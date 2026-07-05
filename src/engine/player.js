@@ -29,6 +29,11 @@ export const PlayerController = {
     _velX: 0,
     _velZ: 0,
     _adsBlend: 0,
+    _crouchBlend: 0,
+    _lookBehindT: 0,
+    _flashlight: null,
+    _flashOn: false,
+    _holstered: false,
 
     async spawn(x = 0, y = 2, z = 0) {
         if (this.spawned) this.despawn();
@@ -81,7 +86,7 @@ export const PlayerController = {
         window.FpsViewmodel?.mount?.(Engine.camera);
 
         if (window.UI?.status) {
-            window.UI.status('Action controls — click canvas to aim · WASD move · Shift sprint · V FPS/TPS · Esc release mouse');
+            window.UI.status('FiveM controls — LMB shoot · RMB aim · F vehicle · Ctrl crouch · click canvas to look');
         }
         window.ThirdEye?.updateHud?.();
         return this.group;
@@ -104,6 +109,7 @@ export const PlayerController = {
         State.controlMode = 'fly';
         State.playerRef = null;
         window.FpsViewmodel?.unmount?.(window.Engine?.camera);
+        this._setFlashlight(false);
         window.Engine?._releaseLookLock?.();
         this._syncWalkOrbit();
         window.ThirdEye?.updateHud?.();
@@ -195,11 +201,16 @@ export const PlayerController = {
         if (Controls?.isAction('right')) { mx += right.x; mz += right.z; }
 
         const len = Math.hypot(mx, mz);
-        const fps = State.viewMode === 'fps';
-        const aiming = fps && Controls?.isAction?.('aim');
-        const sprintMult = Controls?.isAction('sprint') ? SPRINT_MULT : 1;
+        const fps = window.State?.viewMode === 'fps';
+        const aiming = fps && Controls?.isAction?.('aim') && !Controls?.isHolstered?.();
+        const crouching = Controls?.isAction?.('crouch');
+        this._crouchBlend = THREE.MathUtils.lerp(this._crouchBlend, crouching ? 1 : 0, 0.18);
+        const stealth = Controls?.isAction?.('stealthWalk');
+        const sprintMult = Controls?.isAction('sprint') && !crouching ? SPRINT_MULT : 1;
         const adsMult = aiming ? ADS_WALK_MULT : 1;
-        const targetSpeed = this.walkSpeed * sprintMult * adsMult;
+        const crouchMult = THREE.MathUtils.lerp(1, 0.42, this._crouchBlend);
+        const stealthMult = stealth ? 0.55 : 1;
+        const targetSpeed = this.walkSpeed * sprintMult * adsMult * crouchMult * stealthMult;
 
         if (len > 0) {
             mx /= len;
@@ -244,10 +255,14 @@ export const PlayerController = {
 
         const State = window.State;
         const fps = State.viewMode === 'fps';
-        const aiming = fps && window.Controls?.isAction?.('aim');
+        const aiming = fps && window.Controls?.isAction?.('aim') && !window.Controls?.isHolstered?.();
         this._adsBlend = THREE.MathUtils.lerp(this._adsBlend, aiming ? 1 : 0, 0.2);
+        this._holstered = window.Controls?.isHolstered?.() ?? false;
 
-        this.group.position.set(this.body.position.x, this.body.position.y - 0.86, this.body.position.z);
+        const crouchY = this._crouchBlend * 0.38;
+        this.group.position.set(this.body.position.x, this.body.position.y - 0.86 - crouchY, this.body.position.z);
+        const bodyScale = 1 - this._crouchBlend * 0.14;
+        this.group.scale.set(1, bodyScale, 1);
 
         const speed = Math.hypot(this.body.velocity.x, this.body.velocity.z);
         const sprinting = window.Controls?.isAction?.('sprint') && speed > 0.5;
@@ -270,7 +285,9 @@ export const PlayerController = {
             ground,
         });
         window.FpsViewmodel?.setAiming?.(this._adsBlend);
+        window.FpsViewmodel?.setHolstered?.(this._holstered);
         window.FpsViewmodel?.tick?.(speed);
+        this._tickFlashlight();
 
         if (fps && camera.fov != null) {
             camera.fov = THREE.MathUtils.lerp(HIP_FOV, ADS_FOV, this._adsBlend);
@@ -279,27 +296,95 @@ export const PlayerController = {
         document.getElementById('fps-crosshair')?.classList.toggle('ads', this._adsBlend > 0.55);
 
         const base = this.group.position.clone();
-        const chest = base.clone().add(new THREE.Vector3(0, 1.4, 0));
+        const chest = base.clone().add(new THREE.Vector3(0, 1.4 - this._crouchBlend * 0.5, 0));
+        let yaw = this._camYaw;
+        if (this._lookBehindT > 0) {
+            this._lookBehindT = Math.max(0, this._lookBehindT - 0.016);
+            yaw += Math.PI * Math.sin((1 - this._lookBehindT / 0.45) * Math.PI);
+        }
 
         if (fps) {
             const eye = base.clone().add(new THREE.Vector3(0, EYE_HEIGHT, 0));
             camera.position.lerp(eye, 0.35);
             camera.rotation.order = 'YXZ';
-            camera.rotation.y = this._camYaw;
+            camera.rotation.y = yaw;
             camera.rotation.x = this._camPitch;
             Engine.controls.target.copy(chest);
         } else {
+            const dist = TPS_DIST - this._crouchBlend * 0.8;
+            const height = TPS_HEIGHT - this._crouchBlend * 0.55;
             const offset = new THREE.Vector3(
-                Math.sin(this._camYaw) * Math.cos(this._camPitch) * TPS_DIST,
-                Math.sin(this._camPitch) * TPS_DIST + TPS_HEIGHT,
-                Math.cos(this._camYaw) * Math.cos(this._camPitch) * TPS_DIST
+                Math.sin(yaw) * Math.cos(this._camPitch) * dist,
+                Math.sin(this._camPitch) * dist + height,
+                Math.cos(yaw) * Math.cos(this._camPitch) * dist
             );
             const desired = chest.clone().add(offset);
             camera.position.lerp(desired, 0.14);
             camera.rotation.order = 'YXZ';
-            camera.rotation.y = this._camYaw;
+            camera.rotation.y = yaw;
             camera.rotation.x = this._camPitch;
             Engine.controls.target.copy(chest);
+        }
+    },
+
+    lookBehind() {
+        if (!this.spawned) return;
+        this._lookBehindT = 0.45;
+    },
+
+    toggleFlashlight() {
+        this._setFlashlight(!this._flashOn);
+        window.UI?.status?.(this._flashOn ? 'Flashlight on' : 'Flashlight off');
+    },
+
+    _setFlashlight(on) {
+        const Engine = window.Engine;
+        if (!Engine?.scene) return;
+        this._flashOn = on;
+        if (on && !this._flashlight) {
+            this._flashlight = new THREE.SpotLight(0xfff4e8, 2.8, 28, 0.42, 0.35, 1.2);
+            this._flashlight.castShadow = false;
+            Engine.scene.add(this._flashlight);
+            Engine.scene.add(this._flashlight.target);
+        }
+        if (this._flashlight) this._flashlight.visible = on;
+    },
+
+    _tickFlashlight() {
+        if (!this._flashOn || !this._flashlight) return;
+        const camera = window.Engine?.camera;
+        if (!camera) return;
+        const dir = new THREE.Vector3();
+        camera.getWorldDirection(dir);
+        this._flashlight.position.copy(camera.position);
+        this._flashlight.target.position.copy(camera.position).addScaledVector(dir, 6);
+    },
+
+    playMelee() {
+        if (!this.spawned || !this.group) return;
+        const parts = this.group.userData?.humanParts;
+        if (parts?.armR) {
+            parts.armR.rotation.x = -1.2;
+            setTimeout(() => { if (parts?.armR) parts.armR.rotation.x = -0.35; }, 180);
+        }
+        window.StarterSfx?.playStarterSfx?.('starter_metal_hit', 0.42);
+    },
+
+    playReload() {
+        window.StarterSfx?.playStarterSfx?.('starter_gun_rifle', 0.35);
+        window.FpsViewmodel?.playReload?.();
+    },
+
+    playEmote() {
+        if (!this.group) return;
+        const parts = this.group.userData?.humanParts;
+        if (parts?.armL && parts?.armR) {
+            parts.armL.rotation.z = 1.1;
+            parts.armR.rotation.z = -1.1;
+            setTimeout(() => {
+                if (parts?.armL) parts.armL.rotation.z = 0.12;
+                if (parts?.armR) parts.armR.rotation.z = -0.12;
+            }, 900);
         }
     },
 

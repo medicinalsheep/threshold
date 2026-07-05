@@ -1444,6 +1444,114 @@
       ]
     },
     {
+      "id": "starter_highway_albedo",
+      "objectName": "Highway Strip",
+      "slot": "albedo",
+      "file": "starter_highway_albedo.png",
+      "path": "textures/starter_highway_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_highway_albedo_512.png",
+          "path": "textures/starter_highway_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_highway_albedo_1k.png",
+          "path": "textures/starter_highway_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_highway_albedo_2k.png",
+          "path": "textures/starter_highway_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_highway_albedo_4k.png",
+          "path": "textures/starter_highway_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_highway_roughness",
+      "objectName": "Highway Strip",
+      "slot": "roughness",
+      "file": "starter_highway_roughness.png",
+      "path": "textures/starter_highway_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_highway_roughness_512.png",
+          "path": "textures/starter_highway_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_highway_roughness_1k.png",
+          "path": "textures/starter_highway_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_highway_roughness_2k.png",
+          "path": "textures/starter_highway_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_highway_roughness_4k.png",
+          "path": "textures/starter_highway_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_highway_normal",
+      "objectName": "Highway Strip",
+      "slot": "normal",
+      "file": "starter_highway_normal.png",
+      "path": "textures/starter_highway_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_highway_normal_512.png",
+          "path": "textures/starter_highway_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_highway_normal_1k.png",
+          "path": "textures/starter_highway_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_highway_normal_2k.png",
+          "path": "textures/starter_highway_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_highway_normal_4k.png",
+          "path": "textures/starter_highway_normal_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
       "id": "starter_fabric_albedo",
       "objectName": "Fabric Banner",
       "slot": "albedo",
@@ -1770,5 +1878,5 @@
   ],
   "exportDir": "textures",
   "tcRealism": "r8",
-  "exportedAt": "2026-07-05T11:40:35.742Z"
+  "exportedAt": "2026-07-05T12:10:26.715Z"
 }

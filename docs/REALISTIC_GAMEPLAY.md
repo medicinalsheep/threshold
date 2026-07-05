@@ -2,7 +2,7 @@
 
 Threshold ships a **walk/drive action control** template in the SOLO lobby. Use it as the baseline for shooters, RPGs, and vehicle scenes.
 
-**Current default version:** v6.4.1 realism defaults (Phase 10)
+**Current default version:** v6.5.0 — FiveM-style controls + ambient starter (Phase 11)
 
 ---
 
@@ -12,13 +12,25 @@ Threshold ships a **walk/drive action control** template in the SOLO lobby. Use 
 |--------|----------|---------|
 | Move | WASD | L-stick |
 | Sprint | Shift (hold) | L3 (hold) |
+| Crouch | Ctrl (hold) | LT (hold) |
+| Stealth walk | Alt (hold) | — |
 | Jump | Space | A |
 | Interact | E | X / Square |
-| Fire | G | RT |
-| Aim (ADS) | R (hold) | LT (hold) |
+| Enter vehicle | F | Y |
+| Fire | **LMB** · G | RT |
+| Aim (ADS) | **RMB** (hold) | LT (hold) |
+| Reload | R | LB |
+| Melee | B | B |
+| Holster | Z | B |
+| Flashlight | L | LB |
+| Horn | H | D-pad Left |
+| Voice PTT | N (hold) | LB |
 | Toggle FPS / TPS | V | D-pad Down |
-| Third Eye | T | D-pad Up |
-| Toggle fly (editor) | F | Y |
+| Third Eye | M | D-pad Up |
+| Walk / fly | Y | Y |
+| Look behind | O | D-pad Left |
+
+Full reference: [CONTROLS_FIVEM.md](CONTROLS_FIVEM.md)
 
 - **TPS** is the default after intro spawn.
 - **Mouse look** — in PLAY mode, **click the canvas** to capture the cursor (pointer lock); move mouse to orbit/aim like standard FPS/TPS. **Esc** releases. In EDIT (paused), orbit controls work around your character.
@@ -131,6 +143,18 @@ Build your game by replacing props, keeping the control + physics + asset pipeli
 **First clone?** Run `npm run quickstart -- --pack` then `assets:verify` before `preview`.
 
 ---
+
+## Phase 11 additions (v6.5)
+
+| Feature | Notes |
+|---------|-------|
+| FiveM controls | LMB/RMB combat, F vehicle, grouped KEYS menu |
+| Crouch / stealth | Ctrl / Alt movement modifiers |
+| Flashlight | L — spot light on camera |
+| Ambient audio | Wind, highway, birds, cicadas, dust zones |
+| Scene anim | Lamps, birds, wind turbine, banner wave |
+| Highway strip | PBR asphalt + lane dashes + street lamp |
+| Asset roadmap | [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) |
 
 ## Phase 10 additions (v6.4)
 

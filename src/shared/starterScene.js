@@ -308,6 +308,82 @@ export function bootstrapStarterScene() {
         metalness: 0.35,
         envMapIntensity: 0.35,
     });
+    const highway = new THREE.Mesh(
+        new THREE.BoxGeometry(5.5, 0.08, 3.2),
+        new THREE.MeshStandardMaterial({ color: 0x24262a, roughness: 0.92, metalness: 0.02, envMapIntensity: 0.18 })
+    );
+    highway.position.set(6.2, 0.04, -3.0);
+    highway.receiveShadow = true;
+    highway.userData = { id: 'starter_highway', name: 'Highway Strip', type: 'platform', locked: true, surfaceType: 'asphalt' };
+    Engine.scene.add(highway);
+    State.objects.push(highway);
+    if (C) Physics?.addStaticBox?.(new C.Vec3(2.75, 0.04, 1.6), { x: 6.2, y: 0.04, z: -3.0 }, 'ground', 'asphalt');
+
+    [-0.8, 1.4].forEach((zOff, i) => {
+        const dash = new THREE.Mesh(
+            new THREE.BoxGeometry(0.45, 0.015, 0.12),
+            new THREE.MeshStandardMaterial({ color: 0xe8d070, roughness: 0.7, emissive: 0x3a3010, emissiveIntensity: 0.08 })
+        );
+        dash.position.set(6.2 + (i % 2 ? 0.3 : -0.3), 0.09, -3.8 + zOff);
+        dash.userData = { id: `highway_dash_${i}`, name: 'Highway Marking', type: 'decor', locked: true, animDash: true };
+        Engine.scene.add(dash);
+        State.objects.push(dash);
+    });
+
+    const lampGroup = new THREE.Group();
+    lampGroup.name = 'street_lamp';
+    const poleMat = new THREE.MeshStandardMaterial({ color: 0x3a3e44, roughness: 0.4, metalness: 0.55 });
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.2, 8), poleMat);
+    pole.position.y = 1.6;
+    const arm = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.05, 0.05), poleMat);
+    arm.position.set(0.25, 3.1, 0);
+    const bulbMat = new THREE.MeshStandardMaterial({
+        color: 0xfff0d8, emissive: 0xffe8c0, emissiveIntensity: 0.55, roughness: 0.3,
+    });
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.12, 10, 10), bulbMat);
+    bulb.position.set(0.52, 3.05, 0);
+    const lampLight = new THREE.PointLight(0xffe8c8, 0.9, 12, 1.6);
+    lampLight.position.set(0.52, 2.9, 0);
+    lampGroup.add(pole, arm, bulb, lampLight);
+    lampGroup.position.set(8.2, 0, -2.2);
+    lampGroup.userData = { id: 'starter_lamp', name: 'Street Lamp', type: 'prop', locked: true, animLamp: true, bulbMesh: bulb };
+    Engine.scene.add(lampGroup);
+    State.objects.push(lampGroup);
+
+    const windmill = new THREE.Group();
+    windmill.name = 'starter_windmill';
+    const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.18, 2.4, 8), poleMat);
+    tower.position.y = 1.2;
+    const hub = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), poleMat);
+    hub.position.y = 2.45;
+    const blades = new THREE.Group();
+    blades.position.y = 2.45;
+    for (let b = 0; b < 3; b += 1) {
+        const blade = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.9, 0.04), new THREE.MeshStandardMaterial({
+            color: 0x6a7078, roughness: 0.55, metalness: 0.25,
+        }));
+        blade.position.y = 0.45;
+        blade.rotation.z = (b / 3) * Math.PI * 2;
+        blades.add(blade);
+    }
+    windmill.add(tower, hub, blades);
+    windmill.position.set(-7.5, 0, -4.5);
+    windmill.userData = { id: 'starter_windmill', name: 'Wind Turbine', type: 'decor', locked: true, bladeGroup: blades };
+    Engine.scene.add(windmill);
+    State.objects.push(windmill);
+
+    for (let b = 0; b < 4; b += 1) {
+        const bird = new THREE.Mesh(
+            new THREE.ConeGeometry(0.06, 0.18, 4),
+            new THREE.MeshStandardMaterial({ color: 0x2a2828, roughness: 0.8 })
+        );
+        bird.rotation.x = Math.PI;
+        bird.position.set(-2.5 + b * 1.1, 3.2 + b * 0.15, -5.5 - b * 0.3);
+        bird.userData = { id: `starter_bird_${b}`, name: 'Bird', type: 'decor', locked: true, animBird: true };
+        Engine.scene.add(bird);
+        State.objects.push(bird);
+    }
+
     const barrier = new THREE.Group();
     barrier.name = 'starter_barrier';
     const postL = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.95, 10), barrierMat);
@@ -412,13 +488,15 @@ export function bootstrapStarterScene() {
 
     seedStarterSounds().then(() => {
         wireStarterSounds();
+        window.AmbientAudio?.start?.();
     });
     wireStarterTextures().then((tex) => {
         if (tex.maps) window.UI?.status?.(`Starter textures applied (${tex.maps} maps)`);
     });
+    window.StarterAnim?.wireScene?.();
 
     if (terminal && modelKiosk) {
-        window.UI?.status?.('TPS walk — click canvas to aim · E interact · G shoot · V view · T Third Eye');
+        window.UI?.status?.('FiveM controls — LMB shoot · RMB aim · F vehicle · M Third Eye · walk the pads');
     }
 
     State.ctxTargetPos.set(0, 0, 0);
@@ -454,7 +532,7 @@ function scheduleStarterPlayerSpawn() {
         State.viewMode = 'tps';
         window.UI?.updateControlMode?.();
         window.ThirdEye?.updateHud?.();
-        window.UI?.status('Spawned — click canvas to aim · WASD move · V FPS/TPS');
+        window.UI?.status('Spawned — LMB/RMB combat · Ctrl crouch · L flashlight · Y fly toggle');
     }, delay);
 }
 

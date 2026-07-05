@@ -20,7 +20,9 @@
     "Starter Bench": { "uvRepeat": [2, 1], "normalScale": 0.5 },
     "Fabric Banner": { "uvRepeat": [2, 3], "envMapIntensity": 0.18 },
     "AI Build Station": { "uvRepeat": [1, 1], "envMapIntensity": 0.32 },
-    "Model Kiosk": { "uvRepeat": [1, 1], "envMapIntensity": 0.32 }
+    "Model Kiosk": { "uvRepeat": [1, 1], "envMapIntensity": 0.32 },
+    "Highway Strip": { "uvRepeat": [6, 2], "normalScale": 0.42, "envMapIntensity": 0.2 },
+    "Street Lamp": { "envMapIntensity": 0.45 }
   },
   "aliases": {
     "starter_bench": "Starter Bench"

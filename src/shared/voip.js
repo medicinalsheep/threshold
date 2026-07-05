@@ -195,7 +195,7 @@ export const Voip = {
         const onDown = (e) => {
             if (!this._initialized || !voipUsesWebRtc(this.config)) return;
             if (this.config.transmission !== 'ptt') return;
-            if (e.code === this.config.pttKey || e.key === 'v' || e.key === 'V') {
+            if (window.Controls?.isAction?.('voipPtt') || e.code === this.config.pttKey) {
                 this.pttDown = true;
                 this._applyTransmission();
                 this._updateHud();
@@ -203,7 +203,8 @@ export const Voip = {
         };
         const onUp = (e) => {
             if (this.config.transmission !== 'ptt') return;
-            if (e.code === this.config.pttKey || e.key === 'v' || e.key === 'V') {
+            const pttCodes = window.Controls?.getActiveBindings?.()?.voipPtt || [this.config.pttKey];
+            if (pttCodes.includes(e.code)) {
                 this.pttDown = false;
                 this._applyTransmission();
                 this._updateHud();

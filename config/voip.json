@@ -10,7 +10,7 @@
     "maxDistance": 24,
     "minVolume": 0.08,
     "falloff": "linear",
-    "pttKey": "KeyV",
+    "pttKey": "KeyN",
     "discordInvite": "",
     "spectatorsHear": false,
     "spectatorsSpeak": false

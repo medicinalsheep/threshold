@@ -116,9 +116,9 @@
       "tcEd": "tc-lite",
       "slots": ["albedo", "roughness", "normal"],
       "palette": {
-        "base": [38, 40, 44],
-        "speck": [52, 54, 58],
-        "ring": [62, 66, 72]
+        "base": [48, 50, 54],
+        "speck": [62, 64, 68],
+        "ring": [78, 82, 88]
       },
       "style": "concrete"
     },
@@ -128,9 +128,9 @@
       "tcEd": "tc-lite",
       "slots": ["albedo", "roughness", "normal"],
       "palette": {
-        "base": [52, 56, 62],
-        "speck": [68, 72, 78],
-        "ring": [78, 82, 88]
+        "base": [58, 62, 70],
+        "speck": [78, 82, 90],
+        "ring": [92, 96, 104]
       },
       "style": "wall"
     },
@@ -152,9 +152,9 @@
       "surfaceType": "grass",
       "slots": ["albedo", "roughness", "normal"],
       "palette": {
-        "blade": [48, 92, 42],
-        "dark": [32, 68, 28],
-        "speck": [72, 118, 52]
+        "blade": [56, 108, 48],
+        "dark": [38, 78, 34],
+        "speck": [88, 132, 62]
       },
       "style": "grass"
     },
@@ -191,9 +191,22 @@
       "surfaceType": "asphalt",
       "slots": ["albedo", "roughness", "normal"],
       "palette": {
-        "base": [36, 38, 42],
-        "speck": [52, 54, 58],
-        "crack": [28, 30, 34]
+        "base": [32, 34, 38],
+        "speck": [48, 50, 54],
+        "crack": [22, 24, 28]
+      },
+      "style": "asphalt"
+    },
+    {
+      "slug": "starter_highway",
+      "objectName": "Highway Strip",
+      "tcEd": "tc-lite",
+      "surfaceType": "asphalt",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "base": [28, 30, 34],
+        "speck": [42, 44, 48],
+        "crack": [18, 20, 24]
       },
       "style": "asphalt"
     },

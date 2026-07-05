@@ -263,6 +263,82 @@ function synthFootstepAsphalt(sec = 0.1) {
     return out;
 }
 
+function synthWindLoop(sec = 5.5) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const gust = 0.45 + 0.55 * Math.sin(t * 0.55 + Math.sin(t * 1.3) * 0.7);
+        const noise = (Math.random() * 2 - 1) * 0.5;
+        const low = Math.sin(2 * Math.PI * 38 * t) * 0.18;
+        const fade = Math.min(1, i / (SR * 0.2), (n - i) / (SR * 0.2));
+        out[i] = (noise * 0.38 + low) * gust * 0.28 * fade;
+    }
+    return out;
+}
+
+function synthHighwayLoop(sec = 4.8) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const whoosh = (Math.random() * 2 - 1) * 0.4;
+        const rumble = Math.sin(2 * Math.PI * 52 * t) * 0.22 + Math.sin(2 * Math.PI * 104 * t) * 0.12;
+        const pass = Math.max(0, Math.sin(t * 2.8 + 1.2)) ** 2;
+        const fade = Math.min(1, i / (SR * 0.15), (n - i) / (SR * 0.15));
+        out[i] = (whoosh * 0.35 + rumble + pass * whoosh * 0.5) * 0.38 * fade;
+    }
+    return out;
+}
+
+function synthBirdChirp(sec = 0.55) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const env = Math.exp(-t * 5) * (1 - Math.exp(-t * 40));
+        const f = 1800 + Math.sin(t * 28) * 400;
+        out[i] = Math.sin(2 * Math.PI * f * t) * env * 0.22;
+    }
+    return out;
+}
+
+function synthCicadaLoop(sec = 3.2) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const buzz = Math.sin(2 * Math.PI * 4200 * t) * 0.08 + Math.sin(2 * Math.PI * 4350 * t) * 0.06;
+        const mod = 0.4 + 0.6 * (0.5 + 0.5 * Math.sin(t * 6.2));
+        const fade = Math.min(1, i / (SR * 0.1), (n - i) / (SR * 0.1));
+        out[i] = buzz * mod * fade * 0.35;
+    }
+    return out;
+}
+
+function synthDustGust(sec = 0.9) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const env = Math.min(1, t * 4) * Math.exp(-t * 2.5);
+        out[i] = (Math.random() * 2 - 1) * 0.45 * env * 0.35;
+    }
+    return out;
+}
+
+function synthHorn(sec = 0.65) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const env = Math.min(1, t * 12) * Math.exp(-t * 1.8);
+        const tone = Math.sin(2 * Math.PI * 312 * t) + Math.sin(2 * Math.PI * 468 * t) * 0.4;
+        out[i] = tone * env * 0.42;
+    }
+    return out;
+}
+
 function synthMetalHit(sec = 0.28) {
     const n = Math.floor(SR * sec);
     const out = new Float32Array(n);
@@ -294,6 +370,12 @@ const CLIPS = [
     { id: 'starter_footstep_wood', name: 'Footstep — Wood', file: 'footstep_wood', synth: synthFootstepWood, category: 'footstep' },
     { id: 'starter_footstep_gravel', name: 'Footstep — Gravel', file: 'footstep_gravel', synth: synthFootstepGravel, category: 'footstep' },
     { id: 'starter_footstep_asphalt', name: 'Footstep — Asphalt', file: 'footstep_asphalt', synth: synthFootstepAsphalt, category: 'footstep' },
+    { id: 'starter_amb_wind', name: 'Ambient — Wind', file: 'amb_wind', synth: synthWindLoop, category: 'ambient' },
+    { id: 'starter_amb_highway', name: 'Ambient — Highway', file: 'amb_highway', synth: synthHighwayLoop, category: 'ambient' },
+    { id: 'starter_amb_bird', name: 'Ambient — Bird', file: 'amb_bird', synth: synthBirdChirp, category: 'ambient' },
+    { id: 'starter_amb_cicada', name: 'Ambient — Cicadas', file: 'amb_cicada', synth: synthCicadaLoop, category: 'ambient' },
+    { id: 'starter_amb_dust', name: 'Ambient — Dust Gust', file: 'amb_dust', synth: synthDustGust, category: 'ambient' },
+    { id: 'starter_horn', name: 'Vehicle Horn', file: 'horn', synth: synthHorn, category: 'vehicle' },
 ];
 
 function tryCompress(wavPath, oggPath) {
@@ -316,7 +398,7 @@ function main() {
 
     const manifest = {
         format: 'threshold-starter-sounds',
-        version: 2,
+        version: 3,
         sampleRate: SR,
         clips: [],
     };

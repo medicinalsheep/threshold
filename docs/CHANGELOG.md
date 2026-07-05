@@ -1,5 +1,14 @@
 # Changelog
 
+## 6.5.0 — Phase 11: FiveM controls + ambient makeover (iteration 1)
+
+- **Controls** — FiveM-style defaults: LMB fire, RMB aim, F vehicle, Ctrl crouch, grouped KEYS menu
+- **Player** — crouch, stealth walk, flashlight, reload/melee/emote, look behind, holster
+- **Ambient SFX** — wind, highway, birds, cicadas, dust, horn (`sounds:gen`)
+- **Starter scene** — highway strip, street lamp, wind turbine, birds; `StarterAnim` + `AmbientAudio`
+- **Textures** — richer ground/wall/grass/asphalt palettes + `starter_highway`
+- Docs: [CONTROLS_FIVEM.md](CONTROLS_FIVEM.md), [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md)
+
 ## 6.4.1 — Doc truth pass + legacy archive
 
 - **docs/README.md** — full scope map, phase history, command cheat sheet

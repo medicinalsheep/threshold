@@ -3,25 +3,48 @@ const STORAGE_KB_USER = 'threshold_bindings_user';
 const STORAGE_GP_HOST = 'threshold_gamepad_host';
 const STORAGE_GP_USER = 'threshold_gamepad_user';
 
+/** FiveM / GTA-inspired action map — groups match KEYS menu sections */
 export const CONTROL_ACTIONS = {
-    forward: { label: 'Move Forward', group: 'movement' },
+    forward: { label: 'Move Forward', group: 'movement', hint: 'WASD' },
     back: { label: 'Move Back', group: 'movement' },
     left: { label: 'Move Left', group: 'movement' },
     right: { label: 'Move Right', group: 'movement' },
     up: { label: 'Fly Up', group: 'movement' },
-    down: { label: 'Fly Down / Descend', group: 'movement' },
+    down: { label: 'Fly Down', group: 'movement' },
     jump: { label: 'Jump', group: 'movement' },
-    sprint: { label: 'Sprint / Run', group: 'movement' },
-    interact: { label: 'Interact / Insert Menu', group: 'general' },
+    sprint: { label: 'Sprint / Run (hold)', group: 'movement' },
+    crouch: { label: 'Crouch (hold)', group: 'movement', walkOnly: true },
+    stealthWalk: { label: 'Stealth Walk (hold)', group: 'movement', walkOnly: true },
+    interact: { label: 'Interact', group: 'general' },
     toggleMode: { label: 'Toggle Walk / Fly', group: 'general' },
+    enterVehicle: { label: 'Enter / Exit Vehicle', group: 'vehicle' },
     pause: { label: 'Pause Scene (host)', group: 'host', hostOnly: true },
     bindingsMenu: { label: 'Open Keys Menu', group: 'general' },
-    cameraReset: { label: 'Reset Camera Behind Player', group: 'general' },
-    fire: { label: 'Fire / Shoot', group: 'general' },
-    aim: { label: 'Aim Down Sights (hold)', group: 'general' },
-    toggleView: { label: 'Toggle FPS / TPS', group: 'general' },
-    thirdEye: { label: 'Third Eye (awareness)', group: 'general' },
+    sessionPanel: { label: 'Session / Players Panel', group: 'general' },
+    cameraReset: { label: 'Reset Camera Behind Player', group: 'camera' },
+    fire: { label: 'Fire / Shoot', group: 'combat', mouse: 0 },
+    aim: { label: 'Aim Down Sights (hold)', group: 'combat', mouse: 2 },
+    reload: { label: 'Reload', group: 'combat' },
+    melee: { label: 'Melee / Punch', group: 'combat' },
+    holster: { label: 'Holster Weapon', group: 'combat' },
+    emote: { label: 'Emote / Hands Up', group: 'social' },
+    voipPtt: { label: 'Voice Push-to-Talk (hold)', group: 'social' },
+    toggleView: { label: 'Toggle FPS / TPS', group: 'camera' },
+    thirdEye: { label: 'Third Eye (awareness)', group: 'camera' },
+    flashlight: { label: 'Flashlight', group: 'camera' },
+    lookBehind: { label: 'Look Behind (tap)', group: 'camera' },
+    horn: { label: 'Horn', group: 'vehicle' },
 };
+
+export const CONTROL_GROUPS = [
+    { id: 'movement', label: 'Movement' },
+    { id: 'combat', label: 'Combat' },
+    { id: 'camera', label: 'Camera' },
+    { id: 'vehicle', label: 'Vehicle' },
+    { id: 'social', label: 'Social / Voice' },
+    { id: 'general', label: 'General' },
+    { id: 'host', label: 'Host' },
+];
 
 export const GAMEPAD_BUTTON_LABELS = {
     0: 'A / Cross', 1: 'B / Circle', 2: 'X / Square', 3: 'Y / Triangle',
@@ -30,14 +53,16 @@ export const GAMEPAD_BUTTON_LABELS = {
     12: 'D-Up', 13: 'D-Down', 14: 'D-Left', 15: 'D-Right'
 };
 
-/** Standard gamepad defaults — browser Gamepad API button indices */
+/** FiveM-style gamepad defaults — L-stick move · R-stick camera */
 const DEFAULT_GAMEPAD_BINDINGS = {
-    jump: 0,       // A / Cross
-    down: 1,       // B / Circle — descend / crouch fly
-    interact: 2,     // X / Square
-    toggleMode: 3,   // Y / Triangle — walk/fly toggle
-    up: 4,         // LB / L1 — fly up
-    sprint: 10,    // L3 — left stick press (not RT)
+    jump: 0,
+    melee: 1,
+    interact: 2,
+    toggleMode: 3,
+    enterVehicle: 3,
+    up: 4,
+    reload: 5,
+    sprint: 10,
     bindingsMenu: 8,
     pause: 9,
     cameraReset: 11,
@@ -45,8 +70,18 @@ const DEFAULT_GAMEPAD_BINDINGS = {
     aim: 6,
     toggleView: 13,
     thirdEye: 12,
+    horn: 14,
+    emote: 15,
+    flashlight: 4,
+    holster: 9,
+    voipPtt: 8,
+    crouch: 6,
+    stealthWalk: 10,
+    down: 1,
+    sessionPanel: 8,
 };
 
+/** FiveM-inspired keyboard — LMB fire · RMB aim · F vehicle · Y walk/fly */
 const DEFAULT_HOST_KEYBOARD = {
     forward: ['KeyW', 'ArrowUp'],
     back: ['KeyS', 'ArrowDown'],
@@ -56,32 +91,56 @@ const DEFAULT_HOST_KEYBOARD = {
     down: ['KeyC'],
     jump: ['Space'],
     sprint: ['ShiftLeft', 'ShiftRight'],
+    crouch: ['ControlLeft', 'ControlRight'],
+    stealthWalk: ['AltLeft'],
     interact: ['KeyE'],
-    toggleMode: ['KeyF'],
+    toggleMode: ['KeyY'],
+    enterVehicle: ['KeyF'],
     pause: ['KeyP'],
-    bindingsMenu: [],
-    cameraReset: [],
-    fire: ['KeyG'],
-    aim: ['KeyR'],
+    bindingsMenu: ['Backquote'],
+    sessionPanel: ['Tab'],
+    cameraReset: ['Home'],
+    fire: ['Mouse0', 'KeyG'],
+    aim: ['Mouse2'],
+    reload: ['KeyR'],
+    melee: ['KeyB'],
+    holster: ['KeyZ'],
+    emote: ['KeyX'],
+    voipPtt: ['KeyN'],
     toggleView: ['KeyV'],
-    thirdEye: ['KeyT'],
+    thirdEye: ['KeyM'],
+    flashlight: ['KeyL'],
+    lookBehind: ['KeyO'],
+    horn: ['KeyH'],
 };
 
 const DEFAULT_USER_KEYBOARD = {
     ...DEFAULT_HOST_KEYBOARD,
     pause: [],
     bindingsMenu: [],
+    sessionPanel: [],
     cameraReset: []
 };
 
 const KEY_LABELS = {
     KeyW: 'W', KeyA: 'A', KeyS: 'S', KeyD: 'D', KeyQ: 'Q', KeyE: 'E', KeyC: 'C',
-    KeyF: 'F', KeyG: 'G', KeyP: 'P', KeyR: 'R', KeyT: 'T', KeyV: 'V', KeyX: 'X', Space: 'Space', ShiftLeft: 'Shift', ShiftRight: 'Shift',
+    KeyF: 'F', KeyG: 'G', KeyH: 'H', KeyP: 'P', KeyR: 'R', KeyT: 'T', KeyV: 'V',
+    KeyX: 'X', KeyY: 'Y', KeyZ: 'Z', KeyM: 'M', KeyN: 'N', KeyL: 'L', KeyB: 'B',
+    KeyU: 'U', Space: 'Space', ShiftLeft: 'Shift', ShiftRight: 'Shift',
+    ControlLeft: 'Ctrl', ControlRight: 'Ctrl', AltLeft: 'Alt',
+    Mouse0: 'LMB', Mouse1: 'MMB', Mouse2: 'RMB',
+    Backquote: '`', Tab: 'Tab', Home: 'Home',
     ArrowUp: '↑', ArrowDown: '↓', ArrowLeft: '←', ArrowRight: '→'
 };
 
 const GAMEPAD_DEADZONE = 0.18;
-const EDGE_ACTIONS = new Set(['toggleMode', 'interact', 'bindingsMenu', 'cameraReset', 'pause', 'fire', 'toggleView', 'thirdEye']);
+const EDGE_ACTIONS = new Set([
+    'toggleMode', 'interact', 'bindingsMenu', 'cameraReset', 'pause', 'fire',
+    'toggleView', 'thirdEye', 'reload', 'melee', 'holster', 'emote', 'enterVehicle',
+    'flashlight', 'lookBehind', 'horn', 'sessionPanel',
+]);
+
+const MOUSE_HELD_ACTIONS = new Set(['aim', 'crouch', 'stealthWalk', 'voipPtt', 'sprint']);
 
 function cloneKbDefaults(profile) {
     const src = profile === 'host' ? DEFAULT_HOST_KEYBOARD : DEFAULT_USER_KEYBOARD;
@@ -142,12 +201,14 @@ export const Controls = {
     gamepad: null,
     gamepadName: '',
     gamepadActions: {},
+    mouseHeld: {},
     cameraStick: { x: 0, y: 0 },
     justPressed: {},
     _prevButtons: {},
     _rebind: null,
     _rebindGamepad: null,
     _sprintToggle: false,
+    _holstered: false,
 
     init() {
         window.addEventListener('gamepadconnected', (e) => {
@@ -259,7 +320,7 @@ export const Controls = {
     },
 
     formatCode(code) {
-        return KEY_LABELS[code] || code.replace('Key', '');
+        return KEY_LABELS[code] || code.replace('Key', '').replace('Mouse', 'M');
     },
 
     formatGamepadButton(idx) {
@@ -280,6 +341,20 @@ export const Controls = {
         return null;
     },
 
+    setMouseButton(button, pressed) {
+        const code = `Mouse${button}`;
+        const was = !!this.mouseHeld[code];
+        this.mouseHeld[code] = pressed;
+        if (pressed && !was) {
+            const action = this.getActionForCode(code);
+            if (action && EDGE_ACTIONS.has(action)) this.justPressed[action] = true;
+        }
+    },
+
+    _mouseCodesFor(action) {
+        return (this.getActiveBindings()[action] || []).filter((c) => c.startsWith('Mouse'));
+    },
+
     _btnIndex(action) {
         const map = this.getActiveGamepadMap();
         return typeof map[action] === 'number' ? map[action] : null;
@@ -288,13 +363,22 @@ export const Controls = {
     isAction(action) {
         const codes = this.getActiveBindings()[action] || [];
         const keys = window.State?.keys || {};
-        if (codes.some((c) => keys[c])) return true;
+        if (codes.some((c) => !c.startsWith('Mouse') && keys[c])) return true;
+        if (codes.some((c) => c.startsWith('Mouse') && this.mouseHeld[c])) return true;
         if (action === 'sprint' && this._sprintToggle) return true;
         return !!this.gamepadActions[action];
     },
 
+    isHolstered() {
+        return this._holstered;
+    },
+
     getSprintMultiplier() {
         return this.isAction('sprint') ? 1.85 : 1;
+    },
+
+    markJustPressed(action) {
+        if (action) this.justPressed[action] = true;
     },
 
     consumeJustPressed(action) {
@@ -314,6 +398,7 @@ export const Controls = {
     pollGamepad() {
         this.gamepadActions = {};
         this.cameraStick = { x: 0, y: 0 };
+        const kbEdges = { ...this.justPressed };
         const prevJust = { ...this.justPressed };
         this.justPressed = {};
 
@@ -352,9 +437,10 @@ export const Controls = {
             return typeof idx === 'number' && !!pad.buttons[idx]?.pressed;
         };
 
+        MOUSE_HELD_ACTIONS.forEach((action) => {
+            if (press(action)) this.gamepadActions[action] = true;
+        });
         if (press('jump')) this.gamepadActions.jump = true;
-        if (press('sprint')) this.gamepadActions.sprint = true;
-        if (press('aim')) this.gamepadActions.aim = true;
         if (press('up')) this.gamepadActions.up = true;
         if (press('down')) this.gamepadActions.down = true;
 
@@ -368,17 +454,16 @@ export const Controls = {
             this._prevButtons[idx] = pressed;
         };
 
-        edge('toggleMode');
-        edge('interact');
-        edge('fire');
-        edge('toggleView');
-        edge('thirdEye');
-        edge('bindingsMenu');
-        edge('cameraReset');
-        if (this.canUse('pause')) edge('pause');
+        EDGE_ACTIONS.forEach((action) => {
+            if (action === 'pause' && !this.canUse('pause')) return;
+            edge(action);
+        });
 
         Object.keys(prevJust).forEach((k) => {
             if (prevJust[k] && k.startsWith('touch_')) this.justPressed[k] = true;
+        });
+        Object.keys(kbEdges).forEach((k) => {
+            if (kbEdges[k]) this.justPressed[k] = true;
         });
     },
 
@@ -436,10 +521,10 @@ export const Controls = {
         const touch = window.TouchControls?.enabled ? ' · touch' : '';
         if (mode === 'walk') {
             const view = window.State?.viewMode === 'fps' ? 'FPS' : 'TPS';
-            const lock = window.Engine?._lookPointerLocked ? ' · mouse aim' : ' · click canvas to aim';
-            return `${profile}${admin}: ${view} · WASD · Shift sprint · V view · T Third Eye · E interact${lock}${pad}${touch}`;
+            const lock = window.Engine?._lookPointerLocked ? ' · aim' : ' · click to aim';
+            return `${profile}${admin}: ${view} · LMB shoot · RMB aim · F vehicle · E interact${lock}${pad}${touch}`;
         }
-        return `${profile}${admin}: fly · Y toggle · R-stick cam${pad}${touch}`;
+        return `${profile}${admin}: fly · Y walk · R-stick cam${pad}${touch}`;
     },
 
     startKeyboardRebind(profile, action, onDone) {
@@ -521,35 +606,48 @@ export const Controls = {
         if (note) {
             if (profile === 'host') {
                 note.textContent = canEditHost
-                    ? 'Host keyboard + controller profiles sync live to all players. Guests override personally in Guest profile.'
-                    : 'Host controls are read-only for guests — customize your Guest profile locally.';
+                    ? 'FiveM-style defaults — LMB fire · RMB aim · F vehicle · host syncs to guests.'
+                    : 'Host controls are read-only for guests — customize Guest profile locally.';
             } else {
-                note.textContent = 'Guest profile is saved on this device — overrides host defaults per key/button.';
+                note.textContent = 'Guest profile saved on this device — overrides host per key/button.';
             }
         }
 
         const actions = Object.entries(CONTROL_ACTIONS).filter(([, meta]) => !meta.hostOnly || isHostProfile);
         const locked = isHostProfile && !canEditHost;
 
-        kbList.innerHTML = actions.map(([action, meta]) => `
+        const rowsForGroup = (groupId, bindAttr, clearAttr, isGp = false) => actions
+            .filter(([, meta]) => meta.group === groupId)
+            .filter(([a]) => !isGp || DEFAULT_GAMEPAD_BINDINGS[a] !== undefined)
+            .map(([action, meta]) => `
             <div class="binding-row" data-action="${action}">
                 <span class="binding-label">${meta.label}</span>
-                <button type="button" class="binding-key btn-sm" data-bind="${action}" ${locked ? 'disabled' : ''}>
-                    ${(this.bindings[profile][action] || []).map((c) => this.formatCode(c)).join(', ') || (locked ? 'Host only' : 'Bind key')}
+                <button type="button" class="binding-key btn-sm" data-${bindAttr}="${action}" ${locked ? 'disabled' : ''}>
+                    ${isGp
+        ? this.formatGamepadButton(this.gamepadBindings[profile][action])
+        : (this.bindings[profile][action] || []).map((c) => this.formatCode(c)).join(', ') || (locked ? 'Host only' : 'Bind key')}
                 </button>
-                ${locked ? '' : `<button type="button" class="binding-clear btn-sm" data-clear-kb="${action}" title="Clear">✕</button>`}
+                ${locked ? '' : `<button type="button" class="binding-clear btn-sm" data-${clearAttr}="${action}" title="${isGp ? 'Reset default' : 'Clear'}">${isGp ? '↺' : '✕'}</button>`}
+            </div>
+        `).join('');
+
+        kbList.innerHTML = CONTROL_GROUPS
+            .filter((g) => actions.some(([, m]) => m.group === g.id))
+            .map((g) => `
+            <div class="binding-group">
+                <div class="binding-group-title">${g.label}</div>
+                ${rowsForGroup(g.id, 'bind', 'clear-kb')}
             </div>
         `).join('');
 
         gpList.innerHTML = `
-            <p class="insert-hint" style="font-size:0.65rem;margin-top:0;">Fixed: L-stick move · R-stick camera (GTA style)</p>
-            ${actions.filter(([a]) => DEFAULT_GAMEPAD_BINDINGS[a] !== undefined).map(([action, meta]) => `
-            <div class="binding-row" data-action="${action}">
-                <span class="binding-label">${meta.label}</span>
-                <button type="button" class="binding-key btn-sm" data-gpad-bind="${action}" ${locked ? 'disabled' : ''}>
-                    ${this.formatGamepadButton(this.gamepadBindings[profile][action])}
-                </button>
-                ${locked ? '' : `<button type="button" class="binding-clear btn-sm" data-clear-gp="${action}" title="Reset default">↺</button>`}
+            <p class="insert-hint" style="font-size:0.65rem;margin-top:0;">L-stick move · R-stick camera (GTA / FiveM style)</p>
+            ${CONTROL_GROUPS
+        .filter((g) => actions.some(([a, m]) => m.group === g.id && DEFAULT_GAMEPAD_BINDINGS[a] !== undefined))
+        .map((g) => `
+            <div class="binding-group">
+                <div class="binding-group-title">${g.label}</div>
+                ${rowsForGroup(g.id, 'gpad-bind', 'clear-gp', true)}
             </div>
         `).join('')}`;
     }

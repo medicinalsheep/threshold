@@ -95,6 +95,7 @@ export function fireStarterGun() {
     const PC = window.PlayerController;
     const State = window.State;
     if (!Engine?.camera || !THREE || State?.isPaused) return false;
+    if (window.Controls?.isHolstered?.()) return false;
 
     playStarterSfx('starter_gun_pistol', 0.78);
 

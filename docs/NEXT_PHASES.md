@@ -422,6 +422,17 @@ await World.playCutscene('video/intro.mp4', {
 | 10.3 `kit:export` + `kit:verify` — ~1.4 MB WebP fork pack | ✅ |
 | 10.4 GIMP export reads HILOD from `tc-textures.json` | ✅ |
 
+### Phase 11 — FiveM controls + ambient makeover (v6.5) ✅
+
+| Step | Status |
+|------|--------|
+| 11.1 FiveM-style control defaults (LMB/RMB, F vehicle, grouped KEYS) | ✅ |
+| 11.2 Crouch, stealth, flashlight, reload, melee, holster, horn | ✅ |
+| 11.3 Ambient SFX — wind, highway, birds, cicadas, dust | ✅ |
+| 11.4 Starter anim — lamps, birds, wind turbine, banner | ✅ |
+| 11.5 Highway strip + texture palette pass | ✅ |
+| 11.6 [CONTROLS_FIVEM.md](CONTROLS_FIVEM.md) + [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) | ✅ |
+
 ### Phase 10.1 — Docs + archive (v6.4.1) ✅
 
 | Step | Status |

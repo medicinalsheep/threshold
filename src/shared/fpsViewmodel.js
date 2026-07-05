@@ -55,6 +55,28 @@ export const FpsViewmodel = {
         this.group.rotation.z = T.MathUtils.lerp(0, 0.03, b);
     },
 
+    setHolstered(holstered = false) {
+        if (!this.group) return;
+        this.group.visible = window.State?.viewMode === 'fps' && !holstered;
+    },
+
+    playReload() {
+        if (!this.group) return;
+        const T = window.THREE;
+        if (!T) return;
+        const start = performance.now();
+        const tick = () => {
+            const e = (performance.now() - start) / 280;
+            if (e >= 1) {
+                this.group.rotation.x = 0;
+                return;
+            }
+            this.group.rotation.x = -0.35 * Math.sin(e * Math.PI);
+            requestAnimationFrame(tick);
+        };
+        tick();
+    },
+
     tick(speed = 0) {
         if (!this.group?.visible) return;
         const t = performance.now() * 0.001;

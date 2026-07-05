@@ -43,6 +43,8 @@ import '../shared/npcPatrol.js';
 import '../shared/footsteps.js';
 import '../shared/fpsViewmodel.js';
 import '../shared/avatarLoader.js';
+import '../shared/ambientAudio.js';
+import '../shared/starterAnim.js';
 import { bootstrapReferenceIfRequested } from '../shared/referenceEdition.js';
 import { GameExport } from '../shared/gameExport.js';
 import { AgentHub } from '../shared/agentHub.js';
@@ -390,6 +392,36 @@ const AudioSys = {
         }
     },
 
+    playClipLoop: async function (clipId, volume = 0.5) {
+        if (!clipId) return null;
+        this.ensureContext();
+        try {
+            let buffer = this.clipCache.get(clipId);
+            if (!buffer) {
+                const blob = await SoundLibrary.getBlob(clipId);
+                if (!blob) return null;
+                const arr = await blob.arrayBuffer();
+                buffer = await this.ctx.decodeAudioData(arr.slice(0));
+                this.clipCache.set(clipId, buffer);
+            }
+            const src = this.ctx.createBufferSource();
+            const gain = this.ctx.createGain();
+            src.buffer = buffer;
+            src.loop = true;
+            gain.gain.value = volume;
+            src.connect(gain);
+            gain.connect(this.ctx.destination);
+            src.start();
+            return {
+                stop: () => { try { src.stop(); } catch { /* */ } },
+                setVolume: (v) => { gain.gain.value = v; },
+            };
+        } catch (e) {
+            console.warn('Loop playback failed:', e);
+            return null;
+        }
+    },
+
     playObjectSound: function (obj, trigger = 'test') {
         if (!obj?.userData) return;
         const mode = obj.userData.soundMode || 'tone';
@@ -715,16 +747,9 @@ const Engine = {
             if (Controls._rebind) return;
             State.keys[e.code] = true;
             if (e.code === 'Delete') World.deleteObject(State.selectedObject);
-            const action = Controls.getActionForCode(e.code);
             if (!e.repeat) {
-                if (action === 'toggleMode') UI.toggleControlMode();
-                if (action === 'pause' && Controls.canUse('pause')) UI.togglePause();
-                if (action === 'interact') {
-                    if (!window.WorldInteract?.tryInteract?.()) UI.openInsert();
-                }
-                if (action === 'fire') window.StarterSfx?.fireStarterGun?.();
-                if (action === 'toggleView') PlayerController.toggleViewMode?.();
-                if (action === 'thirdEye') ThirdEye.toggle();
+                const action = Controls.getActionForCode(e.code);
+                if (action) Controls.markJustPressed(action);
             }
         });
         window.addEventListener('keyup', (e) => State.keys[e.code] = false);
@@ -956,19 +981,39 @@ const Engine = {
             this._holdPointer = null;
         }
     },
-    onPointerUp: function () {
+    onPointerUp: function (e) {
+        if (e?.pointerType === 'mouse' || e?.pointerType === 'pen') {
+            Controls.setMouseButton(e.button, false);
+        }
         if (this._holdPointer) {
             clearTimeout(this._holdPointer.timer);
             this._holdPointer = null;
         }
     },
+
+    tryEnterVehicle() {
+        if (window.TcDrive?.active) {
+            window.World?.releaseTcVehicle?.();
+            return true;
+        }
+        const hasTc = State.objects.some((o) => o.userData?.id === 'tc_run' || o.userData?.id === 'tc_haul');
+        if (hasTc && window.World?.enterTcRace) {
+            window.World.enterTcRace();
+            UI.status('Vehicle claimed — WASD drive · F exit');
+            return true;
+        }
+        return false;
+    },
     onPointerDown: function (e) {
         if (e.button !== 0) { UI.closeCtx(); return; }
         if (TouchControls.enabled && e.pointerType === 'touch') return;
 
-        if (this._isWalkPlayLook() && (e.pointerType === 'mouse' || e.pointerType === 'pen')) {
-            this._requestLookLock();
-            return;
+        if (e.pointerType === 'mouse' || e.pointerType === 'pen') {
+            Controls.setMouseButton(e.button, true);
+            if (this._isWalkPlayLook()) {
+                this._requestLookLock();
+                return;
+            }
         }
 
         if (e.pointerType === 'mouse' || e.pointerType === 'pen') {
@@ -1057,22 +1102,38 @@ const Engine = {
         Controls.pollGamepad();
         Controls.applyCameraStick();
         if (Controls.consumeJustPressed('toggleMode')) UI.toggleControlMode();
-        if (Controls.consumeJustPressed('pause')) UI.togglePause();
+        if (Controls.consumeJustPressed('pause') && Controls.canUse('pause')) UI.togglePause();
+        if (Controls.consumeJustPressed('bindingsMenu')) UI.openBindingsModal?.();
+        if (Controls.consumeJustPressed('sessionPanel')) UI.openHostPanel?.();
         if (Controls.consumeJustPressed('interact')) {
             if (!window.WorldInteract?.tryInteract?.()) UI.openInsert();
         }
-        if (Controls.consumeJustPressed('fire')) {
+        if (Controls.consumeJustPressed('enterVehicle')) this.tryEnterVehicle();
+        if (Controls.consumeJustPressed('fire') && !Controls.isHolstered()) {
             window.StarterSfx?.fireStarterGun?.();
         }
-        if (Controls.consumeJustPressed('toggleView')) {
-            PlayerController.toggleViewMode?.();
+        if (Controls.consumeJustPressed('reload')) PlayerController.playReload?.();
+        if (Controls.consumeJustPressed('melee')) PlayerController.playMelee?.();
+        if (Controls.consumeJustPressed('emote')) PlayerController.playEmote?.();
+        if (Controls.consumeJustPressed('holster')) {
+            Controls._holstered = !Controls._holstered;
+            UI.status(Controls._holstered ? 'Weapon holstered' : 'Weapon ready');
         }
-        if (Controls.consumeJustPressed('thirdEye')) {
-            ThirdEye.toggle();
+        if (Controls.consumeJustPressed('toggleView')) PlayerController.toggleViewMode?.();
+        if (Controls.consumeJustPressed('thirdEye')) ThirdEye.toggle();
+        if (Controls.consumeJustPressed('flashlight')) PlayerController.toggleFlashlight?.();
+        if (Controls.consumeJustPressed('lookBehind')) PlayerController.lookBehind?.();
+        if (Controls.consumeJustPressed('horn')) {
+            window.StarterSfx?.playStarterSfx?.('starter_horn', 0.55);
+        }
+        if (window.Voip?._initialized && window.Voip?.config?.transmission === 'ptt') {
+            window.Voip.pttDown = Controls.isAction('voipPtt');
+            window.Voip._applyTransmission?.();
         }
         window.WorldInteract?.tick?.();
         ThirdEye.tick();
-        if (Controls.consumeJustPressed('bindingsMenu')) UI.openBindingsModal();
+        window.AmbientAudio?.tick?.();
+        window.StarterAnim?.tick?.(time);
         if (Controls.consumeJustPressed('cameraReset')) {
             PlayerController.resetCameraBehind?.();
             Controls.resetCameraBehindPlayer();
@@ -2396,7 +2457,7 @@ const UI = {
                 State.controlMode = 'walk';
                 PlayerController._inheritLookFromCamera?.();
                 PlayerController._syncWalkOrbit?.();
-                this.status('Walk — click canvas to capture mouse · WASD move');
+                this.status('Walk — LMB shoot · RMB aim · F vehicle · click canvas to look');
             }
         } else {
             const pos = World.getCursorPos();
