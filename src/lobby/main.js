@@ -54,7 +54,8 @@ export function initLobby(onReady) {
             setStatus(`Session live — ${summarizeVoipConfig(voipConfig)}`);
             enterApp();
         } catch (e) {
-            setStatus(e.message || 'Failed to create session', true);
+            console.error('[lobby] create session', e);
+            setStatus(e?.message || String(e) || 'Failed to create session', true);
         }
     });
 

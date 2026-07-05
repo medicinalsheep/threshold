@@ -35,6 +35,7 @@ export const Network = {
     },
 
     async startHost(roomId, options = {}) {
+        this.destroy();
         this.mode = 'host';
         this.roomId = roomId;
         this.voipConfig = normalizeVoipConfig(options.voipConfig || this.voipConfig);
@@ -59,9 +60,11 @@ export const Network = {
             this.peer.on('error', (err) => {
                 console.error('Peer error:', err);
                 if (err.type === 'unavailable-id') {
-                    reject(new Error('Room ID taken — try again'));
+                    reject(new Error('Room ID taken — refresh the page or use Solo Play'));
+                } else if (err.type === 'network' || err.type === 'server-error') {
+                    reject(new Error('Peer server unreachable — check connection or try Solo Play'));
                 } else {
-                    reject(err);
+                    reject(new Error(err.message || err.type || 'Peer connection failed'));
                 }
             });
 

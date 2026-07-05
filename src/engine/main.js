@@ -1469,6 +1469,9 @@ const World = {
     setWeather: function (options = {}) {
         return window.WeatherSystem?.setWeather?.(options);
     },
+    playRecordedSfx: function (tag, opts = {}) {
+        return window.RecordedAmbient?.playTag?.(tag, opts);
+    },
     // NEW: Dynamic import for limitless extensions (e.g., loaders, controls)
     importModule: async function (modulePath, alias) {
         try {

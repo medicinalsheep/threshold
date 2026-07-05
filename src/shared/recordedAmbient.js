@@ -133,4 +133,3 @@ export const RecordedAmbient = {
 };
 
 window.RecordedAmbient = RecordedAmbient;
-window.World.playRecordedSfx = (tag, opts) => RecordedAmbient.playTag(tag, opts);
