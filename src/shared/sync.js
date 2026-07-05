@@ -46,6 +46,7 @@ export const Sync = {
             vehicleClaims: Network?.getVehicleClaims?.() || {},
             circuit: window.TcCircuit?.captureState?.() || null,
             camera,
+            weather: window.WeatherSystem?.captureState?.() || null,
         };
     },
 
@@ -60,6 +61,7 @@ export const Sync = {
             isPaused: !!State.isPaused,
             controlMode: State.controlMode || 'fly',
             player: window.PlayerController?.getState?.() || null,
+            weather: window.WeatherSystem?.captureState?.() || null,
         };
     },
 
@@ -81,9 +83,12 @@ export const Sync = {
         if (state.circuit !== undefined) window.TcCircuit?.applyState?.(state.circuit);
 
         if (typeof state.isPaused === 'boolean') {
+            const wasPaused = State.isPaused;
             State.isPaused = state.isPaused;
             window.Session.isPaused = state.isPaused;
+            if (state.isPaused && !wasPaused) window.Engine?._releaseLookLock?.();
         }
+        if (state.weather) window.WeatherSystem?.applyNetworkState?.(state.weather, { smooth: true });
         if (state.controlMode && !window.TcDrive?.active) State.controlMode = state.controlMode;
         if (state.player && window.PlayerController && !window.TcDrive?.active) {
             window.PlayerController.applyState(state.player);
@@ -177,6 +182,15 @@ export const Sync = {
             }
             window.TextureBridge?.rehydrateScene?.();
             await window.TextureHilod?.rehydrateAfterSync?.();
+
+            const netMode = window.Network?.mode;
+            if (netMode === 'guest' || netMode === 'spectate') {
+                await window.StarterAudio?.ensureStarterAudio?.({ deferWeather: true });
+            }
+            if (state.weather) {
+                window.WeatherSystem?.applyNetworkState?.(state.weather, { smooth: false });
+            }
+
             window.UI?.updateControlMode?.();
             window.Spectate?.updateHud?.();
             window.TcDrive?.rebindAfterSync?.();

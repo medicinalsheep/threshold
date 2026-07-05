@@ -1,5 +1,9 @@
 /** Zone-based ambient loops — real wind/highway + recorded birds */
 
+function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 const ZONES = [
     { id: 'wind_open', clipId: 'starter_amb_wind', volume: 0.22, pos: { x: 0, y: 1, z: 0 }, radius: 22, loop: true },
     { id: 'highway_edge', clipId: 'starter_amb_highway', volume: 0.28, pos: { x: 6.5, y: 0.5, z: -3.2 }, radius: 9, loop: true },
@@ -22,6 +26,18 @@ export const AmbientAudio = {
         this.init();
         void this._playLoop('starter_amb_wind', 0.18, '_windHandle');
         void this._playLoop('starter_amb_highway', 0.14, '_highwayHandle');
+        window.RecordedAmbient?.start?.();
+    },
+
+    /** Stagger loop decode/start to avoid main-thread spikes on first session. */
+    async startStaggered() {
+        if (this._active) return;
+        this._active = true;
+        this.init();
+        await this._playLoop('starter_amb_wind', 0.18, '_windHandle');
+        await delay(420);
+        await this._playLoop('starter_amb_highway', 0.14, '_highwayHandle');
+        await delay(520);
         window.RecordedAmbient?.start?.();
     },
 

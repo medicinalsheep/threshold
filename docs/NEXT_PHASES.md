@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v5.7.0 — Phase R3 Child showcase (characters, audio, full export demo).
+**Current:** v6.7.0 — Phase 13 Stability & session UX (audio cache, weather sync, pointer hardening).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -441,6 +441,38 @@ await World.playCutscene('video/intro.mp4', {
 | 10.1.2 README / AGENTS / GETTING_STARTED / PRODUCT_ROADMAP truth pass | ✅ |
 | 10.1.3 `old/` — legacy editions + R2 scripts | ✅ |
 | 10.1.4 `npm run quickstart` onboarding CLI | ✅ |
+
+### Phase 12 — Real weather audio (v6.6.0) ✅
+
+| Step | Status |
+|------|--------|
+| 12.1 Mixkit rain/thunder fetch pipeline | ✅ |
+| 12.2 `WeatherSystem` — layers, particles, wet surfaces | ✅ |
+| 12.3 User recording tag pipeline + `RecordedAmbient` | ✅ |
+| 12.4 Real combat SFX (gun, glass, metal, footsteps) | ✅ |
+
+### Phase 13 — Stability & session UX (v6.7.0) ✅
+
+| Step | Status |
+|------|--------|
+| 13.1 Manifest fingerprint skip for starter sounds | ✅ |
+| 13.2 Staggered ambient + rain loop starts | ✅ |
+| 13.3 Guest `ensureStarterAudio` after `FULL_STATE` | ✅ |
+| 13.4 Weather sync in `LIVE_STATE` + thunder/gust events | ✅ |
+| 13.5 Pointer lock release — blur, visibility, pause, spectate | ✅ |
+| 13.6 Hotfixes 6.6.1–6.6.2 (freeze, TPS, windowed fullscreen) | ✅ |
+| 13.7 [PHASE_13_STABILITY.md](PHASE_13_STABILITY.md) | ✅ |
+
+### Phase 14 — Ambient iteration 2b (queued · v6.8)
+
+| Step | Status |
+|------|--------|
+| 14.1 River / creek water + flow normals | ⏳ |
+| 14.2 Power lines — hum zone + sway anim | ⏳ |
+| 14.3 Fence chain rattle on gusts | ⏳ |
+| 14.4 Dirt mound + dust particles | ⏳ |
+
+See [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iterations 2b–5.
 
 ```bash
 npm run quickstart

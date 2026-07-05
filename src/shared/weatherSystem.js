@@ -26,11 +26,16 @@ function lerp(a, b, t) {
     return a + (b - a) * t;
 }
 
+function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export const WeatherSystem = {
     _active: false,
     _intensity: 0,
     _targetIntensity: 0.5,
     _rainHandles: {},
+    _rainStarting: false,
     _nextThunder: 0,
     _nextGust: 0,
     _particles: null,
@@ -38,6 +43,9 @@ export const WeatherSystem = {
     _particleData: null,
     _wetTargets: [],
     _fogBase: null,
+    _pendingEvents: [],
+    _seenEventIds: new Set(),
+    _lastWeatherNet: 0,
 
     init() {
         this._collectWetTargets();
@@ -46,24 +54,41 @@ export const WeatherSystem = {
         else if (fog?.isFog) this._fogBase = fog.near;
     },
 
+    isHostAuthority() {
+        const mode = window.Network?.mode;
+        return !mode || mode === 'solo' || mode === 'host';
+    },
+
+    isNetworkGuest() {
+        const mode = window.Network?.mode;
+        return mode === 'guest' || mode === 'spectate';
+    },
+
     start(opts = {}) {
         if (!window.AudioSys?.playClipLoop) return;
         this._active = true;
         this._targetIntensity = opts.intensity ?? 0.55;
-        if (opts.intensity != null) this._intensity = opts.intensity * 0.4;
-        else if (this._intensity < 0.05) this._intensity = 0.12;
+        if (opts.synced && opts.intensity != null) {
+            this._intensity = opts.intensity;
+        } else if (opts.intensity != null) {
+            this._intensity = opts.intensity * 0.4;
+        } else if (this._intensity < 0.05) {
+            this._intensity = 0.12;
+        }
 
         const now = performance.now();
         this._nextThunder = now + 8000 + Math.random() * 14000;
         this._nextGust = now + 12000 + Math.random() * 18000;
 
-        this._startRainLoops();
+        void this._startRainLoops({ stagger: opts.stagger !== false });
         this._ensureParticles(true);
         this._applyWetness();
+        this._notifyNetwork();
     },
 
     stop() {
         this._active = false;
+        this._rainStarting = false;
         Object.values(this._rainHandles).forEach((h) => h?.stop?.());
         this._rainHandles = {};
         if (this._particles) {
@@ -78,13 +103,112 @@ export const WeatherSystem = {
     setWeather(opts = {}) {
         if (opts.rain === false || opts.enabled === false) {
             this.stop();
+            this._notifyNetwork();
             return this;
         }
         if (opts.intensity != null) {
             this._targetIntensity = Math.max(0, Math.min(1, opts.intensity));
         }
         if (!this._active) this.start(opts);
+        else this._notifyNetwork();
         return this;
+    },
+
+    captureState() {
+        const state = {
+            active: this._active,
+            intensity: Math.round(this._intensity * 1000) / 1000,
+            targetIntensity: Math.round(this._targetIntensity * 1000) / 1000,
+        };
+        if (this.isHostAuthority()) {
+            const events = this._drainPendingEvents();
+            if (events?.length) state.events = events;
+        }
+        return state;
+    },
+
+    _drainPendingEvents() {
+        if (!this._pendingEvents.length) return null;
+        const out = this._pendingEvents.splice(0);
+        return out;
+    },
+
+    _queueNetworkEvent(event) {
+        if (!this.isHostAuthority()) return;
+        const id = `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
+        this._pendingEvents.push({ id, ...event });
+        while (this._pendingEvents.length > 12) this._pendingEvents.shift();
+        window.Network?.scheduleLiveSync?.();
+    },
+
+    _notifyNetwork() {
+        if (this.isHostAuthority()) window.Network?.scheduleLiveSync?.();
+    },
+
+    _playSyncedEvent(event) {
+        if (!event?.id || this._seenEventIds.has(event.id)) return;
+        this._seenEventIds.add(event.id);
+        while (this._seenEventIds.size > 48) {
+            const first = this._seenEventIds.values().next().value;
+            this._seenEventIds.delete(first);
+        }
+        if (event.type === 'thunder') {
+            window.AudioSys?.playClipVariation?.(event.clipId, {
+                volume: event.vol ?? 0.5,
+                playbackRate: event.rate ?? 1,
+            });
+        } else if (event.type === 'gust') {
+            window.AudioSys?.playClipVariation?.('starter_wind_gust_real', {
+                volume: event.vol ?? 0.28,
+                playbackRate: event.rate ?? 1,
+            });
+        }
+    },
+
+    applyNetworkState(state, { smooth = true } = {}) {
+        if (!state) return;
+
+        if (Array.isArray(state.events)) {
+            state.events.forEach((e) => this._playSyncedEvent(e));
+        }
+
+        if (state.active && !this._active) {
+            this.start({
+                intensity: state.intensity ?? state.targetIntensity ?? 0.5,
+                stagger: true,
+                synced: true,
+            });
+            if (state.targetIntensity != null) this._targetIntensity = state.targetIntensity;
+            return;
+        }
+        if (!state.active) {
+            if (this._active) this.stop();
+            return;
+        }
+
+        if (state.targetIntensity != null) {
+            this._targetIntensity = Math.max(0, Math.min(1, state.targetIntensity));
+        }
+        if (state.intensity != null) {
+            if (smooth && this.isNetworkGuest()) {
+                this._intensity = lerp(this._intensity, state.intensity, 0.42);
+            } else {
+                this._intensity = state.intensity;
+            }
+        }
+
+        this._applySyncedPresentation();
+    },
+
+    _applySyncedPresentation() {
+        if (!this._active) return;
+        RAIN_LAYERS.forEach((layer) => {
+            const h = this._rainHandles[layer.key];
+            if (h?.setVolume) h.setVolume(this._rainLayerVol(layer, this._intensity));
+        });
+        this._ensureParticles(this._intensity > 0.08);
+        this._tickParticles(0.016);
+        this._applyWetness();
     },
 
     getIntensity() {
@@ -135,12 +259,21 @@ export const WeatherSystem = {
         });
     },
 
-    async _startRainLoops() {
+    async _startRainLoops({ stagger = false } = {}) {
+        if (this._rainStarting) return;
         const AudioSys = window.AudioSys;
-        for (const layer of RAIN_LAYERS) {
-            if (this._rainHandles[layer.key]) continue;
-            const handle = await AudioSys.playClipLoop(layer.clipId, 0);
-            if (handle) this._rainHandles[layer.key] = handle;
+        if (!AudioSys?.playClipLoop) return;
+        this._rainStarting = true;
+        try {
+            for (let i = 0; i < RAIN_LAYERS.length; i++) {
+                const layer = RAIN_LAYERS[i];
+                if (this._rainHandles[layer.key]) continue;
+                if (stagger && i > 0) await delay(380 + i * 120);
+                const handle = await AudioSys.playClipLoop(layer.clipId, 0);
+                if (handle) this._rainHandles[layer.key] = handle;
+            }
+        } finally {
+            this._rainStarting = false;
         }
     },
 
@@ -173,15 +306,17 @@ export const WeatherSystem = {
         const rate = isNear
             ? 0.92 + Math.random() * 0.12
             : 0.78 + Math.random() * 0.18;
-        window.AudioSys?.playClipVariation?.(clipId, { volume: vol * i, playbackRate: rate });
+        const payload = { type: 'thunder', clipId, vol: vol * i, rate };
+        window.AudioSys?.playClipVariation?.(clipId, { volume: payload.vol, playbackRate: rate });
+        this._queueNetworkEvent(payload);
     },
 
     _playGust() {
         if (this._intensity < 0.35) return;
-        window.AudioSys?.playClipVariation?.('starter_wind_gust_real', {
-            volume: 0.18 + Math.random() * 0.22,
-            playbackRate: 0.85 + Math.random() * 0.25,
-        });
+        const vol = 0.18 + Math.random() * 0.22;
+        const rate = 0.85 + Math.random() * 0.25;
+        window.AudioSys?.playClipVariation?.('starter_wind_gust_real', { volume: vol, playbackRate: rate });
+        this._queueNetworkEvent({ type: 'gust', vol, rate });
     },
 
     _ensureParticles(visible = false) {
@@ -240,9 +375,16 @@ export const WeatherSystem = {
 
     tick(dt = 0.016) {
         if (!this._active || window.State?.isPaused) return;
+
+        if (this.isNetworkGuest()) {
+            this._intensity = lerp(this._intensity, this._targetIntensity, 0.022);
+            this._applySyncedPresentation();
+            return;
+        }
+
         const now = performance.now();
 
-        // Slowly drift intensity for organic storms
+        // Slowly drift intensity for organic storms (host / solo authority)
         const drift = (Math.sin(now * 0.00008) + Math.sin(now * 0.00023 + 1.2)) * 0.04;
         this._targetIntensity = Math.max(0.2, Math.min(0.92, this._targetIntensity + drift * dt * 0.15));
         this._intensity = lerp(this._intensity, this._targetIntensity, 0.018);
@@ -264,6 +406,11 @@ export const WeatherSystem = {
         this._ensureParticles(this._intensity > 0.08);
         this._tickParticles(dt);
         this._applyWetness();
+
+        if (now - this._lastWeatherNet > 220) {
+            this._lastWeatherNet = now;
+            window.Network?.scheduleLiveSync?.();
+        }
     },
 };
 

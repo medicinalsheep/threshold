@@ -1,6 +1,6 @@
 # Threshold documentation index
 
-**Version:** 6.6.0 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 6.7.0 · **Live:** https://medicinalsheep.github.io/threshold/
 
 This page is the **full scope map** — what ships today, what is TC vs starter vs yours, and where to read more.
 
@@ -56,6 +56,7 @@ flowchart TB
 | Realistic action defaults | [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | Lobby → SOLO → walk pads, FPS, ADS |
 | FiveM-style controls | [CONTROLS_FIVEM.md](CONTROLS_FIVEM.md) | LMB/RMB · F vehicle · KEYS menu |
 | Ambient + weather | [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) | Real rain/thunder, recorded foley, roadmap |
+| Session stability | [PHASE_13_STABILITY.md](PHASE_13_STABILITY.md) | Audio cache, weather sync, pointer lock |
 | Full asset pipeline | [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | `npm run assets:pack` → `assets:verify` |
 | GIMP textures | [GIMP_TEXTURES.md](GIMP_TEXTURES.md) | `gimp:install` + `textures:watch` + `dev` |
 | Blender avatars | [BLENDER_AVATARS.md](BLENDER_AVATARS.md) | `blender:avatar` |
@@ -75,6 +76,7 @@ flowchart TB
 | **10.1** | 6.4.1 | Doc truth pass, `old/` archive, `quickstart` onboarding |
 | **11** | 6.5.0 | FiveM controls, procedural ambient iteration 1, starter scene props |
 | **12** | 6.6.0 | Real weather + combat SFX, user recording tags, `WeatherSystem` |
+| **13** | 6.7.0 | Manifest audio cache, weather multiplayer sync, pointer/pause hardening |
 
 Earlier phases (export, TC, circuit, Steam): [NEXT_PHASES.md](NEXT_PHASES.md) · [CHANGELOG.md](CHANGELOG.md)
 

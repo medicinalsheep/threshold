@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → local GIMP/Blender art → AI agents on NPCs.
 
-**Current version:** **6.4.1** — realism starter defaults, GIMP live SYNC, starter texture kit, full doc index
+**Current version:** **6.7.0** — Phase 13 stability (audio cache, weather sync, session UX)
 
 **Scope map:** [README.md](README.md) · **Phases:** [NEXT_PHASES.md](NEXT_PHASES.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 

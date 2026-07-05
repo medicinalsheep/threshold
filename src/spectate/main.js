@@ -22,7 +22,10 @@ export const Spectate = {
         active = !!on;
         document.body.classList.toggle('spectate-mode', active);
         document.getElementById('spectate-hud')?.classList.toggle('hidden', !active);
-        if (active) this.updateHud();
+        if (active) {
+            window.Engine?._releaseLookLock?.();
+            this.updateHud();
+        }
         window.dispatchEvent(new Event('resize'));
     },
 

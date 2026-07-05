@@ -486,12 +486,13 @@ export function bootstrapStarterScene() {
         patrolSpeed: 0.95,
     });
 
-    seedStarterSounds().then(() => {
-        wireStarterSounds();
-        window.AmbientAudio?.start?.();
-        setTimeout(() => {
-            window.WeatherSystem?.start?.({ intensity: 0.48 });
-        }, 3200);
+    window.StarterAudio?.ensureStarterAudio?.({
+        weatherDelay: 3200,
+        weatherIntensity: 0.48,
+    }).then((seed) => {
+        if (seed?.skipped && seed.reason === 'manifest') {
+            window.UI?.status?.('Starter audio ready (cached)');
+        }
     });
     wireStarterTextures().then((tex) => {
         if (tex.maps) window.UI?.status?.(`Starter textures applied (${tex.maps} maps)`);

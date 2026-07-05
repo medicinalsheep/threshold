@@ -55,6 +55,17 @@ export const SoundLibrary = {
         return this.list().find((c) => c.id === id) || null;
     },
 
+    hasAllClipIds(ids = []) {
+        if (!ids.length) return true;
+        const have = new Set(this.list().map((c) => c.id));
+        return ids.every((id) => have.has(id));
+    },
+
+    countClipIds(ids = []) {
+        const have = new Set(this.list().map((c) => c.id));
+        return ids.filter((id) => have.has(id)).length;
+    },
+
     async getBlob(id) {
         const db = await openDb();
         return new Promise((resolve, reject) => {

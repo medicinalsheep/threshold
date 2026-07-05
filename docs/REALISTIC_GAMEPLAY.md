@@ -2,7 +2,7 @@
 
 Threshold ships a **walk/drive action control** template in the SOLO lobby. Use it as the baseline for shooters, RPGs, and vehicle scenes.
 
-**Current default version:** v6.5.0 — FiveM-style controls + ambient starter (Phase 11)
+**Current default version:** v6.7.0 — FiveM controls, real weather, multiplayer weather sync (Phase 13)
 
 ---
 
@@ -143,6 +143,24 @@ Build your game by replacing props, keeping the control + physics + asset pipeli
 **First clone?** Run `npm run quickstart -- --pack` then `assets:verify` before `preview`.
 
 ---
+
+## Phase 13 additions (v6.7)
+
+| Feature | Notes |
+|---------|-------|
+| Audio cache | Manifest fingerprint skips re-import when clips unchanged |
+| Staggered loops | Wind → highway → birds → rain layers spread over ~3 s |
+| Weather sync | Host authority; guests hear same rain intensity + thunder |
+| Pointer hardening | Lock releases on tab-out, EDIT, spectate |
+| Detail doc | [PHASE_13_STABILITY.md](PHASE_13_STABILITY.md) |
+
+## Phase 12 additions (v6.6)
+
+| Feature | Notes |
+|---------|-------|
+| Real weather | Mixkit rain/thunder, particles, wet asphalt, `World.setWeather()` |
+| Recorded foley | User-tagged clips, bird loop, proximity props |
+| Combat SFX | Real gun/glass/metal/footsteps (Mixkit + recordings) |
 
 ## Phase 11 additions (v6.5)
 

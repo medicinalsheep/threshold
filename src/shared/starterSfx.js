@@ -1,55 +1,125 @@
 import { SoundLibrary } from './soundLibrary.js';
 import { AssetBundle } from './assetBundle.js';
 
+const MANIFEST_FP_KEY = 'threshold_starter_manifest_fp';
 let seeded = false;
 let seedingPromise = null;
 
+const YIELD_EVERY = 4;
+
+export function fingerprintManifest(manifest) {
+    if (!manifest) return '';
+    const parts = [
+        manifest.format || '',
+        String(manifest.version ?? 0),
+        String(manifest.sampleRate ?? 0),
+        ...(manifest.clips || []).map((c) => [
+            c.id,
+            c.bytes ?? 0,
+            c.oggBytes ?? 0,
+            c.preferred ?? '',
+            c.wav ? c.wav.split('/').pop() : '',
+            c.ogg ? c.ogg.split('/').pop() : '',
+        ].join('|')),
+    ];
+    let h = 5381;
+    const str = parts.join('\n');
+    for (let i = 0; i < str.length; i++) {
+        h = ((h << 5) + h) ^ str.charCodeAt(i);
+    }
+    return `v${manifest.version}-${(h >>> 0).toString(36)}`;
+}
+
+export function getStoredManifestFingerprint() {
+    try {
+        return localStorage.getItem(MANIFEST_FP_KEY) || '';
+    } catch {
+        return '';
+    }
+}
+
+export function storeManifestFingerprint(fp) {
+    try {
+        if (fp) localStorage.setItem(MANIFEST_FP_KEY, fp);
+    } catch { /* */ }
+}
+
+export function manifestFullyCached(manifest) {
+    const ids = (manifest?.clips || []).map((c) => c.id);
+    return SoundLibrary.hasAllClipIds(ids);
+}
+
+function yieldToMain() {
+    return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
 export async function seedStarterSounds(force = false) {
-    if (seeded && !force) return { n: 0, skipped: true };
+    if (seeded && !force) return { n: 0, skipped: true, reason: 'session' };
     if (seedingPromise && !force) return seedingPromise;
 
     seedingPromise = (async () => {
-    let manifest;
-    try {
-        const res = await fetch(AssetBundle.getUrl('sounds/starter/starter-sounds.json'));
-        if (!res.ok) return { n: 0, err: `manifest ${res.status}` };
-        manifest = await res.json();
-    } catch (e) {
-        return { n: 0, err: e.message };
-    }
-
-    let n = 0;
-    for (const clip of manifest.clips || []) {
-        if (!force && await SoundLibrary.getMeta(clip.id)) continue;
-
-        const preferOgg = clip.preferred !== 'wav';
-        const paths = [
-            preferOgg && clip.ogg ? `sounds/starter/${clip.ogg.split('/').pop()}` : null,
-            clip.wav ? `sounds/starter/${clip.wav.split('/').pop()}` : null,
-            !preferOgg && clip.ogg ? `sounds/starter/${clip.ogg.split('/').pop()}` : null,
-        ].filter(Boolean);
-
-        let blob = null;
-        for (const p of paths) {
-            blob = await AssetBundle.fetchBlob(p);
-            if (blob) break;
-        }
-        if (!blob) {
-            console.warn('[starter-sfx] missing', clip.id);
-            continue;
+        let manifest;
+        try {
+            const res = await fetch(AssetBundle.getUrl('sounds/starter/starter-sounds.json'));
+            if (!res.ok) return { n: 0, err: `manifest ${res.status}` };
+            manifest = await res.json();
+        } catch (e) {
+            return { n: 0, err: e.message };
         }
 
-        await SoundLibrary.saveClipWithId(clip.id, clip.name, blob, {
-            context: clip.category ? `Starter ${clip.category}` : 'Starter FX',
-            license: clip.license || 'Original — Threshold',
-            targetType: clip.vehicle ? 'vehicle' : 'world',
-            targetId: clip.vehicle,
-        });
-        n += 1;
-    }
+        const fp = fingerprintManifest(manifest);
+        const clipIds = (manifest.clips || []).map((c) => c.id);
 
-    seeded = true;
-    return { n, clips: manifest.clips?.length || 0 };
+        if (!force && fp && fp === getStoredManifestFingerprint() && manifestFullyCached(manifest)) {
+            seeded = true;
+            return {
+                n: 0,
+                skipped: true,
+                reason: 'manifest',
+                clips: clipIds.length,
+                fingerprint: fp,
+            };
+        }
+
+        let n = 0;
+        let processed = 0;
+        for (const clip of manifest.clips || []) {
+            if (!force && await SoundLibrary.getMeta(clip.id)) continue;
+
+            const preferOgg = clip.preferred !== 'wav';
+            const paths = [
+                preferOgg && clip.ogg ? `sounds/starter/${clip.ogg.split('/').pop()}` : null,
+                clip.wav ? `sounds/starter/${clip.wav.split('/').pop()}` : null,
+                !preferOgg && clip.ogg ? `sounds/starter/${clip.ogg.split('/').pop()}` : null,
+            ].filter(Boolean);
+
+            let blob = null;
+            for (const p of paths) {
+                blob = await AssetBundle.fetchBlob(p);
+                if (blob) break;
+            }
+            if (!blob) {
+                console.warn('[starter-sfx] missing', clip.id);
+                continue;
+            }
+
+            await SoundLibrary.saveClipWithId(clip.id, clip.name, blob, {
+                context: clip.category ? `Starter ${clip.category}` : 'Starter FX',
+                license: clip.license || 'Original — Threshold',
+                targetType: clip.vehicle ? 'vehicle' : 'world',
+                targetId: clip.vehicle,
+            });
+            n += 1;
+            processed += 1;
+            if (processed % YIELD_EVERY === 0) await yieldToMain();
+        }
+
+        if (SoundLibrary.hasAllClipIds(clipIds)) {
+            storeManifestFingerprint(fp);
+        }
+
+        seeded = true;
+        return { n, clips: clipIds.length, fingerprint: fp };
     })();
 
     try {

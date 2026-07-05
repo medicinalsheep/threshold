@@ -1,5 +1,30 @@
 # Changelog
 
+## 6.7.0 — Phase 13: Stability & session UX
+
+- **Manifest fingerprint skip** — `seedStarterSounds()` stores `threshold_starter_manifest_fp`; skips IndexedDB re-import when manifest version + clip sizes unchanged and all clips cached
+- **Staggered audio bootstrap** — `AmbientAudio.startStaggered()`, `WeatherSystem` rain layers, `starterAudio.js` pipeline; yields every 4 clips on first import
+- **Guest audio hydration** — `ensureStarterAudio({ deferWeather: true })` after `FULL_STATE`; guests hear wind/highway/birds/rain matching host
+- **Weather multiplayer sync** — `Sync.capture` / `captureLive` include `weather`; host authority for drift + thunder/gust events; guests lerp intensity + replay synced one-shots
+- **Pointer / pause hardening** — release pointer lock on tab-out (`visibilitychange`), window `blur`, host EDIT pause, spectate mode; no lock in spectate / host-cam follow
+- **Windowed fullscreen** (6.6.2) — immersive UI without browser exclusive fullscreen; Electron maximized window; auto on lobby enter
+- **TPS camera fix** (6.6.2) — camera behind player, corrected mouse look
+- **Freeze fix** (6.6.1) — bird loop guard, `dt` order in animate loop
+- Docs: [PHASE_13_STABILITY.md](PHASE_13_STABILITY.md)
+
+## 6.6.2 — Hotfix: windowed fullscreen + TPS camera
+
+- Windowed fullscreen (web + Electron maximize) for easy Alt+Tab
+- TPS camera behind player; mouse look invert fix
+- Lobby auto-enters windowed fullscreen on session start
+
+## 6.6.1 — Hotfix: post-start freeze
+
+- `RecordedAmbient` bird loop spam guard (`_birdStarting`)
+- `animate()` computes `dt` before ambient tick
+- `seedStarterSounds` dedupes concurrent calls
+- `playRecordedSfx` moved off import-time `World` assignment
+
 ## 6.6.0 — Phase 12: Real weather audio + dynamic storms (iteration 2)
 
 - **Real combat SFX** — `sounds:fetch:sfx` replaces procedural gun (drum-like), glass, metal, horn, brakes, footsteps with Mixkit + your recordings

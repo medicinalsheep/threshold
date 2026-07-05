@@ -46,6 +46,7 @@ import '../shared/avatarLoader.js';
 import '../shared/ambientAudio.js';
 import '../shared/weatherSystem.js';
 import '../shared/recordedAmbient.js';
+import '../shared/starterAudio.js';
 import '../shared/starterAnim.js';
 import { bootstrapReferenceIfRequested } from '../shared/referenceEdition.js';
 import { GameExport } from '../shared/gameExport.js';
@@ -793,9 +794,17 @@ const Engine = {
         const canvas = this.renderer.domElement;
         this._lastPointer = { x: 0, y: 0 };
 
-        document.addEventListener('pointerlockchange', () => {
+        const onLockChange = () => {
             this._lookPointerLocked = document.pointerLockElement === canvas;
+        };
+        document.addEventListener('pointerlockchange', onLockChange);
+        document.addEventListener('mozpointerlockchange', onLockChange);
+        document.addEventListener('webkitpointerlockchange', onLockChange);
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') this._releaseLookLock();
         });
+        window.addEventListener('blur', () => this._releaseLookLock());
 
         canvas.addEventListener('pointermove', (e) => {
             if (State.controlMode !== 'walk' || !PlayerController.spawned || State.isPaused) return;
@@ -837,6 +846,9 @@ const Engine = {
     },
 
     _isWalkPlayLook() {
+        if (window.Spectate?.isSpectatorSession?.()) return false;
+        if (window.Spectate?.isActive?.() && window.Spectate?.isFollowingHost?.()) return false;
+        if (window.Network?.mode === 'spectate') return false;
         return State.controlMode === 'walk' && PlayerController.spawned && !State.isPaused;
     },
 
