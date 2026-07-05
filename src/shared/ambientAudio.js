@@ -48,6 +48,7 @@ export const AmbientAudio = {
         await delay(520);
         window.RecordedAmbient?.start?.();
         await window.WildlifeAmbient?.startStaggered?.();
+        await window.UrbanAmbient?.startStaggered?.();
     },
 
     stop() {
@@ -59,6 +60,7 @@ export const AmbientAudio = {
         window.WeatherSystem?.stop?.();
         window.RecordedAmbient?.stop?.();
         window.WildlifeAmbient?.stop?.();
+        window.UrbanAmbient?.stop?.();
     },
 
     async _playLoop(clipId, vol, key) {
@@ -110,6 +112,7 @@ export const AmbientAudio = {
         window.WeatherSystem?.tick?.(dt);
         window.RecordedAmbient?.tick?.();
         window.WildlifeAmbient?.tick?.(dt);
+        window.UrbanAmbient?.tick?.(dt);
     },
 };
 

@@ -499,12 +499,14 @@ export function bootstrapStarterScene() {
     });
     window.buildStarterEnv14?.();
     window.buildStarterWildlife15?.();
+    window.buildStarterUrban16?.();
     window.StarterAnim?.wireScene?.();
     window.StarterEnv14?.wireAnims?.();
     window.StarterWildlife15?.wireAnims?.();
+    window.StarterUrban16?.wireAnims?.();
 
     if (terminal && modelKiosk) {
-        window.UI?.status?.('FiveM controls — creek & power lines · rain rolling in · World.setWeather()');
+        window.UI?.status?.('FiveM controls — highway traffic · traffic lights · walk east for construction beeps');
     }
 
     State.ctxTargetPos.set(0, 0, 0);

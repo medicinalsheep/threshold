@@ -197,6 +197,10 @@ export const Sync = {
                     window.buildStarterWildlife15?.();
                     window.StarterWildlife15?.wireAnims?.();
                 }
+                if (isStarterWorld && !window.State?.objects?.some((o) => o.userData?.id === 'starter_traffic_lights')) {
+                    window.buildStarterUrban16?.();
+                    window.StarterUrban16?.wireAnims?.();
+                }
             }
             if (state.weather) {
                 window.WeatherSystem?.applyNetworkState?.(state.weather, { smooth: false });

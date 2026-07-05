@@ -475,6 +475,63 @@ function synthFenceRattle(sec = 0.42) {
     return out;
 }
 
+function synthTruckPass(sec = 2.4) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const p = t / sec;
+        const env = Math.sin(p * Math.PI) ** 1.4;
+        const rumble = Math.sin(2 * Math.PI * 42 * t) * 0.38 + Math.sin(2 * Math.PI * 84 * t) * 0.22;
+        const whoosh = (Math.random() * 2 - 1) * 0.55 * (0.4 + p * 0.6);
+        const tire = Math.sin(2 * Math.PI * (18 + p * 8) * t) * 0.15;
+        out[i] = (rumble + whoosh * 0.5 + tire) * env * 0.58;
+    }
+    return out;
+}
+
+function synthMotorcyclePass(sec = 1.1) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const p = t / sec;
+        const env = Math.sin(p * Math.PI) ** 2.2;
+        const rev = Math.sin(2 * Math.PI * (220 + p * 480) * t) * 0.42;
+        const exhaust = (Math.random() * 2 - 1) * 0.35 * Math.exp(-((p - 0.35) ** 2) * 18);
+        const whine = Math.sin(2 * Math.PI * (880 + p * 1200) * t) * 0.12;
+        out[i] = (rev + exhaust + whine) * env * 0.55;
+    }
+    return out;
+}
+
+function synthSirenDistant(sec = 3.6) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const wail = Math.sin(2 * Math.PI * (420 + Math.sin(t * 2.8) * 180) * t);
+        const bed = (Math.random() * 2 - 1) * 0.08;
+        const env = 0.55 + Math.sin(t * 0.9) * 0.15;
+        out[i] = (wail * 0.32 + bed) * env * 0.42;
+    }
+    return out;
+}
+
+function synthConstructionBeep(sec = 0.55) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const beepOn = (Math.floor(t * 2.2) % 2) === 0;
+        const tone = beepOn ? Math.sin(2 * Math.PI * 980 * t) * 0.45 : 0;
+        const click = beepOn && (i % 120 < 8) ? (Math.random() * 2 - 1) * 0.12 : 0;
+        const env = Math.exp(-t * 1.8);
+        out[i] = (tone + click) * env * 0.58;
+    }
+    return out;
+}
+
 /** Procedural-only — combat/impact/footsteps/ambient use sounds:fetch:sfx + recorded clips */
 const CLIPS = [
     { id: 'starter_eng_two_stroke', name: 'Two-Stroke Engine', file: 'engine_two_stroke', synth: synthTwoStroke, category: 'engine', vehicle: 'tc_run' },
@@ -489,6 +546,10 @@ const CLIPS = [
     { id: 'starter_wildlife_cat_meow', name: 'Cat Meow', file: 'wildlife_cat_meow', synth: synthCatMeow, category: 'wildlife' },
     { id: 'starter_wildlife_owl_hoot', name: 'Owl Hoot', file: 'wildlife_owl_hoot', synth: synthOwlHoot, category: 'wildlife' },
     { id: 'starter_wildlife_fish_splash', name: 'Fish Splash', file: 'wildlife_fish_splash', synth: synthFishSplash, category: 'wildlife' },
+    { id: 'starter_urban_truck_pass', name: 'Semi Truck Pass', file: 'urban_truck_pass', synth: synthTruckPass, category: 'urban' },
+    { id: 'starter_urban_moto_pass', name: 'Motorcycle Pass', file: 'urban_moto_pass', synth: synthMotorcyclePass, category: 'urban' },
+    { id: 'starter_urban_siren_distant', name: 'Distant Siren', file: 'urban_siren_distant', synth: synthSirenDistant, category: 'urban' },
+    { id: 'starter_urban_construction_beep', name: 'Construction Beep', file: 'urban_construction_beep', synth: synthConstructionBeep, category: 'urban' },
 ];
 
 function tryCompress(wavPath, oggPath) {

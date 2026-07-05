@@ -57,14 +57,14 @@ Queued additions for the starter scene and TC editions — **one asset at a time
 
 ---
 
-## Iteration 4 — Urban / highway (queued)
+## Iteration 4 — Urban / highway (shipped 7.0.0)
 
 | Asset | Notes |
 |-------|-------|
-| **Semi truck pass** | Doppler whoosh on highway |
-| **Motorcycle** | Quick pass SFX |
-| **Siren distant** | Rare ambient |
-| **Construction beep** | Zone near props |
+| **Semi truck pass** | Doppler whoosh on highway strip |
+| **Motorcycle** | Quick pass SFX with playback-rate ramp |
+| **Siren distant** | Rare ambient one-shot |
+| **Construction beep** | Zone near cones / barrier east of plaza |
 | **Junction traffic lights** | Emissive cycle anim |
 | **Billboard** | Scrolling UV emissive |
 

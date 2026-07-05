@@ -805,6 +805,54 @@
       "oggBytes": null,
       "preferred": "wav",
       "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_urban_truck_pass",
+      "name": "Semi Truck Pass",
+      "wav": "sounds/starter/urban_truck_pass.wav",
+      "ogg": null,
+      "category": "urban",
+      "vehicle": null,
+      "bytes": 105884,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_urban_moto_pass",
+      "name": "Motorcycle Pass",
+      "wav": "sounds/starter/urban_moto_pass.wav",
+      "ogg": null,
+      "category": "urban",
+      "vehicle": null,
+      "bytes": 48554,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_urban_siren_distant",
+      "name": "Distant Siren",
+      "wav": "sounds/starter/urban_siren_distant.wav",
+      "ogg": null,
+      "category": "urban",
+      "vehicle": null,
+      "bytes": 158804,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_urban_construction_beep",
+      "name": "Construction Beep",
+      "wav": "sounds/starter/urban_construction_beep.wav",
+      "ogg": null,
+      "category": "urban",
+      "vehicle": null,
+      "bytes": 24298,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
     }
   ],
   "realAmbient": true,

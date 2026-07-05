@@ -1,5 +1,17 @@
 # Changelog
 
+## 7.0.0 — Phase 16: Urban / highway (ambient iteration 4)
+
+- **Semi truck pass** — Doppler whoosh on highway strip when nearby
+- **Motorcycle pass** — quick rev pass with animated playback rate
+- **Distant siren** — rare ambient one-shot across the scene
+- **Construction beep** — proximity zone near orange cones / barrier
+- **Traffic lights** — junction emissive cycle (green → yellow → red)
+- **Billboard** — scrolling UV emissive face east of highway
+- **Module** — `urbanAmbient.js` + `starterUrban16.js`
+- **Guest sync** — urban props rebuilt on starter-world join
+- Docs: [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iteration 4 shipped
+
 ## 6.9.0 — Phase 15: Wildlife & life (ambient iteration 3)
 
 - **Dog bark** — proximity to Sam (mechanic NPC) + dog bowl prop

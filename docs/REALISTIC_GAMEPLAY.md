@@ -2,7 +2,7 @@
 
 Threshold ships a **walk/drive action control** template in the SOLO lobby. Use it as the baseline for shooters, RPGs, and vehicle scenes.
 
-**Current default version:** v6.9.0 — FiveM controls, wildlife ambience, weather sync (Phase 15)
+**Current default version:** v7.0.0 — FiveM controls, urban highway ambience, weather sync (Phase 16)
 
 ---
 
@@ -143,6 +143,18 @@ Build your game by replacing props, keeping the control + physics + asset pipeli
 **First clone?** Run `npm run quickstart -- --pack` then `assets:verify` before `preview`.
 
 ---
+
+## Phase 16 additions (v7.0)
+
+| Feature | Notes |
+|---------|-------|
+| Truck / motorcycle | Doppler passes on the highway strip (east) |
+| Distant siren | Rare ambient — audible across the scene |
+| Construction beep | Walk east near orange cones |
+| Traffic lights | Junction cycle anim near highway |
+| Billboard | Scrolling emissive face |
+
+Stand on the **highway strip** (east) to hear truck and motorcycle passes.
 
 ## Phase 15 additions (v6.9)
 

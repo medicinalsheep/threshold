@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v6.9.0 — Phase 15 Wildlife & life (dog, cat, crickets, owl, fish splash).
+**Current:** v7.0.0 — Phase 16 Urban / highway (truck/moto Doppler, siren, construction, traffic lights, billboard).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -481,16 +481,16 @@ await World.playCutscene('video/intro.mp4', {
 | 15.3 Cicadas day / crickets night time swap | ✅ |
 | 15.4 Owl evening + fish splash at creek | ✅ |
 
-### Phase 16 — Urban / highway (queued · v7.0)
+### Phase 16 — Urban / highway (v7.0.0) ✅
 
 | Step | Status |
 |------|--------|
-| 16.1 Semi truck Doppler pass | ⏳ |
-| 16.2 Motorcycle quick pass | ⏳ |
-| 16.3 Distant siren + construction beep | ⏳ |
-| 16.4 Traffic lights + billboard UV | ⏳ |
+| 16.1 Semi truck Doppler pass | ✅ |
+| 16.2 Motorcycle quick pass | ✅ |
+| 16.3 Distant siren + construction beep | ✅ |
+| 16.4 Traffic lights + billboard UV | ✅ |
 
-See [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iterations 4–5.
+See [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iteration 4 shipped · iteration 5 queued.
 
 ```bash
 npm run quickstart
