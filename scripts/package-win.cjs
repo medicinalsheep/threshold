@@ -18,5 +18,10 @@ if (!fs.existsSync(distIndex)) {
     run('npm run build');
 }
 
+const icoPath = path.join(root, 'electron', 'resources', 'icon.ico');
+if (!fs.existsSync(icoPath)) {
+    run('npm run build:icons');
+}
+
 run('npx electron-builder --config electron-builder.config.cjs --win portable');
 console.log('\nWindows package written to dist-electron/');

@@ -50,7 +50,46 @@
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.lobby-hero h1 {
+.lobby-logo-wrap {
+    display: block;
+    margin: 0 auto 10px;
+    text-align: center;
+}
+
+.lobby-logo {
+    display: block;
+    width: min(240px, 78vw);
+    height: auto;
+    margin: 0 auto;
+    object-fit: contain;
+}
+
+.lobby-logo-light {
+    display: none;
+}
+
+body.light-mode .lobby-logo-dark {
+    display: none;
+}
+
+body.light-mode .lobby-logo-light {
+    display: block;
+}
+
+.lobby-title-fallback {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.lobby-hero h1,
+.lobby-hero .lobby-title-fallback {
     margin: 0 0 6px;
     font-size: 1.55rem;
     letter-spacing: 4px;

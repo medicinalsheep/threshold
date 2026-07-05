@@ -52,7 +52,8 @@
 - [x] CLI: `npm run package:android` / `package:win` / `electron:dev`
 - [x] Shell bridges — `ThresholdShell` (fullscreen, fs save, mic note)
 - [x] Export wizard — MORE → EXPORT (4-step UI)
-- [ ] Signed APK / store-ready builds (release keystore, icons)
+- [x] App icons — `icons/` rocket brand, Electron .ico, web favicon, lobby logo
+- [ ] Signed APK / store-ready builds (release keystore)
 - [ ] macOS `.app` notarization polish
 - [ ] Capacitor Filesystem plugin for world import on device
 

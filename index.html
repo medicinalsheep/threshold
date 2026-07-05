@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/png" href="icons/appicon512.png" />
+    <link rel="apple-touch-icon" href="icons/appicon512.png" />
+    <link rel="manifest" href="manifest.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="theme-color" content="#000000" />
@@ -15,7 +17,11 @@
         <div class="lobby-bg-grid" aria-hidden="true"></div>
         <div id="lobby-card" class="panel">
             <div class="lobby-hero">
-                <h1>THRESHOLD</h1>
+                <picture class="lobby-logo-wrap">
+                    <img src="icons/logo_transparent.jpg" alt="" class="lobby-logo lobby-logo-dark" width="240" height="120">
+                    <img src="icons/logo_lgt.jpg" alt="" class="lobby-logo lobby-logo-light" width="240" height="120">
+                </picture>
+                <h1 class="lobby-title-fallback">THRESHOLD</h1>
                 <p class="tagline">Create worlds · record sounds · play together in 3D.</p>
             </div>
             <div class="lobby-pills">

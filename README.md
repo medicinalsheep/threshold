@@ -221,6 +221,8 @@ npm run electron:dev      # preview desktop shell
 
 Full guide: [docs/NATIVE_SHELLS.md](docs/NATIVE_SHELLS.md)
 
+Brand icons (`icons/` — neon rocket) power the lobby logo, favicon, and native app icon. Regenerate with `npm run build:icons`.
+
 Optional env (`.env` / build modes):
 
 | Variable | Purpose |

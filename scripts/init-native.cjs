@@ -20,6 +20,15 @@ if (!fs.existsSync(path.join(root, 'dist-pages', 'index.html'))) {
     run('npm run build');
 }
 
+const iconPng = path.join(root, 'icons', 'appicon512.png');
+if (fs.existsSync(iconPng)) {
+    try {
+        run('npm run cap:assets');
+    } catch (e) {
+        console.log('cap:assets skipped — run manually after android platform exists');
+    }
+}
+
 if (!fs.existsSync(androidDir)) {
     console.log('Adding Capacitor Android platform…');
     run('npx cap add android');

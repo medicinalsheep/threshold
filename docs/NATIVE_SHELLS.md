@@ -18,10 +18,24 @@ Threshold stays a **single Vite SPA** (`dist-pages/`). Native targets wrap that 
 
 ---
 
+## App icons
+
+Brand assets live in `icons/` (neon rocket). Web favicon + lobby logo use `appicon512.png` and `logo_*.jpg`.
+
+```bash
+npm run build:icons   # Electron .ico (Windows)
+npm run cap:assets    # Capacitor Android mipmaps + splash
+```
+
+`init:native` and `package:win` invoke these when needed.
+
+---
+
 ## First-time native setup
 
 ```bash
 npm install
+npm run build:icons
 npm run init:native
 ```
 
