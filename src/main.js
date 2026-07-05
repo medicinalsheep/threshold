@@ -20,6 +20,10 @@ import { initThresholdShell } from './shared/thresholdShell.js';
 
 console.log(`Starting Threshold Suite v${VERSION}...`);
 
+if (window.matchMedia('(pointer: coarse)').matches) {
+    document.body.classList.add('touch-device');
+}
+
 const versionEl = document.getElementById('app-version');
 if (versionEl) versionEl.textContent = `v${VERSION}`;
 

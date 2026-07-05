@@ -204,8 +204,36 @@ const Physics = {
         return body;
     },
 
+    applyEnvironmentEffects: function () {
+        const fog = State.env?.fogDensity ?? 0.02;
+        const atmo = State.env?.atmosphereEnabled ? 1 : 0;
+        const damp = 0.06 + fog * 5.5 + atmo * 0.1;
+
+        const applyDamping = (body) => {
+            if (!body || body.mass <= 0) return;
+            body.linearDamping = damp;
+            body.angularDamping = damp * 0.55;
+        };
+
+        State.physicsObjects.forEach(({ body }) => applyDamping(body));
+        if (PlayerController.body) applyDamping(PlayerController.body);
+
+        if (atmo && fog > 0.008) {
+            const t = (State.env.timeOfDay ?? 12) / 24 * Math.PI * 2;
+            const wind = fog * 14;
+            const fx = Math.sin(t) * wind;
+            const fz = Math.cos(t) * wind * 0.6;
+            State.physicsObjects.forEach(({ body }) => {
+                if (body.mass > 0 && body.mass < 80) {
+                    body.applyForce(new CANNON.Vec3(fx, 0, fz), body.position);
+                }
+            });
+        }
+    },
+
     update: function () {
         if (State.isPaused) return;
+        this.applyEnvironmentEffects();
         this.world.step(1 / 60);
 
         // Sync Visuals to Physics
@@ -458,7 +486,7 @@ const Environment = {
             clipBias: 0.003,
             textureWidth: texSize,
             textureHeight: texSize,
-            color: 0x0d4a5c,
+            color: 0x0a1820,
         });
         this.waterReflector.rotation.x = -Math.PI / 2;
         this.waterReflector.position.y = 0.015;
@@ -469,13 +497,13 @@ const Environment = {
         rippleGeo.rotateX(-Math.PI / 2);
         this.waterBasePositions = rippleGeo.attributes.position.array.slice();
         const rippleMat = new THREE.MeshStandardMaterial({
-            color: 0x2a9dbd,
+            color: 0x1a4a5a,
             transparent: true,
-            opacity: 0.35,
-            metalness: 0.6,
-            roughness: 0.05,
+            opacity: 0.22,
+            metalness: 0.45,
+            roughness: 0.18,
             depthWrite: false,
-            envMapIntensity: 1.0,
+            envMapIntensity: 0.55,
         });
         this.waterMesh = new THREE.Mesh(rippleGeo, rippleMat);
         this.waterMesh.position.y = 0.06;
@@ -544,8 +572,10 @@ const Engine = {
         this.renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
         this.renderer.setSize(window.innerWidth, window.innerHeight - navHeight);
         this.renderer.setPixelRatio(IS_TOUCH_DEVICE ? Math.min(window.devicePixelRatio, 1.5) : window.devicePixelRatio);
-        this.renderer.shadowMap.enabled = true; // Enable Shadows
+        this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        this.renderer.toneMappingExposure = 0.92;
         document.getElementById('canvas-container').appendChild(this.renderer.domElement);
         // Lighting (Realism Upgrade)
         const amb = new THREE.AmbientLight(0x404040, 1.0);
@@ -691,7 +721,7 @@ const Engine = {
         this.shaderPass.renderToScreen = false;
         this.composer.addPass(this.shaderPass);
 
-        this.bloomPass = new UnrealBloomPass(size, 1.5, 0.4, 0.85);
+        this.bloomPass = new UnrealBloomPass(size, 0.75, 0.32, 0.92);
         this.bloomPass.enabled = true;
         this.bloomPass.renderToScreen = true;
         this.composer.addPass(this.bloomPass);
@@ -710,11 +740,12 @@ const Engine = {
 
     applyRenderModeSceneTuning: function (idx) {
         const isHyper = idx === 4;
-        if (Environment.sunLight) Environment.sunLight.intensity = isHyper ? 2.0 : 2.45;
+        if (Environment.sunLight) Environment.sunLight.intensity = isHyper ? 1.65 : 2.2;
+        if (this.renderer) this.renderer.toneMappingExposure = isHyper ? 0.88 : 0.92;
         if (this.scene.fog) this.scene.fog.density = isHyper ? State.env.fogDensity : Math.max(State.env.fogDensity, 0.018);
         State.objects.forEach((obj) => {
             if (!obj.material?.isMeshStandardMaterial) return;
-            obj.material.envMapIntensity = isHyper ? 1.0 : 0.35;
+            obj.material.envMapIntensity = isHyper ? 0.65 : 0.35;
             if (!isHyper && obj.material.emissive) {
                 obj.material.emissiveIntensity = Math.max(obj.material.emissiveIntensity || 0, 0.08);
             }
@@ -730,8 +761,8 @@ const Engine = {
         this.bloomPass.renderToScreen = isHyper;
         this.shaderPass.renderToScreen = !isHyper;
         if (isHyper) {
-            this.bloomPass.strength = 1.35;
-            this.bloomPass.radius = 0.45;
+            this.bloomPass.strength = 0.72;
+            this.bloomPass.radius = 0.32;
         }
         this.applyRenderModeSceneTuning(idx);
         UI.updateModeDisplay(idx);
@@ -941,8 +972,9 @@ const World = {
     createObject: function (type, name, color = 0xffffff, usePhysics = false) {
         let geo, mat = new THREE.MeshStandardMaterial({
             color: color,
-            roughness: 0.2, // Shiny for Bloom
-            metalness: 0.5
+            roughness: 0.42,
+            metalness: 0.28,
+            envMapIntensity: 0.65,
         });
         if (type === 'cube') geo = new THREE.BoxGeometry(1, 1, 1);
         else if (type === 'sphere') geo = new THREE.SphereGeometry(0.7, 32, 32);
@@ -966,10 +998,11 @@ const World = {
     addCustom: function (geometry, material, name, usePhysics = false) {
         // Ensure material reacts to Bloom in Hyper mode
         if (material) {
-            material.emissiveIntensity = 0.5; // Base glow
+            material.emissiveIntensity = 0.12;
             // If the color is very bright, increase emissive
-            if (material.color.getHex() > 0x888888) {
+            if (material.color.getHex() > 0xaaaaaa) {
                 material.emissive = material.color;
+                material.emissiveIntensity = 0.1;
             }
         }
         const mesh = new THREE.Mesh(geometry, material);

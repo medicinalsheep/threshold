@@ -56,6 +56,7 @@
 - [ ] Signed APK / store-ready builds (release keystore)
 - [ ] macOS `.app` notarization polish
 - [ ] Capacitor Filesystem plugin for world import on device
+- [ ] Local texture pipeline — see [CREATIVE_PLUGINS.md](CREATIVE_PLUGINS.md) (GIMP + Blender)
 
 ### Phase 3 — Steam & distribution (v3.5)
 

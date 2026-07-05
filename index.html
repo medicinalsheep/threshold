@@ -36,11 +36,14 @@
             <button id="lobby-join" class="lobby-btn">JOIN FRIENDS</button>
             <button id="lobby-solo" class="lobby-btn lobby-btn-ghost">SOLO PLAY →</button>
             <button id="lobby-spectate" class="lobby-btn lobby-btn-spectate">SPECTATE SESSION</button>
-            <div class="lobby-steps">
-                <div class="lobby-step"><span class="lobby-step-num">1</span> Enter the engine — drag panels, tap FULL for immersive view</div>
-                <div class="lobby-step"><span class="lobby-step-num">2</span> PromptGen + Compiler — AI builds your world (reference your recorded sounds)</div>
-                <div class="lobby-step"><span class="lobby-step-num">3</span> SFX tab — record sounds · link to objects, collisions, emotes</div>
-            </div>
+            <details class="lobby-steps-wrap">
+                <summary>Quick tips</summary>
+                <div class="lobby-steps">
+                    <div class="lobby-step"><span class="lobby-step-num">1</span> Tap <strong>SOLO PLAY</strong> — FULL for immersive · TOUCH for sticks</div>
+                    <div class="lobby-step"><span class="lobby-step-num">2</span> PromptGen + Compiler — AI builds your world</div>
+                    <div class="lobby-step"><span class="lobby-step-num">3</span> SFX tab — record sounds · link to objects</div>
+                </div>
+            </details>
             <div id="lobby-status"></div>
         </div>
     </div>
@@ -229,8 +232,9 @@
                 </div>
                 <div class="prop-row">
                     <label>Fog</label>
-                    <input type="range" id="env-fog" min="0" max="0.08" step="0.002" value="0.02">
+                    <input type="range" id="env-fog" min="0" max="0.08" step="0.002" value="0.015">
                 </div>
+                <p class="env-mode-info" style="margin-top:0;">Fog + atmosphere add air drag and light wind on physics props.</p>
                 <div class="prop-row">
                     <label>Water</label>
                     <button id="env-water-toggle" class="active">ON</button>

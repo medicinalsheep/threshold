@@ -37,6 +37,16 @@ export const REFERENCE_LIBRARY = {
 // Engine.setRenderMode(4); // realism default`
         },
         {
+            id: 'env_physics_atmosphere',
+            title: 'Fog + Atmosphere → Physics',
+            summary: 'ENV fog density and atmosphere add air drag and light wind on dynamic bodies.',
+            checklist: ['Fog slider increases linearDamping', 'Atmosphere ON enables wind force', 'Heavier mass = less drift'],
+            code: `// Tuned automatically in Physics.applyEnvironmentEffects():
+// - fogDensity → body.linearDamping (air resistance)
+// - atmosphereEnabled → subtle wind from time-of-day
+// Inspector Collision: mass/friction/restitution still per-object`
+        },
+        {
             id: 'lego_fit_anything',
             title: 'LEGO Fit — Snap Anything Into the Live Scene',
             summary: 'PromptGen + Compiler pattern: read scene context, extend without clearWorld, physics+collision ready.',

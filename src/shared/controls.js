@@ -26,14 +26,14 @@ export const GAMEPAD_BUTTON_LABELS = {
     12: 'D-Up', 13: 'D-Down', 14: 'D-Left', 15: 'D-Right'
 };
 
-/** GTA V defaults — button indices in browser Gamepad API */
+/** Standard gamepad defaults — browser Gamepad API button indices */
 const DEFAULT_GAMEPAD_BINDINGS = {
-    jump: 0,
-    down: 1,
-    interact: 2,
-    toggleMode: 3,
-    up: 4,
-    sprint: 7,
+    jump: 0,       // A / Cross
+    down: 1,       // B / Circle — descend / crouch fly
+    interact: 2,     // X / Square
+    toggleMode: 3,   // Y / Triangle — walk/fly toggle
+    up: 4,         // LB / L1 — fly up
+    sprint: 10,    // L3 — left stick press (not RT)
     bindingsMenu: 8,
     pause: 9,
     cameraReset: 11
@@ -107,6 +107,7 @@ function loadGamepad(profile) {
         Object.keys(base).forEach((action) => {
             if (typeof parsed[action] === 'number') base[action] = parsed[action];
         });
+        if (base.sprint === 7 && !parsed._overrides?.sprint) base.sprint = 10;
         return base;
     } catch {
         return cloneGpDefaults();
@@ -411,7 +412,7 @@ export const Controls = {
         const pad = this.gamepad ? ' · pad' : '';
         const touch = window.TouchControls?.enabled ? ' · touch' : '';
         if (mode === 'walk') {
-            return `${profile}${admin}: WASD/L-stick · ${this.formatGamepadButton(this._btnIndex('jump'))} jump · RT sprint${pad}${touch}`;
+            return `${profile}${admin}: WASD/L-stick · ${this.formatGamepadButton(this._btnIndex('jump'))} jump · L3 sprint${pad}${touch}`;
         }
         return `${profile}${admin}: fly · Y toggle · R-stick cam${pad}${touch}`;
     },

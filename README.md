@@ -223,6 +223,10 @@ Full guide: [docs/NATIVE_SHELLS.md](docs/NATIVE_SHELLS.md)
 
 Brand icons (`icons/` — neon rocket) power the lobby logo, favicon, and native app icon. Regenerate with `npm run build:icons`.
 
+**Gamepad defaults:** A/Cross jump · **L3** (left stick press) sprint · R-stick camera.
+
+**Creative pipeline (planned):** [docs/CREATIVE_PLUGINS.md](docs/CREATIVE_PLUGINS.md) — GIMP + Blender plugins for local AI texture workflow.
+
 Optional env (`.env` / build modes):
 
 | Variable | Purpose |
