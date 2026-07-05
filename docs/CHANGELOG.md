@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.6.0 — Phase R2: Child vehicles GLB + LOD
+
+- `threshold-child-vehicles` edition — Runner/Hauler GLB + LOD1/LOD2, procedural Circuit Span
+- `npm run child:vehicles:build` / `child:vehicles:generate` · Blender `build_child_vehicles.py`
+- Lobby THRESHOLD CHILD loads GLB via `thresholdChildVehicles.js`; Lite procedural fallback
+- Shipped originals in `import/threshold_child_*.glb` + `public/bundle/import/`
+
 ## 5.5.1 — Child Lite realism pass + export compatibility
 
 - Child Lite v1.1 — Runner/Hauler/Circuit Span geometry + PBR + physics bbox improvements

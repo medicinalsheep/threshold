@@ -1,0 +1,39 @@
+{
+  "format": "threshold-reference-edition",
+  "version": 1,
+  "id": "threshold-child-vehicles",
+  "label": "Threshold Child Vehicles",
+  "license": "Original — Threshold Child edition",
+  "author": "Threshold",
+  "loader": "gltf",
+  "source": "src/shared/thresholdChildVehicles.js",
+  "blenderManifest": "import/threshold_blender_manifest.json",
+  "lodDistances": [0, 12, 28],
+  "assets": [
+    {
+      "id": "child_runner",
+      "label": "Threshold Runner",
+      "kind": "vehicle",
+      "spawn": "gltf",
+      "objectName": "Threshold Runner",
+      "file": "import/threshold_child_runner.glb",
+      "lods": ["import/threshold_child_runner_lod1.glb", "import/threshold_child_runner_lod2.glb"],
+      "license": "Original — Threshold Child edition"
+    },
+    {
+      "id": "child_hauler",
+      "label": "Threshold Hauler",
+      "kind": "vehicle",
+      "spawn": "gltf",
+      "objectName": "Threshold Hauler",
+      "file": "import/threshold_child_hauler.glb",
+      "lods": ["import/threshold_child_hauler_lod1.glb", "import/threshold_child_hauler_lod2.glb"],
+      "license": "Original — Threshold Child edition"
+    }
+  ],
+  "companion": {
+    "edition": "threshold-child-lite",
+    "asset": "child_circuit_span",
+    "spawn": "procedural"
+  }
+}

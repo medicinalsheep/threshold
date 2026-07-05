@@ -4,8 +4,8 @@
 
 | Asset | Edition | License | Author |
 |-------|---------|---------|--------|
-| Threshold Runner | `threshold-child-lite` | Original — Threshold Child edition | Threshold |
-| Threshold Hauler | `threshold-child-lite` | Original — Threshold Child edition | Threshold |
+| Threshold Runner | `threshold-child-vehicles` | Original — Threshold Child edition (GLB+LOD) | Threshold |
+| Threshold Hauler | `threshold-child-vehicles` | Original — Threshold Child edition (GLB+LOD) | Threshold |
 | Threshold Circuit Span | `threshold-child-lite` | Original — Threshold Child edition | Threshold |
 
 Procedural meshes generated in-engine — see `src/shared/thresholdChildAssets.js`.

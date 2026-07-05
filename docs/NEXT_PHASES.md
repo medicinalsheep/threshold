@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v5.5.0 — Tier 2 docs + Threshold Child policy (original bundled assets; external seeds dev-only).
+**Current:** v5.6.0 — Phase R2 Child vehicles GLB + LOD; Tier 2 docs + Child policy.
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -204,7 +204,22 @@ See [STEAM_RELEASE.md](STEAM_RELEASE.md)
 
 See [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · [REFERENCE_EDITIONS.md](REFERENCE_EDITIONS.md)
 
-**Next (R2+):** Blender Child GLB + LOD, characters, audio, showcase scene, PromptGen ASSETS block samples.
+### Phase R2 — Blender Child GLB + LOD (v5.6) ✅
+
+| Step | Status |
+|------|--------|
+| R2.1 `threshold_child_*.glb` + LOD chain in `import/` | ✅ |
+| R2.2 `thresholdChildVehicles.js` + `MeshLod` @ 12m/28m | ✅ |
+| R2.3 `child:vehicles:build` + Blender `build_child_vehicles.py` | ✅ |
+| R2.4 Lobby THRESHOLD CHILD → GLB default, Lite fallback | ✅ |
+| R2.5 Edition registry `threshold-child-vehicles` | ✅ |
+
+```bash
+npm run child:vehicles:build
+npm run blender:export -- --blend plugins/threshold-blender/child_vehicles.blend --object "Threshold Runner" --lod
+```
+
+**Next (R3+):** characters, audio, showcase scene, PromptGen ASSETS block samples.
 
 ### Phase K — Cinematic layer (v4.9) ✅
 

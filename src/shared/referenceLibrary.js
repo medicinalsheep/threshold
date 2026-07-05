@@ -205,15 +205,16 @@ m.userData.textureHint = 'textures/stone_albedo.png';
         },
         {
             id: 'threshold_child_assets',
-            title: 'Threshold Child — Original Reference Assets',
-            summary: 'Lobby THRESHOLD CHILD loads procedural vehicles + circuit. CREDITS/PACKS pre-fill; Hyper PBR + physics tuned.',
-            checklist: ['Lobby → THRESHOLD CHILD', 'EXPORT → SCENE shows 3 Child objects', 'CREDITS: Original — Threshold Child edition', 'PACKS: vehicle + scene SKUs suggested'],
-            code: `// THRESHOLD CHILD (bundled originals — not third-party GLB):
-// 1. Lobby → THRESHOLD CHILD → Engine loads Runner, Hauler, Circuit Span
-// 2. Hyper mode auto-selected for PBR review
-// 3. PLAY — push vehicles (physics bbox); walk Circuit Span (static collision)
-// 4. EXPORT → SCENE / CREDITS / PACKS — entries pre-filled from userData
-// 5. Extend in Compiler — do not clearWorld:
+            title: 'Threshold Child — GLB + LOD Vehicles (R2)',
+            summary: 'Lobby THRESHOLD CHILD loads GLB Runner/Hauler with LOD @ 12m/28m + procedural Circuit Span. CREDITS/PACKS pre-fill.',
+            checklist: ['Lobby → THRESHOLD CHILD', 'Fly back — LOD switches at 12m/28m', 'EXPORT → SCENE shows gltf + scene objects', 'PACKS: childvehicles.* SKUs'],
+            code: `// THRESHOLD CHILD R2 (bundled originals — GLB+LOD):
+// 1. Lobby → THRESHOLD CHILD → GLB vehicles + Circuit Span
+// 2. Hyper mode auto-selected · MeshLod.update every frame
+// 3. PLAY — push vehicles; Circuit Span static collision
+// 4. EXPORT → SCENE / CREDITS / PACKS — childEdition threshold-child-vehicles
+// 5. Rebuild assets: npm run child:vehicles:build
+// 6. Blender refine: plugins/threshold-blender/build_child_vehicles.py
 (function() {
   const runner = State.objects.find(o => o.userData?.id === 'child_runner');
   if (runner) runner.userData.mass = 4.0;

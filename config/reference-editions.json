@@ -1,8 +1,8 @@
 {
   "format": "threshold-reference-editions",
-  "version": 2,
+  "version": 3,
   "policy": "docs/THRESHOLD_CHILD_ASSETS.md",
-  "defaultEdition": "threshold-child-lite",
+  "defaultEdition": "threshold-child-vehicles",
   "editions": {
     "threshold": {
       "id": "threshold",
@@ -11,14 +11,25 @@
       "status": "active",
       "license": "Original — Threshold"
     },
+    "threshold-child-vehicles": {
+      "id": "threshold-child-vehicles",
+      "label": "Threshold Child Vehicles",
+      "description": "Blender/Node Child GLB + LOD (Runner, Hauler) + procedural Circuit Span — R2",
+      "status": "active",
+      "license": "Original — Threshold Child edition",
+      "loader": "src/shared/thresholdChildVehicles.js",
+      "blenderManifest": "import/threshold_blender_manifest.json",
+      "buildCli": "npm run child:vehicles:build",
+      "lobbyButton": "THRESHOLD CHILD",
+      "attribution": "reference/ATTRIBUTION.md"
+    },
     "threshold-child-lite": {
       "id": "threshold-child-lite",
       "label": "Threshold Child Lite",
-      "description": "Original procedural vehicles + circuit v1.1 — realism pass, physics + export metadata",
+      "description": "Procedural fallback — vehicles + circuit v1.1",
       "status": "active",
       "license": "Original — Threshold Child edition",
       "loader": "src/shared/thresholdChildAssets.js",
-      "lobbyButton": "THRESHOLD CHILD",
       "attribution": "reference/ATTRIBUTION.md"
     }
   },
@@ -26,7 +37,6 @@
     "threshold-ref-lite": "Removed — raw external CC0 drops replaced by Threshold Child originals (v5.5)"
   },
   "planned": {
-    "threshold-child-vehicles": "Blender-authored Child GLB + LOD",
     "threshold-child-characters": "Unique humanoid Child meshes",
     "threshold-child-audio": "Original SFX library seeds",
     "threshold-child-showcase": "Full demo world for export tutorial"

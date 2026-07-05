@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **5.5.0**)
+**Version:** `src/config.js` → `VERSION` (currently **5.6.0**)
 
 ---
 
@@ -18,7 +18,7 @@ Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blen
 | Creative | `textureBridge.js`, `gltfImport.js`, `creativeWatch.js` |
 | Export | `gameExport.js`, `exportWizard.js`, `exportWalkthrough.js` |
 | Store / Steam | `scripts/store-*.cjs`, `scripts/steam-*.cjs`, `electron/steam*.cjs` |
-| Threshold Child assets | `thresholdChildAssets.js`, `referenceEdition.js`, `config/reference-editions.json` |
+| Threshold Child assets | `thresholdChildVehicles.js`, `thresholdChildAssets.js`, `referenceEdition.js` |
 | Native | `electron/`, `capacitor.config.json`, `thresholdShell.js` |
 | Plugins | `plugins/threshold-gimp/`, `plugins/threshold-blender/` |
 
@@ -43,7 +43,8 @@ npm run package:win            # Electron portable + NSIS
 npm run package:steam -- --manifest <game>.threshold-game.json
 npm run steam:depot -- --manifest <game>.threshold-game.json
 npm run reference:fetch        # Dev-only CC0 seeds → reference/_dev-seeds/ (gitignored)
-npm run reference:sync         # No-op — Child assets are procedural (see thresholdChildAssets.js)
+npm run child:vehicles:build   # R2 GLB+LOD (Blender or Node generator)
+npm run reference:sync         # No-op — Child GLBs in import/ + public/bundle/import/
 ```
 
 ---

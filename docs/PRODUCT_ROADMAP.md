@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → local GIMP/Blender art → AI agents on NPCs.
 
-**Current version:** **5.5.0** (Tier 2 docs + Threshold Child policy — original bundled assets)
+**Current version:** **5.6.0** (R2 Child vehicles GLB+LOD + Threshold Child policy)
 
 **Detailed phases:** [NEXT_PHASES.md](NEXT_PHASES.md) · **Child assets:** [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · [GETTING_STARTED.md](GETTING_STARTED.md)
 

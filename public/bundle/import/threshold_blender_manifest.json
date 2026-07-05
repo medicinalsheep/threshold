@@ -1,0 +1,84 @@
+{
+  "format": "threshold-blender-manifest",
+  "formatVersion": 1,
+  "engineVersion": "5.6.0",
+  "models": [
+    {
+      "id": "threshold_child_runner",
+      "objectName": "Threshold Runner",
+      "file": "threshold_child_runner.glb",
+      "path": "import/threshold_child_runner.glb",
+      "lods": [
+        {
+          "level": 0,
+          "file": "threshold_child_runner.glb",
+          "path": "import/threshold_child_runner.glb",
+          "distance": 0
+        },
+        {
+          "level": 1,
+          "file": "threshold_child_runner_lod1.glb",
+          "path": "import/threshold_child_runner_lod1.glb",
+          "distance": 12
+        },
+        {
+          "level": 2,
+          "file": "threshold_child_runner_lod2.glb",
+          "path": "import/threshold_child_runner_lod2.glb",
+          "distance": 28
+        }
+      ],
+      "lodDistances": [
+        0,
+        12,
+        28
+      ],
+      "hasPhysics": true,
+      "mass": 3.4,
+      "friction": 0.36,
+      "restitution": 0.14,
+      "childEdition": "threshold-child-vehicles",
+      "license": "Original — Threshold Child edition"
+    },
+    {
+      "id": "threshold_child_hauler",
+      "objectName": "Threshold Hauler",
+      "file": "threshold_child_hauler.glb",
+      "path": "import/threshold_child_hauler.glb",
+      "lods": [
+        {
+          "level": 0,
+          "file": "threshold_child_hauler.glb",
+          "path": "import/threshold_child_hauler.glb",
+          "distance": 0
+        },
+        {
+          "level": 1,
+          "file": "threshold_child_hauler_lod1.glb",
+          "path": "import/threshold_child_hauler_lod1.glb",
+          "distance": 12
+        },
+        {
+          "level": 2,
+          "file": "threshold_child_hauler_lod2.glb",
+          "path": "import/threshold_child_hauler_lod2.glb",
+          "distance": 28
+        }
+      ],
+      "lodDistances": [
+        0,
+        12,
+        28
+      ],
+      "hasPhysics": true,
+      "mass": 5.8,
+      "friction": 0.44,
+      "restitution": 0.1,
+      "childEdition": "threshold-child-vehicles",
+      "license": "Original — Threshold Child edition"
+    }
+  ],
+  "exportDir": "import",
+  "exportedAt": "2026-07-05T08:57:43.461Z",
+  "childEdition": "threshold-child-vehicles"
+}

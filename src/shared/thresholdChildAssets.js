@@ -1,19 +1,15 @@
 /**
- * Threshold Child assets — original in-engine content only.
- * Procedural meshes tuned for Hyper PBR + retro render modes + export/physics compatibility.
+ * Threshold Child assets — procedural fallback + Circuit Span.
+ * GLB vehicles (R2) load via thresholdChildVehicles.js when manifest is present.
  */
 
-const CHILD_META = {
-    edition: 'threshold-child-lite',
-    version: '1.1',
-    license: 'Original — Threshold Child edition',
-    author: 'Threshold',
-};
+import {
+    buildChildUserData,
+    CHILD_LITE_META,
+    CHILD_REALISM,
+} from './thresholdChildMeta.js';
 
-const CHILD_REALISM = {
-    tier: 'lite',
-    review: 'Honest realism pass — proportions, PBR materials, bbox physics, export metadata',
-};
+const CHILD_META = CHILD_LITE_META;
 
 function stdMat(color, opts = {}) {
     const THREE = window.THREE;
@@ -60,35 +56,6 @@ function addWheel(group, x, y, z, radius = 0.34, width = 0.24) {
         { z: Math.PI / 2 }
     );
     return { tire, hub };
-}
-
-function buildChildUserData(spec) {
-    const bundleId = 'com.threshold.childlite';
-    const slug = spec.id.replace(/^child_/, '');
-    return {
-        id: spec.id,
-        name: spec.label,
-        type: spec.type,
-        assetKind: spec.kind,
-        isThresholdChild: true,
-        childEdition: CHILD_META.edition,
-        childVersion: CHILD_META.version,
-        childRealism: CHILD_REALISM.tier,
-        license: CHILD_META.license,
-        author: CHILD_META.author,
-        creditSource: 'Threshold Child edition (bundled)',
-        registryUri: `threshold://${bundleId}/asset/${slug}`,
-        storeSku: `childlite.${spec.kind}.${slug}`,
-        hasPhysics: spec.hasPhysics ?? false,
-        mass: spec.mass ?? 1,
-        friction: spec.friction ?? 0.4,
-        restitution: spec.restitution ?? 0.2,
-        soundTrigger: spec.soundTrigger || 'collision',
-        soundFreq: spec.soundFreq ?? 180,
-        soundType: spec.soundType || 'sine',
-        locked: !!spec.locked,
-        renderModeHint: 4,
-    };
 }
 
 function addToScene(mesh) {
@@ -172,7 +139,7 @@ function spawnRunner(pos) {
         restitution: 0.14,
         soundFreq: 220,
         soundType: 'square',
-    });
+    }, CHILD_META);
 
     attachPhysics(group);
     return addToScene(group);
@@ -210,13 +177,13 @@ function spawnHauler(pos) {
         restitution: 0.1,
         soundFreq: 140,
         soundType: 'sawtooth',
-    });
+    }, CHILD_META);
 
     attachPhysics(group);
     return addToScene(group);
 }
 
-function spawnCircuitSpan(pos) {
+export function spawnCircuitSpan(pos) {
     const THREE = window.THREE;
     if (!THREE) return null;
 
@@ -268,7 +235,7 @@ function spawnCircuitSpan(pos) {
         mass: 0,
         locked: true,
         soundFreq: 90,
-    });
+    }, CHILD_META);
 
     attachPhysics(group, { static: true });
     return addToScene(group);
@@ -307,32 +274,12 @@ export function spawnThresholdChildLite() {
 export function getChildCreditEntries() {
     return [
         {
-            id: 'child_runner',
-            label: 'Threshold Runner',
-            kind: 'vehicle',
-            license: CHILD_META.license,
-            author: CHILD_META.author,
-            source: 'Threshold Child edition (bundled)',
-            storeSku: 'childlite.vehicle.runner',
-            registryUri: 'threshold://com.threshold.childlite/asset/runner',
-        },
-        {
-            id: 'child_hauler',
-            label: 'Threshold Hauler',
-            kind: 'vehicle',
-            license: CHILD_META.license,
-            author: CHILD_META.author,
-            source: 'Threshold Child edition (bundled)',
-            storeSku: 'childlite.vehicle.hauler',
-            registryUri: 'threshold://com.threshold.childlite/asset/hauler',
-        },
-        {
             id: 'child_circuit_span',
             label: 'Threshold Circuit Span',
             kind: 'scene',
             license: CHILD_META.license,
             author: CHILD_META.author,
-            source: 'Threshold Child edition (bundled)',
+            source: 'Threshold Child edition (procedural)',
             storeSku: 'childlite.scene.circuit_span',
             registryUri: 'threshold://com.threshold.childlite/asset/circuit_span',
         },

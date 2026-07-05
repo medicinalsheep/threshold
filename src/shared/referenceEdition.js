@@ -1,5 +1,6 @@
 import { ViewPrefs } from './viewPrefs.js';
 import { spawnThresholdChildLite } from './thresholdChildAssets.js';
+import { spawnThresholdChildVehicles } from './thresholdChildVehicles.js';
 
 /** @deprecated Dev-only external seed — use Threshold Child editions */
 export async function spawnExternalSeedLite() {
@@ -23,11 +24,17 @@ export function setLoadReferenceLite(on) {
 export async function bootstrapReferenceIfRequested() {
     if (!shouldLoadThresholdChild()) return null;
     ViewPrefs.set('loadThresholdChild', false);
+
+    const vehicles = await spawnThresholdChildVehicles();
+    if (vehicles.spawned >= 2) return vehicles;
+
+    console.warn('[child] GLB vehicles unavailable — procedural Child Lite fallback');
     return spawnThresholdChildLite();
 }
 
 window.ReferenceEdition = {
     spawnThresholdChildLite,
+    spawnThresholdChildVehicles,
     setLoadThresholdChild,
     setLoadReferenceLite,
     shouldLoadThresholdChild,

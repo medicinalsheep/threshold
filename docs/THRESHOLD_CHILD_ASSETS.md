@@ -40,8 +40,8 @@ Developers may use `reference/_dev-seeds/` locally to **compare** workflows; tho
 | Edition | Status | Contents |
 |---------|--------|----------|
 | `threshold` | Active | Core starter scene only |
-| `threshold-child-lite` | **Active** | Runner, Hauler, Circuit Span (procedural v1.1 — realism pass) |
-| `threshold-child-vehicles` | Planned | Blender Child GLB + LOD |
+| `threshold-child-vehicles` | **Active (default lobby)** | Runner, Hauler — GLB + LOD @ 12m/28m; Circuit Span procedural companion |
+| `threshold-child-lite` | **Active (fallback)** | Procedural Runner, Hauler, Circuit Span v1.1 |
 | `threshold-child-characters` | Planned | Unique humanoid variants |
 | `threshold-child-audio` | Planned | Original SFX timbres (not ripped footstep banks) |
 | `threshold-child-showcase` | Planned | Full demo world + cutscene |
@@ -107,10 +107,25 @@ Use Child assets as **design seeds** — same objects can anchor many game types
 
 ---
 
+## R2 — Blender Child GLB + LOD (vehicles)
+
+| Step | Command / path |
+|------|----------------|
+| Build GLBs | `npm run child:vehicles:build` (Blender if installed, else Node generator) |
+| Blender refine | `plugins/threshold-blender/build_child_vehicles.py` → `child_vehicles.blend` |
+| Export + LOD | `npm run blender:export -- --blend plugins/threshold-blender/child_vehicles.blend --object "Threshold Runner" --lod --mass 3.4` |
+| Manifest | `import/threshold_blender_manifest.json` |
+| Web bundle | `public/bundle/import/*.glb` (dev) · `npm run bundle:assets` (ship) |
+| Loader | `src/shared/thresholdChildVehicles.js` — `MeshLod` @ `[0, 12, 28]` |
+
+Lobby **THRESHOLD CHILD** loads GLB vehicles when manifest is present; falls back to Child Lite procedural.
+
+---
+
 ## Workflow: authoring a new Child asset
 
 1. **Design** — sketch gameplay role (vehicle, prop, character, sound)
-2. **Author** — Engine procedural **or** GIMP/Blender with **new silhouette/material**
+2. **Author** — Engine procedural **or** Blender/GIMP with **new silhouette/material** + realism review
 3. **Name** — `Threshold <Role>` (e.g. `Threshold Runner`); export paths `threshold_child_<role>`
 4. **Register** — `config/reference-editions.json` + manifest under `reference/editions/<edition>/`
 5. **Credit** — `reference/ATTRIBUTION.md` — license: `Original — Threshold Child edition`

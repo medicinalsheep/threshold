@@ -25,7 +25,13 @@ textures/*.jpeg
 textures/*.webp
 !textures/.gitkeep
 import/*.glb
+!import/threshold_child_*.glb
 import/*.gltf
 !import/.gitkeep
+!import/threshold_blender_manifest.json
 reference/_dev-seeds/
-public/bundle/
+public/bundle/*
+!public/bundle/import/
+public/bundle/import/*
+!public/bundle/import/threshold_child_*.glb
+!public/bundle/import/threshold_blender_manifest.json
