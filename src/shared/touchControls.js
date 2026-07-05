@@ -1,8 +1,11 @@
+import { ViewPrefs } from './viewPrefs.js';
+
 const HOLD_MS = 480;
 const DOUBLE_MS = 380;
 
 export const TouchControls = {
     enabled: false,
+    userOverride: null,
     left: { x: 0, y: 0, active: false },
     right: { x: 0, y: 0, active: false },
     buttons: { jump: false, action: false, sprint: false },
@@ -11,12 +14,12 @@ export const TouchControls = {
     _holdPoint: null,
 
     init() {
-        const coarse = window.matchMedia('(pointer: coarse)').matches;
-        const narrow = window.innerWidth < 900;
-        this.enabled = coarse || narrow;
+        const stored = ViewPrefs.get('touchControls');
+        this.userOverride = stored === 'on' ? true : stored === 'off' ? false : null;
+        this._applyEnabled();
+
         const root = document.getElementById('touch-controls');
         if (!root) return;
-        root.classList.toggle('visible', this.enabled);
 
         root.querySelectorAll('[data-touch-btn]').forEach((btn) => {
             const key = btn.dataset.touchBtn;
@@ -45,6 +48,35 @@ export const TouchControls = {
             canvas.addEventListener('pointermove', (e) => this._onCanvasMove(e));
             canvas.addEventListener('pointercancel', (e) => this._onCanvasUp(e));
         }
+
+        window.addEventListener('resize', () => {
+            if (this.userOverride === null) this._applyEnabled();
+        });
+    },
+
+    _autoEnabled() {
+        const coarse = window.matchMedia('(pointer: coarse)').matches;
+        const narrow = window.innerWidth < 900;
+        return coarse || narrow;
+    },
+
+    _applyEnabled() {
+        this.enabled = this.userOverride === null ? this._autoEnabled() : this.userOverride;
+        const root = document.getElementById('touch-controls');
+        if (root) root.classList.toggle('visible', this.enabled);
+        document.body.classList.toggle('touch-on', this.enabled);
+        document.body.classList.toggle('touch-off', !this.enabled);
+    },
+
+    setEnabled(on) {
+        this.userOverride = !!on;
+        ViewPrefs.set('touchControls', on ? 'on' : 'off');
+        this._applyEnabled();
+        window.UI?.updateTouchToggle?.();
+    },
+
+    toggle() {
+        this.setEnabled(!this.enabled);
     },
 
     _bindStick(id, slot) {

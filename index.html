@@ -50,11 +50,13 @@
             <button class="tab-btn" data-target="view-compiler">COMPILER</button>
             <button class="tab-btn" data-target="view-prompter">PROMPTGEN</button>
         </div>
-        <div style="display:flex; gap:8px; align-items:center;">
+        <div class="nav-actions">
+            <button id="nav-collapse-btn" class="nav-collapse-btn mobile-only" type="button" aria-label="Hide top menu" title="Hide top menu">▲</button>
             <button id="auth-logout-btn">LOGOUT</button>
             <button id="global-theme-btn">THEME</button>
         </div>
     </nav>
+    <button id="nav-restore-btn" class="nav-restore-btn" type="button" aria-label="Show top menu" title="Show top menu">▼ MENU</button>
 
     <!-- VIEW: ENGINE -->
     <div id="view-engine" class="view-section active">
@@ -106,6 +108,8 @@
                     <button id="btn-load-world" class="btn-sm" title="Load saved world">WORLDS</button>
                     <button id="btn-save" class="edit-only">EXPORT</button>
                     <button id="btn-load" class="edit-only">IMPORT</button>
+                    <button id="btn-console-toggle" class="btn-sm" type="button" title="Toggle command console">CON</button>
+                    <button id="btn-touch-toggle" class="btn-sm mobile-only" type="button" title="Toggle on-screen touch controls">TOUCH</button>
                 </div>
             </div>
 
@@ -222,6 +226,7 @@
             <!-- Console & Status -->
             <div id="status-msg"></div>
             <div id="command-bar"><input type="text" id="cmd-input" placeholder="> Enter JS command or 'allow pasting'..." autocomplete="off"></div>
+            <button id="btn-console-restore" class="console-restore-tab" type="button" title="Show command console">▲ CONSOLE</button>
         </div>
 
         <!-- Insert Modal (mobile-friendly) -->

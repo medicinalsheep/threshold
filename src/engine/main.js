@@ -21,6 +21,7 @@ import { TouchControls } from '../shared/touchControls.js';
 import { Permissions } from '../shared/permissions.js';
 import { SimMode } from '../shared/simMode.js';
 import { initPanelDrag, ensurePanelVisible } from '../shared/panelDrag.js';
+import { ViewPrefs } from '../shared/viewPrefs.js';
 
 const IS_TOUCH_DEVICE = window.matchMedia('(pointer: coarse)').matches;
 
@@ -935,6 +936,9 @@ const UI = {
         document.getElementById('ctx-close').onclick = () => UI.closeCtx();
 
         document.getElementById('btn-mobile-insert')?.addEventListener('click', () => UI.openInsert());
+        document.getElementById('btn-console-toggle')?.addEventListener('click', () => UI.toggleConsoleBar());
+        document.getElementById('btn-console-restore')?.addEventListener('click', () => UI.setConsoleBarVisible(true));
+        document.getElementById('btn-touch-toggle')?.addEventListener('click', () => UI.toggleTouchControls());
         document.getElementById('insert-close')?.addEventListener('click', () => UI.closeInsert());
         document.getElementById('insert-modal')?.addEventListener('click', (e) => {
             if (e.target.id === 'insert-modal') UI.closeInsert();
@@ -1059,6 +1063,7 @@ const UI = {
 
         UI.updateControlMode();
         UI.updateSimMode();
+        UI.initViewToggles();
         initPanelDrag();
     },
     updateModeDisplay: function (idx) {
@@ -1189,6 +1194,7 @@ const UI = {
             badge.classList.toggle('play', !edit);
         }
         if (layer) layer.classList.toggle('play-mode', !edit);
+        document.body.classList.toggle('play-mode', !edit);
         if (!edit) {
             document.getElementById('inspector').style.display = 'none';
             Engine.transformControl.detach();
@@ -1199,6 +1205,36 @@ const UI = {
         } else {
             document.getElementById('player-skin-panel').style.display = 'none';
         }
+    },
+    initViewToggles: function () {
+        const mobile = window.innerWidth < 900;
+        const consoleVisible = ViewPrefs.get('consoleVisible', !mobile);
+        this.setConsoleBarVisible(consoleVisible, false);
+        this.updateTouchToggle();
+    },
+    setConsoleBarVisible: function (visible, persist = true) {
+        document.body.classList.toggle('console-visible', visible);
+        document.body.classList.toggle('console-hidden', !visible);
+        const btn = document.getElementById('btn-console-toggle');
+        if (btn) {
+            btn.classList.toggle('active', visible);
+            btn.title = visible ? 'Hide command console' : 'Show command console';
+        }
+        if (persist) ViewPrefs.set('consoleVisible', visible);
+    },
+    toggleConsoleBar: function () {
+        this.setConsoleBarVisible(document.body.classList.contains('console-hidden'));
+    },
+    toggleTouchControls: function () {
+        TouchControls.toggle();
+    },
+    updateTouchToggle: function () {
+        const btn = document.getElementById('btn-touch-toggle');
+        if (!btn) return;
+        const on = TouchControls.enabled;
+        btn.textContent = on ? 'TOUCH' : 'TOUCH';
+        btn.classList.toggle('active', on);
+        btn.title = on ? 'Hide on-screen touch controls' : 'Show on-screen touch controls';
     },
     toggleEnvPanel: function () {
         const panel = document.getElementById('env-panel');

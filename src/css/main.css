@@ -82,6 +82,53 @@ body {
         color: var(--accent-color);
     }
 
+.nav-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.nav-collapse-btn {
+    padding: 4px 10px !important;
+    font-size: 0.7rem !important;
+    min-width: 36px;
+}
+
+.nav-restore-btn {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 150;
+    pointer-events: auto;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 4px 16px;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: bold;
+    color: var(--text-color);
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+}
+
+body.nav-collapsed .nav-restore-btn {
+    display: block;
+}
+
+body.nav-collapsed #app-nav {
+    height: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    overflow: hidden !important;
+    pointer-events: none;
+}
+
 #global-theme-btn {
     background: var(--btn-bg);
     border: 1px solid var(--border-color);

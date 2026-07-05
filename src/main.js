@@ -12,6 +12,7 @@ import { initLobby } from './lobby/main.js';
 import { initEngine } from './engine/main.js';
 import { initCompiler } from './compiler/main.js';
 import { initPrompter } from './prompter/main.js';
+import { ViewPrefs } from './shared/viewPrefs.js';
 
 console.log(`Starting Threshold Suite v${VERSION}...`);
 
@@ -19,12 +20,28 @@ const versionEl = document.getElementById('app-version');
 if (versionEl) versionEl.textContent = `v${VERSION}`;
 
 function updateNavHeight() {
+    const collapsed = document.body.classList.contains('nav-collapsed');
     const nav = document.getElementById('app-nav');
-    if (nav) document.documentElement.style.setProperty('--nav-height', `${nav.offsetHeight}px`);
+    const h = collapsed ? 0 : (nav?.offsetHeight || 50);
+    document.documentElement.style.setProperty('--nav-height', `${h}px`);
+}
+
+function setNavCollapsed(collapsed) {
+    document.body.classList.toggle('nav-collapsed', collapsed);
+    ViewPrefs.set('navCollapsed', collapsed);
+    updateNavHeight();
+    window.dispatchEvent(new Event('resize'));
+}
+
+if (ViewPrefs.get('navCollapsed', false)) {
+    document.body.classList.add('nav-collapsed');
 }
 
 updateNavHeight();
 window.addEventListener('resize', updateNavHeight);
+
+document.getElementById('nav-collapse-btn')?.addEventListener('click', () => setNavCollapsed(true));
+document.getElementById('nav-restore-btn')?.addEventListener('click', () => setNavCollapsed(false));
 
 initAuth();
 

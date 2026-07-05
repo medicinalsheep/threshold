@@ -7,10 +7,26 @@
 
     .mobile-fab {
         display: block;
+        bottom: 168px;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+    }
+
+    body.touch-on.play-mode .mobile-fab {
+        display: none !important;
+    }
+
+    body.touch-off .mobile-fab {
+        bottom: 88px;
     }
 
     #command-bar {
         display: none;
+    }
+
+    body.console-visible #command-bar {
+        display: block !important;
     }
 
     #env-panel {
@@ -21,14 +37,42 @@
         display: block;
     }
     #app-nav {
-        padding: 0 12px;
+        padding: 0 10px;
         flex-wrap: wrap;
         height: auto;
-        min-height: 50px;
+        min-height: 44px;
+        gap: 4px;
     }
 
     .brand {
-        font-size: 1rem;
+        font-size: 0.82rem;
+        letter-spacing: 1px;
+    }
+
+    .edition-badge {
+        display: none;
+    }
+
+    #app-version {
+        font-size: 0.7rem;
+    }
+
+    .engine-toolbar {
+        margin: 6px 8px !important;
+        gap: 6px !important;
+    }
+
+    .engine-toolbar #mode-display {
+        font-size: 0.68rem;
+    }
+
+    .session-bar {
+        font-size: 0.58rem;
+    }
+
+    .toolbar-actions .btn-sm {
+        padding: 3px 6px !important;
+        font-size: 0.55rem !important;
     }
 
     #nav-toggle {

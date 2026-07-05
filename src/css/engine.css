@@ -141,6 +141,39 @@ button {
     pointer-events: auto;
 }
 
+body.console-hidden #command-bar {
+    display: none !important;
+}
+
+.console-restore-tab {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: auto;
+    z-index: 25;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    padding: 4px 14px;
+    font-size: 0.6rem;
+    font-family: var(--font-mono);
+    color: #888;
+    cursor: pointer;
+}
+
+body.console-hidden .console-restore-tab {
+    display: block;
+}
+
+#btn-console-toggle.active,
+#btn-touch-toggle.active {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
 #cmd-input {
     width: 100%;
     background: rgba(0,0,0,0.8);
@@ -289,7 +322,7 @@ button {
 
 .mobile-fab {
     display: none;
-    position: absolute;
+    position: fixed;
     bottom: 80px;
     right: 20px;
     width: 56px;
