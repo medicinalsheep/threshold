@@ -352,11 +352,57 @@ function synthMetalHit(sec = 0.28) {
     return out;
 }
 
+function synthCreekLoop(sec = 4.0) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const lfo = 0.5 + 0.5 * Math.sin(2 * Math.PI * 0.35 * t);
+        const babble = (Math.random() * 2 - 1) * 0.35;
+        const flow = Math.sin(2 * Math.PI * (48 + Math.sin(t * 3) * 8) * t) * 0.12;
+        const ripple = Math.sin(2 * Math.PI * (220 + Math.sin(t * 7) * 40) * t) * 0.06 * lfo;
+        out[i] = (babble * 0.4 + flow + ripple) * 0.42;
+    }
+    return out;
+}
+
+function synthPowerHum(sec = 3.0) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const hum = Math.sin(2 * Math.PI * 60 * t) * 0.22
+            + Math.sin(2 * Math.PI * 120 * t) * 0.1
+            + Math.sin(2 * Math.PI * 180 * t) * 0.05;
+        const buzz = (Math.random() * 2 - 1) * 0.04;
+        const wobble = 0.85 + 0.15 * Math.sin(2 * Math.PI * 0.9 * t);
+        out[i] = (hum + buzz) * wobble * 0.38;
+    }
+    return out;
+}
+
+function synthFenceRattle(sec = 0.42) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const env = Math.exp(-t * 5.5);
+        const clank = (Math.random() * 2 - 1) * 0.55;
+        const ring = Math.sin(2 * Math.PI * (680 + (i % 9) * 40) * t) * Math.exp(-t * 12) * 0.25;
+        const chain = Math.sin(2 * Math.PI * 140 * t) * Math.exp(-t * 8) * 0.18;
+        out[i] = (clank * 0.45 + ring + chain) * env * 0.62;
+    }
+    return out;
+}
+
 /** Procedural-only — combat/impact/footsteps/ambient use sounds:fetch:sfx + recorded clips */
 const CLIPS = [
     { id: 'starter_eng_two_stroke', name: 'Two-Stroke Engine', file: 'engine_two_stroke', synth: synthTwoStroke, category: 'engine', vehicle: 'tc_run' },
     { id: 'starter_eng_v8', name: 'V8 Engine Idle', file: 'engine_v8', synth: synthV8, category: 'engine', vehicle: 'tc_haul' },
     { id: 'starter_terminal_chirp', name: 'Terminal Chirp', file: 'terminal_chirp', synth: synthTerminalChirp, category: 'ui' },
+    { id: 'starter_amb_creek', name: 'Creek Water', file: 'amb_creek', synth: synthCreekLoop, category: 'ambient' },
+    { id: 'starter_amb_power_hum', name: 'Power Line Hum', file: 'amb_power_hum', synth: synthPowerHum, category: 'ambient' },
+    { id: 'starter_fence_rattle', name: 'Fence Chain Rattle', file: 'fence_rattle', synth: synthFenceRattle, category: 'ambient' },
 ];
 
 function tryCompress(wavPath, oggPath) {

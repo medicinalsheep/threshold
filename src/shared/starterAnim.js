@@ -1,4 +1,4 @@
-/** Animated starter props — flags, birds, lights, highway shimmer */
+/** Animated starter props — flags, birds, lights, creek, power lines, fence, dust */
 
 const hooks = [];
 

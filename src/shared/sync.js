@@ -184,8 +184,15 @@ export const Sync = {
             await window.TextureHilod?.rehydrateAfterSync?.();
 
             const netMode = window.Network?.mode;
+            const isStarterWorld = (state.objects || []).some(
+                (o) => o.userData?.id === 'starter_ground' || o.userData?.id === 'starter_highway'
+            );
             if (netMode === 'guest' || netMode === 'spectate') {
                 await window.StarterAudio?.ensureStarterAudio?.({ deferWeather: true });
+                if (isStarterWorld && !window.State?.objects?.some((o) => o.userData?.id === 'starter_creek')) {
+                    window.buildStarterEnv14?.();
+                    window.StarterEnv14?.wireAnims?.();
+                }
             }
             if (state.weather) {
                 window.WeatherSystem?.applyNetworkState?.(state.weather, { smooth: false });

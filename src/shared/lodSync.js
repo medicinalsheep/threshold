@@ -1,6 +1,14 @@
 import { LOD_DISTANCES } from './lodConfig.js';
 
-const RUNTIME_ONLY_KEYS = ['_lodScenes'];
+const RUNTIME_ONLY_KEYS = [
+    '_lodScenes',
+    'cableMeshes',
+    'creekWaterMesh',
+    'fenceWires',
+    'bulbMesh',
+    'bladeGroup',
+    'animBase',
+];
 
 export function sanitizeUserDataForSync(userData = {}) {
     const out = { ...userData };

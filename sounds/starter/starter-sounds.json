@@ -4,42 +4,6 @@
   "sampleRate": 22050,
   "clips": [
     {
-      "id": "starter_eng_two_stroke",
-      "name": "Two-Stroke Engine",
-      "wav": "sounds/starter/engine_two_stroke.wav",
-      "ogg": null,
-      "category": "engine",
-      "vehicle": "tc_run",
-      "bytes": 70604,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
-    },
-    {
-      "id": "starter_eng_v8",
-      "name": "V8 Engine Idle",
-      "wav": "sounds/starter/engine_v8.wav",
-      "ogg": null,
-      "category": "engine",
-      "vehicle": "tc_haul",
-      "bytes": 88244,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
-    },
-    {
-      "id": "starter_terminal_chirp",
-      "name": "Terminal Chirp",
-      "wav": "sounds/starter/terminal_chirp.wav",
-      "ogg": null,
-      "category": "ui",
-      "vehicle": null,
-      "bytes": 7982,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
-    },
-    {
       "id": "starter_gun_pistol",
       "name": "Gun — Pistol shot (real)",
       "wav": "sounds/starter/gun_pistol.wav",
@@ -697,6 +661,78 @@
       "license": "Original — user field recording",
       "source": "starter_rec_metal_tap",
       "replaces": "none"
+    },
+    {
+      "id": "starter_eng_two_stroke",
+      "name": "Two-Stroke Engine",
+      "wav": "sounds/starter/engine_two_stroke.wav",
+      "ogg": null,
+      "category": "engine",
+      "vehicle": "tc_run",
+      "bytes": 70604,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_eng_v8",
+      "name": "V8 Engine Idle",
+      "wav": "sounds/starter/engine_v8.wav",
+      "ogg": null,
+      "category": "engine",
+      "vehicle": "tc_haul",
+      "bytes": 88244,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_terminal_chirp",
+      "name": "Terminal Chirp",
+      "wav": "sounds/starter/terminal_chirp.wav",
+      "ogg": null,
+      "category": "ui",
+      "vehicle": null,
+      "bytes": 7982,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_amb_creek",
+      "name": "Creek Water",
+      "wav": "sounds/starter/amb_creek.wav",
+      "ogg": null,
+      "category": "ambient",
+      "vehicle": null,
+      "bytes": 176444,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_amb_power_hum",
+      "name": "Power Line Hum",
+      "wav": "sounds/starter/amb_power_hum.wav",
+      "ogg": null,
+      "category": "ambient",
+      "vehicle": null,
+      "bytes": 132344,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_fence_rattle",
+      "name": "Fence Chain Rattle",
+      "wav": "sounds/starter/fence_rattle.wav",
+      "ogg": null,
+      "category": "ambient",
+      "vehicle": null,
+      "bytes": 18566,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
     }
   ],
   "realAmbient": true,

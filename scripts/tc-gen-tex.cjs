@@ -226,6 +226,20 @@ function gravelRough(x, y, w, h) {
     return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
 }
 
+function dirtAlbedo(x, y, w, h, pal) {
+    const streak = noise(x * 0.5, y * 0.5, 135) > 0.62;
+    const base = streak ? pal.clay : pal.dust;
+    const root = noise(x, y, 137) > 0.94 ? pal.dark : base;
+    const n = noise(x, y, 139) * 14;
+    return [Math.min(255, root[0] + n), Math.min(255, root[1] + n), Math.min(255, root[2] + n), 255];
+}
+
+function dirtRough(x, y, w, h) {
+    const base = 218;
+    const n = noise(x, y, 141) * 28;
+    return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
+}
+
 function asphaltAlbedo(x, y, w, h, pal) {
     const crack = noise(x, y, 105) > 0.97;
     const base = crack ? pal.crack : pal.base;
@@ -330,6 +344,11 @@ function slotFn(asset, slot) {
         if (slot === 'albedo') return (x, y, w, h) => gravelAlbedo(x, y, w, h, asset.palette);
         if (slot === 'roughness') return (x, y, w, h) => gravelRough(x, y, w, h);
         if (slot === 'normal') return (x, y) => surfaceNormal(x, y, 129, 0.95);
+    }
+    if (asset.style === 'dirt') {
+        if (slot === 'albedo') return (x, y, w, h) => dirtAlbedo(x, y, w, h, asset.palette);
+        if (slot === 'roughness') return (x, y, w, h) => dirtRough(x, y, w, h);
+        if (slot === 'normal') return (x, y) => surfaceNormal(x, y, 143, 0.85);
     }
     if (asset.style === 'asphalt') {
         if (slot === 'albedo') return (x, y, w, h) => asphaltAlbedo(x, y, w, h, asset.palette);

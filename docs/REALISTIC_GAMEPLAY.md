@@ -2,7 +2,7 @@
 
 Threshold ships a **walk/drive action control** template in the SOLO lobby. Use it as the baseline for shooters, RPGs, and vehicle scenes.
 
-**Current default version:** v6.7.0 — FiveM controls, real weather, multiplayer weather sync (Phase 13)
+**Current default version:** v6.8.0 — FiveM controls, creek/power-line ambience, weather sync (Phase 14)
 
 ---
 
@@ -143,6 +143,15 @@ Build your game by replacing props, keeping the control + physics + asset pipeli
 **First clone?** Run `npm run quickstart -- --pack` then `assets:verify` before `preview`.
 
 ---
+
+## Phase 14 additions (v6.8)
+
+| Feature | Notes |
+|---------|-------|
+| Creek | West edge water plane, babble loop when near |
+| Power lines | Backdrop cables sway; distant 60 Hz hum |
+| Chain fence | Gust-triggered metal rattle near gravel path |
+| Dirt mound | PBR dirt texture, dust puffs in wind/rain |
 
 ## Phase 13 additions (v6.7)
 

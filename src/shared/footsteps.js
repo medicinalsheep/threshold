@@ -6,6 +6,7 @@ const SURFACE_CLIPS = {
     grass: 'starter_footstep_grass',
     wood: 'starter_footstep_wood',
     gravel: 'starter_footstep_gravel',
+    dirt: 'starter_footstep_gravel',
     asphalt: 'starter_footstep_asphalt',
     default: 'starter_footstep_concrete',
 };
@@ -14,6 +15,7 @@ const SURFACE_INTERVAL = {
     grass: 420,
     wood: 360,
     gravel: 340,
+    dirt: 360,
     asphalt: 390,
     metal: 350,
     concrete: 380,
@@ -35,6 +37,7 @@ export const Footsteps = {
         if (id.includes('grass')) return 'grass';
         if (id.includes('wood')) return 'wood';
         if (id.includes('gravel')) return 'gravel';
+        if (id.includes('dirt')) return 'dirt';
         if (id.includes('asphalt') || id.includes('stripe')) return 'asphalt';
         if (id.includes('ground') || id.includes('platform') || id === 'starter_ground') return 'concrete';
         return 'default';

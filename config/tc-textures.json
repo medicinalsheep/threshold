@@ -248,6 +248,19 @@
         "edge": [98, 102, 108]
       },
       "style": "metal_grate"
+    },
+    {
+      "slug": "starter_dirt",
+      "objectName": "Dirt Mound",
+      "tcEd": "tc-lite",
+      "surfaceType": "dirt",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "dust": [118, 96, 72],
+        "clay": [98, 78, 58],
+        "dark": [72, 58, 42]
+      },
+      "style": "dirt"
     }
   ]
 }

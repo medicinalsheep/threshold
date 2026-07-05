@@ -7,12 +7,16 @@ function delay(ms) {
 const ZONES = [
     { id: 'wind_open', clipId: 'starter_amb_wind', volume: 0.22, pos: { x: 0, y: 1, z: 0 }, radius: 22, loop: true },
     { id: 'highway_edge', clipId: 'starter_amb_highway', volume: 0.28, pos: { x: 6.5, y: 0.5, z: -3.2 }, radius: 9, loop: true },
+    { id: 'creek_edge', clipId: 'starter_amb_creek', volume: 0.26, pos: { x: -5.4, y: 0.2, z: 0.6 }, radius: 5.5, loop: true },
+    { id: 'power_hum', clipId: 'starter_amb_power_hum', volume: 0.14, pos: { x: 0, y: 2, z: -6 }, radius: 14, loop: true, rainDuck: 0.15 },
 ];
 
 export const AmbientAudio = {
     _zones: [],
     _windHandle: null,
     _highwayHandle: null,
+    _creekHandle: null,
+    _powerHandle: null,
     _active: false,
 
     init() {
@@ -37,13 +41,17 @@ export const AmbientAudio = {
         await this._playLoop('starter_amb_wind', 0.18, '_windHandle');
         await delay(420);
         await this._playLoop('starter_amb_highway', 0.14, '_highwayHandle');
+        await delay(380);
+        await this._playLoop('starter_amb_creek', 0.12, '_creekHandle');
+        await delay(450);
+        await this._playLoop('starter_amb_power_hum', 0.08, '_powerHandle');
         await delay(520);
         window.RecordedAmbient?.start?.();
     },
 
     stop() {
         this._active = false;
-        ['_windHandle', '_highwayHandle'].forEach((k) => {
+        ['_windHandle', '_highwayHandle', '_creekHandle', '_powerHandle'].forEach((k) => {
             if (this[k]?.stop) this[k].stop();
             this[k] = null;
         });
@@ -88,8 +96,14 @@ export const AmbientAudio = {
 
         const wind = this._volForZone(this._zones[0], pos) * rainDuck;
         const highway = this._volForZone(this._zones[1], pos) * (1 - rain * 0.15);
+        const creek = this._volForZone(this._zones[2], pos) * (1 - rain * 0.08);
+        const powerZone = this._zones[3];
+        const powerRainMul = 1 - rain * (powerZone.rainDuck ?? 0.2);
+        const power = this._volForZone(powerZone, pos) * powerRainMul;
         if (this._windHandle?.setVolume) this._windHandle.setVolume(wind);
         if (this._highwayHandle?.setVolume) this._highwayHandle.setVolume(highway);
+        if (this._creekHandle?.setVolume) this._creekHandle.setVolume(creek);
+        if (this._powerHandle?.setVolume) this._powerHandle.setVolume(power);
 
         window.WeatherSystem?.tick?.(dt);
         window.RecordedAmbient?.tick?.();

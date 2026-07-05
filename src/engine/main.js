@@ -47,6 +47,7 @@ import '../shared/ambientAudio.js';
 import '../shared/weatherSystem.js';
 import '../shared/recordedAmbient.js';
 import '../shared/starterAudio.js';
+import '../shared/starterEnv14.js';
 import '../shared/starterAnim.js';
 import { bootstrapReferenceIfRequested } from '../shared/referenceEdition.js';
 import { GameExport } from '../shared/gameExport.js';

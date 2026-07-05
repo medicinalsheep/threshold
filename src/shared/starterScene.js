@@ -497,10 +497,12 @@ export function bootstrapStarterScene() {
     wireStarterTextures().then((tex) => {
         if (tex.maps) window.UI?.status?.(`Starter textures applied (${tex.maps} maps)`);
     });
+    window.buildStarterEnv14?.();
     window.StarterAnim?.wireScene?.();
+    window.StarterEnv14?.wireAnims?.();
 
     if (terminal && modelKiosk) {
-        window.UI?.status?.('FiveM controls — rain rolling in · LMB shoot · RMB aim · F vehicle · World.setWeather()');
+        window.UI?.status?.('FiveM controls — creek & power lines · rain rolling in · World.setWeather()');
     }
 
     State.ctxTargetPos.set(0, 0, 0);

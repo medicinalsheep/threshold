@@ -162,6 +162,7 @@ export const WeatherSystem = {
                 volume: event.vol ?? 0.28,
                 playbackRate: event.rate ?? 1,
             });
+            window.StarterEnv14?.onWindGust?.();
         }
     },
 
@@ -317,6 +318,7 @@ export const WeatherSystem = {
         const rate = 0.85 + Math.random() * 0.25;
         window.AudioSys?.playClipVariation?.('starter_wind_gust_real', { volume: vol, playbackRate: rate });
         this._queueNetworkEvent({ type: 'gust', vol, rate });
+        window.StarterEnv14?.onWindGust?.();
     },
 
     _ensureParticles(visible = false) {

@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v6.7.0 — Phase 13 Stability & session UX (audio cache, weather sync, pointer hardening).
+**Current:** v6.8.0 — Phase 14 Ambient iteration 2b (creek, power lines, fence, dirt mound).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -463,16 +463,25 @@ await World.playCutscene('video/intro.mp4', {
 | 13.6 Hotfixes 6.6.1–6.6.2 (freeze, TPS, windowed fullscreen) | ✅ |
 | 13.7 [PHASE_13_STABILITY.md](PHASE_13_STABILITY.md) | ✅ |
 
-### Phase 14 — Ambient iteration 2b (queued · v6.8)
+### Phase 14 — Ambient iteration 2b (v6.8.0) ✅
 
 | Step | Status |
 |------|--------|
-| 14.1 River / creek water + flow normals | ⏳ |
-| 14.2 Power lines — hum zone + sway anim | ⏳ |
-| 14.3 Fence chain rattle on gusts | ⏳ |
-| 14.4 Dirt mound + dust particles | ⏳ |
+| 14.1 River / creek water + flow anim + zone audio | ✅ |
+| 14.2 Power lines — hum zone + sway anim | ✅ |
+| 14.3 Fence chain rattle on wind gusts | ✅ |
+| 14.4 Dirt mound + dust particles + `dirt` texture | ✅ |
 
-See [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iterations 2b–5.
+### Phase 15 — Wildlife & life (queued · v6.9)
+
+| Step | Status |
+|------|--------|
+| 15.1 Dog bark proximity near NPC | ⏳ |
+| 15.2 Cat meow alley spawn | ⏳ |
+| 15.3 Crickets night / owl evening | ⏳ |
+| 15.4 Fish splash (creek hook) | ⏳ |
+
+See [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iterations 3–5.
 
 ```bash
 npm run quickstart

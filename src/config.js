@@ -1,4 +1,4 @@
-export const VERSION = '6.7.0';
+export const VERSION = '6.8.0';
 export const CREATIVE_WATCH_URL = import.meta.env.VITE_CREATIVE_WATCH_URL || 'http://127.0.0.1:3927';
 export const EDITION = import.meta.env.VITE_EDITION || 'web';
 export const IS_GROK_EDITION = EDITION === 'grok';

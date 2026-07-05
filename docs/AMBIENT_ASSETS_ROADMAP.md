@@ -32,18 +32,18 @@ Queued additions for the starter scene and TC editions — **one asset at a time
 | **API** | `World.setWeather({ rain: true, intensity: 0.7 })` |
 | **Pipeline** | `npm run sounds:fetch:ambient` → ffmpeg trim + OGG compress |
 
-## Iteration 2b — Environment (queued)
+## Iteration 2b — Environment (shipped 6.8.0)
 
 | Asset | Notes |
 |-------|-------|
-| **River / creek** | Water plane + flow normal anim |
-| **Power lines** | Distant hum + swaying cables |
-| **Fence chain** | Metal rattle on wind gusts |
-| **Dirt mound** | `dirt` texture style + dust particles |
+| **River / creek** | `starter_creek` water plane + flow opacity anim · `starter_amb_creek` zone |
+| **Power lines** | Swaying cables + `starter_amb_power_hum` distant zone |
+| **Fence chain** | `starter_fence` wire sway · `starter_fence_rattle` on wind gusts |
+| **Dirt mound** | `starter_dirt` PBR + `dirt` surface · dust particles on gust/nearby |
 
 ---
 
-## Iteration 3 — Wildlife & life
+## Iteration 3 — Wildlife & life (queued)
 
 | Asset | Notes |
 |-------|-------|

@@ -1,5 +1,15 @@
 # Changelog
 
+## 6.8.0 — Phase 14: Ambient iteration 2b (environment)
+
+- **Creek** — water plane west edge, babble loop, proximity zone audio
+- **Power lines** — backdrop cables sway with wind/rain, 60 Hz hum zone
+- **Chain fence** — metal wires + gust-triggered `starter_fence_rattle` SFX
+- **Dirt mound** — `dirt` texture style, footstep surface, dust particles on gust
+- **Pipeline** — `starterEnv14.js`, staggered creek/power loops in `AmbientAudio`
+- **Guest sync** — env props rebuilt on starter-world join
+- Docs: [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iteration 2b shipped
+
 ## 6.7.0 — Phase 13: Stability & session UX
 
 - **Manifest fingerprint skip** — `seedStarterSounds()` stores `threshold_starter_manifest_fp`; skips IndexedDB re-import when manifest version + clip sizes unchanged and all clips cached
