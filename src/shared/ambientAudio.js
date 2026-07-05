@@ -49,6 +49,7 @@ export const AmbientAudio = {
         window.RecordedAmbient?.start?.();
         await window.WildlifeAmbient?.startStaggered?.();
         await window.UrbanAmbient?.startStaggered?.();
+        await window.InteriorAmbient?.startStaggered?.();
     },
 
     stop() {
@@ -61,6 +62,7 @@ export const AmbientAudio = {
         window.RecordedAmbient?.stop?.();
         window.WildlifeAmbient?.stop?.();
         window.UrbanAmbient?.stop?.();
+        window.InteriorAmbient?.stop?.();
     },
 
     async _playLoop(clipId, vol, key) {
@@ -113,6 +115,7 @@ export const AmbientAudio = {
         window.RecordedAmbient?.tick?.();
         window.WildlifeAmbient?.tick?.(dt);
         window.UrbanAmbient?.tick?.(dt);
+        window.InteriorAmbient?.tick?.(dt);
     },
 };
 

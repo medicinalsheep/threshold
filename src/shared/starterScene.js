@@ -500,13 +500,15 @@ export function bootstrapStarterScene() {
     window.buildStarterEnv14?.();
     window.buildStarterWildlife15?.();
     window.buildStarterUrban16?.();
+    window.buildStarterInterior17?.();
     window.StarterAnim?.wireScene?.();
     window.StarterEnv14?.wireAnims?.();
     window.StarterWildlife15?.wireAnims?.();
     window.StarterUrban16?.wireAnims?.();
+    window.StarterInterior17?.wireAnims?.();
 
     if (terminal && modelKiosk) {
-        window.UI?.status?.('FiveM controls — highway traffic · traffic lights · walk east for construction beeps');
+        window.UI?.status?.('FiveM controls — AI terminal radio · coffee nook west · shop & elevator RP props');
     }
 
     State.ctxTargetPos.set(0, 0, 0);

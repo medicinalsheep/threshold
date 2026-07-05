@@ -201,6 +201,10 @@ export const Sync = {
                     window.buildStarterUrban16?.();
                     window.StarterUrban16?.wireAnims?.();
                 }
+                if (isStarterWorld && !window.State?.objects?.some((o) => o.userData?.id === 'starter_interior_coffee')) {
+                    window.buildStarterInterior17?.();
+                    window.StarterInterior17?.wireAnims?.();
+                }
             }
             if (state.weather) {
                 window.WeatherSystem?.applyNetworkState?.(state.weather, { smooth: false });

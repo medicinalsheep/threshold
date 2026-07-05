@@ -853,6 +853,66 @@
       "oggBytes": null,
       "preferred": "wav",
       "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_interior_radio_chatter",
+      "name": "Radio Chatter",
+      "wav": "sounds/starter/interior_radio_chatter.wav",
+      "ogg": null,
+      "category": "interior",
+      "vehicle": null,
+      "bytes": 185264,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_interior_coffee_murmur",
+      "name": "Coffee Shop Murmur",
+      "wav": "sounds/starter/interior_coffee_murmur.wav",
+      "ogg": null,
+      "category": "interior",
+      "vehicle": null,
+      "bytes": 220544,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_interior_door_creak",
+      "name": "Door Creak",
+      "wav": "sounds/starter/interior_door_creak.wav",
+      "ogg": null,
+      "category": "interior",
+      "vehicle": null,
+      "bytes": 37528,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_interior_elevator_ding",
+      "name": "Elevator Ding",
+      "wav": "sounds/starter/interior_elevator_ding.wav",
+      "ogg": null,
+      "category": "interior",
+      "vehicle": null,
+      "bytes": 28708,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_interior_cash_register",
+      "name": "Cash Register",
+      "wav": "sounds/starter/interior_cash_register.wav",
+      "ogg": null,
+      "category": "interior",
+      "vehicle": null,
+      "bytes": 33118,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
     }
   ],
   "realAmbient": true,

@@ -1,5 +1,16 @@
 # Changelog
 
+## 7.1.0 — Phase 17: Interior / RP (ambient iteration 5)
+
+- **Radio chatter** — muffled loop zone near AI Build terminal
+- **Coffee murmur** — indoor crowd loop at west coffee nook
+- **Door creak** — RP interact prop with swing anim
+- **Elevator ding** — multi-floor kiosk at north wall; button flash on interact
+- **Cash register** — corner shop counter on wood deck
+- **Module** — `interiorAmbient.js` + `starterInterior17.js`
+- **Guest sync** — interior props rebuilt on starter-world join
+- Docs: [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iteration 5 shipped
+
 ## 7.0.0 — Phase 16: Urban / highway (ambient iteration 4)
 
 - **Semi truck pass** — Doppler whoosh on highway strip when nearby

@@ -96,6 +96,14 @@ export const WorldInteract = {
             window.UI?.openInsert?.();
             return true;
         }
+        if (action === 'rp') {
+            const id = root.userData?.id;
+            if (id === 'starter_interior_door') window.StarterInterior17?.onDoorInteract?.(root);
+            if (id === 'starter_elevator_kiosk') window.StarterInterior17?.onElevatorInteract?.(root);
+            if (id === 'starter_shop_counter') window.StarterInterior17?.onShopInteract?.(root);
+            window.UI?.status?.(root.userData.interactHint || `${label} — RP interact`);
+            return true;
+        }
 
         window.UI?.status?.(`${label} — interact`);
         return true;

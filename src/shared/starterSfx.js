@@ -231,6 +231,9 @@ const SOUND_MAP = {
     starter_crate: { clipId: 'starter_metal_hit', trigger: 'collision' },
     glass_pane: { clipId: 'starter_glass_break', trigger: 'collision' },
     gun_target: { clipId: 'starter_metal_hit', trigger: 'collision' },
+    starter_interior_door: { clipId: 'starter_interior_door_creak', trigger: 'interact' },
+    starter_elevator_kiosk: { clipId: 'starter_interior_elevator_ding', trigger: 'interact' },
+    starter_shop_counter: { clipId: 'starter_interior_cash_register', trigger: 'interact' },
 };
 
 export function wireStarterSounds() {

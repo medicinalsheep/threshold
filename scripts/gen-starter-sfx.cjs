@@ -532,6 +532,77 @@ function synthConstructionBeep(sec = 0.55) {
     return out;
 }
 
+function synthRadioChatterLoop(sec = 4.2) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const burst = Math.max(0, Math.sin(t * 3.6 + 0.8)) ** 3;
+        const voice = (Math.random() * 2 - 1) * 0.22 * burst;
+        const formant = Math.sin(2 * Math.PI * (180 + Math.sin(t * 5) * 60) * t) * 0.08 * burst;
+        const staticBed = (Math.random() * 2 - 1) * 0.06;
+        const hiss = Math.sin(2 * Math.PI * 4200 * t) * 0.02 * (0.4 + burst);
+        const fade = Math.min(1, i / (SR * 0.12), (n - i) / (SR * 0.12));
+        out[i] = (voice + formant + staticBed + hiss) * 0.42 * fade;
+    }
+    return out;
+}
+
+function synthCoffeeMurmurLoop(sec = 5.0) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const crowd = (Math.random() * 2 - 1) * 0.28;
+        const murmur = Math.sin(2 * Math.PI * 95 * t) * 0.12 + Math.sin(2 * Math.PI * 140 * t) * 0.08;
+        const clink = Math.exp(-(((t % 0.9) - 0.15) ** 2) * 120) * (Math.random() * 2 - 1) * 0.18;
+        const cup = Math.exp(-(((t % 1.4) - 0.55) ** 2) * 80) * 0.12;
+        const fade = Math.min(1, i / (SR * 0.2), (n - i) / (SR * 0.2));
+        out[i] = (crowd * 0.35 + murmur + clink + cup) * 0.38 * fade;
+    }
+    return out;
+}
+
+function synthDoorCreak(sec = 0.85) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const scrape = Math.sin(2 * Math.PI * (120 + t * 85) * t) * 0.35;
+        const grit = (Math.random() * 2 - 1) * 0.28;
+        const env = Math.sin(Math.min(1, t / 0.08) * Math.PI * 0.5) * Math.exp(-t * 2.2);
+        out[i] = (scrape + grit * 0.55) * env * 0.58;
+    }
+    return out;
+}
+
+function synthElevatorDing(sec = 0.65) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const ding = Math.sin(2 * Math.PI * 880 * t) * Math.exp(-t * 6);
+        const overtone = Math.sin(2 * Math.PI * 1320 * t) * Math.exp(-t * 8) * 0.35;
+        const bell = Math.sin(2 * Math.PI * 1760 * t) * Math.exp(-t * 12) * 0.15;
+        out[i] = (ding + overtone + bell) * 0.62;
+    }
+    return out;
+}
+
+function synthCashRegister(sec = 0.75) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const ka = t < 0.12 ? Math.sin(2 * Math.PI * 620 * t) * 0.5 : 0;
+        const ching = t > 0.1 && t < 0.35 ? Math.sin(2 * Math.PI * 1480 * (t - 0.1)) * Math.exp(-(t - 0.1) * 14) * 0.55 : 0;
+        const drawer = t > 0.28 ? (Math.random() * 2 - 1) * 0.22 * Math.exp(-(t - 0.28) * 8) : 0;
+        const bell = Math.exp(-((t - 0.18) ** 2) * 200) * 0.35;
+        out[i] = (ka + ching + drawer + bell) * 0.58;
+    }
+    return out;
+}
+
 /** Procedural-only — combat/impact/footsteps/ambient use sounds:fetch:sfx + recorded clips */
 const CLIPS = [
     { id: 'starter_eng_two_stroke', name: 'Two-Stroke Engine', file: 'engine_two_stroke', synth: synthTwoStroke, category: 'engine', vehicle: 'tc_run' },
@@ -550,6 +621,11 @@ const CLIPS = [
     { id: 'starter_urban_moto_pass', name: 'Motorcycle Pass', file: 'urban_moto_pass', synth: synthMotorcyclePass, category: 'urban' },
     { id: 'starter_urban_siren_distant', name: 'Distant Siren', file: 'urban_siren_distant', synth: synthSirenDistant, category: 'urban' },
     { id: 'starter_urban_construction_beep', name: 'Construction Beep', file: 'urban_construction_beep', synth: synthConstructionBeep, category: 'urban' },
+    { id: 'starter_interior_radio_chatter', name: 'Radio Chatter', file: 'interior_radio_chatter', synth: synthRadioChatterLoop, category: 'interior' },
+    { id: 'starter_interior_coffee_murmur', name: 'Coffee Shop Murmur', file: 'interior_coffee_murmur', synth: synthCoffeeMurmurLoop, category: 'interior' },
+    { id: 'starter_interior_door_creak', name: 'Door Creak', file: 'interior_door_creak', synth: synthDoorCreak, category: 'interior' },
+    { id: 'starter_interior_elevator_ding', name: 'Elevator Ding', file: 'interior_elevator_ding', synth: synthElevatorDing, category: 'interior' },
+    { id: 'starter_interior_cash_register', name: 'Cash Register', file: 'interior_cash_register', synth: synthCashRegister, category: 'interior' },
 ];
 
 function tryCompress(wavPath, oggPath) {

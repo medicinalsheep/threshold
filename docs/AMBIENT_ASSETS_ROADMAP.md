@@ -70,15 +70,15 @@ Queued additions for the starter scene and TC editions — **one asset at a time
 
 ---
 
-## Iteration 5 — Interior / RP
+## Iteration 5 — Interior / RP (shipped 7.1.0)
 
 | Asset | Notes |
 |-------|-------|
-| **Radio chatter** | Terminal zone |
-| **Coffee shop murmur** | Indoor reverb zone |
-| **Door creak** | Interact prop |
-| **Elevator ding** | Multi-floor kiosk |
-| **Cash register** | Shop interact |
+| **Radio chatter** | Loop zone near AI Build terminal |
+| **Coffee shop murmur** | West coffee nook indoor loop |
+| **Door creak** | RP interact prop + swing anim |
+| **Elevator ding** | North-wall kiosk · floor button flash |
+| **Cash register** | Wood-deck corner shop · `[E]` interact |
 
 ---
 

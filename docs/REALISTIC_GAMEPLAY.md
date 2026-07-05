@@ -2,7 +2,7 @@
 
 Threshold ships a **walk/drive action control** template in the SOLO lobby. Use it as the baseline for shooters, RPGs, and vehicle scenes.
 
-**Current default version:** v7.0.0 — FiveM controls, urban highway ambience, weather sync (Phase 16)
+**Current default version:** v7.1.0 — FiveM controls, interior RP ambience, weather sync (Phase 17)
 
 ---
 
@@ -143,6 +143,18 @@ Build your game by replacing props, keeping the control + physics + asset pipeli
 **First clone?** Run `npm run quickstart -- --pack` then `assets:verify` before `preview`.
 
 ---
+
+## Phase 17 additions (v7.1)
+
+| Feature | Notes |
+|---------|-------|
+| Radio chatter | Near AI Build terminal (east plaza) |
+| Coffee murmur | West coffee nook alcove |
+| Door creak | `[E]` on creaky door west of platform |
+| Elevator ding | North wall kiosk — floor lights flash |
+| Cash register | Corner shop on wood deck — `[E]` ring up |
+
+Walk to the **AI terminal** for radio static, or the **coffee nook** west for crowd murmur.
 
 ## Phase 16 additions (v7.0)
 

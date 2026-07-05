@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v7.0.0 — Phase 16 Urban / highway (truck/moto Doppler, siren, construction, traffic lights, billboard).
+**Current:** v7.1.0 — Phase 17 Interior / RP (radio chatter, coffee murmur, door, elevator, cash register).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -490,7 +490,16 @@ await World.playCutscene('video/intro.mp4', {
 | 16.3 Distant siren + construction beep | ✅ |
 | 16.4 Traffic lights + billboard UV | ✅ |
 
-See [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iteration 4 shipped · iteration 5 queued.
+### Phase 17 — Interior / RP (v7.1.0) ✅
+
+| Step | Status |
+|------|--------|
+| 17.1 Radio chatter terminal zone | ✅ |
+| 17.2 Coffee shop murmur loop | ✅ |
+| 17.3 Door creak interact prop | ✅ |
+| 17.4 Elevator ding + cash register | ✅ |
+
+See [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iteration 5 shipped.
 
 ```bash
 npm run quickstart
