@@ -35,10 +35,10 @@ const BUILD_PROFILES = {
         notes: 'npm run package:ios — requires macOS + Xcode. Archive → TestFlight → App Store.',
     },
     steam: {
-        label: 'Steam',
-        status: 'planned',
+        label: 'Steam (Windows)',
+        status: 'ready',
         tool: 'electron+steamworks',
-        notes: 'Phase 3.5: Steamworks SDK in Electron build + depot upload.',
+        notes: 'npm run package:steam → steam:depot — optional steamworks.js for achievements + overlay.',
     },
     selfhost: {
         label: 'Self-host + local relay',
@@ -289,7 +289,13 @@ export const GameExport = {
                     appId: options.assetOpportunity?.steam?.appId || null,
                     depotId: options.assetOpportunity?.steam?.depotId || null,
                     graphicsProfile: 'steam',
-                    note: 'Set App/Depot ID in PACKS step; export:graphics --profile steam for depot bundle',
+                    packageCli: 'npm run package:steam -- --manifest <game>.threshold-game.json',
+                    depotCli: 'npm run steam:depot -- --manifest <game>.threshold-game.json',
+                    uploadScript: 'dist-steam/scripts/upload-steam-depot.cmd',
+                    achievements: 'config/steam-release.json',
+                    steamworks: 'npm install steamworks.js (optional) — STEAM_APP_ID or config/steam-app.json',
+                    docs: 'docs/STEAM_RELEASE.md',
+                    note: 'Windows portable + steamcmd depot upload; achievements when launched via Steam',
                 },
             },
         };

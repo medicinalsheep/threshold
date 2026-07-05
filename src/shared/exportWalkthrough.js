@@ -41,7 +41,7 @@ export function defaultExportDraft(base = {}) {
         author: base.author || '',
         description: base.description || '',
         includeSoundBlobs: false,
-        targets: { web: true, android: true, windows: true, ios: false },
+        targets: { web: true, android: true, windows: true, ios: false, steam: false },
         branding: { ...DEFAULT_BRANDING, ...(base.branding || {}) },
         credits: {
             global: base.credits?.global || '',
@@ -285,6 +285,12 @@ export function validateStep(stepId, draft, inventory) {
     if (stepId === 'store') {
         if ((draft.targets?.android || draft.targets?.ios) && !draft.store?.contactEmail?.includes('@')) {
             warnings.push('Contact email recommended for Play/App Store privacy policy');
+        }
+    }
+
+    if (stepId === 'targets') {
+        if (draft.targets?.steam && !draft.assetOpportunity?.steam?.appId?.trim()) {
+            warnings.push('Steam target selected — set App ID in PACKS step (or enable after PACKS)');
         }
     }
 

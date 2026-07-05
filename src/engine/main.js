@@ -2294,6 +2294,9 @@ const UI = {
         const record = { code, name, data: Sync.capture(), savedAt: Date.now() };
         Persistence.exportFile(record);
         this.status('World file exported');
+        import('../shared/steamBridge.js').then(({ SteamBridge }) => {
+            SteamBridge.unlock('WORLD_SAVED');
+        }).catch(() => {});
     },
     importWorldFile: async function (e) {
         const file = e.target.files?.[0];

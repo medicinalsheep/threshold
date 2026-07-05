@@ -32,4 +32,11 @@ contextBridge.exposeInMainWorld('ThresholdShell', {
         supported: true,
         note: 'Uses WebView getUserMedia — grant mic permission in OS settings if needed.',
     },
+    steam: {
+        status: () => ipcRenderer.invoke('steam:status'),
+        listAchievements: () => ipcRenderer.invoke('steam:achievements:list'),
+        unlockAchievement: (id) => ipcRenderer.invoke('steam:achievement:unlock', id),
+        isAchievementUnlocked: (id) => ipcRenderer.invoke('steam:achievement:isUnlocked', id),
+        openOverlay: (dialog) => ipcRenderer.invoke('steam:overlay:open', dialog),
+    },
 });

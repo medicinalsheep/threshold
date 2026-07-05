@@ -5,6 +5,8 @@ dist-grok/
 dist-electron/
 dist-export/
 dist-store/
+dist-steam/
+config/steam-app.json
 android/
 ios/*
 !ios/README.md

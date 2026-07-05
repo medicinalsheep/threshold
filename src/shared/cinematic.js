@@ -213,6 +213,11 @@ export const Cinematic = {
             const meta = { source: sourcePath, reason };
             active = null;
             window.UI?.status?.(reason === 'ended' ? 'Cutscene ended' : 'Cutscene skipped');
+            if (reason === 'ended') {
+                import('./steamBridge.js').then(({ SteamBridge }) => {
+                    SteamBridge.unlock('FIRST_CUTSCENE');
+                }).catch(() => {});
+            }
             if (typeof cb === 'function') cb(meta);
             if (typeof options.onEnd === 'function') options.onEnd(meta);
         };

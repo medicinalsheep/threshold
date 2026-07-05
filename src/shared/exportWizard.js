@@ -121,6 +121,7 @@ export const ExportWizard = {
         this.draft.targets.android = !!document.getElementById('export-target-android')?.checked;
         this.draft.targets.windows = !!document.getElementById('export-target-windows')?.checked;
         this.draft.targets.ios = !!document.getElementById('export-target-ios')?.checked;
+        this.draft.targets.steam = !!document.getElementById('export-target-steam')?.checked;
     },
 
     readReviewFromUi() {
@@ -284,6 +285,8 @@ export const ExportWizard = {
                 <label class="export-wizard-check"><input type="checkbox" id="export-target-android" ${this.draft.targets.android ? 'checked' : ''}> ${profiles.android.label}</label>
                 <label class="export-wizard-check"><input type="checkbox" id="export-target-windows" ${this.draft.targets.windows ? 'checked' : ''}> ${profiles.windows.label}</label>
                 <label class="export-wizard-check"><input type="checkbox" id="export-target-ios" ${this.draft.targets.ios ? 'checked' : ''}> ${profiles.ios.label}</label>
+                <label class="export-wizard-check"><input type="checkbox" id="export-target-steam" ${this.draft.targets.steam ? 'checked' : ''}> ${profiles.steam.label}</label>
+                <p class="insert-hint" style="margin-top:6px;">Steam uses Windows Electron + <code>package:steam</code> · <code>docs/STEAM_RELEASE.md</code></p>
             `;
             return;
         }
@@ -386,6 +389,7 @@ export const ExportWizard = {
         if (this.draft.targets.android) targets.push('android');
         if (this.draft.targets.windows) targets.push('windows');
         if (this.draft.targets.ios) targets.push('ios');
+        if (this.draft.targets.steam) targets.push('steam');
         const contact = this.draft.store.contactEmail ? ` --contact ${this.draft.store.contactEmail}` : '';
         const privacy = this.draft.store.privacyPolicyUrl ? ` --privacy-url ${this.draft.store.privacyPolicyUrl}` : '';
 
@@ -400,7 +404,8 @@ export const ExportWizard = {
             <pre class="export-wizard-cli">npm run store:prep -- --manifest ${escapeText(filename)}${escapeText(contact)}${escapeText(privacy)}
 npm run store:assets -- --manifest ${escapeText(filename)}
 npm run bundle:assets
-npm run package:android:release  # or package:win / package:ios</pre>
+npm run package:android:release  # or package:win / package:steam
+npm run steam:depot -- --manifest ${escapeText(filename)}  # Steam depot upload</pre>
             <p class="insert-hint">Store assets: <code>docs/STORE_ASSETS.md</code> · Walkthrough: <code>docs/EXPORT_WALKTHROUGH.md</code></p>
         `;
         this._pendingFilename = filename;
@@ -428,6 +433,9 @@ npm run package:android:release  # or package:win / package:ios</pre>
         a.click();
         URL.revokeObjectURL(url);
         window.UI?.status(`Exported ${m.game.name} — run store:prep then package:*`);
+        import('./steamBridge.js').then(({ SteamBridge }) => {
+            SteamBridge.unlock('GAME_EXPORTED');
+        }).catch(() => {});
         this.close();
         return m;
     },

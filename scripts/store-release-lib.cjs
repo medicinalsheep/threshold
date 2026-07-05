@@ -71,6 +71,7 @@ function resolveTargets(manifest, cliTargets = null) {
         ios: !!t.ios,
         windows: t.windows !== false,
         macos: !!t.macos,
+        steam: !!t.steam,
         web: t.web !== false,
     };
 }
@@ -387,7 +388,10 @@ function buildNextSteps(targets, storeCfg, assetSummary = null) {
     if (targets.ios) steps.push(`npm run ${storeCfg.targets.ios.packageScript}`);
     if (targets.windows) steps.push(`npm run ${storeCfg.targets.windows.packageScript}`);
     if (targets.macos) steps.push(`npm run ${storeCfg.targets.macos.packageScript}`);
-    if (targets.windows && assetSummary?.steamAppId) {
+    if (targets.steam || (targets.windows && assetSummary?.steamAppId)) {
+        steps.push('npm run package:steam -- --manifest <game>.threshold-game.json');
+        steps.push('npm run steam:depot -- --manifest <game>.threshold-game.json');
+    } else if (targets.windows && assetSummary?.steamAppId) {
         steps.push('npm run export:graphics -- --profile steam --install');
     }
     return steps;

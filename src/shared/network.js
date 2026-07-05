@@ -41,6 +41,9 @@ export const Network = {
 
             this.peer.on('open', () => {
                 this.updateUi();
+                import('./steamBridge.js').then(({ SteamBridge }) => {
+                    SteamBridge.unlock('MULTIPLAYER_HOST');
+                }).catch(() => {});
                 resolve(roomId);
             });
 

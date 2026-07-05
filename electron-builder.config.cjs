@@ -26,6 +26,9 @@ module.exports = {
         'dist-pages/**/*',
         'electron/main.cjs',
         'electron/preload.cjs',
+        'electron/steam.cjs',
+        'electron/steamworks-shim.cjs',
+        'config/steam-release.json',
     ],
     extraMetadata: {
         main: 'electron/main.cjs',

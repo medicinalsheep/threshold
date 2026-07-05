@@ -1,0 +1,48 @@
+{
+  "format": "threshold-steam-release",
+  "version": 1,
+  "description": "Steamworks integration — achievements, overlay, depot upload",
+  "optionalModule": "steamworks.js",
+  "optionalModuleNote": "npm install steamworks.js — requires Steam client + Steamworks SDK redist binaries",
+  "devAppId": "480",
+  "devAppIdNote": "Spacewar — use for local Steam API testing with steam_appid.txt",
+  "achievements": [
+    {
+      "id": "WORLD_SAVED",
+      "name": "Archivist",
+      "description": "Save a world file from the Engine"
+    },
+    {
+      "id": "GAME_EXPORTED",
+      "name": "Ready to Ship",
+      "description": "Export a .threshold-game.json manifest"
+    },
+    {
+      "id": "FIRST_CUTSCENE",
+      "name": "Director",
+      "description": "Play an in-engine video cutscene"
+    },
+    {
+      "id": "MULTIPLAYER_HOST",
+      "name": "Host",
+      "description": "Host a multiplayer session"
+    }
+  ],
+  "depot": {
+    "contentDir": "dist-steam/content",
+    "outputDir": "dist-steam/output",
+    "scriptsDir": "dist-steam/scripts",
+    "executableGlob": "*-win-portable.exe",
+    "steamAppIdFile": "steam_appid.txt"
+  },
+  "steamcmd": {
+    "uploadScript": "dist-steam/scripts/upload-steam-depot.cmd",
+    "appBuildVdf": "dist-steam/scripts/app_build.vdf",
+    "depotBuildVdf": "dist-steam/scripts/depot_build.vdf"
+  },
+  "cli": {
+    "package": "npm run package:steam -- --manifest <game>.threshold-game.json",
+    "depot": "npm run steam:depot -- --manifest <game>.threshold-game.json",
+    "upload": "steamcmd +login <user> +run_app_build dist-steam/scripts/app_build.vdf +quit"
+  }
+}

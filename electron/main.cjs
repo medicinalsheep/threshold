@@ -1,6 +1,11 @@
 const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const fs = require('fs/promises');
+const { initSteamworks } = require('./steamworks-shim.cjs');
+const { registerSteamIpc } = require('./steam.cjs');
+
+initSteamworks();
+registerSteamIpc(ipcMain);
 
 const DIST_INDEX = path.join(__dirname, '..', 'dist-pages', 'index.html');
 const BUNDLE_ROOT = path.join(__dirname, '..', 'dist-pages', 'bundle');

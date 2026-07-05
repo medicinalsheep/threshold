@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → local GIMP/Blender art → AI agents on NPCs.
 
-**Current version:** **5.2.0** (Phase M+ — store asset mapping: Play IAP, Steam depot, itch, registry)
+**Current version:** **5.3.0** (Phase M — Steamworks bridge, depot CI, achievements)
 
 **Detailed next phases:** [NEXT_PHASES.md](NEXT_PHASES.md) (LOD, HILOD, iOS, Phase E leftovers)
 
@@ -84,12 +84,13 @@ See [NEXT_PHASES.md](NEXT_PHASES.md):
 - [x] Targeted graphics export CLI per platform — v4.5 (`export:graphics`)
 - [x] Normal maps in Engine (v3.8)
 
-### Phase 5 — Steam & distribution (v3.5+) 🔧
+### Phase 5 — Steam & distribution (v5.3) ✅
 
 - [x] Steam depot asset map + `export:graphics --profile steam` (Phase M+ — v5.2)
 - [x] itch.io pack structure in `store:assets` (Phase M+ — v5.2)
-- [ ] Steamworks SDK in Electron (Phase M)
-- [ ] Depot CI upload automation (Phase M)
+- [x] Steamworks bridge in Electron — optional `steamworks.js` (Phase M — v5.3)
+- [x] Depot CI — `package:steam` + `steam:depot` + steamcmd VDF (Phase M — v5.3)
+- [x] Achievements scaffold + auto-unlock hooks (Phase M — v5.3)
 
 ### Phase 6 — Scale & AI (v4.0+) 📋
 
@@ -113,7 +114,7 @@ See [NEXT_PHASES.md](NEXT_PHASES.md):
 | **APK** | Capacitor | 🔧 Scaffold |
 | **Windows** | Electron | 🔧 Scaffold |
 | **iOS** | Capacitor | ❌ Not started (Phase F) |
-| **Steam** | Electron + Steamworks | 📋 Planned |
+| **Steam** | Electron + Steamworks | ✅ Phase M (v5.3) |
 | **Self-host** | `dist-pages` + `relay/` | ✅ |
 
 **Manifest includes:** world, scripts, sounds, **textures[]**, gimp/blender/creativeCli blocks, agent configs, relay mode.

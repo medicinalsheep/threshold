@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v5.2.0 — Phase M+ (store asset mapping: Play IAP, Steam depot, itch packs, collectible registry).
+**Current:** v5.3.0 — Phase M (Steamworks bridge, depot CI, achievements, package:steam).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -164,7 +164,24 @@ npm run export:graphics -- --profile steam --install   # Steam depot bundle
 
 See [STORE_ASSETS.md](STORE_ASSETS.md) · `config/store-assets.json`
 
-**Next (Phase M):** Steamworks SDK in Electron, depot CI, overlay.
+### Phase M — Steam release (v5.3) ✅
+
+| Step | Status |
+|------|--------|
+| M1 `electron/steamworks-shim.cjs` — optional steamworks.js, stub fallback | ✅ |
+| M2 Achievements + overlay IPC (`ThresholdShell.steam`, `SteamBridge`) | ✅ |
+| M3 `npm run package:steam` — ultra graphics + portable exe | ✅ |
+| M4 `npm run steam:depot` — content layout + steamcmd VDF scripts | ✅ |
+| M5 Export TARGETS → Steam checkbox + manifest `packaging.steam` | ✅ |
+| M6 Auto achievements: world save, export, cutscene, multiplayer host | ✅ |
+
+```bash
+npm run package:steam -- --manifest my-game.threshold-game.json
+npm run steam:depot -- --manifest my-game.threshold-game.json
+npm install steamworks.js   # optional — achievements when on Steam
+```
+
+See [STEAM_RELEASE.md](STEAM_RELEASE.md)
 
 ### Phase K — Cinematic layer (v4.9) ✅
 

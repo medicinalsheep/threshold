@@ -70,7 +70,7 @@ npm run store:assets -- --manifest my-game.threshold-game.json
 1. PACKS step → set Steam App ID + Depot ID
 2. `npm run export:graphics -- --profile steam --install` — ultra tier, up to 4K textures
 3. Upload `dist-pages/bundle/` per paths in `steam-depot-assets.json`
-4. Phase M (next): Steamworks SDK in Electron for overlay + achievements
+4. Phase M (v5.3): `npm run package:steam` + `steam:depot` — see [STEAM_RELEASE.md](STEAM_RELEASE.md)
 
 ---
 

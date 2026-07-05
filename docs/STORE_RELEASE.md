@@ -116,7 +116,7 @@ npm run package:win
 
 Reduces SmartScreen warnings. Certificate from DigiCert, Sectigo, etc.
 
-**Distribution:** itch.io, Steam (Phase M), or direct download — no Microsoft Store pipeline in Phase L.
+**Distribution:** itch.io, [Steam (STEAM_RELEASE.md)](STEAM_RELEASE.md), or direct download — no Microsoft Store pipeline in Phase L.
 
 ---
 

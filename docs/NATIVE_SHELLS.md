@@ -227,9 +227,16 @@ Dev hot-reload: `npm run textures:watch` (localhost only).
 
 ---
 
-## Steam (Phase 5)
+## Steam (Phase M — v5.3)
 
-Windows Electron build is the base. Steamworks SDK integrates into the same shell — see [PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md).
+Windows Electron portable is the Steam base:
+
+```bash
+npm run package:steam -- --manifest my-game.threshold-game.json
+npm run steam:depot -- --manifest my-game.threshold-game.json
+```
+
+Optional `steamworks.js` for achievements + overlay when launched via Steam client. See [STEAM_RELEASE.md](STEAM_RELEASE.md).
 
 ---
 
