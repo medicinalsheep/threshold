@@ -2,8 +2,10 @@ import { copyFromElement } from '../utils/clipboard.js';
 import { Runtime } from '../shared/runtime.js';
 import { Session } from '../shared/session.js';
 import { REFERENCE_LIBRARY, REFERENCE_SECTIONS, checkCodeReadiness, getReferenceItem } from '../shared/referenceLibrary.js';
+import { ProjectVault } from '../shared/projectVault.js';
+import { Sync } from '../shared/sync.js';
 
-let activeSection = 'players';
+let activeSection = 'workflows';
 
 export function initCompiler() {
     console.log('Initializing Compiler...');
@@ -12,6 +14,15 @@ export function initCompiler() {
     document.getElementById('btn-comp-copy').addEventListener('click', () => Compiler.copy());
     document.getElementById('btn-comp-clear').addEventListener('click', () => Compiler.clear());
     document.getElementById('btn-comp-save-script').addEventListener('click', () => Compiler.saveScript());
+    document.getElementById('btn-comp-save-project')?.addEventListener('click', () => Compiler.saveProject());
+    document.getElementById('project-vault-list')?.addEventListener('click', (e) => {
+        const loadBtn = e.target.closest('[data-project-load]');
+        const worldBtn = e.target.closest('[data-project-world]');
+        const delBtn = e.target.closest('[data-project-del]');
+        if (loadBtn) Compiler.loadProject(loadBtn.dataset.projectLoad, false);
+        if (worldBtn) Compiler.loadProject(worldBtn.dataset.projectWorld, true);
+        if (delBtn) Compiler.deleteProject(delBtn.dataset.projectDel);
+    });
     document.getElementById('btn-comp-run').addEventListener('click', () => Compiler.runInEngine());
     document.getElementById('btn-comp-check')?.addEventListener('click', () => Compiler.checkReady());
 
@@ -30,6 +41,7 @@ export function initCompiler() {
     });
 
     Compiler.renderLibrary();
+    Compiler.renderProjectList();
     Compiler.syncHostDisplay();
     window.Compiler = Compiler;
 }
@@ -109,6 +121,68 @@ const Compiler = {
         document.getElementById('ref-checklist').innerHTML = '';
         document.getElementById('ref-detail').innerHTML = '';
         Runtime.setRunningCode('', 'compiler-clear');
+    },
+
+    async saveProject() {
+        const name = document.getElementById('comp-project-name')?.value?.trim()
+            || prompt('Project name?', `Project-${Date.now().toString(36).slice(-4)}`);
+        if (!name) return;
+        try {
+            const record = await ProjectVault.saveProject(name);
+            document.getElementById('comp-project-name').value = record.name;
+            this.renderProjectList();
+            this.statusEl.textContent = `SAVED ${record.id}`;
+            this.statusEl.style.opacity = 1;
+            setTimeout(() => { this.statusEl.style.opacity = 0; }, 2500);
+        } catch (e) {
+            alert('Project save failed: ' + e.message);
+        }
+    },
+
+    renderProjectList() {
+        const list = document.getElementById('project-vault-list');
+        if (!list) return;
+        const projects = ProjectVault.listLocal();
+        if (!projects.length) {
+            list.innerHTML = '<p class="ref-summary" style="margin:0;">No saved projects yet.</p>';
+            return;
+        }
+        list.innerHTML = projects.map((p) => `
+            <div class="project-vault-item">
+                <span><strong>${p.name}</strong> <code>${p.id}</code></span>
+                <div class="project-vault-actions">
+                    <button type="button" class="comp-btn" data-project-load="${p.id}">SCRIPTS</button>
+                    <button type="button" class="comp-btn" data-project-world="${p.id}">+ WORLD</button>
+                    <button type="button" class="comp-btn" data-project-del="${p.id}">✕</button>
+                </div>
+            </div>
+        `).join('');
+    },
+
+    async loadProject(id, withWorld = false) {
+        try {
+            const record = await ProjectVault.loadProject(id);
+            ProjectVault.applyToCompiler(record);
+            this.renderChecklist([]);
+            const detail = document.getElementById('ref-detail');
+            if (detail) detail.innerHTML = `<strong>${record.name}</strong><p>Loaded scripts from project ${record.id}</p>`;
+            if (withWorld && record.world) {
+                document.querySelector('[data-target="view-engine"]')?.click();
+                setTimeout(() => Sync.applyState(record.world), 120);
+            }
+            this.checkReady();
+            this.statusEl.textContent = withWorld ? 'PROJECT+WORLD' : 'PROJECT';
+            this.statusEl.style.opacity = 1;
+            setTimeout(() => { this.statusEl.style.opacity = 0; }, 2000);
+        } catch (e) {
+            alert(e.message);
+        }
+    },
+
+    async deleteProject(id) {
+        if (!confirm('Delete this project from vault?')) return;
+        await ProjectVault.deleteProject(id);
+        this.renderProjectList();
     },
 
     saveScript() {

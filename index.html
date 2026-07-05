@@ -128,7 +128,7 @@
             </div>
 
             <!-- Environment Panel (hideable) -->
-            <div id="env-panel" class="panel">
+            <div id="env-panel" class="panel hidden">
                 <div class="prop-row panel-drag-handle">
                     <h3 style="margin:0;">ENVIRONMENT</h3>
                     <button id="btn-env-close" class="btn-sm" type="button">✕</button>
@@ -354,9 +354,17 @@
             <aside class="comp-sidebar">
                 <h2 style="margin: 0 0 20px 0; font-size: 1rem; letter-spacing: 2px;">LIBRARY</h2>
 
-                <!-- NEW: Save Script Controls -->
+                <div class="project-vault-block" style="border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px;">
+                    <label style="color:var(--accent-color); font-size:0.7rem;">PROJECT VAULT</label>
+                    <p style="font-size:0.65rem;color:#888;margin:4px 0 8px;">Save scripts + live world together. Build later on this device.</p>
+                    <input type="text" id="comp-project-name" class="comp-textarea" style="padding:5px; height:auto; margin-bottom:5px;" placeholder="project name...">
+                    <button id="btn-comp-save-project" class="comp-btn" style="width:100%; border-color:var(--accent-color); color:var(--accent-color); margin-bottom:8px;">SAVE PROJECT</button>
+                    <div id="project-vault-list" class="project-vault-list"></div>
+                </div>
+
+                <!-- Save Script Controls -->
                 <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px;">
-                    <label style="color:#888; font-size:0.7rem;">SAVE CURRENT SCRIPT</label>
+                    <label style="color:#888; font-size:0.7rem;">SAVE SCRIPT TO DISK</label>
                     <input type="text" id="comp-filename" class="comp-textarea" style="padding:5px; height:auto; margin-bottom:5px;" placeholder="filename...">
                     <select id="comp-tag" class="comp-textarea" style="padding:5px; height:auto; margin-bottom:5px;">
                         <option value="SCENE">TAG: SCENE</option>
@@ -369,7 +377,8 @@
 
                 <p style="font-size:0.7rem;color:#888;margin:0 0 10px;">Reference library — pick a template, verify readiness, then RUN IN ENGINE.</p>
                 <div class="ref-section-tabs">
-                    <button type="button" class="ref-section-tab active" data-ref-section="players">PLAYERS</button>
+                    <button type="button" class="ref-section-tab active" data-ref-section="workflows">WORKFLOWS</button>
+                    <button type="button" class="ref-section-tab" data-ref-section="players">PLAYERS</button>
                     <button type="button" class="ref-section-tab" data-ref-section="worlds">WORLDS</button>
                     <button type="button" class="ref-section-tab" data-ref-section="techniques">TECHNIQUES</button>
                 </div>
@@ -418,6 +427,7 @@
                         <option value="extend">Extend current world</option>
                         <option value="player">Player type / avatar</option>
                         <option value="world">World / map layout</option>
+                        <option value="workflow">Workflow / how to start</option>
                         <option value="audit">Audit scene (edit vs play)</option>
                     </select>
                 </div>

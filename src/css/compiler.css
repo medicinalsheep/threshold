@@ -145,3 +145,35 @@
 
 .ready-row.ok { color: var(--accent-color); }
 .ready-row.warn { color: #aa8800; }
+
+.project-vault-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.project-vault-item {
+    border: 1px solid var(--border-color);
+    padding: 6px;
+    font-size: 0.65rem;
+}
+
+.project-vault-item code {
+    opacity: 0.75;
+}
+
+.project-vault-actions {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+}
+
+.project-vault-actions .comp-btn {
+    flex: 1;
+    min-width: 52px;
+    margin-bottom: 0;
+    padding: 4px 6px;
+    font-size: 0.58rem;
+    text-align: center;
+}

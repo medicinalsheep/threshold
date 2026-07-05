@@ -14,6 +14,7 @@ import { getSceneObjectsForSpawn } from '../shared/sceneContext.js';
 import { Actions } from '../shared/actions.js';
 import { Network } from '../shared/network.js';
 import { PlayerController } from './player.js';
+import { HumanMesh } from './humanMesh.js';
 import { Persistence } from '../shared/persistence.js';
 import { Sync } from '../shared/sync.js';
 import { Controls, CONTROL_ACTIONS } from '../shared/controls.js';
@@ -795,17 +796,21 @@ const World = {
         const x = State.ctxTargetPos.x;
         const z = State.ctxTargetPos.z;
         const y = State.ctxTargetPos.y;
-        const body = this.createObject('cube', 'character_body', 0x3366cc, false);
-        body.scale.set(0.55, 1.1, 0.35);
-        body.position.set(x, y + 1.1, z);
-        const head = this.createObject('sphere', 'character_head', 0xffcc99, false);
-        head.scale.set(0.45, 0.45, 0.45);
-        head.position.set(x, y + 2.1, z);
-        body.userData.isCharacter = true;
-        body.userData.isHuman = true;
-        head.userData.isCharacter = true;
-        head.userData.isHuman = true;
-        if (!silent) { UI.closeInsert(); UI.status('Character inserted'); }
+        const npc = HumanMesh.build();
+        if (npc) {
+            npc.position.set(x, y, z);
+            npc.userData = {
+                id: `npc_${Date.now()}`,
+                name: 'NPC',
+                type: 'human',
+                isHuman: true,
+                isCharacter: true,
+                locked: false
+            };
+            Engine.scene.add(npc);
+            State.objects.push(npc);
+        }
+        if (!silent) { UI.closeInsert(); UI.status('NPC human inserted'); }
     },
     spawnPlayablePlayer: function (silent = false) {
         const x = State.ctxTargetPos.x;

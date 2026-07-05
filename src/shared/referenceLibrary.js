@@ -1,13 +1,74 @@
 /** Code reference library — Compiler sidebar + PromptGen context */
 
-export const REFERENCE_SECTIONS = ['players', 'worlds', 'techniques'];
+export const REFERENCE_SECTIONS = ['workflows', 'players', 'worlds', 'techniques'];
 
 export const REFERENCE_LIBRARY = {
+    workflows: [
+        {
+            id: 'quick_start',
+            title: 'Quick Start — Solo Game in 10 Steps',
+            summary: 'Lobby → build world (EDIT) → save → code → PLAY. Full loop for first playable scene.',
+            checklist: ['Start SOLO or HOST', 'Stay in EDIT (paused) while building', 'SAVE WORLD before big experiments', 'RUN CODE only when paused (host/admin)'],
+            code: `// WORKFLOW (not runnable — follow in UI):
+// 1. Lobby → SOLO PLAY (or CREATE SESSION + copy link)
+// 2. ENGINE → EDIT badge (paused) — fly with WASD, right-click INSERT
+// 3. INSERT → SPAWN AS PLAYER for walkable avatar
+// 4. Build props: Compiler → Techniques → "Extend Scene" → RUN IN ENGINE
+// 5. Select objects → inspector Texture / Collision / Audio tabs
+// 6. SAVE WORLD (toolbar) — get ?world=CODE link
+// 7. PromptGen → describe idea → paste AI output in Compiler
+// 8. CHECK CODE READY → RUN IN ENGINE (stays paused in EDIT)
+// 9. Toolbar PLAY (resume) — test walk + physics
+// 10. SAVE PROJECT in Compiler vault — script + world snapshot together`
+        },
+        {
+            id: 'save_and_resume',
+            title: 'Save & Build Later — Worlds + Projects',
+            summary: 'Worlds = scene state. Projects = scene + scripts together in Compiler vault.',
+            checklist: ['SAVE WORLD for map only', 'SAVE PROJECT for map + compiler scripts', 'Export JSON for backup', '?world=CODE for share links'],
+            code: `// Worlds (toolbar SAVE WORLD / WORLDS):
+// - IndexedDB on this device + optional Supabase cloud
+// - Share: Persistence.getShareUrl(code) → ?world=CODE
+
+// Projects (Compiler sidebar PROJECT VAULT):
+// - Saves comp-input, comp-output, running code, AND live world snapshot
+// - Load project → restores scripts; optionally apply world in Engine
+
+// Disk export still available: EXPORT scene JSON, SAVE TO DISK script`
+        },
+        {
+            id: 'multiplayer_host',
+            title: 'Multiplayer Host Flow',
+            summary: 'Host pauses to edit; guests play locked map. Admins can code. Controls sync from host.',
+            checklist: ['CREATE SESSION → COPY LINK', 'PAUSE = EDIT for world edits', 'PLAYERS panel for admin flags', 'PUSH CONTROLS TO ALL after rebinding'],
+            code: `// Host checklist:
+// 1. CREATE SESSION → share invite link
+// 2. PAUSE (EDIT) — build world, run Compiler code
+// 3. PLAYERS panel — grant Admin to trusted guests
+// 4. KEYS → Host profile → PUSH CONTROLS TO ALL
+// 5. RESUME (PLAY) — guests explore; map locked
+// 6. Guests: KEYS → Guest profile for personal overrides
+// Auto-pause when host opens Compiler/PromptGen (toggle in PLAYERS panel)`
+        },
+        {
+            id: 'ai_prompt_loop',
+            title: 'AI-Assisted Build Loop',
+            summary: 'PromptGen → Compiler → Engine. Reference library patterns keep output runnable.',
+            checklist: ['Include live scene in PromptGen', 'Pick task type (extend/player/world)', 'CHECK CODE READY before RUN', 'Pause stays on during EDIT runs'],
+            code: `// Loop:
+// 1. PromptGen — check "Include live scene" + pick TASK
+// 2. COPY PROMPT → your AI (or RUN WITH GROK)
+// 3. Paste JS into Compiler INPUT → CONVERT → CHECK CODE READY
+// 4. RUN IN ENGINE (switches to Engine tab, executes if paused)
+// 5. Inspect results in EDIT → Texture/Collision panels
+// Reference: Compiler → WORKFLOWS + TECHNIQUES templates`
+        }
+    ],
     players: [
         {
             id: 'walker_capsule',
-            title: 'Walker — Capsule Physics',
-            summary: 'Playable human with Cannon body, third-person camera. Baseline for all player types.',
+            title: 'Walker — Detailed Human + Physics',
+            summary: 'Playable HumanMesh avatar with walk animation, Cannon body, third-person camera.',
             checklist: ['Uses PlayerController.spawn', 'No World.clearWorld unless intended', 'Skins use MeshStandardMaterial'],
             code: `// Spawn playable walker at world center — pause (EDIT) before placing props
 PlayerController.spawn(0, 2, 0);
@@ -201,6 +262,19 @@ export function checkCodeReadiness(code) {
     ];
 }
 
+export function getWorkflowPromptBlock() {
+    const lines = ['WORKFLOWS (OOTB paths):'];
+    REFERENCE_LIBRARY.workflows.forEach((item) => {
+        lines.push(`- ${item.title}: ${item.summary}`);
+    });
+    lines.push('\nPERSISTENCE:');
+    lines.push('- SAVE WORLD → IndexedDB + ?world=CODE (scene snapshot via Persistence)');
+    lines.push('- SAVE PROJECT → Compiler vault (world + scripts together via ProjectVault)');
+    lines.push('- EXPORT/IMPORT JSON for portable scene files');
+    lines.push('- Player files: INSERT → SAVE MY PLAYER (share .json)');
+    return lines.join('\n');
+}
+
 export function getReferencePromptBlock() {
     const lines = ['REFERENCE LIBRARY (Compiler tab):'];
     REFERENCE_SECTIONS.forEach((sec) => {
@@ -210,5 +284,6 @@ export function getReferencePromptBlock() {
         });
     });
     lines.push('\nEDIT vs PLAY: Paused = EDIT (world/objects editable). Running = PLAY (map locked; player skin/code only).');
+    lines.push('\n' + getWorkflowPromptBlock());
     return lines.join('\n');
 }

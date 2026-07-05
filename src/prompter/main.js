@@ -57,6 +57,7 @@ ${getReferencePromptBlock()}
             extend: idea ? `Extend the live world: "${idea}"` : 'Extend the current live world.',
             player: idea ? `Create/improve player type: "${idea}"` : 'Design a playable or NPC player type.',
             world: idea ? `Build world layout: "${idea}"` : 'Design a world layout from current scene.',
+            workflow: idea ? `Follow workflow / game design: "${idea}"` : 'Describe a complete workflow from lobby to playable game.',
             audit: 'Audit current scene — list what is editable in EDIT mode vs locked in PLAY mode.'
         };
 

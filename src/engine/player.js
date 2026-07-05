@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
+import { HumanMesh } from './humanMesh.js';
 
 export const PlayerController = {
     mesh: null,
@@ -18,30 +19,8 @@ export const PlayerController = {
         const Physics = window.Physics;
         if (!State || !Engine?.scene) return null;
 
-        this.group = new THREE.Group();
+        this.group = HumanMesh.build();
         this.group.name = 'player_human';
-
-        const skin = 0xffcc99;
-        const shirt = 0x3366cc;
-        const matSkin = new THREE.MeshStandardMaterial({ color: skin, roughness: 0.8 });
-        const matShirt = new THREE.MeshStandardMaterial({ color: shirt, roughness: 0.7 });
-
-        const torso = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.7, 0.28), matShirt);
-        torso.position.y = 1.15;
-        torso.castShadow = true;
-        const head = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 16), matSkin);
-        head.position.y = 1.65;
-        head.castShadow = true;
-        const legL = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.55, 0.18), matShirt);
-        legL.position.set(-0.14, 0.55, 0);
-        const legR = legL.clone();
-        legR.position.x = 0.14;
-        const armL = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.45, 0.14), matSkin);
-        armL.position.set(-0.36, 1.2, 0);
-        const armR = armL.clone();
-        armR.position.x = 0.36;
-
-        this.group.add(torso, head, legL, legR, armL, armR);
         this.group.position.set(x, y, z);
         this.group.userData = {
             id: 'player',
@@ -136,6 +115,9 @@ export const PlayerController = {
         this.group.position.set(this.body.position.x, this.body.position.y - 0.8, this.body.position.z);
         if (this._lastFacing !== undefined) this.group.rotation.y = this._lastFacing;
 
+        const speed = Math.hypot(this.body.velocity.x, this.body.velocity.z);
+        HumanMesh.updateWalk(this.group, speed);
+
         const forward = new THREE.Vector3();
         camera.getWorldDirection(forward);
         forward.y = 0;
@@ -160,13 +142,7 @@ export const PlayerController = {
 
     applySkin({ bodyColor = 0x3366cc, headColor = 0xffcc99, roughness = 0.7 } = {}) {
         if (!this.group) return;
-        this.group.traverse((c) => {
-            if (!c.isMesh || !c.material) return;
-            const isHead = c.geometry?.type === 'SphereGeometry';
-            c.material.color.setHex(isHead ? headColor : bodyColor);
-            c.material.roughness = roughness;
-            c.material.needsUpdate = true;
-        });
+        HumanMesh.applySkin(this.group, { bodyColor, headColor, roughness });
     },
 
     applyState(data) {
