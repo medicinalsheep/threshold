@@ -38,6 +38,7 @@ function createWindow() {
     });
 
     mainWindow.loadFile(DIST_INDEX);
+    mainWindow.maximize();
 
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
         shell.openExternal(url);
@@ -58,11 +59,16 @@ app.on('window-all-closed', () => {
 
 ipcMain.handle('shell:fullscreen', (_e, on) => {
     if (!mainWindow) return false;
-    mainWindow.setFullScreen(!!on);
-    return mainWindow.isFullScreen();
+    if (on) {
+        if (mainWindow.isFullScreen()) mainWindow.setFullScreen(false);
+        mainWindow.maximize();
+    } else {
+        mainWindow.unmaximize();
+    }
+    return mainWindow.isMaximized();
 });
 
-ipcMain.handle('shell:fullscreen:is', () => mainWindow?.isFullScreen() ?? false);
+ipcMain.handle('shell:fullscreen:is', () => mainWindow?.isMaximized() ?? false);
 
 ipcMain.handle('shell:fs:readText', async (_e, filePath) => {
     return fs.readFile(filePath, 'utf8');

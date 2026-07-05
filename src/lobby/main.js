@@ -1,5 +1,6 @@
 import { Session } from '../shared/session.js';
 import { Network } from '../shared/network.js';
+import { enterWindowedFullscreen } from '../shared/fullscreen.js';
 import { setLoadTC } from '../shared/referenceEdition.js';
 import {
     applyLobbyVoipVisibility,
@@ -34,6 +35,7 @@ export function initLobby(onReady) {
 
     const enterApp = () => {
         overlay?.classList.add('hidden');
+        void enterWindowedFullscreen();
         onReady?.();
     };
 

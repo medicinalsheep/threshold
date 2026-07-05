@@ -34,8 +34,8 @@ function syncButtons() {
         if (!btn) return;
         btn.setAttribute('aria-pressed', on ? 'true' : 'false');
         btn.textContent = on ? 'EXIT' : 'FULL';
-        btn.title = on ? 'Exit fullscreen' : 'Enter fullscreen';
-        btn.setAttribute('aria-label', on ? 'Exit fullscreen' : 'Enter fullscreen');
+        btn.title = on ? 'Exit windowed fullscreen' : 'Windowed fullscreen';
+        btn.setAttribute('aria-label', on ? 'Exit windowed fullscreen' : 'Enter windowed fullscreen');
     });
     if (exit) {
         exit.hidden = !on;
@@ -50,22 +50,27 @@ export function setImmersive(on, { persist = true } = {}) {
     window.dispatchEvent(new Event('resize'));
 }
 
-async function enterImmersive() {
+/** Windowed fullscreen — hide UI chrome; native shell maximizes instead of exclusive fullscreen. */
+export async function enterWindowedFullscreen() {
     if (ThresholdShell.isNative) {
         await ThresholdShell.enterFullscreen();
-    } else {
-        await requestNative();
     }
     setImmersive(true);
 }
 
-async function leaveImmersive() {
+export async function leaveWindowedFullscreen() {
     if (ThresholdShell.isNative) {
         await ThresholdShell.exitFullscreen();
-    } else {
-        await exitNative();
     }
     setImmersive(false);
+}
+
+async function enterImmersive() {
+    await enterWindowedFullscreen();
+}
+
+async function leaveImmersive() {
+    await leaveWindowedFullscreen();
 }
 
 export async function toggleImmersive() {
@@ -102,8 +107,12 @@ export function initFullscreen() {
     document.addEventListener('webkitfullscreenchange', onFullscreenChange);
 
     if (ViewPrefs.get('immersive', false)) {
-        enterImmersive();
+        void enterImmersive();
     } else {
         syncButtons();
     }
+}
+
+export function isWindowedFullscreen() {
+    return isImmersive();
 }

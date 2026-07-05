@@ -80,7 +80,11 @@ export const PlayerController = {
         this._velZ = 0;
         await tryLoadAvatarGroup(this.group, 'starter_avatar.glb');
 
-        this._inheritLookFromCamera();
+        if (State.viewMode === 'fps') {
+            this._inheritLookFromCamera();
+        } else {
+            this.resetCameraBehind();
+        }
         this._syncWalkOrbit();
         this._applyViewMode();
         window.FpsViewmodel?.mount?.(Engine.camera);
@@ -152,32 +156,32 @@ export const PlayerController = {
     _inheritLookFromCamera() {
         const camera = window.Engine?.camera;
         if (!camera || !this.group) {
-            this._camYaw = Math.PI;
+            this._camYaw = this.group?.rotation?.y ?? 0;
             this._camPitch = 0.28;
             return;
         }
         const chest = this.group.position.clone().add(new THREE.Vector3(0, 1.4, 0));
         const offset = camera.position.clone().sub(chest);
         if (offset.lengthSq() < 0.25) {
-            this._camYaw = Math.PI;
+            this._camYaw = this.group.rotation.y;
             this._camPitch = 0.28;
             return;
         }
-        this._camYaw = Math.atan2(offset.x, offset.z);
         const horiz = Math.hypot(offset.x, offset.z) || 1;
+        this._camYaw = Math.atan2(-offset.x, -offset.z);
         this._camPitch = Math.atan2(offset.y - TPS_HEIGHT, horiz);
         this._camPitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, this._camPitch));
     },
 
     applyLookInput(dx, dy, sens = 1) {
         if (!this.spawned || window.State?.controlMode !== 'walk' || window.State?.isPaused) return;
-        this._camYaw -= dx * 0.003 * sens;
-        this._camPitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, this._camPitch + dy * 0.0025 * sens));
+        this._camYaw += dx * 0.003 * sens;
+        this._camPitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, this._camPitch - dy * 0.0025 * sens));
     },
 
     resetCameraBehind() {
         if (!this.spawned || !this.group) return;
-        this._camYaw = this.group.rotation.y + Math.PI;
+        this._camYaw = this.group.rotation.y;
         this._camPitch = 0.28;
     },
 
@@ -314,15 +318,13 @@ export const PlayerController = {
             const dist = TPS_DIST - this._crouchBlend * 0.8;
             const height = TPS_HEIGHT - this._crouchBlend * 0.55;
             const offset = new THREE.Vector3(
-                Math.sin(yaw) * Math.cos(this._camPitch) * dist,
+                -Math.sin(yaw) * Math.cos(this._camPitch) * dist,
                 Math.sin(this._camPitch) * dist + height,
-                Math.cos(yaw) * Math.cos(this._camPitch) * dist
+                -Math.cos(yaw) * Math.cos(this._camPitch) * dist
             );
             const desired = chest.clone().add(offset);
             camera.position.lerp(desired, 0.14);
-            camera.rotation.order = 'YXZ';
-            camera.rotation.y = yaw;
-            camera.rotation.x = this._camPitch;
+            camera.lookAt(chest);
             Engine.controls.target.copy(chest);
         }
     },
