@@ -324,7 +324,22 @@ World.startTcCircuit()
 npm run tc:circuit:verify
 ```
 
-**Next:** Per-guest drivable avatars on synced vehicles (G2).
+### Phase G2 — Drivable TC vehicles + live sync (v5.15) ✅
+
+| Step | Status |
+|------|--------|
+| G2.1 `tcDrive.js` — claim tc_run/tc_haul, WASD physics drive | ✅ |
+| G2.2 `LIVE_STATE` avatar sync (~80ms) without world rebuild | ✅ |
+| G2.3 `World.enterTcRace()` — circuit + vehicle claim | ✅ |
+| G2.4 Extra tc_run spawn for 3+ players | ✅ |
+| G2.5 `npm run tc:drive:verify` | ✅ |
+
+```bash
+World.enterTcRace()   # Compiler after Lobby → TC →
+npm run tc:drive:verify
+```
+
+**Next:** Vehicle enter/exit animations, checkpoint gate triggers (G3).
 
 ### Phase K — Cinematic layer (v4.9) ✅
 

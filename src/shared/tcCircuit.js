@@ -39,6 +39,8 @@ export const TcCircuit = {
     },
 
     getLocalPosition() {
+        const driveAv = window.TcDrive?.getAvatar?.();
+        if (driveAv) return driveAv;
         const PC = window.PlayerController;
         if (PC?.spawned && PC.group) {
             const p = PC.group.position;
@@ -146,7 +148,7 @@ export const TcCircuit = {
         window.UI?.status?.(msg);
         this._renderHud();
 
-        if (net?.mode === 'host') net.scheduleBroadcast();
+        if (net?.mode === 'host') net.scheduleLiveSync?.();
         return event;
     },
 
@@ -205,14 +207,14 @@ export const TcCircuit = {
         this._local.insideCp = inside;
 
         const net = window.Network;
-        const positions = net?.mode === 'host'
-            ? net.getPlayerPositions?.()
-            : window.State?.syncPlayerPositions;
+        const avatars = net?.mode === 'host'
+            ? net.getPlayerAvatars?.()
+            : window.State?.syncPlayerAvatars;
         const roster = net?.mode === 'host'
             ? net.getPlayerList()
             : (this.state.players ? Object.values(this.state.players).map((p) => ({ key: p.key, name: p.name })) : []);
-        if (positions && Object.keys(positions).length) {
-            RemotePlayers.sync(positions, roster);
+        if (avatars && Object.keys(avatars).length) {
+            RemotePlayers.syncAvatars(avatars, roster);
         }
     },
 

@@ -62,7 +62,7 @@ Use Child assets as **design seeds** — same objects can anchor many game types
 |---------------|----------|
 | Physics sandbox / crash test | `hasPhysics`, mass, friction in inspector |
 | Time trial / circuit | TC Span + Compiler timer + `tc_cp` checkpoint (see WORKFLOWS → TC Circuit) |
-| Multiplayer race | `World.startTcCircuit()` — synced leaderboard + `LAP_CROSS` (G1) |
+| Multiplayer race | `World.enterTcRace()` — laps (G1) + drivable vehicles (G2) |
 | Delivery / fetch quest | NPC agent + trigger volume on Hauler |
 | Store SKU demo | PACKS step: `game.vehicle.runner` SKU |
 

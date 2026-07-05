@@ -1,0 +1,16 @@
+{
+  "format": "threshold-tc-drive",
+  "version": 1,
+  "defaultVehicle": "tc_run",
+  "fallbackOrder": ["tc_run", "tc_haul"],
+  "engineForce": 90,
+  "brakeForce": 54,
+  "turnRate": 2.4,
+  "maxSpeed": 14,
+  "spawnExtra": {
+    "vehicleId": "tc_run",
+    "url": "import/tc_run.glb",
+    "name": "TC Runner",
+    "offset": { "x": 0, "y": 0, "z": 4 }
+  }
+}

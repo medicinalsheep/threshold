@@ -42,9 +42,52 @@ export const Sync = {
             admins: window.Session?.getAdminList?.() || [],
             players: Network?.mode === 'host' ? Network.getPlayerList() : undefined,
             playerPositions: Network?.getPlayerPositions?.() || {},
+            playerAvatars: Network?.getPlayerAvatars?.() || {},
+            vehicleClaims: Network?.getVehicleClaims?.() || {},
             circuit: window.TcCircuit?.captureState?.() || null,
             camera,
         };
+    },
+
+    captureLive() {
+        const State = window.State;
+        if (!State) return null;
+        return {
+            playerAvatars: window.Network?.getPlayerAvatars?.() || {},
+            playerPositions: window.Network?.getPlayerPositions?.() || {},
+            vehicleClaims: window.Network?.getVehicleClaims?.() || {},
+            circuit: window.TcCircuit?.captureState?.() || null,
+            isPaused: !!State.isPaused,
+            controlMode: State.controlMode || 'fly',
+            player: window.PlayerController?.getState?.() || null,
+        };
+    },
+
+    applyLiveState(state) {
+        if (!state || applying) return;
+        const State = window.State;
+        if (!State) return;
+
+        if (state.vehicleClaims) window.TcDrive?.setClaims?.(state.vehicleClaims);
+        if (state.playerAvatars) {
+            State.syncPlayerAvatars = state.playerAvatars;
+            State.syncPlayerPositions = state.playerPositions || State.syncPlayerPositions;
+            window.TcDrive?.applyNetworkState?.(state.playerAvatars, state.vehicleClaims || {});
+            window.Voip?.setPlayerPositions?.(state.playerPositions || {});
+        } else if (state.playerPositions) {
+            State.syncPlayerPositions = state.playerPositions;
+            window.Voip?.setPlayerPositions?.(state.playerPositions);
+        }
+        if (state.circuit !== undefined) window.TcCircuit?.applyState?.(state.circuit);
+
+        if (typeof state.isPaused === 'boolean') {
+            State.isPaused = state.isPaused;
+            window.Session.isPaused = state.isPaused;
+        }
+        if (state.controlMode && !window.TcDrive?.active) State.controlMode = state.controlMode;
+        if (state.player && window.PlayerController && !window.TcDrive?.active) {
+            window.PlayerController.applyState(state.player);
+        }
     },
 
     async applyState(state) {
@@ -120,7 +163,12 @@ export const Sync = {
             window.dispatchEvent(new CustomEvent('threshold:pause', { detail: { paused: State.isPaused, reason: state.pauseReason } }));
             if (state.camera) State.hostCamera = state.camera;
             if (state.playerPositions) State.syncPlayerPositions = state.playerPositions;
+            if (state.playerAvatars) State.syncPlayerAvatars = state.playerAvatars;
+            if (state.vehicleClaims) window.TcDrive?.setClaims?.(state.vehicleClaims);
             if (state.circuit !== undefined) window.TcCircuit?.applyState?.(state.circuit);
+            if (state.playerAvatars) {
+                window.TcDrive?.applyNetworkState?.(state.playerAvatars, state.vehicleClaims || {});
+            }
 
             if (state.player && window.PlayerController) {
                 window.PlayerController.applyState(state.player);
@@ -131,6 +179,7 @@ export const Sync = {
             await window.TextureHilod?.rehydrateAfterSync?.();
             window.UI?.updateControlMode?.();
             window.Spectate?.updateHud?.();
+            window.TcDrive?.rebindAfterSync?.();
         } finally {
             applying = false;
         }
@@ -204,6 +253,16 @@ export const Sync = {
             case 'CIRCUIT_STOP':
                 if (window.Network?.mode === 'host' || window.Network?.mode === 'solo') {
                     window.TcCircuit?.stop?.(true);
+                }
+                break;
+            case 'VEHICLE_CLAIM':
+                if (window.Network?.mode === 'host') {
+                    window.TcDrive?.hostClaim?.(payload.fromKey, payload.vehicleId);
+                }
+                break;
+            case 'VEHICLE_RELEASE':
+                if (window.Network?.mode === 'host') {
+                    window.TcDrive?.hostRelease?.(payload.fromKey);
                 }
                 break;
             default:

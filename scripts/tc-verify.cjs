@@ -48,6 +48,12 @@ const CIRCUIT_SCRIPTS = [
     'config/tc-circuit.json',
     'scripts/tc-circuit-verify.cjs',
 ];
+
+const DRIVE_SCRIPTS = [
+    'src/shared/tcDrive.js',
+    'config/tc-drive.json',
+    'scripts/tc-drive-verify.cjs',
+];
 const VIDEO_DIR = path.join(ROOT, 'video');
 const PUB_VID = path.join(ROOT, 'public', 'bundle', 'video');
 
@@ -96,6 +102,9 @@ SHIP_SCRIPTS.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`mi
 
 console.log('[tc-verify] circuit G1');
 CIRCUIT_SCRIPTS.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`missing ${f}`)));
+
+console.log('[tc-verify] drive G2');
+DRIVE_SCRIPTS.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`missing ${f}`)));
 
 console.log('[tc-verify] modules');
 MODULES.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`missing ${f}`)));

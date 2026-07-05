@@ -151,12 +151,14 @@ m.userData.textureHint = 'textures/stone_albedo.png';
             id: 'tc_circuit',
             title: 'TC Circuit — Lap Timer + Checkpoint',
             summary: 'Extend the TC showcase into a time-trial loop: hit tc_cp, log laps, multiplayer lap sync (G1) without clearing the scene.',
-            checklist: ['Lobby TC → then CREATE SESSION for multiplayer', 'Compiler RUN: World.startTcCircuit()', 'Spawn as Player · PLAY · cross tc_cp', 'Leaderboard syncs host → guests'],
-            code: `// TC CIRCUIT (G1) — multiplayer lap sync · paste after Lobby → TC →
-// Host: World.startTcCircuit() · Guests: synced leaderboard + remote player markers
-// Spawn player: Insert → Spawn as Player · PLAY mode · drive to tc_cp (green beacon)
-World.startTcCircuit();
-// Stop: World.stopTcCircuit()`
+            checklist: ['Lobby TC → CREATE SESSION for multiplayer', 'RUN: World.enterTcRace() — circuit + claim tc_run/tc_haul', 'PLAY · WASD drive · cross tc_cp', 'LIVE_STATE syncs vehicles + laps'],
+            code: `// TC CIRCUIT (G1+G2) — paste after Lobby → TC →
+// Solo or host: starts circuit + claims TC Runner
+// Guests auto-claim tc_haul (or extra tc_run spawn) · LIVE_STATE sync ~80ms
+World.enterTcRace();
+// Or step-by-step:
+// World.startTcCircuit(); World.claimTcVehicle('tc_run');
+// Release: World.releaseTcVehicle(); World.stopTcCircuit();`
         },
         {
             id: 'lego_fit_anything',

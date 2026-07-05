@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "5.14.0",
+  "version": "5.15.0",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
@@ -41,6 +41,7 @@
     "tc:ship": "node scripts/tc-ship-e2e.cjs",
     "tc:ship:verify": "node scripts/tc-ship-verify.cjs",
     "tc:circuit:verify": "node scripts/tc-circuit-verify.cjs",
+    "tc:drive:verify": "node scripts/tc-drive-verify.cjs",
     "creative:watch": "node scripts/creative-watch.cjs",
     "bundle:assets": "node scripts/bundle-assets.cjs",
     "export:graphics": "node scripts/export-graphics.cjs",

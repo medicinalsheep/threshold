@@ -46,6 +46,7 @@ import { MeshLod } from '../shared/meshLod.js';
 import { TextureHilod } from '../shared/textureHilod.js';
 import { Cinematic } from '../shared/cinematic.js';
 import '../shared/tcCircuit.js';
+import '../shared/tcDrive.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 
@@ -955,11 +956,15 @@ const Engine = {
         const camFollow = window.Spectate?.shouldFollowHost?.() || window.Spectate?.isFollowingHost?.();
 
         if (!State.isPaused && !camFollow) {
-            if (State.controlMode === 'walk' && PlayerController.spawned) {
+            if (State.controlMode === 'vehicle' && window.TcDrive?.active) {
+                window.TcDrive.prePhysics();
+            } else if (State.controlMode === 'walk' && PlayerController.spawned) {
                 PlayerController.prePhysics(State.keys);
             }
             Physics.update();
-            if (State.controlMode === 'walk' && PlayerController.spawned) {
+            if (State.controlMode === 'vehicle' && window.TcDrive?.active) {
+                window.TcDrive.postPhysics();
+            } else if (State.controlMode === 'walk' && PlayerController.spawned) {
                 PlayerController.postPhysics();
             } else {
                 const speed = 0.2 * (Controls.getSprintMultiplier?.() || 1);
@@ -1231,6 +1236,15 @@ const World = {
     },
     stopTcCircuit: function () {
         return window.TcCircuit?.stop?.();
+    },
+    claimTcVehicle: function (vehicleId) {
+        return window.TcDrive?.claimVehicle?.(vehicleId);
+    },
+    releaseTcVehicle: function () {
+        return window.TcDrive?.release?.();
+    },
+    enterTcRace: function (options = {}) {
+        return window.TcDrive?.enterTcRace?.(options);
     },
     // NEW: Dynamic import for limitless extensions (e.g., loaders, controls)
     importModule: async function (modulePath, alias) {
@@ -2076,8 +2090,10 @@ const UI = {
     },
     updateControlMode: function () {
         const btn = document.getElementById('btn-control-mode');
-        const mode = State.controlMode === 'walk' && PlayerController.spawned ? 'walk' : 'fly';
-        if (btn) btn.textContent = mode === 'walk' ? 'WALK' : 'FLY';
+        let label = 'FLY';
+        if (State.controlMode === 'vehicle' && window.TcDrive?.active) label = 'VEH';
+        else if (State.controlMode === 'walk' && PlayerController.spawned) label = 'WALK';
+        if (btn) btn.textContent = label;
         this.updateControlsHint();
     },
     updateControlsHint: function () {

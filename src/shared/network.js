@@ -15,7 +15,9 @@ export const Network = {
     peerCount: 0,
     voipConfig: defaultVoipHostConfig(),
     playerPositions: new Map(),
+    playerAvatars: new Map(),
     _broadcastTimer: null,
+    _liveTimer: null,
     _voipReady: false,
 
     getShareUrl() {
@@ -231,14 +233,76 @@ export const Network = {
 
     getPlayerPositions() {
         const out = {};
-        this.playerPositions.forEach((pos, key) => { out[key] = pos; });
+        this.playerAvatars.forEach((av, key) => {
+            out[key] = { x: av.x, y: av.y, z: av.z };
+        });
+        this.playerPositions.forEach((pos, key) => {
+            if (!out[key]) out[key] = pos;
+        });
         return out;
+    },
+
+    getPlayerAvatars() {
+        const out = {};
+        this.playerAvatars.forEach((av, key) => { out[key] = av; });
+        return out;
+    },
+
+    getVehicleClaims() {
+        return window.TcDrive?.getClaims?.() || {};
+    },
+
+    updateLocalAvatar(avatar) {
+        if (!avatar || !Number.isFinite(avatar.x)) return;
+        const key = String(Session.playerKey || '').toUpperCase();
+        this.playerAvatars.set(key, avatar);
+        this.playerPositions.set(key, { x: avatar.x, y: avatar.y, z: avatar.z });
+        if (this.mode === 'host') this.scheduleLiveSync();
     },
 
     setPlayerPosition(key, pos) {
         if (!key || !pos) return;
-        this.playerPositions.set(String(key).toUpperCase(), pos);
-        if (this.mode === 'host') this.scheduleBroadcast();
+        const k = String(key).toUpperCase();
+        this.playerPositions.set(k, pos);
+        const prev = this.playerAvatars.get(k) || {};
+        this.playerAvatars.set(k, { ...prev, x: pos.x, y: pos.y, z: pos.z, mode: prev.mode || 'fly' });
+        if (this.mode === 'host') this.scheduleLiveSync();
+    },
+
+    setPlayerAvatar(key, avatar) {
+        if (!key || !avatar || !Number.isFinite(avatar.x)) return;
+        const k = String(key).toUpperCase();
+        this.playerAvatars.set(k, avatar);
+        this.playerPositions.set(k, { x: avatar.x, y: avatar.y, z: avatar.z });
+        if (this.mode === 'host') this.scheduleLiveSync();
+    },
+
+    sendPlayerAvatar(avatar) {
+        if (this.mode === 'spectate') return;
+        if (this.mode === 'host') {
+            this.updateLocalAvatar(avatar);
+            return;
+        }
+        if (this.mode !== 'guest' || !this.hostConnection?.open) return;
+        this.hostConnection.send({
+            type: 'ACTION',
+            action: 'PLAYER_AVATAR',
+            payload: { avatar },
+            from: Session.playerKey,
+        });
+    },
+
+    scheduleLiveSync() {
+        if (this.mode !== 'host') return;
+        clearTimeout(this._liveTimer);
+        this._liveTimer = setTimeout(() => this._broadcastLive(), 80);
+    },
+
+    _broadcastLive() {
+        if (this.mode !== 'host') return;
+        const state = Sync.captureLive();
+        const msg = { type: 'LIVE_STATE', state };
+        this.connections.forEach((c) => { if (c.open) c.send(msg); });
     },
 
     _broadcastVoipRoster() {
@@ -289,6 +353,17 @@ export const Network = {
                     if (meta?.key) this.setPlayerPosition(meta.key, data.payload?.position);
                     return;
                 }
+                if (data.action === 'PLAYER_AVATAR') {
+                    if (meta?.key) this.setPlayerAvatar(meta.key, data.payload?.avatar);
+                    return;
+                }
+                if (data.action === 'VEHICLE_CLAIM' || data.action === 'VEHICLE_RELEASE'
+                    || data.action === 'LAP_CROSS' || data.action === 'CIRCUIT_START'
+                    || data.action === 'CIRCUIT_STOP') {
+                    Sync.applyAction(data.action, { ...data.payload, fromKey: from });
+                    this.scheduleLiveSync();
+                    return;
+                }
                 if (Permissions.isWorldEditAction(data.action) && !Permissions.canEditWorld(from)) {
                     conn.send?.({ type: 'DENIED', action: data.action, message: 'No admin permission' });
                     return;
@@ -299,9 +374,16 @@ export const Network = {
         } else if (this.mode === 'guest' || this.mode === 'spectate') {
             if (data.type === 'FULL_STATE') {
                 Sync.applyState(data.state);
-                if (data.state?.playerPositions) window.Voip?.setPlayerPositions?.(data.state.playerPositions);
+                if (data.state?.playerAvatars) {
+                    window.TcDrive?.applyNetworkState?.(data.state.playerAvatars, data.state.vehicleClaims);
+                } else if (data.state?.playerPositions) {
+                    window.Voip?.setPlayerPositions?.(data.state.playerPositions);
+                }
                 window.UI?.renderHostPanel?.();
                 window.Spectate?.updateHud?.();
+            }
+            if (data.type === 'LIVE_STATE' && data.state) {
+                Sync.applyLiveState(data.state);
             }
             if (data.type === 'WELCOME') {
                 if (window.UI?.status) window.UI.status('Connected to host — synced bindings & scene');
@@ -329,6 +411,10 @@ export const Network = {
                 payload,
                 from: Session.playerKey,
             });
+            return;
+        }
+        if (action === 'PLAYER_AVATAR' && this.mode === 'guest') {
+            this.sendPlayerAvatar(payload.avatar || payload);
             return;
         }
         if (this.mode === 'spectate') {
@@ -406,6 +492,7 @@ export const Network = {
 
     destroy() {
         clearTimeout(this._broadcastTimer);
+        clearTimeout(this._liveTimer);
         window.Voip?.destroy?.();
         this.connections.forEach((c) => c.close());
         this.hostConnection?.close();
@@ -413,6 +500,7 @@ export const Network = {
         this.connections = [];
         this.players.clear();
         this.playerPositions.clear();
+        this.playerAvatars.clear();
         this.hostConnection = null;
         this.peer = null;
         this._voipReady = false;

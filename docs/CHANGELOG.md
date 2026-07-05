@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.15.0 — G2 drivable TC vehicles + live sync
+
+- `tcDrive.js` — claim `tc_run` / `tc_haul`, WASD arcade drive, chase camera
+- `LIVE_STATE` ~80ms sync — `playerAvatars` + `vehicleClaims` (no full world rebuild)
+- `World.enterTcRace()` — circuit + default vehicle · extra `tc_run` spawn for 3+ players
+- Guests see remote vehicles move; walk/fly still uses ghost markers
+
 ## 5.14.0 — G1 TC Circuit multiplayer lap sync
 
 - `tcCircuit.js` — host-synced lap timer, `tc_cp` proximity, live leaderboard HUD

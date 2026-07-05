@@ -260,6 +260,8 @@ export const Voip = {
     },
 
     getLocalPosition() {
+        const driveAv = window.TcDrive?.getAvatar?.();
+        if (driveAv) return driveAv;
         const PC = window.PlayerController;
         if (PC?.spawned && PC.group) {
             const p = PC.group.position;
@@ -276,13 +278,16 @@ export const Voip = {
             const net = window.Network;
             if (!net || net.mode === 'solo' || !this.config?.enabled) return;
             if (window.Session?.isSpectator && !this.config.spectatorsSpeak) return;
-            const pos = this.getLocalPosition();
-            if (net.mode === 'host') {
-                const key = (window.Session?.playerKey || '').toUpperCase();
-                net.setPlayerPosition(key, pos);
-            } else if (net.mode === 'guest') {
-                net.sendToHost('PLAYER_POS', { position: pos });
+            const driveAv = window.TcDrive?.getAvatar?.();
+            if (driveAv) {
+                if (net.mode === 'host') net.updateLocalAvatar(driveAv);
+                else if (net.mode === 'guest') net.sendPlayerAvatar(driveAv);
+                return;
             }
+            const pos = this.getLocalPosition();
+            const av = { ...pos, mode: window.PlayerController?.spawned ? 'walk' : 'fly' };
+            if (net.mode === 'host') net.updateLocalAvatar(av);
+            else if (net.mode === 'guest') net.sendPlayerAvatar(av);
         }, POS_INTERVAL_MS);
     },
 
