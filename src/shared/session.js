@@ -14,6 +14,9 @@ export const Session = {
     isHost: false,
     hostKey: '',
     isPaused: false,
+    pauseReason: '',
+    admins: new Set(),
+    autoCodingPause: true,
 
     init() {
         if (this._inited) { this.updateUi(); return; }
@@ -22,6 +25,7 @@ export const Session = {
         this.playerKey = stored || randomKey();
         sessionStorage.setItem('threshold_player_key', this.playerKey);
         this.playerName = localStorage.getItem('threshold_player_name') || `Player-${this.playerKey}`;
+        this.autoCodingPause = localStorage.getItem('threshold_auto_coding_pause') !== 'false';
         this.syncFromHostState();
         window.addEventListener('storage', (e) => {
             if (e.key === HOST_KEY) this.syncFromHostState();
@@ -58,13 +62,45 @@ export const Session = {
         return this.isHost || window.Network?.mode === 'solo';
     },
 
-    setPaused(paused) {
+    setPaused(paused, reason = '') {
         if (!this.canControlPause()) return false;
         this.isPaused = paused;
+        this.pauseReason = paused ? (reason || 'Paused') : '';
         this.writeHostState();
-        window.dispatchEvent(new CustomEvent('threshold:pause', { detail: { paused } }));
+        window.dispatchEvent(new CustomEvent('threshold:pause', { detail: { paused, reason: this.pauseReason } }));
         this.updateUi();
         return true;
+    },
+
+    isAdmin(key) {
+        const k = (key || this.playerKey || '').toUpperCase();
+        return this.admins.has(k);
+    },
+
+    setAdmins(keys = []) {
+        this.admins = new Set(keys.map((k) => String(k).toUpperCase()));
+        this.updateUi();
+    },
+
+    grantAdmin(key) {
+        if (!key) return;
+        this.admins.add(String(key).toUpperCase());
+        this.updateUi();
+    },
+
+    revokeAdmin(key) {
+        if (!key) return;
+        this.admins.delete(String(key).toUpperCase());
+        this.updateUi();
+    },
+
+    getAdminList() {
+        return [...this.admins];
+    },
+
+    setAutoCodingPause(enabled) {
+        this.autoCodingPause = !!enabled;
+        localStorage.setItem('threshold_auto_coding_pause', enabled ? 'true' : 'false');
     },
 
     togglePause() {

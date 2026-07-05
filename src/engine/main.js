@@ -17,6 +17,8 @@ import { PlayerController } from './player.js';
 import { Persistence } from '../shared/persistence.js';
 import { Sync } from '../shared/sync.js';
 import { Controls, CONTROL_ACTIONS } from '../shared/controls.js';
+import { TouchControls } from '../shared/touchControls.js';
+import { Permissions } from '../shared/permissions.js';
 
 const IS_TOUCH_DEVICE = window.matchMedia('(pointer: coarse)').matches;
 
@@ -68,6 +70,7 @@ export function initEngine() {
     UI.init();
     Physics.createFloor();
     window.Environment = Environment;
+    TouchControls.init();
 
     if (Network.mode === 'host') {
         document.body.classList.add('network-host');
@@ -456,10 +459,13 @@ const Engine = {
             if (!e.repeat) {
                 if (action === 'toggleMode') UI.toggleControlMode();
                 if (action === 'pause' && Controls.canUse('pause')) UI.togglePause();
+                if (action === 'interact') UI.openInsert();
             }
         });
         window.addEventListener('keyup', (e) => State.keys[e.code] = false);
         this.renderer.domElement.addEventListener('pointerdown', (e) => this.onPointerDown(e));
+        this.renderer.domElement.addEventListener('pointerup', (e) => this.onPointerUp(e));
+        this.renderer.domElement.addEventListener('pointermove', (e) => this.onPointerMove(e));
         this.renderer.domElement.addEventListener('contextmenu', (e) => this.onContextMenu(e));
         this.animate();
     },
@@ -547,8 +553,60 @@ const Engine = {
         const select = document.getElementById('env-mode');
         if (select) select.value = String(idx);
     },
+    openContextAtScreen: function (clientX, clientY) {
+        const rect = this.renderer.domElement.getBoundingClientRect();
+        this.mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+        this.mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        const objIntersects = this.raycaster.intersectObjects(State.objects);
+        if (objIntersects.length > 0) {
+            UI.openCtx(clientX, clientY, 'object', objIntersects[0].object);
+            return;
+        }
+        const intersects = this.raycaster.intersectObject(this.groundPlane);
+        if (intersects.length > 0) {
+            State.ctxTargetPos.copy(intersects[0].point);
+            UI.openCtx(clientX, clientY, 'ground');
+        }
+    },
+    onPointerMove: function (e) {
+        if (this._holdPointer && Math.hypot(e.clientX - this._holdPointer.x, e.clientY - this._holdPointer.y) > 14) {
+            clearTimeout(this._holdPointer.timer);
+            this._holdPointer = null;
+        }
+    },
+    onPointerUp: function () {
+        if (this._holdPointer) {
+            clearTimeout(this._holdPointer.timer);
+            this._holdPointer = null;
+        }
+    },
     onPointerDown: function (e) {
         if (e.button !== 0) { UI.closeCtx(); return; }
+        if (TouchControls.enabled && e.pointerType === 'touch') return;
+
+        if (e.pointerType === 'mouse' || e.pointerType === 'pen') {
+            clearTimeout(this._holdPointer?.timer);
+            this._holdPointer = {
+                x: e.clientX, y: e.clientY,
+                timer: setTimeout(() => {
+                    this.openContextAtScreen(e.clientX, e.clientY);
+                    this._holdPointer = null;
+                }, 480)
+            };
+        }
+        const now = Date.now();
+        if (this._lastClick
+            && now - this._lastClick.time < 380
+            && Math.hypot(e.clientX - this._lastClick.x, e.clientY - this._lastClick.y) < 30) {
+            if (this._holdPointer) clearTimeout(this._holdPointer.timer);
+            this._holdPointer = null;
+            this.openContextAtScreen(e.clientX, e.clientY);
+            this._lastClick = null;
+            return;
+        }
+        this._lastClick = { x: e.clientX, y: e.clientY, time: now };
+
         const rect = this.renderer.domElement.getBoundingClientRect();
         this.mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         this.mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
@@ -587,8 +645,12 @@ const Engine = {
         if (this.shaderPass) this.shaderPass.uniforms.time.value = time * 0.001;
 
         Controls.pollGamepad();
+        Controls.applyCameraStick();
         if (Controls.consumeJustPressed('toggleMode')) UI.toggleControlMode();
         if (Controls.consumeJustPressed('pause')) UI.togglePause();
+        if (Controls.consumeJustPressed('interact')) UI.openInsert();
+        if (Controls.consumeJustPressed('bindingsMenu')) UI.openBindingsModal();
+        if (Controls.consumeJustPressed('cameraReset')) Controls.resetCameraBehindPlayer();
 
         if (!State.isPaused) {
             if (State.controlMode === 'walk' && PlayerController.spawned) {
@@ -598,7 +660,7 @@ const Engine = {
             if (State.controlMode === 'walk' && PlayerController.spawned) {
                 PlayerController.postPhysics();
             } else {
-                const speed = 0.2;
+                const speed = 0.2 * (Controls.getSprintMultiplier?.() || 1);
                 const fwd = new THREE.Vector3(); this.camera.getWorldDirection(fwd); fwd.y = 0; fwd.normalize();
                 const rgt = new THREE.Vector3(); rgt.crossVectors(fwd, this.camera.up).normalize();
                 if (Controls.isAction('forward')) { this.camera.position.addScaledVector(fwd, speed); this.controls.target.addScaledVector(fwd, speed); }
@@ -924,8 +986,20 @@ const UI = {
         document.getElementById('bindings-list')?.addEventListener('click', (e) => {
             const bindBtn = e.target.closest('[data-bind]');
             const clearBtn = e.target.closest('[data-clear]');
-            if (bindBtn) UI.startBinding(bindBtn.dataset.bind);
+            if (bindBtn && !bindBtn.disabled) UI.startBinding(bindBtn.dataset.bind);
             if (clearBtn) UI.clearBinding(clearBtn.dataset.clear);
+        });
+        document.getElementById('btn-host-panel')?.addEventListener('click', () => UI.openHostPanel());
+        document.getElementById('host-panel-close')?.addEventListener('click', () => UI.closeHostPanel());
+        document.getElementById('host-panel-modal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'host-panel-modal') UI.closeHostPanel();
+        });
+        document.getElementById('host-auto-coding-pause')?.addEventListener('change', (e) => {
+            Session.setAutoCodingPause(e.target.checked);
+        });
+        document.getElementById('host-push-bindings')?.addEventListener('click', () => {
+            Controls.saveHostAndBroadcast();
+            UI.status('Host bindings pushed to all players');
         });
         document.getElementById('world-list')?.addEventListener('click', (e) => {
             const btn = e.target.closest('[data-world-code]');
@@ -1075,16 +1149,67 @@ const UI = {
             ? `Controller: ${Controls.gamepadName.slice(0, 40)}`
             : 'Controller: none (plug in gamepad)';
     },
-    togglePause: function () {
+    togglePause: function (reason) {
         if (Network.mode === 'guest') {
             this.status('Only the host can pause');
             return;
         }
         const paused = !State.isPaused;
-        Actions.dispatch('PAUSE', { paused });
+        const pauseReason = paused ? (reason || 'Paused') : '';
+        Actions.dispatch('PAUSE', { paused, reason: pauseReason });
         State.isPaused = paused;
         Session.isPaused = paused;
+        Session.pauseReason = pauseReason;
         Session.updateUi();
+        this.status(paused ? `Paused${pauseReason ? `: ${pauseReason}` : ''}` : 'Scene resumed');
+    },
+    setCodingPause: function (on) {
+        if (!Permissions.canPause() || !Session.autoCodingPause) return;
+        if (on) {
+            if (!State.isPaused) this.togglePause('Host editing code');
+        } else if (Session.pauseReason === 'Host editing code') {
+            this.togglePause('');
+        }
+    },
+    openHostPanel: function () {
+        this.renderHostPanel();
+        document.getElementById('host-panel-modal')?.classList.add('open');
+    },
+    closeHostPanel: function () {
+        document.getElementById('host-panel-modal')?.classList.remove('open');
+    },
+    renderHostPanel: function () {
+        const list = document.getElementById('host-player-list');
+        const roleEl = document.getElementById('host-panel-role');
+        if (!list) return;
+
+        const isHost = Network.mode === 'host';
+        if (roleEl) {
+            roleEl.textContent = isHost ? 'You are HOST — manage players & permissions'
+                : (Session.isAdmin(Session.playerKey) ? 'You are GUEST (Admin)' : 'You are GUEST — personal bindings only');
+        }
+
+        const players = isHost ? Network.getPlayerList() : [
+            { key: Session.playerKey, name: Session.playerName, admin: Session.isAdmin(Session.playerKey), self: true }
+        ];
+
+        list.innerHTML = players.map((p) => `
+            <div class="host-player-row">
+                <span>${p.name} <code>${p.key}</code>${p.self ? ' (you)' : ''}</span>
+                ${isHost && !p.self ? `
+                    <label class="host-admin-toggle">
+                        <input type="checkbox" data-admin-key="${p.key}" ${p.admin ? 'checked' : ''}> Admin
+                    </label>
+                ` : `<span class="host-badge">${p.admin ? 'Admin' : 'Player'}</span>`}
+            </div>
+        `).join('');
+
+        list.querySelectorAll('[data-admin-key]').forEach((cb) => {
+            cb.onchange = () => Network.setPlayerAdmin(cb.dataset.adminKey, cb.checked);
+        });
+
+        const codingCb = document.getElementById('host-auto-coding-pause');
+        if (codingCb) codingCb.checked = Session.autoCodingPause;
     },
     openBindingsModal: function () {
         const profile = Controls.getProfile();

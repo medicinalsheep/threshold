@@ -47,6 +47,10 @@ tabs.forEach((tab) => {
 
         if (targetId === 'view-engine') {
             setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
+            window.UI?.setCodingPause?.(false);
+        }
+        if (targetId === 'view-compiler' || targetId === 'view-prompter') {
+            window.UI?.setCodingPause?.(true);
         }
     });
 });

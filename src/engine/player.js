@@ -109,7 +109,8 @@ export const PlayerController = {
 
         if (move.length() > 0) {
             move.normalize();
-            move.scale(this.walkSpeed, move);
+            const mult = Controls?.getSprintMultiplier?.() || 1;
+            move.scale(this.walkSpeed * mult, move);
             this.body.velocity.x = move.x;
             this.body.velocity.z = move.z;
             this._lastFacing = Math.atan2(move.x, move.z);

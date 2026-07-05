@@ -9,15 +9,20 @@ export const Sync = {
         const State = window.State;
         if (!State) return null;
         const player = window.PlayerController?.getState?.();
+        const Network = window.Network;
         return {
             objects: getSceneObjectsForSpawn().filter((o) => !o.userData?.isPlayer),
             env: { ...State.env },
             renderMode: State.renderMode,
             runningCode: window.Runtime?.runningCode || '',
             isPaused: !!State.isPaused,
+            pauseReason: window.Session?.pauseReason || '',
             gridVisible: !!State.gridVisible,
             player,
-            controlMode: State.controlMode || 'fly'
+            controlMode: State.controlMode || 'fly',
+            hostBindings: window.Controls?.exportHostBindings?.(),
+            admins: window.Session?.getAdminList?.() || [],
+            players: Network?.mode === 'host' ? Network.getPlayerList() : undefined
         };
     },
 
@@ -56,7 +61,14 @@ export const Sync = {
 
             State.isPaused = !!state.isPaused;
             State.controlMode = state.controlMode || 'fly';
-            window.dispatchEvent(new CustomEvent('threshold:pause', { detail: { paused: State.isPaused } }));
+            const Session = window.Session;
+            if (Session) {
+                Session.isPaused = State.isPaused;
+                Session.pauseReason = state.pauseReason || '';
+                if (Array.isArray(state.admins)) Session.setAdmins(state.admins);
+            }
+            if (state.hostBindings) window.Controls?.applySessionHostBindings?.(state.hostBindings);
+            window.dispatchEvent(new CustomEvent('threshold:pause', { detail: { paused: State.isPaused, reason: state.pauseReason } }));
             if (state.player && window.PlayerController) {
                 window.PlayerController.applyState(state.player);
             } else if (state.controlMode === 'fly') {
@@ -108,7 +120,16 @@ export const Sync = {
                 World.clearWorld(true);
                 break;
             case 'PAUSE':
-                if (Session?.isHost) Session.setPaused(!!payload.paused);
+                if (Session?.canControlPause?.()) Session.setPaused(!!payload.paused, payload.reason || '');
+                break;
+            case 'SET_ADMINS':
+                if (Session?.isHost && Array.isArray(payload.admins)) Session.setAdmins(payload.admins);
+                break;
+            case 'UPDATE_HOST_BINDINGS':
+                if (payload.bindings) {
+                    window.Controls?.setHostBindings?.(payload.bindings, false);
+                    window.Controls?.applySessionHostBindings?.(payload.bindings);
+                }
                 break;
             default:
                 break;

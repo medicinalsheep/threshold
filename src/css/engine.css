@@ -380,6 +380,86 @@ button {
     opacity: 0.7;
 }
 
+#touch-controls {
+    display: none;
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 45;
+}
+
+#touch-controls.visible {
+    display: block;
+}
+
+.touch-stick-zone {
+    position: absolute;
+    bottom: 24px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    pointer-events: auto;
+    touch-action: none;
+}
+
+#touch-stick-left { left: 16px; }
+#touch-stick-right { right: 16px; }
+
+.touch-knob {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 48px;
+    height: 48px;
+    margin: -24px 0 0 -24px;
+    border-radius: 50%;
+    background: rgba(0,255,170,0.25);
+    border: 1px solid var(--accent-color);
+}
+
+.touch-btn {
+    position: absolute;
+    pointer-events: auto;
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    border: 1px solid var(--accent-color);
+    background: rgba(0,0,0,0.55);
+    color: var(--accent-color);
+    font-size: 0.65rem;
+    font-weight: bold;
+}
+
+.touch-btn.pressed {
+    background: var(--accent-color);
+    color: #000;
+}
+
+.touch-btn[data-touch-btn="jump"] { right: 100px; bottom: 100px; }
+.touch-btn[data-touch-btn="sprint"] { right: 100px; bottom: 36px; font-size: 0.55rem; }
+.touch-btn-action { right: 36px; bottom: 68px; }
+
+.host-player-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 0.75rem;
+}
+
+.host-admin-toggle {
+    font-size: 0.7rem;
+    color: #aaa;
+}
+
+.host-badge {
+    font-size: 0.65rem;
+    color: var(--accent-color);
+}
+
 .insert-hint {
     font-size: 0.75rem;
     color: #888;

@@ -1,11 +1,13 @@
 import Peer from 'peerjs';
 import { Session } from './session.js';
 import { Sync } from './sync.js';
+import { Permissions } from './permissions.js';
 
 export const Network = {
     peer: null,
     hostConnection: null,
     connections: [],
+    players: new Map(),
     mode: 'solo',
     roomId: '',
     peerCount: 0,
@@ -17,11 +19,20 @@ export const Network = {
         return `${base}?room=${this.roomId}`;
     },
 
+    getPlayerList() {
+        const list = [{ key: Session.playerKey, name: Session.playerName, admin: true, self: true }];
+        this.players.forEach((p) => {
+            if (p.key !== Session.playerKey) list.push({ ...p, self: false });
+        });
+        return list;
+    },
+
     async startHost(roomId) {
         this.mode = 'host';
         this.roomId = roomId;
         Session.isHost = true;
         Session.hostKey = roomId;
+        Session.grantAdmin(Session.playerKey);
         Session.updateUi();
 
         return new Promise((resolve, reject) => {
@@ -82,6 +93,7 @@ export const Network = {
         this.roomId = '';
         Session.isHost = false;
         Session.hostKey = '';
+        Session.grantAdmin(Session.playerKey);
         Session.updateUi();
         this.updateUi();
     },
@@ -99,11 +111,26 @@ export const Network = {
 
         conn.on('data', (data) => this._handleMessage(data, conn));
         conn.on('close', () => {
+            const meta = this.players.get(conn);
+            if (meta && window.UI?.status) window.UI.status(`${meta.name} left`);
+            this.players.delete(conn);
             this.connections = this.connections.filter((c) => c !== conn);
             this.updateUi();
+            window.UI?.renderHostPanel?.();
         });
 
         this.updateUi();
+    },
+
+    _registerPlayer(conn, data) {
+        const key = (data.playerKey || '').toUpperCase();
+        this.players.set(conn, {
+            key,
+            name: data.playerName || `Player-${key}`,
+            admin: Session.isAdmin(key),
+            conn
+        });
+        window.UI?.renderHostPanel?.();
     },
 
     _handleMessage(data, conn) {
@@ -111,20 +138,30 @@ export const Network = {
 
         if (this.mode === 'host') {
             if (data.type === 'JOIN') {
+                this._registerPlayer(conn, data);
                 if (window.UI?.status) window.UI.status(`${data.playerName || 'Player'} joined`);
                 this._broadcastState();
                 return;
             }
             if (data.type === 'ACTION') {
+                const from = (data.from || '').toUpperCase();
+                if (Permissions.isWorldEditAction(data.action) && !Permissions.canEditWorld(from)) {
+                    conn.send?.({ type: 'DENIED', action: data.action, message: 'No admin permission' });
+                    return;
+                }
                 Sync.applyAction(data.action, data.payload);
                 this.scheduleBroadcast();
             }
         } else if (this.mode === 'guest') {
             if (data.type === 'FULL_STATE') {
                 Sync.applyState(data.state);
+                window.UI?.renderHostPanel?.();
             }
             if (data.type === 'WELCOME' && window.UI?.status) {
-                window.UI.status('Connected to host');
+                window.UI.status('Connected to host — synced bindings & scene');
+            }
+            if (data.type === 'DENIED' && window.UI?.status) {
+                window.UI.status(data.message || 'Action denied by host');
             }
         }
     },
@@ -155,6 +192,21 @@ export const Network = {
         this.connections.forEach((c) => { if (c.open) c.send(msg); });
     },
 
+    setPlayerAdmin(playerKey, admin) {
+        if (this.mode !== 'host') return;
+        const key = String(playerKey).toUpperCase();
+        if (admin) Session.grantAdmin(key);
+        else Session.revokeAdmin(key);
+
+        this.players.forEach((p, conn) => {
+            if (p.key === key) p.admin = admin;
+        });
+
+        Sync.applyAction('SET_ADMINS', { admins: Session.getAdminList() });
+        this.scheduleBroadcast();
+        window.UI?.renderHostPanel?.();
+    },
+
     updateUi() {
         const countEl = document.getElementById('session-peer-count');
         const linkEl = document.getElementById('session-share-link');
@@ -170,6 +222,9 @@ export const Network = {
             else if (this.mode === 'guest') modeEl.textContent = `GUEST · ${this.roomId}`;
             else modeEl.textContent = 'SOLO';
         }
+
+        const hostPanelBtn = document.getElementById('btn-host-panel');
+        if (hostPanelBtn) hostPanelBtn.style.display = (this.mode === 'host' || this.mode === 'guest') ? 'inline-block' : 'none';
     },
 
     destroy() {
@@ -178,6 +233,7 @@ export const Network = {
         this.hostConnection?.close();
         this.peer?.destroy();
         this.connections = [];
+        this.players.clear();
         this.hostConnection = null;
         this.peer = null;
     }
