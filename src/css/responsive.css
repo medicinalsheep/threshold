@@ -69,23 +69,9 @@
         display: none;
     }
 
-    #env-panel {
-        top: auto;
-        bottom: 70px;
-        left: 10px;
-        right: 10px;
-        width: auto;
-        max-height: 35vh;
-        overflow-y: auto;
-    }
-
-    #inspector {
-        top: 70px;
-        right: 10px;
-        left: auto;
-        width: 200px;
-        max-height: 30vh;
-        overflow-y: auto;
+    .float-panel#env-panel,
+    .float-panel#inspector {
+        max-width: calc(100vw - 16px);
     }
 
     #command-bar {

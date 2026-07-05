@@ -20,6 +20,7 @@ import { Controls, CONTROL_ACTIONS } from '../shared/controls.js';
 import { TouchControls } from '../shared/touchControls.js';
 import { Permissions } from '../shared/permissions.js';
 import { SimMode } from '../shared/simMode.js';
+import { initPanelDrag, ensurePanelVisible } from '../shared/panelDrag.js';
 
 const IS_TOUCH_DEVICE = window.matchMedia('(pointer: coarse)').matches;
 
@@ -1058,6 +1059,7 @@ const UI = {
 
         UI.updateControlMode();
         UI.updateSimMode();
+        initPanelDrag();
     },
     updateModeDisplay: function (idx) {
         const el = document.getElementById('mode-display');
@@ -1068,7 +1070,10 @@ const UI = {
         State.selectedObject = obj;
         if (obj.userData?.isPlayer) {
             document.getElementById('inspector').style.display = 'none';
-            if (SimMode.isPlay()) document.getElementById('player-skin-panel').style.display = 'block';
+            if (SimMode.isPlay()) {
+                document.getElementById('player-skin-panel').style.display = 'block';
+                ensurePanelVisible('#player-skin-panel');
+            }
             Engine.transformControl.detach();
             return;
         }
@@ -1079,6 +1084,7 @@ const UI = {
             return;
         }
         document.getElementById('inspector').style.display = 'block';
+        ensurePanelVisible('#inspector');
         this.loadInspectorFromObject(obj);
         document.getElementById('btn-lock').innerText = obj.userData.locked ? 'LOCKED' : 'UNLOCK';
         if (!obj.userData.locked && SimMode.isEdit()) Engine.transformControl.attach(obj);
@@ -1090,6 +1096,7 @@ const UI = {
         document.getElementById('inspector').style.display = 'none';
         if (SimMode.isPlay() && SimMode.canEditPlayerSkin()) {
             document.getElementById('player-skin-panel').style.display = 'block';
+            ensurePanelVisible('#player-skin-panel');
         } else {
             document.getElementById('player-skin-panel').style.display = 'none';
         }
@@ -1187,6 +1194,7 @@ const UI = {
             Engine.transformControl.detach();
             if (SimMode.canEditPlayerSkin()) {
                 document.getElementById('player-skin-panel').style.display = 'block';
+                ensurePanelVisible('#player-skin-panel');
             }
         } else {
             document.getElementById('player-skin-panel').style.display = 'none';
@@ -1195,13 +1203,16 @@ const UI = {
     toggleEnvPanel: function () {
         const panel = document.getElementById('env-panel');
         if (!panel) return;
+        const willShow = panel.classList.contains('hidden');
         panel.classList.toggle('hidden');
         panel.classList.toggle('mobile-open');
+        if (willShow) ensurePanelVisible('#env-panel');
     },
     setEnvPanelVisible: function (visible) {
         const panel = document.getElementById('env-panel');
         if (!panel) return;
         panel.classList.toggle('hidden', !visible);
+        if (visible) ensurePanelVisible('#env-panel');
     },
     toggleLock: function () {
         if (!State.selectedObject) return;
@@ -1231,11 +1242,12 @@ const UI = {
     closeCtx: function () { document.getElementById('ctx-menu').style.display = 'none'; },
     openJsonEditor: function () {
         if (!State.selectedObject) return;
-        document.getElementById('json-modal').style.display = 'flex';
+        document.getElementById('json-modal')?.classList.add('open');
+        ensurePanelVisible('#json-modal');
         document.getElementById('json-editor').value = JSON.stringify(State.selectedObject.userData, null, 2);
     },
     applyJson: function () { try { State.selectedObject.userData = JSON.parse(document.getElementById('json-editor').value); this.closeModal(); this.selectObject(State.selectedObject); } catch (e) { alert("Invalid JSON"); } },
-    closeModal: function () { document.getElementById('json-modal').style.display = 'none'; },
+    closeModal: function () { document.getElementById('json-modal')?.classList.remove('open'); },
     status: function (msg) {
         const el = document.getElementById('status-msg');
         el.innerText = `> ${msg}`; el.style.opacity = 1; setTimeout(() => el.style.opacity = 0, 3000);
@@ -1264,6 +1276,7 @@ const UI = {
         }
         Session.refreshSavedPlayerList();
         document.getElementById('insert-modal')?.classList.add('open');
+        ensurePanelVisible('#insert-sheet');
     },
     closeInsert: function () {
         document.getElementById('insert-modal')?.classList.remove('open');
@@ -1357,6 +1370,7 @@ const UI = {
     openHostPanel: function () {
         this.renderHostPanel();
         document.getElementById('host-panel-modal')?.classList.add('open');
+        ensurePanelVisible('#host-panel-sheet');
     },
     closeHostPanel: function () {
         document.getElementById('host-panel-modal')?.classList.remove('open');
@@ -1405,6 +1419,7 @@ const UI = {
         this.renderBindingsEditor(profile);
         this.updateGamepadStatus();
         document.getElementById('bindings-modal')?.classList.add('open');
+        ensurePanelVisible('#bindings-sheet');
     },
     closeBindingsModal: function () {
         Controls._rebind = null;
@@ -1490,6 +1505,7 @@ const UI = {
     openWorldModal: function () {
         this.refreshWorldList();
         document.getElementById('world-modal')?.classList.add('open');
+        ensurePanelVisible('#world-sheet');
     },
     closeWorldModal: function () {
         document.getElementById('world-modal')?.classList.remove('open');

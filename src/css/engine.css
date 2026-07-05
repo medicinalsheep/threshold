@@ -229,14 +229,12 @@ button {
 /* JSON Modal */
 #json-modal {
     display: none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 600px;
-    height: 500px;
-    z-index: 20;
+    z-index: 210;
     flex-direction: column;
+}
+
+#json-modal.open {
+    display: flex;
 }
 
 .session-bar {
@@ -320,16 +318,60 @@ button {
 }
 
 .modal-backdrop.open {
-    display: flex;
+    display: block;
 }
 
 .insert-sheet {
     width: 100%;
     max-width: 480px;
-    max-height: 85vh;
-    overflow-y: auto;
-    border-radius: 12px 12px 0 0;
     margin: 0;
+}
+
+.float-panel {
+    position: fixed;
+    z-index: 210;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    overflow: hidden;
+    pointer-events: auto;
+    border-radius: 8px;
+}
+
+.float-panel-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.panel-drag-handle {
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    flex-shrink: 0;
+}
+
+.panel-drag-handle.dragging,
+.panel-resize-handle.resizing {
+    cursor: grabbing;
+}
+
+.panel-resize-handle {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 20px;
+    height: 20px;
+    cursor: nwse-resize;
+    touch-action: none;
+    z-index: 3;
+    opacity: 0.55;
+    background: linear-gradient(135deg, transparent 55%, var(--accent-color) 55%);
+}
+
+.panel-resize-handle:hover {
+    opacity: 0.9;
 }
 
 .insert-header {
@@ -337,6 +379,8 @@ button {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .insert-tabs {
@@ -548,15 +592,10 @@ button {
 
 #player-skin-panel {
     display: none;
-    top: auto;
-    bottom: 80px;
-    right: 10px;
-    width: 220px;
 }
 
 #inspector {
-    max-height: 55vh;
-    overflow-y: auto;
+    overflow: hidden;
 }
 
 .insert-hint {

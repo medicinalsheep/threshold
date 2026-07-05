@@ -125,7 +125,7 @@
 
             <!-- Environment Panel (hideable) -->
             <div id="env-panel" class="panel">
-                <div class="prop-row">
+                <div class="prop-row panel-drag-handle">
                     <h3 style="margin:0;">ENVIRONMENT</h3>
                     <button id="btn-env-close" class="btn-sm" type="button">✕</button>
                 </div>
@@ -167,7 +167,7 @@
 
             <!-- Inspector — EDIT mode object panels -->
             <div id="inspector" class="panel">
-                <div class="prop-row">
+                <div class="prop-row panel-drag-handle">
                     <h3 style="margin:0;">EDIT OBJECT</h3>
                     <button id="btn-lock" style="font-size:0.6rem;">UNLOCK</button>
                 </div>
@@ -210,7 +210,7 @@
 
             <!-- Player skin panel — PLAY mode -->
             <div id="player-skin-panel" class="panel">
-                <div class="prop-row"><h3 style="margin:0;">PLAYER SKIN</h3></div>
+                <div class="prop-row panel-drag-handle"><h3 style="margin:0;">PLAYER SKIN</h3></div>
                 <p class="insert-hint" style="margin:0 0 8px;">PLAY mode: edit your avatar only. World stays locked.</p>
                 <div class="prop-row"><label>Body</label><input type="color" id="skin-body-color" value="#3366cc"></div>
                 <div class="prop-row"><label>Skin</label><input type="color" id="skin-head-color" value="#ffcc99"></div>
@@ -227,7 +227,7 @@
         <!-- Insert Modal (mobile-friendly) -->
         <div id="insert-modal" class="modal-backdrop">
             <div id="insert-sheet" class="panel insert-sheet">
-                <div class="insert-header">
+                <div class="insert-header panel-drag-handle">
                     <h3 style="margin:0;">INSERT</h3>
                     <button id="insert-close">✕</button>
                 </div>
@@ -264,7 +264,7 @@
         <!-- Key bindings modal -->
         <div id="bindings-modal" class="modal-backdrop">
             <div id="bindings-sheet" class="panel insert-sheet">
-                <div class="insert-header">
+                <div class="insert-header panel-drag-handle">
                     <h3 style="margin:0;">CONTROLS</h3>
                     <button id="bindings-close">✕</button>
                 </div>
@@ -294,7 +294,7 @@
         <!-- Host / players panel -->
         <div id="host-panel-modal" class="modal-backdrop">
             <div id="host-panel-sheet" class="panel insert-sheet">
-                <div class="insert-header">
+                <div class="insert-header panel-drag-handle">
                     <h3 style="margin:0;">HOST / PLAYERS</h3>
                     <button id="host-panel-close">✕</button>
                 </div>
@@ -313,7 +313,7 @@
         <!-- World persistence modal -->
         <div id="world-modal" class="modal-backdrop">
             <div id="world-sheet" class="panel insert-sheet">
-                <div class="insert-header">
+                <div class="insert-header panel-drag-handle">
                     <h3 style="margin:0;">SAVED WORLDS</h3>
                     <button id="world-close">✕</button>
                 </div>
@@ -334,7 +334,7 @@
 
         <!-- 4. JSON Modal -->
         <div id="json-modal" class="panel">
-            <h3 style="margin-top:0;">RAW DATA EDITOR</h3>
+            <h3 class="panel-drag-handle" style="margin-top:0;">RAW DATA EDITOR</h3>
             <textarea id="json-editor"></textarea>
             <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
                 <button id="btn-json-cancel">CANCEL</button>
