@@ -981,13 +981,22 @@ const UI = {
         document.getElementById('bindings-modal')?.addEventListener('click', (e) => {
             if (e.target.id === 'bindings-modal') UI.closeBindingsModal();
         });
-        document.getElementById('bindings-profile')?.addEventListener('change', (e) => UI.switchBindingsProfile(e.target.value));
+        document.getElementById('bindings-profile')?.addEventListener('change', (e) => UI.renderBindingsEditor(e.target.value));
         document.getElementById('bindings-reset')?.addEventListener('click', () => UI.resetBindingsProfile());
+        document.querySelectorAll('.bindings-device-tab').forEach((tab) => {
+            tab.addEventListener('click', () => UI.switchBindingsTab(tab.dataset.bindingsTab));
+        });
         document.getElementById('bindings-list')?.addEventListener('click', (e) => {
             const bindBtn = e.target.closest('[data-bind]');
-            const clearBtn = e.target.closest('[data-clear]');
-            if (bindBtn && !bindBtn.disabled) UI.startBinding(bindBtn.dataset.bind);
-            if (clearBtn) UI.clearBinding(clearBtn.dataset.clear);
+            const clearBtn = e.target.closest('[data-clear-kb]');
+            if (bindBtn && !bindBtn.disabled) UI.startKeyboardBinding(bindBtn.dataset.bind);
+            if (clearBtn) UI.clearKeyboardBinding(clearBtn.dataset.clearKb);
+        });
+        document.getElementById('gamepad-bindings-list')?.addEventListener('click', (e) => {
+            const bindBtn = e.target.closest('[data-gpad-bind]');
+            const clearBtn = e.target.closest('[data-clear-gp]');
+            if (bindBtn && !bindBtn.disabled) UI.startGamepadBinding(bindBtn.dataset.gpadBind);
+            if (clearBtn) UI.clearGamepadBinding(clearBtn.dataset.clearGp);
         });
         document.getElementById('btn-host-panel')?.addEventListener('click', () => UI.openHostPanel());
         document.getElementById('host-panel-close')?.addEventListener('click', () => UI.closeHostPanel());
@@ -999,7 +1008,7 @@ const UI = {
         });
         document.getElementById('host-push-bindings')?.addEventListener('click', () => {
             Controls.saveHostAndBroadcast();
-            UI.status('Host bindings pushed to all players');
+            UI.status('Host keyboard + controller profiles pushed to all players');
         });
         document.getElementById('world-list')?.addEventListener('click', (e) => {
             const btn = e.target.closest('[data-world-code]');
@@ -1215,37 +1224,61 @@ const UI = {
         const profile = Controls.getProfile();
         const select = document.getElementById('bindings-profile');
         if (select) select.value = profile;
-        Controls.renderEditor(profile);
+        this.renderBindingsEditor(profile);
         this.updateGamepadStatus();
         document.getElementById('bindings-modal')?.classList.add('open');
     },
     closeBindingsModal: function () {
         Controls._rebind = null;
+        Controls._rebindGamepad = null;
         document.getElementById('bindings-modal')?.classList.remove('open');
         this.updateControlsHint();
     },
-    switchBindingsProfile: function (profile) {
-        Controls.renderEditor(profile || 'host');
+    switchBindingsTab: function (tab) {
+        document.querySelectorAll('.bindings-device-tab').forEach((t) => {
+            t.classList.toggle('active', t.dataset.bindingsTab === tab);
+        });
+        document.getElementById('bindings-panel-keyboard')?.classList.toggle('active', tab === 'keyboard');
+        document.getElementById('bindings-panel-gamepad')?.classList.toggle('active', tab === 'gamepad');
+    },
+    renderBindingsEditor: function (profile) {
+        const p = profile || document.getElementById('bindings-profile')?.value || Controls.getProfile();
+        Controls.renderEditor(p);
     },
     resetBindingsProfile: function () {
         const profile = document.getElementById('bindings-profile')?.value || 'host';
         Controls.resetProfile(profile);
-        Controls.renderEditor(profile);
-        this.status(`${profile === 'host' ? 'Host' : 'Guest'} bindings reset`);
+        this.renderBindingsEditor(profile);
+        this.status(`${profile === 'host' ? 'Host' : 'Guest'} keyboard + controller reset`);
     },
-    startBinding: function (action) {
+    startKeyboardBinding: function (action) {
         const profile = document.getElementById('bindings-profile')?.value || 'host';
         const btn = document.querySelector(`[data-bind="${action}"]`);
         if (btn) btn.textContent = 'Press key… (Esc cancel)';
-        Controls.startRebind(profile, action, (ok) => {
-            Controls.renderEditor(profile);
-            if (ok) this.status(`Bound ${CONTROL_ACTIONS[action]?.label || action}`);
+        Controls.startKeyboardRebind(profile, action, (ok) => {
+            this.renderBindingsEditor(profile);
+            if (ok) this.status(`Key bound: ${CONTROL_ACTIONS[action]?.label || action}`);
         });
     },
-    clearBinding: function (action) {
+    startGamepadBinding: function (action) {
         const profile = document.getElementById('bindings-profile')?.value || 'host';
-        Controls.clearBinding(profile, action);
-        Controls.renderEditor(profile);
+        const btn = document.querySelector(`[data-gpad-bind="${action}"]`);
+        if (btn) btn.textContent = 'Press button… (Esc cancel)';
+        Controls.startGamepadRebind(profile, action, (ok, idx) => {
+            this.renderBindingsEditor(profile);
+            if (ok) this.status(`Controller bound: ${Controls.formatGamepadButton(idx)} → ${CONTROL_ACTIONS[action]?.label || action}`);
+            else if (ok === false) this.renderBindingsEditor(profile);
+        });
+    },
+    clearKeyboardBinding: function (action) {
+        const profile = document.getElementById('bindings-profile')?.value || 'host';
+        Controls.clearKeyboardBinding(profile, action);
+        this.renderBindingsEditor(profile);
+    },
+    clearGamepadBinding: function (action) {
+        const profile = document.getElementById('bindings-profile')?.value || 'host';
+        Controls.clearGamepadBinding(profile, action);
+        this.renderBindingsEditor(profile);
     },
     toggleControlMode: function () {
         if (PlayerController.spawned) {

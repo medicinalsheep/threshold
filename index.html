@@ -246,9 +246,17 @@
                     </select>
                 </div>
                 <p id="gamepad-status" class="insert-hint">Controller: none</p>
-                <p class="insert-hint" style="font-size:0.65rem;">GTA V layout: L-stick move · R-stick camera · A jump · RT sprint · X interact · Y walk/fly · LB/RB up/down · B descend · Start pause · Select keys · R3 camera reset · Touch: hold/double-tap = menu</p>
-                <div id="bindings-list"></div>
-                <button id="bindings-reset" class="insert-action secondary">RESET PROFILE</button>
+                <div class="insert-tabs bindings-device-tabs">
+                    <button type="button" class="insert-tab bindings-device-tab active" data-bindings-tab="keyboard">KEYBOARD</button>
+                    <button type="button" class="insert-tab bindings-device-tab" data-bindings-tab="gamepad">CONTROLLER</button>
+                </div>
+                <div id="bindings-panel-keyboard" class="bindings-device-panel active">
+                    <div id="bindings-list"></div>
+                </div>
+                <div id="bindings-panel-gamepad" class="bindings-device-panel">
+                    <div id="gamepad-bindings-list"></div>
+                </div>
+                <button id="bindings-reset" class="insert-action secondary">RESET PROFILE (KEYS + PAD)</button>
             </div>
         </div>
 
@@ -263,8 +271,8 @@
                 <div id="host-player-list"></div>
                 <hr style="border-color:var(--border-color); margin:12px 0;">
                 <label class="insert-hint"><input type="checkbox" id="host-auto-coding-pause" checked> Auto-pause when host opens Compiler / PromptGen</label>
-                <button id="host-push-bindings" class="insert-action secondary" type="button">PUSH KEYBINDINGS TO ALL</button>
-                <p class="insert-hint" style="font-size:0.65rem;">Admins can add code & edit world. Guests can move, spawn self, and customize personal keybinds. Host binding updates sync on scene broadcast.</p>
+                <button id="host-push-bindings" class="insert-action secondary" type="button">PUSH CONTROLS TO ALL</button>
+                <p class="insert-hint" style="font-size:0.65rem;">Admins can add code & edit world. Guests customize personal keyboard + controller overrides in KEYS → Guest profile. Host control updates sync on broadcast.</p>
             </div>
         </div>
 

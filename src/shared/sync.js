@@ -20,7 +20,7 @@ export const Sync = {
             gridVisible: !!State.gridVisible,
             player,
             controlMode: State.controlMode || 'fly',
-            hostBindings: window.Controls?.exportHostBindings?.(),
+            hostBindings: window.Controls?.exportHostControls?.() || window.Controls?.exportHostBindings?.(),
             admins: window.Session?.getAdminList?.() || [],
             players: Network?.mode === 'host' ? Network.getPlayerList() : undefined
         };

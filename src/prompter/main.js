@@ -40,7 +40,7 @@ SCENE API:
 - Engine.setRenderMode(0-4) — 0 Threshold, 1 1-Bit, 2 Terminal, 3 SMPTE, 4 Hyper (physics+bloom)
 - State.objects, State.env (timeOfDay, fogDensity, waterEnabled, atmosphereEnabled)
 - State.controlMode — 'walk' (third-person human) or 'fly' (free camera)
-- Controls — WASD/mouse, GTA V gamepad (L-stick move, R-stick camera, RT sprint, X interact), touch sticks; Host bindings sync live, Guest personal overrides (KEYS + PLAYERS panels)
+- Controls — KEYS panel: rebindable keyboard + controller buttons per action; Host profiles sync live (keys + gamepad), Guest personal overrides; GTA defaults (L/R sticks fixed, A jump, RT sprint, X interact, Y toggle, etc.)
 
 HUMAN CHARACTER REFERENCE (for NPCs and playable avatars):
 Static NPC pattern (World.spawnCharacter):

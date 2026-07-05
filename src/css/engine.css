@@ -460,6 +460,18 @@ button {
     color: var(--accent-color);
 }
 
+.bindings-device-tabs {
+    margin: 10px 0;
+}
+
+.bindings-device-panel {
+    display: none;
+}
+
+.bindings-device-panel.active {
+    display: block;
+}
+
 .insert-hint {
     font-size: 0.75rem;
     color: #888;
