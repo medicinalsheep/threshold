@@ -21,7 +21,7 @@ export const HumanMesh = {
         const matPants = new THREE.MeshStandardMaterial({ color: pants, roughness: 0.88 });
         const matHair = new THREE.MeshStandardMaterial({ color: hair, roughness: 0.95 });
         const matShoe = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.6 });
-        const matAccent = new THREE.MeshStandardMaterial({ color: 0xff3366, roughness: 0.4, emissive: 0x220011, emissiveIntensity: 0.35 });
+        const matAccent = new THREE.MeshStandardMaterial({ color: 0x39ff14, roughness: 0.4, emissive: 0x112211, emissiveIntensity: 0.35 });
 
         const group = new THREE.Group();
         group.name = 'human_avatar';

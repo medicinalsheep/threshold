@@ -21,7 +21,7 @@ export function bootstrapStarterScene() {
 
     const ring = new THREE.Mesh(
         new THREE.TorusGeometry(3.2, 0.06, 12, 48),
-        new THREE.MeshStandardMaterial({ color: 0xff3366, emissive: 0xff3366, emissiveIntensity: 0.45, roughness: 0.3 })
+        new THREE.MeshStandardMaterial({ color: 0x39ff14, emissive: 0x39ff14, emissiveIntensity: 0.45, roughness: 0.3 })
     );
     ring.rotation.x = Math.PI / 2;
     ring.position.set(0, 0.36, 0);
@@ -44,7 +44,7 @@ export function bootstrapStarterScene() {
         crate.userData.soundTrigger = 'collision';
     }
 
-    const guide = HumanMesh.build({ bodyColor: 0xff3366, pantsColor: 0x222233, skinColor: 0xffd4b8 });
+    const guide = HumanMesh.build({ bodyColor: 0x39ff14, pantsColor: 0x222233, skinColor: 0xffd4b8 });
     if (guide) {
         guide.position.set(-1.2, 0, 2.8);
         guide.rotation.y = Math.PI * 0.85;

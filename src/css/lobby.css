@@ -2,7 +2,7 @@
     position: fixed;
     inset: 0;
     z-index: 2000;
-    background: radial-gradient(ellipse at 30% 20%, #1f1030 0%, #0a0a12 55%, #050508 100%);
+    background: radial-gradient(ellipse at 30% 20%, #0a1208 0%, #0a0a12 55%, #050508 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -15,8 +15,8 @@
     position: absolute;
     inset: -20%;
     background-image:
-        linear-gradient(rgba(255, 51, 102, 0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 51, 102, 0.06) 1px, transparent 1px);
+        linear-gradient(rgba(57, 255, 20, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57, 255, 20, 0.06) 1px, transparent 1px);
     background-size: 48px 48px;
     transform: perspective(500px) rotateX(58deg) translateY(-8%);
     animation: lobbyGridDrift 24s linear infinite;
@@ -41,7 +41,7 @@
     border: 1px solid var(--accent-color);
     padding: 28px 26px;
     box-sizing: border-box;
-    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55), 0 0 40px rgba(255, 51, 102, 0.12);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55), 0 0 40px rgba(57, 255, 20, 0.1);
     animation: lobbyCardIn 0.7s ease-out;
 }
 
@@ -58,10 +58,11 @@
 
 .lobby-logo {
     display: block;
-    width: min(240px, 78vw);
+    width: min(280px, 82vw);
     height: auto;
     margin: 0 auto;
     object-fit: contain;
+    background: transparent;
 }
 
 .lobby-logo-light {
@@ -115,7 +116,7 @@ body.light-mode .lobby-logo-light {
     padding: 4px 8px;
     border: 1px solid var(--border-color);
     color: var(--accent-color);
-    background: rgba(255, 51, 102, 0.08);
+    background: rgba(57, 255, 20, 0.08);
 }
 
 .lobby-input {
