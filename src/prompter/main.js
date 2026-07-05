@@ -90,6 +90,7 @@ OBJECT EDIT METADATA (set in code for inspector):
 - Blender: plugins/threshold-blender exports import/*.glb + threshold_blender_manifest.json — Engine INSERT → GLTF or BLENDER MANIFEST
 - Dev CLI: npm run textures:watch (hot-reload) + npm run blender:export -- --blend file.blend --object "Name" [--lod]
 - Mesh LOD: name Blender duplicates {Object}_LOD1 / _LOD2 — manifest models[].lods[] — Engine distance switch
+- Cinematic: video/*.mp4|webm → await World.playCutscene('video/intro.mp4', { skippable: true, onComplete: fn }) — HTML5 VideoTexture
 
 RENDER MODES (all remain true 3D — post-process stylizes, depth bands preserve space):
 ${getRenderModePromptBlock()}
@@ -107,8 +108,8 @@ LEGO FIT: extend live scene via World.createObject — no clearWorld. Snap props
 
 SPECTATE: guests can watch via lobby SPECTATE or nav SPECTATE tab (read-only orbit).
 
-ASSET OUTPUT (when scene uses textures/GLTF):
-- Include ASSETS comment block in generated JS listing paths: textures/{slug}_albedo.png, import/{slug}.glb
+ASSET OUTPUT (when scene uses textures/GLTF/video):
+- Include ASSETS comment block in generated JS listing paths: textures/{slug}_albedo.png, import/{slug}.glb, video/intro.mp4
 - Object display name must match GIMP/Blender export name (e.g. "Stone Block" → stone_block_*)
 - After RUN: user GIMP SYNC / INSERT GLTF / or textures:watch in dev — blobs are local until native bundle (Phase E)
 

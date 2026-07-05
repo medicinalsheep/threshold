@@ -30,9 +30,10 @@ export const AssetBundle = {
     bundleCandidates(relPath) {
         const norm = normalizeRel(relPath);
         const candidates = [this.toBundlePath(norm)];
-        if (!norm.startsWith('textures/') && !norm.startsWith('import/')) {
+        if (!norm.startsWith('textures/') && !norm.startsWith('import/') && !norm.startsWith('video/')) {
             candidates.push(joinBundle('textures', norm));
             candidates.push(joinBundle('import', norm));
+            candidates.push(joinBundle('video', norm));
         }
         return [...new Set(candidates)];
     },
@@ -72,6 +73,9 @@ export const AssetBundle = {
             else if (lower.endsWith('.webp')) mime = 'image/webp';
             else if (lower.endsWith('.glb')) mime = 'model/gltf-binary';
             else if (lower.endsWith('.gltf')) mime = 'model/gltf+json';
+            else if (lower.endsWith('.mp4')) mime = 'video/mp4';
+            else if (lower.endsWith('.webm')) mime = 'video/webm';
+            else if (lower.endsWith('.m4v')) mime = 'video/mp4';
             const blob = new Blob([buf], { type: mime });
             return new File([blob], name, { type: mime });
         }

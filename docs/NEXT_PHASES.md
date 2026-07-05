@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v4.8.0 — Phase N (LOD+HILOD unify: shared distances, sync persistence, bundle groups).
+**Current:** v4.9.0 — Phase K (cinematic layer: HTML5 video cutscenes + VideoTexture).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -106,6 +106,26 @@ Deliverables:
 npm run export:graphics -- --profile android
 npm run export:graphics -- --profile windows --manifest my-game.threshold-game.json --install
 npm run export:graphics -- --all-profiles
+```
+
+---
+
+### Phase K — Cinematic layer (v4.9) ✅
+
+| Step | Status |
+|------|--------|
+| K1 `video/` folder + `threshold_video_manifest.json` | ✅ |
+| K2 `World.playCutscene()` / `stopCutscene()` — Three.js VideoTexture | ✅ |
+| K3 `textures:watch` watches `video/` (MP4/WebM hot-reload) | ✅ |
+| K4 `bundle:assets` + `export:graphics` ship `video/` | ✅ |
+| K5 Export manifest `videos[]` + wizard count | ✅ |
+
+```javascript
+// In running world code (Compiler → RUN):
+await World.playCutscene('video/intro.mp4', {
+  skippable: true,
+  onComplete: (meta) => console.log('done', meta.reason),
+});
 ```
 
 ---

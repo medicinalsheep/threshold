@@ -130,6 +130,7 @@ function resolveSourceDirs() {
     const bundle = path.join(ROOT, 'dist-pages', 'bundle');
     const textures = path.join(ROOT, 'textures');
     const importDir = path.join(ROOT, 'import');
+    const videoDir = path.join(ROOT, 'video');
     if (fs.existsSync(path.join(bundle, 'textures'))) {
         dirs.textures = path.join(bundle, 'textures');
     } else if (fs.existsSync(textures)) {
@@ -139,6 +140,11 @@ function resolveSourceDirs() {
         dirs.import = path.join(bundle, 'import');
     } else if (fs.existsSync(importDir)) {
         dirs.import = importDir;
+    }
+    if (fs.existsSync(path.join(bundle, 'video'))) {
+        dirs.video = path.join(bundle, 'video');
+    } else if (fs.existsSync(videoDir)) {
+        dirs.video = videoDir;
     }
     return dirs;
 }

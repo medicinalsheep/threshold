@@ -6,6 +6,7 @@ import { ProjectVault } from './projectVault.js';
 import { getGraphicsExportBlock } from './graphicsExportProfiles.js';
 import { TextureHilod } from './textureHilod.js';
 import { LOD_DISTANCES } from './lodConfig.js';
+import { Cinematic } from './cinematic.js';
 
 const BUILD_PROFILES = {
     web: {
@@ -102,6 +103,15 @@ export const GameExport = {
             );
         }
 
+        const bundledVideos = await Cinematic.listBundled();
+        const playedVideos = Cinematic.collectExportEntries();
+        const videoMap = new Map();
+        [...bundledVideos, ...playedVideos].forEach((entry) => {
+            if (!entry?.path) return;
+            videoMap.set(entry.path, { ...entry, source: bundledVideos.some((b) => b.path === entry.path) ? 'bundle' : 'runtime' });
+        });
+        const videoEntries = [...videoMap.values()];
+
         return {
             format: 'threshold-game',
             formatVersion: 1,
@@ -119,6 +129,16 @@ export const GameExport = {
                 running: project.runningCode || window.Runtime?.runningCode || '',
             },
             sounds: soundEntries,
+            videos: videoEntries,
+            cinematic: {
+                api: "World.playCutscene('video/intro.mp4', { skippable: true, onComplete: (m) => {} })",
+                stop: 'World.stopCutscene()',
+                list: 'World.listVideos()',
+                folder: 'video/',
+                manifestName: 'threshold_video_manifest.json',
+                formats: ['mp4', 'webm'],
+                note: 'HTML5 VideoTexture cutscenes — no VLC; bundle via npm run bundle:assets',
+            },
             textures: TextureLibrary.collectManifestEntries(world?.objects || []).map((t) => ({
                 ...t,
                 note: 'Re-import via GIMP SYNC or ship via npm run bundle:assets → dist-pages/bundle/',
@@ -148,7 +168,7 @@ export const GameExport = {
             },
             bundle: {
                 dir: 'dist-pages/bundle/',
-                dirs: ['textures', 'import'],
+                dirs: ['textures', 'import', 'video'],
                 index: 'bundle/bundle-index.json',
                 note: 'npm run bundle:assets copies textures/ + import/ into native/web builds',
             },

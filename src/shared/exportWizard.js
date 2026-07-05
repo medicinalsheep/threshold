@@ -133,6 +133,7 @@ export const ExportWizard = {
                 (o) => o.type === 'gltf' || o.userData?.type === 'gltf'
             ).length;
             const lodModelCount = (this.manifest.models || []).filter((m) => m.lods?.length > 1).length;
+            const videoCount = this.manifest.videos?.length ?? 0;
         const hasScripts = !!(this.manifest.scripts?.running || this.manifest.scripts?.output);
         const hasGimp = !!this.manifest.gimp;
         const hasBlender = !!this.manifest.blender;
@@ -144,10 +145,11 @@ export const ExportWizard = {
                     <li>${objCount} world object(s)${gltfCount ? ` (${gltfCount} GLTF${lodModelCount ? `, ${lodModelCount} LOD chain(s)` : ''})` : ''}</li>
                 <li>${texCount} texture map reference(s)${hilodGroups ? ` (${hilodGroups} HILOD group(s))` : ''} — ship via <code>bundle:assets</code></li>
                 <li>${soundCount} sound clip reference(s)${soundSidecar ? ' (base64 embedded)' : ''}</li>
+                <li>${videoCount} video cutscene(s) — <code>World.playCutscene</code> · ship via <code>bundle:assets</code></li>
                 <li>Scripts: ${hasScripts ? 'included' : 'empty (add in Compiler first)'}</li>
                 <li>Creative: ${hasGimp ? 'GIMP manifest' : '—'} · ${hasBlender ? 'Blender GLTF' : '—'}</li>
                 <li>Graphics: ${escapeText(this.manifest.graphics?.tier || 'realistic')} (render ${this.manifest.graphics?.renderMode ?? 4})</li>
-                <li>Dev CLI: <code>textures:watch</code> · <code>blender:export</code> · <code>bundle:assets</code></li>
+                <li>Dev CLI: <code>textures:watch</code> · <code>blender:export</code> · <code>bundle:assets</code> (video/ hot-reload)</li>
                 <li>Relay: ${escapeText(this.manifest.relay?.mode || 'peerjs-cloud')}</li>
             </ul>
             <label class="export-wizard-check" style="margin-top:10px;">

@@ -131,6 +131,7 @@ ${sceneAssets.length ? sceneAssets.map((a) => {
 - GIMP export folder: textures/ + threshold_manifest.json → Engine Texture → GIMP SYNC
 - Blender export folder: import/ + threshold_blender_manifest.json → INSERT → GLTF
 - Dev hot-reload: npm run textures:watch (pairs with npm run dev)
+- Cutscenes: video/*.mp4|webm → World.playCutscene('video/intro.mp4') — HTML5 VideoTexture
 `.trim();
 }
 

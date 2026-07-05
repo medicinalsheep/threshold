@@ -1253,3 +1253,28 @@ body.shell-capacitor .engine-toolbar {
     font-family: var(--font-mono);
     resize: none;
 }
+
+.cutscene-skip-hint {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%);
+    z-index: 120;
+    margin: 0;
+    padding: 8px 14px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #f0f0f0;
+    background: rgba(0, 0, 0, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.cutscene-skip-hint.visible {
+    opacity: 1;
+}

@@ -43,6 +43,7 @@ import { GraphicsProfile } from '../shared/graphicsProfile.js';
 import { GraphicsPrompt } from '../shared/graphicsPrompt.js';
 import { MeshLod } from '../shared/meshLod.js';
 import { TextureHilod } from '../shared/textureHilod.js';
+import { Cinematic } from '../shared/cinematic.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 
@@ -66,6 +67,7 @@ export function initEngine() {
     window.UnrealBloomPass = UnrealBloomPass;
 
     window.World = World;
+    window.Cinematic = Cinematic;
     window.State = State;
     window.UI = UI;
     window.Recorder = Recorder;
@@ -142,6 +144,8 @@ const State = {
     ctxTargetPos: new THREE.Vector3(),
     isRecording: false,
     isPaused: false,
+    cutscenePlaying: false,
+    cinematicCatalog: [],
     controlMode: 'fly',
     playerRef: null,
     hostCamera: null,
@@ -997,6 +1001,7 @@ const Engine = {
         AgentHub.tick(dt);
         MeshLod.update(this.camera);
         TextureHilod.update(this.camera);
+        Cinematic.tick();
 
         this.controls.update();
         // Visual Rotation (Only for non-physics objects or purely visual effect)
@@ -1205,6 +1210,15 @@ const World = {
         Engine.transformControl.detach();
         UI.deselectObject();
         if (!silent) UI.status('World cleared');
+    },
+    playCutscene: async function (source, options = {}) {
+        return Cinematic.play(source, options);
+    },
+    stopCutscene: async function () {
+        return Cinematic.stop('manual');
+    },
+    listVideos: async function () {
+        return Cinematic.listBundled();
     },
     // NEW: Dynamic import for limitless extensions (e.g., loaders, controls)
     importModule: async function (modulePath, alias) {

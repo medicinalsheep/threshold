@@ -10,10 +10,11 @@ const LOD_DISTANCES = require('../config/lod-distances.json').distances;
 
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'dist-pages', 'bundle');
-const DIRS = ['textures', 'import'];
+const DIRS = ['textures', 'import', 'video'];
 const MANIFESTS = {
     textures: 'threshold_manifest.json',
     import: 'threshold_blender_manifest.json',
+    video: 'threshold_video_manifest.json',
 };
 
 function ensureDir(dir) {
@@ -96,7 +97,8 @@ function main() {
 
     const texCount = index.files.textures?.length ?? 0;
     const importCount = index.files.import?.length ?? 0;
-    console.log(`[bundle-assets] ${copied} file(s) → dist-pages/bundle/ (${texCount} textures, ${importCount} import)`);
+    const videoCount = index.files.video?.length ?? 0;
+    console.log(`[bundle-assets] ${copied} file(s) → dist-pages/bundle/ (${texCount} textures, ${importCount} import, ${videoCount} video)`);
 }
 
 main();

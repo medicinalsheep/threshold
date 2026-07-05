@@ -10,12 +10,14 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = parseInt(process.env.CREATIVE_WATCH_PORT || '3927', 10);
-const WATCH_DIRS = ['textures', 'import'];
+const WATCH_DIRS = ['textures', 'import', 'video'];
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.webp']);
 const MODEL_EXT = new Set(['.glb', '.gltf']);
+const VIDEO_EXT = new Set(['.mp4', '.webm', '.ogg', '.m4v']);
 const MANIFESTS = {
     textures: 'threshold_manifest.json',
     import: 'threshold_blender_manifest.json',
+    video: 'threshold_video_manifest.json',
 };
 
 const clients = new Set();
@@ -95,6 +97,10 @@ function emitChange(kind, filePath) {
         broadcast({ type: 'blender-manifest', path: relative, watchUrl: assetUrl(relative) });
         return;
     }
+    if (fileName === MANIFESTS.video && kind === 'video') {
+        broadcast({ type: 'video-manifest', path: relative, watchUrl: assetUrl(relative) });
+        return;
+    }
 
     if (kind === 'textures' && IMAGE_EXT.has(ext)) {
         const parsed = parseTextureFile(fileName);
@@ -121,6 +127,17 @@ function emitChange(kind, filePath) {
             watchUrl: assetUrl(relative),
             slug,
             objectName: slug.replace(/_/g, ' '),
+        });
+        return;
+    }
+
+    if (kind === 'video' && VIDEO_EXT.has(ext)) {
+        broadcast({
+            type: 'video',
+            path: relative,
+            file: fileName,
+            watchUrl: assetUrl(relative),
+            id: fileName.replace(/\.[^.]+$/, ''),
         });
     }
 }
@@ -199,6 +216,10 @@ const server = http.createServer((req, res) => {
             '.glb': 'model/gltf-binary',
             '.gltf': 'model/gltf+json',
             '.json': 'application/json',
+            '.mp4': 'video/mp4',
+            '.webm': 'video/webm',
+            '.ogg': 'video/ogg',
+            '.m4v': 'video/mp4',
         };
         res.writeHead(200, {
             'Content-Type': types[ext] || 'application/octet-stream',
@@ -216,6 +237,7 @@ server.listen(PORT, '127.0.0.1', () => {
     console.log(`Threshold creative watch on http://127.0.0.1:${PORT}`);
     console.log(`  SSE:  /events`);
     console.log(`  Assets: /asset?path=textures/foo_albedo.png`);
+    console.log(`           /asset?path=video/intro.mp4`);
     console.log('');
     console.log('Run Engine (npm run dev or electron:dev) — hot-reload applies automatically.');
     WATCH_DIRS.forEach(watchDir);

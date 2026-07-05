@@ -67,7 +67,7 @@ export const PlayerController = {
     },
 
     prePhysics(keys) {
-        if (!this.spawned || !this.body || window.State?.controlMode !== 'walk' || window.State?.isPaused) return;
+        if (!this.spawned || !this.body || window.State?.controlMode !== 'walk' || window.State?.isPaused || window.State?.cutscenePlaying) return;
 
         const Engine = window.Engine;
         const camera = Engine?.camera;

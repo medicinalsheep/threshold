@@ -1,0 +1,7 @@
+{
+  "format": "threshold-video-manifest",
+  "formatVersion": 1,
+  "engineVersion": "4.9.0",
+  "videos": [],
+  "note": "Add MP4/WebM cutscenes here. Engine: World.playCutscene('video/intro.mp4')"
+}

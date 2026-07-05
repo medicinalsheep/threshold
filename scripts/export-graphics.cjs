@@ -78,6 +78,7 @@ function exportProfile(profileId, options = {}) {
     const bundleOut = path.join(outDir, 'bundle');
     const texOut = path.join(bundleOut, 'textures');
     const importOut = path.join(bundleOut, 'import');
+    const videoOut = path.join(bundleOut, 'video');
 
     const sources = resolveSourceDirs();
     const gameManifest = loadGameManifest(options.manifest);
@@ -91,6 +92,7 @@ function exportProfile(profileId, options = {}) {
 
     fs.mkdirSync(texOut, { recursive: true });
     fs.mkdirSync(importOut, { recursive: true });
+    fs.mkdirSync(videoOut, { recursive: true });
 
     let copiedTex = 0;
     if (sources.textures) {
@@ -118,6 +120,19 @@ function exportProfile(profileId, options = {}) {
     const gimpManifestSrc = sources.textures
         ? path.join(sources.textures, 'threshold_manifest.json')
         : null;
+    let copiedVideo = 0;
+    if (sources.video) {
+        const videoFiles = collectDirFiles(sources.video).filter((f) => /\.(mp4|webm|ogg|m4v)$/i.test(f));
+        for (const rel of videoFiles) {
+            copyFile(path.join(sources.video, rel), path.join(videoOut, rel));
+            copiedVideo += 1;
+        }
+        const videoManifest = path.join(sources.video, 'threshold_video_manifest.json');
+        if (fs.existsSync(videoManifest)) {
+            copyFile(videoManifest, path.join(videoOut, 'threshold_video_manifest.json'));
+        }
+    }
+
     const gimpFiltered = gimpManifestSrc
         ? filterGimpManifest(gimpManifestSrc, selected)
         : null;
@@ -138,10 +153,11 @@ function exportProfile(profileId, options = {}) {
         textureMax: profile.textureMax,
         tier: profile.tier,
         lodDistances: LOD_DISTANCES,
-        dirs: ['textures', 'import'],
+        dirs: ['textures', 'import', 'video'],
         files: {
             textures: collectDirFiles(texOut),
             import: collectDirFiles(importOut),
+            video: collectDirFiles(videoOut),
         },
         textureGroups: groupTextureFiles(textureFileNames).map((group) => ({
             ...group,
@@ -179,7 +195,7 @@ function exportProfile(profileId, options = {}) {
     }
 
     console.log(
-        `[export-graphics] ${profileId}: ${copiedTex} texture(s) (${groups} groups, ${skipped.length} pruned) + ${copiedImport} model(s) → ${path.relative(ROOT, outDir)}`
+        `[export-graphics] ${profileId}: ${copiedTex} texture(s) (${groups} groups, ${skipped.length} pruned) + ${copiedImport} model(s) + ${copiedVideo} video(s) → ${path.relative(ROOT, outDir)}`
     );
     return { profileId, outDir, copiedTex, skipped: skipped.length, copiedImport };
 }
