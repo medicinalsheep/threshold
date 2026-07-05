@@ -11,10 +11,7 @@
     "preview": "vite preview --outDir dist-pages"
   },
   "devDependencies": {
-    "vite": "npm:rolldown-vite@7.2.5"
-  },
-  "overrides": {
-    "vite": "npm:rolldown-vite@7.2.5"
+    "vite": "^6.2.0"
   },
   "dependencies": {
     "cannon-es": "^0.20.0",
