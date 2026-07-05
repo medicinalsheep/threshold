@@ -1,4 +1,6 @@
 import { GraphicsProfile } from './graphicsProfile.js';
+import { sanitizeUserDataForSync } from './lodSync.js';
+import { LOD_DISTANCES } from './lodConfig.js';
 
 const MODE_NAMES = ['Threshold', '1-Bit', 'Terminal', 'SMPTE', 'Hyper'];
 
@@ -24,6 +26,8 @@ export function getSceneContext() {
         gltfUrl: o.userData?.gltfUrl || null,
         gltfPath: o.userData?.gltfPath || null,
         lodPaths: o.userData?.lodPaths || null,
+        lodDistances: o.userData?.lodDistances || LOD_DISTANCES,
+        textureHilod: o.userData?.textureHilod || null,
     }));
     const humanNpcCount = objects.filter((o) => o.isHuman && !o.isPlayer).length;
 
@@ -140,6 +144,6 @@ export function getSceneObjectsForSpawn() {
         pos: { x: o.position.x, y: o.position.y, z: o.position.z },
         rot: { x: o.rotation.x, y: o.rotation.y, z: o.rotation.z },
         scl: { x: o.scale.x, y: o.scale.y, z: o.scale.z },
-        userData: { ...o.userData }
+        userData: sanitizeUserDataForSync(o.userData),
     }));
 }

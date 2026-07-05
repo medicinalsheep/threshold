@@ -1,12 +1,22 @@
 import * as THREE from 'three';
-import profilesConfig from '../../config/graphics-export-profiles.json';
-
-const HILOD_RE = /_(512|1k|2k|4k)(\.[^.]+)$/i;
-const SLOT_ORDER = ['albedo', 'roughness', 'metalness', 'normal'];
-const DEFAULT_DISTANCES = [0, 8, 20];
+import { LOD_DISTANCES } from './lodConfig.js';
+import {
+    HILOD_RE,
+    SLOT_ORDER,
+    variantSuffix,
+    textureBaseKey,
+    preferenceOrder,
+    parseTextureFileName,
+    pickSuffix,
+    groupTextureFiles,
+} from './hilodUtils.js';
 
 const _camPos = new THREE.Vector3();
 const _objPos = new THREE.Vector3();
+const UPDATE_INTERVAL_MS = 120;
+let _lastUpdateMs = 0;
+let _lastTier = null;
+let _lastCamKey = '';
 
 export const TEXTURE_MAX_BY_TIER = {
     compatibility: 512,
@@ -16,60 +26,27 @@ export const TEXTURE_MAX_BY_TIER = {
     custom: 2048,
 };
 
-export function variantSuffix(fileName = '') {
-    const m = String(fileName).match(/_(512|1k|2k|4k)(\.[^.]+)$/i);
-    return m ? `_${m[1].toLowerCase()}` : '';
-}
+export { parseTextureFileName, variantSuffix, textureBaseKey, pickSuffix, groupTextureFiles };
 
-export function textureBaseKey(fileName = '') {
-    return String(fileName).replace(HILOD_RE, '$2');
-}
-
-export function hasHilodSuffix(fileName = '') {
-    return HILOD_RE.test(fileName);
-}
-
-export function preferenceOrder(textureMax, cfg = profilesConfig) {
-    const key = String(textureMax);
-    if (cfg.textureMaxPreference?.[key]) return cfg.textureMaxPreference[key];
-    if (textureMax <= 512) return ['_512', ''];
-    if (textureMax <= 1024) return ['_1k', '_512', ''];
-    if (textureMax <= 2048) return ['_2k', '_1k', ''];
-    return ['_4k', '_2k', '_1k', ''];
-}
-
-export function parseTextureFileName(fileName = '') {
-    const lower = String(fileName).toLowerCase();
-    let hilod = '';
-    let stem = lower;
-
-    const hilodMatch = lower.match(/_(512|1k|2k|4k)(\.[^.]+)$/i);
-    if (hilodMatch) {
-        hilod = `_${hilodMatch[1].toLowerCase()}`;
-        stem = lower.slice(0, lower.length - hilod.length);
-    }
-
-    const exts = ['.png', '.jpg', '.jpeg', '.webp'];
-    for (const slot of SLOT_ORDER) {
-        const suffix = `_${slot}`;
-        for (const ext of exts) {
-            if (stem.endsWith(`${suffix}${ext}`)) {
-                const slug = stem.slice(0, stem.length - suffix.length - ext.length);
-                return { slot, slug, hilod, baseKey: textureBaseKey(lower) };
-            }
-        }
-    }
-    return null;
+function slugify(name = '') {
+    return String(name)
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '') || 'object';
 }
 
 function ensureHilodUserData(obj) {
     if (!obj.userData) obj.userData = {};
     if (!obj.userData.textureHilod) {
         obj.userData.textureHilod = {
-            distances: [...DEFAULT_DISTANCES],
+            distances: [...LOD_DISTANCES],
             activeBySlot: {},
             slots: {},
         };
+    }
+    if (!obj.userData.textureHilod.distances?.length) {
+        obj.userData.textureHilod.distances = [...LOD_DISTANCES];
     }
     return obj.userData.textureHilod;
 }
@@ -80,25 +57,23 @@ function textureMaxForState() {
     return TEXTURE_MAX_BY_TIER[tier] ?? TEXTURE_MAX_BY_TIER.realistic;
 }
 
-function pickLevel(distance, distances = DEFAULT_DISTANCES) {
-    let level = 0;
-    for (let i = 0; i < distances.length; i++) {
-        if (distance >= distances[i]) level = i;
+function shouldRunUpdate(camera) {
+    const now = performance.now();
+    const tier = window.State?.graphicsTier;
+    const camKey = camera
+        ? `${camera.position.x.toFixed(0)}|${camera.position.y.toFixed(0)}|${camera.position.z.toFixed(0)}`
+        : '';
+    if (now - _lastUpdateMs < UPDATE_INTERVAL_MS && tier === _lastTier && camKey === _lastCamKey) {
+        return false;
     }
-    return Math.min(level, distances.length - 1);
-}
-
-export function pickSuffix(distance, distances, textureMax, availableSuffixes = ['']) {
-    const order = preferenceOrder(textureMax);
-    const available = order.filter((s) => availableSuffixes.includes(s));
-    if (!available.length) return availableSuffixes[0] ?? '';
-    const level = pickLevel(distance, distances);
-    const idx = Math.min(level, available.length - 1);
-    return available[idx];
+    _lastUpdateMs = now;
+    _lastTier = tier;
+    _lastCamKey = camKey;
+    return true;
 }
 
 export const TextureHilod = {
-    DEFAULT_DISTANCES,
+    DEFAULT_DISTANCES: LOD_DISTANCES,
     HILOD_RE,
     SLOT_ORDER,
 
@@ -110,6 +85,17 @@ export const TextureHilod = {
         if (!hilod.slots[slot]) hilod.slots[slot] = {};
         const suffix = variantSuffix(path.split(/[/\\]/).pop() || path);
         hilod.slots[slot][suffix] = { path, texId };
+    },
+
+    registerFromManifestEntries(obj, entries = []) {
+        entries.forEach((entry) => {
+            const path = entry.path || `textures/${entry.file}`;
+            this.registerVariant(obj, entry.slot, path, null);
+            (entry.variants || []).forEach((variant) => {
+                const vPath = variant.path || path.replace(/(\.[^.]+)$/i, `${variant.suffix || ''}$1`);
+                this.registerVariant(obj, entry.slot, vPath, null);
+            });
+        });
     },
 
     availableSuffixes(obj, slot) {
@@ -138,7 +124,40 @@ export const TextureHilod = {
                 const record = await loadFn(variantPath).catch(() => null);
                 if (record) this.registerVariant(obj, slot, variantPath, record.id);
             } catch {
-                /* variant optional */
+                /* optional */
+            }
+        }
+    },
+
+    async discoverVariantsFromBundle(obj) {
+        const AssetBundle = window.AssetBundle;
+        if (!AssetBundle?.getIndex) return;
+        const index = await AssetBundle.getIndex();
+        const groups = index?.textureGroups;
+        if (!groups?.length) return;
+
+        const slug = slugify(obj.userData?.name);
+        for (const group of groups) {
+            if (group.slug !== slug) continue;
+            for (const variant of group.variants) {
+                const rel = variant.path || `textures/${variant.file}`;
+                this.registerVariant(obj, variant.slot, rel, null);
+            }
+        }
+    },
+
+    async loadSlotVariants(obj, TextureBridge) {
+        const hilod = obj?.userData?.textureHilod;
+        if (!hilod?.slots || !TextureBridge) return;
+        for (const slot of Object.keys(hilod.slots)) {
+            for (const entry of Object.values(hilod.slots[slot])) {
+                if (!entry?.path || entry.texId) continue;
+                try {
+                    const record = await TextureBridge.loadFileFromPath(entry.path);
+                    entry.texId = record.id;
+                } catch {
+                    /* optional variant */
+                }
             }
         }
     },
@@ -167,7 +186,7 @@ export const TextureHilod = {
 
     async updateObject(obj, camera, TextureBridge) {
         if (!obj?.material || !obj.userData?.textureHilod?.slots) return;
-        const distances = obj.userData.textureHilod.distances || DEFAULT_DISTANCES;
+        const distances = obj.userData.textureHilod.distances || LOD_DISTANCES;
         const textureMax = textureMaxForState();
         camera.getWorldPosition(_camPos);
         obj.getWorldPosition(_objPos);
@@ -185,6 +204,7 @@ export const TextureHilod = {
         const State = window.State;
         const TextureBridge = window.TextureBridge;
         if (!camera || !State?.objects || !TextureBridge) return;
+        if (!shouldRunUpdate(camera)) return;
 
         const tasks = State.objects
             .filter((o) => o?.userData?.textureHilod?.slots && Object.keys(o.userData.textureHilod.slots).length)
@@ -202,7 +222,29 @@ export const TextureHilod = {
                 delete hilod.activeBySlot[slot];
             });
         }
+        _lastUpdateMs = 0;
         return this.update(window.Engine?.camera);
+    },
+
+    async rehydrateAfterSync() {
+        const State = window.State;
+        const TextureBridge = window.TextureBridge;
+        if (!State?.objects || !TextureBridge) return;
+
+        for (const obj of State.objects) {
+            if (!obj.material) continue;
+            const hilod = obj.userData?.textureHilod;
+            if (hilod?.slots) {
+                for (const [slot, variants] of Object.entries(hilod.slots)) {
+                    for (const [suffix, entry] of Object.entries(variants)) {
+                        if (entry?.path) this.registerVariant(obj, slot, entry.path, null);
+                    }
+                }
+                await this.discoverVariantsFromBundle(obj);
+                await this.loadSlotVariants(obj, TextureBridge);
+            }
+        }
+        await this.refreshAll();
     },
 
     collectExportEntries(objects = []) {
@@ -214,13 +256,13 @@ export const TextureHilod = {
                 const variantList = Object.entries(variants).map(([suffix, v]) => ({
                     suffix: suffix || 'full',
                     path: v.path,
-                    texId: v.texId || null,
                 }));
                 if (!variantList.length) return;
                 entries.push({
                     objectName: obj.userData?.name || null,
                     objectId: obj.userData?.id || null,
                     slot,
+                    distances: hilod.distances || LOD_DISTANCES,
                     activeSuffix: hilod.activeBySlot?.[slot] ?? '',
                     variants: variantList,
                 });

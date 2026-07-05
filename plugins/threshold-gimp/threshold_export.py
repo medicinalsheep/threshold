@@ -25,7 +25,7 @@ except ImportError as exc:
 
 MANIFEST_NAME = "threshold_manifest.json"
 MANIFEST_FORMAT = "threshold-gimp-manifest"
-ENGINE_VERSION = "4.7.0"
+ENGINE_VERSION = "4.8.0"
 HILOD_VARIANTS = [(512, "_512"), (1024, "_1k"), (2048, "_2k")]
 
 

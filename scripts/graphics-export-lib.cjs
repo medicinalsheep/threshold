@@ -6,9 +6,16 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const PROFILES_PATH = path.join(ROOT, 'config', 'graphics-export-profiles.json');
-const IMAGE_EXT = /\.(png|jpe?g|webp)$/i;
+const {
+    variantSuffix,
+    textureBaseKey,
+    hasHilodSuffix,
+    preferenceOrder: hilodPreferenceOrder,
+    groupTextureFiles,
+} = require('./hilod-utils.cjs');
+
+const IMAGE_EXT = /\.(png|jpe?g|webp|ktx2)$/i;
 const MODEL_EXT = /\.(glb|gltf)$/i;
-const HILOD_RE = /_(512|1k|2k|4k)(\.[^.]+)$/i;
 
 const TIER_PRESETS = {
     compatibility: {
@@ -68,25 +75,7 @@ function getTierPreset(tierId) {
 }
 
 function preferenceOrder(textureMax, cfg) {
-    const key = String(textureMax);
-    if (cfg.textureMaxPreference?.[key]) return cfg.textureMaxPreference[key];
-    if (textureMax <= 512) return ['_512', ''];
-    if (textureMax <= 1024) return ['_1k', '_512', ''];
-    if (textureMax <= 2048) return ['_2k', '_1k', ''];
-    return ['_4k', '_2k', '_1k', ''];
-}
-
-function textureBaseKey(fileName) {
-    return fileName.replace(HILOD_RE, '$2');
-}
-
-function hasHilodSuffix(fileName) {
-    return HILOD_RE.test(fileName);
-}
-
-function variantSuffix(fileName) {
-    const m = fileName.match(/_(512|1k|2k|4k)(\.[^.]+)$/i);
-    return m ? `_${m[1].toLowerCase()}` : '';
+    return hilodPreferenceOrder(textureMax, cfg);
 }
 
 function selectTextureFiles(fileNames, textureMax) {
@@ -278,6 +267,7 @@ module.exports = {
     sliceGameManifest,
     buildExportManifest,
     buildTextureExportEntries,
+    groupTextureFiles,
     variantSuffix,
     textureBaseKey,
     IMAGE_EXT,

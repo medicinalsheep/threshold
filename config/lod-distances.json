@@ -1,0 +1,6 @@
+{
+  "format": "threshold-lod-distances",
+  "version": 1,
+  "distances": [0, 12, 28],
+  "note": "Shared camera-distance thresholds (meters) for MeshLod and TextureHilod"
+}

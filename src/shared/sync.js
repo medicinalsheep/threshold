@@ -45,13 +45,14 @@ export const Sync = {
         };
     },
 
-    applyState(state) {
+    async applyState(state) {
         if (!state || applying) return;
+        const State = window.State;
         const World = window.World;
         const Engine = window.Engine;
         const Environment = window.Environment;
         const Runtime = window.Runtime;
-        if (!World || !Engine) return;
+        if (!World || !Engine || !State) return;
 
         applying = true;
         try {
@@ -72,7 +73,7 @@ export const Sync = {
                 }
             });
             if (gltfSnapshots.length) {
-                window.GltfImport?.spawnSnapshots?.(gltfSnapshots);
+                await window.GltfImport?.spawnSnapshots?.(gltfSnapshots);
             }
 
             const graphicsState = state.graphics || state.world?.graphics;
@@ -123,6 +124,7 @@ export const Sync = {
                 window.PlayerController?.despawn();
             }
             window.TextureBridge?.rehydrateScene?.();
+            await window.TextureHilod?.rehydrateAfterSync?.();
             window.UI?.updateControlMode?.();
             window.Spectate?.updateHud?.();
         } finally {

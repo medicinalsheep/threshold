@@ -1,0 +1,88 @@
+/**
+ * Node-side HILOD helpers — mirrors src/shared/hilodUtils.js
+ */
+const fs = require('fs');
+const path = require('path');
+
+const ROOT = path.join(__dirname, '..');
+const PROFILES_PATH = path.join(ROOT, 'config', 'graphics-export-profiles.json');
+
+const HILOD_RE = /_(512|1k|2k|4k)(\.[^.]+)$/i;
+const SLOT_ORDER = ['albedo', 'roughness', 'metalness', 'normal'];
+
+function loadProfiles() {
+    return JSON.parse(fs.readFileSync(PROFILES_PATH, 'utf8'));
+}
+
+function variantSuffix(fileName = '') {
+    const m = String(fileName).match(/_(512|1k|2k|4k)(\.[^.]+)$/i);
+    return m ? `_${m[1].toLowerCase()}` : '';
+}
+
+function textureBaseKey(fileName = '') {
+    return String(fileName).replace(HILOD_RE, '$2');
+}
+
+function hasHilodSuffix(fileName = '') {
+    return HILOD_RE.test(fileName);
+}
+
+function preferenceOrder(textureMax, cfg = loadProfiles()) {
+    const key = String(textureMax);
+    if (cfg.textureMaxPreference?.[key]) return cfg.textureMaxPreference[key];
+    if (textureMax <= 512) return ['_512', ''];
+    if (textureMax <= 1024) return ['_1k', '_512', ''];
+    if (textureMax <= 2048) return ['_2k', '_1k', ''];
+    return ['_4k', '_2k', '_1k', ''];
+}
+
+function parseTextureFileName(fileName = '') {
+    const lower = String(fileName).toLowerCase();
+    let hilod = '';
+    let stem = lower;
+    const hilodMatch = lower.match(/_(512|1k|2k|4k)(\.[^.]+)$/i);
+    if (hilodMatch) {
+        hilod = `_${hilodMatch[1].toLowerCase()}`;
+        stem = lower.slice(0, lower.length - hilod.length);
+    }
+    const exts = ['.png', '.jpg', '.jpeg', '.webp', '.ktx2'];
+    for (const slot of SLOT_ORDER) {
+        const suffix = `_${slot}`;
+        for (const ext of exts) {
+            if (stem.endsWith(`${suffix}${ext}`)) {
+                const slug = stem.slice(0, stem.length - suffix.length - ext.length);
+                return { slot, slug, hilod, baseKey: textureBaseKey(lower) };
+            }
+        }
+    }
+    return null;
+}
+
+function groupTextureFiles(fileNames = []) {
+    const groups = new Map();
+    fileNames.forEach((fileName) => {
+        const parsed = parseTextureFileName(fileName);
+        if (!parsed) return;
+        const base = parsed.baseKey;
+        if (!groups.has(base)) {
+            groups.set(base, { slug: parsed.slug, baseKey: base, variants: [] });
+        }
+        groups.get(base).variants.push({
+            slot: parsed.slot,
+            suffix: parsed.hilod || 'full',
+            file: fileName,
+        });
+    });
+    return [...groups.values()];
+}
+
+module.exports = {
+    HILOD_RE,
+    SLOT_ORDER,
+    variantSuffix,
+    textureBaseKey,
+    hasHilodSuffix,
+    preferenceOrder,
+    parseTextureFileName,
+    groupTextureFiles,
+};

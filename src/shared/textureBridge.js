@@ -121,21 +121,30 @@ export const TextureBridge = {
 
     async loadFileFromPath(filePath) {
         if (!filePath) return null;
-        const name = filePath.split(/[/\\]/).pop();
-        const mime = mimeFromPath(filePath);
+        const resolvedPath = await NativeTextureCodec.resolveSourcePath(filePath);
+        const name = resolvedPath.split(/[/\\]/).pop();
+        const mime = mimeFromPath(resolvedPath);
 
         if (ThresholdShell.isNative) {
-            let buf = await ThresholdShell.readBinary(filePath);
-            if (!buf) buf = await AssetBundle.readBinary(filePath);
+            let buf = await ThresholdShell.readBinary(resolvedPath);
+            if (!buf) buf = await AssetBundle.readBinary(resolvedPath);
             if (!buf) return null;
             const blob = new Blob([buf], { type: mime });
             const file = new File([blob], name, { type: mime });
-            return TextureLibrary.saveFromFile(file, { name, sourcePath: filePath });
+            return TextureLibrary.saveFromFile(file, {
+                name,
+                sourcePath: resolvedPath,
+                ktx2Path: resolvedPath !== filePath ? resolvedPath : null,
+            });
         }
 
-        const bundleFile = await AssetBundle.loadFile(filePath, name);
+        const bundleFile = await AssetBundle.loadFile(resolvedPath, name);
         if (bundleFile) {
-            return TextureLibrary.saveFromFile(bundleFile, { name, sourcePath: filePath });
+            return TextureLibrary.saveFromFile(bundleFile, {
+                name,
+                sourcePath: resolvedPath,
+                ktx2Path: resolvedPath !== filePath ? resolvedPath : null,
+            });
         }
 
         throw new Error('Load from disk requires Threshold desktop (Electron) build or bundled assets');
@@ -149,6 +158,7 @@ export const TextureBridge = {
         textures[slot] = record.id;
         TextureHilod.registerVariant(obj, slot, filePath, record.id);
         TextureHilod.discoverVariants(obj, slot, filePath, (p) => this.loadFileFromPath(p));
+        TextureHilod.discoverVariantsFromBundle(obj);
         if (slot === 'albedo') obj.userData.textureHint = filePath;
         return record;
     },
@@ -322,6 +332,8 @@ export const TextureBridge = {
         }
 
         obj.userData.gimpManifestPath = options.manifestPath || null;
+        TextureHilod.registerFromManifestEntries(obj, entries);
+        await TextureHilod.discoverVariantsFromBundle(obj);
         const albedo = entries.find((e) => e.slot === 'albedo');
         if (albedo?.path) obj.userData.textureHint = albedo.path;
 

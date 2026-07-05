@@ -5,6 +5,8 @@
  */
 const fs = require('fs');
 const path = require('path');
+const { groupTextureFiles } = require('./hilod-utils.cjs');
+const LOD_DISTANCES = require('../config/lod-distances.json').distances;
 
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'dist-pages', 'bundle');
@@ -71,13 +73,24 @@ function main() {
         root: 'bundle/',
         dirs: DIRS,
         manifests: MANIFESTS,
+        lodDistances: LOD_DISTANCES,
         files: {},
+        textureGroups: [],
     };
 
     for (const dirName of DIRS) {
         const bundleDir = path.join(OUT, dirName);
         index.files[dirName] = listFiles(bundleDir);
     }
+
+    const textureFiles = (index.files.textures || []).map((rel) => path.basename(rel));
+    index.textureGroups = groupTextureFiles(textureFiles).map((group) => ({
+        ...group,
+        variants: group.variants.map((v) => ({
+            ...v,
+            path: `textures/${index.files.textures.find((rel) => path.basename(rel) === v.file) || v.file}`,
+        })),
+    }));
 
     fs.writeFileSync(path.join(OUT, 'bundle-index.json'), JSON.stringify(index, null, 2));
 

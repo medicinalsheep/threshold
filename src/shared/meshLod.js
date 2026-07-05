@@ -2,9 +2,10 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { ThresholdShell } from './thresholdShell.js';
 import { AssetBundle } from './assetBundle.js';
+import { LOD_DISTANCES, pickLodLevel } from './lodConfig.js';
 
 const loader = new GLTFLoader();
-const DEFAULT_DISTANCES = [0, 12, 28];
+const DEFAULT_DISTANCES = LOD_DISTANCES;
 const _camPos = new THREE.Vector3();
 const _objPos = new THREE.Vector3();
 
@@ -76,11 +77,7 @@ export const MeshLod = {
     },
 
     pickLevel(distance, distances = DEFAULT_DISTANCES) {
-        let level = 0;
-        for (let i = 0; i < distances.length; i++) {
-            if (distance >= distances[i]) level = i;
-        }
-        return Math.min(level, distances.length - 1);
+        return pickLodLevel(distance, distances);
     },
 
     physicsSource(root) {

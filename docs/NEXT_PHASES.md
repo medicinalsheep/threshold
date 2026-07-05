@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v4.7.0 — Phase I (HILOD textures: GIMP variants + Engine distance/tier switch).
+**Current:** v4.8.0 — Phase N (LOD+HILOD unify: shared distances, sync persistence, bundle groups).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -78,6 +78,16 @@ Deliverables:
 | I3 KTX2/Basis scaffold (`nativeTextureCodec.js`) | ✅ scaffold |
 | I4 `textures:watch` parses HILOD suffix; hot-reload active tier | ✅ |
 | I5 Export `graphics.textures[]` with variant groups | ✅ |
+
+### Phase N — LOD + HILOD unify (v4.8) ✅
+
+| Step | Status |
+|------|--------|
+| N1 Shared `config/lod-distances.json` (0/12/28m) for mesh + texture | ✅ |
+| N2 Sync sanitizes `textureHilod` paths + `lodPaths`; guests rehydrate from bundle | ✅ |
+| N3 `bundle-index.json` `textureGroups[]` for web variant discovery | ✅ |
+| N4 `hilodUtils` shared (browser + `scripts/hilod-utils.cjs`) | ✅ |
+| N5 Throttled `TextureHilod.update()`; KTX2 sibling path probe | ✅ scaffold |
 
 ### Phase J — Targeted graphics export (v4.5) ✅
 

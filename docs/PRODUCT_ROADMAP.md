@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → local GIMP/Blender art → AI agents on NPCs.
 
-**Current version:** **4.6.0** (Phase H — mesh LOD Blender + Engine distance switch)
+**Current version:** **4.8.0** (Phase N — LOD+HILOD unify, sync persistence, bundle texture groups)
 
 **Detailed next phases:** [NEXT_PHASES.md](NEXT_PHASES.md) (LOD, HILOD, iOS, Phase E leftovers)
 

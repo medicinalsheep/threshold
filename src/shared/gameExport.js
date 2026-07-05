@@ -5,6 +5,7 @@ import { TextureLibrary } from './textureLibrary.js';
 import { ProjectVault } from './projectVault.js';
 import { getGraphicsExportBlock } from './graphicsExportProfiles.js';
 import { TextureHilod } from './textureHilod.js';
+import { LOD_DISTANCES } from './lodConfig.js';
 
 const BUILD_PROFILES = {
     web: {
@@ -158,6 +159,7 @@ export const GameExport = {
                 }),
                 ...getGraphicsExportBlock(resolveActiveGraphicsProfile(options.targets)),
                 textures: TextureHilod.collectExportEntries(world?.objects || []),
+                lodDistances: LOD_DISTANCES,
                 hilodNote: 'Runtime picks map suffix by camera distance + graphics tier; export:graphics prunes per platform',
             },
             models: collectGltfModelEntries(world?.objects || []),
@@ -224,7 +226,7 @@ function collectGltfModelEntries(objects = []) {
                 gltfFile: ud.gltfFile,
                 gltfPath: ud.gltfPath,
                 lods: ud.lodPaths || (ud.gltfPath ? [{ level: 0, path: ud.gltfPath, file: ud.gltfFile, distance: 0 }] : []),
-                lodDistances: ud.lodDistances || [0, 12, 28],
+                lodDistances: ud.lodDistances || LOD_DISTANCES,
                 hasPhysics: !!ud.hasPhysics,
             };
         })

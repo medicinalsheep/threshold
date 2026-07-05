@@ -83,6 +83,25 @@ export const AssetBundle = {
     isEnabled() {
         return true;
     },
+
+    _indexCache: null,
+
+    async getIndex(force = false) {
+        if (this._indexCache && !force) return this._indexCache;
+        const blob = await this.fetchBlob('bundle-index.json');
+        if (!blob) return null;
+        try {
+            const text = await blob.text();
+            this._indexCache = JSON.parse(text);
+            return this._indexCache;
+        } catch {
+            return null;
+        }
+    },
+
+    clearIndexCache() {
+        this._indexCache = null;
+    },
 };
 
 window.AssetBundle = AssetBundle;

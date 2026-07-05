@@ -127,6 +127,9 @@ function exportProfile(profileId, options = {}) {
 
     const textureEntries = buildTextureExportEntries(selected, profileId, profile.textureMax);
 
+    const { groupTextureFiles } = require('./hilod-utils.cjs');
+    const LOD_DISTANCES = require('../config/lod-distances.json').distances;
+    const textureFileNames = collectDirFiles(texOut).map((rel) => path.basename(rel));
     const bundleIndex = {
         format: 'threshold-asset-bundle',
         bundledAt: new Date().toISOString(),
@@ -134,11 +137,19 @@ function exportProfile(profileId, options = {}) {
         profile: profileId,
         textureMax: profile.textureMax,
         tier: profile.tier,
+        lodDistances: LOD_DISTANCES,
         dirs: ['textures', 'import'],
         files: {
             textures: collectDirFiles(texOut),
             import: collectDirFiles(importOut),
         },
+        textureGroups: groupTextureFiles(textureFileNames).map((group) => ({
+            ...group,
+            variants: group.variants.map((v) => ({
+                ...v,
+                path: `textures/${collectDirFiles(texOut).find((rel) => path.basename(rel) === v.file) || v.file}`,
+            })),
+        })),
         pruned: skipped.length,
     };
     fs.writeFileSync(path.join(bundleOut, 'bundle-index.json'), JSON.stringify(bundleIndex, null, 2));
