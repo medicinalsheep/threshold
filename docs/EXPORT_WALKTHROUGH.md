@@ -109,6 +109,23 @@ See [STORE_ASSETS.md](STORE_ASSETS.md) for platform upload steps.
 
 ---
 
+## TC showcase walkthrough
+
+Use **Lobby → TC →** to load the bundled export demo, then run the wizard:
+
+| Step | TC expectation |
+|------|----------------|
+| **SCENE** | ≥6 objects: `tc_run`, `tc_haul`, `tc_span`, `tc_msh`, `tc_mec`, `tc_cp` |
+| **CREDITS** | Pre-filled `Original — TC` per asset |
+| **PACKS** | `tc.vehicle.run`, `tc.character.msh`, etc. + `threshold://com.threshold.tc/a/*` |
+| **PromptGen** | Scene context includes `// ASSETS:` block when TC objects present |
+
+Smoke test before manual QA: `npm run tc:verify`
+
+Detail: [GETTING_STARTED.md](GETTING_STARTED.md#tc-walkthrough-qa-r4)
+
+---
+
 ## Related
 
 - [GETTING_STARTED.md](GETTING_STARTED.md) — lobby → ship linear path

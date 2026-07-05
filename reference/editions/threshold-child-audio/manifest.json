@@ -1,17 +1,18 @@
 {
   "format": "threshold-reference-edition",
-  "version": 1,
-  "id": "threshold-child-audio",
-  "label": "Threshold Child Audio",
-  "license": "Original — Threshold Child edition",
+  "version": 2,
+  "id": "tc-sfx",
+  "legacyId": "threshold-child-audio",
+  "label": "TC Sfx",
+  "license": "Original — TC",
   "author": "Threshold",
   "loader": "synthesized",
-  "source": "src/shared/thresholdChildAudio.js",
+  "source": "src/shared/tcSfx.js",
   "assets": [
-    { "id": "child_sfx_vehicle_impact", "label": "Child Vehicle Impact", "kind": "sound" },
-    { "id": "child_sfx_footstep", "label": "Child Footstep", "kind": "sound" },
-    { "id": "child_sfx_engine_idle", "label": "Child Engine Idle", "kind": "sound" },
-    { "id": "child_sfx_checkpoint", "label": "Child Checkpoint", "kind": "sound" },
-    { "id": "child_sfx_start_beep", "label": "Child Start Beep", "kind": "sound" }
+    { "id": "tc_sfx_imp", "legacyId": "child_sfx_vehicle_impact", "label": "TC Impact", "kind": "sound" },
+    { "id": "tc_sfx_ft", "legacyId": "child_sfx_footstep", "label": "TC Footstep", "kind": "sound" },
+    { "id": "tc_sfx_eng", "legacyId": "child_sfx_engine_idle", "label": "TC Engine", "kind": "sound" },
+    { "id": "tc_sfx_cp", "legacyId": "child_sfx_checkpoint", "label": "TC Checkpoint", "kind": "sound" },
+    { "id": "tc_sfx_go", "legacyId": "child_sfx_start_beep", "label": "TC Start", "kind": "sound" }
   ]
 }

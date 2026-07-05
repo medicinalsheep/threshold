@@ -1,17 +1,13 @@
 {
   "format": "threshold-reference-edition",
-  "version": 1,
-  "id": "threshold-child-showcase",
-  "label": "Threshold Child Showcase",
-  "license": "Original — Threshold Child edition",
+  "version": 2,
+  "id": "tc-show",
+  "legacyId": "threshold-child-showcase",
+  "label": "TC Show",
+  "license": "Original — TC",
   "author": "Threshold",
   "loader": "showcase",
-  "source": "src/shared/thresholdChildShowcase.js",
-  "includes": [
-    "threshold-child-vehicles",
-    "threshold-child-characters",
-    "threshold-child-audio",
-    "child_checkpoint"
-  ],
+  "source": "src/shared/tcShow.js",
+  "includes": ["tc-veh", "tc-chr", "tc-sfx", "tc_cp"],
   "exportWalkthrough": "SCENE → CREDITS → PACKS → SHIP"
 }

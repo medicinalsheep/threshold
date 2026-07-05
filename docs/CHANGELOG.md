@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.8.1 — R4 walkthrough QA + doc truth
+
+- `npm run tc:verify` — modules, GLBs, manifest, alias map, ASSETS block
+- Doc/manifest truth pass: `tc-*` editions, lobby **TC →**, `npm run tc:build`
+- Manifest: removed `childEdition`; root `tcEd=tc-show`
+- Edition manifests + `reference/ATTRIBUTION.md` updated to TC ids
+- Compiler WORKFLOWS: **TC Circuit** timer + checkpoint (G1)
+- R4 QA checklist in [GETTING_STARTED.md](GETTING_STARTED.md)
+
 ## 5.8.0 — TC abbreviation + chr GLB+LOD
 
 - Renamed editions/ids: `tc-show`, `tc-veh`, `tc-chr`, `tc-sfx`, `tc-lite`

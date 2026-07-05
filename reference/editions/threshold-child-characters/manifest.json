@@ -1,14 +1,30 @@
 {
   "format": "threshold-reference-edition",
-  "version": 1,
-  "id": "threshold-child-characters",
-  "label": "Threshold Child Characters",
-  "license": "Original — Threshold Child edition",
+  "version": 2,
+  "id": "tc-chr",
+  "legacyId": "threshold-child-characters",
+  "label": "TC Chr",
+  "license": "Original — TC",
   "author": "Threshold",
-  "loader": "procedural",
-  "source": "src/shared/thresholdChildCharacters.js",
+  "loader": "gltf",
+  "source": "src/shared/tcChr.js",
+  "blenderManifest": "import/threshold_blender_manifest.json",
   "assets": [
-    { "id": "child_marshal", "label": "Threshold Marshal", "kind": "character", "spawn": "HumanMesh" },
-    { "id": "child_mechanic", "label": "Threshold Mechanic", "kind": "character", "spawn": "HumanMesh" }
+    {
+      "id": "tc_msh",
+      "legacyId": "child_marshal",
+      "label": "TC Marshal",
+      "kind": "character",
+      "spawn": "HumanMesh",
+      "file": "import/tc_msh.glb"
+    },
+    {
+      "id": "tc_mec",
+      "legacyId": "child_mechanic",
+      "label": "TC Mechanic",
+      "kind": "character",
+      "spawn": "HumanMesh",
+      "file": "import/tc_mec.glb"
+    }
   ]
 }

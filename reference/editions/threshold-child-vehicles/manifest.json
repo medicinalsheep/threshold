@@ -1,39 +1,42 @@
 {
   "format": "threshold-reference-edition",
-  "version": 1,
-  "id": "threshold-child-vehicles",
-  "label": "Threshold Child Vehicles",
-  "license": "Original — Threshold Child edition",
+  "version": 2,
+  "id": "tc-veh",
+  "legacyId": "threshold-child-vehicles",
+  "label": "TC Veh",
+  "license": "Original — TC",
   "author": "Threshold",
   "loader": "gltf",
-  "source": "src/shared/thresholdChildVehicles.js",
+  "source": "src/shared/tcVeh.js",
   "blenderManifest": "import/threshold_blender_manifest.json",
   "lodDistances": [0, 12, 28],
   "assets": [
     {
-      "id": "child_runner",
-      "label": "Threshold Runner",
+      "id": "tc_run",
+      "legacyId": "child_runner",
+      "label": "TC Runner",
       "kind": "vehicle",
       "spawn": "gltf",
-      "objectName": "Threshold Runner",
-      "file": "import/threshold_child_runner.glb",
-      "lods": ["import/threshold_child_runner_lod1.glb", "import/threshold_child_runner_lod2.glb"],
-      "license": "Original — Threshold Child edition"
+      "objectName": "TC Runner",
+      "file": "import/tc_run.glb",
+      "lods": ["import/tc_run_l1.glb", "import/tc_run_l2.glb"],
+      "license": "Original — TC"
     },
     {
-      "id": "child_hauler",
-      "label": "Threshold Hauler",
+      "id": "tc_haul",
+      "legacyId": "child_hauler",
+      "label": "TC Hauler",
       "kind": "vehicle",
       "spawn": "gltf",
-      "objectName": "Threshold Hauler",
-      "file": "import/threshold_child_hauler.glb",
-      "lods": ["import/threshold_child_hauler_lod1.glb", "import/threshold_child_hauler_lod2.glb"],
-      "license": "Original — Threshold Child edition"
+      "objectName": "TC Hauler",
+      "file": "import/tc_haul.glb",
+      "lods": ["import/tc_haul_l1.glb", "import/tc_haul_l2.glb"],
+      "license": "Original — TC"
     }
   ],
   "companion": {
-    "edition": "threshold-child-lite",
-    "asset": "child_circuit_span",
+    "edition": "tc-lite",
+    "asset": "tc_span",
     "spawn": "procedural"
   }
 }

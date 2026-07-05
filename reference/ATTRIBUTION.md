@@ -1,23 +1,23 @@
-# Threshold Child attribution
+# TC (Threshold Child) attribution
 
 ## Shipped editions (original)
 
 | Asset | Edition | License | Author |
 |-------|---------|---------|--------|
-| Threshold Runner | `threshold-child-vehicles` | Original — Threshold Child edition (GLB+LOD) | Threshold |
-| Threshold Hauler | `threshold-child-vehicles` | Original — Threshold Child edition (GLB+LOD) | Threshold |
-| Threshold Circuit Span | `threshold-child-lite` | Original — Threshold Child edition | Threshold |
-| Threshold Marshal | `threshold-child-characters` | Original — Threshold Child edition | Threshold |
-| Threshold Mechanic | `threshold-child-characters` | Original — Threshold Child edition | Threshold |
-| Threshold Checkpoint | `threshold-child-showcase` | Original — Threshold Child edition | Threshold |
-| Child SFX (5 clips) | `threshold-child-audio` | Original — Threshold Child edition (synthesized) | Threshold |
+| TC Runner | `tc-veh` | Original — TC (GLB+LOD) | Threshold |
+| TC Hauler | `tc-veh` | Original — TC (GLB+LOD) | Threshold |
+| TC Span | `tc-lite` | Original — TC | Threshold |
+| TC Marshal | `tc-chr` | Original — TC (GLB+LOD) | Threshold |
+| TC Mechanic | `tc-chr` | Original — TC (GLB+LOD) | Threshold |
+| TC Checkpoint | `tc-show` | Original — TC | Threshold |
+| TC SFX (5 clips) | `tc-sfx` | Original — TC (synthesized) | Threshold |
 
-Procedural meshes generated in-engine — see `src/shared/thresholdChildAssets.js`.
+Loaders: `src/shared/tcVeh.js`, `tcChr.js`, `tcLite.js`, `tcSfx.js`, `tcShow.js`
 
 ## External seeds (dev only — not shipped)
 
-Optional `npm run reference:fetch` downloads third-party **CC0** packs into `reference/_dev-seeds/` for **local developer comparison**. Those files are **gitignored** and must **not** be copied into Child editions without a documented transformation pass.
+Optional `npm run reference:fetch` downloads third-party **CC0** packs into `reference/_dev-seeds/` for **local developer comparison**. Those files are **gitignored** and must **not** be copied into TC editions without a documented transformation pass.
 
 ## User games
 
-When you export **your** game, you attribute **your** assets in the EXPORT **CREDITS** step. Threshold Child assets in a scene export as `Original — Threshold Child edition` unless you replace them with your own work.
+When you export **your** game, you attribute **your** assets in the EXPORT **CREDITS** step. TC assets in a scene export as `Original — TC` unless you replace them with your own work.

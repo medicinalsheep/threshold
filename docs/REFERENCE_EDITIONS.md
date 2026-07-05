@@ -1,6 +1,6 @@
-# Reference editions (Threshold Child — v5.6)
+# Reference editions (TC — v5.8)
 
-Bundled content is **Threshold Child** — **original** assets for learning export and store workflows. Not third-party file drops.
+Bundled content is **TC** (Threshold Child) — **original** assets for learning export and store workflows. Not third-party file drops.
 
 **Policy:** [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md)
 
@@ -11,10 +11,15 @@ Bundled content is **Threshold Child** — **original** assets for learning expo
 | Edition | Lobby | Contents |
 |---------|-------|----------|
 | `threshold` | SOLO PLAY | Core starter scene |
-| **`threshold-child-vehicles`** | **THRESHOLD CHILD** (default) | Runner, Hauler — GLB + LOD; Circuit Span procedural |
-| `threshold-child-lite` | fallback | Procedural Runner, Hauler, Circuit Span |
+| **`tc-show`** | **TC →** (default) | Runner, Hauler, Marshal, Mechanic, Span, Checkpoint — GLB+LOD, SFX |
+| `tc-veh` | fallback | Runner, Hauler — GLB + LOD; TC Span procedural |
+| `tc-chr` | — | Marshal + Mechanic HumanMesh NPCs |
+| `tc-sfx` | — | 5 synthesized TC SFX seeds |
+| `tc-lite` | fallback | Procedural Runner, Hauler, TC Span |
 
 Config: `config/reference-editions.json`
+
+Legacy ids `threshold-child-*` map to `tc-*` (v5.8).
 
 ---
 
@@ -22,24 +27,25 @@ Config: `config/reference-editions.json`
 
 ```bash
 npm run dev
-npm run child:vehicles:build   # ensure GLBs in import/ + public/bundle/import/
+npm run tc:build      # ensure GLBs in import/ + public/bundle/import/
+npm run tc:verify     # smoke test modules, GLBs, manifest, aliases
 ```
 
-Lobby → **THRESHOLD CHILD →** — GLB vehicles with LOD @ 12m/28m + circuit span.
+Lobby → **TC →** — full showcase (≥6 objects): GLB vehicles + characters with LOD @ 12m/28m, TC Span, checkpoint, SFX.
 
-Then **MORE → EXPORT** — **SCENE** shows Child GLTF objects; **CREDITS** + **PACKS** pre-fill.
+Then **MORE → EXPORT** — **SCENE** shows TC GLTF objects; **CREDITS** + **PACKS** pre-fill.
 
 ---
 
-## R2 build pipeline
+## Build pipeline
 
 ```bash
-npm run child:vehicles:build
+npm run tc:build
 # Blender path (when installed):
-npm run blender:export -- --blend plugins/threshold-blender/child_vehicles.blend --object "Threshold Runner" --lod --mass 3.4
+npm run blender:export -- --blend plugins/threshold-blender/tc_veh.blend --object "TC Runner" --lod --mass 3.4
 ```
 
-Manifest: `import/threshold_blender_manifest.json` · Loader: `src/shared/thresholdChildVehicles.js`
+Manifest: `import/threshold_blender_manifest.json` · Loaders: `src/shared/tcVeh.js`, `tcChr.js`, `tcShow.js`
 
 ---
 
@@ -49,17 +55,7 @@ Manifest: `import/threshold_blender_manifest.json` · Loader: `src/shared/thresh
 npm run reference:fetch   # optional CC0 packs → reference/_dev-seeds/ (gitignored)
 ```
 
-Use only for **comparison** when authoring new Child GLBs in Blender. **Do not** ship unmodified downloads.
-
----
-
-## Planned Child editions
-
-| Edition | Focus |
-|---------|--------|
-| `threshold-child-characters` | Unique humanoids |
-| `threshold-child-audio` | Original SFX |
-| `threshold-child-showcase` | Full export demo world |
+Use only for **comparison** when authoring new TC GLBs in Blender. **Do not** ship unmodified downloads.
 
 ---
 

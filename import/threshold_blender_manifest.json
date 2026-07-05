@@ -1,7 +1,7 @@
 {
   "format": "threshold-blender-manifest",
   "formatVersion": 1,
-  "engineVersion": "5.6.0",
+  "engineVersion": "5.8.1",
   "models": [
     {
       "id": "tc_run",
@@ -149,7 +149,6 @@
     }
   ],
   "exportDir": "import",
-  "exportedAt": "2026-07-05T09:05:36.163Z",
-  "childEdition": "threshold-child-vehicles",
-  "tcEd": "tc-chr"
+  "exportedAt": "2026-07-05T09:12:01.168Z",
+  "tcEd": "tc-show"
 }

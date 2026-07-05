@@ -1,34 +1,38 @@
 {
   "format": "threshold-reference-edition",
-  "version": 1.1,
+  "version": 2,
   "realism": "lite-v1.1",
-  "id": "threshold-child-lite",
-  "label": "Threshold Child Lite",
-  "license": "Original — Threshold Child edition",
+  "id": "tc-lite",
+  "legacyId": "threshold-child-lite",
+  "label": "TC Lite",
+  "license": "Original — TC",
   "author": "Threshold",
   "loader": "procedural",
-  "source": "src/shared/thresholdChildAssets.js",
+  "source": "src/shared/tcLite.js",
   "assets": [
     {
-      "id": "child_runner",
-      "label": "Threshold Runner",
+      "id": "tc_run",
+      "legacyId": "child_runner",
+      "label": "TC Runner",
       "kind": "vehicle",
       "spawn": "procedural",
-      "license": "Original — Threshold Child edition"
+      "license": "Original — TC"
     },
     {
-      "id": "child_hauler",
-      "label": "Threshold Hauler",
+      "id": "tc_haul",
+      "legacyId": "child_hauler",
+      "label": "TC Hauler",
       "kind": "vehicle",
       "spawn": "procedural",
-      "license": "Original — Threshold Child edition"
+      "license": "Original — TC"
     },
     {
-      "id": "child_circuit_span",
-      "label": "Threshold Circuit Span",
+      "id": "tc_span",
+      "legacyId": "child_circuit_span",
+      "label": "TC Span",
       "kind": "scene",
       "spawn": "procedural",
-      "license": "Original — Threshold Child edition"
+      "license": "Original — TC"
     }
   ]
 }

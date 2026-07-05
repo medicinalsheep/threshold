@@ -42,8 +42,17 @@ function main() {
     runNode(GEN_CHR);
     const pub = path.join(ROOT, 'public', 'bundle', 'import');
     fs.mkdirSync(pub, { recursive: true });
+    const manPath = path.join(ROOT, 'import', 'threshold_blender_manifest.json');
+    if (fs.existsSync(manPath)) {
+        const man = JSON.parse(fs.readFileSync(manPath, 'utf8'));
+        delete man.childEdition;
+        man.tcEd = 'tc-show';
+        man.engineVersion = require(path.join(ROOT, 'package.json')).version;
+        fs.writeFileSync(manPath, JSON.stringify(man, null, 2));
+        fs.copyFileSync(manPath, path.join(pub, 'threshold_blender_manifest.json'));
+    }
     for (const f of fs.readdirSync(path.join(ROOT, 'import'))) {
-        if (/^tc_.*\.glb$/.test(f) || f === 'threshold_blender_manifest.json') {
+        if (/^tc_.*\.glb$/.test(f)) {
             fs.copyFileSync(path.join(ROOT, 'import', f), path.join(pub, f));
         }
     }

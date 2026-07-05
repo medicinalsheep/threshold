@@ -1,6 +1,6 @@
-# Getting started with Threshold (v5.5)
+# Getting started with Threshold (v5.8)
 
-One linear path from lobby to shipping — and where **Threshold Child** assets fit.
+One linear path from lobby to shipping — and where **TC** (Threshold Child) assets fit.
 
 ---
 
@@ -20,7 +20,7 @@ Lobby → Tutorial → Build (EDIT) → Playtest → Export (9 steps) → Store 
 | 6 | **MORE → EXPORT** | 9-step walkthrough → manifest |
 | 7 | **CLI** | `store:prep`, `package:*` or `package:steam` |
 
-Optional: **Lobby → THRESHOLD CHILD** loads **original** reference vehicles (not third-party files) to practice export **SCENE** and **CREDITS**.
+Optional: **Lobby → TC →** loads **original** reference showcase (vehicles, NPCs, SFX, checkpoint) to practice export **SCENE** and **CREDITS**.
 
 ---
 
@@ -28,10 +28,28 @@ Optional: **Lobby → THRESHOLD CHILD** loads **original** reference vehicles (n
 
 | Path | For | Policy |
 |------|-----|--------|
-| **Threshold Child** (bundled) | Learning export, demo scenes, store scaffold | **Original** — authored for Threshold only |
+| **TC** (bundled) | Learning export, demo scenes, store scaffold | **Original** — authored for Threshold only |
 | **Your game** (user-built) | Your shipped title | You source and credit **your** assets legally |
 
-We do **not** ship unmodified third-party game art in Threshold Child editions. See [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md).
+We do **not** ship unmodified third-party game art in TC editions. See [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md).
+
+---
+
+## TC walkthrough QA (R4)
+
+After **Lobby → TC →**, verify before export:
+
+| Check | Expected |
+|-------|----------|
+| Scene objects | ≥6 (`tc_run`, `tc_haul`, `tc_span`, `tc_msh`, `tc_mec`, `tc_cp`) |
+| Render mode | Hyper (4) |
+| SFX tab | 5 TC clips seeded (`tc_sfx_*`) |
+| EXPORT SCENE | All TC objects listed with `isTC` / `tcEd` |
+| EXPORT CREDITS | `Original — TC` pre-filled |
+| EXPORT PACKS | `tc.*` SKUs + `threshold://` registry URIs |
+| PromptGen | Scene context includes `// ASSETS:` block |
+
+Automated smoke: `npm run tc:verify`
 
 ---
 
@@ -79,6 +97,7 @@ npm run gimp:install
 npm run blender:install
 npm run textures:watch    # + npm run dev
 npm run blender:export -- --blend scene.blend --object "My Prop"
+npm run tc:build          # regenerate TC GLBs
 ```
 
 [GIMP/Blender workflow](CREATIVE_WORKFLOW.md) · [Plugins](CREATIVE_PLUGINS.md)

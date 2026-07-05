@@ -100,7 +100,8 @@ async function main() {
     for (const s of specs) man.models.push(await chr(s));
     man.exportDir = 'import';
     man.exportedAt = new Date().toISOString();
-    man.tcEd = 'tc-chr';
+    man.tcEd = 'tc-show';
+    delete man.childEdition;
     fs.writeFileSync(MAN, JSON.stringify(man, null, 2));
     fs.copyFileSync(MAN, path.join(PUB, 'threshold_blender_manifest.json'));
 }

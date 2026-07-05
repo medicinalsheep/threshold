@@ -35,7 +35,7 @@ Lobby → Engine (3D world) ↔ Compiler (code) ↔ PromptGen (AI prompts)
 7. **EXPORT** — 9-step wizard (icons, credits, packs, ship) → `.threshold-game.json` ([walkthrough](docs/EXPORT_WALKTHROUGH.md)).
 8. **Ship** — `store:prep` → `package:android` / `package:win` / `package:steam` ([store](docs/STORE_RELEASE.md) · [Steam](docs/STEAM_RELEASE.md)).
 
-**Optional:** Lobby → **THRESHOLD CHILD** — GLB+LOD vehicles + circuit to practice export SCENE / CREDITS / PACKS ([Child policy](docs/THRESHOLD_CHILD_ASSETS.md) · [getting started](docs/GETTING_STARTED.md)).
+**Optional:** Lobby → **TC →** — full showcase (veh+chr GLB+LOD, SFX, checkpoint) to practice export SCENE / CREDITS / PACKS ([TC policy](docs/THRESHOLD_CHILD_ASSETS.md) · [getting started](docs/GETTING_STARTED.md)).
 
 Deeper workflows: Compiler sidebar → **WORKFLOWS** (Quick Start, agents, relay, sounds).
 
@@ -228,13 +228,14 @@ npm run electron:dev      # preview desktop shell
 
 Guides: [NATIVE_SHELLS](docs/NATIVE_SHELLS.md) · [STORE_RELEASE](docs/STORE_RELEASE.md) · [STEAM_RELEASE](docs/STEAM_RELEASE.md) · [EXPORT_WALKTHROUGH](docs/EXPORT_WALKTHROUGH.md)
 
-### Threshold Child assets (bundled originals)
+### TC assets (bundled originals)
 
-Lobby → **THRESHOLD CHILD** spawns Runner + Hauler (GLB + LOD) and Circuit Span — original Threshold Child assets.
+Lobby → **TC →** spawns full showcase — Runner, Hauler, Marshal, Mechanic (GLB + LOD), TC Span, checkpoint, SFX.
 
 ```bash
-npm run child:vehicles:build   # (re)generate GLB+LOD into import/
-npm run reference:fetch        # optional dev-only CC0 seeds → reference/_dev-seeds/ (gitignored)
+npm run tc:build      # (re)generate GLB+LOD into import/
+npm run tc:verify     # smoke test TC stack
+npm run reference:fetch   # optional dev-only CC0 seeds → reference/_dev-seeds/ (gitignored)
 ```
 
 [docs/THRESHOLD_CHILD_ASSETS.md](docs/THRESHOLD_CHILD_ASSETS.md) · [docs/REFERENCE_EDITIONS.md](docs/REFERENCE_EDITIONS.md) · [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)

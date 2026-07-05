@@ -116,6 +116,7 @@ async function main() {
     man.exportDir = 'import';
     man.exportedAt = new Date().toISOString();
     man.tcEd = 'tc-veh';
+    delete man.childEdition;
     fs.writeFileSync(MAN, JSON.stringify(man, null, 2));
     fs.copyFileSync(MAN, path.join(PUB, 'threshold_blender_manifest.json'));
 }

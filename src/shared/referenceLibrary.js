@@ -20,7 +20,7 @@ export const REFERENCE_LIBRARY = {
 // 8. CHECK CODE READY → RUN IN ENGINE
 // 9. PLAY — test walk + physics + Hyper for PBR
 // 10. MORE → EXPORT — 9 steps (INFO→SHIP) → store:prep → package:*
-// Optional: Lobby THRESHOLD CHILD (original vehicles) — docs/THRESHOLD_CHILD_ASSETS.md
+// Optional: Lobby TC → (original showcase) — docs/THRESHOLD_CHILD_ASSETS.md
 // See docs/GETTING_STARTED.md · docs/EXPORT_WALKTHROUGH.md`
         },
         {
@@ -121,6 +121,42 @@ m.userData.textureHint = 'textures/stone_block_albedo.png';
 const m = World.createObject('cube', 'Stone Block', 0xffffff, true);
 m.userData.textureHint = 'textures/stone_albedo.png';
 // User imports the file in Texture tab — no cloud upload required`
+        },
+        {
+            id: 'tc_circuit',
+            title: 'TC Circuit — Lap Timer + Checkpoint',
+            summary: 'Extend the TC showcase into a time-trial loop: start at TC Span, hit TC Checkpoint, log laps without clearing the scene.',
+            checklist: ['Lobby TC → first (or keep existing TC objects)', 'Find tc_cp by userData.id', 'Use performance.now() lap timer', 'PLAY mode to drive tc_run / tc_haul'],
+            code: `// TC CIRCUIT — paste into Compiler after Lobby → TC →
+(function() {
+  const objs = (State.objects || []);
+  const byId = (id) => objs.find((o) => o.userData?.id === id || o.userData?.id === TcMeta?.normTcId?.(id));
+  const span = byId('tc_span');
+  const cp = byId('tc_cp');
+  if (!span || !cp) { UI.status('Load TC showcase first (Lobby → TC →)'); return; }
+
+  const lap = { n: 0, t0: performance.now(), best: null, running: false };
+  const dist = (a, b) => a.position.distanceTo(b.position);
+
+  const tick = () => {
+    if (!lap.running) return;
+    const player = State.playerMesh || objs.find((o) => o.userData?.isPlayer);
+    if (!player) return;
+    if (dist(player, cp) < 2.2) {
+      const elapsed = (performance.now() - lap.t0) / 1000;
+      lap.n += 1;
+      lap.best = lap.best == null ? elapsed : Math.min(lap.best, elapsed);
+      lap.t0 = performance.now();
+      UI.status(\`TC lap \${lap.n}: \${elapsed.toFixed(2)}s · best \${lap.best.toFixed(2)}s\`);
+    }
+    requestAnimationFrame(tick);
+  };
+
+  UI.status('TC Circuit — drive to green checkpoint (tc_cp)');
+  lap.running = true;
+  lap.t0 = performance.now();
+  tick();
+})();`
         },
         {
             id: 'lego_fit_anything',
@@ -478,7 +514,7 @@ export function getWorkflowPromptBlock() {
     lines.push('\nCREATIVE ASSETS (v3.6+):');
     lines.push('- GIMP → textures/ + GIMP SYNC · Blender → import/ + INSERT GLTF');
     lines.push('- Dev: npm run textures:watch + npm run dev · docs/CREATIVE_WORKFLOW.md');
-    lines.push('- Bundled: Threshold Child originals (lobby THRESHOLD CHILD) — docs/THRESHOLD_CHILD_ASSETS.md');
+    lines.push('- Bundled: TC originals (lobby TC →) — docs/THRESHOLD_CHILD_ASSETS.md');
     lines.push('- PromptGen includes ASSET MANIFEST when live scene is checked');
     return lines.join('\n');
 }

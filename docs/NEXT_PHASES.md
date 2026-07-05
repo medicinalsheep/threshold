@@ -229,7 +229,32 @@ npm run blender:export -- --blend plugins/threshold-blender/child_vehicles.blend
 | R3.4 PromptGen `childAssetsPrompt.js` ASSETS block | ✅ |
 | R3.5 Lobby showcase default; CREDITS/PACKS character + sound kinds | ✅ |
 
-**Next:** Blender Child character GLB, texture Child exports, cutscene showcase video.
+### Phase R4 — Walkthrough QA + doc truth (v5.8.1) ✅
+
+| Step | Status |
+|------|--------|
+| R4.1 TC walkthrough QA checklist (lobby TC → → EXPORT) | ✅ |
+| R4.2 Doc/manifest truth pass — `tc-*` ids everywhere | ✅ |
+| R4.3 `npm run tc:verify` smoke test + alias map | ✅ |
+| R4.4 Manifest `childEdition` removed; root `tcEd=tc-show` | ✅ |
+| R4.5 G1 starter — Compiler WORKFLOWS **TC Circuit** timer + checkpoint | ✅ |
+
+```bash
+npm run tc:build
+npm run tc:verify
+# Lobby → TC → → MORE → EXPORT (SCENE / CREDITS / PACKS)
+```
+
+**Next (R5):** Blender TC mesh realism (`build_tc_chr.py`), refine veh silhouettes.
+
+### Phase G1 — TC Circuit game-dev path (v5.8.1) ✅
+
+| Step | Status |
+|------|--------|
+| G1.1 `referenceLibrary.js` workflow — lap timer + `tc_cp` checkpoint | ✅ |
+| G1.2 PromptGen extends TC scene without `World.clearWorld()` | ✅ |
+
+**Next:** Multiplayer lap sync smoke, export E2E (S1).
 
 ### Phase K — Cinematic layer (v4.9) ✅
 
