@@ -6,12 +6,9 @@
   "scripts": {
     "dev": "vite",
     "dev:grok": "vite --mode grok",
-    "build": "vite build",
-    "build:pages": "vite build --mode pages && node scripts/write-launcher.mjs",
+    "build": "vite build --mode pages",
     "build:grok": "vite build --mode grok",
-    "preview": "vite preview",
-    "preview:pages": "vite preview --outDir dist-pages",
-    "preview:grok": "vite preview --outDir dist-grok"
+    "preview": "vite preview --outDir dist-pages"
   },
   "devDependencies": {
     "vite": "npm:rolldown-vite@7.2.5"

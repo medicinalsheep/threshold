@@ -1,52 +1,48 @@
 # THRESHOLD SUITE
 
-A browser-based 3D creative workstation: retro shader render modes, physics sandbox, code compiler, and AI prompt tooling.
+A browser-based 3D creative workstation — retro shader modes, physics sandbox, code compiler, and AI prompt tools.
 
-## Features
+## Use it (no install)
 
-- **Engine** — Three.js + Cannon-ES sandbox with 5 render modes (Threshold, 1-Bit, Terminal, SMPTE, Hyper/Bloom)
-- **Compiler** — Convert Three.js snippets to Threshold API; procedural generators included
-- **PromptGen** — Build system prompts for AI scene generation
-- **Mobile-friendly** — Touch orbit controls, responsive layout for phone/tablet
-- **Two editions** — Public web build and Grok edition with xAI API login
+**Open in any browser (desktop, phone, or tablet):**
 
-## Quick Start
+**https://medicinalsheep.github.io/threshold/**
+
+On mobile: open that link → Share → **Add to Home Screen**.
+
+That's it. No download, no npm, no local files.
+
+---
+
+## Develop it (only if you're editing the code)
 
 ```bash
 npm install
-npm run dev          # Web edition
-npm run dev:grok     # Grok edition (API key login)
+npm run dev
 ```
 
 Open `http://localhost:5173`
 
-## Build
+Push to `main` and GitHub automatically updates the live site.
 
-| Script | Purpose |
-|--------|---------|
-| `npm run build:pages` | Static web build → `dist-pages/` |
-| `npm run build:grok` | Grok edition with login → `dist-grok/` |
-| `npm run preview:pages` | Preview Pages build locally |
-| `npm run preview:grok` | Preview Grok build locally |
+---
 
-## Grok Edition
+## Features
 
-The Grok edition adds direct script generation via the xAI API. Users enter their [xAI API key](https://console.x.ai) at login. Keys are stored in `sessionStorage` only.
+- **Engine** — 3D sandbox with 5 render modes + physics
+- **Compiler** — Convert Three.js code to Threshold API
+- **PromptGen** — Generate AI prompts for new scenes
+- **Grok edition** — `npm run dev:grok` for xAI API script generation (API key at login)
 
-```bash
-npm run build:grok
-```
-
-## Engine Controls
+## Controls
 
 | Input | Action |
 |-------|--------|
 | WASD / QE | Fly camera |
-| Mouse / Touch | Orbit |
-| Right-click ground | Spawn object (physics) |
-| Right-click object | Inspect / delete |
-| Command bar | Run JS (`allow pasting` for long scripts) |
+| Mouse / Touch | Orbit / zoom |
+| Right-click | Spawn or edit objects |
+| Command bar | Run scripts (`allow pasting` for long code) |
 
 ## License
 
-MIT — see LICENSE file.
+MIT

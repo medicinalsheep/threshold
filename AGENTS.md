@@ -14,14 +14,14 @@ Threshold is a browser-based 3D creative suite with three modules:
 - Three.js r182, cannon-es
 - CSS variables for theming (`src/css/main.css`)
 
-## Build Editions
+## Build
 
-| Command | Edition | Output |
-|---------|---------|--------|
-| `npm run dev` | web | local dev |
-| `npm run dev:grok` | grok (API login) | local dev |
-| `npm run build:pages` | web | `dist-pages/` for GitHub Pages |
-| `npm run build:grok` | grok | `dist-grok/` for hosted Grok edition |
+| Command | Purpose |
+|---------|---------|
+| `npm run dev` | Local web edition |
+| `npm run dev:grok` | Local Grok edition (xAI API login) |
+| `npm run build` | Production web build → `dist-pages/` (auto-deployed via GitHub Actions) |
+| `npm run build:grok` | Grok edition → `dist-grok/` |
 
 Edition is controlled by `VITE_EDITION` in `.env*` files. Version lives in `src/config.js`.
 
@@ -41,7 +41,7 @@ Edition is controlled by `VITE_EDITION` in `.env*` files. Version lives in `src/
 ## Testing
 
 ```bash
-npm run build:pages
+npm run build
 npm run build:grok
-npm run preview:pages
+npm run preview
 ```
