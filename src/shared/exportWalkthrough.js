@@ -1,6 +1,7 @@
 import { SoundLibrary } from './soundLibrary.js';
 import { TextureLibrary } from './textureLibrary.js';
 import { TextureHilod } from './textureHilod.js';
+import { getChildCreditEntries } from './thresholdChildAssets.js';
 import storeAssetsConfig from '../../config/store-assets.json';
 
 
@@ -95,10 +96,17 @@ export function collectContentInventory() {
             id: o.userData?.id || o.uuid,
             name: o.userData?.name || 'Object',
             type: o.userData?.type || 'mesh',
+            assetKind: o.userData?.assetKind || o.userData?.type || 'mesh',
             hasTextures: !!o.userData?.textures,
             textureHint: o.userData?.textureHint || null,
             gltfPath: o.userData?.gltfPath || null,
             soundClipId: o.userData?.soundClipId || null,
+            isThresholdChild: !!o.userData?.isThresholdChild,
+            childEdition: o.userData?.childEdition || null,
+            license: o.userData?.license || null,
+            author: o.userData?.author || null,
+            storeSku: o.userData?.storeSku || null,
+            registryUri: o.userData?.registryUri || null,
         }));
 
     const textureRefs = textures.map((t) => ({
@@ -149,22 +157,47 @@ export function collectContentInventory() {
 
 export function ensureCreditEntries(draft, inventory) {
     const entries = { ...(draft.credits?.entries || {}) };
-    const add = (id, label, kind) => {
+    const bundleId = draft.branding?.bundleId || 'com.threshold.game';
+
+    const add = (id, label, kind, defaults = {}) => {
         if (!entries[id]) {
             entries[id] = {
                 id,
                 label,
                 kind,
-                author: draft.author || '',
-                license: 'All rights reserved',
-                source: '',
-                storeSku: '',
-                registryUri: '',
+                author: defaults.author || draft.author || '',
+                license: defaults.license || 'All rights reserved',
+                source: defaults.source || '',
+                storeSku: defaults.storeSku || '',
+                registryUri: defaults.registryUri || '',
             };
+        } else {
+            if (defaults.author && !entries[id].author) entries[id].author = defaults.author;
+            if (defaults.license && entries[id].license === 'All rights reserved') entries[id].license = defaults.license;
+            if (defaults.source && !entries[id].source) entries[id].source = defaults.source;
+            if (defaults.storeSku && !entries[id].storeSku) entries[id].storeSku = defaults.storeSku;
+            if (defaults.registryUri && !entries[id].registryUri) entries[id].registryUri = defaults.registryUri;
         }
+        entries[id].label = entries[id].label || label;
+        entries[id].kind = entries[id].kind || kind;
         if (entries[id].storeSku === undefined) entries[id].storeSku = '';
         if (entries[id].registryUri === undefined) entries[id].registryUri = '';
+        if (!entries[id].storeSku) entries[id].storeSku = suggestStoreSku(bundleId, entries[id]);
+        if (!entries[id].registryUri) entries[id].registryUri = suggestRegistryUri(bundleId, entries[id]);
     };
+
+    getChildCreditEntries().forEach((c) => add(c.id, c.label, c.kind, c));
+
+    inventory.sceneObjects
+        .filter((o) => o.isThresholdChild)
+        .forEach((o) => add(o.id, o.name, o.assetKind || o.type, {
+            author: o.author || 'Threshold',
+            license: o.license || 'Original — Threshold Child edition',
+            source: 'Threshold Child edition (scene)',
+            storeSku: o.storeSku || '',
+            registryUri: o.registryUri || '',
+        }));
+
     inventory.soundRefs.forEach((s) => add(s.id, s.name, 'sound'));
     inventory.textureRefs.forEach((t) => add(t.id, t.name, 'texture'));
     inventory.models.forEach((m) => add(m.id || m.name, m.name, 'model'));

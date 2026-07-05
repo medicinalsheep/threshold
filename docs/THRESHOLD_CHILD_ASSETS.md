@@ -12,10 +12,23 @@
 | No raw drops from other games, mods, or unmodified packs | Fallout mods, BF assets, FiveM packs, etc. are **user responsibility** |
 | No suggestion to rip or redistribute copyrighted work | Export walkthrough **CREDITS** step documents **their** rights |
 
+### Child enough = honest realism review
+
+A Child asset passes when it survives a **realism and compatibility review** — not when it merely looks different on paper.
+
+| Review lane | What we check |
+|-------------|---------------|
+| **Silhouette** | Readable proportions at gameplay distance; distinct from source inspiration |
+| **Materials** | PBR tuned for Hyper; emissive accents survive Threshold / Terminal / 1-Bit |
+| **Physics** | `addBodyFromObject` bbox; mass/friction/restitution match role (vehicle vs static span) |
+| **Audio** | Collision `soundFreq` / trigger wired for sandbox testing |
+| **Export** | `isThresholdChild`, license, `storeSku`, `registryUri` pre-filled in CREDITS + PACKS |
+| **PromptGen** | Scene context lists Child tags so AI extends without clearing the scene |
+
 **Child version** means at least one of:
 
 - Original mesh/texture/audio authored in Threshold tools
-- Procedural in-engine asset (current Child Lite vehicles)
+- Procedural in-engine asset with documented realism pass (Child Lite v1.1+)
 - GIMP/Blender derivative with **documented transformation** (rescale, palette, kit-bash, new LODs, new collision) — not a byte-for-byte copy marketed as ours
 
 Developers may use `reference/_dev-seeds/` locally to **compare** workflows; those files are **gitignored** and **never** default lobby content.
@@ -27,7 +40,7 @@ Developers may use `reference/_dev-seeds/` locally to **compare** workflows; tho
 | Edition | Status | Contents |
 |---------|--------|----------|
 | `threshold` | Active | Core starter scene only |
-| `threshold-child-lite` | **Active** | Runner, Hauler, Circuit Span (procedural) |
+| `threshold-child-lite` | **Active** | Runner, Hauler, Circuit Span (procedural v1.1 — realism pass) |
 | `threshold-child-vehicles` | Planned | Blender Child GLB + LOD |
 | `threshold-child-characters` | Planned | Unique humanoid variants |
 | `threshold-child-audio` | Planned | Original SFX timbres (not ripped footstep banks) |

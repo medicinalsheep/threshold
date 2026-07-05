@@ -204,6 +204,24 @@ m.userData.textureHint = 'textures/stone_albedo.png';
 // Reference: WORKFLOWS → gimp_texture_export, blender_gltf_export`
         },
         {
+            id: 'threshold_child_assets',
+            title: 'Threshold Child — Original Reference Assets',
+            summary: 'Lobby THRESHOLD CHILD loads procedural vehicles + circuit. CREDITS/PACKS pre-fill; Hyper PBR + physics tuned.',
+            checklist: ['Lobby → THRESHOLD CHILD', 'EXPORT → SCENE shows 3 Child objects', 'CREDITS: Original — Threshold Child edition', 'PACKS: vehicle + scene SKUs suggested'],
+            code: `// THRESHOLD CHILD (bundled originals — not third-party GLB):
+// 1. Lobby → THRESHOLD CHILD → Engine loads Runner, Hauler, Circuit Span
+// 2. Hyper mode auto-selected for PBR review
+// 3. PLAY — push vehicles (physics bbox); walk Circuit Span (static collision)
+// 4. EXPORT → SCENE / CREDITS / PACKS — entries pre-filled from userData
+// 5. Extend in Compiler — do not clearWorld:
+(function() {
+  const runner = State.objects.find(o => o.userData?.id === 'child_runner');
+  if (runner) runner.userData.mass = 4.0;
+  UI.status('Child Runner retuned — pause to inspect Collision');
+})();
+// See docs/THRESHOLD_CHILD_ASSETS.md`
+        },
+        {
             id: 'export_game_package',
             title: 'Export Game Package (APK / Windows / iOS planned)',
             summary: 'Manifest lists world, scripts, sounds, textures, GIMP/Blender paths → native CLI wrap.',

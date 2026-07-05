@@ -2,13 +2,14 @@
   "format": "threshold-store-assets-config",
   "version": 2,
   "description": "Map authored game assets to store listings, IAP packs, Steam depots, and collectible registry",
-  "assetKinds": ["texture", "sound", "model", "video", "scene"],
+  "assetKinds": ["texture", "sound", "model", "video", "scene", "vehicle"],
   "licensePresets": [
     "All rights reserved",
     "CC BY 4.0",
     "CC BY-SA 4.0",
     "CC0 / Public domain",
     "Original — created in Threshold",
+    "Original — Threshold Child edition",
     "Licensed — third party (cite source)"
   ],
   "platforms": {
@@ -43,7 +44,9 @@
     "texture": { "label": "Texture pack", "suffix": "textures" },
     "model": { "label": "Model pack", "suffix": "models" },
     "sound": { "label": "Sound pack", "suffix": "sounds" },
-    "video": { "label": "Video pack", "suffix": "videos" }
+    "video": { "label": "Video pack", "suffix": "videos" },
+    "vehicle": { "label": "Vehicle pack", "suffix": "vehicles" },
+    "scene": { "label": "Scene pack", "suffix": "scenes" }
   },
   "workflow": [
     "Export walkthrough → PACKS step assigns storeSku + registryUri per asset",

@@ -28,6 +28,10 @@ export function getSceneContext() {
         lodPaths: o.userData?.lodPaths || null,
         lodDistances: o.userData?.lodDistances || LOD_DISTANCES,
         textureHilod: o.userData?.textureHilod || null,
+        isThresholdChild: !!o.userData?.isThresholdChild,
+        childEdition: o.userData?.childEdition || null,
+        license: o.userData?.license || null,
+        storeSku: o.userData?.storeSku || null,
     }));
     const humanNpcCount = objects.filter((o) => o.isHuman && !o.isPlayer).length;
 
@@ -73,7 +77,10 @@ ${objects.length ? objects.map((o) => {
         const gltf = o.type === 'gltf'
             ? ` [gltf:${o.gltfPath || o.gltfUrl || '?'}${lodCount > 1 ? ` lod×${lodCount}` : ''}]`
             : '';
-        return `  - ${o.name} (${o.type}) @ (${o.position.x},${o.position.y},${o.position.z})${snd}${tex}${gltf}`;
+        const child = o.isThresholdChild
+            ? ` [child:${o.childEdition || 'threshold-child'} license:${o.license || 'Original'}${o.storeSku ? ` sku:${o.storeSku}` : ''}]`
+            : '';
+        return `  - ${o.name} (${o.type}) @ (${o.position.x},${o.position.y},${o.position.z})${snd}${tex}${gltf}${child}`;
     }).join('\n') : '  (empty scene)'}
 
 CURRENTLY RUNNING CODE:

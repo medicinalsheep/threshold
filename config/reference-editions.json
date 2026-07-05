@@ -14,7 +14,7 @@
     "threshold-child-lite": {
       "id": "threshold-child-lite",
       "label": "Threshold Child Lite",
-      "description": "Original procedural vehicles + circuit — Runner, Hauler, Circuit Span",
+      "description": "Original procedural vehicles + circuit v1.1 — realism pass, physics + export metadata",
       "status": "active",
       "license": "Original — Threshold Child edition",
       "loader": "src/shared/thresholdChildAssets.js",

@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.5.1 — Child Lite realism pass + export compatibility
+
+- Child Lite v1.1 — Runner/Hauler/Circuit Span geometry + PBR + physics bbox improvements
+- CREDITS/PACKS pre-fill from `getChildCreditEntries()` and live `isThresholdChild` scene objects
+- Scene/PromptGen context tags Child assets; `vehicle` + `scene` store pack kinds
+- Policy: **Child enough** = honest realism review (docs/THRESHOLD_CHILD_ASSETS.md)
+
 ## 5.5.0 — Tier 2 docs + Threshold Child policy
 
 - **Threshold Child** editions — original procedural vehicles (Runner, Hauler, Circuit Span); lobby **THRESHOLD CHILD**
