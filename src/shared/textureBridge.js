@@ -4,6 +4,8 @@ import { TextureManifest } from './textureManifest.js';
 import { ThresholdShell } from './thresholdShell.js';
 import { AssetBundle } from './assetBundle.js';
 import { CREATIVE_WATCH_URL } from '../config.js';
+import { TextureHilod, parseTextureFileName } from './textureHilod.js';
+import { NativeTextureCodec } from './nativeTextureCodec.js';
 
 const SLOT_PROPS = {
     albedo: 'map',
@@ -32,18 +34,7 @@ function slugify(name = '') {
 }
 
 function parseTextureFile(fileName = '') {
-    const lower = fileName.toLowerCase();
-    for (const slot of SLOT_ORDER) {
-        const suffix = `_${slot}`;
-        const exts = ['.png', '.jpg', '.jpeg', '.webp'];
-        for (const ext of exts) {
-            if (lower.endsWith(`${suffix}${ext}`)) {
-                const slug = lower.slice(0, lower.length - suffix.length - ext.length);
-                return { slot, slug };
-            }
-        }
-    }
-    return null;
+    return parseTextureFileName(fileName);
 }
 
 function revokeCachedUrl(texId) {
@@ -156,6 +147,8 @@ export const TextureBridge = {
         await this.applySlot(obj, slot, record.id);
         const textures = ensureTexturesUserData(obj);
         textures[slot] = record.id;
+        TextureHilod.registerVariant(obj, slot, filePath, record.id);
+        TextureHilod.discoverVariants(obj, slot, filePath, (p) => this.loadFileFromPath(p));
         if (slot === 'albedo') obj.userData.textureHint = filePath;
         return record;
     },
@@ -262,6 +255,15 @@ export const TextureBridge = {
                     await this.applySlot(obj, entry.slot, record.id);
                     const textures = ensureTexturesUserData(obj);
                     textures[entry.slot] = record.id;
+                    const srcPath = entry.path || file.name;
+                    TextureHilod.registerVariant(obj, entry.slot, srcPath, record.id);
+                    for (const variant of entry.variants || []) {
+                        const vPath = variant.path || srcPath.replace(
+                            /(\.[^.]+)$/i,
+                            `${variant.suffix || ''}$1`
+                        );
+                        TextureHilod.registerVariant(obj, entry.slot, vPath, null);
+                    }
                     applied += 1;
                 } catch (e) {
                     errors.push(`${entry.slot}: ${e.message || file.name}`);
@@ -297,7 +299,26 @@ export const TextureBridge = {
                     lastErr = e;
                 }
             }
-            if (!ok) errors.push(`${entry.slot}: ${lastErr?.message || candidates[0] || 'not found'}`);
+            if (!ok) {
+                errors.push(`${entry.slot}: ${lastErr?.message || candidates[0] || 'not found'}`);
+            } else {
+                for (const variant of entry.variants || []) {
+                    const vCandidates = TextureManifest.resolveFilePathCandidates(manifestDir, {
+                        ...entry,
+                        file: variant.file,
+                        path: variant.path,
+                    }, manifest);
+                    for (const vPath of vCandidates) {
+                        try {
+                            const vRecord = await this.loadFileFromPath(vPath);
+                            TextureHilod.registerVariant(obj, entry.slot, vPath, vRecord.id);
+                            break;
+                        } catch {
+                            /* optional variant */
+                        }
+                    }
+                }
+            }
         }
 
         obj.userData.gimpManifestPath = options.manifestPath || null;
@@ -347,10 +368,12 @@ export const TextureBridge = {
 
         const url = await this.getObjectUrl(texId);
         if (!url) return false;
+        const meta = await TextureLibrary.getMeta(texId);
+        const resolvedUrl = await NativeTextureCodec.resolveTextureUrl(url, meta);
 
         disposeMap(mat, prop);
         const texture = await new Promise((resolve, reject) => {
-            loader.load(url, resolve, undefined, reject);
+            loader.load(resolvedUrl, resolve, undefined, reject);
         });
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
@@ -390,15 +413,17 @@ export const TextureBridge = {
         }
     },
 
-    formatSlotStatus(textures = {}, hint = '') {
+    formatSlotStatus(textures = {}, hint = '', hilodActive = {}) {
         const lines = [];
         if (hint) lines.push(`hint: ${hint.split(/[/\\]/).pop() || hint}`);
+        const hilod = hilodActive || {};
         const parts = SLOT_ORDER.map((slot) => {
             const id = textures[slot];
             if (!id) return `${slot}: —`;
             const meta = TextureLibrary.list().find((t) => t.id === id);
             const label = meta?.sourcePath?.split(/[/\\]/).pop() || meta?.name || id.slice(-6);
-            return `${slot}: ${label}`;
+            const tier = hilod[slot] ? ` [${hilod[slot] || 'full'}]` : '';
+            return `${slot}: ${label}${tier}`;
         });
         lines.push(parts.join(' · '));
         return lines.join('\n');
@@ -443,13 +468,22 @@ export const TextureBridge = {
             return { applied: 0, error: e };
         }
 
+        const filePath = event.path || record.meta?.sourcePath || event.file;
+        const hilodSuffix = event.hilod ?? parseTextureFile(event.file || '')?.hilod ?? '';
+
         let applied = 0;
         for (const obj of targets) {
             const textures = ensureTexturesUserData(obj);
-            if (textures[slot]) revokeCachedUrl(textures[slot]);
-            await this.applySlot(obj, slot, record.id);
-            textures[slot] = record.id;
-            if (slot === 'albedo') obj.userData.textureHint = event.path || record.meta?.sourcePath;
+            TextureHilod.registerVariant(obj, slot, filePath, record.id);
+            const activeSuffix = obj.userData.textureHilod?.activeBySlot?.[slot];
+            const shouldApply = activeSuffix == null || activeSuffix === hilodSuffix;
+            if (shouldApply) {
+                if (textures[slot]) revokeCachedUrl(textures[slot]);
+                await this.applySlot(obj, slot, record.id);
+                textures[slot] = record.id;
+                if (obj.userData.textureHilod) obj.userData.textureHilod.activeBySlot[slot] = hilodSuffix;
+            }
+            if (slot === 'albedo' && shouldApply) obj.userData.textureHint = filePath;
             applied += 1;
         }
 

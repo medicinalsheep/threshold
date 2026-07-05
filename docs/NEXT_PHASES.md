@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v4.6.0 — Phase H (mesh LOD chain: Blender export + Engine distance switch).
+**Current:** v4.7.0 — Phase I (HILOD textures: GIMP variants + Engine distance/tier switch).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -67,17 +67,17 @@ Deliverables:
 | H4 Manifest `models[].lods[]` | ✅ Blender + game export `models[]` |
 | H5 Physics LOD0 collider | ✅ `MeshLod.physicsSource()` uses LOD0 bbox |
 
-### Phase I — HILOD textures & streaming (v4.3–4.4)
+### Phase I — HILOD textures & streaming (v4.7) ✅
 
 **HILOD** = Hierarchical Level of Detail for textures (mip chains + distance-based map selection).
 
-| Step | Work |
-|------|------|
-| I1 | GIMP/Blender export 2K/1K/512 variants (`_2k`, `_1k`, `_512` suffix) |
-| I2 | TextureBridge selects map set by camera distance + graphics tier |
-| I3 | Optional KTX2/Basis transcoding in native builds |
-| I4 | `textures:watch` reload correct tier on save |
-| I5 | Export pipeline: `graphics.textures[]` with tier variants |
+| Step | Status |
+|------|--------|
+| I1 GIMP export `_512`/`_1k`/`_2k` variants + manifest `variants[]` | ✅ |
+| I2 `TextureHilod.update()` — camera distance + graphics tier | ✅ |
+| I3 KTX2/Basis scaffold (`nativeTextureCodec.js`) | ✅ scaffold |
+| I4 `textures:watch` parses HILOD suffix; hot-reload active tier | ✅ |
+| I5 Export `graphics.textures[]` with variant groups | ✅ |
 
 ### Phase J — Targeted graphics export (v4.5) ✅
 

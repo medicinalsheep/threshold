@@ -4,6 +4,7 @@ import { SoundLibrary } from './soundLibrary.js';
 import { TextureLibrary } from './textureLibrary.js';
 import { ProjectVault } from './projectVault.js';
 import { getGraphicsExportBlock } from './graphicsExportProfiles.js';
+import { TextureHilod } from './textureHilod.js';
 
 const BUILD_PROFILES = {
     web: {
@@ -156,6 +157,8 @@ export const GameExport = {
                     renderMode: 4,
                 }),
                 ...getGraphicsExportBlock(resolveActiveGraphicsProfile(options.targets)),
+                textures: TextureHilod.collectExportEntries(world?.objects || []),
+                hilodNote: 'Runtime picks map suffix by camera distance + graphics tier; export:graphics prunes per platform',
             },
             models: collectGltfModelEntries(world?.objects || []),
             agents: options.agents || window.AgentHub?.exportConfigs?.() || [],

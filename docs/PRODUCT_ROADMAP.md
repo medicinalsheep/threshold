@@ -76,7 +76,7 @@ See [NEXT_PHASES.md](NEXT_PHASES.md):
 
 - [x] Suggested graphics tiers (Compatibility / Balanced / Realistic / Ultra) — v4.1
 - [x] Mesh LOD (Blender multi-GLB + Engine distance switch) — v4.6
-- [ ] HILOD textures (distance + tier-based maps)
+- [x] HILOD textures (distance + tier-based maps) — v4.7
 - [x] Targeted graphics export CLI per platform — v4.5 (`export:graphics`)
 - [x] Normal maps in Engine (v3.8)
 

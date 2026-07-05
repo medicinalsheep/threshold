@@ -20,6 +20,7 @@ const {
     filterGimpManifest,
     sliceGameManifest,
     buildExportManifest,
+    buildTextureExportEntries,
     MODEL_EXT,
 } = require('./graphics-export-lib.cjs');
 
@@ -124,12 +125,7 @@ function exportProfile(profileId, options = {}) {
         fs.writeFileSync(path.join(texOut, 'threshold_manifest.json'), JSON.stringify(gimpFiltered, null, 2));
     }
 
-    const textureEntries = selected.map((rel) => ({
-        path: `textures/${rel}`,
-        file: path.basename(rel),
-        profile: profileId,
-        textureMax: profile.textureMax,
-    }));
+    const textureEntries = buildTextureExportEntries(selected, profileId, profile.textureMax);
 
     const bundleIndex = {
         format: 'threshold-asset-bundle',

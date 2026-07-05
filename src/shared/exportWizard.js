@@ -128,6 +128,7 @@ export const ExportWizard = {
         const objCount = this.manifest.world?.objects?.length ?? 0;
         const soundCount = this.manifest.sounds?.length ?? 0;
         const texCount = this.manifest.textures?.length ?? 0;
+            const hilodGroups = this.manifest.graphics?.textures?.length ?? 0;
             const gltfCount = (this.manifest.world?.objects || []).filter(
                 (o) => o.type === 'gltf' || o.userData?.type === 'gltf'
             ).length;
@@ -141,7 +142,7 @@ export const ExportWizard = {
             <ul class="export-wizard-summary">
                 <li><strong>${escapeText(this.manifest.game.name)}</strong> by ${escapeText(this.manifest.game.author)}</li>
                     <li>${objCount} world object(s)${gltfCount ? ` (${gltfCount} GLTF${lodModelCount ? `, ${lodModelCount} LOD chain(s)` : ''})` : ''}</li>
-                <li>${texCount} texture map reference(s) — ship via <code>bundle:assets</code></li>
+                <li>${texCount} texture map reference(s)${hilodGroups ? ` (${hilodGroups} HILOD group(s))` : ''} — ship via <code>bundle:assets</code></li>
                 <li>${soundCount} sound clip reference(s)${soundSidecar ? ' (base64 embedded)' : ''}</li>
                 <li>Scripts: ${hasScripts ? 'included' : 'empty (add in Compiler first)'}</li>
                 <li>Creative: ${hasGimp ? 'GIMP manifest' : '—'} · ${hasBlender ? 'Blender GLTF' : '—'}</li>

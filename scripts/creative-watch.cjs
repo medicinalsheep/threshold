@@ -56,13 +56,27 @@ function schedule(kind, filePath) {
     );
 }
 
+const HILOD_RE = /_(512|1k|2k|4k)(\.[^.]+)$/i;
+
 function parseTextureFile(fileName) {
     const lower = fileName.toLowerCase();
+    let hilod = '';
+    let stem = lower;
+    const hilodMatch = lower.match(HILOD_RE);
+    if (hilodMatch) {
+        hilod = `_${hilodMatch[1].toLowerCase()}`;
+        stem = lower.slice(0, lower.length - hilod.length);
+    }
     for (const slot of ['albedo', 'roughness', 'metalness', 'normal']) {
         const suffix = `_${slot}`;
-        if (lower.endsWith(`${suffix}.png`) || lower.endsWith(`${suffix}.jpg`) || lower.endsWith(`${suffix}.jpeg`) || lower.endsWith(`${suffix}.webp`)) {
-            const slug = lower.slice(0, lower.lastIndexOf(suffix));
-            return { slot, slug, objectName: slug.replace(/_/g, ' ') };
+        if (
+            stem.endsWith(`${suffix}.png`)
+            || stem.endsWith(`${suffix}.jpg`)
+            || stem.endsWith(`${suffix}.jpeg`)
+            || stem.endsWith(`${suffix}.webp`)
+        ) {
+            const slug = stem.slice(0, stem.lastIndexOf(suffix));
+            return { slot, slug, hilod, objectName: slug.replace(/_/g, ' ') };
         }
     }
     return null;
@@ -91,6 +105,7 @@ function emitChange(kind, filePath) {
             watchUrl: assetUrl(relative),
             slot: parsed?.slot || null,
             slug: parsed?.slug || null,
+            hilod: parsed?.hilod || '',
             objectName: parsed?.objectName || null,
         });
         return;

@@ -12,6 +12,7 @@ export const GRAPHICS_TIERS = {
         shadowMapSize: 1024,
         bloomStrength: 0,
         waterTexSize: 512,
+        textureMax: 512,
     },
     balanced: {
         id: 'balanced',
@@ -24,6 +25,7 @@ export const GRAPHICS_TIERS = {
         shadowMapSize: 2048,
         bloomStrength: 0,
         waterTexSize: 512,
+        textureMax: 1024,
     },
     realistic: {
         id: 'realistic',
@@ -36,6 +38,7 @@ export const GRAPHICS_TIERS = {
         shadowMapSize: 2048,
         bloomStrength: 0.72,
         waterTexSize: 1024,
+        textureMax: 2048,
     },
     ultra: {
         id: 'ultra',
@@ -48,6 +51,7 @@ export const GRAPHICS_TIERS = {
         shadowMapSize: 4096,
         bloomStrength: 0.85,
         waterTexSize: 1024,
+        textureMax: 4096,
     },
     custom: {
         id: 'custom',
@@ -60,6 +64,7 @@ export const GRAPHICS_TIERS = {
         shadowMapSize: null,
         bloomStrength: null,
         waterTexSize: null,
+        textureMax: null,
     },
 };
 
@@ -214,6 +219,8 @@ export const GraphicsProfile = {
             ViewPrefs.set('graphicsTierPrompted', true);
         }
 
+        window.TextureHilod?.refreshAll?.();
+
         if (!options.silent) {
             window.UI?.status?.(`Graphics: ${preset.label} — ${preset.description.split(' — ')[0]}`);
         }
@@ -239,10 +246,13 @@ export const GraphicsProfile = {
 
     exportSnapshot() {
         const State = window.State;
+        const tierId = State?.graphicsTier || null;
+        const tier = tierId ? this.getTier(tierId) : null;
         return {
-            tier: State?.graphicsTier || null,
+            tier: tierId,
             detectedTier: State?.graphicsDetectedTier || null,
             renderMode: State?.renderMode ?? 4,
+            textureMax: tier?.textureMax ?? null,
             env: State?.env ? { ...State.env } : null,
         };
     },

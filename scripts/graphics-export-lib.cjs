@@ -221,6 +221,28 @@ function sliceGameManifest(gameManifest, profile, graphicsBlock, textureEntries)
     return sliced;
 }
 
+function buildTextureExportEntries(selectedFiles, profileId, textureMax) {
+    const groups = new Map();
+    selectedFiles.forEach((rel) => {
+        const file = path.basename(rel);
+        const base = textureBaseKey(file);
+        if (!groups.has(base)) groups.set(base, []);
+        groups.get(base).push({ rel, file, suffix: variantSuffix(file) || 'full' });
+    });
+
+    return [...groups.entries()].map(([base, variants]) => ({
+        base,
+        path: `textures/${variants.find((v) => v.suffix === 'full')?.rel || variants[0].rel}`,
+        profile: profileId,
+        textureMax,
+        variants: variants.map((v) => ({
+            suffix: v.suffix,
+            path: `textures/${v.rel}`,
+            file: v.file,
+        })),
+    }));
+}
+
 function buildExportManifest(profile, options = {}) {
     const tierPreset = getTierPreset(profile.tier);
     const graphicsBlock = buildGraphicsBlock(profile, tierPreset);
@@ -255,6 +277,9 @@ module.exports = {
     buildGraphicsBlock,
     sliceGameManifest,
     buildExportManifest,
+    buildTextureExportEntries,
+    variantSuffix,
+    textureBaseKey,
     IMAGE_EXT,
     MODEL_EXT,
 };

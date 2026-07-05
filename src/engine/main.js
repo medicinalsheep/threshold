@@ -42,6 +42,7 @@ import { getRenderMode } from '../shared/renderModes.js';
 import { GraphicsProfile } from '../shared/graphicsProfile.js';
 import { GraphicsPrompt } from '../shared/graphicsPrompt.js';
 import { MeshLod } from '../shared/meshLod.js';
+import { TextureHilod } from '../shared/textureHilod.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 
@@ -995,6 +996,7 @@ const Engine = {
 
         AgentHub.tick(dt);
         MeshLod.update(this.camera);
+        TextureHilod.update(this.camera);
 
         this.controls.update();
         // Visual Rotation (Only for non-physics objects or purely visual effect)
@@ -1558,7 +1560,13 @@ const UI = {
             return;
         }
         const textures = obj.userData?.textures || {};
-        if (status) status.textContent = TextureBridge.formatSlotStatus(textures, obj.userData?.textureHint);
+        if (status) {
+            status.textContent = TextureBridge.formatSlotStatus(
+                textures,
+                obj.userData?.textureHint,
+                obj.userData?.textureHilod?.activeBySlot
+            );
+        }
         if (preview) {
             const url = await TextureBridge.previewUrlForSlot(textures, 'albedo');
             if (url) {

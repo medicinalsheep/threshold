@@ -25,7 +25,8 @@ except ImportError as exc:
 
 MANIFEST_NAME = "threshold_manifest.json"
 MANIFEST_FORMAT = "threshold-gimp-manifest"
-ENGINE_VERSION = "4.6.0"
+ENGINE_VERSION = "4.7.0"
+HILOD_VARIANTS = [(512, "_512"), (1024, "_1k"), (2048, "_2k")]
 
 
 def slugify(name: str) -> str:
@@ -48,6 +49,56 @@ def export_drawable_png(image, drawable, filepath: str) -> None:
     if folder:
         os.makedirs(folder, exist_ok=True)
     pdb.file_png_save_defaults(image, drawable, filepath, filepath)
+
+
+def export_layer_scaled(image, layer, filepath: str, max_px: int) -> None:
+    width = pdb.gimp_drawable_width(layer)
+    height = pdb.gimp_drawable_height(layer)
+    long_edge = max(width, height)
+    if long_edge <= max_px:
+        export_drawable_png(image, layer, filepath)
+        return
+    if width >= height:
+        new_width = max_px
+        new_height = max(1, int(height * max_px / width))
+    else:
+        new_height = max_px
+        new_width = max(1, int(width * max_px / height))
+    pdb.gimp_image_set_active_layer(image, layer)
+    dup_image = pdb.gimp_image_duplicate(image)
+    dup_layer = pdb.gimp_image_get_active_layer(dup_image)
+    pdb.gimp_image_scale(dup_image, new_width, new_height)
+    export_drawable_png(dup_image, dup_layer, filepath)
+    pdb.gimp_image_delete(dup_image)
+
+
+def export_slot_with_hilod(image, layer, export_dir: str, slug: str, slot: str, export_hilod: bool) -> dict:
+    filename = f"{slug}_{slot}.png"
+    filepath = os.path.join(export_dir, filename)
+    export_drawable_png(image, layer, filepath)
+    entry = {
+        "id": f"{slug}_{slot}",
+        "objectName": None,
+        "slot": slot,
+        "file": filename,
+        "path": rel_path(export_dir, filename),
+        "variants": [],
+    }
+    if export_hilod:
+        base, ext = os.path.splitext(filepath)
+        for max_px, suffix in HILOD_VARIANTS:
+            variant_name = f"{slug}_{slot}{suffix}{ext}"
+            variant_path = os.path.join(export_dir, variant_name)
+            export_layer_scaled(image, layer, variant_path, max_px)
+            entry["variants"].append(
+                {
+                    "suffix": suffix,
+                    "file": variant_name,
+                    "path": rel_path(export_dir, variant_name),
+                    "maxPx": max_px,
+                }
+            )
+    return entry
 
 
 def rel_path(export_dir: str, filename: str) -> str:
@@ -105,6 +156,7 @@ def threshold_export_pbr(
     metal_layer,
     export_normal,
     normal_layer,
+    export_hilod,
 ):
     gimp.progress_init("Exporting Threshold PBR maps…")
 
@@ -130,37 +182,19 @@ def threshold_export_pbr(
         gimp.progress_update(step / total)
         gimp.progress_set_text(msg)
 
+    def append_entry(entry: dict) -> None:
+        entry["objectName"] = display_name
+        entries.append(entry)
+
     if export_albedo:
         bump("Exporting albedo…")
-        filename = f"{slug}_albedo.png"
-        filepath = os.path.join(export_dir, filename)
-        export_drawable_png(image, drawable, filepath)
-        entries.append(
-            {
-                "id": f"{slug}_albedo",
-                "objectName": display_name,
-                "slot": "albedo",
-                "file": filename,
-                "path": rel_path(export_dir, filename),
-            }
-        )
+        append_entry(export_slot_with_hilod(image, drawable, export_dir, slug, "albedo", export_hilod))
 
     if export_roughness:
         bump("Exporting roughness…")
         layer = find_layer_by_name(image, rough_layer)
         if layer:
-            filename = f"{slug}_roughness.png"
-            filepath = os.path.join(export_dir, filename)
-            export_drawable_png(image, layer, filepath)
-            entries.append(
-                {
-                    "id": f"{slug}_roughness",
-                    "objectName": display_name,
-                    "slot": "roughness",
-                    "file": filename,
-                    "path": rel_path(export_dir, filename),
-                }
-            )
+            append_entry(export_slot_with_hilod(image, layer, export_dir, slug, "roughness", export_hilod))
         else:
             gimp.message(f'Roughness layer "{rough_layer}" not found — skipped.')
 
@@ -168,18 +202,7 @@ def threshold_export_pbr(
         bump("Exporting metalness…")
         layer = find_layer_by_name(image, metal_layer)
         if layer:
-            filename = f"{slug}_metalness.png"
-            filepath = os.path.join(export_dir, filename)
-            export_drawable_png(image, layer, filepath)
-            entries.append(
-                {
-                    "id": f"{slug}_metalness",
-                    "objectName": display_name,
-                    "slot": "metalness",
-                    "file": filename,
-                    "path": rel_path(export_dir, filename),
-                }
-            )
+            append_entry(export_slot_with_hilod(image, layer, export_dir, slug, "metalness", export_hilod))
         else:
             gimp.message(f'Metalness layer "{metal_layer}" not found — skipped.')
 
@@ -187,18 +210,7 @@ def threshold_export_pbr(
         bump("Exporting normal map…")
         layer = find_layer_by_name(image, normal_layer)
         if layer:
-            filename = f"{slug}_normal.png"
-            filepath = os.path.join(export_dir, filename)
-            export_drawable_png(image, layer, filepath)
-            entries.append(
-                {
-                    "id": f"{slug}_normal",
-                    "objectName": display_name,
-                    "slot": "normal",
-                    "file": filename,
-                    "path": rel_path(export_dir, filename),
-                }
-            )
+            append_entry(export_slot_with_hilod(image, layer, export_dir, slug, "normal", export_hilod))
         else:
             gimp.message(f'Normal layer "{normal_layer}" not found — skipped.')
 
@@ -211,6 +223,7 @@ def threshold_export_pbr(
         f"Threshold export complete.\n"
         f"Object: {display_name}\n"
         f"Maps: {len(entries)}\n"
+        f"HILOD: {'512/1K/2K variants' if export_hilod else 'full-res only'}\n"
         f"Folder: {export_dir}\n"
         f"Manifest: {manifest_path}\n\n"
         f"In Engine: select mesh → Texture tab → GIMP SYNC"
@@ -247,6 +260,7 @@ register(
         (PF_STRING, "metal_layer", "Metalness layer name", "metalness"),
         (PF_TOGGLE, "export_normal", "Export normal map (optional)", False),
         (PF_STRING, "normal_layer", "Normal layer name", "normal"),
+        (PF_TOGGLE, "export_hilod", "Export HILOD variants (_512/_1k/_2k)", True),
     ],
     [],
     threshold_export_pbr,
