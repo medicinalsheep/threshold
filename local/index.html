@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="https://medicinalsheep.github.io/threshold/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#000000" />
+    <title>THRESHOLD SUITE</title>
+  <script type="module" crossorigin src="https://medicinalsheep.github.io/threshold/assets/threshold.js"></script>
+  <link rel="stylesheet" crossorigin href="https://medicinalsheep.github.io/threshold/assets/threshold.css">
+</head>
+<body>
+
+    <!-- AUTH OVERLAY (Grok edition) -->
+    <div id="auth-overlay">
+        <div id="auth-card" class="panel">
+            <h2>THRESHOLD GROK EDITION</h2>
+            <p>Sign in with your xAI API key to generate scripts directly with Grok. Keys are stored in session only and never sent anywhere except api.x.ai.</p>
+            <form id="auth-form">
+                <input type="password" id="auth-api-key" placeholder="xai-..." autocomplete="off" required>
+                <button type="submit">LOGIN</button>
+            </form>
+            <p style="margin-top:12px; font-size:0.7rem;">Get a key at <a href="https://console.x.ai" target="_blank" rel="noopener" style="color:var(--accent-color);">console.x.ai</a></p>
+        </div>
+    </div>
+
+    <!-- APP HEADER -->
+    <nav id="app-nav">
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v1.0</span><span class="edition-badge" id="edition-badge">WEB</span></div>
+        <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
+        <div class="tabs" id="app-tabs">
+            <button class="tab-btn active" data-target="view-engine">ENGINE</button>
+            <button class="tab-btn" data-target="view-compiler">COMPILER</button>
+            <button class="tab-btn" data-target="view-prompter">PROMPTGEN</button>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+            <button id="auth-logout-btn">LOGOUT</button>
+            <button id="global-theme-btn">THEME</button>
+        </div>
+    </nav>
+
+    <!-- VIEW: ENGINE -->
+    <div id="view-engine" class="view-section active">
+        <!-- 1. Canvas & Hidden I/O -->
+        <div id="canvas-container"></div>
+        <input type="file" id="file-input" accept=".json">
+
+        <!-- 2. Context Menu (Right Click) -->
+        <div id="ctx-menu" class="panel">
+            <div id="ctx-header" style="font-size:0.7rem; color:#666; padding:5px; border-bottom:1px solid #333; margin-bottom:5px;">MENU</div>
+
+            <!-- Spawn Items -->
+            <div id="ctx-group-spawn" style="display:flex; flex-direction:column;">
+                <button id="ctx-spawn-cube">ADD CUBE</button>
+                <button id="ctx-spawn-sphere">ADD SPHERE</button>
+                <button id="ctx-spawn-cone">ADD CONE</button>
+                <button id="ctx-spawn-torus">ADD TORUS</button>
+            </div>
+
+            <!-- Edit Items -->
+            <div id="ctx-group-edit" style="display:none; flex-direction:column;">
+                <button id="ctx-edit-inspect">INSPECT / EDIT</button>
+                <button id="ctx-edit-delete" style="color:#ff5555; border-color:#ff5555;">DELETE</button>
+            </div>
+
+            <!-- Global Tools -->
+            <div style="border-top:1px solid #333; margin-top:5px; padding-top:5px; display:flex; flex-direction:column;">
+                <button id="ctx-record">TOGGLE RECORD</button>
+                <button id="ctx-close">CANCEL</button>
+            </div>
+        </div>
+
+        <!-- 3. UI Overlay Layer -->
+        <div id="ui-layer">
+            <!-- Toolbar -->
+            <div class="panel" style="display: flex; justify-content: space-between; align-items: center; margin: 10px 20px;">
+                <div><div id="mode-display" style="font-size:0.8rem; font-weight:bold; color:var(--accent-color);">RENDER: COMPAT (RAW)</div></div>
+                <div style="display:flex; gap:10px; align-items: center;">
+                    <!-- Record Controls -->
+                    <div style="border: 1px solid var(--border-color); padding: 2px; display:flex; align-items:center;">
+                        <button id="btn-rec-start" title="Start Rec">●</button>
+                        <button id="btn-rec-stop" title="Stop Rec" style="display:none;">■</button>
+                        <button id="btn-rec-save" title="Save Video" style="display:none;">↓</button>
+                        <div class="rec-dot" id="rec-indicator" style="margin: 0 5px; width: 8px; height: 8px; background: red; border-radius: 50%; display:none;"></div>
+                    </div>
+                    <div style="width:1px; height:20px; background:var(--border-color);"></div>
+                    <!-- Engine Controls -->
+                    <button id="btn-mode">MODE</button>
+                    <button id="btn-grid">GRID: ON</button>
+                    <button id="btn-save">EXPORT</button>
+                    <button id="btn-load">IMPORT</button>
+                    <button id="btn-audio">AUDIO: OFF</button>
+                </div>
+            </div>
+
+            <div id="controls-hint">[WASD] Fly &nbsp; [MOUSE/TOUCH] Orbit &nbsp; [R-CLICK/LONG-PRESS] Menu</div>
+
+            <!-- Inspector Panel -->
+            <div id="inspector" class="panel">
+                <div class="prop-row">
+                    <h3 style="margin:0;">PROPERTIES</h3>
+                    <button id="btn-lock" style="font-size:0.6rem;">UNLOCK</button>
+                </div>
+                <hr style="border-color:var(--border-color); margin:10px 0;">
+                <div class="prop-row"><label>Name</label> <input type="text" id="insp-name"></div>
+                <div class="prop-row">
+                    <label>Gizmo</label>
+                    <div style="font-size:0.8rem;">
+                        <label><input type="radio" name="gizmo" value="translate" checked> Mov</label>
+                        <label><input type="radio" name="gizmo" value="rotate"> Rot</label>
+                    </div>
+                </div>
+                <div class="prop-row"><label>Action</label> <button id="btn-anim-rot">AUTO-SPIN</button></div>
+                <div class="prop-row" style="margin-top:5px;"><button id="btn-raw">EDIT RAW JSON</button></div>
+                <div class="prop-row" style="margin-top:5px;"><button id="btn-delete" style="color: #ff5555; border-color: #ff5555; width: 100%;">DELETE</button></div>
+            </div>
+
+            <!-- Console & Status -->
+            <div id="status-msg"></div>
+            <div id="command-bar"><input type="text" id="cmd-input" placeholder="> Enter JS command or 'allow pasting'..." autocomplete="off"></div>
+        </div>
+
+        <!-- 4. JSON Modal -->
+        <div id="json-modal" class="panel">
+            <h3 style="margin-top:0;">RAW DATA EDITOR</h3>
+            <textarea id="json-editor"></textarea>
+            <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+                <button id="btn-json-cancel">CANCEL</button>
+                <button id="btn-json-apply" style="background:var(--accent-color); color:#fff; border:none;">APPLY CHANGES</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW: COMPILER -->
+    <div id="view-compiler" class="view-section" style="display:none;">
+        <div class="comp-container">
+            <aside class="comp-sidebar">
+                <h2 style="margin: 0 0 20px 0; font-size: 1rem; letter-spacing: 2px;">LIBRARY</h2>
+
+                <!-- NEW: Save Script Controls -->
+                <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px;">
+                    <label style="color:#888; font-size:0.7rem;">SAVE CURRENT SCRIPT</label>
+                    <input type="text" id="comp-filename" class="comp-textarea" style="padding:5px; height:auto; margin-bottom:5px;" placeholder="filename...">
+                    <select id="comp-tag" class="comp-textarea" style="padding:5px; height:auto; margin-bottom:5px;">
+                        <option value="SCENE">TAG: SCENE</option>
+                        <option value="OBJECT">TAG: OBJECT</option>
+                        <option value="CHAR">TAG: CHARACTER</option>
+                        <option value="VFX">TAG: VFX</option>
+                    </select>
+                    <button id="btn-comp-save-script" class="comp-btn" style="width:100%; border-color:var(--success-color); color:var(--success-color);">SAVE TO DISK</button>
+                </div>
+
+                <h2 style="margin: 0 0 10px 0; font-size: 0.8rem; color:#666;">GENERATORS</h2>
+                <button id="btn-gen-city" class="comp-btn">Brutalist City</button>
+                <button id="btn-gen-dna" class="comp-btn">DNA Helix</button>
+                <button id="btn-gen-wave" class="comp-btn">Data Wave</button>
+                <button id="btn-gen-ring" class="comp-btn">Orbital Ring</button>
+                <button id="btn-gen-chaos" class="comp-btn">Chaos Entropy</button>
+
+                <button id="btn-comp-clear" class="comp-btn" style="margin-top:auto; border-color:var(--accent-color); color:var(--accent-color);">CLEAR INPUT</button>
+            </aside>
+            <main class="comp-main">
+                <div class="comp-column">
+                    <label style="color:var(--accent-color); font-weight:bold; margin-bottom:10px;">INPUT / SCRATCHPAD</label>
+                    <textarea id="comp-input" class="comp-textarea" placeholder="// Paste Three.js code here..."></textarea>
+                    <div style="margin-top:10px; text-align:right;"><button id="btn-comp-transpile">CONVERT</button></div>
+                </div>
+                <div class="comp-column">
+                    <label style="color:var(--accent-color); font-weight:bold; margin-bottom:10px;">OPTIMIZED OUTPUT</label>
+                    <textarea id="comp-output" class="comp-textarea" readonly placeholder="// Result..."></textarea>
+                    <div style="margin-top:10px; text-align:right;">
+                        <span id="comp-status" style="color:#00ffaa; margin-right:10px; opacity:0;">COPIED</span>
+                        <button id="btn-comp-copy">COPY CODE</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- VIEW: PROMPTGEN -->
+    <div id="view-prompter" class="view-section" style="display:none;">
+        <div class="prompt-container">
+            <aside class="prompt-sidebar">
+                <h2 style="margin:0; font-size:1rem; letter-spacing:1px; color:var(--accent-color);">SPEC GENERATOR</h2>
+                <div style="font-size: 0.75rem; color: #888; line-height: 1.5; border-bottom:1px solid var(--border-color); padding-bottom:15px;">
+                    <strong>INSTRUCTIONS:</strong><br>
+                    1. Describe scene.<br>2. Select style.<br>3. Generate.<br>4. Paste to AI.<br>5. Run code in Engine.
+                </div>
+                <div class="prompt-input-group">
+                    <label>YOUR IDEA</label>
+                    <input type="text" id="prompt-idea" class="prompt-input" placeholder="e.g. A cyberpunk street corner...">
+                </div>
+
+                <!-- NEW: Resolution Settings -->
+                <div class="prompt-input-group">
+                    <label>TARGET RESOLUTION</label>
+                    <select id="prompt-res" class="prompt-input">
+                        <option value="low">Low Poly (Performance)</option>
+                        <option value="med" selected>Standard (Balanced)</option>
+                        <option value="high">High Fidelity (Smooth)</option>
+                    </select>
+                </div>
+
+                <!-- NEW: Color Settings -->
+                <div class="prompt-input-group">
+                    <label>COLOR STRATEGY</label>
+                    <select id="prompt-color" class="prompt-input">
+                        <option value="adaptive">Adaptive (Works in all modes)</option>
+                        <option value="neon">Neon/Cyber (Best for Hyper)</option>
+                        <option value="mono">Monochrome (Best for 1-Bit)</option>
+                        <option value="realistic">Realistic (PBR Materials)</option>
+                    </select>
+                </div>
+
+                <div class="prompt-input-group">
+                    <label>COMPLEXITY</label>
+                    <select id="prompt-complexity" class="prompt-input">
+                        <option value="simple">Simple (Static Objects)</option>
+                        <option value="anim">Animated (Movement/Rotation)</option>
+                        <option value="algo">Algorithmic (Math/Generative)</option>
+                    </select>
+                </div>
+                <div class="prompt-input-group">
+                    <label>DEV STYLE</label>
+                    <select id="prompt-style" class="prompt-input">
+                        <option value="standard">Direct Code</option>
+                        <option value="spec">Spec-Driven (Plan first)</option>
+                        <option value="creative">Creative (Artistic freedom)</option>
+                    </select>
+                </div>
+                <button id="btn-prompt-gen">GENERATE PROMPT</button>
+            </aside>
+            <main class="prompt-main">
+                <label style="color:var(--accent-color); font-weight:bold; margin-bottom:10px;">SYSTEM PROMPT OUTPUT</label>
+                <textarea id="prompt-output" class="prompt-textarea" readonly></textarea>
+                <div class="prompt-footer">
+                    <span id="prompt-flash" style="color:var(--accent-color); opacity:0; transition:opacity 0.5s; font-weight:bold;">COPIED</span>
+                    <button id="btn-prompt-grok" style="display:none;">RUN WITH GROK</button>
+                    <button id="btn-prompt-copy">COPY PROMPT</button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MAIN SCRIPT -->
+</body>
+</html>

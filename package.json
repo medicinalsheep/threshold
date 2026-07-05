@@ -7,7 +7,7 @@
     "dev": "vite",
     "dev:grok": "vite --mode grok",
     "build": "vite build",
-    "build:pages": "vite build --mode pages",
+    "build:pages": "vite build --mode pages && node scripts/write-launcher.mjs",
     "build:grok": "vite build --mode grok",
     "preview": "vite preview",
     "preview:pages": "vite preview --outDir dist-pages",
