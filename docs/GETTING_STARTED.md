@@ -115,6 +115,19 @@ npm run tc:build          # regenerate TC GLBs
 
 ---
 
+## TC Circuit race (G1)
+
+```bash
+# Solo: Lobby → TC → · Compiler → WORKFLOWS → TC Circuit → RUN
+World.startTcCircuit()
+
+# Multiplayer: host CREATE SESSION → guests JOIN → host RUN startTcCircuit
+# Spawn as Player · PLAY · cross green tc_cp — leaderboard syncs to all
+npm run tc:circuit:verify
+```
+
+---
+
 ## Multiplayer (optional)
 
 **CREATE SESSION** → copy link → friends **JOIN**. Host pauses for EDIT; guests need **Admin** to build. See [README.md](../README.md) host/player section.

@@ -198,6 +198,17 @@ export const Network = {
         });
         window.UI?.renderHostPanel?.();
         this._broadcastVoipRoster();
+        if (window.TcCircuit?.state?.running) {
+            window.TcCircuit.state.players[key] = window.TcCircuit.state.players[key] || {
+                key,
+                name: data.playerName || `Player-${key}`,
+                lap: 0,
+                lastLapSec: null,
+                bestSec: null,
+                totalSec: 0,
+            };
+            this.scheduleBroadcast();
+        }
     },
 
     getVoipRoster() {
@@ -282,7 +293,7 @@ export const Network = {
                     conn.send?.({ type: 'DENIED', action: data.action, message: 'No admin permission' });
                     return;
                 }
-                Sync.applyAction(data.action, data.payload);
+                Sync.applyAction(data.action, { ...data.payload, fromKey: from });
                 this.scheduleBroadcast();
             }
         } else if (this.mode === 'guest' || this.mode === 'spectate') {

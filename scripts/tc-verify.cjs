@@ -41,6 +41,13 @@ const SHIP_SCRIPTS = [
     'scripts/tc-ship-e2e.cjs',
     'scripts/tc-ship-verify.cjs',
 ];
+
+const CIRCUIT_SCRIPTS = [
+    'src/shared/tcCircuit.js',
+    'src/shared/remotePlayers.js',
+    'config/tc-circuit.json',
+    'scripts/tc-circuit-verify.cjs',
+];
 const VIDEO_DIR = path.join(ROOT, 'video');
 const PUB_VID = path.join(ROOT, 'public', 'bundle', 'video');
 
@@ -86,6 +93,9 @@ VIDEO_SCRIPTS.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`m
 
 console.log('[tc-verify] ship S1');
 SHIP_SCRIPTS.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`missing ${f}`)));
+
+console.log('[tc-verify] circuit G1');
+CIRCUIT_SCRIPTS.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`missing ${f}`)));
 
 console.log('[tc-verify] modules');
 MODULES.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`missing ${f}`)));

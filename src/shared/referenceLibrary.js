@@ -150,38 +150,13 @@ m.userData.textureHint = 'textures/stone_albedo.png';
         {
             id: 'tc_circuit',
             title: 'TC Circuit — Lap Timer + Checkpoint',
-            summary: 'Extend the TC showcase into a time-trial loop: start at TC Span, hit TC Checkpoint, log laps without clearing the scene.',
-            checklist: ['Lobby TC → first (or keep existing TC objects)', 'Find tc_cp by userData.id', 'Use performance.now() lap timer', 'PLAY mode to drive tc_run / tc_haul'],
-            code: `// TC CIRCUIT — paste into Compiler after Lobby → TC →
-(function() {
-  const objs = (State.objects || []);
-  const byId = (id) => objs.find((o) => o.userData?.id === id || o.userData?.id === TcMeta?.normTcId?.(id));
-  const span = byId('tc_span');
-  const cp = byId('tc_cp');
-  if (!span || !cp) { UI.status('Load TC showcase first (Lobby → TC →)'); return; }
-
-  const lap = { n: 0, t0: performance.now(), best: null, running: false };
-  const dist = (a, b) => a.position.distanceTo(b.position);
-
-  const tick = () => {
-    if (!lap.running) return;
-    const player = State.playerMesh || objs.find((o) => o.userData?.isPlayer);
-    if (!player) return;
-    if (dist(player, cp) < 2.2) {
-      const elapsed = (performance.now() - lap.t0) / 1000;
-      lap.n += 1;
-      lap.best = lap.best == null ? elapsed : Math.min(lap.best, elapsed);
-      lap.t0 = performance.now();
-      UI.status(\`TC lap \${lap.n}: \${elapsed.toFixed(2)}s · best \${lap.best.toFixed(2)}s\`);
-    }
-    requestAnimationFrame(tick);
-  };
-
-  UI.status('TC Circuit — drive to green checkpoint (tc_cp)');
-  lap.running = true;
-  lap.t0 = performance.now();
-  tick();
-})();`
+            summary: 'Extend the TC showcase into a time-trial loop: hit tc_cp, log laps, multiplayer lap sync (G1) without clearing the scene.',
+            checklist: ['Lobby TC → then CREATE SESSION for multiplayer', 'Compiler RUN: World.startTcCircuit()', 'Spawn as Player · PLAY · cross tc_cp', 'Leaderboard syncs host → guests'],
+            code: `// TC CIRCUIT (G1) — multiplayer lap sync · paste after Lobby → TC →
+// Host: World.startTcCircuit() · Guests: synced leaderboard + remote player markers
+// Spawn player: Insert → Spawn as Player · PLAY mode · drive to tc_cp (green beacon)
+World.startTcCircuit();
+// Stop: World.stopTcCircuit()`
         },
         {
             id: 'lego_fit_anything',

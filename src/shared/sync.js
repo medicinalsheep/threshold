@@ -42,6 +42,7 @@ export const Sync = {
             admins: window.Session?.getAdminList?.() || [],
             players: Network?.mode === 'host' ? Network.getPlayerList() : undefined,
             playerPositions: Network?.getPlayerPositions?.() || {},
+            circuit: window.TcCircuit?.captureState?.() || null,
             camera,
         };
     },
@@ -118,6 +119,8 @@ export const Sync = {
             if (state.hostBindings) window.Controls?.applySessionHostBindings?.(state.hostBindings);
             window.dispatchEvent(new CustomEvent('threshold:pause', { detail: { paused: State.isPaused, reason: state.pauseReason } }));
             if (state.camera) State.hostCamera = state.camera;
+            if (state.playerPositions) State.syncPlayerPositions = state.playerPositions;
+            if (state.circuit !== undefined) window.TcCircuit?.applyState?.(state.circuit);
 
             if (state.player && window.PlayerController) {
                 window.PlayerController.applyState(state.player);
@@ -188,6 +191,19 @@ export const Sync = {
                 if (payload.bindings) {
                     window.Controls?.setHostBindings?.(payload.bindings, false);
                     window.Controls?.applySessionHostBindings?.(payload.bindings);
+                }
+                break;
+            case 'LAP_CROSS':
+                window.TcCircuit?.recordLap?.(payload.fromKey || window.Session?.playerKey, payload);
+                break;
+            case 'CIRCUIT_START':
+                if (window.Network?.mode === 'host' || window.Network?.mode === 'solo') {
+                    window.TcCircuit?.start?.(payload, true);
+                }
+                break;
+            case 'CIRCUIT_STOP':
+                if (window.Network?.mode === 'host' || window.Network?.mode === 'solo') {
+                    window.TcCircuit?.stop?.(true);
                 }
                 break;
             default:

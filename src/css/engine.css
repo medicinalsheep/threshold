@@ -1441,3 +1441,74 @@ body.shell-steam.shell-electron::after {
     border-color: #5865f2;
     color: #aab2ff;
 }
+
+.circuit-hud {
+    display: none;
+    position: fixed;
+    top: max(calc(var(--chrome-top, 50px) + 8px), 58px);
+    right: max(10px, env(safe-area-inset-right, 0px));
+    z-index: 94;
+    min-width: 200px;
+    max-width: 280px;
+    padding: 8px 10px;
+    background: rgba(5, 8, 5, 0.9);
+    border: 1px solid rgba(57, 255, 20, 0.35);
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    pointer-events: none;
+}
+
+.circuit-hud.active {
+    display: block;
+}
+
+.circuit-hud-head {
+    color: var(--accent-color);
+    letter-spacing: 0.12em;
+    margin-bottom: 6px;
+    font-size: 9px;
+}
+
+.circuit-cols,
+.circuit-row {
+    display: grid;
+    grid-template-columns: 1fr 28px 40px 40px;
+    gap: 4px;
+    align-items: center;
+}
+
+.circuit-cols {
+    color: #666;
+    font-size: 8px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.circuit-row {
+    padding: 2px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.circuit-row.circuit-leader .circuit-name {
+    color: var(--accent-color);
+}
+
+.circuit-name {
+    color: #ccc;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.circuit-stat {
+    color: #9f9;
+    text-align: right;
+}
+
+.circuit-recent {
+    margin-top: 6px;
+    color: #666;
+    font-size: 8px;
+}

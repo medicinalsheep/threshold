@@ -1,0 +1,9 @@
+{
+  "format": "threshold-tc-circuit",
+  "version": 1,
+  "checkpointId": "tc_cp",
+  "radius": 2.2,
+  "minLapSec": 3,
+  "maxRecent": 8,
+  "defaultSpawn": { "x": 0, "y": 1, "z": 2 }
+}

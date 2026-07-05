@@ -45,6 +45,7 @@ import { GraphicsPrompt } from '../shared/graphicsPrompt.js';
 import { MeshLod } from '../shared/meshLod.js';
 import { TextureHilod } from '../shared/textureHilod.js';
 import { Cinematic } from '../shared/cinematic.js';
+import '../shared/tcCircuit.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 
@@ -153,6 +154,7 @@ const State = {
     controlMode: 'fly',
     playerRef: null,
     hostCamera: null,
+    syncPlayerPositions: {},
     env: {
         timeOfDay: 14,
         fogDensity: 0.015,
@@ -1223,6 +1225,12 @@ const World = {
     },
     listVideos: async function () {
         return Cinematic.listBundled();
+    },
+    startTcCircuit: function (options = {}) {
+        return window.TcCircuit?.start?.(options);
+    },
+    stopTcCircuit: function () {
+        return window.TcCircuit?.stop?.();
     },
     // NEW: Dynamic import for limitless extensions (e.g., loaders, controls)
     importModule: async function (modulePath, alias) {

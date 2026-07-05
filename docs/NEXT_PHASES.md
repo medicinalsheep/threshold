@@ -307,16 +307,24 @@ npm run tc:ship:verify -- --preview-smoke   # uses preview on :4173 if running
 npm run package:win                           # optional — heavy Electron build
 ```
 
-**Next:** G1 multiplayer lap sync smoke.
-
-### Phase G1 — TC Circuit game-dev path (v5.8.1) ✅
+### Phase G1 — TC Circuit + multiplayer lap sync (v5.14) ✅
 
 | Step | Status |
 |------|--------|
 | G1.1 `referenceLibrary.js` workflow — lap timer + `tc_cp` checkpoint | ✅ |
 | G1.2 PromptGen extends TC scene without `World.clearWorld()` | ✅ |
+| G1.3 `tcCircuit.js` — synced leaderboard + `LAP_CROSS` actions | ✅ |
+| G1.4 `remotePlayers.js` — multiplayer position markers | ✅ |
+| G1.5 `npm run tc:circuit:verify` | ✅ |
 
-**Next:** Multiplayer lap sync smoke.
+```bash
+# Solo: Lobby → TC → · Compiler RUN:
+World.startTcCircuit()
+# Multiplayer: host CREATE → guests JOIN → host RUN startTcCircuit → all cross tc_cp
+npm run tc:circuit:verify
+```
+
+**Next:** Per-guest drivable avatars on synced vehicles (G2).
 
 ### Phase K — Cinematic layer (v4.9) ✅
 

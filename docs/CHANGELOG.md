@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.14.0 — G1 TC Circuit multiplayer lap sync
+
+- `tcCircuit.js` — host-synced lap timer, `tc_cp` proximity, live leaderboard HUD
+- `LAP_CROSS` / `CIRCUIT_START` actions · circuit state in `FULL_STATE` sync
+- `remotePlayers.js` — ghost markers at synced `playerPositions` (multiplayer)
+- `World.startTcCircuit()` / `World.stopTcCircuit()` · `npm run tc:circuit:verify`
+
 ## 5.13.0 — Proximity VOIP + Discord parallel
 
 - Lobby voice settings (host before CREATE): WebRTC proximity, PTT/open mic, Discord link
