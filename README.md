@@ -24,18 +24,10 @@ Open `http://localhost:5173`
 
 | Script | Purpose |
 |--------|---------|
-| `npm run build:pages` | Static site for GitHub Pages → `dist-pages/` |
+| `npm run build:pages` | Static web build → `dist-pages/` |
 | `npm run build:grok` | Grok edition with login → `dist-grok/` |
 | `npm run preview:pages` | Preview Pages build locally |
 | `npm run preview:grok` | Preview Grok build locally |
-
-## GitHub Pages
-
-1. Push this repo to GitHub
-2. Enable **Settings → Pages → GitHub Actions**
-3. The deploy workflow runs on push to `main`
-
-Live URL: `https://<username>.github.io/<repo-name>/`
 
 ## Grok Edition
 
