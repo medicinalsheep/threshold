@@ -110,7 +110,8 @@ export const ExportWizard = {
                 <label class="export-wizard-check"><input type="checkbox" id="export-target-ios" ${this.draft.targets.ios ? 'checked' : ''}> ${profiles.ios.label}</label>
                 <p class="insert-hint" style="margin-top:10px;">CLI after download:<br>
                 <code>npm run bundle:assets</code> (auto in package scripts)<br>
-                <code>npm run package:android</code> · <code>npm run package:win</code> · <code>npm run package:ios</code> (macOS archive)<br>
+                <code>npm run export:graphics -- --profile android</code> (auto in package scripts)<br>
+                <code>npm run package:android</code> · <code>npm run package:win</code> · <code>npm run package:ios</code><br>
                 First time: <code>npm run init:native</code></p>
             `;
             return;
@@ -177,7 +178,7 @@ export const ExportWizard = {
                 <li>File: <code>${escapeText(filename)}</code></li>
                 <li>Targets: ${targets.join(', ') || 'manifest only'}</li>
                 <li>Shell: ${ThresholdShell.isNative ? ThresholdShell.kind + ' (' + ThresholdShell.platform + ')' : 'browser — use CLI for APK / .exe'}</li>
-                <li>Bundle: <code>npm run bundle:assets</code> copies textures/ + import/ into dist-pages/bundle/</li>
+                <li>Bundle: <code>bundle:assets</code> then <code>export:graphics --profile &lt;target&gt;</code> prunes textures per platform</li>
             </ul>
             <p class="insert-hint">See <code>docs/NATIVE_SHELLS.md</code> for Android Studio and Windows build steps.</p>
         `;

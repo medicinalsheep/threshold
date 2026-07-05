@@ -75,8 +75,9 @@ export const Sync = {
                 window.GltfImport?.spawnSnapshots?.(gltfSnapshots);
             }
 
-            if (state.graphics) {
-                GraphicsProfile.applyFromSync(state.graphics);
+            const graphicsState = state.graphics || state.world?.graphics;
+            if (graphicsState?.tier || graphicsState?.renderMode != null) {
+                GraphicsProfile.applyFromSync(graphicsState);
             } else {
                 if (state.env && Environment) {
                     Object.assign(State.env, state.env);

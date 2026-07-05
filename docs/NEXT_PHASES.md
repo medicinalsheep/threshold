@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v4.1.0 — Phase G (suggested graphics tiers, first-run prompt, ENV override, export persistence).
+**Current:** v4.5.0 — Phase J (targeted graphics export CLI per platform profile).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -79,23 +79,24 @@ Deliverables:
 | I4 | `textures:watch` reload correct tier on save |
 | I5 | Export pipeline: `graphics.textures[]` with tier variants |
 
-### Phase J — Targeted graphics export (v4.5)
+### Phase J — Targeted graphics export (v4.5) ✅
 
 *Ship different asset packages per store target from one manifest.*
 
-```json
-"graphics": {
-  "profiles": {
-    "web": { "tier": "balanced", "textureMax": 1024 },
-    "android": { "tier": "balanced", "textureMax": 1024 },
-    "ios": { "tier": "balanced", "textureMax": 1024 },
-    "windows": { "tier": "ultra", "textureMax": 2048 },
-    "steam": { "tier": "ultra", "textureMax": 4096 }
-  }
-}
-```
+| Deliverable | Status |
+|-------------|--------|
+| `config/graphics-export-profiles.json` | ✅ web/android/ios/windows/steam |
+| `graphics.profiles` in game export manifest | ✅ v4.5 |
+| `npm run export:graphics -- --profile <id>` | ✅ pruned `dist-export/<id>/bundle/` |
+| HILOD suffix pick (`_512`/`_1k`/`_2k`) | ✅ by `textureMax` |
+| `--install` + package scripts | ✅ auto in `package:android/win/ios` |
+| Sliced `.threshold-game.json` per profile | ✅ with `--manifest` |
 
-CLI: `npm run export:graphics -- --profile android` → pruned asset folder + manifest slice.
+```bash
+npm run export:graphics -- --profile android
+npm run export:graphics -- --profile windows --manifest my-game.threshold-game.json --install
+npm run export:graphics -- --all-profiles
+```
 
 ---
 
@@ -145,6 +146,7 @@ CLI: `npm run export:graphics -- --profile android` → pruned asset folder + ma
 | **3.8** | Phase E — normal maps, bundling, web GIMP batch, sound sidecar |
 | **4.0** | iOS Capacitor scaffold + export wizard + TestFlight docs |
 | **4.1** | Suggested graphics tiers + first-run prompt + ENV presets |
+| **4.5** | Targeted graphics export CLI (`export:graphics`) |
 | **4.1** | Suggested graphics tiers |
 | **4.2** | Mesh LOD |
 | **4.3–4.4** | HILOD textures |

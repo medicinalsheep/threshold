@@ -19,6 +19,7 @@ if (!fs.existsSync(distIndex)) {
 }
 
 run('npm run bundle:assets');
+run('node scripts/export-graphics.cjs --profile windows --install');
 
 const icoPath = path.join(root, 'electron', 'resources', 'icon.ico');
 if (!fs.existsSync(icoPath)) {

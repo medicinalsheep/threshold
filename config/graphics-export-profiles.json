@@ -1,0 +1,48 @@
+{
+  "format": "threshold-graphics-export-profiles",
+  "version": 1,
+  "profiles": {
+    "web": {
+      "label": "Web (static host)",
+      "tier": "balanced",
+      "textureMax": 1024,
+      "packageScript": null,
+      "notes": "GitHub Pages / CDN — SMPTE tier, 1K textures"
+    },
+    "android": {
+      "label": "Android APK",
+      "tier": "balanced",
+      "textureMax": 1024,
+      "packageScript": "package:android",
+      "notes": "Capacitor WebView — balanced tier, 1K textures"
+    },
+    "ios": {
+      "label": "iOS App Store",
+      "tier": "balanced",
+      "textureMax": 1024,
+      "packageScript": "package:ios",
+      "notes": "Capacitor WKWebView — balanced tier, 1K textures"
+    },
+    "windows": {
+      "label": "Windows Electron",
+      "tier": "ultra",
+      "textureMax": 2048,
+      "packageScript": "package:win",
+      "notes": "Desktop portable .exe — ultra tier, 2K textures"
+    },
+    "steam": {
+      "label": "Steam depot",
+      "tier": "ultra",
+      "textureMax": 4096,
+      "packageScript": "package:win",
+      "notes": "High-end desktop — ultra tier, up to 4K where authored"
+    }
+  },
+  "hilodSuffixes": ["_512", "_1k", "_2k", "_4k"],
+  "textureMaxPreference": {
+    "512": ["_512", ""],
+    "1024": ["_1k", "_512", ""],
+    "2048": ["_2k", "_1k", ""],
+    "4096": ["_4k", "_2k", "_1k", ""]
+  }
+}

@@ -3,6 +3,7 @@ import { Sync } from './sync.js';
 import { SoundLibrary } from './soundLibrary.js';
 import { TextureLibrary } from './textureLibrary.js';
 import { ProjectVault } from './projectVault.js';
+import { getGraphicsExportBlock } from './graphicsExportProfiles.js';
 
 const BUILD_PROFILES = {
     web: {
@@ -149,9 +150,12 @@ export const GameExport = {
                 index: 'bundle/bundle-index.json',
                 note: 'npm run bundle:assets copies textures/ + import/ into native/web builds',
             },
-            graphics: window.GraphicsProfile?.exportSnapshot?.() || {
-                tier: options.graphicsTier || 'realistic',
-                renderMode: 4,
+            graphics: {
+                ...(window.GraphicsProfile?.exportSnapshot?.() || {
+                    tier: options.graphicsTier || 'realistic',
+                    renderMode: 4,
+                }),
+                ...getGraphicsExportBlock(resolveActiveGraphicsProfile(options.targets)),
             },
             agents: options.agents || window.AgentHub?.exportConfigs?.() || [],
             relay: {
@@ -205,5 +209,14 @@ export const GameExport = {
         return { ...BUILD_PROFILES };
     },
 };
+
+function resolveActiveGraphicsProfile(targets = {}) {
+    if (targets.steam) return 'steam';
+    if (targets.windows) return 'windows';
+    if (targets.ios) return 'ios';
+    if (targets.android) return 'android';
+    if (targets.web) return 'web';
+    return null;
+}
 
 window.GameExport = GameExport;

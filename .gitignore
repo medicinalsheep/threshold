@@ -3,6 +3,7 @@ dist/
 dist-pages/
 dist-grok/
 dist-electron/
+dist-export/
 android/
 ios/*
 !ios/README.md

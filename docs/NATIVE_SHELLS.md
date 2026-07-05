@@ -53,7 +53,22 @@ Before packaging native builds, copy GIMP/Blender output into the web bundle:
 npm run bundle:assets   # textures/ + import/ → dist-pages/bundle/
 ```
 
-`package:win`, `package:android`, and `package:ios` run this automatically after `npm run build`.
+`package:win`, `package:android`, and `package:ios` run `bundle:assets` then `export:graphics --install` for the active platform profile (prunes textures by tier).
+
+### Targeted graphics export (v4.5)
+
+Ship different texture tiers per store from one game manifest:
+
+```bash
+npm run export:graphics -- --profile android
+npm run export:graphics -- --profile windows --manifest my-game.threshold-game.json
+npm run export:graphics -- --profile android --install   # → dist-pages/bundle/
+npm run export:graphics -- --all-profiles
+```
+
+Output: `dist-export/<profile>/bundle/` + `graphics-export.json` (+ sliced game manifest when `--manifest` provided).
+
+Profiles in `config/graphics-export-profiles.json` — picks HILOD suffix (`_512`, `_1k`, `_2k`) by `textureMax` and applies graphics tier preset.
 
 Electron reads bundled assets via `shell:bundle:readBinary`; web/Capacitor fetch from `./bundle/`.
 

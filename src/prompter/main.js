@@ -7,6 +7,7 @@ import { getSoundContext } from '../shared/soundContext.js';
 import { getReferencePromptBlock } from '../shared/referenceLibrary.js';
 import { getRenderModePromptBlock } from '../shared/renderModes.js';
 import { GraphicsProfile } from '../shared/graphicsProfile.js';
+import { getGraphicsExportBlock } from '../shared/graphicsExportProfiles.js';
 import { SoundLibrary } from '../shared/soundLibrary.js';
 
 function renderSoundPicker() {
@@ -96,6 +97,10 @@ GRAPHICS TIERS (Engine suggests on first run; override in SCENE → ENV):
 ${GraphicsProfile.getPromptBlock()}
 - Match tier to scene: retro galleries → compatibility/balanced; PBR textures/GLTF → realistic/ultra (Hyper mode 4)
 - Persisted in world export as graphics.tier — respect active tier when generating worlds
+
+TARGETED GRAPHICS EXPORT (Phase J — ship per store from one manifest):
+${Object.entries(getGraphicsExportBlock().profiles).map(([id, p]) => `- ${id}: tier=${p.tier}, textureMax=${p.textureMax} — ${p.notes}`).join('\n')}
+- CLI: npm run export:graphics -- --profile android — prunes _512/_1k/_2k texture variants into dist-export/
 
 LEGO FIT: extend live scene via World.createObject — no clearWorld. Snap props with offsets from World.getCursorPos(). Set userData mass/friction/restitution for Collision panel. Use active graphics tier render mode (Hyper=4 for realistic/ultra).
 

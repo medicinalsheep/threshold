@@ -17,6 +17,7 @@ function run(cmd) {
 
 run('npm run build');
 run('npm run bundle:assets');
+run('node scripts/export-graphics.cjs --profile ios --install');
 
 if (!fs.existsSync(iosDir)) {
     console.log('iOS platform missing — running init:native (iOS)…');
