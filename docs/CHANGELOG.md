@@ -1,5 +1,13 @@
 # Changelog
 
+## 6.4.1 — Doc truth pass + legacy archive
+
+- **docs/README.md** — full scope map, phase history, command cheat sheet
+- **README.md** — v6.4 realism starter, asset pipeline table, `quickstart`
+- **old/** — archived `threshold-child-*` editions, R2 child-vehicle scripts, sample GIMP manifest
+- `npm run quickstart` — onboarding (+ `--verify` / `--pack`)
+- Updated AGENTS, GETTING_STARTED, PRODUCT_ROADMAP, REALISTIC_GAMEPLAY, CREATIVE_WORKFLOW
+
 ## 6.4.0 — Phase 10: GIMP live SYNC + starter texture kit
 
 - **Live SYNC** — `textures:watch` auto-WebP, bundle mirror, manifest hot-reload + UV finish pass

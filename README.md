@@ -2,7 +2,7 @@
 
 A collaborative 3D creative playground — design worlds, generate code with AI, record sounds, spawn characters, play together, and **ship games** to stores (Play, Windows, Steam) via a guided export walkthrough.
 
-**Live:** https://medicinalsheep.github.io/threshold/
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 6.4.1
 
 ---
 
@@ -10,34 +10,40 @@ A collaborative 3D creative playground — design worlds, generate code with AI,
 
 | Mode | How |
 |------|-----|
-| **Solo** | Lobby → **SOLO PLAY** — full creative control on your device |
+| **Solo** | Lobby → **SOLO PLAY** — realistic action starter (walk, FPS, ADS, footstep pads) |
 | **Host** | Lobby → **CREATE SESSION** → **COPY LINK** → friends open link → **JOIN FRIENDS** |
 | **Guest** | Open host's link (or enter room code) → **JOIN FRIENDS** |
+| **TC demo** | Lobby → **TC →** — vehicles, NPCs, circuit, full export practice |
 
 ```
 Lobby → Engine (3D world) ↔ Compiler (code) ↔ PromptGen (AI prompts)
               ↓
      First visit: 9-step tutorial · replay via MORE → TUTORIAL
               ↓
-     Insert · SFX · AI agents · EXPORT manifest · PLAY/EDIT
-              ↓
-     Share link → friends join → keep building together
+     Walk/FPS · PBR textures · footsteps · GLB avatars · EXPORT · ship
 ```
 
 ### First session (recommended)
 
-1. **Lobby → SOLO PLAY** — starter scene loads (platform, beacon, Guide NPC).
-2. **Tutorial** — 9-step overlay (build, textures, optional AI); **MORE → TUTORIAL** to replay.
-3. **EDIT** — drag panels; **+** to insert; **Texture** tab or **INSERT → GLTF** for GIMP/Blender art.
-4. **Optional AI** — PromptGen → Compiler, or SCENE → AI agents on NPCs.
-5. **PLAY** — test walk/fly; use **Hyper** render mode for PBR textures.
-6. **SAVE WORLD** — **MORE** menu; share `?world=CODE` links.
-7. **EXPORT** — 9-step wizard (icons, credits, packs, ship) → `.threshold-game.json` ([walkthrough](docs/EXPORT_WALKTHROUGH.md)).
-8. **Ship** — `store:prep` → `package:android` / `package:win` / `package:steam` ([store](docs/STORE_RELEASE.md) · [Steam](docs/STEAM_RELEASE.md)).
+1. **Lobby → SOLO PLAY** — starter scene: platform, surface pads (grass/wood/gravel/asphalt), Alex/Jordan/Sam NPCs.
+2. **Move** — WASD walk, Shift sprint, **V** toggle FPS/TPS, **R** ADS in FPS, **T** Third Eye.
+3. **Try** — **E** interact terminals, **G** shoot glass target, walk different pads for footstep sounds.
+4. **Tutorial** — 9-step overlay; **MORE → TUTORIAL** to replay.
+5. **EDIT** — pause, drag panels, **+** insert, Texture tab or **INSERT → GLTF** for GIMP/Blender art.
+6. **Hyper** render mode — PBR textures + normal maps on starter meshes.
+7. **SAVE WORLD** — **MORE** menu; share `?world=CODE` links.
+8. **EXPORT** — 9-step wizard → `.threshold-game.json` ([walkthrough](docs/EXPORT_WALKTHROUGH.md)).
 
-**Optional:** Lobby → **TC →** — full showcase (veh+chr GLB+LOD, SFX, checkpoint) to practice export SCENE / CREDITS / PACKS ([TC policy](docs/THRESHOLD_CHILD_ASSETS.md) · [getting started](docs/GETTING_STARTED.md)).
+**Developers:** after `git clone`:
 
-Deeper workflows: Compiler sidebar → **WORKFLOWS** (Quick Start, agents, relay, sounds).
+```bash
+npm install
+npm run quickstart        # prints full onboarding path
+npm run quickstart -- --pack   # regenerate textures, sounds, avatars, bundle
+npm run dev               # http://localhost:5173
+```
+
+Full doc index: [docs/README.md](docs/README.md) · Linear path: [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) · Realism guide: [docs/REALISTIC_GAMEPLAY.md](docs/REALISTIC_GAMEPLAY.md)
 
 ---
 
@@ -60,147 +66,76 @@ Threshold uses **host-authoritative** multiplayer over **PeerJS (WebRTC)**. Ther
 - When you **Create Session**, your Player Key **becomes the room code**.
 - Invite links look like: `https://medicinalsheep.github.io/threshold/?room=ABC123`
 
-### PLAYERS panel (toolbar → PLAYERS)
-
-Open this as **host** or **guest** to see roles and permissions.
-
-**Host controls:**
-- **Invite link** — copy and send to friends
-- **Admin checkbox** per joined player — grants trusted guests world-edit powers
-- **Auto-pause when host opens Compiler / PromptGen** — pauses the sim so the host can code without guests running ahead (toggle on/off)
-- **PUSH CONTROLS TO ALL** — syncs host keyboard + gamepad bindings to every connected player
-
-**Guest view:**
-- Shows whether you are **Admin** or a regular **Player**
-- Regular guests can still walk/fly, use personal key overrides, and edit **their own avatar skin** in PLAY mode
-
-### EDIT vs PLAY (the core rule)
+### EDIT vs PLAY
 
 | Mode | Badge | World map | Objects | Your avatar |
 |------|-------|-----------|---------|-------------|
-| **EDIT** | `EDIT` | Unlocked (if you have permission) | Inspector: texture, collision, audio | Skin editable |
+| **EDIT** | `EDIT` | Unlocked (if permitted) | Inspector: texture, collision, audio | Skin editable |
 | **PLAY** | `PLAY` | Locked | View only (host-built) | Skin + player code editable |
 
 - **PAUSE** → EDIT — host (or solo) builds, runs Compiler code, inserts objects
 - **PLAY** (resume) → simulation runs; physics active; world locked for non-admins
-- Guests without Admin can **request** world actions; the host executes and broadcasts state
 
-### Key bindings (KEYS menu)
+### Key bindings (action defaults)
 
-Two profiles in the bindings editor:
+| Action | Keyboard | Gamepad |
+|--------|----------|---------|
+| Move | WASD | L-stick |
+| Sprint | Shift | L3 |
+| Jump | Space | A |
+| Interact | E | X |
+| Fire | G | RT |
+| Aim (ADS) | R | LT |
+| FPS / TPS | V | D-pad Down |
+| Third Eye | T | D-pad Up |
 
-| Profile | Purpose |
-|---------|---------|
-| **Host / Solo** | Default layout + **Pause Scene** binding |
-| **Guest** | Personal overrides; pause binding disabled |
-
-Host can **push** their layout to all guests. Guests can still override locally in the Guest profile.
-
-### What syncs in a session
-
-- World objects (mesh transforms, `userData`, physics flags)
-- Environment (time, fog, water, atmosphere, render mode)
-- Running Compiler code
-- Pause / PLAY state
-- Admin list
-- Host control bindings (when pushed)
-- Host player position (single shared player snapshot — see limitations)
-
-### What does **not** sync automatically
-
-- Recorded **sound blobs** (stored locally per device — only clip **IDs** in object metadata sync)
-- Compiler input drafts, PromptGen text, UI panel positions (saved per browser)
-- Guest personal keybinding overrides (unless host pushes)
+Details: [docs/REALISTIC_GAMEPLAY.md](docs/REALISTIC_GAMEPLAY.md)
 
 ---
 
-## Creative freedom (what you *can* do)
+## Asset pipeline (v6.4)
 
-Threshold is deliberately **not** a locked-down game — it is a **live 3D runtime** with a JavaScript API.
+| Step | Command | Output |
+|------|---------|--------|
+| Full pack | `npm run assets:pack` | textures + avatars + sounds + WebP + build + bundle + kit |
+| Verify | `npm run assets:verify` | smoke test modules, NPCs, SFX, texture budget |
+| GIMP live | `textures:watch` + `dev` | hot-reload on GIMP export |
+| Fork pack | `npm run kit:export` | ~1.4 MB WebP starter kit in `exports/starter-texture-kit/` |
+| TC rebuild | `npm run tc:build` | GLB+LOD vehicles/characters + PBR textures |
 
-### World building
-- Fly or walk the scene; right-click / hold / **+** to insert
-- Drag **TOOLS** and **SCENE** panels anywhere; **LOCK** when placed
-- **FULL** for immersive view (touch-friendly exit button on mobile)
-- ENV / EDIT / SKIN / **SFX** dock tabs
-- Save worlds (`SAVE WORLD` / `?world=CODE` links) and full **Project Vault** (world + scripts)
+```bash
+npm run gimp:install          # GIMP PBR plugin
+npm run blender:install       # Blender GLTF addon
+npm run blender:avatar -- --blend rig.blend --object Armature
+npm run textures:watch        # + npm run dev for live SYNC
+```
 
-### Code & AI
-- **Compiler** — write or paste JS, transpile, **RUN IN ENGINE**
-- **PromptGen** — include live scene + **sound library** so AI references your recorded clips
-- **Grok edition** — direct script generation (optional `VITE_EDITION=grok`)
-- Full globals: `World`, `Engine`, `THREE`, `Physics`, `PlayerController`, `Runtime`, `AudioSys`, etc.
-- Reference library built in (workflows, players, worlds, techniques)
-
-### Characters & animation
-- Procedural human avatars with walk + idle animation
-- GLTF/GLB model URLs for custom skins
-- NPC humans with continuous idle animation
-- Physics objects, collisions, rotating props, custom materials
-
-### Sound
-- Record via mic in **SFX** tab or post-insert prompt
-- Assign clips to objects: collision, interact, emote/walk, ambient
-- Reference clips in PromptGen so AI wires `userData.soundClipId` in generated code
-- Synth tones still available as fallback
-
-### Multiplayer creativity
-- Host pauses → everyone edits together (admins code/build)
-- Host plays → shared world becomes a playground
-- Delegate **Admin** to co-designers without sharing your machine
-- Export/import scene JSON; share player profiles as `.json` files
-
-**Bottom line:** if you can express it in JavaScript against the Three.js scene, you can build it — from ambient art installations to physics puzzles to AI-generated worlds with custom footstep sounds.
+Guides: [ASSET_CAPABILITIES](docs/ASSET_CAPABILITIES.md) · [GIMP_TEXTURES](docs/GIMP_TEXTURES.md) · [BLENDER_AVATARS](docs/BLENDER_AVATARS.md) · [CREATIVE_WORKFLOW](docs/CREATIVE_WORKFLOW.md)
 
 ---
 
-## Known limitations (honest)
+## Creative freedom
+
+Threshold is a **live 3D runtime** with a JavaScript API — not a locked-down game.
+
+- **World building** — fly/walk, insert objects, ENV/EDIT/SKIN/SFX docks, save worlds + Project Vault
+- **Code & AI** — Compiler, PromptGen (live scene + sound library), optional Grok edition
+- **Characters** — GLB avatars with walk animation, procedural fallback, multiplayer meshes
+- **Sound** — record SFX, footstep surfaces, assign collision/interact/ambient clips
+- **Multiplayer** — host pauses for co-edit; Admin delegation; export/import JSON
+
+If you can express it in JavaScript against the Three.js scene, you can build it.
+
+---
+
+## Known limitations
 
 | Area | Limitation |
 |------|------------|
-| **Networking** | PeerJS/WebRTC — host must stay online; strict firewalls/NAT can block connections; no dedicated relay server in the default deploy |
-| **Room codes** | Room ID = host Player Key; rare collisions if ID is taken (retry Create Session) |
-| **Authority** | Guests never mutate the world locally — actions go to host; ~120ms broadcast debounce |
-| **Players in sync** | One shared player snapshot from host state — not full per-guest avatar replication yet |
-| **Audio files** | Recordings live in browser IndexedDB per device; metadata syncs, blobs do not |
-| **Cloud** | Worlds/projects save locally; optional Supabase cloud requires env keys in your build |
-| **Code execution** | `eval()` in-browser — powerful by design, not a sandbox; trust your session participants |
-| **Mobile** | iOS fullscreen uses CSS immersive fallback; mic requires HTTPS + permission |
-| **External assets** | GLTF URLs must allow CORS from the live origin |
-
-These are engineering boundaries, not creative ones. Workarounds: save/share worlds via links, export JSON, use AI + Compiler for procedural content, assign sounds per-object after sync.
-
----
-
-## Feature overview
-
-### Insert menu (+ or right-click)
-
-| Tab | Action |
-|-----|--------|
-| Character | Spawn NPC human |
-| Spawn as Player | Playable walker avatar |
-| Player Key | Insert another player's exported profile |
-| Saved | Use a locally saved player |
-| Code | Run custom JavaScript at cursor |
-
-### PromptGen
-
-- **Include live scene** — objects, env, running code, session info
-- **Include sound library** — pick which recorded clips AI should reference
-- Task types: extend world, player/avatar, map layout, workflow, audit
-
-### Compiler
-
-- Transpile → **CHECK CODE READY** → **RUN IN ENGINE**
-- Project Vault: save/load scripts + world snapshot together
-- Running code panel shows live executed scripts
-
-### Mobile & touch
-
-- **TOUCH** toggle for on-screen sticks + buttons
-- Drag floating panels; portrait/landscape clamping
-- Tap **FULL** for immersive mode
+| **Networking** | PeerJS/WebRTC — host must stay online; strict NAT can block |
+| **Players in sync** | Host-authoritative; ~120ms debounce; one shared player snapshot |
+| **Audio blobs** | Recordings in IndexedDB per device; metadata syncs, blobs do not |
+| **External assets** | GLTF URLs must allow CORS from your origin |
 
 ---
 
@@ -208,96 +143,79 @@ These are engineering boundaries, not creative ones. Workarounds: save/share wor
 
 ```bash
 npm install
-npm run dev          # local dev server
-npm run build        # production build (GitHub Pages)
+npm run quickstart
+npm run dev              # Vite :5173
+npm run build            # GitHub Pages → dist-pages/
+npm run preview          # :4173 smoke test
 ```
 
-Push to `main` — GitHub Pages updates automatically at the live URL above.
+Push to `main` — GitHub Pages updates at the live URL.
 
-### Native packaging & store
+### Native packaging
 
 ```bash
-npm run init:native       # first time: Capacitor Android + iOS project
+npm run init:native
 npm run package:android:release
-npm run package:win       # Windows portable .exe (Electron)
+npm run package:win
 npm run package:steam -- --manifest my-game.threshold-game.json
 npm run store:prep -- --manifest my-game.threshold-game.json
-npm run store:assets -- --manifest my-game.threshold-game.json
-npm run electron:dev      # preview desktop shell
 ```
 
-Guides: [NATIVE_SHELLS](docs/NATIVE_SHELLS.md) · [STORE_RELEASE](docs/STORE_RELEASE.md) · [STEAM_RELEASE](docs/STEAM_RELEASE.md) · [EXPORT_WALKTHROUGH](docs/EXPORT_WALKTHROUGH.md)
+Guides: [NATIVE_SHELLS](docs/NATIVE_SHELLS.md) · [STORE_RELEASE](docs/STORE_RELEASE.md) · [STEAM_RELEASE](docs/STEAM_RELEASE.md)
 
 ### TC assets (bundled originals)
 
-Lobby → **TC →** spawns full showcase — Runner, Hauler, Marshal, Mechanic (GLB + LOD), TC Span, checkpoint, SFX.
+Lobby → **TC →** — Runner, Hauler, Marshal, Mechanic (GLB + LOD), TC Span, checkpoint, SFX, intro cutscene.
 
 ```bash
-npm run tc:build      # (re)generate GLB+LOD into import/
-npm run tc:verify     # smoke test TC stack
-npm run reference:fetch   # optional dev-only CC0 seeds → reference/_dev-seeds/ (gitignored)
+npm run tc:build
+npm run tc:verify
+npm run tc:ship              # automated export E2E
 ```
 
-[docs/THRESHOLD_CHILD_ASSETS.md](docs/THRESHOLD_CHILD_ASSETS.md) · [docs/REFERENCE_EDITIONS.md](docs/REFERENCE_EDITIONS.md) · [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)
+[REFERENCE_EDITIONS](docs/REFERENCE_EDITIONS.md) · [THRESHOLD_CHILD_ASSETS](docs/THRESHOLD_CHILD_ASSETS.md)
 
-Full guide: [docs/NATIVE_SHELLS.md](docs/NATIVE_SHELLS.md)
-
-### Creative pipeline (shipped)
-
-```bash
-npm run gimp:install      # GIMP PBR export plugin
-npm run blender:install     # Blender GLTF addon
-npm run textures:watch    # dev hot-reload (with npm run dev)
-npm run blender:export -- --blend scene.blend --object "Stone Block"
-```
-
-Guides: [docs/CREATIVE_WORKFLOW.md](docs/CREATIVE_WORKFLOW.md) · [docs/CREATIVE_PLUGINS.md](docs/CREATIVE_PLUGINS.md)
-
-Brand icons: `npm run build:icons` · **Gamepad:** A/Cross jump · **L3** sprint · R-stick camera.
-
-Optional env (`.env` / build modes):
+### Optional env
 
 | Variable | Purpose |
 |----------|---------|
 | `VITE_EDITION=grok` | Grok auth + RUN WITH GROK |
-| `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` | Cloud world/project sync |
-| `VITE_BASE_PATH` | Deploy path if not site root |
+| `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` | Cloud world sync |
+| `VITE_PEER_HOST` | Custom PeerJS relay |
 
 ---
 
-## Sponsors
-
-Support ongoing development:
-
-**[github.com/sponsors/medicinalsheep](https://github.com/sponsors/medicinalsheep)**
-
----
-
-## Product roadmap (v5.5)
+## Product roadmap
 
 **Design → Art → Play → Ship → Scale**
 
-| Stage | What |
-|-------|------|
-| **Design** | Engine, Compiler, PromptGen, SFX, 9-step tutorial |
-| **Art** | GIMP, Blender, **Threshold Child** originals, `textures:watch` |
-| **Play** | Solo / host / guest, EDIT·PLAY, graphics tiers, cutscenes |
-| **Ship** | 9-step EXPORT → `store:prep` → APK / Windows / iOS / **Steam** |
+| Stage | What (v6.4) |
+|-------|-------------|
+| **Design** | Engine, Compiler, PromptGen, 9-step tutorial |
+| **Art** | GIMP live SYNC, Blender avatars, procedural PBR + HILOD, `kit:export` |
+| **Play** | TPS/FPS/ADS, footsteps, Third Eye, TC circuit + drive |
+| **Ship** | 9-step EXPORT → `store:prep` → APK / Windows / iOS / Steam |
 | **Scale** | Optional **relay/** — [AWS free tier](relay/README.md) |
 
-**Current:** v5.7.0 — R3 Child showcase (characters, audio, full export demo). [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) · [docs/NEXT_PHASES.md](docs/NEXT_PHASES.md) · [docs/PRODUCT_ROADMAP.md](docs/PRODUCT_ROADMAP.md)
+**Current:** v6.4.1 — realism starter defaults, full asset pipeline, doc index. [docs/PRODUCT_ROADMAP.md](docs/PRODUCT_ROADMAP.md) · [docs/NEXT_PHASES.md](docs/NEXT_PHASES.md) · [docs/CHANGELOG.md](docs/CHANGELOG.md)
 
 ---
 
 ## Tech
 
-- **Three.js** + **Cannon-ES** physics + post-processing render modes
-- **PeerJS** (WebRTC) — host-authoritative sync; optional custom relay via `VITE_PEER_HOST`
+- **Three.js** + **Cannon-ES** + post-processing render modes
+- **PeerJS** (WebRTC) — host-authoritative sync
 - **IndexedDB** — worlds, projects, sound library
 - **Vite** — build tooling
 
 ---
 
+## Sponsors
+
+**[github.com/sponsors/medicinalsheep](https://github.com/sponsors/medicinalsheep)**
+
+---
+
 ## License
 
-MIT — commercial terms planned as product matures (see prior README discussion).
+MIT — commercial terms planned as product matures.

@@ -1,8 +1,10 @@
 # Threshold Suite — Agent & Developer Guide
 
-Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, and store/Steam export.
+Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **5.12.0**)
+**Version:** `src/config.js` → `VERSION` (currently **6.4.1**)
+
+**Doc index:** [docs/README.md](docs/README.md) — full scope map
 
 ---
 
@@ -12,43 +14,44 @@ Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blen
 |------|------|
 | Lobby | `src/lobby/` |
 | Engine | `src/engine/main.js` |
+| Starter scene | `src/engine/starterScene.js`, `starterTex.js`, `starterSfx.js` |
+| Realism | `player.js`, `fpsViewmodel.js`, `footsteps.js`, `npcPatrol.js` |
 | Compiler | `src/compiler/main.js` |
 | PromptGen | `src/prompter/main.js` |
 | Multiplayer | `src/shared/network.js`, `sync.js`, `actions.js` |
 | Creative | `textureBridge.js`, `gltfImport.js`, `creativeWatch.js` |
 | Export | `gameExport.js`, `exportWizard.js`, `exportWalkthrough.js` |
 | Store / Steam | `scripts/store-*.cjs`, `scripts/steam-*.cjs`, `electron/steam*.cjs` |
-| TC assets | `tcShow.js`, `tcVeh.js`, `tcChr.js`, `tcSfx.js`, `tcLite.js`, `tcMeta.js`, `tcPrompt.js` |
+| TC assets | `tcShow.js`, `tcVeh.js`, `tcChr.js`, `tcSfx.js`, `tcLite.js`, `tcMeta.js` |
+| Asset gen | `scripts/tc-gen-tex.cjs`, `gen-starter-avatar.cjs`, `gen-starter-sfx.cjs` |
+| Starter kit | `config/starter-kit.json`, `export-starter-kit.cjs` |
 | Native | `electron/`, `capacitor.config.json`, `thresholdShell.js` |
 | Plugins | `plugins/threshold-gimp/`, `plugins/threshold-blender/` |
+| Legacy archive | `old/` — pre-tc-* editions, R2 child-vehicle scripts |
 
 ---
 
 ## Commands
 
 ```bash
-npm run dev                    # Vite dev
-npm run build                  # GitHub Pages → dist-pages/
-npm run textures:watch         # Hot-reload textures/ + import/ + video/
-npm run gimp:install           # GIMP plugin
-npm run blender:install        # Blender addon
+npm run quickstart              # onboarding (+ --verify / --pack)
+npm run dev                     # Vite dev
+npm run build                   # GitHub Pages → dist-pages/
+npm run preview                 # :4173 smoke test
+npm run assets:pack             # tex + avatars + sounds + webp + build + bundle + kit
+npm run assets:verify           # starter smoke test
+npm run textures:watch          # GIMP live SYNC (with dev)
+npm run kit:export              # fork-friendly WebP pack
+npm run kit:verify
+npm run gimp:install
+npm run blender:install
+npm run blender:avatar -- --blend file.blend --object Armature
 npm run blender:export -- --blend file.blend --object "Name"
-npm run bundle:assets          # Copy creative folders → dist-pages/bundle/
-npm run export:graphics -- --profile android|steam|windows
-npm run store:prep -- --manifest <game>.threshold-game.json
-npm run store:assets -- --manifest <game>.threshold-game.json
-npm run package:android        # Capacitor APK scaffold
-npm run package:android:release
-npm run package:win            # Electron portable + NSIS
-npm run package:steam -- --manifest <game>.threshold-game.json
-npm run steam:depot -- --manifest <game>.threshold-game.json
-npm run reference:fetch        # Dev-only CC0 seeds → reference/_dev-seeds/ (gitignored)
-npm run tc:build               # tc_*.glb veh+chr (Blender or Node)
-npm run tc:gen:veh             # veh GLB only
-npm run tc:gen:chr             # chr GLB only
-npm run tc:export:manifest     # TC Show .threshold-game.json
-npm run tc:ship                # E2E: build → bundle → store:prep
-npm run tc:ship:verify         # verify dist-store + bundle (+ --preview-smoke)
+npm run bundle:assets
+npm run tc:build
+npm run tc:verify
+npm run tc:ship
+npm run tc:ship:verify
 ```
 
 ---
@@ -70,24 +73,17 @@ Manifest includes `branding`, `credits`, `assetRegistry`, `assetOpportunity`, `s
 
 ---
 
-## AI agents (optional UX)
+## Asset naming contract
 
-| Agent | UI | API |
-|-------|-----|-----|
-| Local Script | SCENE → AI | `AgentHub`, interval JS |
-| Grok NPC | SCENE → AI | `NpcAgent`, xAI key |
-| Grok Dev | SCENE → AI | `DevAgent`, Compiler context |
+Object **Name** in Engine inspector must match GIMP/Blender export slug:
 
-Engine tutorial = 9 steps. PromptGen is the primary codegen path.
+| Tool | Name `Stone Block` | Files |
+|------|-------------------|-------|
+| GIMP | `objectName` | `textures/stone_block_albedo.png` |
+| Blender | `--object "Stone Block"` | `import/stone_block.glb` |
+| Starter | `config/starter-textures.json` | UV repeat + preset bind |
 
----
-
-## PromptGen / Compiler asset contract
-
-- `getSceneContext()` — live objects + texture/GLTF hints
-- `getAssetContext()` — ASSET MANIFEST when "Include live scene" is checked
-- Generated JS should include `// ASSETS:` comment with `textureHint` and `import/*.glb` paths
-- Object **name** must match GIMP/Blender export (`Stone Block` → `stone_block_*`)
+Live manifest: `textures/threshold_manifest.json` (not `old/plugins/...` sample).
 
 ---
 
@@ -95,22 +91,21 @@ Engine tutorial = 9 steps. PromptGen is the primary codegen path.
 
 | Doc | Purpose |
 |-----|---------|
+| [docs/README.md](docs/README.md) | **Full scope index** |
 | [README.md](README.md) | Quick start + capabilities |
+| [docs/REALISTIC_GAMEPLAY.md](docs/REALISTIC_GAMEPLAY.md) | Action controls, starter scene |
+| [docs/ASSET_CAPABILITIES.md](docs/ASSET_CAPABILITIES.md) | HILOD, codecs, presets, kit |
+| [docs/GIMP_TEXTURES.md](docs/GIMP_TEXTURES.md) | GIMP install + live SYNC |
+| [docs/BLENDER_AVATARS.md](docs/BLENDER_AVATARS.md) | Rigged GLB export |
+| [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) | Lobby → ship path |
 | [docs/EXPORT_WALKTHROUGH.md](docs/EXPORT_WALKTHROUGH.md) | 9-step export wizard |
-| [docs/STORE_RELEASE.md](docs/STORE_RELEASE.md) | Play / App Store / Windows |
-| [docs/STORE_ASSETS.md](docs/STORE_ASSETS.md) | IAP / depot / registry maps |
-| [docs/STEAM_RELEASE.md](docs/STEAM_RELEASE.md) | Steamworks + depot upload |
-| [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) | Lobby → ship linear path |
-| [docs/THRESHOLD_CHILD_ASSETS.md](docs/THRESHOLD_CHILD_ASSETS.md) | Child policy — original bundled assets only |
-| [docs/REFERENCE_EDITIONS.md](docs/REFERENCE_EDITIONS.md) | Child editions registry |
+| [docs/THRESHOLD_CHILD_ASSETS.md](docs/THRESHOLD_CHILD_ASSETS.md) | TC original-asset policy |
+| [docs/REFERENCE_EDITIONS.md](docs/REFERENCE_EDITIONS.md) | TC edition registry |
 | [docs/CHANGELOG.md](docs/CHANGELOG.md) | Version history |
-| [docs/CREATIVE_WORKFLOW.md](docs/CREATIVE_WORKFLOW.md) | GIMP/Blender/Engine loop |
-| [docs/NATIVE_SHELLS.md](docs/NATIVE_SHELLS.md) | APK / Windows / iOS / Steam |
-| [docs/NEXT_PHASES.md](docs/NEXT_PHASES.md) | Phase history + open work |
-| [docs/PRODUCT_ROADMAP.md](docs/PRODUCT_ROADMAP.md) | Product north star |
+| [old/README.md](old/README.md) | Archived legacy files |
 
 ---
 
 ## Contributing
 
-Vanilla JS + Vite. No React. One SPA for web, Capacitor, Electron. Update roadmap when shipping features. **Shipped Child editions must be original Threshold content** — see `docs/THRESHOLD_CHILD_ASSETS.md`. External seeds are dev-only in `reference/_dev-seeds/`.
+Vanilla JS + Vite. No React. One SPA for web, Capacitor, Electron. Update [docs/CHANGELOG.md](docs/CHANGELOG.md) when shipping features. **Shipped TC editions must be original Threshold content** — see `docs/THRESHOLD_CHILD_ASSETS.md`. External seeds are dev-only in `reference/_dev-seeds/`.

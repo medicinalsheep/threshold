@@ -2,7 +2,7 @@
 
 Threshold ships a **walk/drive action control** template in the SOLO lobby. Use it as the baseline for shooters, RPGs, and vehicle scenes.
 
-**Current default version:** v6.3.0 realism defaults (Phase 9)
+**Current default version:** v6.4.1 realism defaults (Phase 10)
 
 ---
 
@@ -117,15 +117,28 @@ npm run assets:verify  # smoke test
 | Object | Purpose |
 |--------|---------|
 | Welcome Platform | Spawn + physics collider |
-| Starter Ground / Wall | PBR dressing |
+| Starter Ground / Wall | PBR dressing (UV-tiled) |
+| Surface pads | grass / wood / gravel / asphalt footstep demo |
+| Bench + fabric banner | wood + fabric presets |
 | Parking stripes + barrier | Lane dressing |
 | Glass pane + target | Gun range |
 | AI Build Station / Model Kiosk | Interact terminals |
-| Alex / Jordan / Sam | NPC examples |
+| Alex / Jordan / Sam | NPC examples (GLB + procedural fallback) |
 
 Build your game by replacing props, keeping the control + physics + asset pipeline.
 
+**First clone?** Run `npm run quickstart -- --pack` then `assets:verify` before `preview`.
+
 ---
+
+## Phase 10 additions (v6.4)
+
+| Feature | Notes |
+|---------|-------|
+| GIMP live SYNC | `textures:watch` + `dev` — export → instant reload |
+| Starter kit | `npm run kit:export` — ~1.4 MB WebP fork pack |
+| Doc index | `docs/README.md` — full scope map |
+| Quickstart | `npm run quickstart` — onboarding + optional `--pack` |
 
 ## Phase 9 additions (v6.3)
 

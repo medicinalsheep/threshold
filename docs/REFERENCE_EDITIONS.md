@@ -19,7 +19,7 @@ Bundled content is **TC** (Threshold Child) — **original** assets for learning
 
 Config: `config/reference-editions.json`
 
-Legacy ids `threshold-child-*` map to `tc-*` (v5.8).
+Legacy ids `threshold-child-*` map to `tc-*` (v5.8). Archived manifests: `old/reference-editions/`.
 
 ---
 

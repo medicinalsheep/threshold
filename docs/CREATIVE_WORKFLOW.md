@@ -1,4 +1,4 @@
-# Creative Workflow — GIMP, Blender, Engine (v3.6+)
+# Creative Workflow — GIMP, Blender, Engine (v6.4+)
 
 **One loop:** design on device → import into Engine → playtest → export manifest → ship to any platform.
 
@@ -64,7 +64,9 @@ m.userData.textureHint = 'textures/stone_block_albedo.png';
 |---------|---------|
 | `npm run gimp:install` | Install GIMP export plugin |
 | `npm run blender:install` | Install Blender addon |
-| `npm run textures:watch` | SSE hot-reload (dev; `VITE_CREATIVE_WATCH=true` in production) |
+| `npm run textures:watch` | GIMP live SYNC — auto WebP + manifest hot-reload (with `dev`) |
+| `npm run kit:export` | Fork-friendly WebP starter pack (~1.4 MB) |
+| `npm run quickstart` | Onboarding steps (+ `--pack` for full `assets:pack`) |
 | `npm run bundle:assets` | Copy textures/ + import/ → dist-pages/bundle/ |
 | `npm run blender:export -- --blend scene.blend --object "Name"` | Headless GLB |
 | Engine → Texture → **GIMP SYNC** | Load `threshold_manifest.json` |
@@ -108,6 +110,9 @@ Use **Hyper (4)** when showcasing PBR textures and GLTF materials. Retro modes (
 
 ## Further reading
 
+- [README.md](README.md) — documentation index + scope map
+- [GIMP_TEXTURES.md](GIMP_TEXTURES.md) — install, batch, live SYNC
+- [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) — HILOD, codecs, presets
 - [CREATIVE_PLUGINS.md](CREATIVE_PLUGINS.md) — phase A–D implementation detail
-- [NEXT_PHASES.md](NEXT_PHASES.md) — LOD, HILOD, iOS, leftovers
-- [NATIVE_SHELLS.md](NATIVE_SHELLS.md) — APK / Windows (iOS planned)
+- [NEXT_PHASES.md](NEXT_PHASES.md) — phase history + open work
+- [NATIVE_SHELLS.md](NATIVE_SHELLS.md) — APK / Windows / iOS

@@ -1,6 +1,8 @@
-# Getting started with Threshold (v5.8)
+# Getting started with Threshold (v6.4)
 
-One linear path from lobby to shipping — and where **TC** (Threshold Child) assets fit.
+One linear path from lobby to shipping — plus the **realism starter** and **TC** export practice.
+
+**Full scope:** [README.md](README.md) (doc index)
 
 ---
 
@@ -12,15 +14,50 @@ Lobby → Tutorial → Build (EDIT) → Playtest → Export (9 steps) → Store 
 
 | Step | Where | What you learn |
 |------|--------|----------------|
-| 1 | **Lobby → SOLO PLAY** | Session identity, solo vs host |
+| 1 | **Lobby → SOLO PLAY** | TPS walk, surface pads, footstep SFX |
 | 2 | **Tutorial** (auto or MORE → TUTORIAL) | Panels, EDIT/PLAY, insert, optional AI |
-| 3 | **EDIT** | Insert objects, textures, GLTF, SFX |
-| 4 | **PLAY** | Walk/fly, physics, graphics tier |
+| 3 | **PLAY** | FPS (**V**), ADS (**R**), Third Eye (**T**), shoot (**G**) |
+| 4 | **EDIT** | Insert objects, textures, GLTF, SFX |
 | 5 | **SAVE WORLD** | Share links `?world=CODE` |
 | 6 | **MORE → EXPORT** | 9-step walkthrough → manifest |
 | 7 | **CLI** | `store:prep`, `package:*` or `package:steam` |
 
-Optional: **Lobby → TC →** loads **original** reference showcase (vehicles, NPCs, SFX, checkpoint) to practice export **SCENE** and **CREDITS**.
+Optional: **Lobby → TC →** — vehicles, NPCs, circuit, full export **SCENE** / **CREDITS** / **PACKS** practice.
+
+---
+
+## Developer first clone
+
+```bash
+git clone https://github.com/medicinalsheep/threshold.git
+cd threshold
+npm install
+npm run quickstart              # read onboarding steps
+npm run quickstart -- --pack    # regenerate all starter assets (~1 min)
+npm run dev                     # http://localhost:5173
+```
+
+Without `--pack`, the live GitHub Pages build already includes bundled assets. A fresh clone needs `assets:pack` (or `quickstart --pack`) before `preview` shows full PBR + avatars.
+
+Verify:
+
+```bash
+npm run assets:verify
+npm run preview                 # http://localhost:4173
+```
+
+---
+
+## Realism starter (SOLO default)
+
+After **SOLO PLAY**, try this 2-minute playtest:
+
+1. Walk across **grass / wood / gravel / asphalt** pads — different footstep sounds.
+2. **V** → FPS mode; **R** hold → ADS; **G** → shoot glass target.
+3. **T** → Third Eye — highlights Alex, Jordan, Sam NPCs and terminals.
+4. **E** at AI Build Station / Model Kiosk.
+
+Full controls and recipes: [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md)
 
 ---
 
@@ -28,14 +65,31 @@ Optional: **Lobby → TC →** loads **original** reference showcase (vehicles, 
 
 | Path | For | Policy |
 |------|-----|--------|
+| **Starter** (SOLO) | Walk/shoot template, GIMP/Blender onboarding | Original Threshold defaults — `assets:pack` |
 | **TC** (bundled) | Learning export, demo scenes, store scaffold | **Original** — authored for Threshold only |
-| **Your game** (user-built) | Your shipped title | You source and credit **your** assets legally |
+| **Your game** | Your shipped title | You source and credit **your** assets |
 
 We do **not** ship unmodified third-party game art in TC editions. See [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md).
 
+Legacy edition ids (`threshold-child-*`) are archived in `old/reference-editions/`. Active ids: `tc-*`.
+
 ---
 
-## TC walkthrough QA (R4)
+## Creative pipeline
+
+```bash
+npm run gimp:install
+npm run blender:install
+npm run textures:watch    # terminal 1
+npm run dev               # terminal 2 — GIMP export hot-reloads
+npm run kit:export        # fork-friendly ~1.4 MB WebP pack
+```
+
+[GIMP_TEXTURES.md](GIMP_TEXTURES.md) · [BLENDER_AVATARS.md](BLENDER_AVATARS.md) · [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) · [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md)
+
+---
+
+## TC walkthrough QA
 
 After **Lobby → TC →**, verify before export:
 
@@ -44,14 +98,11 @@ After **Lobby → TC →**, verify before export:
 | Scene objects | ≥6 (`tc_run`, `tc_haul`, `tc_span`, `tc_msh`, `tc_mec`, `tc_cp`) |
 | Render mode | Hyper (4) |
 | SFX tab | 5 TC clips seeded (`tc_sfx_*`) |
-| Textures | PBR maps auto-applied · HILOD `_512`/`_1k`/`_2k` on TC meshes |
+| Textures | PBR maps + HILOD `_512`/`_1k`/`_2k` on TC meshes |
 | Intro | `video/tc_intro.webm` plays once (ESC skip) |
 | EXPORT SCENE | All TC objects listed with `isTC` / `tcEd` |
-| EXPORT CREDITS | `Original — TC` pre-filled |
-| EXPORT PACKS | `tc.*` SKUs + `threshold://` registry URIs |
-| PromptGen | Scene context includes `// ASSETS:` block |
 
-Automated smoke: `npm run tc:verify`
+Automated: `npm run tc:verify`
 
 ---
 
@@ -75,17 +126,16 @@ Detail: [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md)
 
 ## Ship checklist
 
-**TC Show (automated — no browser EXPORT wizard):**
+**TC Show (automated):**
 
 ```bash
 npm run tc:ship
-npm run tc:ship:verify -- --preview-smoke   # optional HTTP smoke on :4173
+npm run tc:ship:verify -- --preview-smoke
 ```
 
 **Custom game (MORE → EXPORT wizard):**
 
 ```bash
-# After EXPORT → download my-game.threshold-game.json
 npm run store:prep -- --manifest my-game.threshold-game.json --contact you@example.com
 npm run store:assets -- --manifest my-game.threshold-game.json
 npm run bundle:assets
@@ -101,29 +151,13 @@ npm run package:android:release   # or package:win / package:steam
 
 ---
 
-## Creative pipeline
-
-```bash
-npm run gimp:install
-npm run blender:install
-npm run textures:watch    # + npm run dev
-npm run blender:export -- --blend scene.blend --object "My Prop"
-npm run tc:build          # regenerate TC GLBs
-```
-
-[GIMP/Blender workflow](CREATIVE_WORKFLOW.md) · [Plugins](CREATIVE_PLUGINS.md)
-
----
-
-## TC Circuit race (G1 + G2 + G3)
+## TC Circuit race
 
 ```bash
 # Solo or multiplayer: Lobby → TC → · Compiler RUN:
-World.enterTcRace()    # lap timer + claim tc_run (enter anim · guests get tc_haul / extra run)
+World.enterTcRace()    # lap timer + claim tc_run
 
-# Multiplayer: host CREATE SESSION → guests JOIN → host RUN enterTcRace
-# PLAY · WASD drive · cross green gate at tc_cp — bar opens + sfx · laps sync via LIVE_STATE
-World.releaseTcVehicle()   # exit anim · walk avatar beside vehicle
+World.releaseTcVehicle()   # exit anim · walk avatar
 npm run tc:circuit:verify
 npm run tc:drive:verify
 npm run tc:g3:verify
@@ -139,6 +173,8 @@ npm run tc:g3:verify
 
 ## Related
 
-- [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) — bundled original reference policy
+- [README.md](README.md) — documentation index + scope map
+- [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) — controls + asset recipes
+- [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) — TC policy
 - [REFERENCE_EDITIONS.md](REFERENCE_EDITIONS.md) — edition registry
 - [CHANGELOG.md](CHANGELOG.md) — version history

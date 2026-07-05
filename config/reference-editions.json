@@ -28,8 +28,8 @@
     "tc-lite": { "id": "tc-lite", "label": "TC Lite", "loader": "src/shared/tcLite.js", "license": "Original — TC", "status": "active" }
   },
   "deprecated": {
-    "threshold-ref-lite": "removed v5.5",
-    "threshold-child-*": "renamed tc-* v5.8"
+    "threshold-ref-lite": "removed v5.5 — see old/reference-editions/",
+    "threshold-child-*": "renamed tc-* v5.8 — see old/reference-editions/"
   },
   "devOnly": {
     "seeds": "reference/_dev-seeds/",

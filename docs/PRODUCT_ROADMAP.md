@@ -2,20 +2,21 @@
 
 **Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → local GIMP/Blender art → AI agents on NPCs.
 
-**Current version:** **5.7.0** (R3 Child showcase — characters, audio, export demo)
+**Current version:** **6.4.1** — realism starter defaults, GIMP live SYNC, starter texture kit, full doc index
 
-**Detailed phases:** [NEXT_PHASES.md](NEXT_PHASES.md) · **Child assets:** [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · [GETTING_STARTED.md](GETTING_STARTED.md)
+**Scope map:** [README.md](README.md) · **Phases:** [NEXT_PHASES.md](NEXT_PHASES.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
 ---
 
 ## Goals (north star)
 
-| Pillar | Goal |
-|--------|------|
-| **Design** | Drag UI, record sounds, GIMP/Blender textures, AI-assisted worlds |
-| **Play** | Solo, host/guest, EDIT/PLAY, walk/fly, touch + gamepad, retro + Hyper |
-| **Dev** | Compiler, PromptGen, agents (local + Grok), `textures:watch` |
-| **Ship** | Export manifest → APK / Windows / **iOS (planned)** / Steam |
+| Pillar | Goal (shipped) |
+|--------|----------------|
+| **Design** | Drag UI, record sounds, 9-step tutorial, Compiler + PromptGen |
+| **Art** | GIMP live SYNC, Blender avatars, procedural PBR + HILOD, `kit:export` |
+| **Play** | TPS/FPS/ADS, footsteps (6 surfaces), Third Eye, TC circuit + drive |
+| **Dev** | `assets:pack`, `textures:watch`, agents (local + Grok) |
+| **Ship** | 9-step EXPORT → APK / Windows / iOS scaffold / Steam |
 | **Scale** | Self-host relay locally or AWS free tier |
 
 ---
@@ -24,85 +25,49 @@
 
 ```
 1. LOBBY        → Solo or Create Session
-2. DESIGN       → EDIT: build map, SFX, insert NPCs / GLTF
-3. ART          → GIMP textures/ · Blender GLB · optional textures:watch
-4. GENERATE     → PromptGen (+ assets) → Compiler → RUN IN ENGINE
-5. AGENTS       → Optional: Grok/local agents on NPCs
-6. PLAYTEST     → PLAY: walk, physics, Hyper for PBR
-7. PACKAGE      → EXPORT manifest → Capacitor / Electron / (iOS Phase F)
+2. PLAYTEST     → Walk pads, FPS, ADS, footsteps, Third Eye
+3. DESIGN       → EDIT: build map, SFX, insert NPCs / GLTF
+4. ART          → GIMP textures · Blender GLB · textures:watch
+5. GENERATE     → PromptGen (+ assets) → Compiler → RUN IN ENGINE
+6. AGENTS       → Optional: Grok/local agents on NPCs
+7. PACKAGE      → EXPORT manifest → Capacitor / Electron / Steam
 8. HOST         → PeerJS cloud | local relay | AWS
 ```
 
-See [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md).
+See [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) · [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md)
 
 ---
 
-## Phase map
+## Phase map (summary)
 
-### Phase 1 — Foundation (v2.2) ✅
+### Foundation through Steam (v2–5) ✅
 
-- [x] Game export manifest (`.threshold-game.json`)
-- [x] Relay scaffold + `relay/` server
-- [x] Agents dock: Grok Dev, Grok NPC, Local Script
-- [x] First-session walkthrough + MORE → TUTORIAL replay
-- [x] PWA manifest (light) — `public/manifest.webmanifest`
+Export manifest, relay scaffold, native shells (Android/Windows/iOS), 9-step export wizard, store prep, Steam depot, graphics tiers, mesh LOD, HILOD textures, TC editions (`tc-*`), circuit + drive, VOIP, TC ship E2E.
 
-### Phase 2 — Native shells (v3.0–3.6) 🔧
+Detail: [NEXT_PHASES.md](NEXT_PHASES.md) Phases 1–5, R1–S1, G1–G3, K.
 
-- [x] Capacitor Android APK scaffold
-- [x] Electron Windows portable `.exe`
-- [x] Export wizard with texture/GLTF asset summary (v3.7 → 9-step v5.4)
-- [x] App icons + `build:icons` / `cap:assets`
-- [x] **Creative pipeline A–D** — [CREATIVE_PLUGINS.md](CREATIVE_PLUGINS.md)
-- [x] Store prep CLI + release guides (Phase L — v5.0)
-- [x] Export walkthrough — 9-step wizard: icons, scene, credits, packs, ship (Phase L2/M+ — v5.1–5.4)
-- [x] Asset registry scaffold — tie authored assets to future store SKUs / collectible registry
-- [x] Store asset platform maps — PACKS step + `store:assets` CLI (Phase M+ — v5.2)
-- [ ] Signed APK / store upload (per-developer signing keys)
-- [ ] macOS `.app` notarization
-- [x] Capacitor Filesystem scaffold for on-device world import (`NativeAssets`, v3.8)
-- [x] Native bundle of `textures/` + `import/` via `bundle:assets` (v3.8)
-- [x] Sound blob sidecar — base64 in export manifest (v3.8)
+### Realism & asset pipeline (v6.0–6.4) ✅
 
-### Phase 3 — iOS & Apple (v4.0) 🔧
+| Version | Focus |
+|---------|-------|
+| **6.0** | `assets:pack`, WebP HILOD, realistic gameplay guide |
+| **6.1** | GLB avatars, footsteps, FPS viewmodel, remote meshes |
+| **6.2** | 6 texture presets, KTX2 scaffold, ADS, surface pads |
+| **6.3** | GIMP r8 parity, UV tiling, `blender:avatar` |
+| **6.4** | GIMP live SYNC, `kit:export` starter pack |
+| **6.4.1** | Doc truth pass, `old/` archive, `quickstart` |
 
-- [x] `@capacitor/ios` + `init:native` generates Xcode project locally
-- [x] `npm run package:ios` + `cap:open:ios` + TestFlight docs (NATIVE_SHELLS.md)
-- [x] Export wizard iOS target checkbox + `packaging.ios` in manifest
-- [ ] App Store Connect metadata automation (manual per release today)
-- [ ] Signed TestFlight / App Store archive (requires macOS + developer account)
+### Open work
 
-*Android + Windows + iOS scaffold exist; store submission is per-developer.*
-
-### Phase 4 — Graphics intelligence (v4.1–4.5) 🔧
-
-See [NEXT_PHASES.md](NEXT_PHASES.md):
-
-- [x] Suggested graphics tiers (Compatibility / Balanced / Realistic / Ultra) — v4.1
-- [x] Mesh LOD (Blender multi-GLB + Engine distance switch) — v4.6
-- [x] HILOD textures (distance + tier-based maps) — v4.7
-- [x] Targeted graphics export CLI per platform — v4.5 (`export:graphics`)
-- [x] Normal maps in Engine (v3.8)
-
-### Phase 5 — Steam & distribution (v5.3) ✅
-
-- [x] Steam depot asset map + `export:graphics --profile steam` (Phase M+ — v5.2)
-- [x] itch.io pack structure in `store:assets` (Phase M+ — v5.2)
-- [x] Steamworks bridge in Electron — optional `steamworks.js` (Phase M — v5.3)
-- [x] Depot CI — `package:steam` + `steam:depot` + steamcmd VDF (Phase M — v5.3)
-- [x] Achievements scaffold + auto-unlock hooks (Phase M — v5.3)
-
-### Phase 6 — Scale & AI (v4.0+) 📋
-
-- [ ] AWS relay polish
-- [ ] Grok proxy / NPC sync
-- [ ] Local LLM (Ollama) desktop
-- [ ] Dev agent auto-run loop
-
-### Phase 7 — Commercial
-
-- [ ] Dual license
-- [ ] Threshold Cloud tier
+| Area | Status |
+|------|--------|
+| Signed APK / store upload | Per-developer signing keys |
+| macOS notarization | Planned |
+| App Store Connect automation | Manual today |
+| AWS relay polish | Phase 6 |
+| Grok proxy / NPC sync | Phase 6 |
+| Local LLM (Ollama) | Phase 6 |
+| Dual license / Threshold Cloud | Phase 7 |
 
 ---
 
@@ -113,15 +78,15 @@ See [NEXT_PHASES.md](NEXT_PHASES.md):
 | **Web** | Vite → GitHub Pages | ✅ Live |
 | **APK** | Capacitor | 🔧 Scaffold |
 | **Windows** | Electron | 🔧 Scaffold |
-| **iOS** | Capacitor + Xcode | ✅ Scaffold (Phase F — signing/archive manual) |
-| **Steam** | Electron + Steamworks | ✅ Phase M (v5.3) |
+| **iOS** | Capacitor + Xcode | ✅ Scaffold |
+| **Steam** | Electron + Steamworks | ✅ |
 | **Self-host** | `dist-pages` + `relay/` | ✅ |
 
-**Manifest includes:** world, scripts, sounds, **textures[]**, gimp/blender/creativeCli blocks, agent configs, relay mode.
+**Manifest includes:** world, scripts, sounds, textures[], gimp/blender/creativeCli blocks, agent configs, relay mode.
 
 ---
 
-## Agents (optional in workflow)
+## Agents (optional)
 
 | Agent | Role | Status |
 |-------|------|--------|
@@ -130,16 +95,10 @@ See [NEXT_PHASES.md](NEXT_PHASES.md):
 | **Grok NPC** | NPC dialogue | ✅ |
 | **Local LLM** | Desktop offline | Phase 6 |
 
-Attach via SCENE → AI tab. Tutorial presents agents as **optional**.
-
----
-
-## VLC / video
-
-**No VLC plugin planned.** Cinematic cutscenes will use HTML5 video + VideoTexture first (Phase K in NEXT_PHASES). VLC only if exotic desktop codec needs arise.
+Attach via SCENE → AI tab.
 
 ---
 
 ## Contributing
 
-Pick Phase E (leftovers) or Phase F (iOS) items. Update checkboxes via PR.
+Pick open Phase 6 items or polish starter onboarding. Update [CHANGELOG.md](CHANGELOG.md) and [README.md](README.md) when shipping.

@@ -9,7 +9,7 @@ All bundled reference content is **Threshold-original**. See [docs/THRESHOLD_CHI
 | Use | Allowed |
 |-----|---------|
 | Developer local comparison in `reference/_dev-seeds/` | CC0 packs via `reference:fetch` — **gitignored** |
-| Copy into `reference/editions/` without Child transformation | **No** |
+| Ship unmodified downloads as TC assets | **No** (legacy `reference/editions/` archived in `old/`) |
 | Ship unmodified third-party GLB/texture in Threshold repo | **No** |
 
 ## User-built games

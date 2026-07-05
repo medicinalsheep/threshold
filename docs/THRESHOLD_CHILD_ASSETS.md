@@ -46,7 +46,7 @@ Developers may use `reference/_dev-seeds/` locally to **compare** workflows; tho
 | `tc-sfx` | **Active** | 5 synthesized original SFX seeds |
 | `tc-lite` | **Active (fallback)** | Procedural Runner, Hauler, TC Span v1.1 |
 
-Legacy ids `threshold-child-*` → `tc-*` (v5.8). Lobby button: **TC →**
+Legacy ids `threshold-child-*` → `tc-*` (v5.8). Archived manifests in `old/reference-editions/`. Lobby button: **TC →**
 
 Config: `config/reference-editions.json`
 
@@ -175,10 +175,10 @@ Audio clips wire automatically: `tc_sfx_imp` → vehicles, `tc_sfx_ft` → NPCs,
 1. **Design** — sketch gameplay role (vehicle, prop, character, sound)
 2. **Author** — Engine procedural **or** Blender/GIMP with **new silhouette/material** + realism review
 3. **Name** — `TC <Role>` (e.g. `TC Runner`); export paths `tc_<role>`
-4. **Register** — `config/reference-editions.json` + manifest under `reference/editions/<edition>/`
+4. **Register** — `config/reference-editions.json` + loader in `src/shared/tc*.js` (legacy manifests archived in `old/reference-editions/`)
 5. **Credit** — `reference/ATTRIBUTION.md` — license: `Original — TC`
 6. **Test** — Lobby TC → → EXPORT walkthrough · `npm run tc:verify`
-7. **Never** commit unmodified third-party files to `reference/editions/` (dev seeds only)
+7. **Never** commit unmodified third-party files as shipped TC assets (dev seeds only in `reference/_dev-seeds/`)
 
 ---
 

@@ -373,6 +373,70 @@ await World.playCutscene('video/intro.mp4', {
 });
 ```
 
+### Phase 6 — Realism defaults (v6.0) ✅
+
+| Step | Status |
+|------|--------|
+| 6.0.1 `assets:pack` + `assets:verify` one-shot pipeline | ✅ |
+| 6.0.2 WebP HILOD compress + runtime prefer WebP | ✅ |
+| 6.0.3 `REALISTIC_GAMEPLAY.md` — controls, NPC/texture/audio recipes | ✅ |
+| 6.0.4 Starter scene dressing — stripes, barriers, parking | ✅ |
+
+### Phase 7 — Avatars, footsteps, FPS (v6.1) ✅
+
+| Step | Status |
+|------|--------|
+| 7.1 `avatar:gen` — starter_avatar + NPC GLBs with walk clip | ✅ |
+| 7.2 Footstep SFX — concrete/metal surface raycast | ✅ |
+| 7.3 FPS viewmodel — arms + pistol on camera | ✅ |
+| 7.4 Remote players — avatar mesh (not capsule) | ✅ |
+| 7.5 Full HILOD WebP on all texture tiers | ✅ |
+
+### Phase 8 — Textures, KTX2, ADS (v6.2) ✅
+
+| Step | Status |
+|------|--------|
+| 8.1 Six new texture presets (grass, wood, gravel, asphalt, fabric, metal_grate) | ✅ |
+| 8.2 `_4k` HILOD tier + r8 generation | ✅ |
+| 8.3 KTX2 scaffold (`tex:ktx2`, Basis transcoder) | ✅ |
+| 8.4 ADS — hold R/LT in FPS | ✅ |
+| 8.5 Surface pads in starter scene + 6 footstep surfaces | ✅ |
+| 8.6 `ASSET_CAPABILITIES.md` + `BLENDER_AVATARS.md` | ✅ |
+
+### Phase 9 — GIMP parity, Blender avatar, UV tiling (v6.3) ✅
+
+| Step | Status |
+|------|--------|
+| 9.1 GIMP `build_tc_tex.py` full r8 parity (12 styles) | ✅ |
+| 9.2 `blender:avatar` headless rigged GLB export | ✅ |
+| 9.3 `starter-textures.json` UV repeat + finish pass | ✅ |
+| 9.4 Starter scene — fabric banner, bench, tiled pads | ✅ |
+| 9.5 `GIMP_TEXTURES.md` | ✅ |
+
+### Phase 10 — GIMP live SYNC + starter kit (v6.4) ✅
+
+| Step | Status |
+|------|--------|
+| 10.1 `creative-watch.cjs` — auto WebP, bundle mirror, `/gimp-sync` | ✅ |
+| 10.2 Runtime hot-reload — `finishMaterial` + UV tiling on SYNC | ✅ |
+| 10.3 `kit:export` + `kit:verify` — ~1.4 MB WebP fork pack | ✅ |
+| 10.4 GIMP export reads HILOD from `tc-textures.json` | ✅ |
+
+### Phase 10.1 — Docs + archive (v6.4.1) ✅
+
+| Step | Status |
+|------|--------|
+| 10.1.1 `docs/README.md` scope index | ✅ |
+| 10.1.2 README / AGENTS / GETTING_STARTED / PRODUCT_ROADMAP truth pass | ✅ |
+| 10.1.3 `old/` — legacy editions + R2 scripts | ✅ |
+| 10.1.4 `npm run quickstart` onboarding CLI | ✅ |
+
+```bash
+npm run quickstart
+npm run quickstart -- --pack
+npm run assets:verify
+```
+
 ---
 
 ## VLC plugin — do we need it?
