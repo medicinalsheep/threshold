@@ -113,7 +113,7 @@ export const TextureHilod = {
         const base = textureBaseKey(fileName);
         const dir = basePath.replace(/\\/g, '/').replace(/\/[^/]+$/, '');
         const suffixes = ['_512', '_1k', '_2k', '_4k'];
-        const exts = ['.png', '.jpg', '.jpeg', '.webp'];
+        const exts = ['.png', '.jpg', '.jpeg', '.webp', '.ktx2'];
         const ext = exts.find((e) => base.toLowerCase().endsWith(e)) || '.png';
         const stem = base.slice(0, -ext.length);
 

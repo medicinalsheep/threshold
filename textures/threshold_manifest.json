@@ -11,7 +11,7 @@
       "path": "textures/tc_run_albedo.png",
       "tcEd": "tc-veh",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -30,6 +30,12 @@
           "file": "tc_run_albedo_2k.png",
           "path": "textures/tc_run_albedo_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_run_albedo_4k.png",
+          "path": "textures/tc_run_albedo_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -41,7 +47,7 @@
       "path": "textures/tc_run_roughness.png",
       "tcEd": "tc-veh",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -60,6 +66,12 @@
           "file": "tc_run_roughness_2k.png",
           "path": "textures/tc_run_roughness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_run_roughness_4k.png",
+          "path": "textures/tc_run_roughness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -71,7 +83,7 @@
       "path": "textures/tc_run_metalness.png",
       "tcEd": "tc-veh",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -90,6 +102,12 @@
           "file": "tc_run_metalness_2k.png",
           "path": "textures/tc_run_metalness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_run_metalness_4k.png",
+          "path": "textures/tc_run_metalness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -101,7 +119,7 @@
       "path": "textures/tc_haul_albedo.png",
       "tcEd": "tc-veh",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -120,6 +138,12 @@
           "file": "tc_haul_albedo_2k.png",
           "path": "textures/tc_haul_albedo_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_haul_albedo_4k.png",
+          "path": "textures/tc_haul_albedo_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -131,7 +155,7 @@
       "path": "textures/tc_haul_roughness.png",
       "tcEd": "tc-veh",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -150,6 +174,12 @@
           "file": "tc_haul_roughness_2k.png",
           "path": "textures/tc_haul_roughness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_haul_roughness_4k.png",
+          "path": "textures/tc_haul_roughness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -161,7 +191,7 @@
       "path": "textures/tc_haul_metalness.png",
       "tcEd": "tc-veh",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -180,6 +210,12 @@
           "file": "tc_haul_metalness_2k.png",
           "path": "textures/tc_haul_metalness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_haul_metalness_4k.png",
+          "path": "textures/tc_haul_metalness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -191,7 +227,7 @@
       "path": "textures/tc_msh_albedo.png",
       "tcEd": "tc-chr",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -210,6 +246,12 @@
           "file": "tc_msh_albedo_2k.png",
           "path": "textures/tc_msh_albedo_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_msh_albedo_4k.png",
+          "path": "textures/tc_msh_albedo_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -221,7 +263,7 @@
       "path": "textures/tc_msh_roughness.png",
       "tcEd": "tc-chr",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -240,6 +282,12 @@
           "file": "tc_msh_roughness_2k.png",
           "path": "textures/tc_msh_roughness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_msh_roughness_4k.png",
+          "path": "textures/tc_msh_roughness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -251,7 +299,7 @@
       "path": "textures/tc_mec_albedo.png",
       "tcEd": "tc-chr",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -270,6 +318,12 @@
           "file": "tc_mec_albedo_2k.png",
           "path": "textures/tc_mec_albedo_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_mec_albedo_4k.png",
+          "path": "textures/tc_mec_albedo_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -281,7 +335,7 @@
       "path": "textures/tc_mec_roughness.png",
       "tcEd": "tc-chr",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -300,6 +354,12 @@
           "file": "tc_mec_roughness_2k.png",
           "path": "textures/tc_mec_roughness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_mec_roughness_4k.png",
+          "path": "textures/tc_mec_roughness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -311,7 +371,7 @@
       "path": "textures/tc_span_albedo.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -330,6 +390,12 @@
           "file": "tc_span_albedo_2k.png",
           "path": "textures/tc_span_albedo_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_span_albedo_4k.png",
+          "path": "textures/tc_span_albedo_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -341,7 +407,7 @@
       "path": "textures/tc_span_roughness.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -360,6 +426,12 @@
           "file": "tc_span_roughness_2k.png",
           "path": "textures/tc_span_roughness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_span_roughness_4k.png",
+          "path": "textures/tc_span_roughness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -371,7 +443,7 @@
       "path": "textures/starter_platform_albedo.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -390,6 +462,12 @@
           "file": "starter_platform_albedo_2k.png",
           "path": "textures/starter_platform_albedo_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_platform_albedo_4k.png",
+          "path": "textures/starter_platform_albedo_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -401,7 +479,7 @@
       "path": "textures/starter_platform_roughness.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -420,6 +498,12 @@
           "file": "starter_platform_roughness_2k.png",
           "path": "textures/starter_platform_roughness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_platform_roughness_4k.png",
+          "path": "textures/starter_platform_roughness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -431,7 +515,7 @@
       "path": "textures/starter_terminal_albedo.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -450,6 +534,12 @@
           "file": "starter_terminal_albedo_2k.png",
           "path": "textures/starter_terminal_albedo_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_terminal_albedo_4k.png",
+          "path": "textures/starter_terminal_albedo_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -461,7 +551,7 @@
       "path": "textures/starter_terminal_roughness.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -480,6 +570,12 @@
           "file": "starter_terminal_roughness_2k.png",
           "path": "textures/starter_terminal_roughness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_terminal_roughness_4k.png",
+          "path": "textures/starter_terminal_roughness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -491,7 +587,7 @@
       "path": "textures/starter_terminal_metalness.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -510,6 +606,12 @@
           "file": "starter_terminal_metalness_2k.png",
           "path": "textures/starter_terminal_metalness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_terminal_metalness_4k.png",
+          "path": "textures/starter_terminal_metalness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -521,7 +623,7 @@
       "path": "textures/starter_kiosk_albedo.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -540,6 +642,12 @@
           "file": "starter_kiosk_albedo_2k.png",
           "path": "textures/starter_kiosk_albedo_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_kiosk_albedo_4k.png",
+          "path": "textures/starter_kiosk_albedo_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -551,7 +659,7 @@
       "path": "textures/starter_kiosk_roughness.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -570,6 +678,12 @@
           "file": "starter_kiosk_roughness_2k.png",
           "path": "textures/starter_kiosk_roughness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_kiosk_roughness_4k.png",
+          "path": "textures/starter_kiosk_roughness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -581,7 +695,7 @@
       "path": "textures/starter_kiosk_metalness.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -600,6 +714,12 @@
           "file": "starter_kiosk_metalness_2k.png",
           "path": "textures/starter_kiosk_metalness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_kiosk_metalness_4k.png",
+          "path": "textures/starter_kiosk_metalness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -611,7 +731,7 @@
       "path": "textures/starter_ground_albedo.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -630,6 +750,12 @@
           "file": "starter_ground_albedo_2k.png",
           "path": "textures/starter_ground_albedo_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_ground_albedo_4k.png",
+          "path": "textures/starter_ground_albedo_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -641,7 +767,7 @@
       "path": "textures/starter_ground_roughness.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -660,6 +786,12 @@
           "file": "starter_ground_roughness_2k.png",
           "path": "textures/starter_ground_roughness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_ground_roughness_4k.png",
+          "path": "textures/starter_ground_roughness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -671,7 +803,7 @@
       "path": "textures/starter_ground_normal.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -690,6 +822,12 @@
           "file": "starter_ground_normal_2k.png",
           "path": "textures/starter_ground_normal_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_ground_normal_4k.png",
+          "path": "textures/starter_ground_normal_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -701,7 +839,7 @@
       "path": "textures/starter_wall_albedo.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -720,6 +858,12 @@
           "file": "starter_wall_albedo_2k.png",
           "path": "textures/starter_wall_albedo_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_wall_albedo_4k.png",
+          "path": "textures/starter_wall_albedo_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -731,7 +875,7 @@
       "path": "textures/starter_wall_roughness.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -750,6 +894,12 @@
           "file": "starter_wall_roughness_2k.png",
           "path": "textures/starter_wall_roughness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_wall_roughness_4k.png",
+          "path": "textures/starter_wall_roughness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -761,7 +911,7 @@
       "path": "textures/starter_wall_normal.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -780,6 +930,12 @@
           "file": "starter_wall_normal_2k.png",
           "path": "textures/starter_wall_normal_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_wall_normal_4k.png",
+          "path": "textures/starter_wall_normal_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -791,7 +947,7 @@
       "path": "textures/starter_stripe_albedo.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -810,6 +966,12 @@
           "file": "starter_stripe_albedo_2k.png",
           "path": "textures/starter_stripe_albedo_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_stripe_albedo_4k.png",
+          "path": "textures/starter_stripe_albedo_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -821,7 +983,7 @@
       "path": "textures/starter_stripe_roughness.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r7",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -840,11 +1002,665 @@
           "file": "starter_stripe_roughness_2k.png",
           "path": "textures/starter_stripe_roughness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_stripe_roughness_4k.png",
+          "path": "textures/starter_stripe_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_grass_albedo",
+      "objectName": "Grass Patch",
+      "slot": "albedo",
+      "file": "starter_grass_albedo.png",
+      "path": "textures/starter_grass_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_grass_albedo_512.png",
+          "path": "textures/starter_grass_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_grass_albedo_1k.png",
+          "path": "textures/starter_grass_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_grass_albedo_2k.png",
+          "path": "textures/starter_grass_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_grass_albedo_4k.png",
+          "path": "textures/starter_grass_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_grass_roughness",
+      "objectName": "Grass Patch",
+      "slot": "roughness",
+      "file": "starter_grass_roughness.png",
+      "path": "textures/starter_grass_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_grass_roughness_512.png",
+          "path": "textures/starter_grass_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_grass_roughness_1k.png",
+          "path": "textures/starter_grass_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_grass_roughness_2k.png",
+          "path": "textures/starter_grass_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_grass_roughness_4k.png",
+          "path": "textures/starter_grass_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_grass_normal",
+      "objectName": "Grass Patch",
+      "slot": "normal",
+      "file": "starter_grass_normal.png",
+      "path": "textures/starter_grass_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_grass_normal_512.png",
+          "path": "textures/starter_grass_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_grass_normal_1k.png",
+          "path": "textures/starter_grass_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_grass_normal_2k.png",
+          "path": "textures/starter_grass_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_grass_normal_4k.png",
+          "path": "textures/starter_grass_normal_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_wood_albedo",
+      "objectName": "Wood Deck",
+      "slot": "albedo",
+      "file": "starter_wood_albedo.png",
+      "path": "textures/starter_wood_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_wood_albedo_512.png",
+          "path": "textures/starter_wood_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_wood_albedo_1k.png",
+          "path": "textures/starter_wood_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_wood_albedo_2k.png",
+          "path": "textures/starter_wood_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_wood_albedo_4k.png",
+          "path": "textures/starter_wood_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_wood_roughness",
+      "objectName": "Wood Deck",
+      "slot": "roughness",
+      "file": "starter_wood_roughness.png",
+      "path": "textures/starter_wood_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_wood_roughness_512.png",
+          "path": "textures/starter_wood_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_wood_roughness_1k.png",
+          "path": "textures/starter_wood_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_wood_roughness_2k.png",
+          "path": "textures/starter_wood_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_wood_roughness_4k.png",
+          "path": "textures/starter_wood_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_wood_normal",
+      "objectName": "Wood Deck",
+      "slot": "normal",
+      "file": "starter_wood_normal.png",
+      "path": "textures/starter_wood_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_wood_normal_512.png",
+          "path": "textures/starter_wood_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_wood_normal_1k.png",
+          "path": "textures/starter_wood_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_wood_normal_2k.png",
+          "path": "textures/starter_wood_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_wood_normal_4k.png",
+          "path": "textures/starter_wood_normal_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_gravel_albedo",
+      "objectName": "Gravel Path",
+      "slot": "albedo",
+      "file": "starter_gravel_albedo.png",
+      "path": "textures/starter_gravel_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_gravel_albedo_512.png",
+          "path": "textures/starter_gravel_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_gravel_albedo_1k.png",
+          "path": "textures/starter_gravel_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_gravel_albedo_2k.png",
+          "path": "textures/starter_gravel_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_gravel_albedo_4k.png",
+          "path": "textures/starter_gravel_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_gravel_roughness",
+      "objectName": "Gravel Path",
+      "slot": "roughness",
+      "file": "starter_gravel_roughness.png",
+      "path": "textures/starter_gravel_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_gravel_roughness_512.png",
+          "path": "textures/starter_gravel_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_gravel_roughness_1k.png",
+          "path": "textures/starter_gravel_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_gravel_roughness_2k.png",
+          "path": "textures/starter_gravel_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_gravel_roughness_4k.png",
+          "path": "textures/starter_gravel_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_gravel_normal",
+      "objectName": "Gravel Path",
+      "slot": "normal",
+      "file": "starter_gravel_normal.png",
+      "path": "textures/starter_gravel_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_gravel_normal_512.png",
+          "path": "textures/starter_gravel_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_gravel_normal_1k.png",
+          "path": "textures/starter_gravel_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_gravel_normal_2k.png",
+          "path": "textures/starter_gravel_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_gravel_normal_4k.png",
+          "path": "textures/starter_gravel_normal_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_asphalt_albedo",
+      "objectName": "Asphalt Lane",
+      "slot": "albedo",
+      "file": "starter_asphalt_albedo.png",
+      "path": "textures/starter_asphalt_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_asphalt_albedo_512.png",
+          "path": "textures/starter_asphalt_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_asphalt_albedo_1k.png",
+          "path": "textures/starter_asphalt_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_asphalt_albedo_2k.png",
+          "path": "textures/starter_asphalt_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_asphalt_albedo_4k.png",
+          "path": "textures/starter_asphalt_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_asphalt_roughness",
+      "objectName": "Asphalt Lane",
+      "slot": "roughness",
+      "file": "starter_asphalt_roughness.png",
+      "path": "textures/starter_asphalt_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_asphalt_roughness_512.png",
+          "path": "textures/starter_asphalt_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_asphalt_roughness_1k.png",
+          "path": "textures/starter_asphalt_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_asphalt_roughness_2k.png",
+          "path": "textures/starter_asphalt_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_asphalt_roughness_4k.png",
+          "path": "textures/starter_asphalt_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_asphalt_normal",
+      "objectName": "Asphalt Lane",
+      "slot": "normal",
+      "file": "starter_asphalt_normal.png",
+      "path": "textures/starter_asphalt_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_asphalt_normal_512.png",
+          "path": "textures/starter_asphalt_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_asphalt_normal_1k.png",
+          "path": "textures/starter_asphalt_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_asphalt_normal_2k.png",
+          "path": "textures/starter_asphalt_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_asphalt_normal_4k.png",
+          "path": "textures/starter_asphalt_normal_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_fabric_albedo",
+      "objectName": "Fabric Banner",
+      "slot": "albedo",
+      "file": "starter_fabric_albedo.png",
+      "path": "textures/starter_fabric_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_fabric_albedo_512.png",
+          "path": "textures/starter_fabric_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_fabric_albedo_1k.png",
+          "path": "textures/starter_fabric_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_fabric_albedo_2k.png",
+          "path": "textures/starter_fabric_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_fabric_albedo_4k.png",
+          "path": "textures/starter_fabric_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_fabric_roughness",
+      "objectName": "Fabric Banner",
+      "slot": "roughness",
+      "file": "starter_fabric_roughness.png",
+      "path": "textures/starter_fabric_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_fabric_roughness_512.png",
+          "path": "textures/starter_fabric_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_fabric_roughness_1k.png",
+          "path": "textures/starter_fabric_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_fabric_roughness_2k.png",
+          "path": "textures/starter_fabric_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_fabric_roughness_4k.png",
+          "path": "textures/starter_fabric_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_metal_grate_albedo",
+      "objectName": "Metal Grate",
+      "slot": "albedo",
+      "file": "starter_metal_grate_albedo.png",
+      "path": "textures/starter_metal_grate_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_metal_grate_albedo_512.png",
+          "path": "textures/starter_metal_grate_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_metal_grate_albedo_1k.png",
+          "path": "textures/starter_metal_grate_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_metal_grate_albedo_2k.png",
+          "path": "textures/starter_metal_grate_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_metal_grate_albedo_4k.png",
+          "path": "textures/starter_metal_grate_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_metal_grate_roughness",
+      "objectName": "Metal Grate",
+      "slot": "roughness",
+      "file": "starter_metal_grate_roughness.png",
+      "path": "textures/starter_metal_grate_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_metal_grate_roughness_512.png",
+          "path": "textures/starter_metal_grate_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_metal_grate_roughness_1k.png",
+          "path": "textures/starter_metal_grate_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_metal_grate_roughness_2k.png",
+          "path": "textures/starter_metal_grate_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_metal_grate_roughness_4k.png",
+          "path": "textures/starter_metal_grate_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_metal_grate_metalness",
+      "objectName": "Metal Grate",
+      "slot": "metalness",
+      "file": "starter_metal_grate_metalness.png",
+      "path": "textures/starter_metal_grate_metalness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_metal_grate_metalness_512.png",
+          "path": "textures/starter_metal_grate_metalness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_metal_grate_metalness_1k.png",
+          "path": "textures/starter_metal_grate_metalness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_metal_grate_metalness_2k.png",
+          "path": "textures/starter_metal_grate_metalness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_metal_grate_metalness_4k.png",
+          "path": "textures/starter_metal_grate_metalness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_metal_grate_normal",
+      "objectName": "Metal Grate",
+      "slot": "normal",
+      "file": "starter_metal_grate_normal.png",
+      "path": "textures/starter_metal_grate_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_metal_grate_normal_512.png",
+          "path": "textures/starter_metal_grate_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_metal_grate_normal_1k.png",
+          "path": "textures/starter_metal_grate_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_metal_grate_normal_2k.png",
+          "path": "textures/starter_metal_grate_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_metal_grate_normal_4k.png",
+          "path": "textures/starter_metal_grate_normal_4k.png",
+          "maxPx": 1024
         }
       ]
     }
   ],
   "exportDir": "textures",
-  "tcRealism": "r7",
-  "exportedAt": "2026-07-05T11:17:57.400Z"
+  "tcRealism": "r8",
+  "exportedAt": "2026-07-05T11:32:59.967Z"
 }

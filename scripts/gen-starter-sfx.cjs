@@ -211,6 +211,58 @@ function synthFootstepMetal(sec = 0.1) {
     return out;
 }
 
+function synthFootstepGrass(sec = 0.11) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const env = envHit(t, 0.001, 28);
+        const rustle = (Math.random() * 2 - 1) * 0.35 * Math.exp(-t * 22);
+        const soft = Math.sin(2 * Math.PI * 180 * t) * Math.exp(-t * 35) * 0.12;
+        out[i] = (rustle + soft) * env * 0.42;
+    }
+    return out;
+}
+
+function synthFootstepWood(sec = 0.1) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const env = envHit(t, 0.0009, 30);
+        const knock = Math.sin(2 * Math.PI * 240 * t) * Math.exp(-t * 38) * 0.32;
+        const creak = (Math.random() * 2 - 1) * 0.18 * Math.exp(-t * 28);
+        out[i] = (knock + creak) * env * 0.45;
+    }
+    return out;
+}
+
+function synthFootstepGravel(sec = 0.12) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const env = envHit(t, 0.0012, 26);
+        const crunch = (Math.random() * 2 - 1) * 0.42 * Math.exp(-t * 18);
+        const grit = Math.sin(2 * Math.PI * 320 * t) * Math.exp(-t * 42) * 0.14;
+        out[i] = (crunch + grit) * env * 0.5;
+    }
+    return out;
+}
+
+function synthFootstepAsphalt(sec = 0.1) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const env = envHit(t, 0.0008, 34);
+        const thud = Math.sin(2 * Math.PI * 140 * t) * Math.exp(-t * 32) * 0.22;
+        const scuff = (Math.random() * 2 - 1) * 0.2 * Math.exp(-t * 40);
+        out[i] = (thud + scuff) * env * 0.4;
+    }
+    return out;
+}
+
 function synthMetalHit(sec = 0.28) {
     const n = Math.floor(SR * sec);
     const out = new Float32Array(n);
@@ -238,6 +290,10 @@ const CLIPS = [
     { id: 'starter_metal_hit', name: 'Metal Impact', file: 'metal_hit', synth: synthMetalHit, category: 'impact' },
     { id: 'starter_footstep_concrete', name: 'Footstep — Concrete', file: 'footstep_concrete', synth: synthFootstepConcrete, category: 'footstep' },
     { id: 'starter_footstep_metal', name: 'Footstep — Metal', file: 'footstep_metal', synth: synthFootstepMetal, category: 'footstep' },
+    { id: 'starter_footstep_grass', name: 'Footstep — Grass', file: 'footstep_grass', synth: synthFootstepGrass, category: 'footstep' },
+    { id: 'starter_footstep_wood', name: 'Footstep — Wood', file: 'footstep_wood', synth: synthFootstepWood, category: 'footstep' },
+    { id: 'starter_footstep_gravel', name: 'Footstep — Gravel', file: 'footstep_gravel', synth: synthFootstepGravel, category: 'footstep' },
+    { id: 'starter_footstep_asphalt', name: 'Footstep — Asphalt', file: 'footstep_asphalt', synth: synthFootstepAsphalt, category: 'footstep' },
 ];
 
 function tryCompress(wavPath, oggPath) {

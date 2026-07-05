@@ -11,7 +11,7 @@ const CFG = path.join(ROOT, 'config', 'tc-textures.json');
 const MAN = path.join(TEX, 'threshold_manifest.json');
 const GIMP_MANIFEST = 'threshold-gimp-manifest';
 const TC_LIC = 'Original — TC';
-const REALISM = 'r7';
+const REALISM = 'r8';
 
 function noise(x, y, seed = 0) {
     const n = Math.sin((x * 12.9898 + y * 78.233 + seed) * 43758.5453);
@@ -179,6 +179,108 @@ function terminalMetal(x, y, w, h) {
     return [Math.min(255, val + n), Math.min(255, val + n), Math.min(255, val + n), 255];
 }
 
+function grassAlbedo(x, y, w, h, pal) {
+    const blade = Math.sin((x / w) * 48 + noise(x, y, 81) * 4) > 0.1;
+    const base = blade ? pal.blade : pal.dark;
+    const n = noise(x * 3, y * 3, 83) * 16;
+    const speck = noise(x, y, 87) > 0.94 ? 22 : 0;
+    return [Math.min(255, base[0] + n + speck), Math.min(255, base[1] + n + speck), Math.min(255, base[2] + n), 255];
+}
+
+function grassRough(x, y, w, h) {
+    const base = 210;
+    const n = noise(x, y, 89) * 28;
+    return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
+}
+
+function woodAlbedo(x, y, w, h, pal) {
+    const u = x / w;
+    const v = y / h;
+    const plank = Math.floor(v * 6) % 2 === 0;
+    const grain = Math.sin(u * 42 + noise(x, y, 91) * 2) * 0.5 + 0.5;
+    let base = plank ? pal.grain : pal.dark;
+    if (grain > 0.72) base = pal.ring;
+    const n = noise(x, y, 93) * 10;
+    return [Math.min(255, base[0] + n), Math.min(255, base[1] + n), Math.min(255, base[2] + n), 255];
+}
+
+function woodRough(x, y, w, h) {
+    const base = 178;
+    const n = noise(x, y, 95) * 24;
+    return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
+}
+
+function gravelAlbedo(x, y, w, h, pal) {
+    const cell = noise(Math.floor(x / 4), Math.floor(y / 4), 97);
+    const base = cell > 0.55 ? pal.stone : pal.dark;
+    const speck = noise(x, y, 99) > 0.9 ? pal.speck : base;
+    const n = noise(x, y, 101) * 12;
+    return [Math.min(255, speck[0] + n), Math.min(255, speck[1] + n), Math.min(255, speck[2] + n), 255];
+}
+
+function gravelRough(x, y, w, h) {
+    const base = 205;
+    const n = noise(x, y, 103) * 30;
+    return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
+}
+
+function asphaltAlbedo(x, y, w, h, pal) {
+    const crack = noise(x, y, 105) > 0.97;
+    const base = crack ? pal.crack : pal.base;
+    const n = noise(x, y, 107) * 9;
+    const speck = noise(x * 2, y * 2, 109) > 0.93 ? 14 : 0;
+    return [Math.min(255, base[0] + n + speck), Math.min(255, base[1] + n + speck), Math.min(255, base[2] + n + speck), 255];
+}
+
+function asphaltRough(x, y, w, h) {
+    const base = 200;
+    const n = noise(x, y, 111) * 22;
+    return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
+}
+
+function fabricAlbedo(x, y, w, h, pal) {
+    const u = x / w;
+    const v = y / h;
+    const weave = (Math.floor(u * 24) + Math.floor(v * 24)) % 2 === 0;
+    const base = weave ? pal.weave : pal.thread;
+    const fold = Math.sin(v * 8) * 0.08;
+    const n = noise(x, y, 113) * 8;
+    const shade = fold < -0.04 ? pal.shadow : base;
+    return [Math.min(255, shade[0] + n), Math.min(255, shade[1] + n), Math.min(255, shade[2] + n), 255];
+}
+
+function fabricRough(x, y, w, h) {
+    const base = 220;
+    const n = noise(x, y, 115) * 18;
+    return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
+}
+
+function metalGrateAlbedo(x, y, w, h, pal) {
+    const u = x / w;
+    const v = y / h;
+    const slot = (Math.floor(u * 16) % 2 === 0) && (Math.floor(v * 16) % 2 === 0);
+    const edge = u < 0.06 || u > 0.94 || v < 0.06 || v > 0.94;
+    let base = slot ? pal.slot : pal.plate;
+    if (edge) base = pal.edge;
+    const n = noise(x, y, 117) * 10;
+    return [Math.min(255, base[0] + n), Math.min(255, base[1] + n), Math.min(255, base[2] + n), 255];
+}
+
+function metalGrateRough(x, y, w, h) {
+    const base = 155;
+    const n = noise(x, y, 119) * 20;
+    return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
+}
+
+function metalGrateMetal(x, y, w, h) {
+    const u = x / w;
+    const v = y / h;
+    const slot = (Math.floor(u * 16) % 2 === 0) && (Math.floor(v * 16) % 2 === 0);
+    const val = slot ? 35 : 195;
+    const n = noise(x, y, 121) * 15;
+    return [Math.min(255, val + n), Math.min(255, val + n), Math.min(255, val + n), 255];
+}
+
 function slotFn(asset, slot) {
     if (asset.style === 'vehicle') {
         if (slot === 'albedo') return (x, y, w, h) => vehAlbedo(x, y, w, h, asset.palette);
@@ -211,6 +313,36 @@ function slotFn(asset, slot) {
         if (slot === 'albedo') return (x, y, w, h) => terminalAlbedo(x, y, w, h, asset.palette);
         if (slot === 'roughness') return (x, y, w, h) => terminalRough(x, y, w, h);
         if (slot === 'metalness') return (x, y, w, h) => terminalMetal(x, y, w, h);
+    }
+    if (asset.style === 'grass') {
+        if (slot === 'albedo') return (x, y, w, h) => grassAlbedo(x, y, w, h, asset.palette);
+        if (slot === 'roughness') return (x, y, w, h) => grassRough(x, y, w, h);
+        if (slot === 'normal') return (x, y) => surfaceNormal(x, y, 125, 0.65);
+    }
+    if (asset.style === 'wood') {
+        if (slot === 'albedo') return (x, y, w, h) => woodAlbedo(x, y, w, h, asset.palette);
+        if (slot === 'roughness') return (x, y, w, h) => woodRough(x, y, w, h);
+        if (slot === 'normal') return (x, y) => surfaceNormal(x, y, 127, 0.55);
+    }
+    if (asset.style === 'gravel') {
+        if (slot === 'albedo') return (x, y, w, h) => gravelAlbedo(x, y, w, h, asset.palette);
+        if (slot === 'roughness') return (x, y, w, h) => gravelRough(x, y, w, h);
+        if (slot === 'normal') return (x, y) => surfaceNormal(x, y, 129, 0.95);
+    }
+    if (asset.style === 'asphalt') {
+        if (slot === 'albedo') return (x, y, w, h) => asphaltAlbedo(x, y, w, h, asset.palette);
+        if (slot === 'roughness') return (x, y, w, h) => asphaltRough(x, y, w, h);
+        if (slot === 'normal') return (x, y) => surfaceNormal(x, y, 131, 0.45);
+    }
+    if (asset.style === 'fabric') {
+        if (slot === 'albedo') return (x, y, w, h) => fabricAlbedo(x, y, w, h, asset.palette);
+        if (slot === 'roughness') return (x, y, w, h) => fabricRough(x, y, w, h);
+    }
+    if (asset.style === 'metal_grate') {
+        if (slot === 'albedo') return (x, y, w, h) => metalGrateAlbedo(x, y, w, h, asset.palette);
+        if (slot === 'roughness') return (x, y, w, h) => metalGrateRough(x, y, w, h);
+        if (slot === 'metalness') return (x, y, w, h) => metalGrateMetal(x, y, w, h);
+        if (slot === 'normal') return (x, y) => surfaceNormal(x, y, 133, 0.7);
     }
     return () => [128, 128, 128, 255];
 }

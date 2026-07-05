@@ -103,6 +103,14 @@ export function fireStarterGun() {
     Engine.camera.getWorldDirection(dir);
     origin.copy(Engine.camera.position);
 
+    const ads = PC?._adsBlend ?? 0;
+    const spread = THREE.MathUtils.lerp(0.028, 0.004, ads);
+    if (spread > 0.005) {
+        dir.x += (Math.random() - 0.5) * spread;
+        dir.y += (Math.random() - 0.5) * spread;
+        dir.z += (Math.random() - 0.5) * spread;
+    }
+
     const raycaster = new THREE.Raycaster(origin, dir.normalize(), 0, 52);
     const hits = raycaster.intersectObjects(State?.objects || [], true);
 

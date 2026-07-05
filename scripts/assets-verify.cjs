@@ -85,6 +85,13 @@ else bad('missing docs/REALISTIC_GAMEPLAY.md');
 
 if (fs.existsSync(path.join(ROOT, 'src/shared/footsteps.js'))) ok('footsteps.js');
 if (fs.existsSync(path.join(ROOT, 'src/shared/fpsViewmodel.js'))) ok('fpsViewmodel.js');
+if (fs.existsSync(path.join(ROOT, 'docs/ASSET_CAPABILITIES.md'))) ok('ASSET_CAPABILITIES.md');
+if (fs.existsSync(path.join(ROOT, 'docs/BLENDER_AVATARS.md'))) ok('BLENDER_AVATARS.md');
+if (fs.existsSync(path.join(ROOT, 'public/basis/basis_transcoder.wasm'))) ok('basis transcoder');
+const ktx2Count = fs.existsSync(TEX) ? fs.readdirSync(TEX).filter((f) => f.endsWith('.ktx2')).length : 0;
+if (ktx2Count > 0) ok(`${ktx2Count} KTX2 sidecars`);
+else console.log('  ⚠ 0 KTX2 (optional — npm run tex:ktx2 with toktx/basisu)');
+if (pngCount >= 140) ok(`texture preset coverage (${pngCount} PNG)`);
 
 if (fs.existsSync(path.join(BUNDLE, 'bundle-index.json'))) ok('dist-pages/bundle');
 else console.log('  ⚠ bundle missing — run npm run assets:pack');

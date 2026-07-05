@@ -18,6 +18,7 @@ export const CONTROL_ACTIONS = {
     bindingsMenu: { label: 'Open Keys Menu', group: 'general' },
     cameraReset: { label: 'Reset Camera Behind Player', group: 'general' },
     fire: { label: 'Fire / Shoot', group: 'general' },
+    aim: { label: 'Aim Down Sights (hold)', group: 'general' },
     toggleView: { label: 'Toggle FPS / TPS', group: 'general' },
     thirdEye: { label: 'Third Eye (awareness)', group: 'general' },
 };
@@ -41,6 +42,7 @@ const DEFAULT_GAMEPAD_BINDINGS = {
     pause: 9,
     cameraReset: 11,
     fire: 7,
+    aim: 6,
     toggleView: 13,
     thirdEye: 12,
 };
@@ -60,6 +62,7 @@ const DEFAULT_HOST_KEYBOARD = {
     bindingsMenu: [],
     cameraReset: [],
     fire: ['KeyG'],
+    aim: ['KeyR'],
     toggleView: ['KeyV'],
     thirdEye: ['KeyT'],
 };
@@ -73,7 +76,7 @@ const DEFAULT_USER_KEYBOARD = {
 
 const KEY_LABELS = {
     KeyW: 'W', KeyA: 'A', KeyS: 'S', KeyD: 'D', KeyQ: 'Q', KeyE: 'E', KeyC: 'C',
-    KeyF: 'F', KeyG: 'G', KeyP: 'P', KeyT: 'T', KeyV: 'V', KeyX: 'X', Space: 'Space', ShiftLeft: 'Shift', ShiftRight: 'Shift',
+    KeyF: 'F', KeyG: 'G', KeyP: 'P', KeyR: 'R', KeyT: 'T', KeyV: 'V', KeyX: 'X', Space: 'Space', ShiftLeft: 'Shift', ShiftRight: 'Shift',
     ArrowUp: '↑', ArrowDown: '↓', ArrowLeft: '←', ArrowRight: '→'
 };
 
@@ -351,6 +354,7 @@ export const Controls = {
 
         if (press('jump')) this.gamepadActions.jump = true;
         if (press('sprint')) this.gamepadActions.sprint = true;
+        if (press('aim')) this.gamepadActions.aim = true;
         if (press('up')) this.gamepadActions.up = true;
         if (press('down')) this.gamepadActions.down = true;
 

@@ -1,12 +1,13 @@
 {
   "format": "threshold-tc-textures",
   "version": 2,
-  "realism": "r7",
+  "realism": "r8",
   "baseSize": 512,
   "hilod": [
     { "suffix": "_512", "maxPx": 128 },
     { "suffix": "_1k", "maxPx": 256 },
-    { "suffix": "_2k", "maxPx": 512 }
+    { "suffix": "_2k", "maxPx": 512 },
+    { "suffix": "_4k", "maxPx": 1024 }
   ],
   "assets": [
     {
@@ -143,6 +144,84 @@
         "asphalt": [40, 42, 46]
       },
       "style": "stripe"
+    },
+    {
+      "slug": "starter_grass",
+      "objectName": "Grass Patch",
+      "tcEd": "tc-lite",
+      "surfaceType": "grass",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "blade": [48, 92, 42],
+        "dark": [32, 68, 28],
+        "speck": [72, 118, 52]
+      },
+      "style": "grass"
+    },
+    {
+      "slug": "starter_wood",
+      "objectName": "Wood Deck",
+      "tcEd": "tc-lite",
+      "surfaceType": "wood",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "grain": [118, 88, 58],
+        "dark": [82, 58, 38],
+        "ring": [142, 108, 72]
+      },
+      "style": "wood"
+    },
+    {
+      "slug": "starter_gravel",
+      "objectName": "Gravel Path",
+      "tcEd": "tc-lite",
+      "surfaceType": "gravel",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "stone": [98, 96, 92],
+        "dark": [72, 70, 68],
+        "speck": [128, 126, 122]
+      },
+      "style": "gravel"
+    },
+    {
+      "slug": "starter_asphalt",
+      "objectName": "Asphalt Lane",
+      "tcEd": "tc-lite",
+      "surfaceType": "asphalt",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "base": [36, 38, 42],
+        "speck": [52, 54, 58],
+        "crack": [28, 30, 34]
+      },
+      "style": "asphalt"
+    },
+    {
+      "slug": "starter_fabric",
+      "objectName": "Fabric Banner",
+      "tcEd": "tc-lite",
+      "surfaceType": "default",
+      "slots": ["albedo", "roughness"],
+      "palette": {
+        "weave": [88, 72, 118],
+        "thread": [108, 92, 138],
+        "shadow": [62, 52, 82]
+      },
+      "style": "fabric"
+    },
+    {
+      "slug": "starter_metal_grate",
+      "objectName": "Metal Grate",
+      "tcEd": "tc-lite",
+      "surfaceType": "metal",
+      "slots": ["albedo", "roughness", "metalness", "normal"],
+      "palette": {
+        "plate": [72, 76, 82],
+        "slot": [48, 52, 58],
+        "edge": [98, 102, 108]
+      },
+      "style": "metal_grate"
     }
   ]
 }

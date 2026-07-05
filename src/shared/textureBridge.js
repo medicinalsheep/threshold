@@ -16,7 +16,7 @@ const SLOT_PROPS = {
 
 const SLOT_ORDER = ['albedo', 'roughness', 'metalness', 'normal'];
 
-const IMAGE_FILTERS = [{ name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'webp'] }];
+const IMAGE_FILTERS = [{ name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'webp', 'ktx2'] }];
 const MANIFEST_FILTERS = [
     { name: 'Threshold GIMP Manifest', extensions: ['json'] },
     { name: 'JSON', extensions: ['json'] },
@@ -61,6 +61,7 @@ function mimeFromPath(filePath = '') {
     const lower = filePath.toLowerCase();
     if (lower.endsWith('.png')) return 'image/png';
     if (lower.endsWith('.webp')) return 'image/webp';
+    if (lower.endsWith('.ktx2')) return 'image/ktx2';
     return 'image/jpeg';
 }
 
@@ -378,15 +379,28 @@ export const TextureBridge = {
         const prop = SLOT_PROPS[slot];
         if (!mat || !prop || !texId) return false;
 
-        const url = await this.getObjectUrl(texId);
-        if (!url) return false;
         const meta = await TextureLibrary.getMeta(texId);
-        const resolvedUrl = await NativeTextureCodec.resolveTextureUrl(url, meta);
+        const sourcePath = meta?.sourcePath || meta?.path || '';
+        const resolvedPath = sourcePath
+            ? await NativeTextureCodec.resolveSourcePath(sourcePath, meta)
+            : '';
+        const isKtx2 = /\.ktx2$/i.test(resolvedPath);
+
+        let loadUrl = await this.getObjectUrl(texId);
+        if (!loadUrl) return false;
+        if (resolvedPath && resolvedPath !== sourcePath) {
+            const blob = await AssetBundle.fetchBlob(resolvedPath);
+            if (blob) loadUrl = URL.createObjectURL(blob);
+            else if (ThresholdShell.isNative) {
+                const buf = await AssetBundle.readBinary(resolvedPath);
+                if (buf) {
+                    loadUrl = URL.createObjectURL(new Blob([buf], { type: mimeFromPath(resolvedPath) }));
+                }
+            }
+        }
 
         disposeMap(mat, prop);
-        const texture = await new Promise((resolve, reject) => {
-            loader.load(resolvedUrl, resolve, undefined, reject);
-        });
+        const texture = await NativeTextureCodec.loadTextureFromUrl(loadUrl, { isKtx2 });
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         if (slot === 'albedo' && THREE.SRGBColorSpace) {

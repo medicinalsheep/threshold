@@ -1,5 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+contextBridge.exposeInMainWorld('__THRESHOLD_KTX2__', true);
+
 contextBridge.exposeInMainWorld('ThresholdShell', {
     platform: process.platform === 'win32' ? 'windows' : process.platform === 'darwin' ? 'macos' : 'linux',
     isNative: true,

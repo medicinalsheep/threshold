@@ -40,6 +40,21 @@ export const FpsViewmodel = {
         if (this.group) this.group.visible = visible;
     },
 
+    setAiming(blend = 0) {
+        if (!this.group) return;
+        const T = window.THREE;
+        if (!T) return;
+        const b = Math.max(0, Math.min(1, blend));
+        this.group.position.set(
+            T.MathUtils.lerp(0.14, 0.06, b),
+            T.MathUtils.lerp(-0.12, -0.15, b),
+            T.MathUtils.lerp(-0.35, -0.52, b)
+        );
+        this.group.rotation.x = T.MathUtils.lerp(0, -0.08, b);
+        this.group.rotation.y = T.MathUtils.lerp(0, 0.04, b);
+        this.group.rotation.z = T.MathUtils.lerp(0, 0.03, b);
+    },
+
     tick(speed = 0) {
         if (!this.group?.visible) return;
         const t = performance.now() * 0.001;

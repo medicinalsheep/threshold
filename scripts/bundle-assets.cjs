@@ -68,6 +68,16 @@ function main() {
         copied += copyRecursive(src, dest);
     }
 
+    const basisSrc = path.join(ROOT, 'node_modules', 'three', 'examples', 'jsm', 'libs', 'basis');
+    const basisDest = path.join(OUT, 'basis');
+    if (fs.existsSync(basisSrc)) {
+        copied += copyRecursive(basisSrc, basisDest);
+    }
+    const publicBasis = path.join(ROOT, 'public', 'basis');
+    if (fs.existsSync(publicBasis)) {
+        copied += copyRecursive(publicBasis, basisDest);
+    }
+
     const index = {
         format: 'threshold-asset-bundle',
         bundledAt: new Date().toISOString(),

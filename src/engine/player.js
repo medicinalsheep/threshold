@@ -12,6 +12,9 @@ const TPS_HEIGHT = 2.15;
 const EYE_HEIGHT = 1.65;
 const PITCH_MIN = -0.35;
 const PITCH_MAX = 1.15;
+const HIP_FOV = 75;
+const ADS_FOV = 42;
+const ADS_WALK_MULT = 0.72;
 
 export const PlayerController = {
     mesh: null,
@@ -25,6 +28,7 @@ export const PlayerController = {
     _camPitch: 0.28,
     _velX: 0,
     _velZ: 0,
+    _adsBlend: 0,
 
     async spawn(x = 0, y = 2, z = 0) {
         if (this.spawned) this.despawn();
@@ -166,8 +170,11 @@ export const PlayerController = {
         if (Controls?.isAction('right')) { mx += right.x; mz += right.z; }
 
         const len = Math.hypot(mx, mz);
+        const fps = State.viewMode === 'fps';
+        const aiming = fps && Controls?.isAction?.('aim');
         const sprintMult = Controls?.isAction('sprint') ? SPRINT_MULT : 1;
-        const targetSpeed = this.walkSpeed * sprintMult;
+        const adsMult = aiming ? ADS_WALK_MULT : 1;
+        const targetSpeed = this.walkSpeed * sprintMult * adsMult;
 
         if (len > 0) {
             mx /= len;
@@ -212,6 +219,8 @@ export const PlayerController = {
 
         const State = window.State;
         const fps = State.viewMode === 'fps';
+        const aiming = fps && window.Controls?.isAction?.('aim');
+        this._adsBlend = THREE.MathUtils.lerp(this._adsBlend, aiming ? 1 : 0, 0.2);
 
         this.group.position.set(this.body.position.x, this.body.position.y - 0.86, this.body.position.z);
 
@@ -235,7 +244,14 @@ export const PlayerController = {
             grounded: ground.grounded,
             ground,
         });
+        window.FpsViewmodel?.setAiming?.(this._adsBlend);
         window.FpsViewmodel?.tick?.(speed);
+
+        if (fps && camera.fov != null) {
+            camera.fov = THREE.MathUtils.lerp(HIP_FOV, ADS_FOV, this._adsBlend);
+            camera.updateProjectionMatrix();
+        }
+        document.getElementById('fps-crosshair')?.classList.toggle('ads', this._adsBlend > 0.55);
 
         const base = this.group.position.clone();
         const chest = base.clone().add(new THREE.Vector3(0, 1.4, 0));

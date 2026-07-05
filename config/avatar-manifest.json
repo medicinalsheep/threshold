@@ -1,0 +1,21 @@
+{
+  "format": "threshold-avatar-manifest",
+  "version": 1,
+  "defaultHeightM": 1.75,
+  "preferredRoot": "StarterAvatar",
+  "animationClips": ["walk", "Walk", "locomotion", "idle", "Idle"],
+  "namedParts": ["legL", "legR", "armL", "armR", "torso", "head", "hips"],
+  "fpsHideParts": ["head", "hairCap", "neck"],
+  "roles": {
+    "player": { "glb": "starter_avatar.glb", "blenderNote": "Export Y-up GLB; first walk clip or named limb nodes" },
+    "guide_npc": { "glb": "starter_avatar.glb" },
+    "guard_npc": { "glb": "starter_npc_guard.glb" },
+    "mechanic_npc": { "glb": "starter_npc_mech.glb" }
+  },
+  "blenderExport": {
+    "format": "glb",
+    "applyTransforms": true,
+    "includeAnimations": true,
+    "script": "npm run blender:export -- --blend your_scene.blend --object Avatar --output import"
+  }
+}

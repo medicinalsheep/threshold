@@ -4,6 +4,45 @@ import { wireStarterTextures } from './starterTex.js';
 import { NpcPatrol } from './npcPatrol.js';
 import { spawnHumanWithAvatar } from './avatarLoader.js';
 
+function addSurfacePad({ id, name, surfaceType, pos, size, color, matOpts = {} }) {
+    const Engine = window.Engine;
+    const State = window.State;
+    const Physics = window.Physics;
+    const THREE = window.THREE;
+    const C = window.CANNON;
+    if (!Engine?.scene || !THREE) return null;
+
+    const mat = new THREE.MeshStandardMaterial({
+        color: color ?? 0x444448,
+        roughness: matOpts.roughness ?? 0.86,
+        metalness: matOpts.metalness ?? 0.04,
+        envMapIntensity: 0.22,
+        ...matOpts,
+    });
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(size.x, size.y, size.z), mat);
+    mesh.position.set(pos.x, pos.y, pos.z);
+    mesh.receiveShadow = true;
+    mesh.castShadow = true;
+    mesh.userData = {
+        id,
+        name,
+        type: 'platform',
+        locked: true,
+        surfaceType,
+    };
+    Engine.scene.add(mesh);
+    State.objects.push(mesh);
+    if (C && Physics?.addStaticBox) {
+        Physics.addStaticBox(
+            new C.Vec3(size.x / 2, size.y / 2, size.z / 2),
+            { x: pos.x, y: pos.y, z: pos.z },
+            'ground',
+            surfaceType
+        );
+    }
+    return mesh;
+}
+
 async function spawnStarterNpc({
     id, name, pos, rotY = 0, appearance = {}, interact = {}, waypoints = [], patrolSpeed = 1.1,
 }) {
@@ -179,6 +218,49 @@ export function bootstrapStarterScene() {
     };
     Engine.scene.add(gunTarget);
     State.objects.push(gunTarget);
+
+    addSurfacePad({
+        id: 'starter_grass_patch',
+        name: 'Grass Patch',
+        surfaceType: 'grass',
+        pos: { x: -4.2, y: 0.04, z: 2.4 },
+        size: { x: 2.4, y: 0.08, z: 2.4 },
+        color: 0x3a6e32,
+    });
+    addSurfacePad({
+        id: 'starter_wood_deck',
+        name: 'Wood Deck',
+        surfaceType: 'wood',
+        pos: { x: 4.2, y: 0.05, z: 2.2 },
+        size: { x: 2.6, y: 0.1, z: 2.0 },
+        color: 0x6e5238,
+        matOpts: { roughness: 0.82 },
+    });
+    addSurfacePad({
+        id: 'starter_gravel_path',
+        name: 'Gravel Path',
+        surfaceType: 'gravel',
+        pos: { x: -4.0, y: 0.035, z: -2.8 },
+        size: { x: 2.8, y: 0.07, z: 1.6 },
+        color: 0x6a6864,
+    });
+    addSurfacePad({
+        id: 'starter_asphalt_lane',
+        name: 'Asphalt Lane',
+        surfaceType: 'asphalt',
+        pos: { x: 4.0, y: 0.035, z: -2.6 },
+        size: { x: 2.6, y: 0.07, z: 1.8 },
+        color: 0x2a2c30,
+    });
+    addSurfacePad({
+        id: 'starter_metal_grate',
+        name: 'Metal Grate',
+        surfaceType: 'metal',
+        pos: { x: 2.2, y: 0.04, z: 0.6 },
+        size: { x: 1.2, y: 0.08, z: 1.2 },
+        color: 0x5a5e66,
+        matOpts: { metalness: 0.55, roughness: 0.42 },
+    });
 
     const benchMat = new THREE.MeshStandardMaterial({ color: 0x4a4038, roughness: 0.78, metalness: 0.05 });
     const bench = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.42, 0.45), benchMat);

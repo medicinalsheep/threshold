@@ -1,5 +1,14 @@
 # Changelog
 
+## 6.2.0 — Phase 8: texture expansion, KTX2, ADS, Blender avatars, surfaces
+
+- **Texture presets** — grass, wood, gravel, asphalt, fabric, metal_grate (+ `_4k` HILOD tier, r8)
+- **KTX2 pipeline** — `tex:ktx2`, Basis transcoder in bundle, runtime KTX2Loader probe
+- **ADS** — hold `R` / LT to aim; FOV zoom, viewmodel pose, tighter shot spread
+- **Footsteps** — grass, wood, gravel, asphalt surfaces + starter scene demo pads
+- **Blender avatars** — skinned mesh + walk clip by name; `docs/BLENDER_AVATARS.md`
+- **Capabilities guide** — `docs/ASSET_CAPABILITIES.md` (full dev head-start outline)
+
 ## 6.1.0 — Phase 7: avatars, footsteps, FPS arms, remote meshes
 
 - `avatar:gen` — starter_avatar + NPC guard/mech GLBs with walk animation clip

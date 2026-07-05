@@ -2,7 +2,7 @@
 
 Threshold ships a **walk/drive action control** template in the SOLO lobby. Use it as the baseline for shooters, RPGs, and vehicle scenes.
 
-**Current default version:** v6.1.0 realism defaults (Phase 7)
+**Current default version:** v6.2.0 realism defaults (Phase 8)
 
 ---
 
@@ -15,12 +15,13 @@ Threshold ships a **walk/drive action control** template in the SOLO lobby. Use 
 | Jump | Space | A |
 | Interact | E | X / Square |
 | Fire | G | RT |
+| Aim (ADS) | R (hold) | LT (hold) |
 | Toggle FPS / TPS | V | D-pad Down |
 | Third Eye | T | D-pad Up |
 | Toggle fly (editor) | F | Y |
 
 - **TPS** is the default after intro spawn.
-- **FPS** hides the head mesh and shows a crosshair; aim and fire use the active camera.
+- **FPS** hides the body mesh and shows arms viewmodel + crosshair; **ADS** (`R` / LT) zooms FOV and tightens aim.
 - **Third Eye** shows a green circle HUD and highlights interactables / NPCs within ~18m.
 
 ---
@@ -52,10 +53,14 @@ Starter roster: **Alex** (guide), **Jordan** (range), **Sam** (mechanic).
 ## Texture recipe
 
 ```bash
-npm run tex:gen        # procedural PBR PNG (512px r7)
+npm run tex:gen        # procedural PBR PNG (512px r8) + HILOD tiers
 npm run tex:compress   # PNG → WebP sidecars (ffmpeg)
+npm run tex:ktx2       # PNG → KTX2 (optional; toktx/basisu on PATH)
+npm run basis:copy     # Basis transcoder for KTX2Loader
 npm run bundle:assets  # copy to dist-pages/bundle/
 ```
+
+Full capability map: [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md)
 
 - Manifest: `textures/threshold_manifest.json` — `objectName` must match `userData.name` on scene objects.
 - Runtime prefers **WebP** when a `.webp` sibling exists; PNG is the fallback.
@@ -121,6 +126,17 @@ npm run assets:verify  # smoke test
 Build your game by replacing props, keeping the control + physics + asset pipeline.
 
 ---
+
+## Phase 8 additions (v6.2)
+
+| Feature | Notes |
+|---------|-------|
+| Texture styles | grass, wood, gravel, asphalt, fabric, metal_grate |
+| HILOD `_4k` | Ultra tier up to 1024px variants |
+| KTX2 | Native/web when transcoder bundled |
+| ADS | Hold R / LT in FPS |
+| Footsteps | 6 surfaces; demo pads in starter scene |
+| Blender avatars | [BLENDER_AVATARS.md](BLENDER_AVATARS.md) |
 
 ## Phase 7 additions (v6.1)
 

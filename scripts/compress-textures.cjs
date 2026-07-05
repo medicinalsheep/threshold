@@ -7,6 +7,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 const ROOT = path.join(__dirname, '..');
+const { maxDimFor } = require('./texture-tier-utils.cjs');
 const DIRS = [
     path.join(ROOT, 'textures'),
     path.join(ROOT, 'public', 'bundle', 'textures'),
@@ -20,13 +21,6 @@ function hasFfmpeg() {
     } catch {
         return false;
     }
-}
-
-function maxDimFor(name) {
-    if (name.includes('_2k')) return 512;
-    if (name.includes('_1k')) return 256;
-    if (name.includes('_512')) return 128;
-    return 512;
 }
 
 function compressPng(pngPath, webpPath, maxDim) {

@@ -19,7 +19,22 @@ function collectNamedParts(object) {
 }
 
 function avatarRootFromModel(model) {
+    let skinnedRoot = null;
+    model.traverse((c) => {
+        if (c.isSkinnedMesh && c.skeleton?.bones?.length && !skinnedRoot) {
+            skinnedRoot = c;
+        }
+    });
+    if (skinnedRoot) return skinnedRoot;
     return model.getObjectByName('StarterAvatar') || model.children[0] || model;
+}
+
+const WALK_CLIP_NAMES = ['walk', 'Walk', 'locomotion', 'Locomotion'];
+
+function pickWalkClip(animations = []) {
+    if (!animations.length) return null;
+    const named = animations.find((c) => WALK_CLIP_NAMES.some((n) => c.name?.includes(n)));
+    return named || animations[0];
 }
 
 export const HumanMesh = {
@@ -150,13 +165,22 @@ export const HumanMesh = {
 
     setFirstPersonVisible(group, visible) {
         if (!group) return;
-        const parts = group.userData?.humanParts;
-        if (!parts) return;
         const show = visible;
-        if (parts.head) parts.head.visible = show;
-        if (parts.hairCap) parts.hairCap.visible = show;
-        if (parts.neck) parts.neck.visible = show;
-        if (parts.collar) parts.collar.visible = show;
+        const parts = group.userData?.humanParts;
+        if (parts) {
+            if (parts.head) parts.head.visible = show;
+            if (parts.hairCap) parts.hairCap.visible = show;
+            if (parts.neck) parts.neck.visible = show;
+            if (parts.collar) parts.collar.visible = show;
+            return;
+        }
+        if (group.userData?.isGltf) {
+            group.traverse((c) => {
+                if (c.name === 'head' || c.name === 'hairCap' || c.name === 'neck') {
+                    c.visible = show;
+                }
+            });
+        }
     },
 
     updateWalk(group, horizontalSpeed, dt = 0.016, sprinting = false) {
@@ -254,9 +278,10 @@ export const HumanMesh = {
         group.userData.mixerClip = null;
 
         const avatarRoot = avatarRootFromModel(model);
-        if (gltf.animations?.length) {
+        const walkClip = pickWalkClip(gltf.animations);
+        if (walkClip) {
             const mixer = new THREE.AnimationMixer(avatarRoot);
-            const clip = mixer.clipAction(gltf.animations[0]);
+            const clip = mixer.clipAction(walkClip);
             clip.play();
             group.userData.mixer = mixer;
             group.userData.mixerClip = clip;

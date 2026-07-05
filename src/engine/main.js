@@ -6,6 +6,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
 import * as CANNON from 'cannon-es';
 import { VERSION } from '../config.js';
 import { Session } from '../shared/session.js';
@@ -73,6 +74,8 @@ export function initEngine() {
     window.OrbitControls = OrbitControls;
     window.TransformControls = TransformControls;
     window.GLTFLoader = GLTFLoader;
+    window.KTX2Loader = KTX2Loader;
+    window.__THRESHOLD_KTX2__ = true;
     window.AudioSys = AudioSys;
     window.Engine = Engine;
     window.EffectComposer = EffectComposer;

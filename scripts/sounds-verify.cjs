@@ -22,6 +22,10 @@ const REQUIRED_IDS = [
     'starter_metal_hit',
     'starter_footstep_concrete',
     'starter_footstep_metal',
+    'starter_footstep_grass',
+    'starter_footstep_wood',
+    'starter_footstep_gravel',
+    'starter_footstep_asphalt',
 ];
 
 let fail = 0;

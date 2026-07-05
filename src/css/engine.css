@@ -491,6 +491,14 @@ body.console-hidden .console-restore-tab {
     opacity: 1;
 }
 
+.fps-crosshair.ads {
+    width: 2px;
+    height: 2px;
+    margin: -1px 0 0 -1px;
+    background: rgba(120, 220, 140, 0.92);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.8);
+}
+
 .third-eye-indicator {
     position: absolute;
     top: 50%;
