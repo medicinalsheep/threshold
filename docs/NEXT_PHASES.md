@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v5.0.0 — Phase L (store-ready native polish: prep CLI, signing docs, release packages).
+**Current:** v5.1.0 — Phase L2 (export walkthrough: icons, credits, asset registry, store metadata).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -127,6 +127,27 @@ npm run package:win
 ```
 
 See [STORE_RELEASE.md](STORE_RELEASE.md).
+
+### Phase L2 — Export walkthrough & asset registry (v5.1) ✅
+
+| Step | Status |
+|------|--------|
+| L2.1 8-step export wizard (INFO → SHIP) | ✅ |
+| L2.2 ICONS — bundle ID + `appicon512` / `build:icons` / `cap:assets` checklist | ✅ |
+| L2.3 SCENE — live inventory (objects, GLTF, textures, sounds, video) | ✅ |
+| L2.4 CREDITS — per-asset license, author, source → `credits.md` | ✅ |
+| L2.5 `assetRegistry` + `storeAssets` scaffold (`storeSku`, `registryUri`) | ✅ |
+| L2.6 STORE step — contact / support / privacy URLs → `store:prep` | ✅ |
+| L2.7 `store:prep` writes `credits.md` + `asset-registry.json` | ✅ |
+
+```bash
+# In Engine: MORE → EXPORT (walkthrough)
+npm run store:prep -- --manifest my-game.threshold-game.json --contact you@example.com
+```
+
+See [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) · `config/store-assets.json`
+
+**Future (Phase M+):** map `storeAssets.items` to Play IAP / Steam depot / collectible registry URIs.
 
 ### Phase K — Cinematic layer (v4.9) ✅
 

@@ -50,10 +50,15 @@ Options:
 
 Writes:
   dist-store/<slug>/privacy-policy.md
+  dist-store/<slug>/credits.md
+  dist-store/<slug>/asset-registry.json (when manifest includes assetRegistry)
   dist-store/<slug>/app-store-metadata.json
   dist-store/<slug>/play-console-metadata.json
   dist-store/<slug>/store-prep.json
   config/native-app.json + updates capacitor.config.json appId/appName
+
+Manifest fields used (from MORE → EXPORT walkthrough):
+  branding.bundleId, store.contactEmail, store.privacyPolicyUrl, credits.entries
 `);
 }
 

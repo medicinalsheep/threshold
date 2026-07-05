@@ -7,6 +7,7 @@ import { getGraphicsExportBlock } from './graphicsExportProfiles.js';
 import { TextureHilod } from './textureHilod.js';
 import { LOD_DISTANCES } from './lodConfig.js';
 import { Cinematic } from './cinematic.js';
+import { buildAssetRegistry, defaultExportDraft } from './exportWalkthrough.js';
 
 const BUILD_PROFILES = {
     web: {
@@ -103,14 +104,37 @@ export const GameExport = {
             );
         }
 
+        const bundleId = options.branding?.bundleId || options.bundleId || 'com.threshold.game';
+        const draft = defaultExportDraft({
+            name,
+            author: options.author,
+            description: options.description,
+            branding: options.branding || { bundleId },
+            credits: options.credits,
+            store: options.store,
+            targets: options.targets,
+        });
+        draft.branding.bundleId = bundleId;
+
         const bundledVideos = await Cinematic.listBundled();
-        const playedVideos = Cinematic.collectExportEntries();
+        const liveObjects = window.State?.objects || [];
+        const playedVideos = Cinematic.collectExportEntries(liveObjects);
         const videoMap = new Map();
         [...bundledVideos, ...playedVideos].forEach((entry) => {
             if (!entry?.path) return;
             videoMap.set(entry.path, { ...entry, source: bundledVideos.some((b) => b.path === entry.path) ? 'bundle' : 'runtime' });
         });
         const videoEntries = [...videoMap.values()];
+        const assetRegistry = buildAssetRegistry(draft, {
+            objectCount: liveObjects.filter((o) => !o.userData?.isPlayer).length,
+            sceneObjects: [],
+            textureRefs: TextureLibrary.list().map((t) => ({ id: t.id, name: t.name, path: t.sourcePath, kind: 'texture' })),
+            soundRefs: sounds.map((s) => ({ id: s.id, name: s.name, kind: 'sound' })),
+            models: collectGltfModelEntries(liveObjects).map((m) => ({ id: m.objectName, name: m.objectName, path: m.gltfPath, kind: 'model' })),
+            videoRefs: videoEntries.map((v) => ({ path: v.path, file: v.file, kind: 'video' })),
+            hilodGroups: TextureHilod.collectExportEntries(liveObjects).length,
+            scripts: {},
+        });
 
         return {
             format: 'threshold-game',
@@ -121,6 +145,17 @@ export const GameExport = {
                 name,
                 description: options.description || '',
                 author: options.author || window.Session?.playerName || 'Creator',
+            },
+            branding: options.branding || { bundleId, iconPath: 'icons/appicon512.png' },
+            credits: {
+                global: options.credits?.global || '',
+                entries: options.credits?.entries || {},
+            },
+            assetRegistry,
+            exportWalkthrough: {
+                version: 1,
+                docs: 'docs/EXPORT_WALKTHROUGH.md',
+                steps: ['info', 'branding', 'content', 'credits', 'review', 'targets', 'store', 'package'],
             },
             world,
             scripts: {
@@ -139,7 +174,7 @@ export const GameExport = {
                 formats: ['mp4', 'webm'],
                 note: 'HTML5 VideoTexture cutscenes — no VLC; bundle via npm run bundle:assets',
             },
-            textures: TextureLibrary.collectManifestEntries(world?.objects || []).map((t) => ({
+            textures: TextureLibrary.collectManifestEntries(liveObjects).map((t) => ({
                 ...t,
                 note: 'Re-import via GIMP SYNC or ship via npm run bundle:assets → dist-pages/bundle/',
             })),
@@ -178,11 +213,11 @@ export const GameExport = {
                     renderMode: 4,
                 }),
                 ...getGraphicsExportBlock(resolveActiveGraphicsProfile(options.targets)),
-                textures: TextureHilod.collectExportEntries(world?.objects || []),
+                textures: TextureHilod.collectExportEntries(liveObjects),
                 lodDistances: LOD_DISTANCES,
                 hilodNote: 'Runtime picks map suffix by camera distance + graphics tier; export:graphics prunes per platform',
             },
-            models: collectGltfModelEntries(world?.objects || []),
+            models: collectGltfModelEntries(liveObjects),
             agents: options.agents || window.AgentHub?.exportConfigs?.() || [],
             relay: {
                 mode: options.relayMode || (import.meta.env.VITE_PEER_HOST ? 'custom' : 'peerjs-cloud'),
@@ -195,12 +230,12 @@ export const GameExport = {
                 entry: 'index.html',
                 capacitor: {
                     webDir: 'dist-pages',
-                    appId: options.bundleId || 'com.threshold.game',
+                    appId: bundleId,
                     appName: name,
                 },
                 electron: { main: 'electron/main.cjs', preload: 'electron/preload.cjs' },
                 ios: {
-                    bundleId: options.bundleId || 'com.threshold.game',
+                    bundleId,
                     appName: name,
                     minOsVersion: '14.0',
                     scheme: 'https',
@@ -213,8 +248,9 @@ export const GameExport = {
                     safeArea: 'viewport-fit=cover + env(safe-area-inset-*) in CSS',
                     note: 'Build/archive requires macOS. Sync assets on any OS via package:ios.',
                 },
+                store: options.store || {},
                 android: {
-                    packageName: options.bundleId || 'com.threshold.game',
+                    packageName: bundleId,
                     appName: name,
                     cli: 'npm run package:android',
                     releaseCli: 'npm run package:android:release',
@@ -224,10 +260,11 @@ export const GameExport = {
                 },
                 storeRelease: {
                     prepCli: 'npm run store:prep -- --manifest <game>.threshold-game.json',
+                    walkthrough: 'docs/EXPORT_WALKTHROUGH.md',
                     docs: 'docs/STORE_RELEASE.md',
                     privacyTemplate: 'docs/templates/privacy-policy.template.md',
-                    outputs: ['privacy-policy.md', 'app-store-metadata.json', 'play-console-metadata.json'],
-                    note: 'Run store:prep after export — applies bundleId to capacitor.config.json + generates store checklists',
+                    outputs: ['privacy-policy.md', 'credits.md', 'asset-registry.json', 'app-store-metadata.json', 'play-console-metadata.json'],
+                    note: 'Run store:prep after export — applies bundleId, generates credits + asset registry for stores',
                 },
                 steam: { appId: null, depotId: null, note: 'Assign after Steamworks partner setup' },
             },

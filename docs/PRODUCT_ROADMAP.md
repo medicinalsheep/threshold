@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → local GIMP/Blender art → AI agents on NPCs.
 
-**Current version:** **5.0.0** (Phase L — store prep CLI, release packaging, signing guides)
+**Current version:** **5.1.0** (Phase L2 — export walkthrough: icons, credits, asset registry, store metadata)
 
 **Detailed next phases:** [NEXT_PHASES.md](NEXT_PHASES.md) (LOD, HILOD, iOS, Phase E leftovers)
 
@@ -55,6 +55,8 @@ See [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md).
 - [x] App icons + `build:icons` / `cap:assets`
 - [x] **Creative pipeline A–D** — [CREATIVE_PLUGINS.md](CREATIVE_PLUGINS.md)
 - [x] Store prep CLI + release guides (Phase L — v5.0)
+- [x] Export walkthrough — 8-step wizard: icons, scene, credits, store metadata (Phase L2 — v5.1)
+- [x] Asset registry scaffold — tie authored assets to future store SKUs / collectible registry
 - [ ] Signed APK / store upload (per-developer signing keys)
 - [ ] macOS `.app` notarization
 - [x] Capacitor Filesystem scaffold for on-device world import (`NativeAssets`, v3.8)

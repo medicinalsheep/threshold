@@ -806,15 +806,21 @@ body.ui-immersive.touch-off #status-msg {
 }
 
 .export-wizard-sheet {
-    max-height: min(85vh, 560px);
+    max-height: min(88vh, 640px);
     overflow-y: auto;
 }
 
 .export-wizard-progress {
     display: flex;
-    gap: 6px;
+    gap: 4px;
     margin: 10px 0 12px;
     flex-wrap: wrap;
+}
+
+.export-wizard-progress-8 span {
+    font-size: 0.5rem;
+    letter-spacing: 0.4px;
+    padding: 3px 5px;
 }
 
 .export-wizard-progress span {
@@ -864,6 +870,74 @@ body.ui-immersive.touch-off #status-msg {
     background: var(--accent-color) !important;
     color: #000 !important;
     border: none !important;
+}
+
+.export-wizard-scroll {
+    max-height: 140px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.export-credits-list {
+    max-height: 240px;
+    overflow-y: auto;
+    margin-top: 8px;
+    padding-right: 4px;
+}
+
+.export-credit-row {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 8px 10px;
+    margin: 8px 0;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.export-credit-label {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 0.72rem;
+}
+
+.export-credit-kind {
+    font-size: 0.58rem;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: #888;
+    border: 1px solid #444;
+    border-radius: 2px;
+    padding: 1px 5px;
+}
+
+.export-wizard-validation {
+    margin: 10px 0 0;
+    padding-left: 18px;
+    font-size: 0.68rem;
+    line-height: 1.5;
+}
+
+.export-warn-block {
+    color: #f77;
+}
+
+.export-warn-soft {
+    color: #da8;
+}
+
+.export-wizard-cli {
+    background: #0d0d0d;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 10px 12px;
+    margin: 8px 0;
+    font-size: 0.64rem;
+    line-height: 1.55;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    color: #9cf;
+    font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
 }
 
 body.shell-electron .engine-toolbar,

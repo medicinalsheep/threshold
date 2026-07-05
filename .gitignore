@@ -4,6 +4,7 @@ dist-pages/
 dist-grok/
 dist-electron/
 dist-export/
+dist-store/
 android/
 ios/*
 !ios/README.md

@@ -1,8 +1,10 @@
-# Store release guide (Phase L — v5.0)
+# Store release guide (Phase L — v5.0, walkthrough v5.1)
 
 Ship Threshold games to **Google Play**, **App Store**, and **Windows** from one export manifest.
 
-**Prerequisites:** Export wizard → download `.threshold-game.json` → creative assets bundled.
+**Prerequisites:** **MORE → EXPORT** 8-step walkthrough → download `.threshold-game.json` → creative assets bundled.
+
+**Walkthrough:** [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) — icons, scene inventory, per-asset credits, store metadata.
 
 ---
 
@@ -25,6 +27,8 @@ Output of `store:prep`:
 | File | Use |
 |------|-----|
 | `dist-store/<slug>/privacy-policy.md` | Host on your site; paste URL into store forms |
+| `dist-store/<slug>/credits.md` | Asset attributions from export wizard CREDITS step |
+| `dist-store/<slug>/asset-registry.json` | Store-facing asset list + future SKU/registry scaffold |
 | `dist-store/<slug>/app-store-metadata.json` | App Store Connect copy-paste reference |
 | `dist-store/<slug>/play-console-metadata.json` | Play Console listing reference |
 | `dist-store/<slug>/store-prep.json` | Checklist + next commands |
@@ -35,13 +39,15 @@ Output of `store:prep`:
 ## Workflow
 
 ```
-EXPORT manifest → store:prep → package:<target> → store console upload
+EXPORT walkthrough → manifest → store:prep → package:<target> → store console upload
 ```
 
-1. **Name & bundle ID** — set in export wizard; `store:prep` writes `capacitor.config.json` and `config/native-app.json`.
-2. **Privacy policy** — edit generated `privacy-policy.md`; host at a public URL.
-3. **Graphics bundle** — `package:*` scripts run `bundle:assets` + `export:graphics --install` automatically.
-4. **Checklist** — `store:prep` prints per-target steps from `config/store-release.json`.
+1. **Export walkthrough** — INFO → ICONS → SCENE → CREDITS → REVIEW → TARGETS → STORE → SHIP (see [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md)).
+2. **Name & bundle ID** — ICONS step; `store:prep` writes `capacitor.config.json` and `config/native-app.json`.
+3. **Credits** — CREDITS step feeds `credits.md` and `asset-registry.json` for store review and future asset packs.
+4. **Privacy policy** — edit generated `privacy-policy.md`; host at a public URL (STORE step URL → `store:prep`).
+5. **Graphics bundle** — `package:*` scripts run `bundle:assets` + `export:graphics --install` automatically.
+6. **Checklist** — `store:prep` prints per-target steps from `config/store-release.json`.
 
 ---
 

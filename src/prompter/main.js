@@ -154,7 +154,7 @@ OUTPUT REQUIREMENTS:
 - If sounds are listed, wire userData.soundClipId + soundTrigger on matching objects
 - If textures are listed, set userData.textureHint paths (textures/slug_albedo.png); user runs GIMP export then ENGINE GIMP SYNC
 - For 3D props, reference Blender GLB path (import/slug.glb) and userData.hasPhysics/mass/friction — INSERT → GLTF in Engine
-- List all assets in a // ASSETS: comment block so EXPORT manifest and users can verify paths
+- List all assets in a // ASSETS: comment block so EXPORT walkthrough (CREDITS step) and manifest can attribute licenses
 `.trim()
         };
     },
