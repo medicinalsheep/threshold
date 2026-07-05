@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v4.9.0 — Phase K (cinematic layer: HTML5 video cutscenes + VideoTexture).
+**Current:** v5.0.0 — Phase L (store-ready native polish: prep CLI, signing docs, release packages).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -109,6 +109,24 @@ npm run export:graphics -- --all-profiles
 ```
 
 ---
+
+### Phase L — Store-ready native polish (v5.0) ✅
+
+| Step | Status |
+|------|--------|
+| L1 `npm run store:prep` — privacy policy + store metadata from manifest | ✅ |
+| L2 `config/native-app.json` → Capacitor + Electron `appId` / `appName` | ✅ |
+| L3 `package:android:release` (AAB) + Play Console template | ✅ |
+| L4 Windows portable + NSIS installer; `CSC_LINK` signing docs | ✅ |
+| L5 `package:mac` + notarization guide; iOS checklist in STORE_RELEASE.md | ✅ |
+
+```bash
+npm run store:prep -- --manifest my-game.threshold-game.json --contact you@example.com
+npm run package:android:release
+npm run package:win
+```
+
+See [STORE_RELEASE.md](STORE_RELEASE.md).
 
 ### Phase K — Cinematic layer (v4.9) ✅
 

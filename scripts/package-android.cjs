@@ -28,5 +28,7 @@ if (!fs.existsSync(androidDir)) {
 
 console.log('\nAndroid web assets synced.');
 console.log('  Open project:  npm run cap:open');
-console.log('  In Android Studio: Build → Build APK(s)');
-console.log('  Or CLI (if SDK configured): cd android && ./gradlew assembleDebug');
+console.log('  Debug APK:     Android Studio → Build APK(s)');
+console.log('  Release AAB:   npm run package:android:release');
+console.log('  Store prep:    npm run store:prep -- --manifest <game>.threshold-game.json');
+console.log('  Guide:         docs/STORE_RELEASE.md');

@@ -1,0 +1,27 @@
+{
+  "format": "threshold-app-store-metadata",
+  "appName": "{{GAME_NAME}}",
+  "subtitle": "Create and play 3D worlds",
+  "bundleId": "{{BUNDLE_ID}}",
+  "sku": "{{SKU}}",
+  "primaryCategory": "Games",
+  "secondaryCategory": "Entertainment",
+  "ageRating": "4+",
+  "copyright": "{{YEAR}} {{AUTHOR}}",
+  "description": {
+    "short": "{{GAME_NAME}} — design 3D worlds, play with friends, export to every device.",
+    "full": "{{DESCRIPTION}}\n\nFeatures:\n• Build and edit worlds in real time\n• Optional multiplayer sessions\n• PBR textures, GLTF models, and cutscenes\n• Retro and Hyper render modes\n\nPrivacy policy URL required before submission."
+  },
+  "keywords": ["games", "creative", "multiplayer", "3d", "sandbox"],
+  "supportUrl": "{{SUPPORT_URL}}",
+  "privacyPolicyUrl": "{{PRIVACY_POLICY_URL}}",
+  "screenshots": {
+    "iphone67": "Required — capture from simulator or device",
+    "iphone65": "Required",
+    "ipadPro129": "Optional"
+  },
+  "appPrivacy": {
+    "microphone": { "purpose": "App Functionality", "linkedToUser": false, "tracking": false },
+    "networking": { "purpose": "App Functionality", "linkedToUser": false, "tracking": false }
+  }
+}

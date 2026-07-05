@@ -1,0 +1,23 @@
+{
+  "format": "threshold-play-console-metadata",
+  "title": "{{GAME_NAME}}",
+  "packageName": "{{PACKAGE_NAME}}",
+  "defaultLanguage": "en-US",
+  "category": "GAME",
+  "tags": ["Creative", "Multiplayer"],
+  "shortDescription": "Design 3D worlds and play with friends — Threshold engine.",
+  "fullDescription": "{{DESCRIPTION}}\n\n• Real-time world editing\n• Optional multiplayer\n• Textures, GLTF, and video cutscenes\n• Graphics tiers for every device",
+  "privacyPolicyUrl": "{{PRIVACY_POLICY_URL}}",
+  "contactEmail": "{{CONTACT_EMAIL}}",
+  "dataSafety": {
+    "collectsData": true,
+    "sharedData": false,
+    "securityPractices": ["Data encrypted in transit (HTTPS for multiplayer)"],
+    "dataTypes": [
+      { "type": "Audio", "collected": true, "shared": false, "ephemeral": true, "purpose": "Optional SFX recording" },
+      { "type": "App activity", "collected": true, "shared": false, "ephemeral": false, "purpose": "Local saves and preferences" }
+    ]
+  },
+  "contentRating": "IARC questionnaire required in Play Console",
+  "releaseTrack": "internal → closed testing → production"
+}

@@ -1,13 +1,16 @@
-# Native shells (v4.0)
+# Native shells (v5.0)
+
+**Store submission:** [STORE_RELEASE.md](STORE_RELEASE.md) — `npm run store:prep`, signing, Play/App Store checklists.
 
 Threshold stays a **single Vite SPA** (`dist-pages/`). Native targets wrap that build — no runtime fork.
 
 | Target | Shell | CLI | Status |
 |--------|-------|-----|--------|
 | **Web** | Static host / GitHub Pages | `npm run build` | ✅ |
-| **Android APK** | Capacitor WebView | `npm run package:android` | 🔧 Scaffold |
-| **Windows .exe** | Electron | `npm run package:win` | 🔧 Scaffold |
-| **iOS** | Capacitor WebView | `npm run package:ios` | 🔧 Scaffold (Xcode archive on macOS) |
+| **Android APK/AAB** | Capacitor WebView | `npm run package:android` / `package:android:release` | 🔧 Release guide |
+| **Windows .exe** | Electron portable + NSIS | `npm run package:win` | 🔧 Optional `CSC_LINK` sign |
+| **macOS .dmg** | Electron | `npm run package:mac` | 🔧 macOS host + notarize |
+| **iOS** | Capacitor WebView | `npm run package:ios` | 🔧 Xcode archive on macOS |
 
 ---
 

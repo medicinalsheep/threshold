@@ -1,0 +1,67 @@
+{
+  "format": "threshold-store-release",
+  "version": 1,
+  "targets": {
+    "android": {
+      "label": "Google Play",
+      "packageScript": "package:android:release",
+      "prepProfile": "android",
+      "artifact": "android/app/build/outputs/bundle/release/app-release.aab",
+      "fallbackArtifact": "android/app/build/outputs/apk/release/app-release.apk",
+      "checklist": [
+        "Create Play Console app with unique package name (manifest packaging.capacitor.appId)",
+        "Upload privacy policy URL (generate via npm run store:prep)",
+        "Complete Data safety form: microphone (SFX), optional multiplayer (PeerJS)",
+        "Target API 34+; test on physical device",
+        "Build signed AAB: Android Studio → Generate signed bundle — or configure signing in android/",
+        "Internal testing track → closed → production",
+        "Store listing: short + full description, 512 icon, feature graphic, screenshots"
+      ]
+    },
+    "ios": {
+      "label": "App Store / TestFlight",
+      "packageScript": "package:ios",
+      "prepProfile": "ios",
+      "artifact": "Xcode Organizer → uploaded .ipa",
+      "checklist": [
+        "Apple Developer account + App Store Connect app record",
+        "Bundle ID matches manifest packaging.ios.bundleId",
+        "Xcode Signing & Capabilities → Team + automatic signing",
+        "Product → Archive → Distribute → App Store Connect",
+        "App Privacy: microphone, multiplayer networking if used",
+        "Screenshots: 6.7\" and 6.5\" iPhone required",
+        "TestFlight internal → external → App Store review"
+      ]
+    },
+    "windows": {
+      "label": "Windows distribution",
+      "packageScript": "package:win",
+      "prepProfile": "windows",
+      "artifact": "dist-electron/Threshold-{version}-win-portable.exe",
+      "checklist": [
+        "Default ship: portable .exe (no installer) — itch.io / direct download",
+        "Optional code sign: set CSC_LINK + CSC_KEY_PASSWORD before package:win",
+        "SmartScreen: signed builds reduce warnings",
+        "Test fullscreen, mic, and bundled assets on clean VM",
+        "Steam: Phase M — separate depot pipeline"
+      ]
+    },
+    "macos": {
+      "label": "macOS Electron (.dmg)",
+      "packageScript": "package:mac",
+      "prepProfile": "windows",
+      "artifact": "dist-electron/Threshold-{version}.dmg",
+      "checklist": [
+        "Build on macOS: npm run package:mac",
+        "Notarization: APPLE_ID, APPLE_APP_SPECIFIC_PASSWORD, CSC_LINK",
+        "Gatekeeper: staple notarization ticket",
+        "Capacitor iOS is separate from Electron macOS — ship WKWebView app via Xcode for Mac App Store if needed"
+      ]
+    }
+  },
+  "privacyDataTypes": [
+    { "id": "microphone", "used": true, "purpose": "Optional SFX recording in Engine", "stores": false },
+    { "id": "multiplayer", "used": true, "purpose": "Optional PeerJS sessions (host/guest)", "stores": "session metadata only" },
+    { "id": "local_storage", "used": true, "purpose": "World saves, texture library, preferences", "stores": true }
+  ]
+}

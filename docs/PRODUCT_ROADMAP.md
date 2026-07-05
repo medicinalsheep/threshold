@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → local GIMP/Blender art → AI agents on NPCs.
 
-**Current version:** **4.9.0** (Phase K — HTML5 video cutscenes, `World.playCutscene`)
+**Current version:** **5.0.0** (Phase L — store prep CLI, release packaging, signing guides)
 
 **Detailed next phases:** [NEXT_PHASES.md](NEXT_PHASES.md) (LOD, HILOD, iOS, Phase E leftovers)
 
@@ -54,7 +54,8 @@ See [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md).
 - [x] Export wizard (4-step) with texture/GLTF asset summary (v3.7)
 - [x] App icons + `build:icons` / `cap:assets`
 - [x] **Creative pipeline A–D** — [CREATIVE_PLUGINS.md](CREATIVE_PLUGINS.md)
-- [ ] Signed APK / store-ready builds
+- [x] Store prep CLI + release guides (Phase L — v5.0)
+- [ ] Signed APK / store upload (per-developer signing keys)
 - [ ] macOS `.app` notarization
 - [x] Capacitor Filesystem scaffold for on-device world import (`NativeAssets`, v3.8)
 - [x] Native bundle of `textures/` + `import/` via `bundle:assets` (v3.8)

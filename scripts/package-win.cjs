@@ -26,5 +26,8 @@ if (!fs.existsSync(icoPath)) {
     run('npm run build:icons');
 }
 
-run('npx electron-builder --config electron-builder.config.cjs --win portable');
-console.log('\nWindows package written to dist-electron/');
+run('npx electron-builder --config electron-builder.config.cjs --win portable nsis');
+console.log('\nWindows packages written to dist-electron/');
+console.log('  Portable + NSIS installer — optional sign: CSC_LINK + CSC_KEY_PASSWORD');
+console.log('  Store prep: npm run store:prep -- --manifest <game>.threshold-game.json');
+console.log('  Guide: docs/STORE_RELEASE.md');

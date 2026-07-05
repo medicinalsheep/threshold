@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "4.9.0",
+  "version": "5.0.0",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
@@ -18,6 +18,9 @@
     "package:android": "node scripts/package-android.cjs",
     "package:ios": "node scripts/package-ios.cjs",
     "package:win": "node scripts/package-win.cjs",
+    "package:mac": "node scripts/package-mac.cjs",
+    "package:android:release": "node scripts/package-android-release.cjs",
+    "store:prep": "node scripts/store-prep.cjs",
     "build:icons": "node scripts/build-icons.cjs",
     "gimp:install": "node scripts/install-gimp-plugin.cjs",
     "blender:install": "node scripts/install-blender-addon.cjs",

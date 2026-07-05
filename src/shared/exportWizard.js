@@ -149,7 +149,7 @@ export const ExportWizard = {
                 <li>Scripts: ${hasScripts ? 'included' : 'empty (add in Compiler first)'}</li>
                 <li>Creative: ${hasGimp ? 'GIMP manifest' : '—'} · ${hasBlender ? 'Blender GLTF' : '—'}</li>
                 <li>Graphics: ${escapeText(this.manifest.graphics?.tier || 'realistic')} (render ${this.manifest.graphics?.renderMode ?? 4})</li>
-                <li>Dev CLI: <code>textures:watch</code> · <code>blender:export</code> · <code>bundle:assets</code> (video/ hot-reload)</li>
+                <li>Dev CLI: <code>textures:watch</code> · <code>blender:export</code> · <code>bundle:assets</code> · <code>store:prep</code></li>
                 <li>Relay: ${escapeText(this.manifest.relay?.mode || 'peerjs-cloud')}</li>
             </ul>
             <label class="export-wizard-check" style="margin-top:10px;">
@@ -183,8 +183,9 @@ export const ExportWizard = {
                 <li>Targets: ${targets.join(', ') || 'manifest only'}</li>
                 <li>Shell: ${ThresholdShell.isNative ? ThresholdShell.kind + ' (' + ThresholdShell.platform + ')' : 'browser — use CLI for APK / .exe'}</li>
                 <li>Bundle: <code>bundle:assets</code> then <code>export:graphics --profile &lt;target&gt;</code> prunes textures per platform</li>
+                <li>Store: <code>npm run store:prep -- --manifest ${escapeText(filename)}</code> → privacy policy + Play/App Store metadata</li>
             </ul>
-            <p class="insert-hint">See <code>docs/NATIVE_SHELLS.md</code> for Android Studio and Windows build steps.</p>
+            <p class="insert-hint">See <code>docs/STORE_RELEASE.md</code> and <code>docs/NATIVE_SHELLS.md</code> for signing and upload steps.</p>
         `;
         this._pendingFilename = filename;
         this._pendingJson = JSON.stringify(m, null, 2);

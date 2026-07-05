@@ -213,6 +213,22 @@ export const GameExport = {
                     safeArea: 'viewport-fit=cover + env(safe-area-inset-*) in CSS',
                     note: 'Build/archive requires macOS. Sync assets on any OS via package:ios.',
                 },
+                android: {
+                    packageName: options.bundleId || 'com.threshold.game',
+                    appName: name,
+                    cli: 'npm run package:android',
+                    releaseCli: 'npm run package:android:release',
+                    openStudio: 'npm run cap:open',
+                    playConsole: 'Upload AAB to Google Play Console',
+                    dataSafety: 'Microphone (optional SFX), local storage, optional PeerJS multiplayer',
+                },
+                storeRelease: {
+                    prepCli: 'npm run store:prep -- --manifest <game>.threshold-game.json',
+                    docs: 'docs/STORE_RELEASE.md',
+                    privacyTemplate: 'docs/templates/privacy-policy.template.md',
+                    outputs: ['privacy-policy.md', 'app-store-metadata.json', 'play-console-metadata.json'],
+                    note: 'Run store:prep after export — applies bundleId to capacitor.config.json + generates store checklists',
+                },
                 steam: { appId: null, depotId: null, note: 'Assign after Steamworks partner setup' },
             },
         };
