@@ -34,8 +34,8 @@
       "label": "Steam depot",
       "tier": "ultra",
       "textureMax": 4096,
-      "packageScript": "package:win",
-      "notes": "High-end desktop — ultra tier, up to 4K where authored"
+      "packageScript": "package:steam",
+      "notes": "High-end desktop — ultra tier, up to 4K; npm run package:steam"
     }
   },
   "hilodSuffixes": ["_512", "_1k", "_2k", "_4k"],

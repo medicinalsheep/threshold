@@ -1,5 +1,6 @@
 import { Session } from '../shared/session.js';
 import { Network } from '../shared/network.js';
+import { setLoadReferenceLite } from '../shared/referenceEdition.js';
 
 export function initLobby(onReady) {
     const overlay = document.getElementById('lobby-overlay');
@@ -72,6 +73,19 @@ export function initLobby(onReady) {
             localStorage.setItem('threshold_player_name', name);
         }
         Network.startSolo();
+        enterApp();
+    });
+
+    document.getElementById('lobby-reference-lite')?.addEventListener('click', () => {
+        Session.init();
+        const name = document.getElementById('lobby-name')?.value?.trim();
+        if (name) {
+            Session.playerName = name;
+            localStorage.setItem('threshold_player_name', name);
+        }
+        setLoadReferenceLite(true);
+        Network.startSolo();
+        setStatus('Reference Lite — CC0 Kenney vehicles loading…');
         enterApp();
     });
 

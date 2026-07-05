@@ -1,6 +1,6 @@
 # THRESHOLD SUITE
 
-A collaborative 3D creative playground — design worlds, generate code with AI, record sounds, spawn characters, and play together in real time.
+A collaborative 3D creative playground — design worlds, generate code with AI, record sounds, spawn characters, play together, and **ship games** to stores (Play, Windows, Steam) via a guided export walkthrough.
 
 **Live:** https://medicinalsheep.github.io/threshold/
 
@@ -32,7 +32,10 @@ Lobby → Engine (3D world) ↔ Compiler (code) ↔ PromptGen (AI prompts)
 4. **Optional AI** — PromptGen → Compiler, or SCENE → AI agents on NPCs.
 5. **PLAY** — test walk/fly; use **Hyper** render mode for PBR textures.
 6. **SAVE WORLD** — **MORE** menu; share `?world=CODE` links.
-7. **EXPORT** — manifest lists textures, GLTF, sounds → `package:android` / `package:win` / `package:ios` ([native shells](docs/NATIVE_SHELLS.md)).
+7. **EXPORT** — 9-step wizard (icons, credits, packs, ship) → `.threshold-game.json` ([walkthrough](docs/EXPORT_WALKTHROUGH.md)).
+8. **Ship** — `store:prep` → `package:android` / `package:win` / `package:steam` ([store](docs/STORE_RELEASE.md) · [Steam](docs/STEAM_RELEASE.md)).
+
+**Optional:** Lobby → **REFERENCE LITE (CC0)** — Kenney vehicles to practice GLTF + export ([reference editions](docs/REFERENCE_EDITIONS.md)).
 
 Deeper workflows: Compiler sidebar → **WORKFLOWS** (Quick Start, agents, relay, sounds).
 
@@ -211,16 +214,28 @@ npm run build        # production build (GitHub Pages)
 
 Push to `main` — GitHub Pages updates automatically at the live URL above.
 
-### Native packaging
+### Native packaging & store
 
 ```bash
-npm run init:native       # first time: Capacitor Android project
-npm run package:android   # sync web build → Android Studio APK
+npm run init:native       # first time: Capacitor Android + iOS project
+npm run package:android:release
 npm run package:win       # Windows portable .exe (Electron)
+npm run package:steam -- --manifest my-game.threshold-game.json
+npm run store:prep -- --manifest my-game.threshold-game.json
+npm run store:assets -- --manifest my-game.threshold-game.json
 npm run electron:dev      # preview desktop shell
 ```
 
-**iOS / App Store:** scaffold in v4.0 — `npm run package:ios` + Xcode archive on macOS. See [docs/NATIVE_SHELLS.md](docs/NATIVE_SHELLS.md).
+Guides: [NATIVE_SHELLS](docs/NATIVE_SHELLS.md) · [STORE_RELEASE](docs/STORE_RELEASE.md) · [STEAM_RELEASE](docs/STEAM_RELEASE.md) · [EXPORT_WALKTHROUGH](docs/EXPORT_WALKTHROUGH.md)
+
+### Reference assets (CC0)
+
+```bash
+npm run reference:fetch   # Kenney vehicles (first time)
+npm run reference:sync    # → import/ + dev bundle
+```
+
+[docs/REFERENCE_EDITIONS.md](docs/REFERENCE_EDITIONS.md)
 
 Full guide: [docs/NATIVE_SHELLS.md](docs/NATIVE_SHELLS.md)
 
@@ -255,21 +270,19 @@ Support ongoing development:
 
 ---
 
-## Product roadmap (v3.7+)
+## Product roadmap (v5.4)
 
 **Design → Art → Play → Ship → Scale**
 
 | Stage | What |
 |-------|------|
-| **Design** | Engine, Compiler, PromptGen, SFX |
-| **Art** | GIMP textures, Blender GLTF, `textures:watch` |
-| **Play** | Solo / host / guest, EDIT·PLAY, retro + Hyper |
-| **Ship** | EXPORT manifest (textures, GLTF, sounds) → APK / Windows / iOS (Capacitor) |
+| **Design** | Engine, Compiler, PromptGen, SFX, 9-step tutorial |
+| **Art** | GIMP, Blender, reference CC0 editions, `textures:watch` |
+| **Play** | Solo / host / guest, EDIT·PLAY, graphics tiers, cutscenes |
+| **Ship** | 9-step EXPORT → `store:prep` → APK / Windows / iOS / **Steam** |
 | **Scale** | Optional **relay/** — [AWS free tier](relay/README.md) |
 
-**Agents (optional):** SCENE → AI — Grok NPC, Grok Dev, local script.
-
-**Next:** LOD, HILOD, suggested graphics — [docs/NEXT_PHASES.md](docs/NEXT_PHASES.md)
+**Current:** v5.4.0 — reference editions + store/Steam pipeline. [docs/NEXT_PHASES.md](docs/NEXT_PHASES.md) · [docs/PRODUCT_ROADMAP.md](docs/PRODUCT_ROADMAP.md)
 
 ---
 

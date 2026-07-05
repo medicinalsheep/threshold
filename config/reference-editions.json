@@ -1,0 +1,31 @@
+{
+  "format": "threshold-reference-editions",
+  "version": 1,
+  "defaultEdition": "threshold-ref-lite",
+  "editions": {
+    "threshold": {
+      "id": "threshold",
+      "label": "Threshold Core",
+      "description": "Procedural starter scene only — no bundled reference assets",
+      "status": "active"
+    },
+    "threshold-ref-lite": {
+      "id": "threshold-ref-lite",
+      "label": "Threshold Reference Lite",
+      "description": "CC0 Kenney vehicles + colormap texture — learn INSERT GLTF, export CREDITS/SCENE",
+      "status": "active",
+      "license": "CC0",
+      "manifest": "reference/editions/threshold-ref-lite/manifest.json",
+      "attribution": "reference/ATTRIBUTION.md",
+      "sources": "reference/SOURCES.md",
+      "syncCli": "npm run reference:sync",
+      "fetchCli": "npm run reference:fetch"
+    }
+  },
+  "planned": {
+    "threshold-ref-vehicles": "Extended CC0 vehicle pack",
+    "threshold-ref-characters": "Modular humanoids",
+    "threshold-ref-audio": "CC0 SFX seed library",
+    "threshold-ref-showcase": "Pre-built world combining all editions"
+  }
+}

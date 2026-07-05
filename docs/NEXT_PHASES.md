@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v5.3.0 — Phase M (Steamworks bridge, depot CI, achievements, package:steam).
+**Current:** v5.4.0 — Phase R1 (reference editions scaffold, CC0 Kenney vehicles, doc truth pass).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -132,7 +132,7 @@ See [STORE_RELEASE.md](STORE_RELEASE.md).
 
 | Step | Status |
 |------|--------|
-| L2.1 8-step export wizard (INFO → SHIP) | ✅ |
+| L2.1 9-step export wizard (INFO → REVIEW → … → PACKS → SHIP) | ✅ |
 | L2.2 ICONS — bundle ID + `appicon512` / `build:icons` / `cap:assets` checklist | ✅ |
 | L2.3 SCENE — live inventory (objects, GLTF, textures, sounds, video) | ✅ |
 | L2.4 CREDITS — per-asset license, author, source → `credits.md` | ✅ |
@@ -182,6 +182,24 @@ npm install steamworks.js   # optional — achievements when on Steam
 ```
 
 See [STEAM_RELEASE.md](STEAM_RELEASE.md)
+
+### Phase R1 — Reference editions scaffold (v5.4) ✅
+
+| Step | Status |
+|------|--------|
+| R1.1 `config/reference-editions.json` + `reference/ATTRIBUTION.md` | ✅ |
+| R1.2 Kenney CC0 vehicles (Starter Kit: Racing) in `threshold-ref-lite` | ✅ |
+| R1.3 `npm run reference:fetch` + `reference:sync` | ✅ |
+| R1.4 Lobby **REFERENCE LITE** + `referenceEdition.js` spawn | ✅ |
+| R1.5 Doc truth pass (9-step export, AGENTS.md, README) | ✅ |
+
+```bash
+npm run reference:fetch && npm run reference:sync
+```
+
+See [REFERENCE_EDITIONS.md](REFERENCE_EDITIONS.md)
+
+**Next (R2+):** characters, audio, showcase scene, PromptGen ASSETS block samples.
 
 ### Phase K — Cinematic layer (v4.9) ✅
 

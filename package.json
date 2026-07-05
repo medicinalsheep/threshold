@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "5.3.0",
+  "version": "5.4.0",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
@@ -24,6 +24,8 @@
     "store:assets": "node scripts/store-assets.cjs",
     "package:steam": "node scripts/package-steam.cjs",
     "steam:depot": "node scripts/steam-depot.cjs",
+    "reference:fetch": "node scripts/fetch-reference-assets.cjs",
+    "reference:sync": "node scripts/sync-reference-assets.cjs",
     "build:icons": "node scripts/build-icons.cjs",
     "gimp:install": "node scripts/install-gimp-plugin.cjs",
     "blender:install": "node scripts/install-blender-addon.cjs",

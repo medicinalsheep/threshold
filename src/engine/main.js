@@ -32,6 +32,7 @@ import { GltfImport } from '../shared/gltfImport.js';
 import { ThresholdShell } from '../shared/thresholdShell.js';
 import { CreativeWatch } from '../shared/creativeWatch.js';
 import { bootstrapStarterScene } from '../shared/starterScene.js';
+import { bootstrapReferenceIfRequested } from '../shared/referenceEdition.js';
 import { GameExport } from '../shared/gameExport.js';
 import { AgentHub } from '../shared/agentHub.js';
 import { NpcAgent } from '../grok/npcAgent.js';
@@ -119,7 +120,10 @@ export function initEngine() {
             .then((r) => UI.status(`Loaded world ${r.name} (${r.code})`))
             .catch((e) => UI.status(e.message));
     } else {
-        setTimeout(() => bootstrapStarterScene(), 120);
+        setTimeout(async () => {
+            bootstrapStarterScene();
+            await bootstrapReferenceIfRequested();
+        }, 120);
     }
 
     Walkthrough.startIfNeeded();

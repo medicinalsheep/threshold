@@ -1,0 +1,54 @@
+{
+  "format": "threshold-reference-edition",
+  "formatVersion": 1,
+  "id": "threshold-ref-lite",
+  "label": "Threshold Reference Lite",
+  "license": "CC0",
+  "author": "Kenney Vleugels (assets) · Threshold (edition manifest)",
+  "source": "https://github.com/KenneyNL/Starter-Kit-Racing",
+  "attribution": "../../ATTRIBUTION.md",
+  "models": [
+    {
+      "id": "kenney_motorcycle",
+      "name": "Kenney Motorcycle",
+      "file": "import/kenney_motorcycle.glb",
+      "kind": "vehicle",
+      "license": "CC0",
+      "author": "Kenney",
+      "spawn": { "x": -4, "y": 0, "z": 0, "physics": true }
+    },
+    {
+      "id": "kenney_truck_green",
+      "name": "Kenney Truck Green",
+      "file": "import/kenney_truck_green.glb",
+      "kind": "vehicle",
+      "license": "CC0",
+      "author": "Kenney",
+      "spawn": { "x": 4, "y": 0, "z": -2, "physics": true }
+    },
+    {
+      "id": "kenney_track_straight",
+      "name": "Kenney Track Straight",
+      "file": "import/kenney_track_straight.glb",
+      "kind": "scene",
+      "license": "CC0",
+      "author": "Kenney",
+      "spawn": { "x": 0, "y": 0, "z": -6, "physics": false, "scale": 1.2 }
+    }
+  ],
+  "textures": [
+    {
+      "id": "ref_kenney_colormap",
+      "name": "Kenney Colormap",
+      "file": "textures/ref_kenney_colormap.png",
+      "kind": "texture",
+      "license": "CC0",
+      "author": "Kenney",
+      "slot": "albedo"
+    }
+  ],
+  "credits": {
+    "global": "Reference vehicles and track by Kenney (CC0) — Starter Kit: Racing",
+    "note": "Feeds export walkthrough CREDITS + PACKS demo"
+  }
+}

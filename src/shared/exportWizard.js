@@ -265,7 +265,7 @@ export const ExportWizard = {
                 <label class="insert-hint">Global credits (shown in listings / future in-game credits)</label>
                 <textarea id="export-credits-global" class="insert-input" rows="2" maxlength="600" placeholder="Music by … · Textures original · Built with Threshold">${escapeText(this.draft.credits.global)}</textarea>
                 <div class="export-credits-list">${rows}</div>
-                <p class="insert-hint" style="margin-top:8px;">Next: <strong>PACKS</strong> step maps assets to Play IAP, Steam depot, itch DLC, and registry URIs.</p>
+                <p class="insert-hint" style="margin-top:8px;">Next: <strong>REVIEW</strong> → TARGETS → STORE → <strong>PACKS</strong> (store SKUs / registry URIs).</p>
                 ${this._renderValidation('credits')}
             `;
             return;

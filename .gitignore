@@ -27,3 +27,6 @@ textures/*.webp
 import/*.glb
 import/*.gltf
 !import/.gitkeep
+!reference/**/*.glb
+!reference/**/*.png
+public/bundle/

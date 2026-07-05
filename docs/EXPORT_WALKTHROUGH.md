@@ -1,4 +1,4 @@
-# Export walkthrough (v5.2)
+# Export walkthrough (v5.4)
 
 Guided **MORE → EXPORT** flow — from game identity through icons, scene content, asset credits, store packs, and download.
 

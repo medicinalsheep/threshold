@@ -49,6 +49,6 @@
     "Export walkthrough → PACKS step assigns storeSku + registryUri per asset",
     "assetRegistry.storeAssets in manifest documents rights + store mappings",
     "npm run store:assets (or store:prep) generates play/steam/itch/registry JSON",
-    "Phase M — Steamworks SDK in Electron; depot upload uses steam-depot-assets.json"
+    "Phase M — Steamworks + steam:depot (v5.3); depot upload uses steam-depot-assets.json"
   ]
 }

@@ -2,7 +2,7 @@
 
 Ship Threshold games to **Google Play**, **App Store**, and **Windows** from one export manifest.
 
-**Prerequisites:** **MORE → EXPORT** 8-step walkthrough → download `.threshold-game.json` → creative assets bundled.
+**Prerequisites:** **MORE → EXPORT** 9-step walkthrough → download `.threshold-game.json` → creative assets bundled.
 
 **Walkthrough:** [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) — icons, scene inventory, per-asset credits, store metadata.
 

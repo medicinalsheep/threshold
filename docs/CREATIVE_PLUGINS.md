@@ -101,4 +101,4 @@ PromptGen with **Include live scene** appends `getAssetContext()` — lists clip
 
 **Breakthrough:** Retro render modes (Threshold/Terminal) for compatibility + **Hyper** for realism — same world, same physics, same locally authored textures. No cloud required for art pipeline.
 
-**Next:** [NEXT_PHASES.md](NEXT_PHASES.md) — Phase E leftovers, iOS App Store, LOD, HILOD, suggested graphics tiers.
+**Next:** [NEXT_PHASES.md](NEXT_PHASES.md) — reference editions, store ship, open Phase R2+.

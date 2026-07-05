@@ -19,8 +19,9 @@ export const REFERENCE_LIBRARY = {
 // 7. SAVE WORLD (MORE) — ?world=CODE link
 // 8. CHECK CODE READY → RUN IN ENGINE
 // 9. PLAY — test walk + physics + Hyper for PBR
-// 10. MORE → EXPORT manifest (lists textures, GLTF, sounds) + package:android / package:win
-// See docs/CREATIVE_WORKFLOW.md`
+// 10. MORE → EXPORT — 9 steps (INFO→SHIP) → store:prep → package:*
+// Optional: Lobby REFERENCE LITE (CC0 Kenney vehicles) — docs/REFERENCE_EDITIONS.md
+// See docs/EXPORT_WALKTHROUGH.md`
         },
         {
             id: 'render_modes_3d',

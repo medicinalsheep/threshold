@@ -2,9 +2,9 @@
 
 **Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → local GIMP/Blender art → AI agents on NPCs.
 
-**Current version:** **5.3.0** (Phase M — Steamworks bridge, depot CI, achievements)
+**Current version:** **5.4.0** (Phase R1 — reference editions scaffold + doc truth pass)
 
-**Detailed next phases:** [NEXT_PHASES.md](NEXT_PHASES.md) (LOD, HILOD, iOS, Phase E leftovers)
+**Detailed phases:** [NEXT_PHASES.md](NEXT_PHASES.md) · **Reference assets:** [REFERENCE_EDITIONS.md](REFERENCE_EDITIONS.md)
 
 ---
 
@@ -51,11 +51,11 @@ See [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md).
 
 - [x] Capacitor Android APK scaffold
 - [x] Electron Windows portable `.exe`
-- [x] Export wizard (4-step) with texture/GLTF asset summary (v3.7)
+- [x] Export wizard with texture/GLTF asset summary (v3.7 → 9-step v5.4)
 - [x] App icons + `build:icons` / `cap:assets`
 - [x] **Creative pipeline A–D** — [CREATIVE_PLUGINS.md](CREATIVE_PLUGINS.md)
 - [x] Store prep CLI + release guides (Phase L — v5.0)
-- [x] Export walkthrough — 8-step wizard: icons, scene, credits, store metadata (Phase L2 — v5.1)
+- [x] Export walkthrough — 9-step wizard: icons, scene, credits, packs, ship (Phase L2/M+ — v5.1–5.4)
 - [x] Asset registry scaffold — tie authored assets to future store SKUs / collectible registry
 - [x] Store asset platform maps — PACKS step + `store:assets` CLI (Phase M+ — v5.2)
 - [ ] Signed APK / store upload (per-developer signing keys)
@@ -113,7 +113,7 @@ See [NEXT_PHASES.md](NEXT_PHASES.md):
 | **Web** | Vite → GitHub Pages | ✅ Live |
 | **APK** | Capacitor | 🔧 Scaffold |
 | **Windows** | Electron | 🔧 Scaffold |
-| **iOS** | Capacitor | ❌ Not started (Phase F) |
+| **iOS** | Capacitor + Xcode | ✅ Scaffold (Phase F — signing/archive manual) |
 | **Steam** | Electron + Steamworks | ✅ Phase M (v5.3) |
 | **Self-host** | `dist-pages` + `relay/` | ✅ |
 
