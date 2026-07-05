@@ -135,6 +135,10 @@ button {
     border-right: none;
 }
 
+.scene-dock.expanded:not(.has-panel) .dock-panels {
+    display: none !important;
+}
+
 .dock-tab-bar {
     display: flex;
     flex-direction: column;
@@ -235,6 +239,45 @@ button {
 
 .toolbar-more-menu {
     display: contents;
+}
+
+#sound-prompt-modal.open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 230;
+}
+
+#sound-prompt-sheet {
+    width: min(420px, calc(100vw - 24px));
+    max-height: 80dvh;
+    overflow-y: auto;
+}
+
+.sfx-library-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 220px;
+    overflow-y: auto;
+    margin-top: 8px;
+}
+
+.sfx-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px;
+    border: 1px solid var(--border-color);
+    font-size: 0.65rem;
+}
+
+.sfx-item-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .toolbar-more-trigger {

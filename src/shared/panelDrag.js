@@ -2,17 +2,26 @@ const STORAGE_KEY = 'threshold-panel-layout-v2';
 const MIN_W = 220;
 const MIN_H = 140;
 
+function viewportSize() {
+    const vv = window.visualViewport;
+    return {
+        w: Math.round(vv?.width ?? window.innerWidth),
+        h: Math.round(vv?.height ?? window.innerHeight),
+    };
+}
+
 function readBounds() {
     const root = getComputedStyle(document.documentElement);
     const chromeTop = parseInt(root.getPropertyValue('--chrome-top'), 10)
         || parseInt(root.getPropertyValue('--nav-height'), 10)
         || 50;
     const pad = 8;
+    const vp = viewportSize();
     return {
         nav: chromeTop,
         pad,
-        maxW: window.innerWidth - pad * 2,
-        maxH: window.innerHeight - chromeTop - pad * 2,
+        maxW: vp.w - pad * 2,
+        maxH: vp.h - chromeTop - pad * 2,
     };
 }
 
@@ -327,11 +336,50 @@ export function initPanelDrag() {
         ...PANEL_CONFIG.map((c) => c.selector),
     ];
 
-    window.addEventListener('resize', () => {
+    const clampAll = () => {
         allSelectors.forEach((selector) => {
             document.querySelector(selector)?._floatApi?.clamp();
         });
+        resolveChromeOverlap();
+    };
+
+    window.addEventListener('resize', clampAll);
+    window.addEventListener('orientationchange', () => setTimeout(clampAll, 250));
+    window.visualViewport?.addEventListener('resize', clampAll);
+    document.addEventListener('immersive-change', clampAll);
+}
+
+function rectsOverlap(a, b, gap = 12) {
+    return !(a.x + a.w + gap <= b.x
+        || b.x + b.w + gap <= a.x
+        || a.y + a.h + gap <= b.y
+        || b.y + b.h + gap <= a.y);
+}
+
+function resolveChromeOverlap() {
+    const toolbar = document.getElementById('engine-toolbar');
+    const dock = document.getElementById('scene-dock');
+    const tApi = toolbar?._floatApi;
+    const dApi = dock?._floatApi;
+    if (!tApi || !dApi || tApi.isLocked?.() || dApi.isLocked?.()) return;
+
+    const t = tApi.getRect();
+    const d = dApi.getRect();
+    if (!rectsOverlap(t, d)) return;
+
+    const { pad, nav, maxH } = readBounds();
+    const portrait = window.innerHeight > window.innerWidth;
+    const dockRect = portrait
+        ? { x: pad, y: nav + pad, w: d.w, h: Math.min(d.h, maxH * 0.42) }
+        : { x: window.innerWidth - d.w - pad, y: nav + pad + t.h + 12, w: d.w, h: d.h };
+    dock._floatRect = clampRect(dockRect, {
+        minW: 52,
+        minH: 120,
+        maxW: 480,
+        maxH: 720,
     });
+    applyRect(dock, dock._floatRect);
+    saveOne('scene-dock', dock._floatRect, dApi.isLocked());
 }
 
 window.PanelDrag = { initPanelDrag, setupFloatPanel, ensurePanelVisible };

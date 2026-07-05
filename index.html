@@ -154,6 +154,7 @@
                     <button type="button" class="dock-tab" data-dock-tab="env" title="Environment">ENV</button>
                     <button type="button" class="dock-tab" data-dock-tab="inspect" title="Edit object">EDIT</button>
                     <button type="button" class="dock-tab" data-dock-tab="skin" title="Player skin">SKIN</button>
+                    <button type="button" class="dock-tab" data-dock-tab="sfx" title="Sound library">SFX</button>
                     <button type="button" id="dock-collapse" class="dock-collapse" title="Collapse dock">◀</button>
                 </div>
                 <div class="dock-panels">
@@ -230,12 +231,41 @@
                     <div class="prop-row"><label>Bounce</label><input type="range" id="insp-restitution" min="0" max="1" step="0.05" value="0.5"></div>
                 </div>
                 <div class="insp-panel" data-insp-panel="audio">
-                    <div class="prop-row"><label>Tone (Hz)</label><input type="number" id="insp-sound-freq" min="80" max="2000" value="440"></div>
-                    <div class="prop-row"><label>Wave</label>
+                    <div class="prop-row"><label>Source</label>
+                        <select id="insp-sound-mode"><option value="tone">Synth tone</option><option value="clip">My recording</option></select>
+                    </div>
+                    <div class="prop-row insp-sound-tone"><label>Tone (Hz)</label><input type="number" id="insp-sound-freq" min="80" max="2000" value="440"></div>
+                    <div class="prop-row insp-sound-tone"><label>Wave</label>
                         <select id="insp-sound-type"><option value="sine">sine</option><option value="square">square</option><option value="triangle">triangle</option></select>
                     </div>
-                    <div class="prop-row"><button id="insp-test-sound" type="button">TEST SOUND</button></div>
+                    <div class="prop-row insp-sound-clip" style="display:none;"><label>Clip</label>
+                        <select id="insp-sound-clip"></select>
+                    </div>
+                    <div class="prop-row"><label>Trigger</label>
+                        <select id="insp-sound-trigger">
+                            <option value="collision">On collision</option>
+                            <option value="interact">On interact</option>
+                            <option value="emote">On emote / walk</option>
+                            <option value="ambient">Ambient loop</option>
+                        </select>
+                    </div>
+                    <div class="prop-row">
+                        <button id="insp-test-sound" type="button">TEST</button>
+                        <button id="insp-record-sound" type="button">RECORD</button>
+                    </div>
                 </div>
+            </div>
+
+            <div id="sfx-panel" class="panel dock-panel" data-dock-panel="sfx" style="display:none;">
+                <div class="prop-row"><h3 style="margin:0;">SOUND LIBRARY</h3></div>
+                <p class="insert-hint" style="margin:0 0 8px;">Record your own sounds. Link them to objects in EDIT → Audio, or when adding AI content.</p>
+                <input type="text" id="sfx-record-name" class="insert-input" placeholder="Sound name" style="margin-bottom:6px;">
+                <div class="prop-row">
+                    <button id="sfx-record-btn" type="button">● RECORD</button>
+                    <button id="sfx-stop-btn" type="button" style="display:none;">■ STOP</button>
+                </div>
+                <p id="sfx-record-status" class="insert-hint" style="margin:6px 0;">Tap RECORD — mic permission required once.</p>
+                <div id="sfx-library-list" class="sfx-library-list"></div>
             </div>
 
             <div id="player-skin-panel" class="panel dock-panel" data-dock-panel="skin" style="display:none;">
@@ -258,6 +288,27 @@
             <div id="status-msg"></div>
             <div id="command-bar"><input type="text" id="cmd-input" placeholder="> Enter JS command or 'allow pasting'..." autocomplete="off"></div>
             <button id="btn-console-restore" class="console-restore-tab" type="button" title="Show command console">▲ CONSOLE</button>
+        </div>
+
+        <!-- Sound prompt (after AI / insert) -->
+        <div id="sound-prompt-modal" class="modal-backdrop">
+            <div id="sound-prompt-sheet" class="panel insert-sheet">
+                <div class="insert-header">
+                    <h3 id="sound-prompt-title" style="margin:0;">Add sound</h3>
+                    <button id="sound-prompt-close" type="button">✕</button>
+                </div>
+                <p id="sound-prompt-hint" class="insert-hint" style="margin:0 0 12px;">Record or pick a sound now, or add later in SFX tab.</p>
+                <input type="text" id="sound-prompt-name" class="insert-input" placeholder="Sound name" style="margin-bottom:8px;">
+                <div class="prop-row">
+                    <button id="sound-prompt-record" type="button">● RECORD</button>
+                    <button id="sound-prompt-later" type="button">LATER</button>
+                </div>
+                <p id="sound-prompt-status" class="insert-hint" style="margin:8px 0;">Record a sound for this feature, or add later</p>
+                <div class="prop-row"><label>Saved</label>
+                    <select id="sound-prompt-pick" class="insert-input" style="flex:1;"></select>
+                </div>
+                <button id="sound-prompt-assign" type="button" style="width:100%;margin-top:8px;">USE THIS SOUND</button>
+            </div>
         </div>
 
         <!-- Insert Modal (mobile-friendly) -->

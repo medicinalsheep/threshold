@@ -119,6 +119,14 @@ export const PlayerController = {
         const sprinting = window.Controls?.isAction?.('sprint') && speed > 0.5;
         HumanMesh.updateWalk(this.group, speed, 0.016, sprinting);
 
+        if (speed > 1.5 && this.group.userData?.soundTrigger === 'emote') {
+            const now = performance.now();
+            if (!this._lastEmoteSound || now - this._lastEmoteSound > 380) {
+                this._lastEmoteSound = now;
+                window.AudioSys?.playObjectSound?.(this.group, 'emote');
+            }
+        }
+
         const forward = new THREE.Vector3();
         camera.getWorldDirection(forward);
         forward.y = 0;

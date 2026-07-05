@@ -24,6 +24,8 @@ import { SimMode } from '../shared/simMode.js';
 import { initPanelDrag, ensurePanelVisible } from '../shared/panelDrag.js';
 import { ViewPrefs } from '../shared/viewPrefs.js';
 import { SceneDock } from '../shared/sceneDock.js';
+import { SoundLibrary } from '../shared/soundLibrary.js';
+import { SoundPrompt } from '../shared/soundPrompt.js';
 
 const IS_TOUCH_DEVICE = window.matchMedia('(pointer: coarse)').matches;
 
@@ -148,6 +150,19 @@ const Physics = {
             friction: 0.3, restitution: 0.7 // Bounciness
         });
         this.world.addContactMaterial(contactMat);
+
+        const lastHit = new Map();
+        this.world.addEventListener('collide', (e) => {
+            const now = performance.now();
+            [e.bodyA, e.bodyB].forEach((body) => {
+                const entry = State.physicsObjects.find((p) => p.body === body);
+                if (!entry?.mesh) return;
+                const id = entry.mesh.userData?.id || entry.mesh.uuid;
+                if (lastHit.get(id) && now - lastHit.get(id) < 280) return;
+                lastHit.set(id, now);
+                AudioSys.playObjectSound(entry.mesh, 'collision');
+            });
+        });
     },
 
     createFloor: function () {
@@ -188,28 +203,79 @@ const Physics = {
 // --- AUDIO SYSTEM ---
 const AudioSys = {
     ctx: null,
+    clipCache: new Map(),
+
     init: function () {
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         this.ctx = new AudioContext();
     },
-    playTone: function (freq, type = 'square', dur = 0.1) {
-        if (!State.audioEnabled || !this.ctx) return;
+
+    ensureContext: function () {
+        if (!this.ctx) this.init();
+        State.audioEnabled = true;
         if (this.ctx.state === 'suspended') this.ctx.resume();
+    },
+
+    playTone: function (freq, type = 'square', dur = 0.1) {
+        if (!this.ctx) return;
+        this.ensureContext();
 
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-        osc.type = type; osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
         gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + dur);
-        osc.connect(gain); gain.connect(this.ctx.destination);
-        osc.start(); osc.stop(this.ctx.currentTime + dur);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + dur);
     },
+
+    playClip: async function (clipId, volume = 0.85) {
+        if (!clipId) return;
+        this.ensureContext();
+        try {
+            let buffer = this.clipCache.get(clipId);
+            if (!buffer) {
+                const blob = await SoundLibrary.getBlob(clipId);
+                if (!blob) return;
+                const arr = await blob.arrayBuffer();
+                buffer = await this.ctx.decodeAudioData(arr.slice(0));
+                this.clipCache.set(clipId, buffer);
+            }
+            const src = this.ctx.createBufferSource();
+            const gain = this.ctx.createGain();
+            src.buffer = buffer;
+            gain.gain.value = volume;
+            src.connect(gain);
+            gain.connect(this.ctx.destination);
+            src.start();
+        } catch (e) {
+            console.warn('Clip playback failed:', e);
+        }
+    },
+
+    playObjectSound: function (obj, trigger = 'test') {
+        if (!obj?.userData) return;
+        const mode = obj.userData.soundMode || 'tone';
+        const configured = obj.userData.soundTrigger || 'collision';
+        if (trigger !== 'test' && configured !== trigger) return;
+
+        if (mode === 'clip' && obj.userData.soundClipId) {
+            this.playClip(obj.userData.soundClipId);
+            return;
+        }
+        this.playTone(obj.userData.soundFreq || 440, obj.userData.soundType || 'sine', 0.25);
+    },
+
     toggle: function () {
         if (!this.ctx) this.init();
         State.audioEnabled = !State.audioEnabled;
-        document.getElementById('btn-audio').innerText = State.audioEnabled ? "AUDIO: ON" : "AUDIO: OFF";
+        const btn = document.getElementById('btn-audio');
+        if (btn) btn.innerText = State.audioEnabled ? 'AUDIO: ON' : 'AUDIO: OFF';
         if (State.audioEnabled && this.ctx.state === 'suspended') this.ctx.resume();
-    }
+    },
 };
 
 // --- VIDEO RECORDER --- (Merged: Your version + fixes for smoothness/cleanup)
@@ -811,7 +877,11 @@ const World = {
             Engine.scene.add(npc);
             State.objects.push(npc);
         }
-        if (!silent) { UI.closeInsert(); UI.status('NPC human inserted'); }
+        if (!silent) {
+            UI.closeInsert();
+            UI.status('NPC human inserted');
+            if (npc) setTimeout(() => SoundPrompt.offerForObject(npc, 'NPC character', 'interact'), 400);
+        }
     },
     spawnPlayablePlayer: function (silent = false) {
         const x = State.ctxTargetPos.x;
@@ -850,7 +920,10 @@ const World = {
     runCustomAtCursor: function (code, silent = false) {
         const wrapped = `const _x=${State.ctxTargetPos.x}, _y=${State.ctxTargetPos.y}, _z=${State.ctxTargetPos.z};\n${code}`;
         Runtime.execute(wrapped, 'insert-code');
-        if (!silent) UI.closeInsert();
+        if (!silent) {
+            UI.closeInsert();
+            setTimeout(() => SoundPrompt.offerForWorld('Custom code / object'), 500);
+        }
     },
     getCursorPos: function () {
         return { x: State.ctxTargetPos.x, y: State.ctxTargetPos.y, z: State.ctxTargetPos.z };
@@ -983,23 +1056,64 @@ const UI = {
         document.getElementById('btn-env-close')?.addEventListener('click', () => UI.setEnvPanelVisible(false));
         document.getElementById('btn-toolbar-more')?.addEventListener('click', (e) => {
             e.stopPropagation();
-            document.getElementById('toolbar-more-menu')?.classList.toggle('open');
+            const menu = document.getElementById('toolbar-more-menu');
+            menu?.classList.toggle('open');
+            if (menu?.classList.contains('open')) this.positionMoreMenu();
         });
         document.addEventListener('click', () => {
             document.getElementById('toolbar-more-menu')?.classList.remove('open');
         });
+        window.addEventListener('resize', () => this.positionMoreMenu());
+        window.addEventListener('orientationchange', () => setTimeout(() => this.positionMoreMenu(), 200));
         document.getElementById('btn-load-model')?.addEventListener('click', () => UI.loadPlayerModel());
 
         document.querySelectorAll('.insp-tab').forEach((tab) => {
             tab.addEventListener('click', () => UI.switchInspTab(tab.dataset.inspTab));
         });
         ['insp-name', 'insp-color', 'insp-rough', 'insp-metal', 'insp-emissive', 'insp-emissive-int',
-            'insp-physics', 'insp-mass', 'insp-friction', 'insp-restitution', 'insp-sound-freq', 'insp-sound-type'
+            'insp-physics', 'insp-mass', 'insp-friction', 'insp-restitution', 'insp-sound-freq', 'insp-sound-type',
+            'insp-sound-mode', 'insp-sound-clip', 'insp-sound-trigger'
         ].forEach((id) => {
             document.getElementById(id)?.addEventListener('input', () => UI.applyInspectorFromUi());
-            document.getElementById(id)?.addEventListener('change', () => UI.applyInspectorFromUi());
+            document.getElementById(id)?.addEventListener('change', () => {
+                if (id === 'insp-sound-mode') UI.syncSoundInspectorMode();
+                UI.applyInspectorFromUi();
+            });
         });
         document.getElementById('insp-test-sound')?.addEventListener('click', () => UI.testObjectSound());
+        document.getElementById('insp-record-sound')?.addEventListener('click', () => {
+            const obj = State.selectedObject;
+            if (obj) SoundPrompt.offerForObject(obj, obj.userData?.name || 'Object', 'collision');
+        });
+
+        SoundPrompt.init();
+        SoundLibrary.init().then(() => UI.renderSoundLibrary());
+        window.addEventListener('sound-library-change', () => UI.renderSoundLibrary());
+
+        let sfxRecording = false;
+        document.getElementById('sfx-record-btn')?.addEventListener('click', async () => {
+            try {
+                AudioSys.ensureContext();
+                await SoundLibrary.startRecording();
+                sfxRecording = true;
+                document.getElementById('sfx-record-btn').style.display = 'none';
+                document.getElementById('sfx-stop-btn').style.display = 'inline-block';
+                document.getElementById('sfx-record-status').textContent = 'Recording…';
+            } catch (e) {
+                UI.status(e.message || 'Mic denied');
+            }
+        });
+        document.getElementById('sfx-stop-btn')?.addEventListener('click', async () => {
+            if (!sfxRecording) return;
+            const blob = await SoundLibrary.stopRecording();
+            sfxRecording = false;
+            document.getElementById('sfx-record-btn').style.display = 'inline-block';
+            document.getElementById('sfx-stop-btn').style.display = 'none';
+            document.getElementById('sfx-record-status').textContent = 'Saved to library';
+            const name = document.getElementById('sfx-record-name')?.value?.trim() || `Sound ${Date.now().toString(36).slice(-4)}`;
+            await SoundLibrary.saveClip(name, blob, { context: 'library' });
+            UI.renderSoundLibrary();
+        });
         document.getElementById('btn-reload-skin')?.addEventListener('click', () => UI.reloadPlayerSkin());
         document.getElementById('btn-player-code')?.addEventListener('click', () => UI.openPlayerCodeRef());
 
@@ -1135,6 +1249,10 @@ const UI = {
         document.getElementById('insp-restitution').value = obj.userData.restitution ?? 0.5;
         document.getElementById('insp-sound-freq').value = obj.userData.soundFreq ?? 440;
         document.getElementById('insp-sound-type').value = obj.userData.soundType || 'sine';
+        document.getElementById('insp-sound-mode').value = obj.userData.soundMode || 'tone';
+        document.getElementById('insp-sound-trigger').value = obj.userData.soundTrigger || 'collision';
+        this.populateSoundClipSelect(obj.userData.soundClipId || '');
+        this.syncSoundInspectorMode();
     },
     applyInspectorFromUi: function () {
         const obj = State.selectedObject;
@@ -1156,6 +1274,9 @@ const UI = {
         obj.userData.restitution = parseFloat(document.getElementById('insp-restitution').value);
         obj.userData.soundFreq = parseInt(document.getElementById('insp-sound-freq').value, 10);
         obj.userData.soundType = document.getElementById('insp-sound-type').value;
+        obj.userData.soundMode = document.getElementById('insp-sound-mode').value;
+        obj.userData.soundTrigger = document.getElementById('insp-sound-trigger').value;
+        obj.userData.soundClipId = document.getElementById('insp-sound-clip').value || null;
         UI.syncObjectPhysics(obj, wantPhys);
     },
     syncObjectPhysics: function (obj, enabled) {
@@ -1176,7 +1297,59 @@ const UI = {
     testObjectSound: function () {
         const obj = State.selectedObject;
         if (!obj) return;
-        AudioSys.playTone(obj.userData.soundFreq || 440, obj.userData.soundType || 'sine', 0.25);
+        AudioSys.playObjectSound(obj, 'test');
+    },
+    populateSoundClipSelect: function (selectedId = '') {
+        const sel = document.getElementById('insp-sound-clip');
+        if (!sel) return;
+        const clips = SoundLibrary.list();
+        sel.innerHTML = '<option value="">— pick recording —</option>'
+            + clips.map((c) => `<option value="${c.id}">${c.name}</option>`).join('');
+        if (selectedId) sel.value = selectedId;
+    },
+    syncSoundInspectorMode: function () {
+        const mode = document.getElementById('insp-sound-mode')?.value || 'tone';
+        document.querySelectorAll('.insp-sound-tone').forEach((el) => {
+            el.style.display = mode === 'tone' ? '' : 'none';
+        });
+        document.querySelectorAll('.insp-sound-clip').forEach((el) => {
+            el.style.display = mode === 'clip' ? '' : 'none';
+        });
+        if (mode === 'clip') this.populateSoundClipSelect(document.getElementById('insp-sound-clip')?.value);
+    },
+    renderSoundLibrary: function () {
+        const list = document.getElementById('sfx-library-list');
+        if (!list) return;
+        const clips = SoundLibrary.list();
+        this.populateSoundClipSelect(document.getElementById('insp-sound-clip')?.value);
+        if (!clips.length) {
+            list.innerHTML = '<p class="insert-hint" style="margin:0;">No sounds yet — record one above.</p>';
+            return;
+        }
+        list.innerHTML = clips.map((c) => `
+            <div class="sfx-item" data-sfx-id="${c.id}">
+                <span class="sfx-item-name">${c.name}</span>
+                <button type="button" class="btn-sm sfx-play" data-sfx-play="${c.id}">▶</button>
+                <button type="button" class="btn-sm sfx-del" data-sfx-del="${c.id}">✕</button>
+            </div>
+        `).join('');
+        list.querySelectorAll('[data-sfx-play]').forEach((btn) => {
+            btn.addEventListener('click', () => AudioSys.playClip(btn.dataset.sfxPlay));
+        });
+        list.querySelectorAll('[data-sfx-del]').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+                await SoundLibrary.deleteClip(btn.dataset.sfxDel);
+                UI.renderSoundLibrary();
+            });
+        });
+    },
+    positionMoreMenu: function () {
+        const menu = document.getElementById('toolbar-more-menu');
+        const trigger = document.getElementById('btn-toolbar-more');
+        if (!menu?.classList.contains('open') || !trigger || window.innerWidth >= 900) return;
+        const r = trigger.getBoundingClientRect();
+        menu.style.top = `${r.bottom + 4}px`;
+        menu.style.left = `${Math.max(8, Math.min(r.left, window.innerWidth - menu.offsetWidth - 8))}px`;
     },
     reloadPlayerSkin: function () {
         if (!PlayerController.spawned) { this.status('Spawn a player first'); return; }
@@ -1266,6 +1439,9 @@ const UI = {
         try {
             await PlayerController.applyModelUrl(url);
             this.status('GLTF model loaded');
+            if (PlayerController.group) {
+                setTimeout(() => SoundPrompt.offerForObject(PlayerController.group, 'Avatar / emote', 'emote'), 500);
+            }
         } catch (e) {
             this.status('Model load failed: ' + e.message);
         }

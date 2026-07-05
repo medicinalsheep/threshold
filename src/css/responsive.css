@@ -81,16 +81,16 @@
 
     .toolbar-more-menu {
         display: none;
-        position: absolute;
-        top: calc(100% + 4px);
-        right: 0;
-        min-width: 140px;
+        position: fixed;
+        min-width: 148px;
+        max-width: min(220px, calc(100vw - 16px));
         background: var(--panel-bg);
         border: 1px solid var(--border-color);
         padding: 6px;
         gap: 4px;
-        z-index: 30;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        z-index: 60;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+        border-radius: 6px;
     }
 
     .toolbar-more-menu.open {
@@ -206,6 +206,35 @@
     #auth-card {
         width: calc(100vw - 32px);
         max-width: 420px;
+    }
+}
+
+@media (orientation: portrait) {
+    #engine-toolbar.float-panel {
+        max-height: 38dvh;
+    }
+
+    #scene-dock.float-panel {
+        max-height: 42dvh;
+    }
+
+    #engine-toolbar.float-panel .engine-toolbar-body,
+    #scene-dock.float-panel .scene-dock-inner {
+        overflow-y: auto;
+    }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+    #engine-toolbar.float-panel {
+        max-height: 52dvh;
+    }
+
+    #scene-dock.float-panel {
+        max-height: 70dvh;
+    }
+
+    .mobile-fab {
+        bottom: 72px !important;
     }
 }
 

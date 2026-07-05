@@ -37,8 +37,10 @@ export const SceneDock = {
         const dock = document.getElementById('scene-dock');
         if (!dock) return;
 
-        const expanded = ViewPrefs.get('dockExpanded', window.innerWidth >= 900);
+        const lastTab = ViewPrefs.get('dockTab', null);
+        const expanded = ViewPrefs.get('dockExpanded', false) && !!lastTab;
         setExpanded(expanded, false);
+        if (lastTab) this.openTab(lastTab);
 
         tabs().forEach((tab) => {
             tab.addEventListener('click', () => this.openTab(tab.dataset.dockTab));
@@ -101,6 +103,10 @@ export const SceneDock = {
     restoreLastTab() {
         const last = ViewPrefs.get('dockTab', null);
         if (last) this.openTab(last);
+    },
+
+    refreshSoundLibrary() {
+        window.UI?.renderSoundLibrary?.();
     },
 };
 

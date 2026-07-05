@@ -251,6 +251,9 @@ ${code}`;
             } else {
                 Runtime.execute(code, 'compiler');
             }
+            setTimeout(() => {
+                window.SoundPrompt?.offerForWorld?.('AI / compiler script');
+            }, 600);
         }, 150);
     },
 
