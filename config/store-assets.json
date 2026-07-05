@@ -1,7 +1,7 @@
 {
   "format": "threshold-store-assets-config",
-  "version": 1,
-  "description": "Scaffold for tying authored game assets to store listings and future collectible/registry opportunities",
+  "version": 2,
+  "description": "Map authored game assets to store listings, IAP packs, Steam depots, and collectible registry",
   "assetKinds": ["texture", "sound", "model", "video", "scene"],
   "licensePresets": [
     "All rights reserved",
@@ -11,14 +11,44 @@
     "Original — created in Threshold",
     "Licensed — third party (cite source)"
   ],
+  "platforms": {
+    "play": {
+      "label": "Google Play",
+      "productTypes": ["managed", "subscription"],
+      "outputFile": "play-in-app-products.json",
+      "docs": "Play Console → Monetize → Products → Create product with SKU"
+    },
+    "steam": {
+      "label": "Steam",
+      "outputFile": "steam-depot-assets.json",
+      "docs": "Steamworks → App Admin → Depots → upload bundle/ paths via steamcmd"
+    },
+    "itch": {
+      "label": "itch.io",
+      "outputFile": "itch-asset-packs.json",
+      "docs": "itch.io → Edit game → Upload DLC / separate files per pack"
+    },
+    "registry": {
+      "label": "Collectible registry",
+      "outputFile": "collectible-registry.json",
+      "uriScheme": "threshold://",
+      "docs": "Optional registryUri per asset — IPFS, on-chain metadata, or threshold:// pointer"
+    }
+  },
   "storeLinkFields": {
-    "storeSku": "Platform SKU or Play/App internal product id (future)",
-    "registryUri": "Optional URI — IPFS, on-chain metadata, or store asset manifest (future)"
+    "storeSku": "Unified SKU — Play product id, Steam DLC key, or itch file id",
+    "registryUri": "Optional URI — threshold://, ipfs://, or store asset manifest"
+  },
+  "packKinds": {
+    "texture": { "label": "Texture pack", "suffix": "textures" },
+    "model": { "label": "Model pack", "suffix": "models" },
+    "sound": { "label": "Sound pack", "suffix": "sounds" },
+    "video": { "label": "Video pack", "suffix": "videos" }
   },
   "workflow": [
-    "Export walkthrough → CREDITS step attributes every sound/texture/model/video",
-    "assetRegistry in .threshold-game.json documents rights for store review",
-    "store:prep generates credits.md for privacy policy and store forms",
-    "Phase M+ — map assetRegistry.items to Steam depot / Play asset packs"
+    "Export walkthrough → PACKS step assigns storeSku + registryUri per asset",
+    "assetRegistry.storeAssets in manifest documents rights + store mappings",
+    "npm run store:assets (or store:prep) generates play/steam/itch/registry JSON",
+    "Phase M — Steamworks SDK in Electron; depot upload uses steam-depot-assets.json"
   ]
 }

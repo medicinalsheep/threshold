@@ -28,7 +28,11 @@ Output of `store:prep`:
 |------|-----|
 | `dist-store/<slug>/privacy-policy.md` | Host on your site; paste URL into store forms |
 | `dist-store/<slug>/credits.md` | Asset attributions from export wizard CREDITS step |
-| `dist-store/<slug>/asset-registry.json` | Store-facing asset list + future SKU/registry scaffold |
+| `dist-store/<slug>/asset-registry.json` | Store-facing asset list + SKU/registry mappings |
+| `dist-store/<slug>/play-in-app-products.json` | Google Play IAP SKU reference |
+| `dist-store/<slug>/steam-depot-assets.json` | Steam depot file paths |
+| `dist-store/<slug>/itch-asset-packs.json` | itch.io DLC structure |
+| `dist-store/<slug>/collectible-registry.json` | Assets with registry URIs |
 | `dist-store/<slug>/app-store-metadata.json` | App Store Connect copy-paste reference |
 | `dist-store/<slug>/play-console-metadata.json` | Play Console listing reference |
 | `dist-store/<slug>/store-prep.json` | Checklist + next commands |
@@ -42,12 +46,13 @@ Output of `store:prep`:
 EXPORT walkthrough → manifest → store:prep → package:<target> → store console upload
 ```
 
-1. **Export walkthrough** — INFO → ICONS → SCENE → CREDITS → REVIEW → TARGETS → STORE → SHIP (see [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md)).
+1. **Export walkthrough** — INFO → … → STORE → PACKS → SHIP (see [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md)).
 2. **Name & bundle ID** — ICONS step; `store:prep` writes `capacitor.config.json` and `config/native-app.json`.
-3. **Credits** — CREDITS step feeds `credits.md` and `asset-registry.json` for store review and future asset packs.
-4. **Privacy policy** — edit generated `privacy-policy.md`; host at a public URL (STORE step URL → `store:prep`).
-5. **Graphics bundle** — `package:*` scripts run `bundle:assets` + `export:graphics --install` automatically.
-6. **Checklist** — `store:prep` prints per-target steps from `config/store-release.json`.
+3. **Credits** — CREDITS step feeds `credits.md` and `asset-registry.json` for store review.
+4. **Packs** — PACKS step maps assets to Play/Steam/itch SKUs; `npm run store:assets` generates platform JSON. See [STORE_ASSETS.md](STORE_ASSETS.md).
+5. **Privacy policy** — edit generated `privacy-policy.md`; host at a public URL (STORE step URL → `store:prep`).
+6. **Graphics bundle** — `package:*` scripts run `bundle:assets` + `export:graphics --install` automatically.
+7. **Checklist** — `store:prep` prints per-target steps from `config/store-release.json`.
 
 ---
 

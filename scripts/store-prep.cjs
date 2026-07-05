@@ -51,7 +51,11 @@ Options:
 Writes:
   dist-store/<slug>/privacy-policy.md
   dist-store/<slug>/credits.md
-  dist-store/<slug>/asset-registry.json (when manifest includes assetRegistry)
+  dist-store/<slug>/asset-registry.json
+  dist-store/<slug>/play-in-app-products.json
+  dist-store/<slug>/steam-depot-assets.json
+  dist-store/<slug>/itch-asset-packs.json
+  dist-store/<slug>/collectible-registry.json
   dist-store/<slug>/app-store-metadata.json
   dist-store/<slug>/play-console-metadata.json
   dist-store/<slug>/store-prep.json

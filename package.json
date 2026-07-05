@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "5.1.0",
+  "version": "5.2.0",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
@@ -21,6 +21,7 @@
     "package:mac": "node scripts/package-mac.cjs",
     "package:android:release": "node scripts/package-android-release.cjs",
     "store:prep": "node scripts/store-prep.cjs",
+    "store:assets": "node scripts/store-assets.cjs",
     "build:icons": "node scripts/build-icons.cjs",
     "gimp:install": "node scripts/install-gimp-plugin.cjs",
     "blender:install": "node scripts/install-blender-addon.cjs",

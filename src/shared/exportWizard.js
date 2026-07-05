@@ -9,6 +9,8 @@ import {
     ensureCreditEntries,
     validateStep,
     suggestBundleId,
+    suggestAllStoreLinks,
+    buildKindPacks,
 } from './exportWalkthrough.js';
 import profilesConfig from '../../config/store-assets.json';
 
@@ -85,6 +87,29 @@ export const ExportWizard = {
         });
     },
 
+    readPacksFromUi() {
+        const opp = this.draft.assetOpportunity;
+        opp.registryEnabled = !!document.getElementById('export-packs-enabled')?.checked;
+        opp.steam = {
+            appId: document.getElementById('export-steam-app')?.value?.trim() || '',
+            depotId: document.getElementById('export-steam-depot')?.value?.trim() || '',
+        };
+        opp.play = {
+            applicationId: document.getElementById('export-play-app')?.value?.trim()
+                || this.draft.branding?.bundleId
+                || '',
+        };
+        opp.itch = {
+            gameSlug: document.getElementById('export-itch-slug')?.value?.trim() || '',
+        };
+        document.querySelectorAll('[data-pack-id]').forEach((el) => {
+            const id = el.dataset.packId;
+            const field = el.dataset.packField;
+            if (!id || !field || !this.draft.credits.entries[id]) return;
+            this.draft.credits.entries[id][field] = el.value?.trim() || '';
+        });
+    },
+
     readStoreFromUi() {
         this.draft.store.contactEmail = document.getElementById('export-store-contact')?.value?.trim() || '';
         this.draft.store.supportUrl = document.getElementById('export-store-support')?.value?.trim() || '';
@@ -110,6 +135,7 @@ export const ExportWizard = {
         if (stepId === 'review') this.readReviewFromUi();
         if (stepId === 'targets') this.readTargetsFromUi();
         if (stepId === 'store') this.readStoreFromUi();
+        if (stepId === 'packs') this.readPacksFromUi();
     },
 
     async buildManifest() {
@@ -238,7 +264,7 @@ export const ExportWizard = {
                 <label class="insert-hint">Global credits (shown in listings / future in-game credits)</label>
                 <textarea id="export-credits-global" class="insert-input" rows="2" maxlength="600" placeholder="Music by … · Textures original · Built with Threshold">${escapeText(this.draft.credits.global)}</textarea>
                 <div class="export-credits-list">${rows}</div>
-                <p class="insert-hint" style="margin-top:8px;">Future: <code>assetRegistry.storeAssets</code> links each asset to store SKUs / collectible registry (see EXPORT_WALKTHROUGH.md)</p>
+                <p class="insert-hint" style="margin-top:8px;">Next: <strong>PACKS</strong> step maps assets to Play IAP, Steam depot, itch DLC, and registry URIs.</p>
                 ${this._renderValidation('credits')}
             `;
             return;
@@ -278,6 +304,49 @@ export const ExportWizard = {
             return;
         }
 
+        if (stepId === 'packs') {
+            this.draft.credits.entries = ensureCreditEntries(this.draft, this.inventory);
+            const opp = this.draft.assetOpportunity;
+            const entries = Object.values(this.draft.credits.entries);
+            const packs = buildKindPacks(this.draft, entries);
+            const packSummary = packs.length
+                ? packs.map((p) => `<li>${escapeText(p.label)} — <code>${escapeText(p.storeSku)}</code> (${p.assetIds.length} assets)</li>`).join('')
+                : '<li>(no assets to pack)</li>';
+            const rows = entries.length ? entries.map((e) => `
+                <div class="export-pack-row">
+                    <div class="export-credit-label"><strong>${escapeText(e.label || e.id)}</strong> <span class="export-credit-kind">${escapeText(e.kind)}</span></div>
+                    <label class="insert-hint">Store SKU</label>
+                    <input data-pack-id="${escapeAttr(e.id)}" data-pack-field="storeSku" class="insert-input" value="${escapeAttr(e.storeSku || '')}" maxlength="80" placeholder="game.texture.stone_block">
+                    <label class="insert-hint">Registry URI</label>
+                    <input data-pack-id="${escapeAttr(e.id)}" data-pack-field="registryUri" class="insert-input" value="${escapeAttr(e.registryUri || '')}" maxlength="200" placeholder="threshold://com.you.game/asset/…">
+                </div>`).join('') : '<p class="insert-hint">Add textures, sounds, or models in Engine first.</p>';
+
+            body.innerHTML = `
+                <p class="insert-hint">Map authored assets to store products — Play IAP, Steam depot files, itch DLC, collectible registry.</p>
+                <label class="export-wizard-check"><input type="checkbox" id="export-packs-enabled" ${opp.registryEnabled ? 'checked' : ''}> Enable store asset mapping in manifest</label>
+                <label class="insert-hint">Steam App ID</label>
+                <input type="text" id="export-steam-app" class="insert-input" value="${escapeAttr(opp.steam?.appId || '')}" placeholder="1234560">
+                <label class="insert-hint">Steam Depot ID</label>
+                <input type="text" id="export-steam-depot" class="insert-input" value="${escapeAttr(opp.steam?.depotId || '')}" placeholder="1234561">
+                <label class="insert-hint">Play application ID (defaults to bundle ID)</label>
+                <input type="text" id="export-play-app" class="insert-input" value="${escapeAttr(opp.play?.applicationId || this.draft.branding?.bundleId || '')}" maxlength="120">
+                <label class="insert-hint">itch.io game slug</label>
+                <input type="text" id="export-itch-slug" class="insert-input" value="${escapeAttr(opp.itch?.gameSlug || '')}" placeholder="my-threshold-game">
+                <button type="button" id="export-suggest-skus" class="btn-sm" style="margin:8px 0;">SUGGEST ALL SKUs</button>
+                <p class="insert-hint">Auto packs by kind:</p>
+                <ul class="export-wizard-summary">${packSummary}</ul>
+                <div class="export-packs-list">${rows}</div>
+                <p class="insert-hint" style="margin-top:8px;"><code>npm run store:assets</code> generates platform JSON · <code>docs/STORE_ASSETS.md</code></p>
+                ${this._renderValidation('packs')}
+            `;
+            document.getElementById('export-suggest-skus')?.addEventListener('click', () => {
+                this.readPacksFromUi();
+                suggestAllStoreLinks(this.draft);
+                this.render();
+            });
+            return;
+        }
+
         this._renderPackageStep();
     },
 
@@ -292,7 +361,7 @@ export const ExportWizard = {
             <ul class="export-wizard-summary">
                 <li><strong>${escapeText(m.game.name)}</strong> · ${escapeText(m.branding?.bundleId || m.packaging?.capacitor?.appId)}</li>
                 <li>Assets: ${m.assetRegistry?.inventory?.objects ?? 0} obj · ${m.assetRegistry?.inventory?.sounds ?? 0} snd · ${m.assetRegistry?.inventory?.textures ?? 0} tex · ${m.videos?.length ?? 0} video</li>
-                <li>Credits: ${Object.keys(m.credits?.entries || {}).length} attributed · registry v${m.assetRegistry?.formatVersion ?? 1}</li>
+                <li>Credits: ${Object.keys(m.credits?.entries || {}).length} attributed · store assets: ${m.assetRegistry?.storeAssets?.status || 'scaffold'}</li>
                 <li>Graphics: ${escapeText(m.graphics?.tier || 'realistic')}</li>
             </ul>
             <label class="export-wizard-check" style="margin-top:10px;">
@@ -329,9 +398,10 @@ export const ExportWizard = {
             </ul>
             <p class="insert-hint">Post-download commands:</p>
             <pre class="export-wizard-cli">npm run store:prep -- --manifest ${escapeText(filename)}${escapeText(contact)}${escapeText(privacy)}
+npm run store:assets -- --manifest ${escapeText(filename)}
 npm run bundle:assets
 npm run package:android:release  # or package:win / package:ios</pre>
-            <p class="insert-hint">Walkthrough: <code>docs/EXPORT_WALKTHROUGH.md</code></p>
+            <p class="insert-hint">Store assets: <code>docs/STORE_ASSETS.md</code> · Walkthrough: <code>docs/EXPORT_WALKTHROUGH.md</code></p>
         `;
         this._pendingFilename = filename;
         this._pendingJson = JSON.stringify(m, null, 2);
@@ -378,6 +448,9 @@ npm run package:android:release  # or package:win / package:ios</pre>
         this.step += 1;
         if (STEPS[this.step] === 'package' || STEPS[this.step] === 'review') {
             if (STEPS[this.step] === 'review') this.readReviewFromUi();
+            this.manifest = await this.buildManifest();
+        }
+        if (STEPS[this.step] === 'packs') {
             this.manifest = await this.buildManifest();
         }
         if (STEPS[this.step] === 'package') {

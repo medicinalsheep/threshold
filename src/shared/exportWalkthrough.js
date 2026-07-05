@@ -1,11 +1,14 @@
 import { SoundLibrary } from './soundLibrary.js';
 import { TextureLibrary } from './textureLibrary.js';
 import { TextureHilod } from './textureHilod.js';
+import storeAssetsConfig from '../../config/store-assets.json';
 
 
-export const EXPORT_STEPS = ['info', 'branding', 'content', 'credits', 'review', 'targets', 'store', 'package'];
+export const EXPORT_STEPS = ['info', 'branding', 'content', 'credits', 'review', 'targets', 'store', 'packs', 'package'];
 
-export const EXPORT_STEP_LABELS = ['INFO', 'ICONS', 'SCENE', 'CREDITS', 'REVIEW', 'TARGETS', 'STORE', 'SHIP'];
+export const EXPORT_STEP_LABELS = ['INFO', 'ICONS', 'SCENE', 'CREDITS', 'REVIEW', 'TARGETS', 'STORE', 'PACKS', 'SHIP'];
+
+const PACK_KINDS = storeAssetsConfig.packKinds || {};
 
 const DEFAULT_BRANDING = {
     bundleId: 'com.threshold.game',
@@ -24,6 +27,14 @@ const DEFAULT_STORE = {
     privacyPolicyUrl: '',
 };
 
+const DEFAULT_ASSET_OPPORTUNITY = {
+    registryEnabled: false,
+    steam: { appId: '', depotId: '' },
+    play: { applicationId: '' },
+    itch: { gameSlug: '' },
+    packs: [],
+};
+
 export function defaultExportDraft(base = {}) {
     return {
         name: base.name || 'My Threshold Game',
@@ -38,9 +49,11 @@ export function defaultExportDraft(base = {}) {
         },
         store: { ...DEFAULT_STORE, ...(base.store || {}) },
         assetOpportunity: {
-            registryEnabled: false,
-            note: 'Future: link authored assets to store SKUs / collectible registry',
+            ...DEFAULT_ASSET_OPPORTUNITY,
             ...(base.assetOpportunity || {}),
+            steam: { ...DEFAULT_ASSET_OPPORTUNITY.steam, ...(base.assetOpportunity?.steam || {}) },
+            play: { ...DEFAULT_ASSET_OPPORTUNITY.play, ...(base.assetOpportunity?.play || {}) },
+            itch: { ...DEFAULT_ASSET_OPPORTUNITY.itch, ...(base.assetOpportunity?.itch || {}) },
         },
     };
 }
@@ -49,9 +62,25 @@ function slugify(name = '') {
     return String(name).replace(/[^a-z0-9]+/gi, '-').toLowerCase() || 'game';
 }
 
+function assetSlug(label = '', id = '') {
+    return slugify(label || id).replace(/-/g, '_').slice(0, 32) || 'asset';
+}
+
 function bundleIdFromName(name = '') {
     const slug = slugify(name).replace(/-/g, '');
     return `com.${slug.slice(0, 24) || 'threshold'}.game`;
+}
+
+export function suggestStoreSku(bundleId, entry) {
+    const base = (bundleId || 'com.threshold.game').split('.').pop() || 'game';
+    const kind = entry.kind || 'asset';
+    const slug = assetSlug(entry.label, entry.id);
+    return `${base}.${kind}.${slug}`;
+}
+
+export function suggestRegistryUri(bundleId, entry) {
+    const slug = assetSlug(entry.label, entry.id);
+    return `threshold://${bundleId || 'com.threshold.game'}/asset/${slug}`;
 }
 
 export function collectContentInventory() {
@@ -122,8 +151,19 @@ export function ensureCreditEntries(draft, inventory) {
     const entries = { ...(draft.credits?.entries || {}) };
     const add = (id, label, kind) => {
         if (!entries[id]) {
-            entries[id] = { id, label, kind, author: draft.author || '', license: 'All rights reserved', source: '' };
+            entries[id] = {
+                id,
+                label,
+                kind,
+                author: draft.author || '',
+                license: 'All rights reserved',
+                source: '',
+                storeSku: '',
+                registryUri: '',
+            };
         }
+        if (entries[id].storeSku === undefined) entries[id].storeSku = '';
+        if (entries[id].registryUri === undefined) entries[id].registryUri = '';
     };
     inventory.soundRefs.forEach((s) => add(s.id, s.name, 'sound'));
     inventory.textureRefs.forEach((t) => add(t.id, t.name, 'texture'));
@@ -132,20 +172,50 @@ export function ensureCreditEntries(draft, inventory) {
     return entries;
 }
 
+export function buildKindPacks(draft, assets) {
+    const bundleId = draft.branding?.bundleId || 'com.threshold.game';
+    const byKind = {};
+    assets.forEach((a) => {
+        const kind = a.kind || 'asset';
+        if (!byKind[kind]) byKind[kind] = [];
+        byKind[kind].push(a);
+    });
+
+    return Object.entries(byKind).map(([kind, items]) => {
+        const meta = PACK_KINDS[kind] || { label: `${kind} pack`, suffix: kind };
+        const packId = `${kind}-pack`;
+        return {
+            id: packId,
+            label: meta.label,
+            kind,
+            assetIds: items.map((i) => i.id),
+            storeSku: `${bundleId.split('.').pop() || 'game'}.${meta.suffix || kind}`,
+            playSku: `${meta.suffix || kind}_pack`,
+            steamDepotSubdir: `bundle/${meta.suffix || kind}/`,
+            itchPackId: `${slugify(draft.name)}-${meta.suffix || kind}`,
+        };
+    });
+}
+
 export function buildAssetRegistry(draft, inventory) {
     const entries = ensureCreditEntries(draft, inventory);
+    const bundleId = draft.branding?.bundleId;
     const assets = Object.values(entries).map((entry) => ({
         ...entry,
-        storeSku: null,
-        registryUri: null,
+        storeSku: entry.storeSku || null,
+        registryUri: entry.registryUri || null,
     }));
+
+    const mappedCount = assets.filter((a) => a.storeSku || a.registryUri).length;
+    const packs = buildKindPacks(draft, assets);
+    const enabled = !!draft.assetOpportunity?.registryEnabled;
 
     return {
         format: 'threshold-asset-registry',
-        formatVersion: 1,
+        formatVersion: 2,
         game: draft.name,
         author: draft.author,
-        bundleId: draft.branding?.bundleId,
+        bundleId,
         inventory: {
             objects: inventory.objectCount,
             sounds: inventory.soundRefs.length,
@@ -159,10 +229,12 @@ export function buildAssetRegistry(draft, inventory) {
         globalCredits: draft.credits?.global || '',
         storeAssets: {
             format: 'threshold-store-assets',
-            version: 1,
-            status: 'scaffold',
-            note: draft.assetOpportunity?.note,
-            opportunity: 'Tie authored GIMP/Blender/sound/scene assets to store listings and future collectible registry',
+            version: 2,
+            status: enabled && mappedCount > 0 ? 'mapped' : (enabled ? 'enabled' : 'scaffold'),
+            mappedCount,
+            platforms: storeAssetsConfig.platforms,
+            opportunity: draft.assetOpportunity,
+            packs,
             items: assets.map((a) => ({
                 assetId: a.id,
                 label: a.label,
@@ -171,6 +243,11 @@ export function buildAssetRegistry(draft, inventory) {
                 author: a.author,
                 storeSku: a.storeSku,
                 registryUri: a.registryUri,
+                play: a.storeSku ? { sku: a.storeSku, productType: 'managed' } : null,
+                steam: draft.assetOpportunity?.steam?.depotId
+                    ? { depotId: draft.assetOpportunity.steam.depotId, depotPath: `bundle/${a.kind}/${assetSlug(a.label, a.id)}` }
+                    : null,
+                itch: a.storeSku ? { packId: `${slugify(draft.name)}-${a.kind}-${assetSlug(a.label, a.id)}` } : null,
             })),
         },
     };
@@ -211,11 +288,37 @@ export function validateStep(stepId, draft, inventory) {
         }
     }
 
+    if (stepId === 'packs') {
+        if (draft.assetOpportunity?.registryEnabled) {
+            const entries = Object.values(draft.credits?.entries || {});
+            const unmapped = entries.filter((e) => !e.storeSku?.trim() && !e.registryUri?.trim());
+            if (unmapped.length === entries.length && entries.length) {
+                warnings.push('Enable mapping but no SKUs set — use Suggest SKUs or fill manually');
+            }
+            if (draft.targets?.windows && !draft.assetOpportunity?.steam?.appId?.trim()) {
+                warnings.push('Steam App ID recommended when targeting Windows / Steam depot');
+            }
+        }
+    }
+
     return { warnings, blockers, ok: blockers.length === 0 };
 }
 
 export function suggestBundleId(gameName) {
     return bundleIdFromName(gameName);
+}
+
+export function suggestAllStoreLinks(draft) {
+    const bundleId = draft.branding?.bundleId || suggestBundleId(draft.name);
+    const entries = { ...(draft.credits?.entries || {}) };
+    Object.values(entries).forEach((entry) => {
+        if (!entry.storeSku?.trim()) entry.storeSku = suggestStoreSku(bundleId, entry);
+        if (!entry.registryUri?.trim()) entry.registryUri = suggestRegistryUri(bundleId, entry);
+    });
+    draft.credits.entries = entries;
+    draft.assetOpportunity.play.applicationId = bundleId;
+    draft.assetOpportunity.itch.gameSlug = slugify(draft.name);
+    return draft;
 }
 
 window.ExportWalkthrough = {
@@ -224,6 +327,10 @@ window.ExportWalkthrough = {
     defaultExportDraft,
     collectContentInventory,
     buildAssetRegistry,
+    buildKindPacks,
     validateStep,
     suggestBundleId,
+    suggestStoreSku,
+    suggestRegistryUri,
+    suggestAllStoreLinks,
 };

@@ -817,10 +817,11 @@ body.ui-immersive.touch-off #status-msg {
     flex-wrap: wrap;
 }
 
-.export-wizard-progress-8 span {
-    font-size: 0.5rem;
-    letter-spacing: 0.4px;
-    padding: 3px 5px;
+.export-wizard-progress-8 span,
+.export-wizard-progress-9 span {
+    font-size: 0.48rem;
+    letter-spacing: 0.35px;
+    padding: 3px 4px;
 }
 
 .export-wizard-progress span {
@@ -878,11 +879,20 @@ body.ui-immersive.touch-off #status-msg {
     padding-right: 4px;
 }
 
-.export-credits-list {
+.export-credits-list,
+.export-packs-list {
     max-height: 240px;
     overflow-y: auto;
     margin-top: 8px;
     padding-right: 4px;
+}
+
+.export-pack-row {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 8px 10px;
+    margin: 8px 0;
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .export-credit-row {

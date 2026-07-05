@@ -10,6 +10,7 @@ const TEMPLATE_DIR = path.join(ROOT, 'docs', 'templates');
 const NATIVE_APP_PATH = path.join(ROOT, 'config', 'native-app.json');
 const CAPACITOR_CONFIG = path.join(ROOT, 'capacitor.config.json');
 const PKG_PATH = path.join(ROOT, 'package.json');
+const STORE_ASSETS_CONFIG = path.join(ROOT, 'config', 'store-assets.json');
 
 function loadStoreConfig() {
     return JSON.parse(fs.readFileSync(STORE_CONFIG_PATH, 'utf8'));
@@ -127,6 +128,8 @@ function generateStoreBundle(manifest, options = {}) {
     const creditsMd = buildCreditsMarkdown(manifest, vars);
     fs.writeFileSync(path.join(outDir, 'credits.md'), creditsMd);
 
+    const assetMaps = generateStoreAssetMaps(manifest, vars, outDir);
+
     const storeCfg = loadStoreConfig();
     const targets = resolveTargets(manifest, options.targets);
     const checklist = {};
@@ -147,8 +150,9 @@ function generateStoreBundle(manifest, options = {}) {
         privacyPolicy: `${relOut}/privacy-policy.md`,
         credits: `${relOut}/credits.md`,
         assetRegistry: manifest.assetRegistry ? `${relOut}/asset-registry.json` : null,
+        storeAssets: assetMaps.summary,
         manifestCredits: Object.keys(manifest.credits?.entries || {}).length,
-        nextSteps: buildNextSteps(targets, storeCfg),
+        nextSteps: buildNextSteps(targets, storeCfg, assetMaps.summary),
     };
     fs.writeFileSync(path.join(outDir, 'store-prep.json'), JSON.stringify(prep, null, 2));
     return prep;
@@ -179,12 +183,213 @@ function buildCreditsMarkdown(manifest, vars) {
     return lines.join('\n');
 }
 
-function buildNextSteps(targets, storeCfg) {
+function loadStoreAssetsConfig() {
+    return JSON.parse(fs.readFileSync(STORE_ASSETS_CONFIG, 'utf8'));
+}
+
+function getRegistryItems(manifest) {
+    const registry = manifest.assetRegistry || {};
+    const fromStore = registry.storeAssets?.items || [];
+    if (fromStore.length) return fromStore;
+    const entries = Object.values(manifest.credits?.entries || {});
+    return entries.map((e) => ({
+        assetId: e.id,
+        label: e.label,
+        kind: e.kind,
+        license: e.license,
+        author: e.author,
+        storeSku: e.storeSku || null,
+        registryUri: e.registryUri || null,
+    }));
+}
+
+function assetSlug(label = '', id = '') {
+    return slugify(label || id).replace(/-/g, '_').slice(0, 32) || 'asset';
+}
+
+function getOpportunity(manifest) {
+    return manifest.assetOpportunity
+        || manifest.assetRegistry?.storeAssets?.opportunity
+        || {};
+}
+
+function buildPlayInAppProducts(manifest, vars) {
+    const items = getRegistryItems(manifest).filter((i) => i.storeSku);
+    const packs = manifest.assetRegistry?.storeAssets?.packs || [];
+    const opportunity = getOpportunity(manifest);
+    const products = items.map((i) => ({
+        sku: i.storeSku,
+        type: i.play?.productType || 'managed',
+        title: i.label,
+        description: `${i.label} (${i.kind}) for ${vars.GAME_NAME}`,
+        assetId: i.assetId,
+        kind: i.kind,
+    }));
+    packs.forEach((p) => {
+        if (!p.storeSku) return;
+        products.push({
+            sku: p.playSku || p.storeSku,
+            type: 'managed',
+            title: p.label,
+            description: `${p.label} — ${p.assetIds?.length || 0} assets`,
+            packId: p.id,
+            kind: p.kind,
+            assetIds: p.assetIds,
+        });
+    });
+    return {
+        format: 'threshold-play-iap',
+        version: 1,
+        packageName: vars.BUNDLE_ID,
+        applicationId: opportunity.play?.applicationId || vars.BUNDLE_ID,
+        products,
+        note: 'Play Console → Monetize → Products — create matching SKUs',
+    };
+}
+
+function buildSteamDepotAssets(manifest, vars) {
+    const items = getRegistryItems(manifest);
+    const opportunity = getOpportunity(manifest);
+    const steam = opportunity.steam || manifest.packaging?.steam || {};
+    const packs = manifest.assetRegistry?.storeAssets?.packs || [];
+    return {
+        format: 'threshold-steam-depot',
+        version: 1,
+        appId: steam.appId || null,
+        depotId: steam.depotId || null,
+        depotRoot: 'dist-pages/bundle/',
+        graphicsProfile: 'steam',
+        files: items.map((i) => ({
+            assetId: i.assetId,
+            label: i.label,
+            kind: i.kind,
+            depotPath: `bundle/${i.kind}/${assetSlug(i.label, i.assetId)}`,
+            storeSku: i.storeSku,
+            registryUri: i.registryUri,
+        })),
+        packs: packs.map((p) => ({
+            id: p.id,
+            label: p.label,
+            steamDepotSubdir: p.steamDepotSubdir,
+            assetIds: p.assetIds,
+            storeSku: p.storeSku,
+        })),
+        note: 'Use export:graphics --profile steam then upload bundle/ via steamcmd / ContentBuilder',
+    };
+}
+
+function buildItchAssetPacks(manifest, vars) {
+    const opportunity = getOpportunity(manifest);
+    const gameSlug = opportunity.itch?.gameSlug || slugify(vars.GAME_NAME);
+    const packs = manifest.assetRegistry?.storeAssets?.packs || [];
+    const items = getRegistryItems(manifest).filter((i) => i.storeSku);
+    return {
+        format: 'threshold-itch-packs',
+        version: 1,
+        gameSlug,
+        baseGame: {
+            title: vars.GAME_NAME,
+            author: vars.AUTHOR,
+            artifact: 'dist-electron/*.exe or dist-pages zip',
+        },
+        packs: packs.map((p) => ({
+            id: p.itchPackId || p.id,
+            label: p.label,
+            kind: p.kind,
+            suggestedPriceUsd: null,
+            assetIds: p.assetIds,
+            storeSku: p.storeSku,
+        })),
+        individualAssets: items.map((i) => ({
+            assetId: i.assetId,
+            label: i.label,
+            itchFileId: i.itch?.packId || `${gameSlug}-${i.kind}-${assetSlug(i.label, i.assetId)}`,
+            storeSku: i.storeSku,
+        })),
+        note: 'itch.io → Edit project → Upload DLC files or separate downloads per pack',
+    };
+}
+
+function buildCollectibleRegistry(manifest, vars) {
+    const items = getRegistryItems(manifest).filter((i) => i.registryUri);
+    const opportunity = getOpportunity(manifest);
+    return {
+        format: 'threshold-collectible-registry',
+        version: 1,
+        game: vars.GAME_NAME,
+        bundleId: vars.BUNDLE_ID,
+        registryRoot: `threshold://${vars.BUNDLE_ID}`,
+        enabled: !!opportunity.registryEnabled,
+        items: items.map((i) => ({
+            assetId: i.assetId,
+            uri: i.registryUri,
+            label: i.label,
+            kind: i.kind,
+            license: i.license,
+            author: i.author,
+            storeSku: i.storeSku,
+        })),
+        note: 'Optional collectible / metadata registry — IPFS, on-chain, or threshold:// URIs',
+    };
+}
+
+function generateStoreAssetMaps(manifest, vars, outDir) {
+    const cfg = loadStoreAssetsConfig();
+    const platforms = cfg.platforms || {};
+    const play = buildPlayInAppProducts(manifest, vars);
+    const steam = buildSteamDepotAssets(manifest, vars);
+    const itch = buildItchAssetPacks(manifest, vars);
+    const registry = buildCollectibleRegistry(manifest, vars);
+
+    const files = {};
+    if (platforms.play?.outputFile) {
+        const p = path.join(outDir, platforms.play.outputFile);
+        fs.writeFileSync(p, JSON.stringify(play, null, 2));
+        files.play = platforms.play.outputFile;
+    }
+    if (platforms.steam?.outputFile) {
+        const p = path.join(outDir, platforms.steam.outputFile);
+        fs.writeFileSync(p, JSON.stringify(steam, null, 2));
+        files.steam = platforms.steam.outputFile;
+    }
+    if (platforms.itch?.outputFile) {
+        const p = path.join(outDir, platforms.itch.outputFile);
+        fs.writeFileSync(p, JSON.stringify(itch, null, 2));
+        files.itch = platforms.itch.outputFile;
+    }
+    if (platforms.registry?.outputFile) {
+        const p = path.join(outDir, platforms.registry.outputFile);
+        fs.writeFileSync(p, JSON.stringify(registry, null, 2));
+        files.registry = platforms.registry.outputFile;
+    }
+
+    const summary = {
+        format: 'threshold-store-assets-prep',
+        status: manifest.assetRegistry?.storeAssets?.status || 'scaffold',
+        mappedCount: manifest.assetRegistry?.storeAssets?.mappedCount || 0,
+        files,
+        platforms: Object.keys(files),
+        steamAppId: steam.appId,
+        steamDepotId: steam.depotId,
+        playProductCount: play.products.length,
+        registryItemCount: registry.items.length,
+    };
+    fs.writeFileSync(path.join(outDir, 'store-assets-prep.json'), JSON.stringify(summary, null, 2));
+    return { summary, play, steam, itch, registry };
+}
+
+function buildNextSteps(targets, storeCfg, assetSummary = null) {
     const steps = ['npm run store:prep -- --manifest <game>.threshold-game.json'];
+    if (assetSummary?.mappedCount > 0 || assetSummary?.status === 'mapped') {
+        steps.push('npm run store:assets -- --manifest <game>.threshold-game.json');
+    }
     if (targets.android) steps.push(`npm run ${storeCfg.targets.android.packageScript}`);
     if (targets.ios) steps.push(`npm run ${storeCfg.targets.ios.packageScript}`);
     if (targets.windows) steps.push(`npm run ${storeCfg.targets.windows.packageScript}`);
     if (targets.macos) steps.push(`npm run ${storeCfg.targets.macos.packageScript}`);
+    if (targets.windows && assetSummary?.steamAppId) {
+        steps.push('npm run export:graphics -- --profile steam --install');
+    }
     return steps;
 }
 
@@ -206,6 +411,7 @@ module.exports = {
     resolveTargets,
     applyNativeAppConfig,
     generateStoreBundle,
+    generateStoreAssetMaps,
     printChecklist,
     slugify,
 };

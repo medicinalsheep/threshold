@@ -1,6 +1,6 @@
-# Export walkthrough (v5.1)
+# Export walkthrough (v5.2)
 
-Guided **MORE → EXPORT** flow — from game identity through icons, scene content, asset credits, store prep, and download.
+Guided **MORE → EXPORT** flow — from game identity through icons, scene content, asset credits, store packs, and download.
 
 ---
 
@@ -15,6 +15,7 @@ Guided **MORE → EXPORT** flow — from game identity through icons, scene cont
 | **REVIEW** | Full manifest preview + optional sound base64 embed |
 | **TARGETS** | Web / Android / Windows / iOS checkboxes |
 | **STORE** | Contact email, support URL, privacy policy URL for `store:prep` |
+| **PACKS** | Store SKU + registry URI per asset; Steam App/Depot ID; Play + itch mapping |
 | **SHIP** | Download `.threshold-game.json` + CLI command summary |
 
 ---
@@ -41,7 +42,8 @@ The export manifest includes:
 
 - **`credits`** — global text + per-asset `{ license, author, source }`
 - **`assetRegistry`** — inventory counts + normalized asset list
-- **`storeAssets`** — scaffold linking assets to future store SKUs / registry URIs
+- **`storeAssets`** — platform maps (Play IAP, Steam depot, itch packs, collectible registry)
+- **`assetOpportunity`** — Steam/Play/itch IDs from PACKS step
 
 ### Why it matters
 
@@ -50,7 +52,7 @@ The export manifest includes:
 | **App Store / Play** | Prove you own or licensed art, audio, models |
 | **Players** | In-game credits screen (future) from `credits.global` |
 | **Store SKUs** | One manifest documents which files ship in which build |
-| **Collectibles (future)** | `registryUri` / `storeSku` per asset — tie GIMP/Blender exports to tradable or premium packs |
+| **Collectibles** | `registryUri` / `storeSku` per asset — tie GIMP/Blender exports to tradable or premium packs |
 
 Config: `config/store-assets.json`
 
@@ -63,6 +65,7 @@ npm run store:prep -- --manifest my-game.threshold-game.json \
   --contact you@example.com \
   --privacy-url https://yoursite.com/privacy
 
+npm run store:assets -- --manifest my-game.threshold-game.json
 npm run bundle:assets
 npm run package:android:release   # or package:win / package:ios
 ```
@@ -72,6 +75,7 @@ npm run package:android:release   # or package:win / package:ios
 - `privacy-policy.md`
 - `credits.md` — from wizard attributions
 - `asset-registry.json` — store-facing asset list
+- `play-in-app-products.json` / `steam-depot-assets.json` / `itch-asset-packs.json` / `collectible-registry.json`
 - `app-store-metadata.json` / `play-console-metadata.json`
 
 ---
@@ -92,21 +96,22 @@ Use **SCENE** step to confirm object count and linked assets match what you auth
 
 ---
 
-## Future: store asset opportunities
+## Store asset opportunities (Phase M+)
 
-Phase L2 vision (documented, not fully implemented):
+Implemented in **PACKS** step + `npm run store:assets`:
 
-1. **Asset packs** — sell texture/model packs on itch.io / Play as IAP; `storeSku` in registry.
-2. **Collectible registry** — optional `registryUri` per authored asset (metadata hash / on-chain pointer).
-3. **Cross-game reuse** — import another game’s `assetRegistry` with license verification.
-4. **PromptGen** — generates worlds with `ASSETS` block matching registry paths.
+1. **Asset packs** — auto-grouped by kind (textures, models, sounds, videos) with suggested SKUs.
+2. **Platform JSON** — Play IAP, Steam depot paths, itch DLC structure, collectible registry.
+3. **Cross-game reuse** (scaffold) — import another game’s `assetRegistry` with license verification.
+4. **PromptGen** — `ASSETS` block matches registry paths for CREDITS + PACKS steps.
 
-See [STORE_RELEASE.md](STORE_RELEASE.md) for platform upload steps.
+See [STORE_ASSETS.md](STORE_ASSETS.md) for platform upload steps.
 
 ---
 
 ## Related
 
+- [STORE_ASSETS.md](STORE_ASSETS.md) — Play / Steam / itch / registry maps
 - [STORE_RELEASE.md](STORE_RELEASE.md) — signing, AAB, TestFlight
 - [NATIVE_SHELLS.md](NATIVE_SHELLS.md) — Capacitor / Electron
 - [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) — GIMP / Blender pipeline

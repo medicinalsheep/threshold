@@ -113,8 +113,12 @@ export const GameExport = {
             credits: options.credits,
             store: options.store,
             targets: options.targets,
+            assetOpportunity: options.assetOpportunity,
         });
         draft.branding.bundleId = bundleId;
+        if (options.credits?.entries) {
+            draft.credits.entries = { ...options.credits.entries };
+        }
 
         const bundledVideos = await Cinematic.listBundled();
         const liveObjects = window.State?.objects || [];
@@ -152,10 +156,13 @@ export const GameExport = {
                 entries: options.credits?.entries || {},
             },
             assetRegistry,
+            assetOpportunity: options.assetOpportunity || assetRegistry.storeAssets?.opportunity || {},
+            store: options.store || {},
             exportWalkthrough: {
-                version: 1,
+                version: 2,
                 docs: 'docs/EXPORT_WALKTHROUGH.md',
-                steps: ['info', 'branding', 'content', 'credits', 'review', 'targets', 'store', 'package'],
+                storeAssetsDocs: 'docs/STORE_ASSETS.md',
+                steps: ['info', 'branding', 'content', 'credits', 'review', 'targets', 'store', 'packs', 'package'],
             },
             world,
             scripts: {
@@ -260,13 +267,30 @@ export const GameExport = {
                 },
                 storeRelease: {
                     prepCli: 'npm run store:prep -- --manifest <game>.threshold-game.json',
+                    assetsCli: 'npm run store:assets -- --manifest <game>.threshold-game.json',
                     walkthrough: 'docs/EXPORT_WALKTHROUGH.md',
+                    storeAssets: 'docs/STORE_ASSETS.md',
                     docs: 'docs/STORE_RELEASE.md',
                     privacyTemplate: 'docs/templates/privacy-policy.template.md',
-                    outputs: ['privacy-policy.md', 'credits.md', 'asset-registry.json', 'app-store-metadata.json', 'play-console-metadata.json'],
-                    note: 'Run store:prep after export — applies bundleId, generates credits + asset registry for stores',
+                    outputs: [
+                        'privacy-policy.md',
+                        'credits.md',
+                        'asset-registry.json',
+                        'play-in-app-products.json',
+                        'steam-depot-assets.json',
+                        'itch-asset-packs.json',
+                        'collectible-registry.json',
+                        'app-store-metadata.json',
+                        'play-console-metadata.json',
+                    ],
+                    note: 'Run store:prep + store:assets after export — bundleId, credits, platform asset maps',
                 },
-                steam: { appId: null, depotId: null, note: 'Assign after Steamworks partner setup' },
+                steam: {
+                    appId: options.assetOpportunity?.steam?.appId || null,
+                    depotId: options.assetOpportunity?.steam?.depotId || null,
+                    graphicsProfile: 'steam',
+                    note: 'Set App/Depot ID in PACKS step; export:graphics --profile steam for depot bundle',
+                },
             },
         };
     },

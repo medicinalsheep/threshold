@@ -43,7 +43,7 @@
         "Optional code sign: set CSC_LINK + CSC_KEY_PASSWORD before package:win",
         "SmartScreen: signed builds reduce warnings",
         "Test fullscreen, mic, and bundled assets on clean VM",
-        "Steam: Phase M — separate depot pipeline"
+        "Steam: set App/Depot ID in PACKS step → npm run store:assets → export:graphics --profile steam"
       ]
     },
     "macos": {

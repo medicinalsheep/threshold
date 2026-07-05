@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v5.1.0 — Phase L2 (export walkthrough: icons, credits, asset registry, store metadata).
+**Current:** v5.2.0 — Phase M+ (store asset mapping: Play IAP, Steam depot, itch packs, collectible registry).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -147,7 +147,24 @@ npm run store:prep -- --manifest my-game.threshold-game.json --contact you@examp
 
 See [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) · `config/store-assets.json`
 
-**Future (Phase M+):** map `storeAssets.items` to Play IAP / Steam depot / collectible registry URIs.
+### Phase M+ — Store asset platform mapping (v5.2) ✅
+
+| Step | Status |
+|------|--------|
+| M+.1 PACKS wizard step — per-asset `storeSku` + `registryUri` | ✅ |
+| M+.2 Steam App/Depot ID, Play app ID, itch slug in manifest | ✅ |
+| M+.3 Auto kind packs (textures, models, sounds, videos) | ✅ |
+| M+.4 `npm run store:assets` — Play / Steam / itch / registry JSON | ✅ |
+| M+.5 Integrated into `store:prep` + `store-assets-prep.json` summary | ✅ |
+
+```bash
+npm run store:assets -- --manifest my-game.threshold-game.json
+npm run export:graphics -- --profile steam --install   # Steam depot bundle
+```
+
+See [STORE_ASSETS.md](STORE_ASSETS.md) · `config/store-assets.json`
+
+**Next (Phase M):** Steamworks SDK in Electron, depot CI, overlay.
 
 ### Phase K — Cinematic layer (v4.9) ✅
 

@@ -70,7 +70,7 @@ const STEPS = [
     },
     {
         title: 'Save & ship',
-        body: '<strong>MORE → SAVE WORLD</strong> for share links. <strong>MORE → EXPORT</strong> opens an 8-step walkthrough — icons, scene inventory, asset credits, store metadata — then downloads <code>.threshold-game.json</code>. Ship with <code>store:prep</code> then <code>package:android</code>, <code>package:win</code>, or <code>package:ios</code>. Guide: <code>docs/EXPORT_WALKTHROUGH.md</code>.',
+        body: '<strong>MORE → SAVE WORLD</strong> for share links. <strong>MORE → EXPORT</strong> opens a 9-step walkthrough — icons, scene, credits, store packs (Play/Steam/itch SKUs) — then downloads <code>.threshold-game.json</code>. Ship with <code>store:prep</code>, <code>store:assets</code>, then <code>package:*</code>. Guides: <code>docs/EXPORT_WALKTHROUGH.md</code>, <code>docs/STORE_ASSETS.md</code>.',
         highlight: '#btn-toolbar-more',
     },
     {

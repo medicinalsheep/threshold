@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → local GIMP/Blender art → AI agents on NPCs.
 
-**Current version:** **5.1.0** (Phase L2 — export walkthrough: icons, credits, asset registry, store metadata)
+**Current version:** **5.2.0** (Phase M+ — store asset mapping: Play IAP, Steam depot, itch, registry)
 
 **Detailed next phases:** [NEXT_PHASES.md](NEXT_PHASES.md) (LOD, HILOD, iOS, Phase E leftovers)
 
@@ -57,6 +57,7 @@ See [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md).
 - [x] Store prep CLI + release guides (Phase L — v5.0)
 - [x] Export walkthrough — 8-step wizard: icons, scene, credits, store metadata (Phase L2 — v5.1)
 - [x] Asset registry scaffold — tie authored assets to future store SKUs / collectible registry
+- [x] Store asset platform maps — PACKS step + `store:assets` CLI (Phase M+ — v5.2)
 - [ ] Signed APK / store upload (per-developer signing keys)
 - [ ] macOS `.app` notarization
 - [x] Capacitor Filesystem scaffold for on-device world import (`NativeAssets`, v3.8)
@@ -83,11 +84,12 @@ See [NEXT_PHASES.md](NEXT_PHASES.md):
 - [x] Targeted graphics export CLI per platform — v4.5 (`export:graphics`)
 - [x] Normal maps in Engine (v3.8)
 
-### Phase 5 — Steam & distribution (v3.5+) 📋
+### Phase 5 — Steam & distribution (v3.5+) 🔧
 
-- [ ] Steamworks in Electron
-- [ ] Depot CI
-- [ ] itch.io / sideload docs
+- [x] Steam depot asset map + `export:graphics --profile steam` (Phase M+ — v5.2)
+- [x] itch.io pack structure in `store:assets` (Phase M+ — v5.2)
+- [ ] Steamworks SDK in Electron (Phase M)
+- [ ] Depot CI upload automation (Phase M)
 
 ### Phase 6 — Scale & AI (v4.0+) 📋
 
