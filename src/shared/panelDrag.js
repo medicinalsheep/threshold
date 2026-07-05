@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'threshold-panel-layout-v2';
+const STORAGE_KEY = 'threshold-panel-layout-v3';
 const MIN_W = 220;
 const MIN_H = 140;
 
@@ -66,18 +66,27 @@ function defaultRect(panel, options = {}) {
     let y;
     const anchor = options.anchor || 'center';
 
+    const vpH = window.innerHeight;
+    const usableH = vpH - nav - pad * 2;
+
     if (anchor === 'top-left') {
         x = pad;
         y = nav + pad;
+    } else if (anchor === 'left-center') {
+        x = pad;
+        y = nav + pad + Math.max(0, (usableH - h) / 2);
     } else if (anchor === 'top-right') {
         x = window.innerWidth - w - pad;
         y = nav + pad;
+    } else if (anchor === 'right-center') {
+        x = window.innerWidth - w - pad;
+        y = nav + pad + Math.max(0, (usableH - h) / 2);
     } else if (anchor === 'bottom-right') {
         x = window.innerWidth - w - pad;
         y = window.innerHeight - h - 72;
     } else {
         x = (window.innerWidth - w) / 2;
-        y = nav + pad + Math.max(0, (window.innerHeight - nav - h - pad * 2) / 2);
+        y = nav + pad + Math.max(0, usableH / 2);
     }
 
     return clampRect({ x, y, w, h }, limits);
@@ -188,8 +197,13 @@ export function setupFloatPanel(panel, options = {}) {
             saveOne(id, rect, locked);
         },
         ensureMinWidth: (minW) => {
+            const rightEdge = rect.x + rect.w;
             if (rect.w < minW) {
                 rect.w = minW;
+                const anchor = options.anchor || options.defaultSize?.anchor;
+                if (anchor?.includes('right')) {
+                    rect.x = rightEdge - rect.w;
+                }
                 rect = clampRect(rect, limits);
                 applyRect(panel, rect);
                 saveOne(id, rect, locked);
@@ -295,20 +309,23 @@ const CHROME_PANELS = [
         selector: '#engine-toolbar',
         id: 'engine-toolbar',
         handleSelector: '.panel-chrome-header',
-        defaultSize: { w: 440, h: 118, anchor: 'top-left' },
-        minW: 220,
-        minH: 72,
+        defaultSize: { w: 500, h: 128, anchor: 'left-center' },
+        minW: 260,
+        minH: 88,
         maxW: 920,
+        maxH: 420,
+        anchor: 'left-center',
     },
     {
         selector: '#scene-dock',
         id: 'scene-dock',
         handleSelector: '.panel-chrome-header',
-        defaultSize: { w: 58, h: 280, anchor: 'top-right' },
+        defaultSize: { w: 56, h: 340, anchor: 'right-center' },
         minW: 52,
-        minH: 120,
-        maxW: 480,
-        maxH: 720,
+        minH: 160,
+        maxW: 400,
+        maxH: 680,
+        anchor: 'right-center',
     },
 ];
 
@@ -370,8 +387,13 @@ function resolveChromeOverlap() {
     const { pad, nav, maxH } = readBounds();
     const portrait = window.innerHeight > window.innerWidth;
     const dockRect = portrait
-        ? { x: pad, y: nav + pad, w: d.w, h: Math.min(d.h, maxH * 0.42) }
-        : { x: window.innerWidth - d.w - pad, y: nav + pad + t.h + 12, w: d.w, h: d.h };
+        ? { x: pad, y: nav + pad + t.h + 12, w: Math.max(d.w, 280), h: Math.min(d.h, maxH * 0.45) }
+        : {
+            x: window.innerWidth - Math.max(d.w, 56) - pad,
+            y: nav + pad + Math.max(0, (maxH - d.h) / 2),
+            w: d.w,
+            h: d.h,
+        };
     dock._floatRect = clampRect(dockRect, {
         minW: 52,
         minH: 120,

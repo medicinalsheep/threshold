@@ -115,16 +115,18 @@ npm run tc:build          # regenerate TC GLBs
 
 ---
 
-## TC Circuit race (G1 + G2)
+## TC Circuit race (G1 + G2 + G3)
 
 ```bash
 # Solo or multiplayer: Lobby → TC → · Compiler RUN:
-World.enterTcRace()    # lap timer + claim tc_run (guests get tc_haul / extra run)
+World.enterTcRace()    # lap timer + claim tc_run (enter anim · guests get tc_haul / extra run)
 
 # Multiplayer: host CREATE SESSION → guests JOIN → host RUN enterTcRace
-# PLAY · WASD drive · cross green tc_cp — laps + vehicles sync via LIVE_STATE
+# PLAY · WASD drive · cross green gate at tc_cp — bar opens + sfx · laps sync via LIVE_STATE
+World.releaseTcVehicle()   # exit anim · walk avatar beside vehicle
 npm run tc:circuit:verify
 npm run tc:drive:verify
+npm run tc:g3:verify
 ```
 
 ---

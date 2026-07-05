@@ -61,10 +61,12 @@ button {
 #engine-toolbar.float-panel .engine-toolbar-body {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: 10px;
-    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 8px;
+    flex-wrap: nowrap;
     padding: 8px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .engine-toolbar #mode-display {
@@ -74,12 +76,19 @@ button {
 }
 
 .toolbar-actions {
-    display: flex;
-    gap: 8px;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    align-items: stretch;
     flex-shrink: 0;
-    flex-wrap: wrap;
-    justify-content: flex-end;
+    min-width: 168px;
+    max-width: 220px;
+}
+
+.toolbar-actions .toolbar-keep,
+.toolbar-actions .toolbar-more-trigger {
+    width: 100%;
+    min-width: 0;
 }
 
 .rec-dot {
@@ -103,6 +112,7 @@ button {
     display: flex;
     flex-direction: column;
     pointer-events: auto;
+    max-height: calc(100dvh - var(--chrome-top, var(--nav-height, 50px)) - 16px);
 }
 
 #scene-dock .scene-dock-inner {
@@ -151,12 +161,14 @@ button {
 }
 
 .dock-tab {
-    padding: 8px 6px !important;
+    padding: 10px 6px !important;
     font-size: 0.55rem !important;
-    min-width: 42px;
+    min-width: 44px;
+    min-height: 44px;
     writing-mode: vertical-rl;
     text-orientation: mixed;
     letter-spacing: 1px;
+    line-height: 1.1;
 }
 
 .dock-tab.active {
@@ -433,6 +445,77 @@ body.console-hidden .console-restore-tab {
     background: rgba(0, 0, 0, 0.45);
     border-radius: 3px;
     z-index: 5;
+}
+
+.interact-hint {
+    position: absolute;
+    bottom: 78px;
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    max-width: min(calc(100% - 32px), 420px);
+    font-size: 0.68rem;
+    color: var(--accent-color);
+    opacity: 0;
+    pointer-events: none;
+    text-align: center;
+    padding: 6px 12px;
+    background: rgba(5, 8, 5, 0.82);
+    border: 1px solid rgba(57, 255, 20, 0.35);
+    border-radius: 4px;
+    z-index: 6;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.interact-hint.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.fps-crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    margin: -2px 0 0 -2px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.65);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 7;
+    transition: opacity 0.15s ease;
+}
+
+.fps-crosshair.visible {
+    opacity: 1;
+}
+
+.third-eye-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    margin: -22px 0 0 -6px;
+    border-radius: 50%;
+    border: 2px solid rgba(42, 204, 68, 0.92);
+    background: rgba(42, 204, 68, 0.22);
+    box-shadow: 0 0 10px rgba(42, 204, 68, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 7;
+    transition: opacity 0.18s ease;
+}
+
+.third-eye-indicator.visible {
+    opacity: 1;
+    animation: third-eye-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes third-eye-pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 8px rgba(42, 204, 68, 0.4); }
+    50% { transform: scale(1.08); box-shadow: 0 0 14px rgba(42, 204, 68, 0.65); }
 }
 
 .engine-graphics-prompt {
@@ -722,12 +805,21 @@ body.ui-immersive.touch-off #status-msg {
 .session-bar {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 5px;
     align-items: center;
     margin-top: 4px;
-    font-size: 0.65rem;
+    font-size: 0.62rem;
     max-width: 100%;
+    row-gap: 4px;
+}
+
+.session-bar code {
+    max-width: 72px;
     overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .session-label {

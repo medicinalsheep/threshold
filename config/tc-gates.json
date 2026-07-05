@@ -1,0 +1,9 @@
+{
+  "format": "threshold-tc-gates",
+  "version": 1,
+  "gateOpenMs": 1400,
+  "beaconIdlePulse": 0.45,
+  "enterAnimMs": 580,
+  "exitAnimMs": 520,
+  "exitOffset": { "x": 2.2, "y": 0.5, "z": 0.4 }
+}

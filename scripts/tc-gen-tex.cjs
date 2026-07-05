@@ -11,7 +11,7 @@ const CFG = path.join(ROOT, 'config', 'tc-textures.json');
 const MAN = path.join(TEX, 'threshold_manifest.json');
 const GIMP_MANIFEST = 'threshold-gimp-manifest';
 const TC_LIC = 'Original — TC';
-const REALISM = 'r6';
+const REALISM = 'r7';
 
 function noise(x, y, seed = 0) {
     const n = Math.sin((x * 12.9898 + y * 78.233 + seed) * 43758.5453);
@@ -88,6 +88,82 @@ function spanRough(x, y, w, h) {
     return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
 }
 
+function concreteAlbedo(x, y, w, h, pal) {
+    const u = x / w;
+    const v = y / h;
+    const ring = Math.hypot(u - 0.5, v - 0.5);
+    const edge = ring > 0.38 && ring < 0.44;
+    let base = edge ? pal.ring : pal.base;
+    const n = noise(x, y, 23) * 14;
+    const speck = noise(x * 2, y * 2, 29) > 0.92 ? 18 : 0;
+    return [Math.min(255, base[0] + n + speck), Math.min(255, base[1] + n + speck), Math.min(255, base[2] + n + speck), 255];
+}
+
+function concreteRough(x, y, w, h) {
+    const base = 198;
+    const n = noise(x, y, 31) * 22;
+    return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
+}
+
+function wallAlbedo(x, y, w, h, pal) {
+    const u = x / w;
+    const v = y / h;
+    const panel = Math.floor(v * 5) % 2 === 0;
+    const seam = Math.abs((u * 8) % 1 - 0.5) < 0.04 || Math.abs((v * 5) % 1 - 0.5) < 0.03;
+    let base = panel ? pal.base : pal.speck;
+    if (seam) base = pal.ring;
+    const n = noise(x, y, 53) * 11;
+    return [Math.min(255, base[0] + n), Math.min(255, base[1] + n), Math.min(255, base[2] + n), 255];
+}
+
+function wallRough(x, y, w, h) {
+    const base = 192;
+    const n = noise(x, y, 57) * 28;
+    return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
+}
+
+function stripeAlbedo(x, y, w, h, pal) {
+    const u = x / w;
+    const stripe = Math.floor(u * 14) % 2 === 0;
+    const base = stripe ? pal.paint : pal.asphalt;
+    const n = noise(x, y, 61) * 8;
+    return [Math.min(255, base[0] + n), Math.min(255, base[1] + n), Math.min(255, base[2] + n), 255];
+}
+
+function stripeRough(x, y, w, h) {
+    const base = 175;
+    const n = noise(x, y, 63) * 20;
+    return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
+}
+
+function terminalAlbedo(x, y, w, h, pal) {
+    const u = x / w;
+    const v = y / h;
+    const screen = u > 0.18 && u < 0.82 && v > 0.52 && v < 0.82;
+    const trim = v < 0.2 || v > 0.88;
+    let base = pal.body;
+    if (screen) base = pal.screen;
+    if (trim) base = pal.trim;
+    const n = noise(x, y, 37) * 10;
+    return [Math.min(255, base[0] + n), Math.min(255, base[1] + n), Math.min(255, base[2] + n), 255];
+}
+
+function terminalRough(x, y, w, h) {
+    const v = y / h;
+    const screen = v > 0.52 && v < 0.82;
+    const base = screen ? 95 : 175;
+    const n = noise(x, y, 41) * 20;
+    return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
+}
+
+function terminalMetal(x, y, w, h) {
+    const v = y / h;
+    const bezel = v > 0.48 && v < 0.86;
+    const val = bezel ? 140 : 18;
+    const n = noise(x, y, 43) * 12;
+    return [Math.min(255, val + n), Math.min(255, val + n), Math.min(255, val + n), 255];
+}
+
 function slotFn(asset, slot) {
     if (asset.style === 'vehicle') {
         if (slot === 'albedo') return (x, y, w, h) => vehAlbedo(x, y, w, h, asset.palette);
@@ -101,6 +177,23 @@ function slotFn(asset, slot) {
     if (asset.style === 'span') {
         if (slot === 'albedo') return (x, y, w, h) => spanAlbedo(x, y, w, h, asset.palette);
         if (slot === 'roughness') return (x, y, w, h) => spanRough(x, y, w, h);
+    }
+    if (asset.style === 'concrete') {
+        if (slot === 'albedo') return (x, y, w, h) => concreteAlbedo(x, y, w, h, asset.palette);
+        if (slot === 'roughness') return (x, y, w, h) => concreteRough(x, y, w, h);
+    }
+    if (asset.style === 'wall') {
+        if (slot === 'albedo') return (x, y, w, h) => wallAlbedo(x, y, w, h, asset.palette);
+        if (slot === 'roughness') return (x, y, w, h) => wallRough(x, y, w, h);
+    }
+    if (asset.style === 'stripe') {
+        if (slot === 'albedo') return (x, y, w, h) => stripeAlbedo(x, y, w, h, asset.palette);
+        if (slot === 'roughness') return (x, y, w, h) => stripeRough(x, y, w, h);
+    }
+    if (asset.style === 'terminal') {
+        if (slot === 'albedo') return (x, y, w, h) => terminalAlbedo(x, y, w, h, asset.palette);
+        if (slot === 'roughness') return (x, y, w, h) => terminalRough(x, y, w, h);
+        if (slot === 'metalness') return (x, y, w, h) => terminalMetal(x, y, w, h);
     }
     return () => [128, 128, 128, 255];
 }

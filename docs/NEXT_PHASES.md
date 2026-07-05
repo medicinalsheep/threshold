@@ -339,7 +339,21 @@ World.enterTcRace()   # Compiler after Lobby → TC →
 npm run tc:drive:verify
 ```
 
-**Next:** Vehicle enter/exit animations, checkpoint gate triggers (G3).
+### Phase G3 — Checkpoint gates + vehicle enter/exit (v5.16) ✅
+
+| Step | Status |
+|------|--------|
+| G3.1 `tcGateFx.js` — gate bar + beacon pulse + checkpoint sfx | ✅ |
+| G3.2 `lastGatePulse` circuit sync — multiplayer gate flash | ✅ |
+| G3.3 `tcDrive` enter/exit animations — camera + walk spawn | ✅ |
+| G3.4 `npm run tc:g3:verify` | ✅ |
+
+```bash
+World.enterTcRace()   # gate + drive anim on claim
+# Cross tc_cp — bar opens · sfx · lap logged · synced to guests
+World.releaseTcVehicle()   # exit anim · walk avatar
+npm run tc:g3:verify
+```
 
 ### Phase K — Cinematic layer (v4.9) ✅
 

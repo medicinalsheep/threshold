@@ -1,8 +1,8 @@
 {
   "format": "threshold-tc-textures",
-  "version": 1,
-  "realism": "r6",
-  "baseSize": 256,
+  "version": 2,
+  "realism": "r7",
+  "baseSize": 512,
   "hilod": [
     { "suffix": "_512", "maxPx": 128 },
     { "suffix": "_1k", "maxPx": 256 },
@@ -15,10 +15,10 @@
       "tcEd": "tc-veh",
       "slots": ["albedo", "roughness", "metalness"],
       "palette": {
-        "body": [26, 42, 68],
-        "trim": [13, 21, 32],
-        "accent": [57, 255, 20],
-        "metal": [136, 153, 170]
+        "body": [32, 48, 62],
+        "trim": [18, 26, 34],
+        "accent": [88, 108, 118],
+        "metal": [120, 128, 138]
       },
       "style": "vehicle"
     },
@@ -28,10 +28,10 @@
       "tcEd": "tc-veh",
       "slots": ["albedo", "roughness", "metalness"],
       "palette": {
-        "body": [45, 74, 53],
-        "trim": [58, 90, 72],
-        "accent": [0, 255, 170],
-        "metal": [100, 110, 120]
+        "body": [48, 52, 46],
+        "trim": [62, 58, 52],
+        "accent": [96, 88, 72],
+        "metal": [108, 112, 118]
       },
       "style": "vehicle"
     },
@@ -72,6 +72,77 @@
         "accent": [57, 255, 20]
       },
       "style": "span"
+    },
+    {
+      "slug": "starter_platform",
+      "objectName": "Welcome Platform",
+      "tcEd": "tc-lite",
+      "slots": ["albedo", "roughness"],
+      "palette": {
+        "base": [42, 44, 48],
+        "speck": [58, 60, 64],
+        "ring": [72, 78, 86]
+      },
+      "style": "concrete"
+    },
+    {
+      "slug": "starter_terminal",
+      "objectName": "AI Build Station",
+      "tcEd": "tc-lite",
+      "slots": ["albedo", "roughness", "metalness"],
+      "palette": {
+        "body": [36, 40, 48],
+        "screen": [14, 28, 42],
+        "trim": [68, 74, 82]
+      },
+      "style": "terminal"
+    },
+    {
+      "slug": "starter_kiosk",
+      "objectName": "Model Kiosk",
+      "tcEd": "tc-lite",
+      "slots": ["albedo", "roughness", "metalness"],
+      "palette": {
+        "body": [40, 44, 52],
+        "screen": [18, 32, 48],
+        "trim": [72, 78, 88]
+      },
+      "style": "terminal"
+    },
+    {
+      "slug": "starter_ground",
+      "objectName": "Starter Ground",
+      "tcEd": "tc-lite",
+      "slots": ["albedo", "roughness"],
+      "palette": {
+        "base": [38, 40, 44],
+        "speck": [52, 54, 58],
+        "ring": [62, 66, 72]
+      },
+      "style": "concrete"
+    },
+    {
+      "slug": "starter_wall",
+      "objectName": "Starter Wall",
+      "tcEd": "tc-lite",
+      "slots": ["albedo", "roughness"],
+      "palette": {
+        "base": [52, 56, 62],
+        "speck": [68, 72, 78],
+        "ring": [78, 82, 88]
+      },
+      "style": "wall"
+    },
+    {
+      "slug": "starter_stripe",
+      "objectName": "Starter Stripe",
+      "tcEd": "tc-lite",
+      "slots": ["albedo", "roughness"],
+      "palette": {
+        "paint": [218, 186, 68],
+        "asphalt": [40, 42, 46]
+      },
+      "style": "stripe"
     }
   ]
 }

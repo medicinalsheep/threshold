@@ -32,6 +32,13 @@ import { GltfImport } from '../shared/gltfImport.js';
 import { ThresholdShell } from '../shared/thresholdShell.js';
 import { CreativeWatch } from '../shared/creativeWatch.js';
 import { bootstrapStarterScene } from '../shared/starterScene.js';
+import '../shared/worldInteract.js';
+import '../shared/aiTerminal.js';
+import '../shared/starterSfx.js';
+import { ThirdEye } from '../shared/thirdEye.js';
+import '../shared/engineAudio.js';
+import '../shared/starterTex.js';
+import '../shared/npcPatrol.js';
 import { bootstrapReferenceIfRequested } from '../shared/referenceEdition.js';
 import { GameExport } from '../shared/gameExport.js';
 import { AgentHub } from '../shared/agentHub.js';
@@ -47,6 +54,7 @@ import { TextureHilod } from '../shared/textureHilod.js';
 import { Cinematic } from '../shared/cinematic.js';
 import '../shared/tcCircuit.js';
 import '../shared/tcDrive.js';
+import '../shared/tcGateFx.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 
@@ -153,6 +161,7 @@ const State = {
     cutscenePlaying: false,
     cinematicCatalog: [],
     controlMode: 'fly',
+    viewMode: 'tps',
     playerRef: null,
     hostCamera: null,
     syncPlayerPositions: {},
@@ -181,17 +190,21 @@ const Physics = {
 
     init: function () {
         this.world = new CANNON.World();
-        this.world.gravity.set(0, -9.82, 0); // Earth Gravity
+        this.world.gravity.set(0, -9.82, 0);
         this.world.broadphase = new CANNON.NaiveBroadphase();
-        this.world.solver.iterations = 15;
+        this.world.solver.iterations = 18;
         this.world.allowSleep = true;
 
-        const defaultMat = new CANNON.Material('default');
-        const contactMat = new CANNON.ContactMaterial(defaultMat, defaultMat, {
-            friction: 0.42,
-            restitution: 0.28
-        });
-        this.world.addContactMaterial(contactMat);
+        this.materials = {
+            default: new CANNON.Material('default'),
+            ground: new CANNON.Material('ground'),
+            player: new CANNON.Material('player'),
+        };
+        const { default: def, ground, player } = this.materials;
+        this.world.addContactMaterial(new CANNON.ContactMaterial(def, def, { friction: 0.48, restitution: 0.12 }));
+        this.world.addContactMaterial(new CANNON.ContactMaterial(player, ground, { friction: 0.55, restitution: 0.02 }));
+        this.world.addContactMaterial(new CANNON.ContactMaterial(player, def, { friction: 0.52, restitution: 0.05 }));
+        this.world.addContactMaterial(new CANNON.ContactMaterial(ground, def, { friction: 0.52, restitution: 0.08 }));
 
         const lastHit = new Map();
         this.world.addEventListener('collide', (e) => {
@@ -209,10 +222,28 @@ const Physics = {
 
     createFloor: function () {
         const shape = new CANNON.Plane();
-        const body = new CANNON.Body({ mass: 0 }); // Mass 0 = Static
+        const body = new CANNON.Body({ mass: 0, material: this.materials.ground });
         body.addShape(shape);
         body.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
         this.world.addBody(body);
+    },
+
+    addStaticBox(halfExtents, position, materialKey = 'ground') {
+        const mat = this.materials[materialKey] || this.materials.ground;
+        const shape = new CANNON.Box(halfExtents);
+        const body = new CANNON.Body({ mass: 0, material: mat });
+        body.addShape(shape);
+        body.position.set(position.x, position.y, position.z);
+        this.world.addBody(body);
+        return body;
+    },
+
+    raycastDown(origin, maxDist = 1.25) {
+        const from = new CANNON.Vec3(origin.x, origin.y + 0.05, origin.z);
+        const to = new CANNON.Vec3(origin.x, origin.y - maxDist, origin.z);
+        const result = new CANNON.RaycastResult();
+        this.world.raycastClosest(from, to, {}, result);
+        return result;
     },
 
     addBody: function (mesh, shapeType) {
@@ -260,7 +291,10 @@ const Physics = {
         };
 
         State.physicsObjects.forEach(({ body }) => applyDamping(body));
-        if (PlayerController.body) applyDamping(PlayerController.body);
+        if (PlayerController.body) {
+            PlayerController.body.linearDamping = 0.08;
+            PlayerController.body.angularDamping = 0.9;
+        }
 
         if (atmo && fog > 0.008) {
             const t = (State.env.timeOfDay ?? 12) / 24 * Math.PI * 2;
@@ -555,10 +589,10 @@ const Environment = {
             color: 0x1a4a5a,
             transparent: true,
             opacity: 0.22,
-            metalness: 0.45,
-            roughness: 0.18,
+            metalness: 0.18,
+            roughness: 0.48,
             depthWrite: false,
-            envMapIntensity: 0.55,
+            envMapIntensity: 0.22,
         });
         this.waterMesh = new THREE.Mesh(rippleGeo, rippleMat);
         this.waterMesh.position.y = 0.06;
@@ -630,12 +664,12 @@ const Engine = {
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        this.renderer.toneMappingExposure = 0.92;
+        this.renderer.toneMappingExposure = 0.84;
         document.getElementById('canvas-container').appendChild(this.renderer.domElement);
         // Lighting (Realism Upgrade)
-        const amb = new THREE.AmbientLight(0x404040, 1.0);
+        const amb = new THREE.AmbientLight(0x3a3d42, 0.72);
         this.scene.add(amb);
-        Environment.sunLight = new THREE.DirectionalLight(0xffffff, 2.0);
+        Environment.sunLight = new THREE.DirectionalLight(0xfff4e8, 1.55);
         Environment.sunLight.position.set(10, 20, 10);
         Environment.sunLight.castShadow = true;
         Environment.sunLight.shadow.mapSize.width = 2048;
@@ -645,7 +679,7 @@ const Engine = {
         this.gridHelper = new THREE.GridHelper(40, 40, 0x666666, 0x333333);
         this.scene.add(this.gridHelper);
         const planeGeo = new THREE.PlaneGeometry(100, 100);
-        const planeMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.55, metalness: 0.15, envMapIntensity: 0.6 });
+        const planeMat = new THREE.MeshStandardMaterial({ color: 0x1a1c1e, roughness: 0.78, metalness: 0.04, envMapIntensity: 0.28 });
         this.groundPlane = new THREE.Mesh(planeGeo, planeMat);
         this.groundPlane.rotation.x = -Math.PI / 2;
         this.groundPlane.receiveShadow = true; // Floor receives shadows
@@ -672,10 +706,32 @@ const Engine = {
             if (!e.repeat) {
                 if (action === 'toggleMode') UI.toggleControlMode();
                 if (action === 'pause' && Controls.canUse('pause')) UI.togglePause();
-                if (action === 'interact') UI.openInsert();
+                if (action === 'interact') {
+                    if (!window.WorldInteract?.tryInteract?.()) UI.openInsert();
+                }
+                if (action === 'fire') window.StarterSfx?.fireStarterGun?.();
+                if (action === 'toggleView') PlayerController.toggleViewMode?.();
+                if (action === 'thirdEye') ThirdEye.toggle();
             }
         });
         window.addEventListener('keyup', (e) => State.keys[e.code] = false);
+        this._lastPointer = { x: 0, y: 0 };
+        this.renderer.domElement.addEventListener('pointermove', (e) => {
+            if (State.controlMode !== 'walk' || !PlayerController.spawned || State.isPaused) return;
+            const dx = e.clientX - this._lastPointer.x;
+            const dy = e.clientY - this._lastPointer.y;
+            this._lastPointer.x = e.clientX;
+            this._lastPointer.y = e.clientY;
+            if (e.pointerType === 'touch') return;
+            if (Math.abs(dx) + Math.abs(dy) < 0.5) return;
+            const fps = State.viewMode === 'fps';
+            if (!fps && e.buttons === 0) return;
+            PlayerController.applyLookInput(dx, dy);
+        });
+        this.renderer.domElement.addEventListener('pointerdown', (e) => {
+            this._lastPointer.x = e.clientX;
+            this._lastPointer.y = e.clientY;
+        });
         this.renderer.domElement.addEventListener('pointerdown', (e) => this.onPointerDown(e));
         this.renderer.domElement.addEventListener('pointerup', (e) => this.onPointerUp(e));
         this.renderer.domElement.addEventListener('pointermove', (e) => this.onPointerMove(e));
@@ -776,7 +832,7 @@ const Engine = {
         this.shaderPass.renderToScreen = false;
         this.composer.addPass(this.shaderPass);
 
-        this.bloomPass = new UnrealBloomPass(size, 0.75, 0.32, 0.92);
+        this.bloomPass = new UnrealBloomPass(size, 0.46, 0.28, 0.97);
         this.bloomPass.enabled = true;
         this.bloomPass.renderToScreen = true;
         this.composer.addPass(this.bloomPass);
@@ -795,12 +851,12 @@ const Engine = {
 
     applyRenderModeSceneTuning: function (idx) {
         const isHyper = idx === 4;
-        if (Environment.sunLight) Environment.sunLight.intensity = isHyper ? 1.65 : 2.2;
-        if (this.renderer) this.renderer.toneMappingExposure = isHyper ? 0.88 : 0.92;
+        if (Environment.sunLight) Environment.sunLight.intensity = isHyper ? 1.32 : 1.55;
+        if (this.renderer) this.renderer.toneMappingExposure = isHyper ? 0.8 : 0.84;
         if (this.scene.fog) this.scene.fog.density = isHyper ? State.env.fogDensity : Math.max(State.env.fogDensity, 0.018);
         State.objects.forEach((obj) => {
             if (!obj.material?.isMeshStandardMaterial) return;
-            obj.material.envMapIntensity = isHyper ? 0.65 : 0.35;
+            obj.material.envMapIntensity = isHyper ? 0.38 : 0.22;
             if (!isHyper && obj.material.emissive) {
                 obj.material.emissiveIntensity = Math.max(obj.material.emissiveIntensity || 0, 0.08);
             }
@@ -816,8 +872,9 @@ const Engine = {
         this.bloomPass.renderToScreen = isHyper;
         this.shaderPass.renderToScreen = !isHyper;
         if (isHyper) {
-            this.bloomPass.strength = 0.72;
-            this.bloomPass.radius = 0.32;
+            this.bloomPass.strength = 0.46;
+            this.bloomPass.radius = 0.28;
+            this.bloomPass.threshold = 0.97;
         }
         this.applyRenderModeSceneTuning(idx);
         UI.updateModeDisplay(idx);
@@ -948,9 +1005,25 @@ const Engine = {
         Controls.applyCameraStick();
         if (Controls.consumeJustPressed('toggleMode')) UI.toggleControlMode();
         if (Controls.consumeJustPressed('pause')) UI.togglePause();
-        if (Controls.consumeJustPressed('interact')) UI.openInsert();
+        if (Controls.consumeJustPressed('interact')) {
+            if (!window.WorldInteract?.tryInteract?.()) UI.openInsert();
+        }
+        if (Controls.consumeJustPressed('fire')) {
+            window.StarterSfx?.fireStarterGun?.();
+        }
+        if (Controls.consumeJustPressed('toggleView')) {
+            PlayerController.toggleViewMode?.();
+        }
+        if (Controls.consumeJustPressed('thirdEye')) {
+            ThirdEye.toggle();
+        }
+        window.WorldInteract?.tick?.();
+        ThirdEye.tick();
         if (Controls.consumeJustPressed('bindingsMenu')) UI.openBindingsModal();
-        if (Controls.consumeJustPressed('cameraReset')) Controls.resetCameraBehindPlayer();
+        if (Controls.consumeJustPressed('cameraReset')) {
+            PlayerController.resetCameraBehind?.();
+            Controls.resetCameraBehindPlayer();
+        }
 
         this.tickHostCameraFollow();
         const camFollow = window.Spectate?.shouldFollowHost?.() || window.Spectate?.isFollowingHost?.();
@@ -1003,7 +1076,9 @@ const Engine = {
         }
 
         const dt = 0.016;
+        window.NpcPatrol?.tick?.(dt);
         State.objects.forEach((obj) => {
+            if (obj.userData?.patrolId) return;
             if (obj.userData?.isHuman && !obj.userData?.isPlayer && !obj.userData?.isGltf) {
                 HumanMesh.updateIdle(obj, time * 0.001, dt);
             }
@@ -1013,6 +1088,7 @@ const Engine = {
         MeshLod.update(this.camera);
         TextureHilod.update(this.camera);
         Cinematic.tick();
+        window.TcGateFx?.tick?.();
 
         this.controls.update();
         // Visual Rotation (Only for non-physics objects or purely visual effect)
@@ -1035,8 +1111,9 @@ const World = {
     createObject: function (type, name, color = 0xffffff, usePhysics = false) {
         let geo, mat = new THREE.MeshStandardMaterial({
             color: color,
-            roughness: 0.42,
-            metalness: 0.28,
+            roughness: 0.64,
+            metalness: 0.1,
+            envMapIntensity: 0.32,
             envMapIntensity: 0.65,
         });
         if (type === 'cube') geo = new THREE.BoxGeometry(1, 1, 1);
@@ -1394,7 +1471,10 @@ const UI = {
         });
 
         SoundPrompt.init();
-        SoundLibrary.init().then(() => UI.renderSoundLibrary());
+        SoundLibrary.init().then(async () => {
+            await window.StarterSfx?.seedStarterSounds?.();
+            UI.renderSoundLibrary();
+        });
         window.addEventListener('sound-library-change', () => UI.renderSoundLibrary());
         TextureLibrary.init();
         window.addEventListener('texture-library-change', () => {
@@ -1532,6 +1612,8 @@ const UI = {
         UI.initViewToggles();
         initPanelDrag();
         SceneDock.init();
+        window.WorldInteract?.init?.();
+        ThirdEye.init();
         CreativeWatch.init();
     },
     updateModeDisplay: function (idx) {
@@ -2092,7 +2174,9 @@ const UI = {
         const btn = document.getElementById('btn-control-mode');
         let label = 'FLY';
         if (State.controlMode === 'vehicle' && window.TcDrive?.active) label = 'VEH';
-        else if (State.controlMode === 'walk' && PlayerController.spawned) label = 'WALK';
+        else if (State.controlMode === 'walk' && PlayerController.spawned) {
+            label = State.viewMode === 'fps' ? 'FPS' : 'TPS';
+        }
         if (btn) btn.textContent = label;
         this.updateControlsHint();
     },
@@ -2250,15 +2334,18 @@ const UI = {
         if (PlayerController.spawned) {
             if (State.controlMode === 'walk') {
                 State.controlMode = 'fly';
+                if (Engine.controls) Engine.controls.enabled = true;
                 this.status('Fly camera mode');
             } else {
                 State.controlMode = 'walk';
-                this.status('Walk mode — WASD + Space');
+                PlayerController._syncWalkOrbit?.();
+                this.status('Walk — action controls active');
             }
         } else {
             const pos = World.getCursorPos();
             PlayerController.spawn(pos.x, pos.y + 1, pos.z);
         }
+        ThirdEye.updateHud();
         this.updateControlMode();
     },
     saveWorld: async function () {

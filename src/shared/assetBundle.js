@@ -30,10 +30,11 @@ export const AssetBundle = {
     bundleCandidates(relPath) {
         const norm = normalizeRel(relPath);
         const candidates = [this.toBundlePath(norm)];
-        if (!norm.startsWith('textures/') && !norm.startsWith('import/') && !norm.startsWith('video/')) {
+        if (!norm.startsWith('textures/') && !norm.startsWith('import/') && !norm.startsWith('video/') && !norm.startsWith('sounds/')) {
             candidates.push(joinBundle('textures', norm));
             candidates.push(joinBundle('import', norm));
             candidates.push(joinBundle('video', norm));
+            candidates.push(joinBundle('sounds', norm));
         }
         return [...new Set(candidates)];
     },
@@ -62,9 +63,19 @@ export const AssetBundle = {
     },
 
     async loadFile(relPath, fileName = null) {
-        const name = fileName || relPath.split(/[/\\]/).pop() || 'asset';
+        let pathTry = relPath;
+        if (/\.png$/i.test(relPath)) {
+            const webpPath = relPath.replace(/\.png$/i, '.webp');
+            const webpBlob = await this.fetchBlob(webpPath);
+            if (webpBlob) pathTry = webpPath;
+            else if (ThresholdShell.isNative) {
+                const wbuf = await this.readBinary(webpPath);
+                if (wbuf) pathTry = webpPath;
+            }
+        }
+        const name = fileName || pathTry.split(/[/\\]/).pop() || 'asset';
         if (ThresholdShell.isNative) {
-            const buf = await this.readBinary(relPath);
+            const buf = await this.readBinary(pathTry);
             if (!buf) return null;
             const lower = name.toLowerCase();
             let mime = 'application/octet-stream';
@@ -79,7 +90,7 @@ export const AssetBundle = {
             const blob = new Blob([buf], { type: mime });
             return new File([blob], name, { type: mime });
         }
-        const blob = await this.fetchBlob(relPath);
+        const blob = await this.fetchBlob(pathTry);
         if (!blob) return null;
         return new File([blob], name, { type: blob.type || 'application/octet-stream' });
     },

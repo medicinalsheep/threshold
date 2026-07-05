@@ -16,7 +16,10 @@ export const CONTROL_ACTIONS = {
     toggleMode: { label: 'Toggle Walk / Fly', group: 'general' },
     pause: { label: 'Pause Scene (host)', group: 'host', hostOnly: true },
     bindingsMenu: { label: 'Open Keys Menu', group: 'general' },
-    cameraReset: { label: 'Reset Camera Behind Player', group: 'general' }
+    cameraReset: { label: 'Reset Camera Behind Player', group: 'general' },
+    fire: { label: 'Fire / Shoot', group: 'general' },
+    toggleView: { label: 'Toggle FPS / TPS', group: 'general' },
+    thirdEye: { label: 'Third Eye (awareness)', group: 'general' },
 };
 
 export const GAMEPAD_BUTTON_LABELS = {
@@ -36,7 +39,10 @@ const DEFAULT_GAMEPAD_BINDINGS = {
     sprint: 10,    // L3 — left stick press (not RT)
     bindingsMenu: 8,
     pause: 9,
-    cameraReset: 11
+    cameraReset: 11,
+    fire: 7,
+    toggleView: 13,
+    thirdEye: 12,
 };
 
 const DEFAULT_HOST_KEYBOARD = {
@@ -45,14 +51,17 @@ const DEFAULT_HOST_KEYBOARD = {
     left: ['KeyA', 'ArrowLeft'],
     right: ['KeyD', 'ArrowRight'],
     up: ['KeyQ'],
-    down: ['KeyE', 'KeyC'],
+    down: ['KeyC'],
     jump: ['Space'],
     sprint: ['ShiftLeft', 'ShiftRight'],
-    interact: ['KeyX'],
+    interact: ['KeyE'],
     toggleMode: ['KeyF'],
     pause: ['KeyP'],
     bindingsMenu: [],
-    cameraReset: []
+    cameraReset: [],
+    fire: ['KeyG'],
+    toggleView: ['KeyV'],
+    thirdEye: ['KeyT'],
 };
 
 const DEFAULT_USER_KEYBOARD = {
@@ -64,12 +73,12 @@ const DEFAULT_USER_KEYBOARD = {
 
 const KEY_LABELS = {
     KeyW: 'W', KeyA: 'A', KeyS: 'S', KeyD: 'D', KeyQ: 'Q', KeyE: 'E', KeyC: 'C',
-    KeyF: 'F', KeyP: 'P', KeyX: 'X', Space: 'Space', ShiftLeft: 'Shift', ShiftRight: 'Shift',
+    KeyF: 'F', KeyG: 'G', KeyP: 'P', KeyT: 'T', KeyV: 'V', KeyX: 'X', Space: 'Space', ShiftLeft: 'Shift', ShiftRight: 'Shift',
     ArrowUp: '↑', ArrowDown: '↓', ArrowLeft: '←', ArrowRight: '→'
 };
 
 const GAMEPAD_DEADZONE = 0.18;
-const EDGE_ACTIONS = new Set(['toggleMode', 'interact', 'bindingsMenu', 'cameraReset', 'pause']);
+const EDGE_ACTIONS = new Set(['toggleMode', 'interact', 'bindingsMenu', 'cameraReset', 'pause', 'fire', 'toggleView', 'thirdEye']);
 
 function cloneKbDefaults(profile) {
     const src = profile === 'host' ? DEFAULT_HOST_KEYBOARD : DEFAULT_USER_KEYBOARD;
@@ -357,6 +366,9 @@ export const Controls = {
 
         edge('toggleMode');
         edge('interact');
+        edge('fire');
+        edge('toggleView');
+        edge('thirdEye');
         edge('bindingsMenu');
         edge('cameraReset');
         if (this.canUse('pause')) edge('pause');
@@ -381,6 +393,14 @@ export const Controls = {
     applyCameraStick() {
         const { x, y } = this.cameraStick;
         if (Math.abs(x) < GAMEPAD_DEADZONE && Math.abs(y) < GAMEPAD_DEADZONE) return;
+
+        const State = window.State;
+        const PC = window.PlayerController;
+        if (State?.controlMode === 'walk' && PC?.spawned) {
+            PC.applyLookInput(x * 14, y * 14, 1.2);
+            return;
+        }
+
         const Engine = window.Engine;
         if (!Engine?.camera || !Engine.controls) return;
 
@@ -399,9 +419,8 @@ export const Controls = {
         const PC = window.PlayerController;
         const Engine = window.Engine;
         if (!PC?.spawned || !Engine?.camera) return;
+        PC.resetCameraBehind?.();
         const target = PC.group.position.clone().add(new THREE.Vector3(0, 1.4, 0));
-        const back = new THREE.Vector3(0, 0, 4);
-        Engine.camera.position.copy(target).add(back);
         Engine.controls.target.copy(target);
     },
 
@@ -412,7 +431,8 @@ export const Controls = {
         const pad = this.gamepad ? ' · pad' : '';
         const touch = window.TouchControls?.enabled ? ' · touch' : '';
         if (mode === 'walk') {
-            return `${profile}${admin}: WASD/L-stick · ${this.formatGamepadButton(this._btnIndex('jump'))} jump · L3 sprint${pad}${touch}`;
+            const view = window.State?.viewMode === 'fps' ? 'FPS' : 'TPS';
+            return `${profile}${admin}: ${view} · WASD · Shift sprint · V view · T Third Eye · E interact${pad}${touch}`;
         }
         return `${profile}${admin}: fly · Y toggle · R-stick cam${pad}${touch}`;
     },

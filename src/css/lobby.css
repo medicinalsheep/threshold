@@ -2,33 +2,104 @@
     position: fixed;
     inset: 0;
     z-index: 2000;
-    background: radial-gradient(ellipse at 30% 20%, #0a1208 0%, #0a0a12 55%, #050508 100%);
+    background: radial-gradient(ellipse at 18% 35%, #0c1810 0%, #0a0a12 48%, #050508 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    padding-top: max(20px, env(safe-area-inset-top, 0px));
-    padding-bottom: max(20px, env(safe-area-inset-bottom, 0px));
+    padding: clamp(12px, 3vw, 28px);
+    padding-top: max(12px, env(safe-area-inset-top, 0px));
+    padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
     box-sizing: border-box;
     overflow: hidden;
 }
 
 .lobby-bg-grid {
     position: absolute;
-    inset: -20%;
+    inset: -25%;
     background-image:
-        linear-gradient(rgba(57, 255, 20, 0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(57, 255, 20, 0.06) 1px, transparent 1px);
-    background-size: 48px 48px;
-    transform: perspective(500px) rotateX(58deg) translateY(-8%);
-    animation: lobbyGridDrift 24s linear infinite;
+        linear-gradient(rgba(57, 255, 20, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57, 255, 20, 0.07) 1px, transparent 1px);
+    background-size: 52px 52px;
+    transform: perspective(680px) rotateX(62deg) translateY(-6%);
+    animation: lobbyGridDrift 20s linear infinite;
     pointer-events: none;
-    opacity: 0.7;
+    opacity: 0.75;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, #000 20%, transparent 72%);
 }
 
 @keyframes lobbyGridDrift {
     from { background-position: 0 0, 0 0; }
-    to { background-position: 0 96px, 96px 0; }
+    to { background-position: 0 104px, 104px 0; }
+}
+
+.lobby-bg-orbs {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.lobby-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(48px);
+    opacity: 0.45;
+    animation: lobbyOrbFloat 14s ease-in-out infinite;
+}
+
+.lobby-orb-1 {
+    width: min(42vw, 320px);
+    height: min(42vw, 320px);
+    left: -8%;
+    top: 18%;
+    background: radial-gradient(circle, rgba(57, 255, 20, 0.35) 0%, transparent 70%);
+    animation-duration: 16s;
+}
+
+.lobby-orb-2 {
+    width: min(36vw, 260px);
+    height: min(36vw, 260px);
+    right: 6%;
+    bottom: 12%;
+    background: radial-gradient(circle, rgba(0, 255, 170, 0.22) 0%, transparent 70%);
+    animation-duration: 19s;
+    animation-delay: -4s;
+}
+
+.lobby-orb-3 {
+    width: min(28vw, 200px);
+    height: min(28vw, 200px);
+    left: 42%;
+    top: 8%;
+    background: radial-gradient(circle, rgba(120, 80, 255, 0.18) 0%, transparent 70%);
+    animation-duration: 22s;
+    animation-delay: -8s;
+}
+
+@keyframes lobbyOrbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(24px, -18px) scale(1.06); }
+    66% { transform: translate(-16px, 14px) scale(0.94); }
+}
+
+.lobby-scanlines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.04;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 255, 255, 0.35) 2px,
+        rgba(255, 255, 255, 0.35) 3px
+    );
+    animation: lobbyScanPulse 8s ease-in-out infinite;
+}
+
+@keyframes lobbyScanPulse {
+    0%, 100% { opacity: 0.03; }
+    50% { opacity: 0.06; }
 }
 
 #lobby-overlay.hidden {
@@ -37,34 +108,120 @@
 
 #lobby-card {
     position: relative;
-    width: 100%;
-    max-width: 440px;
-    background: rgba(5, 5, 8, 0.94);
+    width: min(960px, 100%);
+    max-height: min(92vh, 640px);
+    background: rgba(5, 5, 8, 0.92);
     border: 1px solid var(--accent-color);
-    padding: 28px 26px;
+    padding: 0;
     box-sizing: border-box;
-    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55), 0 0 40px rgba(57, 255, 20, 0.1);
-    animation: lobbyCardIn 0.7s ease-out;
+    box-shadow:
+        0 28px 72px rgba(0, 0, 0, 0.6),
+        0 0 48px rgba(57, 255, 20, 0.12),
+        inset 0 1px 0 rgba(57, 255, 20, 0.15);
+    animation: lobbyCardIn 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+    overflow: hidden;
+}
+
+#lobby-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(57, 255, 20, 0.06) 0%, transparent 42%, transparent 58%, rgba(0, 255, 170, 0.04) 100%);
+    pointer-events: none;
 }
 
 @keyframes lobbyCardIn {
-    from { opacity: 0; transform: translateY(18px) scale(0.97); }
+    from { opacity: 0; transform: translateY(22px) scale(0.96); }
     to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.lobby-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    min-height: min(520px, 88vh);
+    position: relative;
+}
+
+.lobby-hero-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(20px, 4vw, 36px) clamp(18px, 3vw, 32px);
+    border-right: 1px solid rgba(57, 255, 20, 0.22);
+    background: linear-gradient(180deg, rgba(57, 255, 20, 0.04) 0%, transparent 55%);
+    position: relative;
+    overflow: hidden;
+}
+
+.lobby-hero-panel::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 12%;
+    bottom: 12%;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, var(--accent-color), transparent);
+    opacity: 0.5;
+    animation: lobbyRailGlow 3s ease-in-out infinite;
+}
+
+@keyframes lobbyRailGlow {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.85; }
+}
+
+.lobby-actions-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(18px, 3vw, 28px) clamp(18px, 3vw, 32px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.lobby-actions-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.lobby-actions-label {
+    font-size: 0.72rem;
+    letter-spacing: 3px;
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.lobby-actions-sub {
+    font-size: 0.62rem;
+    color: #666;
+    letter-spacing: 0.3px;
 }
 
 .lobby-logo-wrap {
     display: block;
-    margin: 0 auto 10px;
-    text-align: center;
+    margin: 0 0 12px;
+    text-align: left;
 }
 
 .lobby-logo {
     display: block;
-    width: min(280px, 82vw);
+    width: min(300px, 100%);
     height: auto;
-    margin: 0 auto;
+    margin: 0;
     object-fit: contain;
     background: transparent;
+    animation: lobbyLogoFloat 5s ease-in-out infinite;
+    filter: drop-shadow(0 8px 24px rgba(57, 255, 20, 0.15));
+}
+
+@keyframes lobbyLogoFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
 }
 
 .lobby-logo-light {
@@ -100,25 +257,74 @@ body.light-mode .lobby-logo-light {
 
 #lobby-card .tagline {
     color: #aaa;
-    font-size: 0.82rem;
-    margin: 0 0 18px;
+    font-size: 0.84rem;
+    margin: 0 0 20px;
     line-height: 1.55;
+    min-height: 2.6em;
+    transition: opacity 0.35s ease;
+}
+
+#lobby-card .tagline.tagline-fade {
+    opacity: 0;
 }
 
 .lobby-pills {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 18px;
+    gap: 7px;
+    margin-bottom: 20px;
 }
 
 .lobby-pill {
     font-size: 0.58rem;
-    letter-spacing: 0.5px;
-    padding: 4px 8px;
+    letter-spacing: 0.6px;
+    padding: 5px 9px;
     border: 1px solid var(--border-color);
     color: var(--accent-color);
     background: rgba(57, 255, 20, 0.08);
+    animation: lobbyPillIn 0.6s ease-out backwards;
+    animation-delay: calc(0.08s * var(--pill-i, 0) + 0.35s);
+}
+
+@keyframes lobbyPillIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.lobby-hero-rail {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 16px;
+    opacity: 0.7;
+}
+
+.lobby-rail-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    box-shadow: 0 0 12px var(--accent-color);
+    animation: lobbyDotPulse 2s ease-in-out infinite;
+}
+
+@keyframes lobbyDotPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.25); opacity: 0.65; }
+}
+
+.lobby-rail-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent-color), transparent);
+    max-width: 120px;
+}
+
+.lobby-rail-label {
+    font-size: 0.58rem;
+    letter-spacing: 2px;
+    color: var(--accent-color);
 }
 
 .lobby-input {
@@ -127,24 +333,43 @@ body.light-mode .lobby-logo-light {
     background: #080808;
     color: #fff;
     border: 1px solid var(--border-color);
-    padding: 12px;
+    padding: 11px 12px;
     font-family: var(--font-mono);
-    margin-bottom: 12px;
-    font-size: 1rem;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
     border-radius: 4px;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .lobby-input:focus {
     outline: none;
     border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(57, 255, 20, 0.12);
+}
+
+.lobby-join-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: start;
+    margin-bottom: 4px;
+}
+
+.lobby-join-row .lobby-input {
+    margin-bottom: 0;
 }
 
 .lobby-btn {
     width: 100%;
-    padding: 14px !important;
+    padding: 13px !important;
     margin-bottom: 8px;
-    font-size: 0.85rem !important;
+    font-size: 0.82rem !important;
     border-radius: 4px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lobby-btn:active {
+    transform: scale(0.98);
 }
 
 .lobby-btn-primary {
@@ -152,23 +377,50 @@ body.light-mode .lobby-logo-light {
     color: #000 !important;
     border: none !important;
     font-weight: bold;
+    box-shadow: 0 4px 20px rgba(57, 255, 20, 0.25);
+}
+
+.lobby-btn-primary:hover {
+    box-shadow: 0 6px 28px rgba(57, 255, 20, 0.35);
+}
+
+.lobby-btn-join {
+    width: auto;
+    min-width: 88px;
+    margin-bottom: 0;
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+    white-space: nowrap;
 }
 
 .lobby-btn-ghost {
     background: transparent !important;
     color: var(--text-color) !important;
     border: 1px dashed var(--border-color) !important;
+    margin-bottom: 0;
+}
+
+.lobby-quick-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 10px 0 8px;
+}
+
+.lobby-quick-row .lobby-btn {
+    padding: 11px 6px !important;
+    font-size: 0.72rem !important;
 }
 
 #lobby-status {
     font-size: 0.75rem;
     color: #888;
-    margin-top: 12px;
+    margin-top: 10px;
     min-height: 1.2em;
 }
 
 .lobby-steps-wrap {
-    margin-top: 12px;
+    margin-top: 8px;
     border: 1px solid var(--border-color);
     background: rgba(0, 0, 0, 0.35);
     border-radius: 4px;
@@ -176,7 +428,7 @@ body.light-mode .lobby-logo-light {
 
 .lobby-steps-wrap summary {
     cursor: pointer;
-    padding: 10px 12px;
+    padding: 9px 12px;
     font-size: 0.68rem;
     color: var(--accent-color);
     letter-spacing: 0.5px;
@@ -240,55 +492,8 @@ body.light-mode .lobby-logo-light {
     margin-bottom: 4px;
 }
 
-@media (max-width: 600px) {
-    #lobby-overlay {
-        align-items: flex-start;
-        justify-content: flex-start;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        padding: max(10px, env(safe-area-inset-top)) 12px 20px;
-    }
-
-    #lobby-card {
-        padding: 16px 14px;
-        max-width: 100%;
-        margin: 0 auto 16px;
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-    }
-
-    .lobby-logo {
-        width: min(190px, 68vw);
-        margin-bottom: 4px;
-    }
-
-    #lobby-card .tagline {
-        font-size: 0.72rem;
-        margin-bottom: 12px;
-    }
-
-    .lobby-pills {
-        display: none;
-    }
-
-    .lobby-input {
-        padding: 11px;
-        font-size: 16px;
-        margin-bottom: 8px;
-    }
-
-    .lobby-btn {
-        padding: 12px !important;
-        font-size: 0.8rem !important;
-        margin-bottom: 6px;
-    }
-
-    .lobby-steps-wrap {
-        margin-top: 8px;
-    }
-}
-
 .lobby-voip-wrap {
-    margin: 10px 0 12px;
+    margin: 6px 0 8px;
     text-align: left;
     font-size: 0.72rem;
     color: #888;
@@ -298,14 +503,14 @@ body.light-mode .lobby-logo-light {
     cursor: pointer;
     color: var(--accent-color);
     letter-spacing: 1px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .lobby-voip-grid {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 8px 0 4px;
+    padding: 6px 0 4px;
 }
 
 .lobby-voip-row {
@@ -326,9 +531,119 @@ body.light-mode .lobby-logo-light {
     color: #666;
 }
 
+@media (max-width: 720px) {
+    #lobby-overlay {
+        align-items: flex-start;
+        justify-content: flex-start;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #lobby-card {
+        max-height: none;
+        margin: 0 auto 16px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .lobby-layout {
+        grid-template-columns: 1fr;
+        min-height: 0;
+    }
+
+    .lobby-hero-panel {
+        border-right: none;
+        border-bottom: 1px solid rgba(57, 255, 20, 0.18);
+        padding: 18px 16px 14px;
+    }
+
+    .lobby-hero-panel::after {
+        display: none;
+    }
+
+    .lobby-hero-rail {
+        display: none;
+    }
+
+    .lobby-logo-wrap {
+        text-align: center;
+    }
+
+    .lobby-logo {
+        margin: 0 auto;
+        width: min(220px, 72vw);
+        animation: none;
+    }
+
+    #lobby-card .tagline {
+        text-align: center;
+        font-size: 0.76rem;
+        margin-bottom: 14px;
+        min-height: 2.4em;
+    }
+
+    .lobby-pills {
+        justify-content: center;
+        margin-bottom: 0;
+    }
+
+    .lobby-actions-panel {
+        padding: 16px 14px 18px;
+    }
+
+    .lobby-actions-head {
+        margin-bottom: 12px;
+    }
+
+    .lobby-actions-sub {
+        display: none;
+    }
+
+    .lobby-input {
+        padding: 11px;
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    .lobby-btn {
+        padding: 12px !important;
+        font-size: 0.8rem !important;
+        margin-bottom: 6px;
+    }
+
+    .lobby-quick-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .lobby-quick-row .lobby-btn {
+        font-size: 0.78rem !important;
+    }
+}
+
 @media (max-width: 480px) {
+    .lobby-pills .lobby-pill:nth-child(n+4) {
+        display: none;
+    }
+
     .lobby-hero h1 {
         font-size: 1.25rem;
         letter-spacing: 2px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lobby-bg-grid,
+    .lobby-orb,
+    .lobby-scanlines,
+    .lobby-logo,
+    .lobby-pill,
+    .lobby-rail-dot,
+    .lobby-hero-panel::after,
+    #lobby-card {
+        animation: none;
+    }
+
+    #lobby-card .tagline {
+        transition: none;
     }
 }

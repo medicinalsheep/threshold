@@ -54,6 +54,14 @@
     #engine-toolbar.float-panel .engine-toolbar-body {
         gap: 6px !important;
         padding: 6px !important;
+        flex-wrap: wrap;
+    }
+
+    .toolbar-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        min-width: 140px;
+        max-width: 100%;
+        width: 100%;
     }
 
     .engine-toolbar #mode-display {

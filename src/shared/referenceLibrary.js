@@ -149,12 +149,12 @@ m.userData.textureHint = 'textures/stone_albedo.png';
         },
         {
             id: 'tc_circuit',
-            title: 'TC Circuit — Lap Timer + Checkpoint',
-            summary: 'Extend the TC showcase into a time-trial loop: hit tc_cp, log laps, multiplayer lap sync (G1) without clearing the scene.',
-            checklist: ['Lobby TC → CREATE SESSION for multiplayer', 'RUN: World.enterTcRace() — circuit + claim tc_run/tc_haul', 'PLAY · WASD drive · cross tc_cp', 'LIVE_STATE syncs vehicles + laps'],
-            code: `// TC CIRCUIT (G1+G2) — paste after Lobby → TC →
-// Solo or host: starts circuit + claims TC Runner
-// Guests auto-claim tc_haul (or extra tc_run spawn) · LIVE_STATE sync ~80ms
+            title: 'TC Circuit — Lap Timer + Gate + Drive',
+            summary: 'Time-trial loop: drive through tc_cp gate, log laps + multiplayer sync (G1), claim vehicles with enter/exit anim (G2+G3).',
+            checklist: ['Lobby TC → CREATE SESSION for multiplayer', 'RUN: World.enterTcRace() — circuit + claim tc_run/tc_haul', 'Gate opens + checkpoint sfx on lap · synced via lastGatePulse', 'World.releaseTcVehicle() — exit anim spawns walk avatar'],
+            code: `// TC CIRCUIT (G1+G2+G3) — paste after Lobby → TC →
+// Gate bar at tc_cp opens on lap · beacon pulses while circuit runs
+// Vehicle enter: camera swoop + hop · exit: spawn walk avatar beside car
 World.enterTcRace();
 // Or step-by-step:
 // World.startTcCircuit(); World.claimTcVehicle('tc_run');

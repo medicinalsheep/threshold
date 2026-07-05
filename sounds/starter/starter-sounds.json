@@ -1,0 +1,139 @@
+{
+  "format": "threshold-starter-sounds",
+  "version": 2,
+  "sampleRate": 22050,
+  "clips": [
+    {
+      "id": "starter_eng_two_stroke",
+      "name": "Two-Stroke Engine",
+      "wav": "sounds/starter/engine_two_stroke.wav",
+      "ogg": "sounds/starter/engine_two_stroke.ogg",
+      "category": "engine",
+      "vehicle": "tc_run",
+      "bytes": 70604,
+      "oggBytes": 16963,
+      "preferred": "ogg",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_eng_v8",
+      "name": "V8 Engine Idle",
+      "wav": "sounds/starter/engine_v8.wav",
+      "ogg": "sounds/starter/engine_v8.ogg",
+      "category": "engine",
+      "vehicle": "tc_haul",
+      "bytes": 88244,
+      "oggBytes": 16116,
+      "preferred": "ogg",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_terminal_chirp",
+      "name": "Terminal Chirp",
+      "wav": "sounds/starter/terminal_chirp.wav",
+      "ogg": "sounds/starter/terminal_chirp.ogg",
+      "category": "ui",
+      "vehicle": null,
+      "bytes": 7982,
+      "oggBytes": 4091,
+      "preferred": "ogg",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_gun_pistol",
+      "name": "Gun — Pistol",
+      "wav": "sounds/starter/gun_pistol.wav",
+      "ogg": "sounds/starter/gun_pistol.ogg",
+      "category": "gun",
+      "vehicle": null,
+      "bytes": 16802,
+      "oggBytes": 6160,
+      "preferred": "ogg",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_gun_rifle",
+      "name": "Gun — Rifle",
+      "wav": "sounds/starter/gun_rifle.wav",
+      "ogg": "sounds/starter/gun_rifle.ogg",
+      "category": "gun",
+      "vehicle": null,
+      "bytes": 21212,
+      "oggBytes": 6927,
+      "preferred": "ogg",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_brake_squeal",
+      "name": "Brake Squeal",
+      "wav": "sounds/starter/brake_squeal.wav",
+      "ogg": "sounds/starter/brake_squeal.ogg",
+      "category": "vehicle",
+      "vehicle": null,
+      "bytes": 27386,
+      "oggBytes": 9190,
+      "preferred": "ogg",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_door_lock",
+      "name": "Door Lock",
+      "wav": "sounds/starter/door_lock.wav",
+      "ogg": "sounds/starter/door_lock.ogg",
+      "category": "door",
+      "vehicle": null,
+      "bytes": 6218,
+      "oggBytes": 4685,
+      "preferred": "ogg",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_door_unlock",
+      "name": "Door Unlock",
+      "wav": "sounds/starter/door_unlock.wav",
+      "ogg": "sounds/starter/door_unlock.ogg",
+      "category": "door",
+      "vehicle": null,
+      "bytes": 5336,
+      "oggBytes": 4548,
+      "preferred": "ogg",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_glass_break",
+      "name": "Glass Break",
+      "wav": "sounds/starter/glass_break.wav",
+      "ogg": "sounds/starter/glass_break.ogg",
+      "category": "impact",
+      "vehicle": null,
+      "bytes": 31796,
+      "oggBytes": 8391,
+      "preferred": "ogg",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_tire_skid",
+      "name": "Tire Skid",
+      "wav": "sounds/starter/tire_skid.wav",
+      "ogg": "sounds/starter/tire_skid.ogg",
+      "category": "vehicle",
+      "vehicle": null,
+      "bytes": 37528,
+      "oggBytes": 9518,
+      "preferred": "ogg",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_metal_hit",
+      "name": "Metal Impact",
+      "wav": "sounds/starter/metal_hit.wav",
+      "ogg": "sounds/starter/metal_hit.ogg",
+      "category": "impact",
+      "vehicle": null,
+      "bytes": 12392,
+      "oggBytes": 5283,
+      "preferred": "ogg",
+      "license": "Original — Threshold procedural"
+    }
+  ]
+}

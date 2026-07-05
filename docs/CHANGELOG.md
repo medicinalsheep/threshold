@@ -1,5 +1,60 @@
 # Changelog
 
+## 6.0.0 — Realism defaults (asset pack + creator guide)
+
+- `tex:compress` — PNG → WebP sidecars; runtime prefers WebP when bundled
+- `assets:pack` — one-shot tex + sounds + webp + build + bundle
+- `assets:verify` — smoke test modules, NPCs, SFX, texture budget
+- Parking stripes, barrier posts, `starter_stripe` r7 texture
+- [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) — action controls, NPC/texture/audio/physics recipes
+
+## 5.22.0 — Physics pass · NPC roster · scene dressing
+
+- Capsule player collider, ground raycast jump, player/ground physics materials (less bounce)
+- Static platform + ground slab colliders — no more floating plane-only feel
+- **Alex**, **Jordan** (range patrol), **Sam** (mechanic patrol) — upgraded human proportions
+- `npcPatrol.js` — waypoint idle loops; Third Eye highlights all three
+- Starter ground slab, backdrop wall, bench; r7 textures at 512px for ground/wall
+
+## 5.20.0 — Action controls · FPS/TPS · Third Eye
+
+- **TPS walk** from first spawn — camera-relative movement, Shift/L3 sprint, accel/decel curves
+- **V** / D-pad Down toggles **FPS ↔ TPS**; FPS crosshair, head hidden at eye height
+- **Third Eye** (**T** / D-pad Up) — green circle HUD + highlight interactables/NPCs within 18m
+- **E** = interact (hint and binding aligned); OrbitControls disabled in walk mode
+- Mouse / R-stick look in walk; fire raycast from active camera
+
+## 5.19.0 — Starter world FX (guns, brakes, locks, glass)
+
+- `sounds:gen` — 8 new procedural clips: pistol/rifle, brake squeal, tire skid, door lock/unlock, glass break, metal hit
+- `wireStarterSounds()` — crate/glass/target collisions, terminal door-lock on interact, engine loops unchanged
+- **G** to shoot — raycast hits glass pane (shatters) or metal target; kick crate for impact SFX
+- TC drive — brake squeal on hard stop, tire skid on fast turns
+- Starter scene props: glass pane + shooting target on the platform
+
+## 5.18.0 — Starter engine SFX + texture realism
+
+- `npm run sounds:gen` — procedural two-stroke + V8 loops (22 kHz mono WAV, optional OGG via ffmpeg)
+- `EngineAudio` — looping drive sound with throttle-linked pitch/volume on `tc_run` / `tc_haul`
+- Starter + TC textures: concrete platform, terminal kiosks, muted vehicle palettes (`tc:gen:tex`)
+- `sounds:compress` — drop rips in `sounds/import/` for ffmpeg/VLC lightweight conversion
+- ffmpeg via winget → OGG clips ~16 KB each (vs ~70–88 KB WAV) · `npm run sounds:verify`
+
+## 5.17.0 — Panel layout · realism pass · AI terminals
+
+- TOOLS / SCENE panels default **left-center** / **right-center**; v3 layout resets cut-off positions
+- Toolbar button grid + session bar ellipsis; scene dock scroll/height fixes
+- Hyper glare reduced — lower bloom, exposure, env reflections, softer ground/water
+- Starter scene: **Alex** guide NPC + **AI Build Station** + **Model Kiosk** (walk up · press E)
+- Human mesh proportions — neck, shoulders, matte skin; less neon emissive
+
+## 5.16.0 — G3 checkpoint gates + vehicle enter/exit animations
+
+- `tcGateFx.js` — tc_cp gate bar opens on lap, beacon pulse, checkpoint sfx
+- `lastGatePulse` in circuit LIVE_STATE — multiplayer gate sync without extra actions
+- `tcDrive.js` — enter camera swoop + vehicle hop; exit spawns walk avatar with scale-in
+- TC show checkpoint spawns gate posts + bar · `npm run tc:g3:verify`
+
 ## 5.15.0 — G2 drivable TC vehicles + live sync
 
 - `tcDrive.js` — claim `tc_run` / `tc_haul`, WASD arcade drive, chase camera

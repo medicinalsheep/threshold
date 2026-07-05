@@ -9,6 +9,7 @@ function emptyCircuit() {
         radius: circuitCfg.radius ?? 2.2,
         minLapSec: circuitCfg.minLapSec ?? 3,
         startedAt: null,
+        lastGatePulse: 0,
         players: {},
         recent: [],
     };
@@ -96,9 +97,10 @@ export const TcCircuit = {
         this._local.insideCp = false;
         this._bindTick();
         this._renderHud();
+        window.TcGateFx?.ensureGate?.(cp);
 
         if (!silent) {
-            window.UI?.status?.('TC Circuit live — cross green checkpoint (tc_cp) to log laps');
+            window.UI?.status?.('TC Circuit live — drive through the green gate (tc_cp) to log laps');
         }
         if (net?.mode === 'host') net.scheduleBroadcast();
         return this.state;
@@ -143,6 +145,7 @@ export const TcCircuit = {
             at: new Date().toISOString(),
         };
         this.state.recent = [event, ...(this.state.recent || [])].slice(0, circuitCfg.maxRecent || 8);
+        this.state.lastGatePulse = performance.now();
 
         const msg = `${row.name} lap ${row.lap}: ${elapsed.toFixed(2)}s · best ${row.bestSec.toFixed(2)}s`;
         window.UI?.status?.(msg);
@@ -163,6 +166,7 @@ export const TcCircuit = {
         if (this.state.running) this._bindTick();
         else this._unbindTick();
         this._renderHud();
+        if (this.state.lastGatePulse) window.TcGateFx?.onCircuitPulse?.(this.state.lastGatePulse);
     },
 
     captureState() {
@@ -175,6 +179,7 @@ export const TcCircuit = {
         const key = String(window.Session?.playerKey || '').toUpperCase();
         const net = window.Network;
 
+        window.TcGateFx?.trigger?.();
         if (net?.mode === 'host' || net?.mode === 'solo') {
             this.recordLap(key, { elapsedSec });
         } else if (net?.mode === 'guest') {
@@ -270,7 +275,7 @@ export const TcCircuit = {
             const last = (this.state.recent || [])[0];
             recent.textContent = last
                 ? `Last: ${last.name} lap ${last.lap} · ${last.elapsedSec.toFixed(2)}s`
-                : 'Cross tc_cp to start timing';
+                : 'Drive through the green gate to start timing';
         }
     },
 };

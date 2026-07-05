@@ -34,7 +34,7 @@ console.log('[tc-circuit-verify] workflow');
 const ref = fs.readFileSync(path.join(ROOT, 'src/shared/referenceLibrary.js'), 'utf8');
 if (!ref.includes('World.startTcCircuit')) bad('referenceLibrary missing World.startTcCircuit');
 else ok('WORKFLOWS → World.startTcCircuit()');
-if (!ref.includes('multiplayer lap sync')) bad('workflow summary missing multiplayer');
+if (!ref.includes('multiplayer lap sync') && !ref.includes('multiplayer sync')) bad('workflow summary missing multiplayer');
 else ok('G1 multiplayer lap sync doc');
 
 console.log('[tc-circuit-verify] UI');

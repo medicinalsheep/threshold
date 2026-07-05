@@ -12,7 +12,6 @@ export function initLobby(onReady) {
     const joinInput = document.getElementById('lobby-join-code');
     const statusEl = document.getElementById('lobby-status');
     const urlRoom = new URLSearchParams(window.location.search).get('room');
-
     if (urlRoom) {
         joinInput.value = urlRoom.toUpperCase();
     }

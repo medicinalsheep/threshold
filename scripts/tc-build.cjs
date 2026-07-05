@@ -8,6 +8,7 @@ const ROOT = path.join(__dirname, '..');
 const GEN_VEH = path.join(__dirname, 'tc-gen-veh.cjs');
 const GEN_CHR = path.join(__dirname, 'tc-gen-chr.cjs');
 const GEN_TEX = path.join(__dirname, 'tc-gen-tex.cjs');
+const GEN_SFX = path.join(__dirname, 'gen-starter-sfx.cjs');
 const GEN_VID = path.join(__dirname, 'tc-gen-vid.cjs');
 const BLEND_DIR = path.join(ROOT, 'plugins', 'threshold-blender');
 const BLEND_VEH = path.join(BLEND_DIR, 'tc_veh.blend');
@@ -130,6 +131,7 @@ function main() {
 
     finalizeManifest();
     runNode(GEN_TEX);
+    runNode(GEN_SFX);
     if (!runNode(GEN_VID)) console.log('[tc-build] vid skipped (pip install pillow imageio imageio-ffmpeg)');
     console.log('[tc-build] done');
 }

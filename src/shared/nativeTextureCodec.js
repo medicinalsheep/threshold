@@ -12,6 +12,23 @@ function ktx2SiblingPath(sourcePath = '') {
     return sourcePath.replace(/\.(png|jpe?g|webp)$/i, '.ktx2');
 }
 
+function webpSiblingPath(sourcePath = '') {
+    if (!sourcePath || !/\.png$/i.test(sourcePath)) return null;
+    return sourcePath.replace(/\.png$/i, '.webp');
+}
+
+async function probeWebpPath(sourcePath) {
+    const webp = webpSiblingPath(sourcePath);
+    if (!webp) return null;
+    const blob = await AssetBundle.fetchBlob(webp);
+    if (blob) return webp;
+    if (ThresholdShell.isNative) {
+        const buf = await AssetBundle.readBinary(webp);
+        return buf ? webp : null;
+    }
+    return null;
+}
+
 async function probeKtx2Path(sourcePath) {
     if (!sourcePath || !ThresholdShell.isNative) return null;
     const ktx2Path = ktx2SiblingPath(sourcePath);
@@ -28,10 +45,14 @@ export const NativeTextureCodec = {
     ktx2SiblingPath,
 
     async resolveSourcePath(sourcePath = '', meta = {}) {
-        if (!this.ktx2Enabled) return sourcePath;
         const explicit = meta.ktx2Path || meta.sourceKtx2;
         if (explicit) return explicit;
-        return (await probeKtx2Path(sourcePath)) || sourcePath;
+        if (this.ktx2Enabled) {
+            const ktx2 = await probeKtx2Path(sourcePath);
+            if (ktx2) return ktx2;
+        }
+        const webp = await probeWebpPath(sourcePath);
+        return webp || sourcePath;
     },
 
     /** Returns original URL until basis_transcoder.wasm is bundled. */

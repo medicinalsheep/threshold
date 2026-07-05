@@ -10,7 +10,7 @@ const LOD_DISTANCES = require('../config/lod-distances.json').distances;
 
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'dist-pages', 'bundle');
-const DIRS = ['textures', 'import', 'video'];
+const DIRS = ['textures', 'import', 'video', 'sounds'];
 const MANIFESTS = {
     textures: 'threshold_manifest.json',
     import: 'threshold_blender_manifest.json',

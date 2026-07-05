@@ -68,6 +68,13 @@ export const TextureManifest = {
         add(`bundle/textures/${file}`);
         add(`bundle/${rel}`);
 
+        if (/\.png$/i.test(file)) {
+            const webp = file.replace(/\.png$/i, '.webp');
+            add(joinPath(manifestDir, webp));
+            add(`textures/${webp}`);
+            add(`bundle/textures/${webp}`);
+        }
+
         return candidates;
     },
 
