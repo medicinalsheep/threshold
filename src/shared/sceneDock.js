@@ -21,6 +21,14 @@ function setExpanded(expanded, persist = true) {
         btn.title = expanded ? 'Collapse panel dock' : 'Expand panel dock';
     }
     if (persist) ViewPrefs.set('dockExpanded', expanded);
+
+    const api = dock?._floatApi;
+    if (api) {
+        if (expanded) api.ensureMinWidth(280);
+        else api.ensureMinWidth(52);
+        api.clamp();
+    }
+
     window.dispatchEvent(new Event('resize'));
 }
 

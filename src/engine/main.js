@@ -1078,8 +1078,8 @@ const UI = {
         UI.updateControlMode();
         UI.updateSimMode();
         UI.initViewToggles();
-        SceneDock.init();
         initPanelDrag();
+        SceneDock.init();
     },
     updateModeDisplay: function (idx) {
         const el = document.getElementById('mode-display');

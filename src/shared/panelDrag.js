@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'threshold-panel-layout-v1';
+const STORAGE_KEY = 'threshold-panel-layout-v2';
 const MIN_W = 220;
 const MIN_H = 140;
 
@@ -24,16 +24,20 @@ function loadAll() {
     }
 }
 
-function saveOne(id, rect) {
+function saveOne(id, rect, locked) {
     const all = loadAll();
-    all[id] = rect;
+    all[id] = { ...rect, locked: !!locked };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
 }
 
-function clampRect(rect) {
+function clampRect(rect, limits = {}) {
     const { nav, pad, maxW, maxH } = readBounds();
-    const w = Math.min(Math.max(rect.w, MIN_W), maxW);
-    const h = Math.min(Math.max(rect.h, MIN_H), maxH);
+    const minW = limits.minW ?? MIN_W;
+    const minH = limits.minH ?? MIN_H;
+    const capW = limits.maxW ?? maxW;
+    const capH = limits.maxH ?? maxH;
+    const w = Math.min(Math.max(rect.w, minW), capW);
+    const h = Math.min(Math.max(rect.h, minH), capH);
     const maxX = window.innerWidth - w - pad;
     const maxY = window.innerHeight - h - pad;
     return {
@@ -46,18 +50,19 @@ function clampRect(rect) {
 
 function defaultRect(panel, options = {}) {
     const { nav, pad, maxW, maxH } = readBounds();
-    const w = Math.min(options.w || panel.offsetWidth || 400, maxW);
-    const h = Math.min(options.h || panel.offsetHeight || 400, maxH);
+    const limits = options.limits || {};
+    const w = Math.min(options.w || panel.offsetWidth || 400, limits.maxW ?? maxW);
+    const h = Math.min(options.h || panel.offsetHeight || 400, limits.maxH ?? maxH);
     let x;
     let y;
     const anchor = options.anchor || 'center';
 
     if (anchor === 'top-left') {
         x = pad;
-        y = nav + 60;
+        y = nav + pad;
     } else if (anchor === 'top-right') {
         x = window.innerWidth - w - pad;
-        y = nav + 60;
+        y = nav + pad;
     } else if (anchor === 'bottom-right') {
         x = window.innerWidth - w - pad;
         y = window.innerHeight - h - 72;
@@ -66,7 +71,7 @@ function defaultRect(panel, options = {}) {
         y = nav + pad + Math.max(0, (window.innerHeight - nav - h - pad * 2) / 2);
     }
 
-    return clampRect({ x, y, w, h });
+    return clampRect({ x, y, w, h }, limits);
 }
 
 function applyRect(panel, rect) {
@@ -89,12 +94,13 @@ function findHandle(panel, selector) {
         const el = panel.querySelector(selector);
         if (el) return el;
     }
-    return panel.querySelector('.panel-drag-handle')
+    return panel.querySelector('.panel-chrome-header')
+        || panel.querySelector('.panel-drag-handle')
         || panel.querySelector('.insert-header')
         || panel.querySelector('h3');
 }
 
-function ensureScrollRegion(panel, handle, resizeEl) {
+function ensureScrollRegion(panel, handle, resizeEl, contentSelector) {
     if (panel.querySelector('.float-panel-scroll')) return;
 
     const scroll = document.createElement('div');
@@ -110,11 +116,27 @@ function ensureScrollRegion(panel, handle, resizeEl) {
     }
 }
 
+function syncLockUi(panel, lockBtn, locked) {
+    panel.classList.toggle('panel-locked', locked);
+    if (lockBtn) {
+        lockBtn.textContent = locked ? '🔒' : 'LOCK';
+        lockBtn.title = locked ? 'Unlock to move or resize' : 'Lock position';
+        lockBtn.setAttribute('aria-pressed', locked ? 'true' : 'false');
+    }
+}
+
 export function setupFloatPanel(panel, options = {}) {
     if (!panel || panel.dataset.floatReady) return panel?._floatApi;
 
     const id = options.id || panel.id;
     if (!id) return null;
+
+    const limits = {
+        minW: options.minW ?? MIN_W,
+        minH: options.minH ?? MIN_H,
+        maxW: options.maxW,
+        maxH: options.maxH,
+    };
 
     panel.dataset.floatReady = '1';
     panel.classList.add('float-panel');
@@ -122,8 +144,12 @@ export function setupFloatPanel(panel, options = {}) {
     const handle = findHandle(panel, options.handleSelector);
     if (handle) {
         handle.classList.add('panel-drag-handle');
-        if (!handle.title) handle.title = 'Drag to move';
+        if (!handle.title && !handle.querySelector('.panel-chrome-title')) {
+            handle.title = 'Drag to move';
+        }
     }
+
+    const lockBtn = handle?.querySelector('.panel-lock-btn');
 
     let resizeEl = panel.querySelector('.panel-resize-handle');
     if (!resizeEl) {
@@ -133,29 +159,56 @@ export function setupFloatPanel(panel, options = {}) {
         panel.appendChild(resizeEl);
     }
 
-    ensureScrollRegion(panel, handle, resizeEl);
+    ensureScrollRegion(panel, handle, resizeEl, options.contentSelector);
 
     const saved = loadAll()[id];
-    let rect = saved ? clampRect(saved) : defaultRect(panel, options.defaultSize);
+    let locked = saved?.locked ?? false;
+    let rect = saved ? clampRect(saved, limits) : defaultRect(panel, { ...options.defaultSize, limits });
 
     const api = {
         id,
+        isLocked: () => locked,
+        setLocked: (value) => {
+            locked = !!value;
+            syncLockUi(panel, lockBtn, locked);
+            saveOne(id, rect, locked);
+        },
         clamp: () => {
-            rect = clampRect(rect);
+            rect = clampRect(rect, limits);
             applyRect(panel, rect);
-            saveOne(id, rect);
+            saveOne(id, rect, locked);
+        },
+        ensureMinWidth: (minW) => {
+            if (rect.w < minW) {
+                rect.w = minW;
+                rect = clampRect(rect, limits);
+                applyRect(panel, rect);
+                saveOne(id, rect, locked);
+            }
         },
         reset: () => {
-            rect = defaultRect(panel, options.defaultSize);
+            rect = defaultRect(panel, { ...options.defaultSize, limits });
+            locked = false;
+            syncLockUi(panel, lockBtn, locked);
             applyRect(panel, rect);
-            saveOne(id, rect);
+            saveOne(id, rect, locked);
         },
+        getRect: () => ({ ...rect }),
     };
 
     applyRect(panel, rect);
+    syncLockUi(panel, lockBtn, locked);
+
+    lockBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        api.setLocked(!locked);
+    });
+
+    lockBtn?.addEventListener('pointerdown', (e) => e.stopPropagation());
 
     if (handle) {
         handle.addEventListener('pointerdown', (e) => {
+            if (locked) return;
             if (e.button !== 0) return;
             if (e.target.closest('button, input, select, textarea, a, label')) return;
             e.preventDefault();
@@ -171,7 +224,7 @@ export function setupFloatPanel(panel, options = {}) {
                     ...startRect,
                     x: startRect.x + (ev.clientX - startX),
                     y: startRect.y + (ev.clientY - startY),
-                });
+                }, limits);
                 applyRect(panel, rect);
             };
 
@@ -179,7 +232,7 @@ export function setupFloatPanel(panel, options = {}) {
                 handle.classList.remove('dragging');
                 handle.removeEventListener('pointermove', onMove);
                 handle.removeEventListener('pointerup', onUp);
-                saveOne(id, rect);
+                saveOne(id, rect, locked);
             };
 
             handle.addEventListener('pointermove', onMove);
@@ -188,6 +241,7 @@ export function setupFloatPanel(panel, options = {}) {
     }
 
     resizeEl.addEventListener('pointerdown', (e) => {
+        if (locked) return;
         if (e.button !== 0) return;
         e.preventDefault();
         e.stopPropagation();
@@ -203,7 +257,7 @@ export function setupFloatPanel(panel, options = {}) {
                 ...startRect,
                 w: startRect.w + (ev.clientX - startX),
                 h: startRect.h + (ev.clientY - startY),
-            });
+            }, limits);
             applyRect(panel, rect);
         };
 
@@ -211,7 +265,7 @@ export function setupFloatPanel(panel, options = {}) {
             resizeEl.classList.remove('resizing');
             resizeEl.removeEventListener('pointermove', onMove);
             resizeEl.removeEventListener('pointerup', onUp);
-            saveOne(id, rect);
+            saveOne(id, rect, locked);
         };
 
         resizeEl.addEventListener('pointermove', onMove);
@@ -227,23 +281,54 @@ export function ensurePanelVisible(selector) {
     panel?._floatApi?.clamp();
 }
 
+const CHROME_PANELS = [
+    {
+        selector: '#engine-toolbar',
+        id: 'engine-toolbar',
+        handleSelector: '.panel-chrome-header',
+        defaultSize: { w: 440, h: 118, anchor: 'top-left' },
+        minW: 220,
+        minH: 72,
+        maxW: 920,
+    },
+    {
+        selector: '#scene-dock',
+        id: 'scene-dock',
+        handleSelector: '.panel-chrome-header',
+        defaultSize: { w: 58, h: 280, anchor: 'top-right' },
+        minW: 52,
+        minH: 120,
+        maxW: 480,
+        maxH: 720,
+    },
+];
+
 const PANEL_CONFIG = [
     { selector: '#insert-sheet', defaultSize: { w: 420, h: 440 } },
     { selector: '#bindings-sheet', defaultSize: { w: 440, h: 520 } },
     { selector: '#host-panel-sheet', defaultSize: { w: 400, h: 480 } },
     { selector: '#world-sheet', defaultSize: { w: 420, h: 520 } },
-
     { selector: '#json-modal', defaultSize: { w: 600, h: 500 } },
 ];
 
 export function initPanelDrag() {
+    CHROME_PANELS.forEach((cfg) => {
+        const el = document.querySelector(cfg.selector);
+        if (el) setupFloatPanel(el, cfg);
+    });
+
     PANEL_CONFIG.forEach(({ selector, defaultSize }) => {
         const el = document.querySelector(selector);
         if (el) setupFloatPanel(el, { defaultSize });
     });
 
+    const allSelectors = [
+        ...CHROME_PANELS.map((c) => c.selector),
+        ...PANEL_CONFIG.map((c) => c.selector),
+    ];
+
     window.addEventListener('resize', () => {
-        PANEL_CONFIG.forEach(({ selector }) => {
+        allSelectors.forEach((selector) => {
             document.querySelector(selector)?._floatApi?.clamp();
         });
     });

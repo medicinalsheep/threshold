@@ -51,11 +51,9 @@
         font-size: 0.7rem;
     }
 
-    .engine-toolbar {
-        margin: 6px 8px !important;
-        margin-right: max(8px, var(--dock-gutter, 56px)) !important;
+    #engine-toolbar.float-panel .engine-toolbar-body {
         gap: 6px !important;
-        max-width: calc(100% - 16px - var(--dock-gutter, 56px)) !important;
+        padding: 6px !important;
     }
 
     .engine-toolbar #mode-display {
@@ -104,13 +102,8 @@
         display: inline-block !important;
     }
 
-    #scene-dock {
-        top: calc(var(--chrome-top, var(--nav-height, 50px)) + 6px);
+    #scene-dock.float-panel {
         max-height: calc(100dvh - var(--chrome-top, var(--nav-height, 50px)) - 12px);
-    }
-
-    .scene-dock.expanded .dock-panels {
-        width: min(268px, 72vw);
     }
 
     #nav-toggle {
@@ -163,10 +156,8 @@
         font-size: 0.75rem;
     }
 
-    #ui-layer > .panel:first-child {
-        margin: 8px !important;
-        flex-wrap: wrap;
-        gap: 8px;
+    #ui-layer > .panel.float-panel {
+        margin: 0 !important;
     }
 
     #json-modal {

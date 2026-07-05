@@ -48,16 +48,23 @@ button {
     }
 
 .engine-toolbar {
+    z-index: 23;
+    box-sizing: border-box;
+    padding: 0 !important;
+}
+
+#engine-toolbar.float-panel,
+#scene-dock.float-panel {
+    z-index: 28;
+}
+
+#engine-toolbar.float-panel .engine-toolbar-body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin: 10px 20px;
-    margin-right: max(20px, var(--dock-gutter, 56px));
     gap: 10px;
-    max-width: calc(100% - 40px - var(--dock-gutter, 56px));
     flex-wrap: wrap;
-    z-index: 20;
-    box-sizing: border-box;
+    padding: 8px;
 }
 
 .engine-toolbar #mode-display {
@@ -88,15 +95,23 @@ button {
 }
 
 #scene-dock {
-    position: fixed;
-    top: calc(var(--chrome-top, var(--nav-height, 50px)) + 8px);
-    right: 0;
     z-index: 24;
+    padding: 0 !important;
+}
+
+#scene-dock.float-panel {
     display: flex;
+    flex-direction: column;
+    pointer-events: auto;
+}
+
+#scene-dock .scene-dock-inner {
+    display: flex;
+    flex: 1;
+    min-height: 0;
     flex-direction: row-reverse;
     align-items: stretch;
-    pointer-events: none;
-    max-height: calc(100dvh - var(--chrome-top, var(--nav-height, 50px)) - 16px);
+    overflow: hidden;
 }
 
 .scene-dock .dock-tab-bar,
@@ -111,7 +126,8 @@ button {
 .scene-dock.expanded .dock-panels {
     display: flex;
     flex-direction: column;
-    width: 268px;
+    flex: 1;
+    min-width: 0;
     max-height: inherit;
     overflow: hidden;
     background: var(--panel-bg);
@@ -157,7 +173,64 @@ button {
     overflow-y: auto;
     border: none !important;
     margin: 0 !important;
-    max-height: calc(100dvh - var(--chrome-top, var(--nav-height, 50px)) - 32px);
+    max-height: none;
+}
+
+#scene-dock.float-panel .float-panel-scroll {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: row-reverse;
+    overflow: hidden;
+}
+
+.panel-chrome-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.35);
+    touch-action: none;
+    flex-shrink: 0;
+}
+
+.panel-chrome-grip {
+    opacity: 0.55;
+    font-size: 0.85rem;
+    line-height: 1;
+}
+
+.panel-chrome-title {
+    flex: 1;
+    font-size: 0.62rem;
+    font-weight: bold;
+    color: #888;
+    letter-spacing: 1px;
+}
+
+.panel-lock-btn {
+    padding: 6px 10px !important;
+    min-width: 44px;
+    min-height: 36px;
+    flex-shrink: 0;
+}
+
+.float-panel.panel-locked .panel-chrome-header {
+    cursor: default;
+}
+
+.float-panel.panel-locked .panel-chrome-grip {
+    opacity: 0.2;
+}
+
+.float-panel.panel-locked .panel-resize-handle {
+    display: none;
+}
+
+.float-panel.panel-locked .panel-lock-btn {
+    border-color: var(--accent-color) !important;
+    color: var(--accent-color) !important;
 }
 
 .toolbar-more-menu {
@@ -338,7 +411,7 @@ body.console-hidden .console-restore-tab {
 
 body.ui-immersive #app-nav,
 body.ui-immersive .nav-restore-btn,
-body.ui-immersive #view-engine .engine-toolbar,
+body.ui-immersive #engine-toolbar,
 body.ui-immersive #controls-hint,
 body.ui-immersive #btn-fullscreen-toolbar {
     display: none !important;
@@ -349,13 +422,8 @@ body.ui-immersive .view-section {
     height: 100dvh !important;
 }
 
-body.ui-immersive #scene-dock {
-    top: max(8px, env(safe-area-inset-top));
+body.ui-immersive #scene-dock.float-panel {
     max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 16px);
-}
-
-body.ui-immersive .dock-panel {
-    max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px);
 }
 
 body.ui-immersive.console-hidden .console-restore-tab {
@@ -454,7 +522,6 @@ body.ui-immersive.touch-off #status-msg {
     gap: 2px;
     flex: 1;
     min-width: 0;
-    max-width: calc(100% - var(--dock-gutter, 56px));
     overflow: hidden;
 }
 

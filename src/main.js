@@ -36,26 +36,11 @@ function updateChromeMetrics() {
         navH = nav?.offsetHeight || 50;
     }
 
-    let toolbarH = 0;
-    if (!immersive && isEngineViewActive()) {
-        const toolbar = document.querySelector('#view-engine .engine-toolbar');
-        if (toolbar) {
-            const rect = toolbar.getBoundingClientRect();
-            toolbarH = Math.max(0, Math.ceil(rect.bottom));
-        }
-    }
-
-    const chromeTop = Math.max(navH, toolbarH);
+    const chromeTop = navH;
     document.documentElement.style.setProperty('--nav-height', `${navH}px`);
-    document.documentElement.style.setProperty('--toolbar-height', `${toolbarH}px`);
+    document.documentElement.style.setProperty('--toolbar-height', `0px`);
     document.documentElement.style.setProperty('--chrome-top', `${chromeTop}px`);
-
-    const dock = document.getElementById('scene-dock');
-    let dockGutter = 0;
-    if (!immersive && dock) {
-        dockGutter = dock.classList.contains('expanded') ? 280 : 56;
-    }
-    document.documentElement.style.setProperty('--dock-gutter', `${dockGutter}px`);
+    document.documentElement.style.setProperty('--dock-gutter', `0px`);
 }
 
 const updateNavHeight = updateChromeMetrics;
