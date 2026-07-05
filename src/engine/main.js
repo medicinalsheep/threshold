@@ -19,6 +19,7 @@ import { Sync } from '../shared/sync.js';
 import { Controls, CONTROL_ACTIONS } from '../shared/controls.js';
 import { TouchControls } from '../shared/touchControls.js';
 import { Permissions } from '../shared/permissions.js';
+import { SimMode } from '../shared/simMode.js';
 
 const IS_TOUCH_DEVICE = window.matchMedia('(pointer: coarse)').matches;
 
@@ -79,7 +80,9 @@ export function initEngine() {
 
     window.addEventListener('threshold:pause', (e) => {
         State.isPaused = !!e.detail?.paused;
-        UI.status(State.isPaused ? 'Scene paused by host' : 'Scene resumed');
+        UI.updateSimMode();
+        const reason = e.detail?.reason;
+        UI.status(State.isPaused ? (reason ? `EDIT: ${reason}` : 'EDIT mode — world editable') : 'PLAY mode — simulation running');
     });
 
     const worldCode = new URLSearchParams(window.location.search).get('world');
@@ -494,33 +497,57 @@ const Engine = {
         this.composer.addPass(new RenderPass(this.scene, this.camera));
 
         const ThresholdShader = {
-            uniforms: { tDiffuse: { value: null }, mode: { value: 4 }, time: { value: 0 } },
+            uniforms: {
+                tDiffuse: { value: null },
+                mode: { value: 4 },
+                time: { value: 0 },
+                resolution: { value: new THREE.Vector2(size.x, size.y) }
+            },
             vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
             fragmentShader: `
                 uniform sampler2D tDiffuse;
                 uniform int mode;
                 uniform float time;
+                uniform vec2 resolution;
                 varying vec2 vUv;
+
+                float layeredGrid(vec2 fragCoord, float band, float baseScale) {
+                    float scale = baseScale + band * 6.0;
+                    vec2 g = abs(fract(fragCoord / scale) - 0.5);
+                    return step(0.46, max(g.x, g.y));
+                }
+
                 void main() {
                     vec4 texel = texture2D(tDiffuse, vUv);
                     if (mode == 4) { gl_FragColor = texel; return; }
+
                     float luma = dot(texel.rgb, vec3(0.299, 0.587, 0.114));
+                    float band = floor(luma * 5.0);
+                    float grid = layeredGrid(gl_FragCoord.xy, band, 5.0);
                     vec3 outColor;
+
                     if (mode == 0) {
-                        float q = 0.0;
-                        if (luma > 0.8) q = 1.0;
-                        else if (luma > 0.6) q = 0.75;
-                        else if (luma > 0.4) q = 0.5;
-                        else if (luma > 0.2) q = 0.25;
+                        float q = band / 4.0;
                         outColor = vec3(q);
+                        outColor = mix(outColor, outColor * 0.55, grid);
                     } else if (mode == 1) {
                         outColor = (luma > 0.4) ? vec3(1.0) : vec3(0.0);
+                        outColor = mix(outColor, vec3(0.15), grid * 0.5);
                     } else if (mode == 2) {
-                        float q = (luma > 0.5) ? 1.0 : ((luma > 0.2) ? 0.3 : 0.0);
-                        outColor = vec3(0.0, q, 0.0);
-                        if (mod(gl_FragCoord.y, 4.0) < 2.0) outColor *= 0.8;
+                        float g = 0.08;
+                        if (band > 0.5) g = 0.22;
+                        if (band > 1.5) g = 0.4;
+                        if (band > 2.5) g = 0.65;
+                        if (band > 3.5) g = 0.95;
+                        outColor = vec3(0.0, g, 0.0);
+                        float scan = mod(gl_FragCoord.y, 3.0) < 1.5 ? 0.85 : 1.0;
+                        outColor *= scan;
+                        outColor = mix(outColor, outColor * 0.4, grid);
                     } else if (mode == 3) {
                         outColor = floor(texel.rgb * 4.0) / 4.0;
+                        vec3 layerTint = vec3(0.9 + band * 0.02, 0.85, 1.0 - band * 0.05);
+                        outColor *= layerTint;
+                        outColor = mix(outColor, outColor * 0.6, grid);
                     } else {
                         outColor = texel.rgb;
                     }
@@ -639,6 +666,9 @@ const Engine = {
         this.renderer.setSize(window.innerWidth, window.innerHeight - navHeight);
         this.composer.setSize(window.innerWidth, window.innerHeight - navHeight);
         if (this.bloomPass) this.bloomPass.setSize(window.innerWidth, window.innerHeight - navHeight);
+        if (this.shaderPass?.uniforms?.resolution) {
+            this.shaderPass.uniforms.resolution.value.set(window.innerWidth, window.innerHeight - navHeight);
+        }
     },
     animate: function (time) {
         requestAnimationFrame((t) => this.animate(t));
@@ -819,6 +849,10 @@ const World = {
     },
     deleteObject: function (obj) {
         if (!obj) return;
+        if (SimMode.isPlay() && !obj.userData?.isPlayer) {
+            UI.status('PLAY mode — cannot delete world objects');
+            return;
+        }
         Engine.transformControl.detach();
         Engine.scene.remove(obj);
         State.objects = State.objects.filter(o => o !== obj);
@@ -895,10 +929,6 @@ const IO = {
 const UI = {
     init: function () {
         // Recorder buttons
-        document.getElementById('btn-rec-start').onclick = () => Recorder.start();
-        document.getElementById('btn-rec-stop').onclick = () => Recorder.stop();
-        document.getElementById('btn-rec-save').onclick = () => Recorder.save();
-
         document.getElementById('ctx-insert').onclick = () => { UI.closeCtx(); UI.openInsert(); };
         document.getElementById('ctx-clear').onclick = () => { Actions.dispatch('CLEAR_WORLD'); UI.closeCtx(); };
         document.getElementById('ctx-close').onclick = () => UI.closeCtx();
@@ -938,17 +968,27 @@ const UI = {
 
         document.getElementById('btn-copy-link')?.addEventListener('click', () => UI.copySessionLink());
         document.getElementById('btn-host-pause')?.addEventListener('click', () => UI.togglePause());
-        document.getElementById('btn-env-toggle')?.addEventListener('click', () => {
-            document.getElementById('env-panel')?.classList.toggle('mobile-open');
+        document.getElementById('btn-env-toggle')?.addEventListener('click', () => UI.toggleEnvPanel());
+        document.getElementById('btn-env-close')?.addEventListener('click', () => UI.setEnvPanelVisible(false));
+
+        document.querySelectorAll('.insp-tab').forEach((tab) => {
+            tab.addEventListener('click', () => UI.switchInspTab(tab.dataset.inspTab));
         });
+        ['insp-name', 'insp-color', 'insp-rough', 'insp-metal', 'insp-emissive', 'insp-emissive-int',
+            'insp-physics', 'insp-mass', 'insp-friction', 'insp-restitution', 'insp-sound-freq', 'insp-sound-type'
+        ].forEach((id) => {
+            document.getElementById(id)?.addEventListener('input', () => UI.applyInspectorFromUi());
+            document.getElementById(id)?.addEventListener('change', () => UI.applyInspectorFromUi());
+        });
+        document.getElementById('insp-test-sound')?.addEventListener('click', () => UI.testObjectSound());
+        document.getElementById('btn-reload-skin')?.addEventListener('click', () => UI.reloadPlayerSkin());
+        document.getElementById('btn-player-code')?.addEventListener('click', () => UI.openPlayerCodeRef());
 
         document.getElementById('ctx-edit-inspect').onclick = () => { if (State.selectedObject) UI.selectObject(State.selectedObject); UI.closeCtx(); };
         document.getElementById('ctx-edit-delete').onclick = () => { World.deleteObject(State.selectedObject); UI.closeCtx(); };
 
         document.getElementById('btn-lock').onclick = () => this.toggleLock();
         document.getElementById('btn-delete').onclick = () => World.deleteObject(State.selectedObject);
-        document.getElementById('btn-anim-rot').onclick = () => { if (State.selectedObject) State.selectedObject.userData.isRotating = !State.selectedObject.userData.isRotating; };
-        document.getElementById('btn-raw').onclick = () => this.openJsonEditor();
         document.querySelectorAll('input[name="gizmo"]').forEach(r => r.addEventListener('change', (e) => Engine.transformControl.setMode(e.target.value)));
 
         document.getElementById('btn-json-cancel').onclick = () => this.closeModal();
@@ -1016,6 +1056,7 @@ const UI = {
         });
 
         UI.updateControlMode();
+        UI.updateSimMode();
     },
     updateModeDisplay: function (idx) {
         const el = document.getElementById('mode-display');
@@ -1024,13 +1065,142 @@ const UI = {
     selectObject: function (obj) {
         if (State.selectedObject === obj) return;
         State.selectedObject = obj;
+        if (obj.userData?.isPlayer) {
+            document.getElementById('inspector').style.display = 'none';
+            if (SimMode.isPlay()) document.getElementById('player-skin-panel').style.display = 'block';
+            Engine.transformControl.detach();
+            return;
+        }
+        document.getElementById('player-skin-panel').style.display = 'none';
+        if (!SimMode.canEditObject(obj)) {
+            UI.status('PLAY mode — world locked. Pause to edit objects.');
+            Engine.transformControl.detach();
+            return;
+        }
         document.getElementById('inspector').style.display = 'block';
-        document.getElementById('insp-name').value = obj.userData.name;
-        document.getElementById('btn-lock').innerText = obj.userData.locked ? "LOCKED" : "UNLOCK";
-        if (!obj.userData.locked) Engine.transformControl.attach(obj); else Engine.transformControl.detach();
+        this.loadInspectorFromObject(obj);
+        document.getElementById('btn-lock').innerText = obj.userData.locked ? 'LOCKED' : 'UNLOCK';
+        if (!obj.userData.locked && SimMode.isEdit()) Engine.transformControl.attach(obj);
+        else Engine.transformControl.detach();
     },
     deselectObject: function () {
-        State.selectedObject = null; Engine.transformControl.detach(); document.getElementById('inspector').style.display = 'none';
+        State.selectedObject = null;
+        Engine.transformControl.detach();
+        document.getElementById('inspector').style.display = 'none';
+        if (SimMode.isPlay() && SimMode.canEditPlayerSkin()) {
+            document.getElementById('player-skin-panel').style.display = 'block';
+        } else {
+            document.getElementById('player-skin-panel').style.display = 'none';
+        }
+    },
+    switchInspTab: function (tab) {
+        document.querySelectorAll('.insp-tab').forEach((t) => t.classList.toggle('active', t.dataset.inspTab === tab));
+        document.querySelectorAll('.insp-panel').forEach((p) => p.classList.toggle('active', p.dataset.inspPanel === tab));
+    },
+    loadInspectorFromObject: function (obj) {
+        if (!obj) return;
+        document.getElementById('insp-name').value = obj.userData.name || '';
+        const mat = obj.material;
+        if (mat?.color) document.getElementById('insp-color').value = '#' + mat.color.getHexString();
+        if (mat) {
+            document.getElementById('insp-rough').value = mat.roughness ?? 0.5;
+            document.getElementById('insp-metal').value = mat.metalness ?? 0.5;
+            document.getElementById('insp-emissive').value = '#' + (mat.emissive?.getHexString?.() || '000000');
+            document.getElementById('insp-emissive-int').value = mat.emissiveIntensity ?? 0;
+        }
+        document.getElementById('insp-physics').checked = !!obj.userData.hasPhysics;
+        document.getElementById('insp-mass').value = obj.userData.mass ?? 1;
+        document.getElementById('insp-friction').value = obj.userData.friction ?? 0.3;
+        document.getElementById('insp-restitution').value = obj.userData.restitution ?? 0.5;
+        document.getElementById('insp-sound-freq').value = obj.userData.soundFreq ?? 440;
+        document.getElementById('insp-sound-type').value = obj.userData.soundType || 'sine';
+    },
+    applyInspectorFromUi: function () {
+        const obj = State.selectedObject;
+        if (!obj || !SimMode.canEditObject(obj)) return;
+        obj.userData.name = document.getElementById('insp-name').value;
+        const mat = obj.material;
+        if (mat) {
+            mat.color.set(document.getElementById('insp-color').value);
+            mat.roughness = parseFloat(document.getElementById('insp-rough').value);
+            mat.metalness = parseFloat(document.getElementById('insp-metal').value);
+            if (!mat.emissive) mat.emissive = new THREE.Color();
+            mat.emissive.set(document.getElementById('insp-emissive').value);
+            mat.emissiveIntensity = parseFloat(document.getElementById('insp-emissive-int').value);
+            mat.needsUpdate = true;
+        }
+        const wantPhys = document.getElementById('insp-physics').checked;
+        obj.userData.mass = parseFloat(document.getElementById('insp-mass').value);
+        obj.userData.friction = parseFloat(document.getElementById('insp-friction').value);
+        obj.userData.restitution = parseFloat(document.getElementById('insp-restitution').value);
+        obj.userData.soundFreq = parseInt(document.getElementById('insp-sound-freq').value, 10);
+        obj.userData.soundType = document.getElementById('insp-sound-type').value;
+        UI.syncObjectPhysics(obj, wantPhys);
+    },
+    syncObjectPhysics: function (obj, enabled) {
+        const entry = State.physicsObjects.find((p) => p.mesh === obj);
+        if (enabled && !obj.userData.hasPhysics) {
+            const body = Physics.addBody(obj, obj.userData.type || 'cube');
+            body.mass = obj.userData.mass ?? 1;
+            State.physicsObjects.push({ mesh: obj, body });
+            obj.userData.hasPhysics = true;
+        } else if (!enabled && entry) {
+            Physics.world.removeBody(entry.body);
+            State.physicsObjects = State.physicsObjects.filter((p) => p.mesh !== obj);
+            obj.userData.hasPhysics = false;
+        } else if (entry?.body) {
+            entry.body.mass = obj.userData.mass ?? entry.body.mass;
+        }
+    },
+    testObjectSound: function () {
+        const obj = State.selectedObject;
+        if (!obj) return;
+        AudioSys.playTone(obj.userData.soundFreq || 440, obj.userData.soundType || 'sine', 0.25);
+    },
+    reloadPlayerSkin: function () {
+        if (!PlayerController.spawned) { this.status('Spawn a player first'); return; }
+        const bodyHex = parseInt(document.getElementById('skin-body-color').value.replace('#', ''), 16);
+        const headHex = parseInt(document.getElementById('skin-head-color').value.replace('#', ''), 16);
+        const rough = parseFloat(document.getElementById('skin-rough').value);
+        PlayerController.applySkin({ bodyColor: bodyHex, headColor: headHex, roughness: rough });
+        this.status('Skin reloaded');
+    },
+    openPlayerCodeRef: function () {
+        document.querySelector('[data-target="view-compiler"]')?.click();
+        setTimeout(() => {
+            window.Compiler?.loadReference?.('players', 'player_skin_reload');
+        }, 100);
+    },
+    updateSimMode: function () {
+        const badge = document.getElementById('sim-mode-badge');
+        const layer = document.getElementById('ui-layer');
+        const edit = SimMode.isEdit();
+        if (badge) {
+            badge.textContent = edit ? 'EDIT' : 'PLAY';
+            badge.classList.toggle('edit', edit);
+            badge.classList.toggle('play', !edit);
+        }
+        if (layer) layer.classList.toggle('play-mode', !edit);
+        if (!edit) {
+            document.getElementById('inspector').style.display = 'none';
+            Engine.transformControl.detach();
+            if (SimMode.canEditPlayerSkin()) {
+                document.getElementById('player-skin-panel').style.display = 'block';
+            }
+        } else {
+            document.getElementById('player-skin-panel').style.display = 'none';
+        }
+    },
+    toggleEnvPanel: function () {
+        const panel = document.getElementById('env-panel');
+        if (!panel) return;
+        panel.classList.toggle('hidden');
+        panel.classList.toggle('mobile-open');
+    },
+    setEnvPanelVisible: function (visible) {
+        const panel = document.getElementById('env-panel');
+        if (!panel) return;
+        panel.classList.toggle('hidden', !visible);
     },
     toggleLock: function () {
         if (!State.selectedObject) return;

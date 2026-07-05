@@ -99,17 +99,14 @@
                     <input type="text" id="session-share-link" readonly>
                 </div>
                 <div class="toolbar-actions">
-                    <button id="btn-env-toggle" class="btn-sm mobile-only">ENV</button>
-                    <button id="btn-rec-start" title="Record">REC</button>
-                    <button id="btn-rec-stop" title="Stop" style="display:none;">STOP</button>
-                    <button id="btn-rec-save" title="Save" style="display:none;">SAVE</button>
-                    <span class="rec-dot" id="rec-indicator" style="display:none;"></span>
+                    <span id="sim-mode-badge" class="sim-mode-badge edit">EDIT</span>
+                    <button id="btn-env-toggle" class="btn-sm" title="Environment">ENV</button>
                     <button id="btn-control-mode" class="btn-sm" title="Walk / Fly">FLY</button>
                     <button id="btn-bindings" class="btn-sm" title="Key bindings">KEYS</button>
                     <button id="btn-save-world" class="btn-sm" title="Save persistent world">SAVE WORLD</button>
                     <button id="btn-load-world" class="btn-sm" title="Load saved world">WORLDS</button>
-                    <button id="btn-save">EXPORT</button>
-                    <button id="btn-load">IMPORT</button>
+                    <button id="btn-save" class="edit-only">EXPORT</button>
+                    <button id="btn-load" class="edit-only">IMPORT</button>
                 </div>
             </div>
 
@@ -127,10 +124,11 @@
                 <button type="button" class="touch-btn touch-btn-action" data-touch-btn="action" aria-label="Interact">ACT</button>
             </div>
 
-            <!-- Environment Panel -->
+            <!-- Environment Panel (hideable) -->
             <div id="env-panel" class="panel">
                 <div class="prop-row">
                     <h3 style="margin:0;">ENVIRONMENT</h3>
+                    <button id="btn-env-close" class="btn-sm" type="button">✕</button>
                 </div>
                 <hr style="border-color:var(--border-color); margin:8px 0;">
                 <div class="prop-row">
@@ -168,24 +166,58 @@
 
             <div id="controls-hint">WASD fly · QE up/down · right-click menu</div>
 
-            <!-- Inspector Panel -->
+            <!-- Inspector — EDIT mode object panels -->
             <div id="inspector" class="panel">
                 <div class="prop-row">
-                    <h3 style="margin:0;">PROPERTIES</h3>
+                    <h3 style="margin:0;">EDIT OBJECT</h3>
                     <button id="btn-lock" style="font-size:0.6rem;">UNLOCK</button>
                 </div>
-                <hr style="border-color:var(--border-color); margin:10px 0;">
-                <div class="prop-row"><label>Name</label> <input type="text" id="insp-name"></div>
-                <div class="prop-row">
-                    <label>Gizmo</label>
-                    <div style="font-size:0.8rem;">
-                        <label><input type="radio" name="gizmo" value="translate" checked> Mov</label>
-                        <label><input type="radio" name="gizmo" value="rotate"> Rot</label>
-                    </div>
+                <div class="insp-tabs">
+                    <button type="button" class="insp-tab active" data-insp-tab="general">General</button>
+                    <button type="button" class="insp-tab" data-insp-tab="texture">Texture</button>
+                    <button type="button" class="insp-tab" data-insp-tab="collision">Collision</button>
+                    <button type="button" class="insp-tab" data-insp-tab="audio">Audio</button>
                 </div>
-                <div class="prop-row"><label>Action</label> <button id="btn-anim-rot">AUTO-SPIN</button></div>
-                <div class="prop-row" style="margin-top:5px;"><button id="btn-raw">EDIT RAW JSON</button></div>
-                <div class="prop-row" style="margin-top:5px;"><button id="btn-delete" style="color: #ff5555; border-color: #ff5555; width: 100%;">DELETE</button></div>
+                <div class="insp-panel active" data-insp-panel="general">
+                    <div class="prop-row"><label>Name</label> <input type="text" id="insp-name"></div>
+                    <div class="prop-row">
+                        <label>Gizmo</label>
+                        <label><input type="radio" name="gizmo" value="translate" checked> Move</label>
+                        <label><input type="radio" name="gizmo" value="rotate"> Rotate</label>
+                    </div>
+                    <div class="prop-row"><button id="btn-delete" style="color:#ff5555;border-color:#ff5555;width:100%;">DELETE</button></div>
+                </div>
+                <div class="insp-panel" data-insp-panel="texture">
+                    <div class="prop-row"><label>Color</label><input type="color" id="insp-color" value="#ffffff"></div>
+                    <div class="prop-row"><label>Roughness</label><input type="range" id="insp-rough" min="0" max="1" step="0.05" value="0.5"></div>
+                    <div class="prop-row"><label>Metalness</label><input type="range" id="insp-metal" min="0" max="1" step="0.05" value="0.5"></div>
+                    <div class="prop-row"><label>Emissive</label><input type="color" id="insp-emissive" value="#000000"></div>
+                    <div class="prop-row"><label>Glow</label><input type="range" id="insp-emissive-int" min="0" max="2" step="0.1" value="0"></div>
+                </div>
+                <div class="insp-panel" data-insp-panel="collision">
+                    <div class="prop-row"><label>Physics</label><input type="checkbox" id="insp-physics"></div>
+                    <div class="prop-row"><label>Mass</label><input type="number" id="insp-mass" min="0.1" max="500" step="0.5" value="1"></div>
+                    <div class="prop-row"><label>Friction</label><input type="range" id="insp-friction" min="0" max="1" step="0.05" value="0.3"></div>
+                    <div class="prop-row"><label>Bounce</label><input type="range" id="insp-restitution" min="0" max="1" step="0.05" value="0.5"></div>
+                </div>
+                <div class="insp-panel" data-insp-panel="audio">
+                    <div class="prop-row"><label>Tone (Hz)</label><input type="number" id="insp-sound-freq" min="80" max="2000" value="440"></div>
+                    <div class="prop-row"><label>Wave</label>
+                        <select id="insp-sound-type"><option value="sine">sine</option><option value="square">square</option><option value="triangle">triangle</option></select>
+                    </div>
+                    <div class="prop-row"><button id="insp-test-sound" type="button">TEST SOUND</button></div>
+                </div>
+            </div>
+
+            <!-- Player skin panel — PLAY mode -->
+            <div id="player-skin-panel" class="panel">
+                <div class="prop-row"><h3 style="margin:0;">PLAYER SKIN</h3></div>
+                <p class="insert-hint" style="margin:0 0 8px;">PLAY mode: edit your avatar only. World stays locked.</p>
+                <div class="prop-row"><label>Body</label><input type="color" id="skin-body-color" value="#3366cc"></div>
+                <div class="prop-row"><label>Skin</label><input type="color" id="skin-head-color" value="#ffcc99"></div>
+                <div class="prop-row"><label>Shine</label><input type="range" id="skin-rough" min="0" max="1" step="0.05" value="0.7"></div>
+                <button id="btn-reload-skin" type="button" style="width:100%;margin-top:6px;">RELOAD SKIN</button>
+                <button id="btn-player-code" type="button" class="edit-only" style="width:100%;margin-top:6px;">EDIT PLAYER CODE</button>
             </div>
 
             <!-- Console & Status -->
@@ -328,14 +360,18 @@
                     <button id="btn-comp-save-script" class="comp-btn" style="width:100%; border-color:var(--success-color); color:var(--success-color);">SAVE TO DISK</button>
                 </div>
 
-                <h2 style="margin: 0 0 10px 0; font-size: 0.8rem; color:#666;">GENERATORS</h2>
-                <button id="btn-gen-city" class="comp-btn">Brutalist City</button>
-                <button id="btn-gen-dna" class="comp-btn">DNA Helix</button>
-                <button id="btn-gen-wave" class="comp-btn">Data Wave</button>
-                <button id="btn-gen-ring" class="comp-btn">Orbital Ring</button>
-                <button id="btn-gen-chaos" class="comp-btn">Chaos Entropy</button>
-
-                <button id="btn-comp-clear" class="comp-btn" style="margin-top:auto; border-color:var(--accent-color); color:var(--accent-color);">CLEAR INPUT</button>
+                <p style="font-size:0.7rem;color:#888;margin:0 0 10px;">Reference library — pick a template, verify readiness, then RUN IN ENGINE.</p>
+                <div class="ref-section-tabs">
+                    <button type="button" class="ref-section-tab active" data-ref-section="players">PLAYERS</button>
+                    <button type="button" class="ref-section-tab" data-ref-section="worlds">WORLDS</button>
+                    <button type="button" class="ref-section-tab" data-ref-section="techniques">TECHNIQUES</button>
+                </div>
+                <div id="ref-library-list"></div>
+                <div id="ref-detail" class="ref-detail"></div>
+                <ul id="ref-checklist" class="ref-checklist"></ul>
+                <div id="comp-readiness" class="comp-readiness"></div>
+                <button id="btn-comp-check" class="comp-btn" style="border-color:var(--accent-color);color:var(--accent-color);">CHECK CODE READY?</button>
+                <button id="btn-comp-clear" class="comp-btn" style="margin-top:8px; border-color:#666; color:#888;">CLEAR</button>
             </aside>
             <main class="comp-main">
                 <div class="comp-column">
@@ -367,50 +403,20 @@
             <aside class="prompt-sidebar">
                 <h2 style="margin:0; font-size:1rem; letter-spacing:1px; color:var(--accent-color);">SPEC GENERATOR</h2>
                 <div style="font-size: 0.75rem; color: #888; line-height: 1.5; border-bottom:1px solid var(--border-color); padding-bottom:15px;">
-                    <strong>INSTRUCTIONS:</strong><br>
-                    1. Describe scene.<br>2. Select style.<br>3. Generate.<br>4. Paste to AI/Grok.<br>5. Paste result into Compiler → RUN IN ENGINE.
+                    Describes the <strong>live world</strong>, EDIT/PLAY rules, and Compiler references for AI output.
+                </div>
+                <div class="prompt-input-group">
+                    <label>TASK</label>
+                    <select id="prompt-task" class="prompt-input">
+                        <option value="extend">Extend current world</option>
+                        <option value="player">Player type / avatar</option>
+                        <option value="world">World / map layout</option>
+                        <option value="audit">Audit scene (edit vs play)</option>
+                    </select>
                 </div>
                 <div class="prompt-input-group">
                     <label>YOUR IDEA</label>
-                    <input type="text" id="prompt-idea" class="prompt-input" placeholder="e.g. A cyberpunk street corner...">
-                </div>
-
-                <!-- NEW: Resolution Settings -->
-                <div class="prompt-input-group">
-                    <label>TARGET RESOLUTION</label>
-                    <select id="prompt-res" class="prompt-input">
-                        <option value="low">Low Poly (Performance)</option>
-                        <option value="med" selected>Standard (Balanced)</option>
-                        <option value="high">High Fidelity (Smooth)</option>
-                    </select>
-                </div>
-
-                <!-- NEW: Color Settings -->
-                <div class="prompt-input-group">
-                    <label>COLOR STRATEGY</label>
-                    <select id="prompt-color" class="prompt-input">
-                        <option value="adaptive">Adaptive (Works in all modes)</option>
-                        <option value="neon">Neon/Cyber (Best for Hyper)</option>
-                        <option value="mono">Monochrome (Best for 1-Bit)</option>
-                        <option value="realistic">Realistic (PBR Materials)</option>
-                    </select>
-                </div>
-
-                <div class="prompt-input-group">
-                    <label>COMPLEXITY</label>
-                    <select id="prompt-complexity" class="prompt-input">
-                        <option value="simple">Simple (Static Objects)</option>
-                        <option value="anim">Animated (Movement/Rotation)</option>
-                        <option value="algo">Algorithmic (Math/Generative)</option>
-                    </select>
-                </div>
-                <div class="prompt-input-group">
-                    <label>DEV STYLE</label>
-                    <select id="prompt-style" class="prompt-input">
-                        <option value="standard">Direct Code</option>
-                        <option value="spec">Spec-Driven (Plan first)</option>
-                        <option value="creative">Creative (Artistic freedom)</option>
-                    </select>
+                    <input type="text" id="prompt-idea" class="prompt-input" placeholder="e.g. rooftop garden with NPC guides...">
                 </div>
                 <div class="prompt-input-group">
                     <label><input type="checkbox" id="prompt-use-scene" checked> Include live scene + running code</label>

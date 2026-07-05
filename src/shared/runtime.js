@@ -18,8 +18,12 @@ export const Runtime = {
 
         this.setRunningCode(trimmed, source);
 
-        if (window.State?.isPaused) {
-            return { ok: false, error: 'Scene is paused by host' };
+        if (!window.State?.isPaused) {
+            const worldMutating = /World\.(createObject|clearWorld|addCustom|spawn)|State\.objects\.push/.test(trimmed);
+            const playerSafe = /PlayerController|applySkin|\.traverse\s*\(/i.test(trimmed);
+            if (worldMutating && !playerSafe) {
+                return { ok: false, error: 'PLAY mode — world locked. Pause (EDIT) to run world code.' };
+            }
         }
 
         try {

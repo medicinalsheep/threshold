@@ -3,6 +3,7 @@ import { IS_GROK_EDITION, APP_URL, VERSION } from '../config.js';
 import { Auth } from '../auth/main.js';
 import { generateScript } from '../grok/client.js';
 import { getSceneContext } from '../shared/sceneContext.js';
+import { getReferencePromptBlock } from '../shared/referenceLibrary.js';
 
 export function initPrompter() {
     console.log('Initializing Prompter...');
@@ -21,72 +22,45 @@ const Prompter = {
 TOOL: THRESHOLD SUITE v${VERSION}
 LIVE APP: ${APP_URL}
 
-You are an expert developer for THRESHOLD — a browser-based 3D sandbox (Engine + Compiler + PromptGen tabs).
-Stack: Three.js, Cannon-ES physics, 5 retro/hyper render modes, optional multiplayer sessions.
+You are an expert for THRESHOLD (Engine + Compiler reference library + PromptGen).
+Stack: Three.js, Cannon-ES, layered retro render modes (depth-band grids preserve 3D), multiplayer.
 
-HOW TO DELIVER CODE:
-1. Output executable JavaScript only (no markdown fences unless the user prefers them).
-2. The user pastes your code into the COMPILER tab → clicks RUN IN ENGINE, or runs it in the Engine command bar (type "allow pasting" first for long snippets).
-3. Open the tool at ${APP_URL} to test. Multiplayer: create session → share ?room=CODE link.
+DELIVER CODE:
+1. Executable JavaScript — user pastes into COMPILER → CHECK CODE READY → RUN IN ENGINE
+2. Tool URL: ${APP_URL}
 
-GLOBAL ACCESS (already on window): World, State, Engine, THREE, CANNON, Physics, PlayerController, Persistence, Runtime, Session, Network, Environment, Utils, AudioSys
+EDIT vs PLAY (critical):
+- PAUSED = EDIT MODE: host/admin can edit world objects, textures, collision, audio, run world code
+- RUNNING = PLAY MODE: world/map LOCKED; players only edit their player skin/code (Player Skin panel)
+- Inspector panels in EDIT: General, Texture, Collision, Audio per selected object
+- Use Compiler reference library for player types, worlds, techniques
 
-SCENE API:
-- World.createObject(type, name, colorHex, usePhysics) — types: cube|sphere|cone|torus
-- World.addCustom(geometry, material, name, usePhysics)
-- World.spawnCharacter() — static NPC human (body cube + head sphere, userData.isHuman)
-- World.spawnPlayablePlayer() — spawns walkable player at cursor
-- World.clearWorld() — only when user wants a fresh scene
-- Engine.setRenderMode(0-4) — 0 Threshold, 1 1-Bit, 2 Terminal, 3 SMPTE, 4 Hyper (physics+bloom)
-- State.objects, State.env (timeOfDay, fogDensity, waterEnabled, atmosphereEnabled)
-- State.controlMode — 'walk' (third-person human) or 'fly' (free camera)
-- Controls — KEYS panel: rebindable keyboard + controller buttons per action; Host profiles sync live (keys + gamepad), Guest personal overrides; GTA defaults (L/R sticks fixed, A jump, RT sprint, X interact, Y toggle, etc.)
+GLOBAL API: World, State, Engine, THREE, Physics, PlayerController, Persistence, Runtime, Session, Network, Controls, SimMode, UI
 
-HUMAN CHARACTER REFERENCE (for NPCs and playable avatars):
-Static NPC pattern (World.spawnCharacter):
-  - Body: scaled cube (0.55×1.1×0.35), color 0x3366cc, userData.isCharacter + isHuman
-  - Head: scaled sphere (0.45), skin 0xffcc99
-Playable human (PlayerController.spawn(x,y,z)):
-  - Full mesh: torso, head, arms, legs (THREE.Group, userData.isPlayer/isHuman)
-  - Cannon cylinder body (mass 70, fixedRotation) — WASD walk relative to camera, Space jump
-  - Third-person camera follow in walk mode; toggle fly with UI or despawn
-Custom humans: build a THREE.Group with MeshStandardMaterial limbs, optional Physics.addBody for ragdoll props
+OBJECT EDIT METADATA (set in code for inspector):
+- material: color, roughness, metalness, emissive, emissiveIntensity
+- userData: hasPhysics, mass, friction, restitution, soundFreq, soundType, isHuman, isPlayer
 
-PERSISTENCE API:
-- Persistence.saveWorld(name) — saves full scene to IndexedDB (+ cloud if configured), returns {code, name}
-- Persistence.loadWorld(code) — restores scene; share URL: ${APP_URL}?world=CODE
-- Persistence.getShareUrl(code), Persistence.listLocal(), Persistence.exportFile(record)
+RENDER MODES (parallel depth-layer grids):
+- 0 Threshold, 1 1-Bit, 2 Terminal (green bands), 3 SMPTE, 4 Hyper (physics+bloom)
+- Space objects on Z-axis / luminance for readable retro depth
 
-RULES:
-- Prefer extending the CURRENT SCENE unless the user asks to clear.
-- Use physics (usePhysics: true) for interactive/droppable objects in Hyper mode.
-- Wrap full scene replacements in an IIFE when appropriate.
+${getReferencePromptBlock()}
 `,
 
-    buildPrompt: function () {
+    buildPrompt() {
         const idea = document.getElementById('prompt-idea').value;
-        const complexity = document.getElementById('prompt-complexity').value;
-        const style = document.getElementById('prompt-style').value;
-        const resolution = document.getElementById('prompt-res').value;
-        const colorScheme = document.getElementById('prompt-color').value;
+        const taskType = document.getElementById('prompt-task')?.value || 'extend';
         const useScene = document.getElementById('prompt-use-scene')?.checked;
 
-        const instructions = [];
+        const taskLines = {
+            extend: idea ? `Extend the live world: "${idea}"` : 'Extend the current live world.',
+            player: idea ? `Create/improve player type: "${idea}"` : 'Design a playable or NPC player type.',
+            world: idea ? `Build world layout: "${idea}"` : 'Design a world layout from current scene.',
+            audit: 'Audit current scene — list what is editable in EDIT mode vs locked in PLAY mode.'
+        };
 
-        if (complexity === 'simple') instructions.push('Create a static scene layout.');
-        else if (complexity === 'anim') instructions.push('Add animation via userData.isRotating or physics.');
-        else if (complexity === 'algo') instructions.push('Use procedural/math-based generation.');
-
-        if (resolution === 'low') instructions.push('Use low-poly geometry.');
-        else if (resolution === 'high') instructions.push('Use high-poly smooth geometry.');
-        else instructions.push('Balanced geometry.');
-
-        if (colorScheme === 'neon') instructions.push('Neon colors with emissive glow.');
-        else if (colorScheme === 'mono') instructions.push('Monochrome palette.');
-        else if (colorScheme === 'adaptive') instructions.push('High contrast colors for all render modes.');
-        else if (colorScheme === 'realistic') instructions.push('PBR natural materials.');
-
-        const sceneBlock = useScene ? `\n\n${getSceneContext()}\n\nIMPORTANT: Build on the current scene state above. Only call World.clearWorld() if the user explicitly wants a fresh start.` : '';
+        const sceneBlock = useScene ? `\n\n${getSceneContext()}\n\nBuild on this scene. World.clearWorld() only if explicitly requested.` : '';
 
         return {
             idea,
@@ -94,22 +68,19 @@ RULES:
 ${this.apiContext}
 ${sceneBlock}
 
-TASK:
-${idea ? `Extend/improve the scene: "${idea}"` : 'Improve the current live scene based on the context above.'}
+TASK: ${taskLines[taskType] || taskLines.extend}
 
-SPECIFICATIONS:
-${instructions.map((i) => `- ${i}`).join('\n')}
-
-OUTPUT: Return runnable JavaScript for THRESHOLD. User will paste into Compiler at ${APP_URL} and click RUN IN ENGINE.
-
-${style === 'spec' ? 'Provide a brief plan, then code.' : 'Provide code immediately.'}
+OUTPUT REQUIREMENTS:
+- Describe how changes interact with EDIT vs PLAY modes
+- Reference Compiler library patterns (players/worlds/techniques) where applicable
+- Return runnable JS for COMPILER at ${APP_URL}
+- Note which inspector panels users will use (Texture/Collision/Audio)
 `.trim()
         };
     },
 
-    generate: function () {
-        const { prompt } = this.buildPrompt();
-        document.getElementById('prompt-output').value = prompt;
+    generate() {
+        document.getElementById('prompt-output').value = this.buildPrompt().prompt;
     },
 
     generateWithGrok: async function () {

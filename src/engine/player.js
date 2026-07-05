@@ -158,6 +158,17 @@ export const PlayerController = {
         };
     },
 
+    applySkin({ bodyColor = 0x3366cc, headColor = 0xffcc99, roughness = 0.7 } = {}) {
+        if (!this.group) return;
+        this.group.traverse((c) => {
+            if (!c.isMesh || !c.material) return;
+            const isHead = c.geometry?.type === 'SphereGeometry';
+            c.material.color.setHex(isHead ? headColor : bodyColor);
+            c.material.roughness = roughness;
+            c.material.needsUpdate = true;
+        });
+    },
+
     applyState(data) {
         if (!data) return;
         if (data.controlMode) window.State.controlMode = data.controlMode;

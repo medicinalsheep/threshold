@@ -41,7 +41,7 @@ ${netLine}
 - Fog density: ${env.fogDensity ?? '?'}
 - Water: ${env.waterEnabled ? 'ON' : 'OFF'}
 - Atmosphere: ${env.atmosphereEnabled ? 'ON' : 'OFF'}
-- Paused: ${State.isPaused ? 'YES' : 'NO'}
+- Sim mode: ${State.isPaused ? 'EDIT (paused — world editable)' : 'PLAY (running — world locked)'}
 - Control mode: ${State.controlMode || 'fly'}
 ${playerLine}
 - Human NPCs: ${humanNpcCount} (static characters for reference)

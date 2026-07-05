@@ -472,6 +472,74 @@ button {
     display: block;
 }
 
+.sim-mode-badge {
+    font-size: 0.65rem;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+}
+
+.sim-mode-badge.edit {
+    background: rgba(0, 255, 170, 0.15);
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+}
+
+.sim-mode-badge.play {
+    background: rgba(255, 170, 0, 0.15);
+    color: #ffaa00;
+    border: 1px solid #ffaa00;
+}
+
+#ui-layer.play-mode .edit-only {
+    display: none !important;
+}
+
+#env-panel.hidden {
+    display: none !important;
+}
+
+.insp-tabs, .bindings-device-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 8px 0;
+}
+
+.insp-tab {
+    flex: 1;
+    min-width: 60px;
+    font-size: 0.58rem !important;
+    padding: 6px 4px !important;
+}
+
+.insp-tab.active {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.insp-panel {
+    display: none;
+}
+
+.insp-panel.active {
+    display: block;
+}
+
+#player-skin-panel {
+    display: none;
+    top: auto;
+    bottom: 80px;
+    right: 10px;
+    width: 220px;
+}
+
+#inspector {
+    max-height: 55vh;
+    overflow-y: auto;
+}
+
 .insert-hint {
     font-size: 0.75rem;
     color: #888;
