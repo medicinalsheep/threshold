@@ -11,6 +11,8 @@ import { VERSION } from '../config.js';
 import { Session } from '../shared/session.js';
 import { Runtime } from '../shared/runtime.js';
 import { getSceneObjectsForSpawn } from '../shared/sceneContext.js';
+import { Actions } from '../shared/actions.js';
+import { Network } from '../shared/network.js';
 
 const IS_TOUCH_DEVICE = window.matchMedia('(pointer: coarse)').matches;
 
@@ -42,18 +44,25 @@ export function initEngine() {
     };
     window.Session = Session;
     window.Runtime = Runtime;
+    window.Actions = Actions;
+    window.Network = Network;
 
     window.addEventListener('theme-change', () => {
         State.darkMode = !document.body.classList.contains('light-mode');
         Engine.updateBackground();
     });
 
-    Session.init();
     Physics.init();
     Engine.init();
     Environment.init();
     UI.init();
     Physics.createFloor();
+    window.Environment = Environment;
+
+    if (Network.mode === 'host') {
+        document.body.classList.add('network-host');
+        Network.updateUi();
+    }
 
     window.addEventListener('threshold:pause', (e) => {
         State.isPaused = !!e.detail?.paused;
@@ -651,7 +660,7 @@ const World = {
         const type = OBJECT_TYPES[Math.floor(Math.random() * OBJECT_TYPES.length)];
         this.spawnAtCursor(type);
     },
-    spawnCharacter: function () {
+    spawnCharacter: function (silent = false) {
         const x = State.ctxTargetPos.x;
         const z = State.ctxTargetPos.z;
         const y = State.ctxTargetPos.y;
@@ -663,23 +672,21 @@ const World = {
         head.position.set(x, y + 2.1, z);
         body.userData.isCharacter = true;
         head.userData.isCharacter = true;
-        UI.closeInsert();
-        UI.status('Character inserted');
+        if (!silent) { UI.closeInsert(); UI.status('Character inserted'); }
     },
-    insertPlayerByKey: function (key) {
+    insertPlayerByKey: function (key, silent = false) {
         const player = Session.getPlayer(key);
         if (!player) {
-            UI.status('Player key not found — import their file first');
+            if (!silent) UI.status('Player key not found — import their file first');
             return false;
         }
         if (player.code) Runtime.execute(player.code, 'player-key');
         else if (player.objects?.length) this.spawnObjectSnapshot(player.objects);
-        UI.closeInsert();
-        UI.status(`Inserted player ${player.name}`);
+        if (!silent) { UI.closeInsert(); UI.status(`Inserted player ${player.name}`); }
         return true;
     },
-    insertSavedPlayer: function (key) {
-        return this.insertPlayerByKey(key);
+    insertSavedPlayer: function (key, silent = false) {
+        return this.insertPlayerByKey(key, silent);
     },
     spawnObjectSnapshot: function (objects) {
         const ox = State.ctxTargetPos.x;
@@ -694,10 +701,13 @@ const World = {
             }
         });
     },
-    runCustomAtCursor: function (code) {
+    runCustomAtCursor: function (code, silent = false) {
         const wrapped = `const _x=${State.ctxTargetPos.x}, _y=${State.ctxTargetPos.y}, _z=${State.ctxTargetPos.z};\n${code}`;
         Runtime.execute(wrapped, 'insert-code');
-        UI.closeInsert();
+        if (!silent) UI.closeInsert();
+    },
+    getCursorPos: function () {
+        return { x: State.ctxTargetPos.x, y: State.ctxTargetPos.y, z: State.ctxTargetPos.z };
     },
     deleteObject: function (obj) {
         if (!obj) return;
@@ -712,14 +722,14 @@ const World = {
         }
         UI.deselectObject();
     },
-    clearWorld: function () {
-        // Clear Physics
+    clearWorld: function (silent = false) {
         State.physicsObjects.forEach(p => Physics.world.removeBody(p.body));
         State.physicsObjects = [];
         State.objects.forEach(o => Engine.scene.remove(o));
         State.objects = [];
         Engine.transformControl.detach();
         UI.deselectObject();
+        if (!silent) UI.status('World cleared');
     },
     // NEW: Dynamic import for limitless extensions (e.g., loaders, controls)
     importModule: async function (modulePath, alias) {
@@ -782,7 +792,7 @@ const UI = {
         document.getElementById('btn-rec-save').onclick = () => Recorder.save();
 
         document.getElementById('ctx-insert').onclick = () => { UI.closeCtx(); UI.openInsert(); };
-        document.getElementById('ctx-clear').onclick = () => { World.clearWorld(); UI.closeCtx(); UI.status('World cleared'); };
+        document.getElementById('ctx-clear').onclick = () => { Actions.dispatch('CLEAR_WORLD'); UI.closeCtx(); };
         document.getElementById('ctx-close').onclick = () => UI.closeCtx();
 
         document.getElementById('btn-mobile-insert')?.addEventListener('click', () => UI.openInsert());
@@ -793,30 +803,35 @@ const UI = {
         document.querySelectorAll('.insert-tab').forEach((tab) => {
             tab.addEventListener('click', () => UI.switchInsertTab(tab.dataset.tab));
         });
-        document.getElementById('insert-character')?.addEventListener('click', () => World.spawnCharacter());
+        document.getElementById('insert-character')?.addEventListener('click', () => {
+            Actions.dispatch('INSERT_CHARACTER', { pos: World.getCursorPos() });
+            UI.closeInsert();
+        });
         document.getElementById('insert-player-btn')?.addEventListener('click', () => {
             const key = document.getElementById('insert-player-key')?.value;
-            World.insertPlayerByKey(key);
+            Actions.dispatch('INSERT_PLAYER', { key });
+            UI.closeInsert();
         });
         document.getElementById('insert-saved-btn')?.addEventListener('click', () => {
             const key = document.getElementById('insert-saved-player')?.value;
-            if (key) World.insertSavedPlayer(key);
+            if (key) { Actions.dispatch('INSERT_SAVED', { key }); UI.closeInsert(); }
         });
         document.getElementById('save-current-player')?.addEventListener('click', () => UI.saveCurrentPlayer());
         document.getElementById('insert-code-run')?.addEventListener('click', () => {
             const code = document.getElementById('insert-custom-code')?.value;
-            World.runCustomAtCursor(code);
+            Actions.dispatch('INSERT_CUSTOM', { code, pos: World.getCursorPos() });
+            UI.closeInsert();
         });
         document.getElementById('import-player-file')?.addEventListener('change', (e) => UI.importPlayerFile(e));
 
-        document.getElementById('btn-copy-key')?.addEventListener('click', () => UI.copyPlayerKey());
-        document.getElementById('btn-claim-host')?.addEventListener('click', () => {
-            if (Session.isHost) Session.releaseHost();
-            else Session.claimHost();
-        });
+        document.getElementById('btn-copy-link')?.addEventListener('click', () => UI.copySessionLink());
         document.getElementById('btn-host-pause')?.addEventListener('click', () => {
-            if (Session.togglePause()) State.isPaused = Session.isPaused;
-            else UI.status('Only the host can pause');
+            if (!Session.isHost) { UI.status('Only the host can pause'); return; }
+            const paused = !State.isPaused;
+            Actions.dispatch('PAUSE', { paused });
+            State.isPaused = paused;
+            Session.isPaused = paused;
+            Session.updateUi();
         });
         document.getElementById('btn-env-toggle')?.addEventListener('click', () => {
             document.getElementById('env-panel')?.classList.toggle('mobile-open');
@@ -960,12 +975,13 @@ const UI = {
         reader.readAsText(file);
         e.target.value = '';
     },
-    copyPlayerKey: async function () {
+    copySessionLink: async function () {
+        const link = Network.getShareUrl();
         try {
-            await navigator.clipboard.writeText(Session.playerKey);
-            this.status('Key copied');
+            await navigator.clipboard.writeText(link);
+            this.status('Invite link copied — send to friends');
         } catch {
-            this.status(Session.playerKey);
+            this.status(link);
         }
     }
 };

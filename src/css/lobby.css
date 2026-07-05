@@ -1,0 +1,98 @@
+#lobby-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#lobby-overlay.hidden {
+    display: none;
+}
+
+#lobby-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--panel-bg);
+    border: 1px solid var(--accent-color);
+    padding: 28px;
+    box-sizing: border-box;
+}
+
+#lobby-card h1 {
+    margin: 0 0 4px;
+    font-size: 1.4rem;
+    letter-spacing: 3px;
+}
+
+#lobby-card .tagline {
+    color: #888;
+    font-size: 0.8rem;
+    margin: 0 0 24px;
+    line-height: 1.5;
+}
+
+.lobby-input {
+    width: 100%;
+    box-sizing: border-box;
+    background: #080808;
+    color: #fff;
+    border: 1px solid var(--border-color);
+    padding: 12px;
+    font-family: var(--font-mono);
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
+
+.lobby-btn {
+    width: 100%;
+    padding: 14px !important;
+    margin-bottom: 8px;
+    font-size: 0.85rem !important;
+}
+
+.lobby-btn-primary {
+    background: var(--accent-color) !important;
+    color: #000 !important;
+    border: none !important;
+}
+
+.lobby-btn-ghost {
+    background: transparent !important;
+    color: var(--text-color) !important;
+}
+
+#lobby-status {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 12px;
+    min-height: 1.2em;
+}
+
+.lobby-steps {
+    font-size: 0.7rem;
+    color: #666;
+    margin: 16px 0;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    line-height: 1.6;
+}
+
+#session-share-link {
+    width: 100%;
+    font-size: 0.6rem;
+    padding: 4px;
+    background: #080808;
+    color: #888;
+    border: 1px solid var(--border-color);
+    margin-top: 4px;
+    display: none;
+}
+
+.network-host #session-share-link {
+    display: block;
+}

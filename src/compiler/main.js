@@ -89,7 +89,13 @@ ${code}`;
         if (!code) return;
 
         document.querySelector('[data-target="view-engine"]')?.click();
-        setTimeout(() => Runtime.execute(code, 'compiler'), 150);
+        setTimeout(() => {
+            if (window.Actions) {
+                window.Actions.dispatch('RUN_CODE', { code, source: 'compiler' });
+            } else {
+                Runtime.execute(code, 'compiler');
+            }
+        }, 150);
     },
 
     copy: async function () {

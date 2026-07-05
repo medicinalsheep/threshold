@@ -16,6 +16,8 @@ export const Session = {
     isPaused: false,
 
     init() {
+        if (this._inited) { this.updateUi(); return; }
+        this._inited = true;
         const stored = sessionStorage.getItem('threshold_player_key');
         this.playerKey = stored || randomKey();
         sessionStorage.setItem('threshold_player_key', this.playerKey);
@@ -137,22 +139,16 @@ export const Session = {
         const keyEl = document.getElementById('session-player-key');
         const hostEl = document.getElementById('session-host-status');
         const pauseBtn = document.getElementById('btn-host-pause');
-        const claimBtn = document.getElementById('btn-claim-host');
-
         if (keyEl) keyEl.textContent = this.playerKey;
         if (hostEl) {
-            if (this.isHost) hostEl.textContent = 'HOST';
-            else if (this.hostKey) hostEl.textContent = `GUEST → ${this.hostKey}`;
-            else hostEl.textContent = 'GUEST';
+            if (this.isHost) hostEl.textContent = `HOST · ${this.hostKey}`;
+            else if (this.hostKey) hostEl.textContent = `GUEST · ${this.hostKey}`;
+            else hostEl.textContent = 'SOLO';
         }
         if (pauseBtn) {
             pauseBtn.textContent = this.isPaused ? 'RESUME' : 'PAUSE';
             pauseBtn.disabled = !this.canControlPause();
             pauseBtn.classList.toggle('active', this.isPaused);
-        }
-        if (claimBtn) {
-            claimBtn.textContent = this.isHost ? 'HOSTING' : 'BECOME HOST';
-            claimBtn.classList.toggle('active', this.isHost);
         }
 
         this.refreshSavedPlayerList();

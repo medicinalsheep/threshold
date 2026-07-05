@@ -1,0 +1,100 @@
+import { getSceneObjectsForSpawn } from './sceneContext.js';
+
+let applying = false;
+
+export const Sync = {
+    isApplying() { return applying; },
+
+    capture() {
+        const State = window.State;
+        if (!State) return null;
+        return {
+            objects: getSceneObjectsForSpawn(),
+            env: { ...State.env },
+            renderMode: State.renderMode,
+            runningCode: window.Runtime?.runningCode || '',
+            isPaused: !!State.isPaused,
+            gridVisible: !!State.gridVisible
+        };
+    },
+
+    applyState(state) {
+        if (!state || applying) return;
+        const World = window.World;
+        const Engine = window.Engine;
+        const Environment = window.Environment;
+        const Runtime = window.Runtime;
+        if (!World || !Engine) return;
+
+        applying = true;
+        try {
+            World.clearWorld(false);
+            (state.objects || []).forEach((d) => {
+                const m = World.createObject(d.type, d.name, d.color, !!d.userData?.hasPhysics);
+                if (m) {
+                    m.position.set(d.pos?.x || 0, d.pos?.y || 1, d.pos?.z || 0);
+                    if (d.rot) m.rotation.set(d.rot.x, d.rot.y, d.rot.z);
+                    if (d.scl) m.scale.set(d.scl.x, d.scl.y, d.scl.z);
+                    if (d.userData) m.userData = { ...m.userData, ...d.userData };
+                }
+            });
+
+            if (state.env && Environment) {
+                Environment.setTimeOfDay(state.env.timeOfDay ?? 14);
+                Environment.setFog(state.env.fogDensity ?? 0.02);
+                if (!!state.env.waterEnabled !== !!State.env.waterEnabled) Environment.toggleWater();
+                if (!!state.env.atmosphereEnabled !== !!State.env.atmosphereEnabled) Environment.toggleAtmosphere();
+            }
+
+            if (typeof state.renderMode === 'number') Engine.setRenderMode(state.renderMode);
+            if (typeof state.gridVisible === 'boolean' && state.gridVisible !== State.gridVisible) Engine.toggleGrid();
+
+            if (Runtime && state.runningCode) Runtime.setRunningCode(state.runningCode, 'sync');
+
+            State.isPaused = !!state.isPaused;
+            window.dispatchEvent(new CustomEvent('threshold:pause', { detail: { paused: State.isPaused } }));
+        } finally {
+            applying = false;
+        }
+    },
+
+    applyAction(action, payload = {}) {
+        if (applying) return;
+        const World = window.World;
+        const Runtime = window.Runtime;
+        const Session = window.Session;
+        if (!World) return;
+
+        switch (action) {
+            case 'RUN_CODE':
+                if (payload.code) Runtime?.execute(payload.code, payload.source || 'network');
+                break;
+            case 'INSERT_CHARACTER': {
+                const State = window.State;
+                if (payload.pos && State) State.ctxTargetPos.set(payload.pos.x, payload.pos.y, payload.pos.z);
+                World.spawnCharacter(true);
+                break;
+            }
+            case 'INSERT_PLAYER':
+                World.insertPlayerByKey(payload.key, true);
+                break;
+            case 'INSERT_SAVED':
+                World.insertSavedPlayer(payload.key, true);
+                break;
+            case 'INSERT_CUSTOM': {
+                const State = window.State;
+                if (payload.pos && State) State.ctxTargetPos.set(payload.pos.x, payload.pos.y, payload.pos.z);
+                World.runCustomAtCursor(payload.code, true);
+                break;
+            }
+            case 'CLEAR_WORLD':
+                World.clearWorld(true);
+                break;
+            case 'PAUSE':
+                if (Session?.isHost) Session.setPaused(!!payload.paused);
+                break;
+            default:
+                break;
+        }
+    }
+};

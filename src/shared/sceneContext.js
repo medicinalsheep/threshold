@@ -16,9 +16,18 @@ export function getSceneContext() {
 
     const env = State.env || {};
     const runningCode = window.Runtime?.runningCode || '(none)';
+    const network = window.Network;
+    const session = window.Session;
+    const netLine = network?.mode === 'host'
+        ? `- Session: HOST room ${network.roomId}, ${network.peerCount} guest(s)`
+        : network?.mode === 'guest'
+            ? `- Session: GUEST in room ${network.roomId}`
+            : '- Session: solo';
 
     return `
 CURRENT LIVE SCENE (use as base — extend, do not blindly clear unless asked):
+${netLine}
+- Your player key: ${session?.playerKey || '?'}
 - Render mode: ${MODE_NAMES[State.renderMode] || State.renderMode}
 - Object count: ${objects.length}
 - Time of day: ${env.timeOfDay ?? '?'}h

@@ -242,10 +242,15 @@ button {
     letter-spacing: 1px;
 }
 
-.session-host {
+.session-host,
+.session-peers {
     padding: 2px 6px;
     border: 1px solid var(--border-color);
     font-size: 0.6rem;
+}
+
+.session-peers {
+    color: #888;
 }
 
 .btn-sm {

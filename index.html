@@ -10,6 +10,24 @@
 </head>
 <body>
 
+    <!-- LOBBY: Create or join a session -->
+    <div id="lobby-overlay">
+        <div id="lobby-card" class="panel">
+            <h1>THRESHOLD</h1>
+            <p class="tagline">Create, code, and play together in 3D.</p>
+            <input type="text" id="lobby-name" class="lobby-input" placeholder="Your name" maxlength="20">
+            <button id="lobby-create" class="lobby-btn lobby-btn-primary">CREATE SESSION</button>
+            <input type="text" id="lobby-join-code" class="lobby-input" placeholder="Room code to join" maxlength="8">
+            <button id="lobby-join" class="lobby-btn">JOIN FRIENDS</button>
+            <button id="lobby-solo" class="lobby-btn lobby-btn-ghost">SOLO PLAY</button>
+            <div class="lobby-steps">
+                <strong>With friends:</strong> Create → copy link → friends open link → Join.<br>
+                Then: generate code · insert characters · design together.
+            </div>
+            <div id="lobby-status"></div>
+        </div>
+    </div>
+
     <!-- AUTH OVERLAY (Grok edition) -->
     <div id="auth-overlay">
         <div id="auth-card" class="panel">
@@ -70,13 +88,14 @@
                 <div class="toolbar-left">
                     <div id="mode-display">HYPER (BLOOM)</div>
                     <div class="session-bar">
-                        <span class="session-label">KEY</span>
+                        <span class="session-label">YOU</span>
                         <code id="session-player-key">------</code>
-                        <button id="btn-copy-key" class="btn-sm">COPY</button>
-                        <span id="session-host-status" class="session-host">GUEST</span>
-                        <button id="btn-claim-host" class="btn-sm">BECOME HOST</button>
+                        <span id="session-host-status" class="session-host">SOLO</span>
+                        <span id="session-peer-count" class="session-peers">solo</span>
+                        <button id="btn-copy-link" class="btn-sm">COPY LINK</button>
                         <button id="btn-host-pause" class="btn-sm" disabled>PAUSE</button>
                     </div>
+                    <input type="text" id="session-share-link" readonly>
                 </div>
                 <div class="toolbar-actions">
                     <button id="btn-env-toggle" class="btn-sm mobile-only">ENV</button>

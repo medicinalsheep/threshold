@@ -3,10 +3,12 @@ import './css/engine.css';
 import './css/compiler.css';
 import './css/prompter.css';
 import './css/responsive.css';
+import './css/lobby.css';
 
 import { VERSION } from './config.js';
 import { initAuth } from './auth/main.js';
 import './shared/runtime.js';
+import { initLobby } from './lobby/main.js';
 import { initEngine } from './engine/main.js';
 import { initCompiler } from './compiler/main.js';
 import { initPrompter } from './prompter/main.js';
@@ -59,6 +61,8 @@ document.getElementById('global-theme-btn')?.addEventListener('click', () => {
     window.dispatchEvent(new CustomEvent('theme-change'));
 });
 
-initEngine();
-initCompiler();
-initPrompter();
+initLobby(() => {
+    initEngine();
+    initCompiler();
+    initPrompter();
+});
