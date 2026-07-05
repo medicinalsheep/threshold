@@ -33,6 +33,8 @@ import { NpcAgent } from '../grok/npcAgent.js';
 import { DevAgent } from '../grok/devAgent.js';
 import { Walkthrough } from '../shared/walkthrough.js';
 import { ExportWizard } from '../shared/exportWizard.js';
+import { getRenderMode } from '../shared/renderModes.js';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
 const IS_TOUCH_DEVICE = window.matchMedia('(pointer: coarse)').matches;
 
@@ -128,9 +130,9 @@ const State = {
     playerRef: null,
     env: {
         timeOfDay: 14,
-        fogDensity: 0.02,
-        waterEnabled: false,
-        atmosphereEnabled: false
+        fogDensity: 0.015,
+        waterEnabled: true,
+        atmosphereEnabled: true
     }
 };
 
@@ -153,12 +155,13 @@ const Physics = {
         this.world = new CANNON.World();
         this.world.gravity.set(0, -9.82, 0); // Earth Gravity
         this.world.broadphase = new CANNON.NaiveBroadphase();
-        this.world.solver.iterations = 10;
+        this.world.solver.iterations = 15;
+        this.world.allowSleep = true;
 
-        // Default Material
         const defaultMat = new CANNON.Material('default');
         const contactMat = new CANNON.ContactMaterial(defaultMat, defaultMat, {
-            friction: 0.3, restitution: 0.7 // Bounciness
+            friction: 0.42,
+            restitution: 0.28
         });
         this.world.addContactMaterial(contactMat);
 
@@ -360,6 +363,21 @@ const Environment = {
         this.bindUi();
         this.setTimeOfDay(State.env.timeOfDay);
         this.setFog(State.env.fogDensity);
+        if (State.env.waterEnabled) {
+            this.createWater();
+            const btn = document.getElementById('env-water-toggle');
+            if (btn) { btn.textContent = 'ON'; btn.classList.add('active'); }
+            if (Engine.groundPlane) Engine.groundPlane.visible = false;
+        }
+        if (State.env.atmosphereEnabled) {
+            if (!this.hemiLight) {
+                this.hemiLight = new THREE.HemisphereLight(0x87ceeb, 0x1a2a12, 0.55);
+                Engine.scene.add(this.hemiLight);
+            }
+            this.hemiLight.visible = true;
+            const btn = document.getElementById('env-atmo-toggle');
+            if (btn) { btn.textContent = 'ON'; btn.classList.add('active'); }
+        }
     },
 
     bindUi: function () {
@@ -436,9 +454,10 @@ const Environment = {
         const mat = new THREE.MeshStandardMaterial({
             color: 0x1a6b8a,
             transparent: true,
-            opacity: 0.82,
-            metalness: 0.75,
-            roughness: 0.15
+            opacity: 0.88,
+            metalness: 0.92,
+            roughness: 0.08,
+            envMapIntensity: 1.2
         });
         this.waterMesh = new THREE.Mesh(geo, mat);
         this.waterMesh.position.y = 0.02;
@@ -517,7 +536,7 @@ const Engine = {
         this.gridHelper = new THREE.GridHelper(40, 40, 0x666666, 0x333333);
         this.scene.add(this.gridHelper);
         const planeGeo = new THREE.PlaneGeometry(100, 100);
-        const planeMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.8 });
+        const planeMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.55, metalness: 0.15, envMapIntensity: 0.6 });
         this.groundPlane = new THREE.Mesh(planeGeo, planeMat);
         this.groundPlane.rotation.x = -Math.PI / 2;
         this.groundPlane.receiveShadow = true; // Floor receives shadows
@@ -532,6 +551,7 @@ const Engine = {
         this.scene.add(this.transformControl);
         this.raycaster = new THREE.Raycaster();
         this.setupPipeline();
+        this.setupImageBasedLighting();
         this.setRenderMode(4);
         UI.updateModeDisplay(4);
         window.addEventListener('resize', () => this.onResize());
@@ -595,7 +615,10 @@ const Engine = {
                 float layeredGrid(vec2 fragCoord, float band, float baseScale) {
                     float scale = baseScale + band * 6.0;
                     vec2 g = abs(fract(fragCoord / scale) - 0.5);
-                    return step(0.46, max(g.x, g.y));
+                    float parallel = step(0.46, max(g.x, g.y));
+                    vec2 d = abs(fract((fragCoord + band * 2.0) / (scale * 1.15)) - 0.5);
+                    float crossed = step(0.48, abs(d.x - d.y));
+                    return max(parallel, crossed * 0.65);
                 }
 
                 void main() {
@@ -603,17 +626,21 @@ const Engine = {
                     if (mode == 4) { gl_FragColor = texel; return; }
 
                     float luma = dot(texel.rgb, vec3(0.299, 0.587, 0.114));
-                    float band = floor(luma * 5.0);
+                    float depthCue = 1.0 - vUv.y * 0.38;
+                    float edge = length(vec2(dFdx(luma), dFdy(luma)));
+                    float depthMix = clamp(luma * 0.62 + depthCue * 0.28 + edge * 2.2, 0.0, 0.999);
+                    float band = floor(depthMix * 5.0);
                     float grid = layeredGrid(gl_FragCoord.xy, band, 5.0);
                     vec3 outColor;
 
                     if (mode == 0) {
                         float q = band / 4.0;
-                        outColor = vec3(q);
+                        outColor = mix(vec3(q), texel.rgb, 0.12);
                         outColor = mix(outColor, outColor * 0.55, grid);
                     } else if (mode == 1) {
-                        outColor = (luma > 0.4) ? vec3(1.0) : vec3(0.0);
-                        outColor = mix(outColor, vec3(0.15), grid * 0.5);
+                        float thresh = 0.38 + depthCue * 0.12;
+                        outColor = (depthMix > thresh) ? vec3(1.0) : vec3(0.0);
+                        outColor = mix(outColor, vec3(0.12), grid * 0.45);
                     } else if (mode == 2) {
                         float g = 0.08;
                         if (band > 0.5) g = 0.22;
@@ -623,7 +650,7 @@ const Engine = {
                         outColor = vec3(0.0, g, 0.0);
                         float scan = mod(gl_FragCoord.y, 3.0) < 1.5 ? 0.85 : 1.0;
                         outColor *= scan;
-                        outColor = mix(outColor, outColor * 0.4, grid);
+                        outColor = mix(outColor, outColor * 0.35, grid);
                     } else if (mode == 3) {
                         outColor = floor(texel.rgb * 4.0) / 4.0;
                         vec3 layerTint = vec3(0.9 + band * 0.02, 0.85, 1.0 - band * 0.05);
@@ -645,6 +672,31 @@ const Engine = {
         this.bloomPass.renderToScreen = true;
         this.composer.addPass(this.bloomPass);
     },
+    setupImageBasedLighting: function () {
+        if (this._envMap) return;
+        const pmrem = new THREE.PMREMGenerator(this.renderer);
+        pmrem.compileEquirectangularShader();
+        this._envMap = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+        this.scene.environment = this._envMap;
+        pmrem.dispose();
+        State.objects.forEach((o) => {
+            if (o.material?.isMeshStandardMaterial) o.material.needsUpdate = true;
+        });
+    },
+
+    applyRenderModeSceneTuning: function (idx) {
+        const isHyper = idx === 4;
+        if (Environment.sunLight) Environment.sunLight.intensity = isHyper ? 2.0 : 2.45;
+        if (this.scene.fog) this.scene.fog.density = isHyper ? State.env.fogDensity : Math.max(State.env.fogDensity, 0.018);
+        State.objects.forEach((obj) => {
+            if (!obj.material?.isMeshStandardMaterial) return;
+            obj.material.envMapIntensity = isHyper ? 1.0 : 0.35;
+            if (!isHyper && obj.material.emissive) {
+                obj.material.emissiveIntensity = Math.max(obj.material.emissiveIntensity || 0, 0.08);
+            }
+        });
+    },
+
     setRenderMode: function (idx) {
         State.renderMode = idx;
         if (!this.shaderPass || !this.bloomPass) return;
@@ -654,12 +706,17 @@ const Engine = {
         this.bloomPass.renderToScreen = isHyper;
         this.shaderPass.renderToScreen = !isHyper;
         if (isHyper) {
-            this.bloomPass.strength = 1.5;
-            this.bloomPass.radius = 0.5;
+            this.bloomPass.strength = 1.35;
+            this.bloomPass.radius = 0.45;
         }
+        this.applyRenderModeSceneTuning(idx);
         UI.updateModeDisplay(idx);
         const select = document.getElementById('env-mode');
         if (select) select.value = String(idx);
+        const info = document.getElementById('env-mode-info');
+        const meta = getRenderMode(idx);
+        if (info) info.textContent = `${meta.tagline} — ${meta.limits}`;
+        window.Spectate?.updateHud?.();
     },
     openContextAtScreen: function (clientX, clientY) {
         const rect = this.renderer.domElement.getBoundingClientRect();
@@ -1745,8 +1802,10 @@ const UI = {
         panelModal?.classList.toggle('host-view', isHost);
         if (linkEl) linkEl.value = isHost ? Network.getShareUrl() : '';
         if (roleEl) {
-            roleEl.textContent = isHost ? 'You are HOST — manage players & permissions'
-                : (Session.isAdmin(Session.playerKey) ? 'You are GUEST (Admin)' : 'You are GUEST — personal bindings only');
+            if (Network.mode === 'spectate') roleEl.textContent = 'You are SPECTATING — read-only orbit camera';
+            else if (isHost) roleEl.textContent = 'You are HOST — manage players & permissions';
+            else roleEl.textContent = Session.isAdmin(Session.playerKey)
+                ? 'You are GUEST (Admin)' : 'You are GUEST — personal bindings only';
         }
 
         const players = isHost ? Network.getPlayerList() : [
@@ -1755,7 +1814,7 @@ const UI = {
 
         list.innerHTML = players.map((p) => `
             <div class="host-player-row">
-                <span>${p.name} <code>${p.key}</code>${p.self ? ' (you)' : ''}</span>
+                <span>${p.name} <code>${p.key}</code>${p.spectator ? ' 👁' : ''}${p.self ? ' (you)' : ''}</span>
                 ${isHost && !p.self ? `
                     <label class="host-admin-toggle">
                         <input type="checkbox" data-admin-key="${p.key}" ${p.admin ? 'checked' : ''}> Admin

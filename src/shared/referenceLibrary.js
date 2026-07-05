@@ -22,6 +22,44 @@ export const REFERENCE_LIBRARY = {
 // 10. MORE → EXPORT manifest + SAVE PROJECT in Compiler vault`
         },
         {
+            id: 'render_modes_3d',
+            title: 'Render Modes — 3D Readable Across All Styles',
+            summary: 'Threshold/1-Bit/Terminal/SMPTE use depth+grid bands; Hyper is full PBR. Space props on Z for layers.',
+            checklist: ['0 Threshold = lightweight 5-band', '1 1-Bit = B&W only — spacing matters', '2 Terminal = green cross-hatch layers', '4 Hyper = water+physics+IBL default'],
+            code: `// RENDER MODES (Engine → ENV → Render):
+// 0 THRESHOLD — ultimate compatibility, 5 luminance+depth bands + crossed grid
+// 1 1-BIT — binary B&W; mid-tones lost — separate objects in Z/fog
+// 2 TERMINAL — phosphor green parallel+crossed hatch per depth band
+// 3 SMPTE — 4-level quantized color + depth tint
+// 4 HYPER — full lighting, bloom, water, IBL reflections, physics showcase
+//
+// AI layout rule: stagger Z every 2–3 units for retro modes
+// Engine.setRenderMode(4); // realism default`
+        },
+        {
+            id: 'lego_fit_anything',
+            title: 'LEGO Fit — Snap Anything Into the Live Scene',
+            summary: 'PromptGen + Compiler pattern: read scene context, extend without clearWorld, physics+collision ready.',
+            checklist: ['No World.clearWorld()', 'World.getCursorPos() or fixed coords', 'usePhysics: true for interactives', 'userData for inspector panels'],
+            code: `// LEGO FIT TEMPLATE — paste from PromptGen into Compiler:
+(function() {
+  const p = World.getCursorPos();
+  const snap = (type, name, color, physics, x, y, z) => {
+    const m = World.createObject(type, name, color, physics);
+    if (!m) return null;
+    m.position.set(p.x + x, p.y + y, p.z + z);
+    m.userData.friction = 0.42;
+    m.userData.restitution = 0.25;
+    if (physics) m.userData.mass = 1.5;
+    return m;
+  };
+  snap('cube', 'Lego_A', 0x39ff14, true, 0, 1.2, 0);
+  snap('sphere', 'Lego_B', 0xffffff, true, 1.5, 1.5, -1);
+  snap('torus', 'Lego_C', 0x4488ff, false, -1.5, 1.8, 1);
+  UI.status('LEGO blocks snapped — pause to inspect Collision/Audio');
+})();`
+        },
+        {
             id: 'first_session_walkthrough',
             title: 'First Session Walkthrough (in-engine)',
             summary: '8-step tutorial on first Engine visit: panels, EDIT/PLAY, build, AI paths, export.',

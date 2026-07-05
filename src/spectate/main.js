@@ -1,0 +1,55 @@
+import { getRenderMode } from '../shared/renderModes.js';
+
+let active = false;
+let followHost = false;
+
+export const Spectate = {
+    isActive() { return active; },
+
+    setActive(on) {
+        active = !!on;
+        document.body.classList.toggle('spectate-mode', active);
+        document.getElementById('spectate-hud')?.classList.toggle('hidden', !active);
+        if (active) this.updateHud();
+        window.dispatchEvent(new Event('resize'));
+    },
+
+    init() {
+        document.getElementById('spectate-follow-host')?.addEventListener('click', () => {
+            followHost = true;
+            window.UI?.status('Spectate: following host camera (synced state)');
+            this.updateHud();
+        });
+        document.getElementById('spectate-free-cam')?.addEventListener('click', () => {
+            followHost = false;
+            window.UI?.status('Spectate: free orbit camera');
+            this.updateHud();
+        });
+        document.getElementById('spectate-exit')?.addEventListener('click', () => {
+            document.querySelector('[data-target="view-engine"]')?.click();
+        });
+    },
+
+    updateHud() {
+        const mode = getRenderMode(window.State?.renderMode ?? 4);
+        const net = window.Network;
+        const netLabel = net?.mode === 'spectate' ? `watching ${net.roomId}`
+            : net?.mode === 'host' ? `host ${net.roomId}`
+                : net?.mode === 'guest' ? `guest ${net.roomId}` : 'solo preview';
+        const el = document.getElementById('spectate-render-info');
+        if (el) el.textContent = `${mode.short} · ${netLabel} · ${followHost ? 'follow' : 'free cam'}`;
+        document.getElementById('spectate-follow-host')?.classList.toggle('active', followHost);
+        document.getElementById('spectate-free-cam')?.classList.toggle('active', !followHost);
+    },
+
+    shouldFollowHost() { return active && followHost; },
+
+    isSpectatorSession() {
+        return window.Network?.mode === 'spectate' || window.Session?.isSpectator;
+    },
+};
+
+export function initSpectate() {
+    Spectate.init();
+    window.Spectate = Spectate;
+}

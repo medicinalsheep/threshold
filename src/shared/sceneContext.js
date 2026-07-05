@@ -32,7 +32,9 @@ export function getSceneContext() {
         ? `- Session: HOST room ${network.roomId}, ${network.peerCount} guest(s)`
         : network?.mode === 'guest'
             ? `- Session: GUEST in room ${network.roomId}`
-            : '- Session: solo';
+            : network?.mode === 'spectate'
+                ? `- Session: SPECTATE room ${network.roomId} (read-only)`
+                : '- Session: solo';
 
     return `
 CURRENT LIVE SCENE (use as base — extend, do not blindly clear unless asked):

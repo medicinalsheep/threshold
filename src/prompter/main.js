@@ -5,6 +5,7 @@ import { generateScript } from '../grok/client.js';
 import { getSceneContext } from '../shared/sceneContext.js';
 import { getSoundContext } from '../shared/soundContext.js';
 import { getReferencePromptBlock } from '../shared/referenceLibrary.js';
+import { getRenderModePromptBlock } from '../shared/renderModes.js';
 import { SoundLibrary } from '../shared/soundLibrary.js';
 
 function renderSoundPicker() {
@@ -83,9 +84,12 @@ OBJECT EDIT METADATA (set in code for inspector):
 - userData: hasPhysics, mass, friction, restitution, soundFreq, soundType, isHuman, isPlayer
 - userData: soundMode ('clip'|'tone'), soundClipId (from user library), soundTrigger (collision|interact|emote|ambient)
 
-RENDER MODES (parallel depth-layer grids):
-- 0 Threshold, 1 1-Bit, 2 Terminal (green bands), 3 SMPTE, 4 Hyper (physics+bloom)
-- Space objects on Z-axis / luminance for readable retro depth
+RENDER MODES (all remain true 3D — post-process stylizes, depth bands preserve space):
+${getRenderModePromptBlock()}
+
+LEGO FIT: extend live scene via World.createObject — no clearWorld. Snap props with offsets from World.getCursorPos(). Set userData mass/friction/restitution for Collision panel. Hyper(4) default for realism.
+
+SPECTATE: guests can watch via lobby SPECTATE or nav SPECTATE tab (read-only orbit).
 
 ${getReferencePromptBlock()}
 `,

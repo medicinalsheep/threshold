@@ -11,6 +11,7 @@ export const SimMode = {
 
     canEditWorld() {
         if (this.isPlay()) return false;
+        if (window.Session?.isSpectator || window.Network?.mode === 'spectate') return false;
         const mode = window.Network?.mode;
         if (mode === 'solo' || mode === 'host') return true;
         return Permissions.canEditWorld(window.Session?.playerKey);

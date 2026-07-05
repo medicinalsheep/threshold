@@ -13,6 +13,7 @@ export const Permissions = {
 
     canEditWorld(fromKey) {
         const mode = Network.mode;
+        if (Session.isSpectator || mode === 'spectate') return false;
         if (mode === 'solo' || mode === 'host') return true;
         if (mode === 'guest') return Session.isAdmin(fromKey || Session.playerKey);
         return false;

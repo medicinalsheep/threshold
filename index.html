@@ -35,6 +35,7 @@
             <input type="text" id="lobby-join-code" class="lobby-input" placeholder="Room code to join" maxlength="8">
             <button id="lobby-join" class="lobby-btn">JOIN FRIENDS</button>
             <button id="lobby-solo" class="lobby-btn lobby-btn-ghost">SOLO PLAY →</button>
+            <button id="lobby-spectate" class="lobby-btn lobby-btn-spectate">SPECTATE SESSION</button>
             <div class="lobby-steps">
                 <div class="lobby-step"><span class="lobby-step-num">1</span> Enter the engine — drag panels, tap FULL for immersive view</div>
                 <div class="lobby-step"><span class="lobby-step-num">2</span> PromptGen + Compiler — AI builds your world (reference your recorded sounds)</div>
@@ -63,6 +64,7 @@
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
+            <button class="tab-btn" data-target="view-spectate">SPECTATE</button>
             <button class="tab-btn" data-target="view-compiler">COMPILER</button>
             <button class="tab-btn" data-target="view-prompter">PROMPTGEN</button>
         </div>
@@ -80,6 +82,15 @@
     <div id="view-engine" class="view-section active">
         <!-- 1. Canvas & Hidden I/O -->
         <div id="canvas-container"></div>
+
+        <div id="spectate-hud" class="spectate-hud hidden">
+            <span id="spectate-badge">SPECTATE</span>
+            <span id="spectate-render-info">Hyper · solo preview</span>
+            <button id="spectate-follow-host" type="button" class="btn-sm">FOLLOW</button>
+            <button id="spectate-free-cam" type="button" class="btn-sm active">FREE CAM</button>
+            <button id="spectate-exit" type="button" class="btn-sm">ENGINE</button>
+            <p class="spectate-hint">Read-only view — orbit/zoom only · all render modes stay 3D-readable via depth bands</p>
+        </div>
         <input type="file" id="file-input" accept=".json">
 
         <!-- 2. Context Menu (Right Click) -->
@@ -210,6 +221,7 @@
                         <option value="4" selected>Hyper</option>
                     </select>
                 </div>
+                <p id="env-mode-info" class="env-mode-info"></p>
                 <div class="prop-row">
                     <label>Time</label>
                     <input type="range" id="env-time" min="0" max="24" step="0.25" value="14">
@@ -221,11 +233,11 @@
                 </div>
                 <div class="prop-row">
                     <label>Water</label>
-                    <button id="env-water-toggle">OFF</button>
+                    <button id="env-water-toggle" class="active">ON</button>
                 </div>
                 <div class="prop-row">
                     <label>Atmosphere</label>
-                    <button id="env-atmo-toggle">OFF</button>
+                    <button id="env-atmo-toggle" class="active">ON</button>
                 </div>
                 <div class="prop-row">
                     <label>Grid</label>

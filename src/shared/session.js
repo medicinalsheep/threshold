@@ -13,6 +13,7 @@ export const Session = {
     playerName: 'Player',
     isHost: false,
     hostKey: '',
+    isSpectator: false,
     isPaused: false,
     pauseReason: '',
     admins: new Set(),

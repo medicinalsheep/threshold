@@ -1,0 +1,78 @@
+body.spectate-mode #engine-toolbar,
+body.spectate-mode #scene-dock,
+body.spectate-mode #btn-mobile-insert,
+body.spectate-mode #touch-controls,
+body.spectate-mode .toolbar-more-menu {
+    display: none !important;
+}
+
+body.spectate-mode #canvas-container {
+    top: var(--nav-height, 50px);
+}
+
+.spectate-hud {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    top: calc(var(--nav-height, 50px) + 8px);
+    z-index: 220;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.82);
+    border: 1px solid var(--accent-color);
+    border-radius: 6px;
+    pointer-events: auto;
+    max-width: min(96vw, 640px);
+}
+
+.spectate-hud.hidden {
+    display: none;
+}
+
+#spectate-badge {
+    font-size: 0.62rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: #000;
+    background: var(--accent-color);
+    padding: 4px 8px;
+    border-radius: 3px;
+}
+
+#spectate-render-info {
+    font-size: 0.62rem;
+    color: #aaa;
+    flex: 1 1 auto;
+    min-width: 120px;
+}
+
+.spectate-hud .btn-sm.active {
+    border-color: var(--accent-color) !important;
+    color: var(--accent-color) !important;
+}
+
+.spectate-hint {
+    width: 100%;
+    margin: 0;
+    font-size: 0.58rem;
+    color: #666;
+}
+
+.lobby-btn-spectate {
+    background: transparent !important;
+    color: var(--accent-color) !important;
+    border: 1px solid var(--accent-color) !important;
+}
+
+.env-mode-info {
+    font-size: 0.6rem;
+    line-height: 1.45;
+    color: #888;
+    margin: 6px 0 10px;
+    padding: 8px;
+    border: 1px dashed var(--border-color);
+    background: rgba(0, 0, 0, 0.25);
+}

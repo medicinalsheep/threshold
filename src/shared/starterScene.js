@@ -42,7 +42,21 @@ export function bootstrapStarterScene() {
         crate.position.set(2.4, 0.5, -1.6);
         crate.scale.set(0.9, 0.9, 0.9);
         crate.userData.soundTrigger = 'collision';
+        crate.userData.mass = 2.5;
+        crate.userData.friction = 0.45;
+        crate.userData.restitution = 0.2;
     }
+
+    const depthLayers = [0x888888, 0x555555, 0x333333];
+    depthLayers.forEach((col, i) => {
+        const m = World.createObject('cube', `Depth_${i}`, col, false);
+        if (m) {
+            m.position.set(-3.5 + i * 1.2, 1.2, -4 - i * 2.5);
+            m.scale.set(0.7, 1.4, 0.5);
+            m.material.emissive.setHex(col);
+            m.material.emissiveIntensity = 0.12;
+        }
+    });
 
     const guide = HumanMesh.build({ bodyColor: 0x39ff14, pantsColor: 0x222233, skinColor: 0xffd4b8 });
     if (guide) {

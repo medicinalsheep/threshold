@@ -75,6 +75,25 @@ export function initLobby(onReady) {
         enterApp();
     });
 
+    document.getElementById('lobby-spectate')?.addEventListener('click', async () => {
+        const code = joinInput?.value?.trim().toUpperCase();
+        if (!code) { setStatus('Enter a room code to spectate', true); return; }
+        setStatus('Joining as spectator...');
+        try {
+            Session.init();
+            const name = document.getElementById('lobby-name')?.value?.trim();
+            if (name) {
+                Session.playerName = name;
+                localStorage.setItem('threshold_player_name', name);
+            }
+            await Network.spectateRoom(code);
+            enterApp();
+            document.querySelector('[data-target="view-spectate"]')?.click();
+        } catch (e) {
+            setStatus(e.message || 'Could not spectate — check code & host', true);
+        }
+    });
+
     if (urlRoom) {
         setStatus(`Room code detected: ${urlRoom.toUpperCase()} — tap Join`);
     }

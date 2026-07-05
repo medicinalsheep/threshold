@@ -21,7 +21,7 @@ export const Network = {
     },
 
     getPlayerList() {
-        const list = [{ key: Session.playerKey, name: Session.playerName, admin: true, self: true }];
+        const list = [{ key: Session.playerKey, name: Session.playerName, admin: true, self: true, spectator: false }];
         this.players.forEach((p) => {
             if (p.key !== Session.playerKey) list.push({ ...p, self: false });
         });
@@ -57,10 +57,41 @@ export const Network = {
         });
     },
 
+    async spectateRoom(roomId) {
+        this.mode = 'spectate';
+        this.roomId = roomId;
+        Session.isHost = false;
+        Session.isSpectator = true;
+        Session.hostKey = roomId;
+        Session.updateUi();
+
+        return new Promise((resolve, reject) => {
+            this.peer = new Peer(getPeerOptions());
+            this.peer.on('open', () => {
+                const conn = this.peer.connect(roomId, { reliable: true });
+                this.hostConnection = conn;
+                this._setupConn(conn);
+                conn.on('open', () => {
+                    conn.send({
+                        type: 'JOIN',
+                        playerKey: Session.playerKey,
+                        playerName: Session.playerName,
+                        spectate: true,
+                    });
+                    this.updateUi();
+                    resolve(roomId);
+                });
+                conn.on('error', reject);
+            });
+            this.peer.on('error', reject);
+        });
+    },
+
     async joinRoom(roomId) {
         this.mode = 'guest';
         this.roomId = roomId;
         Session.isHost = false;
+        Session.isSpectator = false;
         Session.hostKey = roomId;
         Session.updateUi();
 
@@ -93,6 +124,7 @@ export const Network = {
         this.mode = 'solo';
         this.roomId = '';
         Session.isHost = false;
+        Session.isSpectator = false;
         Session.hostKey = '';
         Session.grantAdmin(Session.playerKey);
         Session.updateUi();
@@ -125,10 +157,12 @@ export const Network = {
 
     _registerPlayer(conn, data) {
         const key = (data.playerKey || '').toUpperCase();
+        const spectator = !!data.spectate;
         this.players.set(conn, {
             key,
             name: data.playerName || `Player-${key}`,
-            admin: Session.isAdmin(key),
+            admin: spectator ? false : Session.isAdmin(key),
+            spectator,
             conn
         });
         window.UI?.renderHostPanel?.();
@@ -146,6 +180,11 @@ export const Network = {
             }
             if (data.type === 'ACTION') {
                 const from = (data.from || '').toUpperCase();
+                const meta = this.players.get(conn);
+                if (meta?.spectator) {
+                    conn.send?.({ type: 'DENIED', action: data.action, message: 'Spectators are read-only' });
+                    return;
+                }
                 if (Permissions.isWorldEditAction(data.action) && !Permissions.canEditWorld(from)) {
                     conn.send?.({ type: 'DENIED', action: data.action, message: 'No admin permission' });
                     return;
@@ -153,10 +192,11 @@ export const Network = {
                 Sync.applyAction(data.action, data.payload);
                 this.scheduleBroadcast();
             }
-        } else if (this.mode === 'guest') {
+        } else if (this.mode === 'guest' || this.mode === 'spectate') {
             if (data.type === 'FULL_STATE') {
                 Sync.applyState(data.state);
                 window.UI?.renderHostPanel?.();
+                window.Spectate?.updateHud?.();
             }
             if (data.type === 'WELCOME' && window.UI?.status) {
                 window.UI.status('Connected to host — synced bindings & scene');
@@ -168,6 +208,10 @@ export const Network = {
     },
 
     sendToHost(action, payload = {}) {
+        if (this.mode === 'spectate') {
+            if (window.UI?.status) window.UI.status('Spectators cannot send actions');
+            return;
+        }
         if (this.mode !== 'guest' || !this.hostConnection?.open) {
             if (window.UI?.status) window.UI.status('Not connected to host');
             return;
@@ -216,16 +260,25 @@ export const Network = {
         const count = this.mode === 'host' ? this.connections.length : (this.hostConnection?.open ? 1 : 0);
         this.peerCount = this.mode === 'host' ? this.connections.length : 0;
 
-        if (countEl) countEl.textContent = this.mode === 'host' ? `${this.peerCount} joined` : (this.mode === 'guest' ? 'connected' : 'solo');
+        const specCount = this.mode === 'host'
+            ? [...this.players.values()].filter((p) => p.spectator).length
+            : 0;
+        if (countEl) {
+            if (this.mode === 'host') countEl.textContent = `${this.peerCount} joined${specCount ? ` · ${specCount} watching` : ''}`;
+            else if (this.mode === 'guest') countEl.textContent = 'connected';
+            else if (this.mode === 'spectate') countEl.textContent = 'spectating';
+            else countEl.textContent = 'solo';
+        }
         if (linkEl && this.mode === 'host') linkEl.value = this.getShareUrl();
         if (modeEl) {
             if (this.mode === 'host') modeEl.textContent = `HOST · ${this.roomId}`;
             else if (this.mode === 'guest') modeEl.textContent = `GUEST · ${this.roomId}`;
+            else if (this.mode === 'spectate') modeEl.textContent = `WATCH · ${this.roomId}`;
             else modeEl.textContent = 'SOLO';
         }
 
         const hostPanelBtn = document.getElementById('btn-host-panel');
-        if (hostPanelBtn) hostPanelBtn.style.display = (this.mode === 'host' || this.mode === 'guest') ? 'inline-block' : 'none';
+        if (hostPanelBtn) hostPanelBtn.style.display = (this.mode === 'host' || this.mode === 'guest' || this.mode === 'spectate') ? 'inline-block' : 'none';
     },
 
     destroy() {

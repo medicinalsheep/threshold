@@ -4,6 +4,7 @@ import './css/compiler.css';
 import './css/prompter.css';
 import './css/responsive.css';
 import './css/lobby.css';
+import './css/spectate.css';
 
 import { VERSION } from './config.js';
 import { initAuth } from './auth/main.js';
@@ -12,6 +13,7 @@ import { initLobby } from './lobby/main.js';
 import { initEngine } from './engine/main.js';
 import { initCompiler } from './compiler/main.js';
 import { initPrompter } from './prompter/main.js';
+import { initSpectate } from './spectate/main.js';
 import { ViewPrefs } from './shared/viewPrefs.js';
 import { initFullscreen } from './shared/fullscreen.js';
 import { initThresholdShell } from './shared/thresholdShell.js';
@@ -79,13 +81,21 @@ tabs.forEach((tab) => {
         tab.classList.add('active');
 
         const targetId = tab.getAttribute('data-target');
+        const isSpectate = targetId === 'view-spectate';
+        const showEngine = targetId === 'view-engine' || isSpectate;
+
         views.forEach((view) => {
-            view.style.display = view.id === targetId ? 'flex' : 'none';
+            if (view.id === 'view-engine') {
+                view.style.display = showEngine ? 'flex' : 'none';
+            } else {
+                view.style.display = view.id === targetId ? 'flex' : 'none';
+            }
         });
 
+        window.Spectate?.setActive(isSpectate);
         tabsContainer?.classList.remove('open');
 
-        if (targetId === 'view-engine') {
+        if (showEngine) {
             setTimeout(() => {
                 updateChromeMetrics();
                 window.dispatchEvent(new Event('resize'));
@@ -111,6 +121,8 @@ document.getElementById('global-theme-btn')?.addEventListener('click', () => {
 });
 
 initThresholdShell();
+
+initSpectate();
 
 initLobby(() => {
     initEngine();
