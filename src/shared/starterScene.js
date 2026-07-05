@@ -87,6 +87,27 @@ export function bootstrapStarterScene() {
         Engine.camera.position.set(State.introFrom.x, State.introFrom.y, State.introFrom.z);
         Engine.controls.target.set(State.introTarget.x, State.introTarget.y, State.introTarget.z);
     }
+
+    scheduleStarterPlayerSpawn();
+}
+
+function scheduleStarterPlayerSpawn() {
+    const Network = window.Network;
+    const Session = window.Session;
+    const PlayerController = window.PlayerController;
+    const State = window.State;
+    if (!PlayerController || !State) return;
+    if (Network?.mode === 'spectate' || Session?.isSpectator) return;
+
+    const delay = (State.introDuration || 2800) + 350;
+    setTimeout(() => {
+        if (PlayerController.spawned) return;
+        const pos = State.introTarget || { x: 0, y: 1.2, z: 0 };
+        PlayerController.spawn(pos.x, Math.max(pos.y, 1.2), pos.z + 1.8);
+        State.controlMode = 'walk';
+        window.UI?.updateControlMode?.();
+        window.UI?.status('You spawned on the platform — WASD walk, Space jump, PLAY to test physics');
+    }, delay);
 }
 
 window.bootstrapStarterScene = bootstrapStarterScene;

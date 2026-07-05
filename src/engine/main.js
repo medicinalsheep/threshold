@@ -35,6 +35,7 @@ import { Walkthrough } from '../shared/walkthrough.js';
 import { ExportWizard } from '../shared/exportWizard.js';
 import { getRenderMode } from '../shared/renderModes.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 
 const IS_TOUCH_DEVICE = window.matchMedia('(pointer: coarse)').matches;
 
@@ -128,6 +129,7 @@ const State = {
     isPaused: false,
     controlMode: 'fly',
     playerRef: null,
+    hostCamera: null,
     env: {
         timeOfDay: 14,
         fogDensity: 0.015,
@@ -357,6 +359,7 @@ const Environment = {
     sunLight: null,
     hemiLight: null,
     waterMesh: null,
+    waterReflector: null,
     waterBasePositions: null,
 
     init: function () {
@@ -447,30 +450,51 @@ const Environment = {
     },
 
     createWater: function () {
-        if (this.waterMesh) return;
-        const geo = new THREE.PlaneGeometry(120, 120, 48, 48);
-        geo.rotateX(-Math.PI / 2);
-        this.waterBasePositions = geo.attributes.position.array.slice();
-        const mat = new THREE.MeshStandardMaterial({
-            color: 0x1a6b8a,
-            transparent: true,
-            opacity: 0.88,
-            metalness: 0.92,
-            roughness: 0.08,
-            envMapIntensity: 1.2
+        if (this.waterReflector) return;
+
+        const texSize = IS_TOUCH_DEVICE ? 512 : 1024;
+        const reflectorGeo = new THREE.PlaneGeometry(120, 120);
+        this.waterReflector = new Reflector(reflectorGeo, {
+            clipBias: 0.003,
+            textureWidth: texSize,
+            textureHeight: texSize,
+            color: 0x0d4a5c,
         });
-        this.waterMesh = new THREE.Mesh(geo, mat);
-        this.waterMesh.position.y = 0.02;
-        this.waterMesh.receiveShadow = true;
+        this.waterReflector.rotation.x = -Math.PI / 2;
+        this.waterReflector.position.y = 0.015;
+        this.waterReflector.receiveShadow = true;
+        Engine.scene.add(this.waterReflector);
+
+        const rippleGeo = new THREE.PlaneGeometry(120, 120, 48, 48);
+        rippleGeo.rotateX(-Math.PI / 2);
+        this.waterBasePositions = rippleGeo.attributes.position.array.slice();
+        const rippleMat = new THREE.MeshStandardMaterial({
+            color: 0x2a9dbd,
+            transparent: true,
+            opacity: 0.35,
+            metalness: 0.6,
+            roughness: 0.05,
+            depthWrite: false,
+            envMapIntensity: 1.0,
+        });
+        this.waterMesh = new THREE.Mesh(rippleGeo, rippleMat);
+        this.waterMesh.position.y = 0.06;
         Engine.scene.add(this.waterMesh);
     },
 
     removeWater: function () {
-        if (!this.waterMesh) return;
-        Engine.scene.remove(this.waterMesh);
-        this.waterMesh.geometry.dispose();
-        this.waterMesh.material.dispose();
-        this.waterMesh = null;
+        if (this.waterReflector) {
+            Engine.scene.remove(this.waterReflector);
+            this.waterReflector.geometry.dispose();
+            this.waterReflector.material.dispose();
+            this.waterReflector = null;
+        }
+        if (this.waterMesh) {
+            Engine.scene.remove(this.waterMesh);
+            this.waterMesh.geometry.dispose();
+            this.waterMesh.material.dispose();
+            this.waterMesh = null;
+        }
         this.waterBasePositions = null;
     },
 
@@ -797,6 +821,27 @@ const Engine = {
             UI.openCtx(e.clientX, e.clientY, 'ground');
         }
     },
+    tickHostCameraFollow: function () {
+        const Spectate = window.Spectate;
+        const follow = Spectate?.shouldFollowHost?.() || Spectate?.isFollowingHost?.();
+        if (!follow || !State.hostCamera) {
+            if ((Spectate?.isActive?.() || window.Network?.mode === 'spectate') && !follow) {
+                this.controls.enabled = true;
+            }
+            return;
+        }
+        this.controls.enabled = false;
+        const hc = State.hostCamera;
+        if (!this._hostCamPos) {
+            this._hostCamPos = new THREE.Vector3();
+            this._hostCamTarget = new THREE.Vector3();
+        }
+        this._hostCamPos.set(hc.position.x, hc.position.y, hc.position.z);
+        this._hostCamTarget.set(hc.target.x, hc.target.y, hc.target.z);
+        this.camera.position.lerp(this._hostCamPos, 0.14);
+        this.controls.target.lerp(this._hostCamTarget, 0.14);
+    },
+
     onResize: function () {
         const navHeight = document.getElementById('app-nav')?.offsetHeight || 50;
         this.camera.aspect = window.innerWidth / (window.innerHeight - navHeight);
@@ -820,7 +865,10 @@ const Engine = {
         if (Controls.consumeJustPressed('bindingsMenu')) UI.openBindingsModal();
         if (Controls.consumeJustPressed('cameraReset')) Controls.resetCameraBehindPlayer();
 
-        if (!State.isPaused) {
+        this.tickHostCameraFollow();
+        const camFollow = window.Spectate?.shouldFollowHost?.() || window.Spectate?.isFollowingHost?.();
+
+        if (!State.isPaused && !camFollow) {
             if (State.controlMode === 'walk' && PlayerController.spawned) {
                 PlayerController.prePhysics(State.keys);
             }

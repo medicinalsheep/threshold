@@ -88,6 +88,7 @@ export function initLobby(onReady) {
             }
             await Network.spectateRoom(code);
             enterApp();
+            window.Spectate?.setFollowHost?.(true);
             document.querySelector('[data-target="view-spectate"]')?.click();
         } catch (e) {
             setStatus(e.message || 'Could not spectate — check code & host', true);

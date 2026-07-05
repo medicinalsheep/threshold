@@ -10,6 +10,22 @@ export const Sync = {
         if (!State) return null;
         const player = window.PlayerController?.getState?.();
         const Network = window.Network;
+        const Engine = window.Engine;
+        let camera = null;
+        if (Network?.mode === 'host' && Engine?.camera && Engine.controls) {
+            camera = {
+                position: {
+                    x: Engine.camera.position.x,
+                    y: Engine.camera.position.y,
+                    z: Engine.camera.position.z,
+                },
+                target: {
+                    x: Engine.controls.target.x,
+                    y: Engine.controls.target.y,
+                    z: Engine.controls.target.z,
+                },
+            };
+        }
         return {
             objects: getSceneObjectsForSpawn().filter((o) => !o.userData?.isPlayer),
             env: { ...State.env },
@@ -22,7 +38,8 @@ export const Sync = {
             controlMode: State.controlMode || 'fly',
             hostBindings: window.Controls?.exportHostControls?.() || window.Controls?.exportHostBindings?.(),
             admins: window.Session?.getAdminList?.() || [],
-            players: Network?.mode === 'host' ? Network.getPlayerList() : undefined
+            players: Network?.mode === 'host' ? Network.getPlayerList() : undefined,
+            camera,
         };
     },
 
@@ -69,12 +86,15 @@ export const Sync = {
             }
             if (state.hostBindings) window.Controls?.applySessionHostBindings?.(state.hostBindings);
             window.dispatchEvent(new CustomEvent('threshold:pause', { detail: { paused: State.isPaused, reason: state.pauseReason } }));
+            if (state.camera) State.hostCamera = state.camera;
+
             if (state.player && window.PlayerController) {
                 window.PlayerController.applyState(state.player);
             } else if (state.controlMode === 'fly') {
                 window.PlayerController?.despawn();
             }
             window.UI?.updateControlMode?.();
+            window.Spectate?.updateHud?.();
         } finally {
             applying = false;
         }

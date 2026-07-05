@@ -6,6 +6,18 @@ let followHost = false;
 export const Spectate = {
     isActive() { return active; },
 
+    isFollowingHost() {
+        return followHost && (active || window.Network?.mode === 'spectate');
+    },
+
+    setFollowHost(on) {
+        followHost = !!on;
+        this.updateHud();
+        if (followHost && window.State?.hostCamera) {
+            window.UI?.status('Following host camera');
+        }
+    },
+
     setActive(on) {
         active = !!on;
         document.body.classList.toggle('spectate-mode', active);
@@ -16,14 +28,12 @@ export const Spectate = {
 
     init() {
         document.getElementById('spectate-follow-host')?.addEventListener('click', () => {
-            followHost = true;
-            window.UI?.status('Spectate: following host camera (synced state)');
-            this.updateHud();
+            this.setFollowHost(true);
         });
         document.getElementById('spectate-free-cam')?.addEventListener('click', () => {
-            followHost = false;
+            this.setFollowHost(false);
+            window.Engine?.controls && (window.Engine.controls.enabled = true);
             window.UI?.status('Spectate: free orbit camera');
-            this.updateHud();
         });
         document.getElementById('spectate-exit')?.addEventListener('click', () => {
             document.querySelector('[data-target="view-engine"]')?.click();
@@ -37,9 +47,12 @@ export const Spectate = {
             : net?.mode === 'host' ? `host ${net.roomId}`
                 : net?.mode === 'guest' ? `guest ${net.roomId}` : 'solo preview';
         const el = document.getElementById('spectate-render-info');
-        if (el) el.textContent = `${mode.short} · ${netLabel} · ${followHost ? 'follow' : 'free cam'}`;
-        document.getElementById('spectate-follow-host')?.classList.toggle('active', followHost);
-        document.getElementById('spectate-free-cam')?.classList.toggle('active', !followHost);
+        const follow = this.isFollowingHost();
+        if (el) {
+            el.textContent = `${mode.short} · ${netLabel} · ${follow ? 'host cam' : 'free cam'}`;
+        }
+        document.getElementById('spectate-follow-host')?.classList.toggle('active', follow);
+        document.getElementById('spectate-free-cam')?.classList.toggle('active', !follow);
     },
 
     shouldFollowHost() { return active && followHost; },
