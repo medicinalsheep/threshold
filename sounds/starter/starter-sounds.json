@@ -11,7 +11,7 @@
       "category": "engine",
       "vehicle": "tc_run",
       "bytes": 70604,
-      "oggBytes": 16963,
+      "oggBytes": 14961,
       "preferred": "ogg",
       "license": "Original — Threshold procedural"
     },
@@ -23,7 +23,7 @@
       "category": "engine",
       "vehicle": "tc_haul",
       "bytes": 88244,
-      "oggBytes": 16116,
+      "oggBytes": 16008,
       "preferred": "ogg",
       "license": "Original — Threshold procedural"
     },
@@ -47,7 +47,7 @@
       "category": "gun",
       "vehicle": null,
       "bytes": 16802,
-      "oggBytes": 6160,
+      "oggBytes": 6201,
       "preferred": "ogg",
       "license": "Original — Threshold procedural"
     },
@@ -59,7 +59,7 @@
       "category": "gun",
       "vehicle": null,
       "bytes": 21212,
-      "oggBytes": 6927,
+      "oggBytes": 6947,
       "preferred": "ogg",
       "license": "Original — Threshold procedural"
     },
@@ -71,7 +71,7 @@
       "category": "vehicle",
       "vehicle": null,
       "bytes": 27386,
-      "oggBytes": 9190,
+      "oggBytes": 8801,
       "preferred": "ogg",
       "license": "Original — Threshold procedural"
     },
@@ -83,7 +83,7 @@
       "category": "door",
       "vehicle": null,
       "bytes": 6218,
-      "oggBytes": 4685,
+      "oggBytes": 4678,
       "preferred": "ogg",
       "license": "Original — Threshold procedural"
     },
@@ -107,7 +107,7 @@
       "category": "impact",
       "vehicle": null,
       "bytes": 31796,
-      "oggBytes": 8391,
+      "oggBytes": 8450,
       "preferred": "ogg",
       "license": "Original — Threshold procedural"
     },
@@ -119,7 +119,7 @@
       "category": "vehicle",
       "vehicle": null,
       "bytes": 37528,
-      "oggBytes": 9518,
+      "oggBytes": 9666,
       "preferred": "ogg",
       "license": "Original — Threshold procedural"
     },
@@ -131,7 +131,31 @@
       "category": "impact",
       "vehicle": null,
       "bytes": 12392,
-      "oggBytes": 5283,
+      "oggBytes": 5246,
+      "preferred": "ogg",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_footstep_concrete",
+      "name": "Footstep — Concrete",
+      "wav": "sounds/starter/footstep_concrete.wav",
+      "ogg": "sounds/starter/footstep_concrete.ogg",
+      "category": "footstep",
+      "vehicle": null,
+      "bytes": 5336,
+      "oggBytes": 4674,
+      "preferred": "ogg",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_footstep_metal",
+      "name": "Footstep — Metal",
+      "wav": "sounds/starter/footstep_metal.wav",
+      "ogg": "sounds/starter/footstep_metal.ogg",
+      "category": "footstep",
+      "vehicle": null,
+      "bytes": 4454,
+      "oggBytes": 4511,
       "preferred": "ogg",
       "license": "Original — Threshold procedural"
     }

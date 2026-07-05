@@ -39,6 +39,9 @@ import { ThirdEye } from '../shared/thirdEye.js';
 import '../shared/engineAudio.js';
 import '../shared/starterTex.js';
 import '../shared/npcPatrol.js';
+import '../shared/footsteps.js';
+import '../shared/fpsViewmodel.js';
+import '../shared/avatarLoader.js';
 import { bootstrapReferenceIfRequested } from '../shared/referenceEdition.js';
 import { GameExport } from '../shared/gameExport.js';
 import { AgentHub } from '../shared/agentHub.js';
@@ -228,12 +231,13 @@ const Physics = {
         this.world.addBody(body);
     },
 
-    addStaticBox(halfExtents, position, materialKey = 'ground') {
+    addStaticBox(halfExtents, position, materialKey = 'ground', surfaceType = 'concrete') {
         const mat = this.materials[materialKey] || this.materials.ground;
         const shape = new CANNON.Box(halfExtents);
         const body = new CANNON.Body({ mass: 0, material: mat });
         body.addShape(shape);
         body.position.set(position.x, position.y, position.z);
+        body.surfaceType = surfaceType;
         this.world.addBody(body);
         return body;
     },

@@ -136,6 +136,21 @@ function stripeRough(x, y, w, h) {
     return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
 }
 
+function surfaceNormal(x, y, seed = 71, strength = 0.85) {
+    const hx = noise(x + 1, y, seed) - noise(x - 1, y, seed);
+    const hy = noise(x, y + 1, seed + 1) - noise(x, y - 1, seed + 1);
+    const nx = -hx * strength;
+    const ny = -hy * strength;
+    const nz = 1;
+    const len = Math.hypot(nx, ny, nz) || 1;
+    return [
+        Math.round((nx / len * 0.5 + 0.5) * 255),
+        Math.round((ny / len * 0.5 + 0.5) * 255),
+        Math.round((nz / len * 0.5 + 0.5) * 255),
+        255,
+    ];
+}
+
 function terminalAlbedo(x, y, w, h, pal) {
     const u = x / w;
     const v = y / h;
@@ -181,10 +196,12 @@ function slotFn(asset, slot) {
     if (asset.style === 'concrete') {
         if (slot === 'albedo') return (x, y, w, h) => concreteAlbedo(x, y, w, h, asset.palette);
         if (slot === 'roughness') return (x, y, w, h) => concreteRough(x, y, w, h);
+        if (slot === 'normal') return (x, y) => surfaceNormal(x, y, 71, 0.75);
     }
     if (asset.style === 'wall') {
         if (slot === 'albedo') return (x, y, w, h) => wallAlbedo(x, y, w, h, asset.palette);
         if (slot === 'roughness') return (x, y, w, h) => wallRough(x, y, w, h);
+        if (slot === 'normal') return (x, y) => surfaceNormal(x, y, 73, 0.9);
     }
     if (asset.style === 'stripe') {
         if (slot === 'albedo') return (x, y, w, h) => stripeAlbedo(x, y, w, h, asset.palette);

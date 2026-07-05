@@ -20,6 +20,8 @@ const REQUIRED_IDS = [
     'starter_glass_break',
     'starter_tire_skid',
     'starter_metal_hit',
+    'starter_footstep_concrete',
+    'starter_footstep_metal',
 ];
 
 let fail = 0;

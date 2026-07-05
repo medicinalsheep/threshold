@@ -16,6 +16,7 @@ function run(label, args) {
 }
 
 run('textures', ['tc:gen:tex']);
+run('avatars', ['avatar:gen']);
 run('sounds', ['sounds:gen']);
 run('webp', ['tex:compress']);
 run('build', ['build']);

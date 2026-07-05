@@ -185,6 +185,32 @@ function synthTireSkid(sec = 0.85) {
     return out;
 }
 
+function synthFootstepConcrete(sec = 0.12) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const env = envHit(t, 0.001, 28);
+        const thump = Math.sin(2 * Math.PI * 95 * t) * Math.exp(-t * 35) * 0.45;
+        const grit = (Math.random() * 2 - 1) * 0.35 * Math.exp(-t * 22);
+        out[i] = (thump + grit) * env * 0.55;
+    }
+    return out;
+}
+
+function synthFootstepMetal(sec = 0.1) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const env = envHit(t, 0.0008, 32);
+        const ring = Math.sin(2 * Math.PI * 520 * t) * Math.exp(-t * 40) * 0.28;
+        const tap = (Math.random() * 2 - 1) * 0.25 * Math.exp(-t * 45);
+        out[i] = (ring + tap) * env * 0.48;
+    }
+    return out;
+}
+
 function synthMetalHit(sec = 0.28) {
     const n = Math.floor(SR * sec);
     const out = new Float32Array(n);
@@ -210,6 +236,8 @@ const CLIPS = [
     { id: 'starter_glass_break', name: 'Glass Break', file: 'glass_break', synth: synthGlassBreak, category: 'impact' },
     { id: 'starter_tire_skid', name: 'Tire Skid', file: 'tire_skid', synth: synthTireSkid, category: 'vehicle' },
     { id: 'starter_metal_hit', name: 'Metal Impact', file: 'metal_hit', synth: synthMetalHit, category: 'impact' },
+    { id: 'starter_footstep_concrete', name: 'Footstep — Concrete', file: 'footstep_concrete', synth: synthFootstepConcrete, category: 'footstep' },
+    { id: 'starter_footstep_metal', name: 'Footstep — Metal', file: 'footstep_metal', synth: synthFootstepMetal, category: 'footstep' },
 ];
 
 function tryCompress(wavPath, oggPath) {

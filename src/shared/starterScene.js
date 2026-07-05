@@ -2,16 +2,16 @@ import { spawnAiTerminal } from './aiTerminal.js';
 import { seedStarterSounds, wireStarterSounds } from './starterSfx.js';
 import { wireStarterTextures } from './starterTex.js';
 import { NpcPatrol } from './npcPatrol.js';
+import { spawnHumanWithAvatar } from './avatarLoader.js';
 
-function spawnStarterNpc({
+async function spawnStarterNpc({
     id, name, pos, rotY = 0, appearance = {}, interact = {}, waypoints = [], patrolSpeed = 1.1,
 }) {
-    const HumanMesh = window.HumanMesh;
     const Engine = window.Engine;
     const State = window.State;
-    if (!HumanMesh || !Engine?.scene) return null;
+    if (!Engine?.scene) return null;
 
-    const npc = HumanMesh.build(appearance);
+    const npc = await spawnHumanWithAvatar({ id, appearance });
     npc.position.set(pos.x, pos.y ?? 0, pos.z);
     npc.rotation.y = rotY;
     npc.userData = {
@@ -55,7 +55,7 @@ export function bootstrapStarterScene() {
     State.objects.push(groundSlab);
     const C = window.CANNON;
     if (C) {
-        Physics?.addStaticBox?.(new C.Vec3(7, 0.06, 7), { x: 0, y: 0.06, z: 0 });
+        Physics?.addStaticBox?.(new C.Vec3(7, 0.06, 7), { x: 0, y: 0.06, z: 0 }, 'ground', 'concrete');
     }
 
     const wallMat = new THREE.MeshStandardMaterial({
@@ -82,7 +82,7 @@ export function bootstrapStarterScene() {
     platform.userData = { id: 'starter_platform', name: 'Welcome Platform', type: 'platform', locked: true };
     Engine.scene.add(platform);
     State.objects.push(platform);
-    if (C) Physics?.addStaticBox?.(new C.Vec3(3.8, 0.175, 3.8), { x: 0, y: 0.175, z: 0 });
+    if (C) Physics?.addStaticBox?.(new C.Vec3(3.8, 0.175, 3.8), { x: 0, y: 0.175, z: 0 }, 'ground', 'concrete');
 
     const ring = new THREE.Mesh(
         new THREE.TorusGeometry(3.2, 0.06, 12, 48),
@@ -241,7 +241,7 @@ export function bootstrapStarterScene() {
         interactHint: 'Assign local avatar / GLTF skin',
     });
 
-    spawnStarterNpc({
+    void spawnStarterNpc({
         id: 'guide_npc',
         name: 'Alex',
         pos: { x: 1.6, y: 0, z: 2.2 },
@@ -260,7 +260,7 @@ export function bootstrapStarterScene() {
         },
     });
 
-    spawnStarterNpc({
+    void spawnStarterNpc({
         id: 'guard_npc',
         name: 'Jordan',
         pos: { x: 2.8, y: 0, z: -1.8 },
@@ -286,7 +286,7 @@ export function bootstrapStarterScene() {
         patrolSpeed: 1.05,
     });
 
-    spawnStarterNpc({
+    void spawnStarterNpc({
         id: 'mechanic_npc',
         name: 'Sam',
         pos: { x: -1.2, y: 0, z: 0.4 },
@@ -351,7 +351,7 @@ function scheduleStarterPlayerSpawn() {
     setTimeout(() => {
         if (PlayerController.spawned) return;
         const pos = State.introTarget || { x: 0, y: 1.2, z: 0 };
-        PlayerController.spawn(pos.x, Math.max(pos.y, 1.2), pos.z + 1.8);
+        PlayerController.spawn(pos.x, Math.max(pos.y, 1.2), pos.z + 1.8).catch(() => {});
         State.controlMode = 'walk';
         State.viewMode = 'tps';
         window.UI?.updateControlMode?.();

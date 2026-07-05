@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "6.0.0",
+  "version": "6.1.0",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
@@ -37,6 +37,7 @@
     "tc:gen:tex": "node scripts/tc-gen-tex.cjs",
     "tex:gen": "node scripts/tc-gen-tex.cjs",
     "tex:compress": "node scripts/compress-textures.cjs",
+    "avatar:gen": "node scripts/gen-starter-avatar.cjs",
     "assets:pack": "node scripts/assets-pack.cjs",
     "assets:verify": "node scripts/assets-verify.cjs",
     "sounds:gen": "node scripts/gen-starter-sfx.cjs",

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { HumanMesh } from './humanMesh.js';
+import { tryLoadAvatarGroup } from '../shared/avatarLoader.js';
 
 const WALK_SPEED = 3.2;
 const SPRINT_MULT = 1.875;
@@ -25,7 +26,7 @@ export const PlayerController = {
     _velX: 0,
     _velZ: 0,
 
-    spawn(x = 0, y = 2, z = 0) {
+    async spawn(x = 0, y = 2, z = 0) {
         if (this.spawned) this.despawn();
 
         const State = window.State;
@@ -70,8 +71,11 @@ export const PlayerController = {
         this._camPitch = 0.28;
         this._velX = 0;
         this._velZ = 0;
+        await tryLoadAvatarGroup(this.group, 'starter_avatar.glb');
+
         this._syncWalkOrbit();
         this._applyViewMode();
+        window.FpsViewmodel?.mount?.(Engine.camera);
 
         if (window.UI?.status) {
             window.UI.status('Action controls — WASD move · Shift sprint · V FPS/TPS · T Third Eye · E interact');
@@ -96,6 +100,7 @@ export const PlayerController = {
         this.spawned = false;
         State.controlMode = 'fly';
         State.playerRef = null;
+        window.FpsViewmodel?.unmount?.(window.Engine?.camera);
         this._syncWalkOrbit();
         window.ThirdEye?.updateHud?.();
     },
@@ -105,6 +110,7 @@ export const PlayerController = {
         if (!this.spawned || State.controlMode !== 'walk') return State?.viewMode || 'tps';
         State.viewMode = State.viewMode === 'fps' ? 'tps' : 'fps';
         this._applyViewMode();
+        window.FpsViewmodel?.setVisible?.(State.viewMode === 'fps');
         window.ThirdEye?.updateHud?.();
         window.UI?.status?.(State.viewMode === 'fps' ? 'First person' : 'Third person');
         return State.viewMode;
@@ -112,7 +118,12 @@ export const PlayerController = {
 
     _applyViewMode() {
         const fps = window.State?.viewMode === 'fps';
-        HumanMesh.setFirstPersonVisible(this.group, !fps);
+        if (this.group?.userData?.isGltf) {
+            this.group.visible = !fps;
+        } else {
+            HumanMesh.setFirstPersonVisible(this.group, !fps);
+        }
+        window.FpsViewmodel?.setVisible?.(fps);
     },
 
     _syncWalkOrbit() {
@@ -216,6 +227,15 @@ export const PlayerController = {
         }
 
         HumanMesh.updateWalk(this.group, speed, 0.016, sprinting);
+
+        const ground = this._probeGround();
+        window.Footsteps?.tick?.({
+            speed,
+            sprinting,
+            grounded: ground.grounded,
+            ground,
+        });
+        window.FpsViewmodel?.tick?.(speed);
 
         const base = this.group.position.clone();
         const chest = base.clone().add(new THREE.Vector3(0, 1.4, 0));

@@ -8,6 +8,20 @@ function limbGroup(mesh, pivotY, offsetX = 0) {
     return g;
 }
 
+const GLTF_PART_NAMES = ['legL', 'legR', 'armL', 'armR', 'torso', 'head', 'hips'];
+
+function collectNamedParts(object) {
+    const parts = {};
+    object.traverse((c) => {
+        if (GLTF_PART_NAMES.includes(c.name) && parts[c.name] == null) parts[c.name] = c;
+    });
+    return parts;
+}
+
+function avatarRootFromModel(model) {
+    return model.getObjectByName('StarterAvatar') || model.children[0] || model;
+}
+
 export const HumanMesh = {
     build(options = {}) {
         const skin = options.skinColor ?? 0xffcc99;
@@ -103,7 +117,8 @@ export const HumanMesh = {
     },
 
     updateIdle(group, time, dt = 0.016) {
-        if (!group || group.userData?.isGltf) return;
+        if (!group) return;
+        if (group.userData?.isGltf && group.userData?.mixer) return;
 
         const parts = group.userData?.humanParts;
         if (!parts) return;
@@ -114,23 +129,27 @@ export const HumanMesh = {
         const sway = Math.sin(t * 0.7) * 0.028;
         const look = Math.sin(t * 0.35 + (group.userData.idleSeed || 0)) * 0.14;
 
-        parts.torso.position.y = 1.3 + breathe;
+        if (parts.torso) {
+            parts.torso.position.y = 1.3 + breathe;
+            parts.torso.rotation.y = THREE.MathUtils.lerp(parts.torso.rotation.y, sway * 0.35, 0.05);
+        }
         if (parts.shoulders) parts.shoulders.position.y = 1.56 + breathe;
         if (parts.collar) parts.collar.position.y = 1.62 + breathe;
         if (parts.neck) parts.neck.position.y = 1.66 + breathe;
-        parts.head.position.y = 1.8 + breathe * 1.15;
-        parts.hairCap.position.y = 1.86 + breathe * 1.15;
-        parts.head.rotation.y = THREE.MathUtils.lerp(parts.head.rotation.y, look, 0.06);
-        parts.torso.rotation.y = THREE.MathUtils.lerp(parts.torso.rotation.y, sway * 0.35, 0.05);
-        parts.armL.rotation.x = THREE.MathUtils.lerp(parts.armL.rotation.x, Math.sin(t * 1.1) * 0.07, 0.08);
-        parts.armR.rotation.x = THREE.MathUtils.lerp(parts.armR.rotation.x, -Math.sin(t * 1.1 + 0.5) * 0.07, 0.08);
-        parts.legL.rotation.x = THREE.MathUtils.lerp(parts.legL.rotation.x, 0, 0.12);
-        parts.legR.rotation.x = THREE.MathUtils.lerp(parts.legR.rotation.x, 0, 0.12);
-        parts.hips.position.y = 0.88 + Math.sin(t * 1.8) * 0.006;
+        if (parts.head) {
+            parts.head.position.y = 1.8 + breathe * 1.15;
+            parts.head.rotation.y = THREE.MathUtils.lerp(parts.head.rotation.y, look, 0.06);
+        }
+        if (parts.hairCap) parts.hairCap.position.y = 1.86 + breathe * 1.15;
+        if (parts.armL) parts.armL.rotation.x = THREE.MathUtils.lerp(parts.armL.rotation.x, Math.sin(t * 1.1) * 0.07, 0.08);
+        if (parts.armR) parts.armR.rotation.x = THREE.MathUtils.lerp(parts.armR.rotation.x, -Math.sin(t * 1.1 + 0.5) * 0.07, 0.08);
+        if (parts.legL) parts.legL.rotation.x = THREE.MathUtils.lerp(parts.legL.rotation.x, 0, 0.12);
+        if (parts.legR) parts.legR.rotation.x = THREE.MathUtils.lerp(parts.legR.rotation.x, 0, 0.12);
+        if (parts.hips) parts.hips.position.y = 0.88 + Math.sin(t * 1.8) * 0.006;
     },
 
     setFirstPersonVisible(group, visible) {
-        if (!group || group.userData?.isGltf) return;
+        if (!group) return;
         const parts = group.userData?.humanParts;
         if (!parts) return;
         const show = visible;
@@ -173,22 +192,26 @@ export const HumanMesh = {
         const s = Math.sin(group.userData.walkPhase);
         const c = Math.cos(group.userData.walkPhase);
 
-        parts.legL.rotation.x = s * amp;
-        parts.legR.rotation.x = -s * amp;
-        parts.armL.rotation.x = -s * (amp - 0.12);
-        parts.armR.rotation.x = s * (amp - 0.12);
-        parts.torso.rotation.y = c * (sprinting ? 0.08 : 0.05);
-        parts.torso.rotation.x = Math.abs(s) * 0.035;
-        parts.head.rotation.y = THREE.MathUtils.lerp(parts.head.rotation.y, parts.torso.rotation.y * 0.3, 0.15);
+        if (parts.legL) parts.legL.rotation.x = s * amp;
+        if (parts.legR) parts.legR.rotation.x = -s * amp;
+        if (parts.armL) parts.armL.rotation.x = -s * (amp - 0.12);
+        if (parts.armR) parts.armR.rotation.x = s * (amp - 0.12);
+        if (parts.torso) {
+            parts.torso.rotation.y = c * (sprinting ? 0.08 : 0.05);
+            parts.torso.rotation.x = Math.abs(s) * 0.035;
+        }
+        if (parts.head && parts.torso) {
+            parts.head.rotation.y = THREE.MathUtils.lerp(parts.head.rotation.y, parts.torso.rotation.y * 0.3, 0.15);
+        }
 
         const bob = Math.abs(s) * (sprinting ? 0.055 : 0.04);
-        parts.torso.position.y = 1.3 + bob;
+        if (parts.torso) parts.torso.position.y = 1.3 + bob;
         if (parts.shoulders) parts.shoulders.position.y = 1.56 + bob;
         if (parts.collar) parts.collar.position.y = 1.62 + bob;
         if (parts.neck) parts.neck.position.y = 1.66 + bob;
-        parts.head.position.y = 1.8 + bob * 1.1;
-        parts.hairCap.position.y = 1.86 + bob * 1.1;
-        parts.hips.position.y = 0.88 + bob * 0.45;
+        if (parts.head) parts.head.position.y = 1.8 + bob * 1.1;
+        if (parts.hairCap) parts.hairCap.position.y = 1.86 + bob * 1.1;
+        if (parts.hips) parts.hips.position.y = 0.88 + bob * 0.45;
     },
 
     async loadGltf(group, url) {
@@ -225,16 +248,28 @@ export const HumanMesh = {
         model.position.y -= box.min.y;
 
         group.add(model);
-        group.userData.humanParts = null;
         group.userData.isGltf = true;
         group.userData.modelUrl = url;
+        group.userData.mixer = null;
+        group.userData.mixerClip = null;
 
+        const avatarRoot = avatarRootFromModel(model);
         if (gltf.animations?.length) {
-            const mixer = new THREE.AnimationMixer(model);
+            const mixer = new THREE.AnimationMixer(avatarRoot);
             const clip = mixer.clipAction(gltf.animations[0]);
             clip.play();
             group.userData.mixer = mixer;
             group.userData.mixerClip = clip;
+            group.userData.humanParts = null;
+        } else {
+            const parts = collectNamedParts(model);
+            if (parts.legL && parts.legR && parts.armL && parts.armR) {
+                group.userData.humanParts = parts;
+                group.userData.walkPhase = 0;
+                group.userData.idlePhase = Math.random() * Math.PI * 2;
+            } else {
+                group.userData.humanParts = null;
+            }
         }
 
         return group;

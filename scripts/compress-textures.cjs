@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 /**
- * PNG → WebP sidecars for default bundle (textures/*.webp next to *.png).
- * Uses ffmpeg libwebp when available; PNG fallback always kept.
+ * PNG → WebP sidecars (all tiers including HILOD).
  */
 const fs = require('fs');
 const path = require('path');
@@ -13,7 +12,6 @@ const DIRS = [
     path.join(ROOT, 'public', 'bundle', 'textures'),
 ];
 const QUALITY = 82;
-const MAX_DIM = 512;
 
 function hasFfmpeg() {
     try {
@@ -24,16 +22,23 @@ function hasFfmpeg() {
     }
 }
 
-function compressPng(pngPath, webpPath) {
+function maxDimFor(name) {
+    if (name.includes('_2k')) return 512;
+    if (name.includes('_1k')) return 256;
+    if (name.includes('_512')) return 128;
+    return 512;
+}
+
+function compressPng(pngPath, webpPath, maxDim) {
     if (fs.existsSync(webpPath)) fs.unlinkSync(webpPath);
-    const cmd = `ffmpeg -y -i "${pngPath}" -vf "scale='min(${MAX_DIM},iw)':'min(${MAX_DIM},ih)':force_original_aspect_ratio=decrease" -quality ${QUALITY} "${webpPath}"`;
+    const cmd = `ffmpeg -y -i "${pngPath}" -vf "scale='min(${maxDim},iw)':'min(${maxDim},ih)':force_original_aspect_ratio=decrease" -quality ${QUALITY} "${webpPath}"`;
     execSync(cmd, { stdio: 'pipe' });
     return fs.existsSync(webpPath);
 }
 
 function listPngs(dir) {
     if (!fs.existsSync(dir)) return [];
-    return fs.readdirSync(dir).filter((f) => f.endsWith('.png') && !f.includes('_512') && !f.includes('_1k') && !f.includes('_2k'));
+    return fs.readdirSync(dir).filter((f) => f.endsWith('.png'));
 }
 
 function main() {
@@ -51,12 +56,11 @@ function main() {
         const pngPath = path.join(primary, name);
         const webpName = name.replace(/\.png$/i, '.webp');
         const webpPath = path.join(primary, webpName);
+        const maxDim = maxDimFor(name);
         try {
-            if (compressPng(pngPath, webpPath)) {
+            if (compressPng(pngPath, webpPath, maxDim)) {
                 ok += 1;
-                const pngSize = fs.statSync(pngPath).size;
-                const webpSize = fs.statSync(webpPath).size;
-                saved += Math.max(0, pngSize - webpSize);
+                saved += Math.max(0, fs.statSync(pngPath).size - fs.statSync(webpPath).size);
                 for (const dir of DIRS) {
                     if (dir === primary) continue;
                     fs.mkdirSync(dir, { recursive: true });

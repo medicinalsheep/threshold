@@ -664,6 +664,36 @@
       ]
     },
     {
+      "id": "starter_ground_normal",
+      "objectName": "Starter Ground",
+      "slot": "normal",
+      "file": "starter_ground_normal.png",
+      "path": "textures/starter_ground_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r7",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_ground_normal_512.png",
+          "path": "textures/starter_ground_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_ground_normal_1k.png",
+          "path": "textures/starter_ground_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_ground_normal_2k.png",
+          "path": "textures/starter_ground_normal_2k.png",
+          "maxPx": 512
+        }
+      ]
+    },
+    {
       "id": "starter_wall_albedo",
       "objectName": "Starter Wall",
       "slot": "albedo",
@@ -719,6 +749,36 @@
           "suffix": "_2k",
           "file": "starter_wall_roughness_2k.png",
           "path": "textures/starter_wall_roughness_2k.png",
+          "maxPx": 512
+        }
+      ]
+    },
+    {
+      "id": "starter_wall_normal",
+      "objectName": "Starter Wall",
+      "slot": "normal",
+      "file": "starter_wall_normal.png",
+      "path": "textures/starter_wall_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r7",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_wall_normal_512.png",
+          "path": "textures/starter_wall_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_wall_normal_1k.png",
+          "path": "textures/starter_wall_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_wall_normal_2k.png",
+          "path": "textures/starter_wall_normal_2k.png",
           "maxPx": 512
         }
       ]
@@ -786,5 +846,5 @@
   ],
   "exportDir": "textures",
   "tcRealism": "r7",
-  "exportedAt": "2026-07-05T11:08:56.220Z"
+  "exportedAt": "2026-07-05T11:17:57.400Z"
 }

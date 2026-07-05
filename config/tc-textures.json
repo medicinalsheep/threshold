@@ -113,7 +113,7 @@
       "slug": "starter_ground",
       "objectName": "Starter Ground",
       "tcEd": "tc-lite",
-      "slots": ["albedo", "roughness"],
+      "slots": ["albedo", "roughness", "normal"],
       "palette": {
         "base": [38, 40, 44],
         "speck": [52, 54, 58],
@@ -125,7 +125,7 @@
       "slug": "starter_wall",
       "objectName": "Starter Wall",
       "tcEd": "tc-lite",
-      "slots": ["albedo", "roughness"],
+      "slots": ["albedo", "roughness", "normal"],
       "palette": {
         "base": [52, 56, 62],
         "speck": [68, 72, 78],

@@ -77,6 +77,15 @@ const scene = fs.readFileSync(path.join(ROOT, 'src/shared/starterScene.js'), 'ut
 if (fs.existsSync(path.join(ROOT, 'docs', 'REALISTIC_GAMEPLAY.md'))) ok('REALISTIC_GAMEPLAY.md');
 else bad('missing docs/REALISTIC_GAMEPLAY.md');
 
+['starter_avatar.glb', 'starter_npc_guard.glb', 'starter_npc_mech.glb'].forEach((f) => {
+    const p = path.join(ROOT, 'import', f);
+    if (fs.existsSync(p)) ok(`avatar ${f}`);
+    else bad(`missing import/${f}`);
+});
+
+if (fs.existsSync(path.join(ROOT, 'src/shared/footsteps.js'))) ok('footsteps.js');
+if (fs.existsSync(path.join(ROOT, 'src/shared/fpsViewmodel.js'))) ok('fpsViewmodel.js');
+
 if (fs.existsSync(path.join(BUNDLE, 'bundle-index.json'))) ok('dist-pages/bundle');
 else console.log('  ⚠ bundle missing — run npm run assets:pack');
 

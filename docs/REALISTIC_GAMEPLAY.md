@@ -2,7 +2,7 @@
 
 Threshold ships a **walk/drive action control** template in the SOLO lobby. Use it as the baseline for shooters, RPGs, and vehicle scenes.
 
-**Current default version:** v6.0.0 realism defaults
+**Current default version:** v6.1.0 realism defaults (Phase 7)
 
 ---
 
@@ -119,3 +119,16 @@ npm run assets:verify  # smoke test
 | Alex / Jordan / Sam | NPC examples |
 
 Build your game by replacing props, keeping the control + physics + asset pipeline.
+
+---
+
+## Phase 7 additions (v6.1)
+
+| Feature | Command / file |
+|---------|----------------|
+| Avatar GLBs | `npm run avatar:gen` → `import/starter_avatar.glb` |
+| Footsteps | Auto while walking; concrete vs metal surfaces |
+| FPS arms | Visible in FPS mode (`V`); body hidden, viewmodel on camera |
+| Remote players | Full avatar mesh in multiplayer (not capsule) |
+| Normal maps | `starter_ground` / `starter_wall` in `tex:gen` |
+| Full HILOD WebP | `npm run tex:compress` (all `_512`/`_1k`/`_2k` tiers) |

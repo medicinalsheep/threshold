@@ -1,5 +1,14 @@
 # Changelog
 
+## 6.1.0 — Phase 7: avatars, footsteps, FPS arms, remote meshes
+
+- `avatar:gen` — starter_avatar + NPC guard/mech GLBs with walk animation clip
+- Player + NPCs load GLB first, procedural human fallback
+- Footstep SFX (concrete/metal) with surface detection from physics raycast
+- FPS viewmodel — arms + pistol on camera in first-person mode
+- Remote players use avatar mesh instead of capsule ghosts
+- HILOD WebP compress (all PNG tiers); normal maps on starter ground/wall
+
 ## 6.0.0 — Realism defaults (asset pack + creator guide)
 
 - `tex:compress` — PNG → WebP sidecars; runtime prefers WebP when bundled
