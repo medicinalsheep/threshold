@@ -2,7 +2,7 @@ import { copyFromElement } from '../utils/clipboard.js';
 import { IS_GROK_EDITION, APP_URL, VERSION } from '../config.js';
 import { Auth } from '../auth/main.js';
 import { generateScript } from '../grok/client.js';
-import { getSceneContext } from '../shared/sceneContext.js';
+import { getSceneContext, getAssetContext } from '../shared/sceneContext.js';
 import { getSoundContext } from '../shared/soundContext.js';
 import { getReferencePromptBlock } from '../shared/referenceLibrary.js';
 import { getRenderModePromptBlock } from '../shared/renderModes.js';
@@ -95,6 +95,11 @@ LEGO FIT: extend live scene via World.createObject — no clearWorld. Snap props
 
 SPECTATE: guests can watch via lobby SPECTATE or nav SPECTATE tab (read-only orbit).
 
+ASSET OUTPUT (when scene uses textures/GLTF):
+- Include ASSETS comment block in generated JS listing paths: textures/{slug}_albedo.png, import/{slug}.glb
+- Object display name must match GIMP/Blender export name (e.g. "Stone Block" → stone_block_*)
+- After RUN: user GIMP SYNC / INSERT GLTF / or textures:watch in dev — blobs are local until native bundle (Phase E)
+
 ${getReferencePromptBlock()}
 `,
 
@@ -112,7 +117,9 @@ ${getReferencePromptBlock()}
             audit: 'Audit current scene — list what is editable in EDIT mode vs locked in PLAY mode.'
         };
 
-        const sceneBlock = useScene ? `\n\n${getSceneContext()}\n\nBuild on this scene. World.clearWorld() only if explicitly requested.` : '';
+        const sceneBlock = useScene
+            ? `\n\n${getSceneContext()}\n\n${getAssetContext()}\n\nBuild on this scene. World.clearWorld() only if explicitly requested.`
+            : '';
         const soundBlock = useSounds
             ? `\n\n${getSoundContext(this.getSelectedSoundIds())}\n\nWhen generated features need audio, reference clip IDs above or leave soundClipId null for user to record later.`
             : '';
@@ -134,6 +141,7 @@ OUTPUT REQUIREMENTS:
 - If sounds are listed, wire userData.soundClipId + soundTrigger on matching objects
 - If textures are listed, set userData.textureHint paths (textures/slug_albedo.png); user runs GIMP export then ENGINE GIMP SYNC
 - For 3D props, reference Blender GLB path (import/slug.glb) and userData.hasPhysics/mass/friction — INSERT → GLTF in Engine
+- List all assets in a // ASSETS: comment block so EXPORT manifest and users can verify paths
 `.trim()
         };
     },

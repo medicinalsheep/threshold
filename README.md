@@ -17,7 +17,7 @@ A collaborative 3D creative playground — design worlds, generate code with AI,
 ```
 Lobby → Engine (3D world) ↔ Compiler (code) ↔ PromptGen (AI prompts)
               ↓
-     First visit: 8-step tutorial · replay via MORE → TUTORIAL
+     First visit: 9-step tutorial · replay via MORE → TUTORIAL
               ↓
      Insert · SFX · AI agents · EXPORT manifest · PLAY/EDIT
               ↓
@@ -27,11 +27,12 @@ Lobby → Engine (3D world) ↔ Compiler (code) ↔ PromptGen (AI prompts)
 ### First session (recommended)
 
 1. **Lobby → SOLO PLAY** — starter scene loads (platform, beacon, Guide NPC).
-2. **Tutorial** — 8-step overlay on first visit; skip anytime or **MORE → TUTORIAL** to replay.
-3. **EDIT** — drag **TOOLS** / **SCENE** panels; use **+** to insert; **SCENE → AI** for Grok NPC or switch to **PromptGen**.
-4. **PLAY** — resume simulation; test walk/fly and physics.
-5. **SAVE WORLD** — **MORE** menu; share `?world=CODE` links.
-6. **EXPORT** — **MORE → EXPORT** wizard → manifest + `npm run package:android` / `package:win` ([native shells](docs/NATIVE_SHELLS.md)).
+2. **Tutorial** — 9-step overlay (build, textures, optional AI); **MORE → TUTORIAL** to replay.
+3. **EDIT** — drag panels; **+** to insert; **Texture** tab or **INSERT → GLTF** for GIMP/Blender art.
+4. **Optional AI** — PromptGen → Compiler, or SCENE → AI agents on NPCs.
+5. **PLAY** — test walk/fly; use **Hyper** render mode for PBR textures.
+6. **SAVE WORLD** — **MORE** menu; share `?world=CODE` links.
+7. **EXPORT** — manifest lists textures, GLTF, sounds → `package:android` / `package:win` ([native shells](docs/NATIVE_SHELLS.md); iOS planned).
 
 Deeper workflows: Compiler sidebar → **WORKFLOWS** (Quick Start, agents, relay, sounds).
 
@@ -210,7 +211,7 @@ npm run build        # production build (GitHub Pages)
 
 Push to `main` — GitHub Pages updates automatically at the live URL above.
 
-### Native packaging (v3.0)
+### Native packaging
 
 ```bash
 npm run init:native       # first time: Capacitor Android project
@@ -219,13 +220,22 @@ npm run package:win       # Windows portable .exe (Electron)
 npm run electron:dev      # preview desktop shell
 ```
 
+**iOS / App Store:** not yet — see [docs/NEXT_PHASES.md](docs/NEXT_PHASES.md) Phase F.
+
 Full guide: [docs/NATIVE_SHELLS.md](docs/NATIVE_SHELLS.md)
 
-Brand icons (`icons/` — neon rocket) power the lobby logo, favicon, and native app icon. Regenerate with `npm run build:icons`.
+### Creative pipeline (shipped)
 
-**Gamepad defaults:** A/Cross jump · **L3** (left stick press) sprint · R-stick camera.
+```bash
+npm run gimp:install      # GIMP PBR export plugin
+npm run blender:install     # Blender GLTF addon
+npm run textures:watch    # dev hot-reload (with npm run dev)
+npm run blender:export -- --blend scene.blend --object "Stone Block"
+```
 
-**Creative pipeline (planned):** [docs/CREATIVE_PLUGINS.md](docs/CREATIVE_PLUGINS.md) — GIMP + Blender plugins for local AI texture workflow.
+Guides: [docs/CREATIVE_WORKFLOW.md](docs/CREATIVE_WORKFLOW.md) · [docs/CREATIVE_PLUGINS.md](docs/CREATIVE_PLUGINS.md)
+
+Brand icons: `npm run build:icons` · **Gamepad:** A/Cross jump · **L3** sprint · R-stick camera.
 
 Optional env (`.env` / build modes):
 
@@ -245,18 +255,21 @@ Support ongoing development:
 
 ---
 
-## Product roadmap (v3.0+)
+## Product roadmap (v3.7+)
 
-**Design → Play → Ship → Scale**
+**Design → Art → Play → Ship → Scale**
 
 | Stage | What |
 |-------|------|
-| **Design** | Engine, Compiler, PromptGen, SFX, agents |
-| **Play** | Solo / host / guest, EDIT·PLAY, walk·fly |
-| **Ship** | **EXPORT** → `.threshold-game.json` manifest (APK / Windows / Steam paths in [docs/PRODUCT_ROADMAP.md](docs/PRODUCT_ROADMAP.md)) |
-| **Scale** | Optional **relay/** server — local or [AWS free tier](relay/README.md) |
+| **Design** | Engine, Compiler, PromptGen, SFX |
+| **Art** | GIMP textures, Blender GLTF, `textures:watch` |
+| **Play** | Solo / host / guest, EDIT·PLAY, retro + Hyper |
+| **Ship** | EXPORT manifest (textures, GLTF, sounds) → APK / Windows / iOS (planned) |
+| **Scale** | Optional **relay/** — [AWS free tier](relay/README.md) |
 
-**Agents (SCENE dock → AI):** Grok NPC dialogue, Grok Dev Compiler helper, local script timer.
+**Agents (optional):** SCENE → AI — Grok NPC, Grok Dev, local script.
+
+**Next:** LOD, HILOD, suggested graphics — [docs/NEXT_PHASES.md](docs/NEXT_PHASES.md)
 
 ---
 

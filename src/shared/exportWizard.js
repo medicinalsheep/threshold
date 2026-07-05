@@ -90,16 +90,26 @@ export const ExportWizard = {
             this.manifest = this.buildManifest();
             const objCount = this.manifest.world?.objects?.length ?? 0;
             const soundCount = this.manifest.sounds?.length ?? 0;
+            const texCount = this.manifest.textures?.length ?? 0;
+            const gltfCount = (this.manifest.world?.objects || []).filter(
+                (o) => o.type === 'gltf' || o.userData?.type === 'gltf'
+            ).length;
             const hasScripts = !!(this.manifest.scripts?.running || this.manifest.scripts?.output);
+            const hasGimp = !!this.manifest.gimp;
+            const hasBlender = !!this.manifest.blender;
             body.innerHTML = `
                 <p class="insert-hint">Manifest preview — engine v${this.manifest.engineVersion}</p>
                 <ul class="export-wizard-summary">
                     <li><strong>${escapeText(this.manifest.game.name)}</strong> by ${escapeText(this.manifest.game.author)}</li>
-                    <li>${objCount} world object(s)</li>
+                    <li>${objCount} world object(s)${gltfCount ? ` (${gltfCount} GLTF)` : ''}</li>
+                    <li>${texCount} texture map reference(s)</li>
                     <li>${soundCount} sound clip reference(s)</li>
                     <li>Scripts: ${hasScripts ? 'included' : 'empty (add in Compiler first)'}</li>
+                    <li>Creative: ${hasGimp ? 'GIMP manifest' : '—'} · ${hasBlender ? 'Blender GLTF' : '—'}</li>
+                    <li>Dev CLI: <code>textures:watch</code> · <code>blender:export</code></li>
                     <li>Relay: ${escapeText(this.manifest.relay?.mode || 'peerjs-cloud')}</li>
                 </ul>
+                <p class="insert-hint" style="margin-top:8px;">Texture/sound blobs stay on device until native bundle (Phase E). Paths in manifest document what to ship.</p>
             `;
             return;
         }

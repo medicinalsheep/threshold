@@ -1,8 +1,10 @@
 # Threshold Product Roadmap
 
-**Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → add AI agents to NPCs and your dev workflow.
+**Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → local GIMP/Blender art → AI agents on NPCs.
 
-**Current version:** 3.0.0 (native shells scaffold) → **3.5** (Steam) → **4.x** (scale + commercial tier)
+**Current version:** **3.7.0** (creative pipeline A–D shipped; UX/docs refresh)
+
+**Detailed next phases:** [NEXT_PHASES.md](NEXT_PHASES.md) (LOD, HILOD, iOS, Phase E leftovers)
 
 ---
 
@@ -10,11 +12,11 @@
 
 | Pillar | Goal |
 |--------|------|
-| **Design** | Drag UI, record sounds, AI-assisted worlds, reference workflows |
-| **Play** | Solo, host/guest, EDIT/PLAY, walk/fly, touch + gamepad |
-| **Dev** | Compiler, PromptGen, agents (local + Grok), project vault |
-| **Ship** | Export game packages → APK / Windows / Steam-ready |
-| **Scale** | Self-host relay locally or AWS free tier when rooms grow |
+| **Design** | Drag UI, record sounds, GIMP/Blender textures, AI-assisted worlds |
+| **Play** | Solo, host/guest, EDIT/PLAY, walk/fly, touch + gamepad, retro + Hyper |
+| **Dev** | Compiler, PromptGen, agents (local + Grok), `textures:watch` |
+| **Ship** | Export manifest → APK / Windows / **iOS (planned)** / Steam |
+| **Scale** | Self-host relay locally or AWS free tier |
 
 ---
 
@@ -22,118 +24,114 @@
 
 ```
 1. LOBBY        → Solo or Create Session
-2. DESIGN       → EDIT mode: build map, SFX, insert NPCs
-3. GENERATE     → PromptGen (+ sounds) → Compiler → RUN IN ENGINE
-4. AGENTS       → Attach Grok/local agents to NPCs or dev menu
-5. PLAYTEST     → PLAY mode: walk, physics, multiplayer
-6. PACKAGE      → Export manifest → Capacitor (APK) / Electron (Win) / Steam depot
-7. HOST         → PeerJS cloud (default) | local relay | AWS relay (more players)
-8. MONETIZE     → Commercial license when product matures (see README)
+2. DESIGN       → EDIT: build map, SFX, insert NPCs / GLTF
+3. ART          → GIMP textures/ · Blender GLB · optional textures:watch
+4. GENERATE     → PromptGen (+ assets) → Compiler → RUN IN ENGINE
+5. AGENTS       → Optional: Grok/local agents on NPCs
+6. PLAYTEST     → PLAY: walk, physics, Hyper for PBR
+7. PACKAGE      → EXPORT manifest → Capacitor / Electron / (iOS Phase F)
+8. HOST         → PeerJS cloud | local relay | AWS
 ```
+
+See [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md).
 
 ---
 
 ## Phase map
 
-### Phase 1 — Foundation (v2.2, **complete**)
+### Phase 1 — Foundation (v2.2) ✅
 
-- [x] Game export manifest (`.threshold-game.json`) — world + scripts + build hints
-- [x] Relay config via env (`VITE_PEER_HOST`, ICE servers)
-- [x] `relay/` PeerJS server scaffold + AWS free-tier deploy notes
-- [x] **Agents** dock tab: Grok Dev, Grok NPC, Local Script
-- [x] Workflow entries: export, relay, agents
-- [x] First-session walkthrough (8 steps) + MORE → TUTORIAL replay
-- [ ] PWA manifest (light) — deferred to Phase 2 shell work
+- [x] Game export manifest (`.threshold-game.json`)
+- [x] Relay scaffold + `relay/` server
+- [x] Agents dock: Grok Dev, Grok NPC, Local Script
+- [x] First-session walkthrough + MORE → TUTORIAL replay
+- [x] PWA manifest (light) — `public/manifest.webmanifest`
 
-### Phase 2 — Native shells (v3.0, **scaffold shipped**)
+### Phase 2 — Native shells (v3.0–3.6) 🔧
 
-- [x] **Capacitor** — Android APK from `dist-pages` (`capacitor.config.json`, `init:native`)
-- [x] **Electron** — Windows portable `.exe` (`electron/`, `package:win`)
-- [x] CLI: `npm run package:android` / `package:win` / `electron:dev`
-- [x] Shell bridges — `ThresholdShell` (fullscreen, fs save, mic note)
-- [x] Export wizard — MORE → EXPORT (4-step UI)
-- [x] App icons — `icons/` rocket brand, Electron .ico, web favicon, lobby logo
-- [ ] Signed APK / store-ready builds (release keystore)
-- [ ] macOS `.app` notarization polish
-- [ ] Capacitor Filesystem plugin for world import on device
-- [ ] Local texture pipeline — see [CREATIVE_PLUGINS.md](CREATIVE_PLUGINS.md) (GIMP + Blender)
+- [x] Capacitor Android APK scaffold
+- [x] Electron Windows portable `.exe`
+- [x] Export wizard (4-step) with texture/GLTF asset summary (v3.7)
+- [x] App icons + `build:icons` / `cap:assets`
+- [x] **Creative pipeline A–D** — [CREATIVE_PLUGINS.md](CREATIVE_PLUGINS.md)
+- [ ] Signed APK / store-ready builds
+- [ ] macOS `.app` notarization
+- [ ] Capacitor Filesystem for on-device world + asset import
+- [ ] Native bundle of `textures/` + `import/` + sound blobs (Phase E)
 
-### Phase 3 — Steam & distribution (v3.5)
+### Phase 3 — iOS & Apple (v4.0) 📋
 
-- [ ] Steamworks SDK integration in Electron shell
-- [ ] Depot build CI (GitHub Actions)
-- [ ] itch.io / sideload APK docs
-- [ ] App icons, splash, store metadata from export manifest
+- [ ] `@capacitor/ios` + Xcode project
+- [ ] `npm run package:ios` + TestFlight docs
+- [ ] Export wizard iOS target checkbox
+- [ ] App Store metadata from manifest
 
-### Phase 4 — Scale & AI (v4.0)
+*Android + Windows exist today; iOS does not.*
 
-- [ ] AWS relay: ECS/Fargate or EC2 free tier + peerjs-server
-- [ ] Optional TURN (coturn) for strict NAT
-- [ ] Grok proxy on Lambda (hide API keys, fix CORS)
-- [ ] NPC agent state sync (host-authoritative dialogue)
-- [ ] Dev agent: auto check → transpile → run loop
-- [ ] Local agent IPC (desktop): file watch, terminal (Electron preload)
+### Phase 4 — Graphics intelligence (v4.1–4.5) 📋
 
-### Phase 5 — Commercial (when value justifies)
+See [NEXT_PHASES.md](NEXT_PHASES.md):
 
-- [ ] Dual license (community + commercial)
-- [ ] Hosted Threshold Cloud (worlds, relay, Grok proxy tier)
-- [ ] Enterprise relay + support
+- [ ] Suggested graphics tiers (Compatibility / Balanced / Realistic / Ultra)
+- [ ] Mesh LOD (Blender multi-GLB)
+- [ ] HILOD textures (distance + tier-based maps)
+- [ ] Targeted graphics export CLI per platform
+- [ ] Normal maps in Engine (Phase E leftover)
+
+### Phase 5 — Steam & distribution (v3.5+) 📋
+
+- [ ] Steamworks in Electron
+- [ ] Depot CI
+- [ ] itch.io / sideload docs
+
+### Phase 6 — Scale & AI (v4.0+) 📋
+
+- [ ] AWS relay polish
+- [ ] Grok proxy / NPC sync
+- [ ] Local LLM (Ollama) desktop
+- [ ] Dev agent auto-run loop
+
+### Phase 7 — Commercial
+
+- [ ] Dual license
+- [ ] Threshold Cloud tier
 
 ---
 
 ## Export targets
 
-| Target | Technology | Status v2.1 |
-|--------|------------|---------------|
+| Target | Technology | Status |
+|--------|------------|--------|
 | **Web** | Vite → GitHub Pages | ✅ Live |
-| **APK** | Capacitor + WebView | 🔧 Scaffold + `package:android` |
-| **Windows** | Electron | 🔧 Scaffold + `package:win` |
-| **Steam** | Electron + Steamworks | 📋 Planned v3.5 |
-| **Self-host** | Static `dist-pages` + optional `relay/` | ✅ |
+| **APK** | Capacitor | 🔧 Scaffold |
+| **Windows** | Electron | 🔧 Scaffold |
+| **iOS** | Capacitor | ❌ Not started (Phase F) |
+| **Steam** | Electron + Steamworks | 📋 Planned |
+| **Self-host** | `dist-pages` + `relay/` | ✅ |
 
-**Export manifest includes:** world snapshot, running code, compiler scripts, sound clip metadata, suggested app name, relay mode, agent configs.
-
----
-
-## Hosting & relay
-
-| Mode | Use when | Setup |
-|------|----------|--------|
-| **PeerJS cloud** | Jams, small groups | Default (zero config) |
-| **Local relay** | LAN parties, dev | `cd relay && npm start` |
-| **AWS free tier** | Public games, more peers | `relay/README.md` — t2.micro / Lightsail |
-
-Configure build with:
-```env
-VITE_PEER_HOST=your-relay.example.com
-VITE_PEER_PORT=443
-VITE_PEER_PATH=/peerjs
-VITE_PEER_SECURE=true
-VITE_ICE_SERVERS=[{"urls":"stun:stun.l.google.com:19302"}]
-```
+**Manifest includes:** world, scripts, sounds, **textures[]**, gimp/blender/creativeCli blocks, agent configs, relay mode.
 
 ---
 
-## Agents
+## Agents (optional in workflow)
 
-| Agent | Role | API | v2.1 |
-|-------|------|-----|------|
-| **Local Script** | Run sandbox JS on interval / trigger | None | ✅ |
-| **Grok Dev** | Suggest/fix Compiler code | xAI key (user) | ✅ |
-| **Grok NPC** | Dialogue + actions for selected NPC | xAI key (user) | ✅ |
-| **Local LLM** | Ollama / LM Studio (desktop) | localhost | Phase 4 |
+| Agent | Role | Status |
+|-------|------|--------|
+| **Local Script** | Interval sandbox JS | ✅ |
+| **Grok Dev** | Compiler suggestions | ✅ |
+| **Grok NPC** | NPC dialogue | ✅ |
+| **Local LLM** | Desktop offline | Phase 6 |
 
-Agents attach via `userData.agentId` on NPCs or run from **AGENTS** dock tab.
-
----
-
-## What stays browser-first
-
-The engine remains a **Vite SPA**. Native targets wrap the same build — no fork of the runtime. Multiplayer stays host-authoritative until optional dedicated game server (future).
+Attach via SCENE → AI tab. Tutorial presents agents as **optional**.
 
 ---
 
-## Contributing to the roadmap
+## VLC / video
 
-Pick a Phase 1–2 item, open an issue, or PR against `docs/PRODUCT_ROADMAP.md` checkboxes.
+**No VLC plugin planned.** Cinematic cutscenes will use HTML5 video + VideoTexture first (Phase K in NEXT_PHASES). VLC only if exotic desktop codec needs arise.
+
+---
+
+## Contributing
+
+Pick Phase E (leftovers) or Phase F (iOS) items. Update checkboxes via PR.

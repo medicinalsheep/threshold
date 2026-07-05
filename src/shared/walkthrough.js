@@ -4,21 +4,21 @@ import { SceneDock } from './sceneDock.js';
 const STEPS = [
     {
         title: 'Welcome to Threshold',
-        body: 'You are in a solo session with a starter scene — platform, beacon, and <strong>Guide</strong> NPC. This short tour covers design, AI, playtest, and export.',
+        body: 'Solo session with a starter scene — platform, beacon, and <strong>Guide</strong> NPC. This tour covers build, <strong>textures</strong>, optional <strong>AI agents</strong>, playtest, and export.',
     },
     {
         title: 'Floating panels',
-        body: 'Drag <strong>TOOLS</strong> and <strong>SCENE</strong> anywhere on screen. Tap <strong>LOCK</strong> on a panel header when the layout feels right.',
+        body: 'Drag <strong>TOOLS</strong> and <strong>SCENE</strong> anywhere. Tap <strong>LOCK</strong> on a panel header when the layout feels right.',
         highlight: '#engine-toolbar',
     },
     {
         title: 'EDIT vs PLAY',
-        body: '<strong>EDIT</strong> (paused) unlocks the world — insert objects, run Compiler code, tweak inspector. <strong>PLAY</strong> resumes physics so you can walk and test.',
+        body: '<strong>EDIT</strong> (paused) unlocks the world — insert, Compiler code, inspector panels. <strong>PLAY</strong> runs physics so you can walk and test.',
         highlight: '#sim-mode-badge',
     },
     {
         title: 'Build something',
-        body: 'Tap <strong>+</strong> or right-click the ground to insert. Try adding a physics block now, or skip and build freely after the tour.',
+        body: 'Tap <strong>+</strong> or right-click the ground to insert. Add a small physics block now, or skip and build freely after the tour.',
         action: {
             label: 'Add tutorial block',
             run() {
@@ -33,9 +33,21 @@ const STEPS = [
         },
     },
     {
+        title: 'Textures & 3D models (optional)',
+        body: 'Select any mesh → <strong>SCENE → Inspect → Texture</strong> to import PNG maps or <strong>GIMP SYNC</strong>. For Blender models: <strong>+ → GLTF</strong>. Names must match your GIMP/Blender export (e.g. <em>Stone Block</em> → <code>stone_block_albedo.png</code>). Dev power-users: <code>npm run textures:watch</code> + <code>npm run dev</code> for live reload.',
+        highlight: '#inspector',
+    },
+    {
         title: 'AI-assisted creation',
-        body: 'Pick one path now (you can use both later): attach a <strong>Grok NPC</strong> agent to Guide, or jump to <strong>PromptGen</strong> to describe a world for the Compiler.',
+        body: 'Pick one path (both work together later): <strong>PromptGen</strong> → Compiler for world code, or attach a <strong>Grok NPC</strong> agent to Guide for dialogue. Agents are optional — skip if you prefer pure building.',
         actions: [
+            {
+                label: 'Open PromptGen',
+                run() {
+                    document.querySelector('[data-target="view-prompter"]')?.click();
+                    window.UI?.status('PromptGen — describe your scene; include live scene + assets');
+                },
+            },
             {
                 label: 'Guide + AI tab',
                 run() {
@@ -45,31 +57,24 @@ const STEPS = [
                     });
                     if (guide) window.UI?.selectObject(guide);
                     SceneDock.openTab('agents');
-                    window.UI?.status('Guide selected — set persona and ATTACH TO NPC');
-                },
-            },
-            {
-                label: 'Open PromptGen',
-                run() {
-                    document.querySelector('[data-target="view-prompter"]')?.click();
-                    window.UI?.status('PromptGen — describe your scene, paste into Compiler');
+                    window.UI?.status('Optional: set persona → ATTACH TO NPC');
                 },
             },
         ],
     },
     {
         title: 'Playtest',
-        body: 'When ready, tap <strong>PLAY</strong> on the toolbar (or <strong>PAUSE</strong> to return to EDIT). Use <strong>WASD</strong> to move; switch <strong>FLY</strong> / walk with the mode button.',
+        body: 'Tap <strong>PLAY</strong> (or <strong>PAUSE</strong> for EDIT). <strong>WASD</strong> to move. Try <strong>Hyper</strong> render mode (ENV) when using PBR textures. Switch <strong>FLY</strong> / walk with the mode button.',
         highlight: '#btn-host-pause',
     },
     {
         title: 'Save & ship',
-        body: '<strong>MORE</strong> → <strong>SAVE WORLD</strong> for share links. When your game is ready, <strong>MORE</strong> → <strong>EXPORT</strong> opens the packaging wizard (manifest + <code>package:android</code> / <code>package:win</code>).',
+        body: '<strong>MORE → SAVE WORLD</strong> for share links. <strong>MORE → EXPORT</strong> downloads a manifest listing world, sounds, <strong>textures</strong>, and Blender/GIMP paths. Then <code>package:android</code> or <code>package:win</code> — iOS pipeline coming soon (see docs/NEXT_PHASES.md).',
         highlight: '#btn-toolbar-more',
     },
     {
         title: 'You are set',
-        body: 'Restart this tour anytime from <strong>MORE → TUTORIAL</strong>. Compiler workflows live under WORKFLOWS in the sidebar. Have fun building.',
+        body: 'Replay via <strong>MORE → TUTORIAL</strong>. Creative guide: <code>docs/CREATIVE_WORKFLOW.md</code>. Compiler <strong>WORKFLOWS</strong> has GIMP, Blender, and export paths. Have fun — same world, every device.',
     },
 ];
 

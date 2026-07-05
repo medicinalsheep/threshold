@@ -11,15 +11,16 @@ export const REFERENCE_LIBRARY = {
             checklist: ['Start SOLO or HOST', 'First visit: engine TUTORIAL (MORE → TUTORIAL to replay)', 'Stay in EDIT while building', 'MORE → EXPORT when ready to ship'],
             code: `// WORKFLOW (not runnable — follow in UI):
 // 1. Lobby → SOLO PLAY (or CREATE SESSION + copy link)
-// 2. ENGINE → first-session walkthrough (8 steps) — skip or replay via MORE → TUTORIAL
-// 3. EDIT badge (paused) — fly WASD, + insert, right-click INSERT
+// 2. ENGINE → tutorial (9 steps) — MORE → TUTORIAL to replay
+// 3. EDIT (paused) — fly WASD, + insert, right-click INSERT
 // 4. INSERT → SPAWN AS PLAYER for walkable avatar
-// 5. SCENE → AI: attach Grok to Guide NPC — OR PromptGen → Compiler
-// 6. Build props: Compiler → Techniques → "Extend Scene" → RUN IN ENGINE
-// 7. SAVE WORLD (MORE) — get ?world=CODE link
-// 8. CHECK CODE READY → RUN IN ENGINE (stays paused in EDIT)
-// 9. Toolbar PLAY — test walk + physics
-// 10. MORE → EXPORT manifest + SAVE PROJECT in Compiler vault`
+// 5. Optional art: GIMP → textures/ → Texture GIMP SYNC — OR Blender → INSERT GLTF
+// 6. PromptGen → Compiler OR SCENE → AI agents (optional)
+// 7. SAVE WORLD (MORE) — ?world=CODE link
+// 8. CHECK CODE READY → RUN IN ENGINE
+// 9. PLAY — test walk + physics + Hyper for PBR
+// 10. MORE → EXPORT manifest (lists textures, GLTF, sounds) + package:android / package:win
+// See docs/CREATIVE_WORKFLOW.md`
         },
         {
             id: 'render_modes_3d',
@@ -146,8 +147,8 @@ m.userData.textureHint = 'textures/stone_albedo.png';
         {
             id: 'first_session_walkthrough',
             title: 'First Session Walkthrough (in-engine)',
-            summary: '8-step tutorial on first Engine visit: panels, EDIT/PLAY, build, AI paths, export.',
-            checklist: ['Auto-starts once per browser', 'MORE → TUTORIAL to replay', 'Step 5: Guide+AI or PromptGen', 'Step 7: SAVE WORLD + EXPORT manifest'],
+            summary: '9-step tutorial: panels, EDIT/PLAY, build, textures, optional AI, export.',
+            checklist: ['Auto-starts once per browser', 'MORE → TUTORIAL to replay', 'Textures step: GIMP SYNC / GLTF', 'EXPORT lists all asset refs'],
             code: `// Tutorial steps (engine overlay):
 // 1. Welcome + starter scene (Guide NPC, platform)
 // 2. Drag TOOLS / SCENE panels · LOCK headers
@@ -190,27 +191,30 @@ m.userData.textureHint = 'textures/stone_albedo.png';
         {
             id: 'ai_prompt_loop',
             title: 'AI-Assisted Build Loop',
-            summary: 'PromptGen → Compiler → Engine. Reference library patterns keep output runnable.',
+            summary: 'PromptGen → Compiler → Engine. Live scene includes ASSET MANIFEST for textures/GLTF.',
             checklist: ['Include live scene in PromptGen', 'Pick task type (extend/player/world)', 'CHECK CODE READY before RUN', 'Pause stays on during EDIT runs'],
             code: `// Loop:
-// 1. PromptGen — check "Include live scene" + pick TASK
+// 1. PromptGen — "Include live scene" + TASK → prompt includes ASSET MANIFEST
 // 2. COPY PROMPT → your AI (or RUN WITH GROK)
 // 3. Paste JS into Compiler INPUT → CONVERT → CHECK CODE READY
-// 4. RUN IN ENGINE (switches to Engine tab, executes if paused)
-// 5. Inspect results in EDIT → Texture/Collision panels
-// Reference: Compiler → WORKFLOWS + TECHNIQUES templates`
+// 4. Generated code should include // ASSETS: block with textureHint + gltf paths
+// 5. RUN IN ENGINE → GIMP SYNC / INSERT GLTF for local files
+// 6. Inspect EDIT → Texture / Collision / Audio panels
+// Reference: WORKFLOWS → gimp_texture_export, blender_gltf_export`
         },
         {
             id: 'export_game_package',
-            title: 'Export Game Package (APK / Windows / Steam path)',
-            summary: 'Download .threshold-game.json manifest → wrap with Capacitor/Electron in Phase 3.',
-            checklist: ['MORE → EXPORT wizard (4 steps)', 'npm run package:android / package:win', 'docs/NATIVE_SHELLS.md', 'Self-host relay optional'],
+            title: 'Export Game Package (APK / Windows / iOS planned)',
+            summary: 'Manifest lists world, scripts, sounds, textures, GIMP/Blender paths → native CLI wrap.',
+            checklist: ['MORE → EXPORT wizard (4 steps)', 'Review texture + GLTF counts', 'package:android / package:win', 'iOS: docs/NEXT_PHASES.md Phase F'],
             code: `// After designing your game:
-// 1. MORE → EXPORT — wizard: name, review, targets, download manifest
-// 2. npm run init:native (first time Android)
-// 3. npm run package:android — open Android Studio → Build APK
-// 4. npm run package:win — Threshold-x.x.x-win-portable.exe
-// 5. relay/README.md — AWS free tier when you need owned signaling`
+// 1. MORE → EXPORT — name, review (objects, textures, GLTF, sounds), targets, download
+// 2. Manifest includes textures[], gimp{}, blender{}, creativeCli{}
+// 3. npm run init:native (first time Android)
+// 4. npm run package:android — Android Studio → APK
+// 5. npm run package:win — portable .exe
+// 6. iOS App Store — Phase F (not yet — see NEXT_PHASES.md)
+// 7. relay/README.md — optional owned signaling`
         },
         {
             id: 'relay_aws_host',
@@ -456,6 +460,10 @@ export function getWorkflowPromptBlock() {
     lines.push('- SAVE PROJECT → Compiler vault (world + scripts together via ProjectVault)');
     lines.push('- EXPORT/IMPORT JSON for portable scene files');
     lines.push('- Player files: INSERT → SAVE MY PLAYER (share .json)');
+    lines.push('\nCREATIVE ASSETS (v3.6+):');
+    lines.push('- GIMP → textures/ + GIMP SYNC · Blender → import/ + INSERT GLTF');
+    lines.push('- Dev: npm run textures:watch + npm run dev · docs/CREATIVE_WORKFLOW.md');
+    lines.push('- PromptGen includes ASSET MANIFEST when live scene is checked');
     return lines.join('\n');
 }
 

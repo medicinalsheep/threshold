@@ -100,7 +100,7 @@ export const GameExport = {
                 webRoot: 'dist-pages/',
                 entry: 'index.html',
                 capacitor: { webDir: 'dist-pages', appId: 'com.threshold.game', appName: name },
-                electron: { main: 'electron/main.js', preload: 'electron/preload.js' },
+                electron: { main: 'electron/main.cjs', preload: 'electron/preload.cjs' },
                 steam: { appId: null, depotId: null, note: 'Assign after Steamworks partner setup' },
             },
         };

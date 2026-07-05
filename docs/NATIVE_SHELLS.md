@@ -1,12 +1,13 @@
-# Native shells (Phase 2 — v3.0)
+# Native shells (v3.7)
 
 Threshold stays a **single Vite SPA** (`dist-pages/`). Native targets wrap that build — no runtime fork.
 
-| Target | Shell | CLI |
-|--------|-------|-----|
-| **Web** | Static host / GitHub Pages | `npm run build` |
-| **Android APK** | Capacitor WebView | `npm run package:android` |
-| **Windows .exe** | Electron | `npm run package:win` |
+| Target | Shell | CLI | Status |
+|--------|-------|-----|--------|
+| **Web** | Static host / GitHub Pages | `npm run build` | ✅ |
+| **Android APK** | Capacitor WebView | `npm run package:android` | 🔧 Scaffold |
+| **Windows .exe** | Electron | `npm run package:win` | 🔧 Scaffold |
+| **iOS** | Capacitor WebView | `npm run package:ios` | ❌ Phase F — not started |
 
 ---
 
@@ -48,7 +49,7 @@ This builds `dist-pages`, adds the Capacitor Android project (if missing), and s
 1. Design your game in Engine (EDIT mode).
 2. **MORE → EXPORT** — 4-step wizard:
    - Game name / author
-   - Manifest review (world, scripts, sounds)
+   - Manifest review (world, scripts, sounds, textures, GLTF refs)
    - Target checkboxes (web / Android / Windows)
    - Download `.threshold-game.json`
 3. Run packaging CLI below.
@@ -90,7 +91,7 @@ SFX recording uses WebView `getUserMedia`. Ensure **RECORD_AUDIO** is granted �
 npm run package:win
 ```
 
-Output: `dist-electron/Threshold-3.0.0-win-portable.exe` (version from `package.json`).
+Output: `dist-electron/Threshold-{version}-win-portable.exe` (version from `package.json`).
 
 Dev preview (no packager):
 
@@ -125,7 +126,30 @@ After changing app name in export wizard, update `appName` in `capacitor.config.
 
 ---
 
-## Steam (Phase 3.5)
+## iOS & App Store (planned — Phase F)
+
+**Not implemented yet.** No `@capacitor/ios`, no Xcode project in repo.
+
+Planned steps (see [NEXT_PHASES.md](NEXT_PHASES.md)):
+
+1. `npm install @capacitor/ios` + `npx cap add ios`
+2. `npm run package:ios` — build + `cap sync`
+3. `npm run cap:open:ios` — Xcode archive → TestFlight → App Store
+4. Export wizard **iOS** target + manifest `packaging.ios` block
+
+Until Phase F ships, ship **web** (Safari) or **Android** for mobile.
+
+---
+
+## Creative assets in native builds
+
+Export manifest documents `textures/` and `import/` paths. **Blob bundling** into APK/exe (copy assets beside WebView) is Phase E — today users re-import or use hosted GLB URLs.
+
+Dev hot-reload: `npm run textures:watch` (localhost only).
+
+---
+
+## Steam (Phase 5)
 
 Windows Electron build is the base. Steamworks SDK integrates into the same shell — see [PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md).
 

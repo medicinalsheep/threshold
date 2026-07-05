@@ -70,6 +70,59 @@ ${runningCode}
 `.trim();
 }
 
+export function getAssetContext() {
+    const State = window.State;
+    const TextureLibrary = window.TextureLibrary;
+    const objects = State?.objects || [];
+
+    const textureClips = (TextureLibrary?.list?.() || []).map((t) => ({
+        id: t.id,
+        name: t.name,
+        path: t.sourcePath || null,
+    }));
+
+    const sceneAssets = objects.map((o) => {
+        const ud = o.userData || {};
+        const slots = ud.textures
+            ? Object.entries(ud.textures).filter(([, v]) => v).map(([slot, id]) => `${slot}:${id}`).join(', ')
+            : null;
+        return {
+            name: ud.name,
+            type: ud.type,
+            textureHint: ud.textureHint || null,
+            textureSlots: slots,
+            gltfPath: ud.gltfPath || null,
+            gltfUrl: ud.gltfUrl || null,
+            gltfFile: ud.gltfFile || null,
+        };
+    }).filter((a) => a.textureHint || a.textureSlots || a.gltfPath || a.gltfUrl);
+
+    const expectedPaths = sceneAssets.flatMap((a) => {
+        const paths = [];
+        if (a.textureHint) paths.push(a.textureHint);
+        if (a.gltfPath) paths.push(a.gltfPath);
+        return paths;
+    });
+
+    return `
+ASSET MANIFEST (for PromptGen / Compiler — user imports files after RUN if paths are local):
+- Texture library clips (IndexedDB): ${textureClips.length ? textureClips.map((t) => `${t.id} (${t.path || t.name})`).join('; ') : 'none'}
+- Scene-linked assets:
+${sceneAssets.length ? sceneAssets.map((a) => {
+        const parts = [`  - ${a.name} (${a.type})`];
+        if (a.textureSlots) parts.push(`maps: ${a.textureSlots}`);
+        if (a.textureHint) parts.push(`hint: ${a.textureHint}`);
+        if (a.gltfPath) parts.push(`gltf: ${a.gltfPath}`);
+        else if (a.gltfUrl) parts.push(`gltf: ${a.gltfUrl}`);
+        return parts.join(' · ');
+    }).join('\n') : '  (none — set userData.textureHint or INSERT GLTF after Blender export)'}
+- Expected local paths: ${expectedPaths.length ? expectedPaths.join(', ') : 'none yet'}
+- GIMP export folder: textures/ + threshold_manifest.json → Engine Texture → GIMP SYNC
+- Blender export folder: import/ + threshold_blender_manifest.json → INSERT → GLTF
+- Dev hot-reload: npm run textures:watch (pairs with npm run dev)
+`.trim();
+}
+
 export function getSceneObjectsForSpawn() {
     const State = window.State;
     if (!State?.objects) return [];
