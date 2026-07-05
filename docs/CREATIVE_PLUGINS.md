@@ -14,11 +14,11 @@
 
 ---
 
-## Phase A — File bridge (v3.5)
+## Phase A — File bridge (v3.3)
 
-- [ ] **Import texture** — ENGINE inspector → Texture tab → load PNG/JPG from disk (Electron) or file picker (web)
-- [ ] **Apply to selected mesh** — `material.map` + roughness/metalness maps when present
-- [ ] **Manifest field** — `.threshold-game.json` lists `textures: [{ id, path, objectId }]`
+- [x] **Import texture** — ENGINE inspector → Texture tab → load PNG/JPG from disk (Electron) or file picker (web)
+- [x] **Apply to selected mesh** — `material.map` + roughness/metalness maps when present
+- [x] **Manifest field** — `.threshold-game.json` lists `textures: [{ id, path, objectId }]`
 
 ---
 

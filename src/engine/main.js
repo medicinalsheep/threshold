@@ -26,6 +26,8 @@ import { ViewPrefs } from '../shared/viewPrefs.js';
 import { SceneDock } from '../shared/sceneDock.js';
 import { SoundLibrary } from '../shared/soundLibrary.js';
 import { SoundPrompt } from '../shared/soundPrompt.js';
+import { TextureLibrary } from '../shared/textureLibrary.js';
+import { TextureBridge } from '../shared/textureBridge.js';
 import { bootstrapStarterScene } from '../shared/starterScene.js';
 import { GameExport } from '../shared/gameExport.js';
 import { AgentHub } from '../shared/agentHub.js';
@@ -1096,6 +1098,7 @@ const World = {
                 if (d.userData) m.userData = { ...m.userData, ...d.userData };
             }
         });
+        TextureBridge.rehydrateScene();
     },
     runCustomAtCursor: function (code, silent = false) {
         const wrapped = `const _x=${State.ctxTargetPos.x}, _y=${State.ctxTargetPos.y}, _z=${State.ctxTargetPos.z};\n${code}`;
@@ -1179,6 +1182,7 @@ const IO = {
                         m.scale.copy(d.scl); m.userData = d.userData;
                     }
                 });
+                TextureBridge.rehydrateScene();
                 UI.status("Scene Loaded");
             } catch (err) { UI.status("Error Loading"); }
         };
@@ -1269,6 +1273,14 @@ const UI = {
         SoundPrompt.init();
         SoundLibrary.init().then(() => UI.renderSoundLibrary());
         window.addEventListener('sound-library-change', () => UI.renderSoundLibrary());
+        TextureLibrary.init();
+        window.addEventListener('texture-library-change', () => {
+            if (State.selectedObject) UI.syncTextureInspector(State.selectedObject);
+        });
+        document.getElementById('insp-texture-albedo')?.addEventListener('click', () => UI.importTextureSlot('albedo'));
+        document.getElementById('insp-texture-rough')?.addEventListener('click', () => UI.importTextureSlot('roughness'));
+        document.getElementById('insp-texture-metal')?.addEventListener('click', () => UI.importTextureSlot('metalness'));
+        document.getElementById('insp-texture-clear')?.addEventListener('click', () => UI.clearTextureMaps());
 
         let sfxRecording = false;
         document.getElementById('sfx-record-btn')?.addEventListener('click', async () => {
@@ -1451,6 +1463,54 @@ const UI = {
         document.getElementById('insp-sound-trigger').value = obj.userData.soundTrigger || 'collision';
         this.populateSoundClipSelect(obj.userData.soundClipId || '');
         this.syncSoundInspectorMode();
+        this.syncTextureInspector(obj);
+    },
+    syncTextureInspector: async function (obj) {
+        const status = document.getElementById('insp-texture-status');
+        const preview = document.getElementById('insp-texture-preview');
+        if (!obj?.material) {
+            if (status) status.textContent = 'Select a mesh object to import textures.';
+            if (preview) preview.hidden = true;
+            return;
+        }
+        const textures = obj.userData?.textures || {};
+        if (status) status.textContent = TextureBridge.formatSlotStatus(textures);
+        if (preview) {
+            const url = await TextureBridge.previewUrlForSlot(textures, 'albedo');
+            if (url) {
+                preview.src = url;
+                preview.hidden = false;
+            } else {
+                preview.removeAttribute('src');
+                preview.hidden = true;
+            }
+        }
+    },
+    importTextureSlot: async function (slot) {
+        const obj = State.selectedObject;
+        if (!obj || !SimMode.canEditObject(obj)) {
+            UI.status('Select an object in EDIT mode to import textures');
+            return;
+        }
+        if (!obj.material) {
+            UI.status('This object has no material — pick a primitive mesh');
+            return;
+        }
+        try {
+            const record = await TextureBridge.pickAndApplyToObject(obj, slot);
+            if (!record) return;
+            UI.syncTextureInspector(obj);
+            UI.status(`${slot} map applied — ${record.name}`);
+        } catch (e) {
+            UI.status(e.message || 'Texture import failed');
+        }
+    },
+    clearTextureMaps: function () {
+        const obj = State.selectedObject;
+        if (!obj || !SimMode.canEditObject(obj)) return;
+        TextureBridge.clearMaps(obj);
+        UI.syncTextureInspector(obj);
+        UI.status('Texture maps cleared');
     },
     applyInspectorFromUi: function () {
         const obj = State.selectedObject;

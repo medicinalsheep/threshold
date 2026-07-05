@@ -47,6 +47,25 @@ export const REFERENCE_LIBRARY = {
 // Inspector Collision: mass/friction/restitution still per-object`
         },
         {
+            id: 'texture_local_import',
+            title: 'Local Texture Import — Inspector Texture Tab',
+            summary: 'Import PNG/JPG albedo, roughness, and metalness maps onto selected meshes. Stored in IndexedDB; included in EXPORT manifest.',
+            checklist: ['EDIT mode — select mesh', 'SCENE → Inspect → Texture tab', 'ALBEDO / ROUGH / METAL buttons', 'SAVE WORLD + EXPORT manifest'],
+            code: `// TEXTURE WORKFLOW (Engine UI — not runnable):
+// 1. Pause (EDIT) → select cube/sphere/cone/torus
+// 2. SCENE panel → Inspect → Texture tab
+// 3. ALBEDO — import PNG/JPG (web file picker or Electron dialog)
+// 4. Optional ROUGH + METAL grayscale maps for PBR (Hyper mode)
+// 5. Maps persist in userData.textures { albedo, roughness, metalness }
+// 6. SAVE WORLD / sync restores maps from local library
+// 7. MORE → EXPORT — manifest.textures lists { id, path, objectId, slot }
+//
+// Code hint for PromptGen / GIMP export path:
+const m = World.createObject('cube', 'Stone Block', 0xffffff, true);
+m.userData.textureHint = 'textures/stone_albedo.png';
+// User imports the file in Texture tab — no cloud upload required`
+        },
+        {
             id: 'lego_fit_anything',
             title: 'LEGO Fit — Snap Anything Into the Live Scene',
             summary: 'PromptGen + Compiler pattern: read scene context, extend without clearWorld, physics+collision ready.',

@@ -1,6 +1,7 @@
 import { VERSION } from '../config.js';
 import { Sync } from './sync.js';
 import { SoundLibrary } from './soundLibrary.js';
+import { TextureLibrary } from './textureLibrary.js';
 import { ProjectVault } from './projectVault.js';
 
 const BUILD_PROFILES = {
@@ -64,6 +65,10 @@ export const GameExport = {
                 name: s.name,
                 context: s.context,
                 note: 'Blob stored locally — re-record or bundle in Phase 3 native export',
+            })),
+            textures: TextureLibrary.collectManifestEntries(world?.objects || []).map((t) => ({
+                ...t,
+                note: 'Blob stored locally — re-import or bundle in native export',
             })),
             agents: options.agents || window.AgentHub?.exportConfigs?.() || [],
             relay: {

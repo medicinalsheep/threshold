@@ -19,6 +19,7 @@ contextBridge.exposeInMainWorld('ThresholdShell', {
     },
     fs: {
         readText: (filePath) => ipcRenderer.invoke('shell:fs:readText', filePath),
+        readBinary: (filePath) => ipcRenderer.invoke('shell:fs:readBinary', filePath),
         writeText: (filePath, content) => ipcRenderer.invoke('shell:fs:writeText', filePath, content),
         pickFile: (filters) => ipcRenderer.invoke('shell:fs:pickFile', filters),
         pickSave: (defaultName, filters) => ipcRenderer.invoke('shell:fs:pickSave', defaultName, filters),

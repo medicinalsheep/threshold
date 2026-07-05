@@ -1073,6 +1073,50 @@ body.shell-capacitor .engine-toolbar {
     display: block;
 }
 
+.insp-texture-hint {
+    margin: 0 0 8px;
+    font-size: 0.68rem;
+}
+
+.insp-texture-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.insp-texture-actions .btn-sm {
+    flex: 1;
+    min-width: 52px;
+    font-size: 0.58rem !important;
+    padding: 5px 4px !important;
+}
+
+.insp-texture-clear {
+    color: #ff7777 !important;
+    border-color: #884444 !important;
+}
+
+.insp-texture-preview-wrap {
+    margin-bottom: 6px;
+}
+
+.insp-texture-preview {
+    width: 100%;
+    max-height: 72px;
+    object-fit: contain;
+    border: 1px solid #333;
+    border-radius: 2px;
+    background: #111;
+}
+
+.insp-texture-status {
+    margin: 0 0 8px;
+    font-size: 0.62rem;
+    line-height: 1.35;
+    word-break: break-word;
+}
+
 #player-skin-panel {
     display: none;
 }

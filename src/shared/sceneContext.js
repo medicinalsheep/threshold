@@ -17,6 +17,8 @@ export function getSceneContext() {
         soundMode: o.userData?.soundMode || null,
         soundClipId: o.userData?.soundClipId || null,
         soundTrigger: o.userData?.soundTrigger || null,
+        textures: o.userData?.textures || null,
+        textureHint: o.userData?.textureHint || null,
     }));
     const humanNpcCount = objects.filter((o) => o.isHuman && !o.isPlayer).length;
 
@@ -54,7 +56,10 @@ ${playerLine}
 OBJECTS:
 ${objects.length ? objects.map((o) => {
         const snd = o.soundClipId ? ` [sound:${o.soundClipId}/${o.soundTrigger || 'collision'}]` : '';
-        return `  - ${o.name} (${o.type}) @ (${o.position.x},${o.position.y},${o.position.z})${snd}`;
+        const tex = o.textures
+            ? ` [tex:${Object.entries(o.textures).filter(([, v]) => v).map(([k, v]) => `${k}:${v}`).join(',')}]`
+            : '';
+        return `  - ${o.name} (${o.type}) @ (${o.position.x},${o.position.y},${o.position.z})${snd}${tex}`;
     }).join('\n') : '  (empty scene)'}
 
 CURRENTLY RUNNING CODE:

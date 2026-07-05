@@ -54,6 +54,11 @@ ipcMain.handle('shell:fs:readText', async (_e, filePath) => {
     return fs.readFile(filePath, 'utf8');
 });
 
+ipcMain.handle('shell:fs:readBinary', async (_e, filePath) => {
+    const buf = await fs.readFile(filePath);
+    return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+});
+
 ipcMain.handle('shell:fs:writeText', async (_e, filePath, content) => {
     await fs.writeFile(filePath, content, 'utf8');
     return true;

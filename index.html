@@ -270,6 +270,18 @@
                     <div class="prop-row"><button id="btn-delete" style="color:#ff5555;border-color:#ff5555;width:100%;">DELETE</button></div>
                 </div>
                 <div class="insp-panel" data-insp-panel="texture">
+                    <p class="insert-hint insp-texture-hint">Import PNG/JPG maps — stored locally in your browser.</p>
+                    <input type="file" id="insp-texture-file" accept="image/png,image/jpeg,image/webp" hidden>
+                    <div class="insp-texture-actions">
+                        <button type="button" id="insp-texture-albedo" class="btn-sm">ALBEDO</button>
+                        <button type="button" id="insp-texture-rough" class="btn-sm">ROUGH</button>
+                        <button type="button" id="insp-texture-metal" class="btn-sm">METAL</button>
+                        <button type="button" id="insp-texture-clear" class="btn-sm insp-texture-clear">CLEAR</button>
+                    </div>
+                    <div class="insp-texture-preview-wrap">
+                        <img id="insp-texture-preview" class="insp-texture-preview" alt="" hidden>
+                    </div>
+                    <p id="insp-texture-status" class="insert-hint insp-texture-status"></p>
                     <div class="prop-row"><label>Color</label><input type="color" id="insp-color" value="#ffffff"></div>
                     <div class="prop-row"><label>Roughness</label><input type="range" id="insp-rough" min="0" max="1" step="0.05" value="0.5"></div>
                     <div class="prop-row"><label>Metalness</label><input type="range" id="insp-metal" min="0" max="1" step="0.05" value="0.5"></div>

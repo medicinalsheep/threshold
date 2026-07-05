@@ -93,6 +93,7 @@ export const Sync = {
             } else if (state.controlMode === 'fly') {
                 window.PlayerController?.despawn();
             }
+            window.TextureBridge?.rehydrateScene?.();
             window.UI?.updateControlMode?.();
             window.Spectate?.updateHud?.();
         } finally {
