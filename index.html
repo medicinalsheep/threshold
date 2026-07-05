@@ -49,7 +49,7 @@
             <div id="ctx-header" style="font-size:0.7rem; color:#666; padding:5px; border-bottom:1px solid #333; margin-bottom:5px;">MENU</div>
 
             <div id="ctx-group-ground" style="display:flex; flex-direction:column;">
-                <button id="ctx-insert">INSERT OBJECT</button>
+                <button id="ctx-insert">INSERT...</button>
                 <button id="ctx-clear" style="color:#ffaa00; border-color:#ffaa00;">CLEAR WORLD</button>
             </div>
 
@@ -65,10 +65,21 @@
 
         <!-- 3. UI Overlay Layer -->
         <div id="ui-layer">
-            <!-- Slim Toolbar -->
+            <!-- Session + Toolbar -->
             <div class="panel engine-toolbar">
-                <div id="mode-display">HYPER (BLOOM)</div>
+                <div class="toolbar-left">
+                    <div id="mode-display">HYPER (BLOOM)</div>
+                    <div class="session-bar">
+                        <span class="session-label">KEY</span>
+                        <code id="session-player-key">------</code>
+                        <button id="btn-copy-key" class="btn-sm">COPY</button>
+                        <span id="session-host-status" class="session-host">GUEST</span>
+                        <button id="btn-claim-host" class="btn-sm">BECOME HOST</button>
+                        <button id="btn-host-pause" class="btn-sm" disabled>PAUSE</button>
+                    </div>
+                </div>
                 <div class="toolbar-actions">
+                    <button id="btn-env-toggle" class="btn-sm mobile-only">ENV</button>
                     <button id="btn-rec-start" title="Record">REC</button>
                     <button id="btn-rec-stop" title="Stop" style="display:none;">STOP</button>
                     <button id="btn-rec-save" title="Save" style="display:none;">SAVE</button>
@@ -77,6 +88,8 @@
                     <button id="btn-load">IMPORT</button>
                 </div>
             </div>
+
+            <button id="btn-mobile-insert" class="mobile-fab" aria-label="Insert">+</button>
 
             <!-- Environment Panel -->
             <div id="env-panel" class="panel">
@@ -144,6 +157,42 @@
             <div id="command-bar"><input type="text" id="cmd-input" placeholder="> Enter JS command or 'allow pasting'..." autocomplete="off"></div>
         </div>
 
+        <!-- Insert Modal (mobile-friendly) -->
+        <div id="insert-modal" class="modal-backdrop">
+            <div id="insert-sheet" class="panel insert-sheet">
+                <div class="insert-header">
+                    <h3 style="margin:0;">INSERT</h3>
+                    <button id="insert-close">✕</button>
+                </div>
+                <div class="insert-tabs">
+                    <button class="insert-tab active" data-tab="character">CHARACTER</button>
+                    <button class="insert-tab" data-tab="player">PLAYER KEY</button>
+                    <button class="insert-tab" data-tab="saved">SAVED</button>
+                    <button class="insert-tab" data-tab="code">CODE</button>
+                </div>
+                <div class="insert-panel active" data-panel="character">
+                    <p class="insert-hint">Spawn a simple character at the target point.</p>
+                    <button id="insert-character" class="insert-action">INSERT CHARACTER</button>
+                </div>
+                <div class="insert-panel" data-panel="player">
+                    <p class="insert-hint">Enter another player's key. They must share/export their player first.</p>
+                    <input type="text" id="insert-player-key" class="insert-input" placeholder="PLAYER KEY" maxlength="8">
+                    <button id="insert-player-btn" class="insert-action">INSERT PLAYER</button>
+                    <label class="insert-hint">Import player file</label>
+                    <input type="file" id="import-player-file" accept=".json">
+                </div>
+                <div class="insert-panel" data-panel="saved">
+                    <select id="insert-saved-player" class="insert-input"></select>
+                    <button id="insert-saved-btn" class="insert-action">INSERT SAVED</button>
+                    <button id="save-current-player" class="insert-action secondary">SAVE MY PLAYER</button>
+                </div>
+                <div class="insert-panel" data-panel="code">
+                    <textarea id="insert-custom-code" class="insert-code" placeholder="World.createObject('sphere', 'mine', 0xff00ff, true);"></textarea>
+                    <button id="insert-code-run" class="insert-action">RUN CODE</button>
+                </div>
+            </div>
+        </div>
+
         <!-- 4. JSON Modal -->
         <div id="json-modal" class="panel">
             <h3 style="margin-top:0;">RAW DATA EDITOR</h3>
@@ -194,8 +243,14 @@
                     <textarea id="comp-output" class="comp-textarea" readonly placeholder="// Result..."></textarea>
                     <div style="margin-top:10px; text-align:right;">
                         <span id="comp-status" style="color:#00ffaa; margin-right:10px; opacity:0;">COPIED</span>
-                        <button id="btn-comp-copy">COPY CODE</button>
+                        <button id="btn-comp-copy">COPY</button>
+                        <button id="btn-comp-run">RUN IN ENGINE</button>
                     </div>
+                </div>
+                <div class="comp-column comp-running-col">
+                    <label style="color:#00ffaa; font-weight:bold; margin-bottom:10px;">▶ RUNNING CODE (LIVE)</label>
+                    <textarea id="comp-running" class="comp-textarea comp-running" readonly placeholder="// Executes from Compiler or Engine..."></textarea>
+                    <p class="comp-running-note">Host <code id="comp-host-key">---</code> can pause the scene.</p>
                 </div>
             </main>
         </div>
@@ -251,6 +306,9 @@
                         <option value="spec">Spec-Driven (Plan first)</option>
                         <option value="creative">Creative (Artistic freedom)</option>
                     </select>
+                </div>
+                <div class="prompt-input-group">
+                    <label><input type="checkbox" id="prompt-use-scene" checked> Include live scene + running code</label>
                 </div>
                 <button id="btn-prompt-gen">GENERATE PROMPT</button>
             </aside>

@@ -1,6 +1,25 @@
 /* Mobile & tablet layout */
 
 @media (max-width: 900px) {
+    .mobile-only {
+        display: inline-block !important;
+    }
+
+    .mobile-fab {
+        display: block;
+    }
+
+    #command-bar {
+        display: none;
+    }
+
+    #env-panel {
+        display: none;
+    }
+
+    #env-panel.mobile-open {
+        display: block;
+    }
     #app-nav {
         padding: 0 12px;
         flex-wrap: wrap;
@@ -114,6 +133,10 @@
 
     .comp-main {
         flex-direction: column;
+    }
+
+    .comp-running-col {
+        order: -1;
     }
 
     .comp-column {

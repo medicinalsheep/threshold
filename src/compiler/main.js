@@ -1,4 +1,6 @@
 import { copyFromElement } from '../utils/clipboard.js';
+import { Runtime } from '../shared/runtime.js';
+import { Session } from '../shared/session.js';
 
 export function initCompiler() {
     console.log('Initializing Compiler...');
@@ -7,22 +9,40 @@ export function initCompiler() {
     document.getElementById('btn-comp-copy').addEventListener('click', () => Compiler.copy());
     document.getElementById('btn-comp-clear').addEventListener('click', () => Compiler.clear());
     document.getElementById('btn-comp-save-script').addEventListener('click', () => Compiler.saveScript());
+    document.getElementById('btn-comp-run').addEventListener('click', () => Compiler.runInEngine());
 
     document.getElementById('btn-gen-city').addEventListener('click', () => Generator.set('city'));
     document.getElementById('btn-gen-dna').addEventListener('click', () => Generator.set('dna'));
     document.getElementById('btn-gen-wave').addEventListener('click', () => Generator.set('wave'));
     document.getElementById('btn-gen-ring').addEventListener('click', () => Generator.set('ring'));
     document.getElementById('btn-gen-chaos').addEventListener('click', () => Generator.set('chaos'));
+
+    window.addEventListener('threshold:code-update', (e) => {
+        const el = document.getElementById('comp-running');
+        if (el && e.detail?.code !== undefined) el.value = e.detail.code;
+    });
+
+    Compiler.syncHostDisplay();
 }
 
 const Compiler = {
     get input() { return document.getElementById('comp-input'); },
     get output() { return document.getElementById('comp-output'); },
+    get running() { return document.getElementById('comp-running'); },
     get filename() { return document.getElementById('comp-filename'); },
     get tag() { return document.getElementById('comp-tag'); },
     get statusEl() { return document.getElementById('comp-status'); },
 
-    clear: function () { this.input.value = ''; this.output.value = ''; },
+    syncHostDisplay: function () {
+        const el = document.getElementById('comp-host-key');
+        if (el) el.textContent = Session.hostKey || Session.playerKey || '---';
+    },
+
+    clear: function () {
+        this.input.value = '';
+        this.output.value = '';
+        Runtime.setRunningCode('', 'compiler-clear');
+    },
 
     saveScript: function () {
         const code = this.input.value;
@@ -51,21 +71,25 @@ ${code}`;
 
     transpile: function () {
         let clean = this.input.value;
-
         clean = clean.replace(/scene\.add\([^;]+\);/g, '// handled by Engine');
         clean = clean.replace(/new THREE\.Mesh\(\s*new THREE\.BoxGeometry[^)]*\)/gi, "World.createObject('cube')");
         clean = clean.replace(/new THREE\.Mesh\(\s*new THREE\.SphereGeometry[^)]*\)/gi, "World.createObject('sphere')");
 
-        const final = `
-// --- THRESHOLD OPTIMIZED ---
-(function() {
+        const final = `(function() {
     try {
-        console.log("Running Script...");
         ${clean}
     } catch(e) { console.error("Script Error:", e); }
 })();`;
 
         this.output.value = final.trim();
+    },
+
+    runInEngine: function () {
+        const code = this.output.value.trim() || this.input.value.trim();
+        if (!code) return;
+
+        document.querySelector('[data-target="view-engine"]')?.click();
+        setTimeout(() => Runtime.execute(code, 'compiler'), 150);
     },
 
     copy: async function () {
@@ -85,8 +109,7 @@ const Generator = {
 
         if (type === 'city') {
             code = `World.clearWorld();
-const size = 6;
-const spacing = 2;
+const size = 6, spacing = 2;
 for (let x = -size; x < size; x++) {
     for (let z = -size; z < size; z++) {
         if(Math.random() > 0.8) continue;
@@ -94,57 +117,39 @@ for (let x = -size; x < size; x++) {
         const b = World.createObject('cube', 'bld', 0x222222, false);
         b.position.set(x * spacing, h / 2, z * spacing);
         b.scale.set(1, h, 1);
-        const light = World.createObject('sphere', 'light', 0x00ffaa, false);
-        light.position.set(x * spacing, h + 0.5, z * spacing);
-        light.scale.set(0.2, 0.2, 0.2);
     }
 }`;
         } else if (type === 'dna') {
             code = `World.clearWorld();
-const steps = 40;
-for (let i = 0; i < steps; i++) {
+for (let i = 0; i < 40; i++) {
     const y = i * 0.5 + 2;
     const a = World.createObject('cube', 'dna_a', 0xff00ff, false);
     a.position.set(Math.cos(i * 0.4) * 3, y, Math.sin(i * 0.4) * 3);
-    a.userData.isRotating = true;
     const b = World.createObject('cube', 'dna_b', 0x00aaff, false);
     b.position.set(Math.cos(i * 0.4 + Math.PI) * 3, y, Math.sin(i * 0.4 + Math.PI) * 3);
-    b.userData.isRotating = true;
 }`;
         } else if (type === 'ring') {
             code = `World.clearWorld();
-const count = 20;
-const r = 10;
-for (let i = 0; i < count; i++) {
-    const angle = (i / count) * Math.PI * 2;
+for (let i = 0; i < 20; i++) {
+    const angle = (i / 20) * Math.PI * 2;
     const obj = World.createObject('cone', 'sat', 0xffaa00, false);
-    obj.position.set(Math.cos(angle) * r, 2, Math.sin(angle) * r);
-    obj.lookAt(0,2,0);
-}
-const core = World.createObject('sphere', 'core', 0xffffff, false);
-core.position.set(0, 2, 0);
-core.scale.set(3,3,3);`;
+    obj.position.set(Math.cos(angle) * 10, 2, Math.sin(angle) * 10);
+}`;
         } else if (type === 'chaos') {
-            code = `World.clearWorld();
-let count = 0;
+            code = `let count = 0;
 const interval = setInterval(() => {
-    const x = (Math.random() - 0.5) * 10;
-    const z = (Math.random() - 0.5) * 10;
-    World.createObject('cube', 'rain', Math.random() * 0xffffff, true).position.set(x, 20, z);
-    count++;
-    if(count > 50) clearInterval(interval);
+    World.createObject('cube', 'rain', Math.random() * 0xffffff, true).position.set((Math.random()-0.5)*10, 20, (Math.random()-0.5)*10);
+    if(++count > 50) clearInterval(interval);
 }, 100);`;
         } else if (type === 'wave') {
             code = `World.clearWorld();
-for(let x=-8; x<8; x++) {
-    for(let z=-8; z<8; z++) {
-        const s = World.createObject('sphere', 'dot', 0x00ff00, false);
-        s.position.set(x, Math.sin(x*0.5) + Math.cos(z*0.5) + 2, z);
-        s.scale.set(0.2, 0.2, 0.2);
-    }
+for(let x=-8; x<8; x++) for(let z=-8; z<8; z++) {
+    const s = World.createObject('sphere', 'dot', 0x00ff00, false);
+    s.position.set(x, Math.sin(x*0.5)+Math.cos(z*0.5)+2, z);
+    s.scale.set(0.2,0.2,0.2);
 }`;
         } else {
-            code = `World.clearWorld();\nWorld.createObject('cube');`;
+            code = `World.createObject('cube');`;
         }
 
         Compiler.input.value = code.trim();

@@ -6,6 +6,7 @@ import './css/responsive.css';
 
 import { VERSION } from './config.js';
 import { initAuth } from './auth/main.js';
+import './shared/runtime.js';
 import { initEngine } from './engine/main.js';
 import { initCompiler } from './compiler/main.js';
 import { initPrompter } from './prompter/main.js';

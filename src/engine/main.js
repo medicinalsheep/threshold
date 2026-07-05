@@ -8,6 +8,9 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as CANNON from 'cannon-es';
 import { VERSION } from '../config.js';
+import { Session } from '../shared/session.js';
+import { Runtime } from '../shared/runtime.js';
+import { getSceneObjectsForSpawn } from '../shared/sceneContext.js';
 
 const IS_TOUCH_DEVICE = window.matchMedia('(pointer: coarse)').matches;
 
@@ -33,21 +36,29 @@ export function initEngine() {
     window.UI = UI;
     window.Recorder = Recorder;
     window.Utils = {
-        getMode: () => State.renderMode, // 0-4
+        getMode: () => State.renderMode,
         isHyper: () => State.renderMode === 4,
         randomColor: () => Math.random() * 0xffffff
     };
+    window.Session = Session;
+    window.Runtime = Runtime;
 
     window.addEventListener('theme-change', () => {
         State.darkMode = !document.body.classList.contains('light-mode');
         Engine.updateBackground();
     });
 
+    Session.init();
     Physics.init();
     Engine.init();
     Environment.init();
     UI.init();
     Physics.createFloor();
+
+    window.addEventListener('threshold:pause', (e) => {
+        State.isPaused = !!e.detail?.paused;
+        UI.status(State.isPaused ? 'Scene paused by host' : 'Scene resumed');
+    });
 }
 
 // --- GLOBAL STATE ---
@@ -63,6 +74,7 @@ const State = {
     clipboardAllowed: false,
     ctxTargetPos: new THREE.Vector3(),
     isRecording: false,
+    isPaused: false,
     env: {
         timeOfDay: 14,
         fogDensity: 0.02,
@@ -124,6 +136,7 @@ const Physics = {
     },
 
     update: function () {
+        if (State.isPaused) return;
         this.world.step(1 / 60);
 
         // Sync Visuals to Physics
@@ -537,8 +550,10 @@ const Engine = {
     },
     animate: function (time) {
         requestAnimationFrame((t) => this.animate(t));
-        Physics.update();
-        Environment.updateWater(time);
+        if (!State.isPaused) {
+            Physics.update();
+            Environment.updateWater(time);
+        }
         if (this.shaderPass) this.shaderPass.uniforms.time.value = time * 0.001;
         // Camera Logic (OrbitControls handles mouse, we handle keys)
         const speed = 0.2;
@@ -552,9 +567,11 @@ const Engine = {
         if (State.keys['KeyE']) { this.camera.position.y -= speed; this.controls.target.y -= speed; }
         this.controls.update();
         // Visual Rotation (Only for non-physics objects or purely visual effect)
-        State.objects.forEach(obj => {
-            if (obj.userData.isRotating && !obj.userData.locked && !obj.userData.hasPhysics) obj.rotation.y += 0.02;
-        });
+        if (!State.isPaused) {
+            State.objects.forEach(obj => {
+                if (obj.userData.isRotating && !obj.userData.locked && !obj.userData.hasPhysics) obj.rotation.y += 0.02;
+            });
+        }
         // Recorder frame request (for smooth video)
         if (State.isRecording && Recorder.stream) {
             Recorder.stream.getVideoTracks()[0].requestFrame();
@@ -633,6 +650,54 @@ const World = {
     insertRandomObject: function () {
         const type = OBJECT_TYPES[Math.floor(Math.random() * OBJECT_TYPES.length)];
         this.spawnAtCursor(type);
+    },
+    spawnCharacter: function () {
+        const x = State.ctxTargetPos.x;
+        const z = State.ctxTargetPos.z;
+        const y = State.ctxTargetPos.y;
+        const body = this.createObject('cube', 'character_body', 0x3366cc, false);
+        body.scale.set(0.55, 1.1, 0.35);
+        body.position.set(x, y + 1.1, z);
+        const head = this.createObject('sphere', 'character_head', 0xffcc99, false);
+        head.scale.set(0.45, 0.45, 0.45);
+        head.position.set(x, y + 2.1, z);
+        body.userData.isCharacter = true;
+        head.userData.isCharacter = true;
+        UI.closeInsert();
+        UI.status('Character inserted');
+    },
+    insertPlayerByKey: function (key) {
+        const player = Session.getPlayer(key);
+        if (!player) {
+            UI.status('Player key not found — import their file first');
+            return false;
+        }
+        if (player.code) Runtime.execute(player.code, 'player-key');
+        else if (player.objects?.length) this.spawnObjectSnapshot(player.objects);
+        UI.closeInsert();
+        UI.status(`Inserted player ${player.name}`);
+        return true;
+    },
+    insertSavedPlayer: function (key) {
+        return this.insertPlayerByKey(key);
+    },
+    spawnObjectSnapshot: function (objects) {
+        const ox = State.ctxTargetPos.x;
+        const oz = State.ctxTargetPos.z;
+        objects.forEach((d) => {
+            const m = this.createObject(d.type, d.name, d.color, false);
+            if (m) {
+                m.position.set(ox + (d.pos?.x || 0), d.pos?.y || 1, oz + (d.pos?.z || 0));
+                if (d.rot) m.rotation.set(d.rot.x, d.rot.y, d.rot.z);
+                if (d.scl) m.scale.set(d.scl.x, d.scl.y, d.scl.z);
+                if (d.userData) m.userData = { ...m.userData, ...d.userData };
+            }
+        });
+    },
+    runCustomAtCursor: function (code) {
+        const wrapped = `const _x=${State.ctxTargetPos.x}, _y=${State.ctxTargetPos.y}, _z=${State.ctxTargetPos.z};\n${code}`;
+        Runtime.execute(wrapped, 'insert-code');
+        UI.closeInsert();
     },
     deleteObject: function (obj) {
         if (!obj) return;
@@ -716,9 +781,46 @@ const UI = {
         document.getElementById('btn-rec-stop').onclick = () => Recorder.stop();
         document.getElementById('btn-rec-save').onclick = () => Recorder.save();
 
-        document.getElementById('ctx-insert').onclick = () => World.insertRandomObject();
+        document.getElementById('ctx-insert').onclick = () => { UI.closeCtx(); UI.openInsert(); };
         document.getElementById('ctx-clear').onclick = () => { World.clearWorld(); UI.closeCtx(); UI.status('World cleared'); };
         document.getElementById('ctx-close').onclick = () => UI.closeCtx();
+
+        document.getElementById('btn-mobile-insert')?.addEventListener('click', () => UI.openInsert());
+        document.getElementById('insert-close')?.addEventListener('click', () => UI.closeInsert());
+        document.getElementById('insert-modal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'insert-modal') UI.closeInsert();
+        });
+        document.querySelectorAll('.insert-tab').forEach((tab) => {
+            tab.addEventListener('click', () => UI.switchInsertTab(tab.dataset.tab));
+        });
+        document.getElementById('insert-character')?.addEventListener('click', () => World.spawnCharacter());
+        document.getElementById('insert-player-btn')?.addEventListener('click', () => {
+            const key = document.getElementById('insert-player-key')?.value;
+            World.insertPlayerByKey(key);
+        });
+        document.getElementById('insert-saved-btn')?.addEventListener('click', () => {
+            const key = document.getElementById('insert-saved-player')?.value;
+            if (key) World.insertSavedPlayer(key);
+        });
+        document.getElementById('save-current-player')?.addEventListener('click', () => UI.saveCurrentPlayer());
+        document.getElementById('insert-code-run')?.addEventListener('click', () => {
+            const code = document.getElementById('insert-custom-code')?.value;
+            World.runCustomAtCursor(code);
+        });
+        document.getElementById('import-player-file')?.addEventListener('change', (e) => UI.importPlayerFile(e));
+
+        document.getElementById('btn-copy-key')?.addEventListener('click', () => UI.copyPlayerKey());
+        document.getElementById('btn-claim-host')?.addEventListener('click', () => {
+            if (Session.isHost) Session.releaseHost();
+            else Session.claimHost();
+        });
+        document.getElementById('btn-host-pause')?.addEventListener('click', () => {
+            if (Session.togglePause()) State.isPaused = Session.isPaused;
+            else UI.status('Only the host can pause');
+        });
+        document.getElementById('btn-env-toggle')?.addEventListener('click', () => {
+            document.getElementById('env-panel')?.classList.toggle('mobile-open');
+        });
 
         document.getElementById('ctx-edit-inspect').onclick = () => { if (State.selectedObject) UI.selectObject(State.selectedObject); UI.closeCtx(); };
         document.getElementById('ctx-edit-delete').onclick = () => { World.deleteObject(State.selectedObject); UI.closeCtx(); };
@@ -799,9 +901,71 @@ const UI = {
         const input = document.getElementById('cmd-input');
         const raw = input.value.trim();
         if (!raw) return;
-        if (raw.toLowerCase() === 'allow pasting') { State.clipboardAllowed = true; input.value = ''; this.status("Pasting Allowed"); return; }
+        if (raw.toLowerCase() === 'allow pasting') { State.clipboardAllowed = true; input.value = ''; this.status('Pasting Allowed'); return; }
         if (!State.clipboardAllowed && raw.length > 50) { this.status("Type 'allow pasting' first."); return; }
-        try { const result = eval(raw); this.status("Executed"); input.classList.add('cmd-success'); setTimeout(() => input.classList.remove('cmd-success'), 300); input.value = ''; }
-        catch (e) { console.error(e); this.status("Error"); input.classList.add('cmd-error'); setTimeout(() => input.classList.remove('cmd-error'), 300); }
+        const result = Runtime.execute(raw, 'command-bar');
+        if (result.ok) {
+            input.classList.add('cmd-success');
+            setTimeout(() => input.classList.remove('cmd-success'), 300);
+            input.value = '';
+        } else {
+            input.classList.add('cmd-error');
+            setTimeout(() => input.classList.remove('cmd-error'), 300);
+        }
+    },
+    openInsert: function () {
+        if (IS_TOUCH_DEVICE && Engine.groundPlane) {
+            Engine.raycaster.setFromCamera(new THREE.Vector2(0, 0), Engine.camera);
+            const hit = Engine.raycaster.intersectObject(Engine.groundPlane);
+            if (hit.length) State.ctxTargetPos.copy(hit[0].point);
+        }
+        Session.refreshSavedPlayerList();
+        document.getElementById('insert-modal')?.classList.add('open');
+    },
+    closeInsert: function () {
+        document.getElementById('insert-modal')?.classList.remove('open');
+    },
+    switchInsertTab: function (tab) {
+        document.querySelectorAll('.insert-tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === tab));
+        document.querySelectorAll('.insert-panel').forEach((p) => p.classList.toggle('active', p.dataset.panel === tab));
+    },
+    saveCurrentPlayer: function () {
+        const name = prompt('Player name?', Session.playerName) || Session.playerName;
+        const code = Runtime.runningCode || '';
+        const objects = getSceneObjectsForSpawn();
+        const saved = Session.savePlayer(name, code, objects);
+        Session.refreshSavedPlayerList();
+        const blob = new Blob([JSON.stringify(saved, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `player_${Session.playerKey}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        this.status(`Saved player ${Session.playerKey} — share this file`);
+    },
+    importPlayerFile: function (e) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            try {
+                const data = JSON.parse(ev.target.result);
+                if (Session.importPlayer(data)) this.status(`Imported player ${data.key}`);
+                else this.status('Invalid player file');
+            } catch {
+                this.status('Invalid player file');
+            }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
+    },
+    copyPlayerKey: async function () {
+        try {
+            await navigator.clipboard.writeText(Session.playerKey);
+            this.status('Key copied');
+        } catch {
+            this.status(Session.playerKey);
+        }
     }
 };

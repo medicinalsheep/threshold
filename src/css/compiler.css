@@ -27,9 +27,24 @@
     flex-grow: 1;
     padding: 20px;
     display: flex;
-    gap: 20px;
-    overflow: hidden; /* Prevent scrollbars on main container */
-    margin-bottom: 45px; /* Extra space for footer */
+    gap: 16px;
+    overflow: hidden;
+    margin-bottom: 45px;
+}
+
+.comp-running-col label {
+    font-size: 0.85rem;
+}
+
+.comp-running {
+    color: #00ffaa !important;
+    border-color: #00ffaa !important;
+}
+
+.comp-running-note {
+    font-size: 0.7rem;
+    color: #888;
+    margin: 8px 0 0;
 }
 
 .comp-column {

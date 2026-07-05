@@ -2,6 +2,7 @@ import { copyFromElement } from '../utils/clipboard.js';
 import { IS_GROK_EDITION } from '../config.js';
 import { Auth } from '../auth/main.js';
 import { generateScript } from '../grok/client.js';
+import { getSceneContext } from '../shared/sceneContext.js';
 
 export function initPrompter() {
     console.log('Initializing Prompter...');
@@ -18,27 +19,19 @@ export function initPrompter() {
 const Prompter = {
     apiContext: `
 CONTEXT:
-You are an expert developer for "THRESHOLD ENGINE", a limitless 3D sandbox tool blending Three.js for rendering, Cannon-ES for realistic physics, and Unreal Bloom for hyper-glow effects.
+You are an expert developer for "THRESHOLD ENGINE", a 3D sandbox using Three.js, Cannon-ES physics, and retro/hyper render modes.
 
-GLOBAL ACCESS:
-- World, State, THREE, Physics, Utils, AudioSys, Engine
+GLOBAL ACCESS: World, State, Engine, THREE, Physics, Utils, AudioSys, Runtime, Session
 
-API REFERENCE:
-1. World.createObject(type, name, colorHex, usePhysics); // Types: 'cube', 'sphere', 'cone', 'torus'
-2. World.addCustom(geometry, material, name, usePhysics);
-3. World.importModule(modulePath, alias); // Async dynamic imports
-4. Utils.isHyper() -> True in Bloom/Glow mode
-5. AudioSys.playTone(freq, type='sine', dur=0.5);
-6. Physics.addBody(mesh, shapeType);
-7. Engine.setRenderMode(idx); // 0-4: Threshold, 1-Bit, Terminal, SMPTE, Hyper
-8. State.objects;
+API:
+- World.createObject(type, name, colorHex, usePhysics) — cube|sphere|cone|torus
+- World.addCustom(geometry, material, name, usePhysics)
+- Engine.setRenderMode(0-4)
+- State.objects, State.env (time, fog, water, atmosphere)
 
-COMPATIBILITY RULES:
-- Use THREE.Scene.add(group) for hierarchies; add lights and fog for atmosphere.
-- Use addCustom for procedural geometry; import GLTFLoader for models.
-- Custom materials: THREE.MeshPhysicalMaterial with roughness/metalness/emissive for neon.
-- Physics: usePhysics=true for interactive objects.
-- Always wrap code in an IIFE: (() => { World.clearWorld(); /* code */ })();
+RULES:
+- Prefer extending the CURRENT SCENE unless user asks to clear.
+- Wrap new scripts in an IIFE when replacing the whole scene.
 `,
 
     buildPrompt: function () {
@@ -47,38 +40,38 @@ COMPATIBILITY RULES:
         const style = document.getElementById('prompt-style').value;
         const resolution = document.getElementById('prompt-res').value;
         const colorScheme = document.getElementById('prompt-color').value;
+        const useScene = document.getElementById('prompt-use-scene')?.checked;
 
         const instructions = [];
 
-        if (complexity === 'simple') instructions.push('Create a static scene layout with basic objects.');
-        else if (complexity === 'anim') instructions.push('Animate objects using loops, userData.isRotating, or physics simulations.');
-        else if (complexity === 'algo') instructions.push('Use procedural generation or advanced physics for emergent scenes.');
+        if (complexity === 'simple') instructions.push('Create a static scene layout.');
+        else if (complexity === 'anim') instructions.push('Add animation via userData.isRotating or physics.');
+        else if (complexity === 'algo') instructions.push('Use procedural/math-based generation.');
 
-        if (resolution === 'low') instructions.push('OPTIMIZATION: Use low-poly geometry (16 segments or less).');
-        else if (resolution === 'high') instructions.push('QUALITY: Use high-poly geometry (64 segments) for smooth details.');
-        else instructions.push('Use standard geometry settings for balanced visuals.');
+        if (resolution === 'low') instructions.push('Use low-poly geometry.');
+        else if (resolution === 'high') instructions.push('Use high-poly smooth geometry.');
+        else instructions.push('Balanced geometry.');
 
-        if (colorScheme === 'neon') instructions.push('COLORS: High-saturation neon with emissive intensity > 1.0.');
-        else if (colorScheme === 'mono') instructions.push('COLORS: Black, white, and grays only.');
-        else if (colorScheme === 'adaptive') instructions.push('COLORS: Bright contrasting colors that work in all render modes.');
-        else if (colorScheme === 'realistic') instructions.push('COLORS: Natural earth tones with PBR materials.');
+        if (colorScheme === 'neon') instructions.push('Neon colors with emissive glow.');
+        else if (colorScheme === 'mono') instructions.push('Monochrome palette.');
+        else if (colorScheme === 'adaptive') instructions.push('High contrast colors for all render modes.');
+        else if (colorScheme === 'realistic') instructions.push('PBR natural materials.');
 
-        instructions.push('Combine objects into groups, add DirectionalLights and fog for depth.');
-        instructions.push('Optionally use AudioSys.playTone on spawn or collision events.');
+        const sceneBlock = useScene ? `\n\n${getSceneContext()}\n\nIMPORTANT: Build on the current scene state above. Only call World.clearWorld() if the user explicitly wants a fresh start.` : '';
 
         return {
             idea,
             prompt: `
 ${this.apiContext}
+${sceneBlock}
 
 TASK:
-Write a script to generate: "${idea}" – a beautiful, immersive 3D experience in Threshold's sandbox.
+${idea ? `Extend/improve the scene: "${idea}"` : 'Improve the current live scene based on the context above.'}
 
 SPECIFICATIONS:
 ${instructions.map((i) => `- ${i}`).join('\n')}
 
-${style === 'spec' ? 'Provide a logic plan first, then the code.' : 'Provide the code immediately.'}
-Ensure code is wrapped in an IIFE and starts with World.clearWorld().
+${style === 'spec' ? 'Provide a brief plan, then code.' : 'Provide code immediately.'}
 `.trim()
         };
     },
@@ -104,7 +97,7 @@ Ensure code is wrapped in an IIFE and starts with World.clearWorld().
         grokBtn.textContent = 'GENERATING...';
 
         try {
-            const script = await generateScript(prompt, idea || 'abstract generative scene');
+            const script = await generateScript(prompt, idea || 'extend current scene');
             outputBox.value = script;
             flash.textContent = 'SCRIPT GENERATED';
             flash.style.opacity = 1;
