@@ -23,6 +23,7 @@ import { Permissions } from '../shared/permissions.js';
 import { SimMode } from '../shared/simMode.js';
 import { initPanelDrag, ensurePanelVisible } from '../shared/panelDrag.js';
 import { ViewPrefs } from '../shared/viewPrefs.js';
+import { SceneDock } from '../shared/sceneDock.js';
 
 const IS_TOUCH_DEVICE = window.matchMedia('(pointer: coarse)').matches;
 
@@ -980,6 +981,14 @@ const UI = {
         document.getElementById('btn-host-pause')?.addEventListener('click', () => UI.togglePause());
         document.getElementById('btn-env-toggle')?.addEventListener('click', () => UI.toggleEnvPanel());
         document.getElementById('btn-env-close')?.addEventListener('click', () => UI.setEnvPanelVisible(false));
+        document.getElementById('btn-toolbar-more')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('toolbar-more-menu')?.classList.toggle('open');
+        });
+        document.addEventListener('click', () => {
+            document.getElementById('toolbar-more-menu')?.classList.remove('open');
+        });
+        document.getElementById('btn-load-model')?.addEventListener('click', () => UI.loadPlayerModel());
 
         document.querySelectorAll('.insp-tab').forEach((tab) => {
             tab.addEventListener('click', () => UI.switchInspTab(tab.dataset.inspTab));
@@ -1069,6 +1078,7 @@ const UI = {
         UI.updateControlMode();
         UI.updateSimMode();
         UI.initViewToggles();
+        SceneDock.init();
         initPanelDrag();
     },
     updateModeDisplay: function (idx) {
@@ -1079,22 +1089,17 @@ const UI = {
         if (State.selectedObject === obj) return;
         State.selectedObject = obj;
         if (obj.userData?.isPlayer) {
-            document.getElementById('inspector').style.display = 'none';
-            if (SimMode.isPlay()) {
-                document.getElementById('player-skin-panel').style.display = 'block';
-                ensurePanelVisible('#player-skin-panel');
-            }
+            if (SimMode.isPlay()) SceneDock.openTab('skin');
+            else SceneDock.closeTab();
             Engine.transformControl.detach();
             return;
         }
-        document.getElementById('player-skin-panel').style.display = 'none';
         if (!SimMode.canEditObject(obj)) {
             UI.status('PLAY mode — world locked. Pause to edit objects.');
             Engine.transformControl.detach();
             return;
         }
-        document.getElementById('inspector').style.display = 'block';
-        ensurePanelVisible('#inspector');
+        SceneDock.openTab('inspect');
         this.loadInspectorFromObject(obj);
         document.getElementById('btn-lock').innerText = obj.userData.locked ? 'LOCKED' : 'UNLOCK';
         if (!obj.userData.locked && SimMode.isEdit()) Engine.transformControl.attach(obj);
@@ -1103,12 +1108,10 @@ const UI = {
     deselectObject: function () {
         State.selectedObject = null;
         Engine.transformControl.detach();
-        document.getElementById('inspector').style.display = 'none';
         if (SimMode.isPlay() && SimMode.canEditPlayerSkin()) {
-            document.getElementById('player-skin-panel').style.display = 'block';
-            ensurePanelVisible('#player-skin-panel');
+            SceneDock.openTab('skin');
         } else {
-            document.getElementById('player-skin-panel').style.display = 'none';
+            SceneDock.closeTab();
         }
     },
     switchInspTab: function (tab) {
@@ -1177,6 +1180,10 @@ const UI = {
     },
     reloadPlayerSkin: function () {
         if (!PlayerController.spawned) { this.status('Spawn a player first'); return; }
+        if (PlayerController.group?.userData?.isGltf) {
+            this.status('GLTF model active — colors apply to procedural mesh only');
+            return;
+        }
         const bodyHex = parseInt(document.getElementById('skin-body-color').value.replace('#', ''), 16);
         const headHex = parseInt(document.getElementById('skin-head-color').value.replace('#', ''), 16);
         const rough = parseFloat(document.getElementById('skin-rough').value);
@@ -1201,14 +1208,11 @@ const UI = {
         if (layer) layer.classList.toggle('play-mode', !edit);
         document.body.classList.toggle('play-mode', !edit);
         if (!edit) {
-            document.getElementById('inspector').style.display = 'none';
             Engine.transformControl.detach();
-            if (SimMode.canEditPlayerSkin()) {
-                document.getElementById('player-skin-panel').style.display = 'block';
-                ensurePanelVisible('#player-skin-panel');
-            }
+            SceneDock.closeTab();
+            if (SimMode.canEditPlayerSkin()) SceneDock.openTab('skin');
         } else {
-            document.getElementById('player-skin-panel').style.display = 'none';
+            SceneDock.closeTab();
         }
     },
     initViewToggles: function () {
@@ -1242,18 +1246,29 @@ const UI = {
         btn.title = on ? 'Hide on-screen touch controls' : 'Show on-screen touch controls';
     },
     toggleEnvPanel: function () {
-        const panel = document.getElementById('env-panel');
-        if (!panel) return;
-        const willShow = panel.classList.contains('hidden');
-        panel.classList.toggle('hidden');
-        panel.classList.toggle('mobile-open');
-        if (willShow) ensurePanelVisible('#env-panel');
+        SceneDock.toggleTab('env');
+        document.getElementById('env-panel')?.classList.toggle('mobile-open', true);
     },
     setEnvPanelVisible: function (visible) {
-        const panel = document.getElementById('env-panel');
-        if (!panel) return;
-        panel.classList.toggle('hidden', !visible);
-        if (visible) ensurePanelVisible('#env-panel');
+        if (visible) SceneDock.openTab('env');
+        else SceneDock.closeTab();
+    },
+    loadPlayerModel: async function () {
+        const url = document.getElementById('skin-model-url')?.value?.trim();
+        if (!url) {
+            this.status('Enter a GLTF/GLB URL first');
+            return;
+        }
+        if (!PlayerController.spawned) {
+            this.status('Spawn as player first');
+            return;
+        }
+        try {
+            await PlayerController.applyModelUrl(url);
+            this.status('GLTF model loaded');
+        } catch (e) {
+            this.status('Model load failed: ' + e.message);
+        }
     },
     toggleLock: function () {
         if (!State.selectedObject) return;

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 function limbGroup(mesh, pivotY, offsetX = 0) {
     const g = new THREE.Group();
@@ -79,27 +80,99 @@ export const HumanMesh = {
         return group;
     },
 
-    updateWalk(group, horizontalSpeed, dt = 0.016) {
-        const parts = group?.userData?.humanParts;
+    updateWalk(group, horizontalSpeed, dt = 0.016, sprinting = false) {
+        if (!group) return;
+
+        if (group.userData.isGltf && group.userData.mixer) {
+            const clip = group.userData.mixerClip;
+            if (clip) {
+                const moving = horizontalSpeed > 0.25;
+                clip.paused = !moving;
+                clip.timeScale = sprinting ? 1.8 : Math.max(0.6, horizontalSpeed / 3.5);
+            }
+            group.userData.mixer.update(dt);
+            return;
+        }
+
+        const parts = group.userData?.humanParts;
         if (!parts) return;
 
         const moving = horizontalSpeed > 0.25;
+        group.userData.idlePhase = (group.userData.idlePhase || 0) + dt;
+
         if (!moving) {
             parts.legL.rotation.x = THREE.MathUtils.lerp(parts.legL.rotation.x, 0, 0.2);
             parts.legR.rotation.x = THREE.MathUtils.lerp(parts.legR.rotation.x, 0, 0.2);
             parts.armL.rotation.x = THREE.MathUtils.lerp(parts.armL.rotation.x, 0, 0.2);
             parts.armR.rotation.x = THREE.MathUtils.lerp(parts.armR.rotation.x, 0, 0.2);
+            parts.torso.rotation.y = THREE.MathUtils.lerp(parts.torso.rotation.y, 0, 0.15);
+            const bob = Math.sin(group.userData.idlePhase * 2.2) * 0.015;
+            parts.head.position.y = 1.78 + bob;
+            parts.hairCap.position.y = 1.84 + bob;
             group.userData.walkPhase = 0;
             return;
         }
 
-        group.userData.walkPhase += dt * 9 * Math.min(horizontalSpeed / 3.5, 1.6);
+        const pace = sprinting ? 12 : 9;
+        const amp = sprinting ? 0.78 : 0.62;
+        group.userData.walkPhase += dt * pace * Math.min(horizontalSpeed / 3.5, 1.8);
         const s = Math.sin(group.userData.walkPhase);
-        parts.legL.rotation.x = s * 0.62;
-        parts.legR.rotation.x = -s * 0.62;
-        parts.armL.rotation.x = -s * 0.38;
-        parts.armR.rotation.x = s * 0.38;
-        parts.torso.rotation.y = Math.sin(group.userData.walkPhase * 0.5) * 0.04;
+        parts.legL.rotation.x = s * amp;
+        parts.legR.rotation.x = -s * amp;
+        parts.armL.rotation.x = -s * (amp - 0.2);
+        parts.armR.rotation.x = s * (amp - 0.2);
+        parts.torso.rotation.y = Math.sin(group.userData.walkPhase * 0.5) * (sprinting ? 0.07 : 0.04);
+        parts.head.position.y = 1.78;
+        parts.hairCap.position.y = 1.84;
+    },
+
+    async loadGltf(group, url) {
+        const loader = new GLTFLoader();
+        const gltf = await loader.loadAsync(url);
+
+        if (group.userData.mixer) {
+            group.userData.mixer.stopAllAction();
+        }
+
+        while (group.children.length) {
+            const child = group.children[0];
+            group.remove(child);
+            child.traverse?.((c) => {
+                if (c.geometry) c.geometry.dispose?.();
+                if (c.material) {
+                    if (Array.isArray(c.material)) c.material.forEach((m) => m.dispose?.());
+                    else c.material.dispose?.();
+                }
+            });
+        }
+
+        const model = gltf.scene;
+        model.traverse((c) => { if (c.isMesh) c.castShadow = true; });
+
+        const box = new THREE.Box3().setFromObject(model);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+        if (size.y > 0) {
+            const scale = 1.75 / size.y;
+            model.scale.setScalar(scale);
+        }
+        box.setFromObject(model);
+        model.position.y -= box.min.y;
+
+        group.add(model);
+        group.userData.humanParts = null;
+        group.userData.isGltf = true;
+        group.userData.modelUrl = url;
+
+        if (gltf.animations?.length) {
+            const mixer = new THREE.AnimationMixer(model);
+            const clip = mixer.clipAction(gltf.animations[0]);
+            clip.play();
+            group.userData.mixer = mixer;
+            group.userData.mixerClip = clip;
+        }
+
+        return group;
     },
 
     applySkin(group, { bodyColor = 0x3366cc, headColor = 0xffcc99, pantsColor = 0x1a2844, roughness = 0.7 } = {}) {

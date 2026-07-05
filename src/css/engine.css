@@ -81,10 +81,99 @@ button {
 }
 
 #env-panel {
-    position: absolute;
-    top: 70px;
-    left: 20px;
-    width: 240px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#scene-dock {
+    position: fixed;
+    top: calc(var(--nav-height, 50px) + 12px);
+    right: 0;
+    z-index: 18;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: stretch;
+    pointer-events: none;
+    max-height: calc(100dvh - var(--nav-height, 50px) - 24px);
+}
+
+.scene-dock .dock-tab-bar,
+.scene-dock .dock-panels {
+    pointer-events: auto;
+}
+
+.scene-dock.collapsed .dock-panels {
+    display: none;
+}
+
+.scene-dock.expanded .dock-panels {
+    display: flex;
+    flex-direction: column;
+    width: 268px;
+    max-height: inherit;
+    overflow: hidden;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-right: none;
+}
+
+.dock-tab-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px 4px;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+}
+
+.dock-tab {
+    padding: 8px 6px !important;
+    font-size: 0.55rem !important;
+    min-width: 42px;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    letter-spacing: 1px;
+}
+
+.dock-tab.active {
+    border-color: var(--accent-color) !important;
+    color: var(--accent-color) !important;
+}
+
+.dock-collapse {
+    padding: 6px 4px !important;
+    font-size: 0.65rem !important;
+    opacity: 0.7;
+    border: none !important;
+    background: transparent !important;
+}
+
+.dock-panel {
+    flex: 1;
+    overflow-y: auto;
+    border: none !important;
+    margin: 0 !important;
+    max-height: calc(100dvh - var(--nav-height, 50px) - 40px);
+}
+
+.toolbar-more-menu {
+    display: contents;
+}
+
+.toolbar-more-trigger {
+    display: none;
+}
+
+.toolbar-actions {
+    position: relative;
+}
+
+.toolbar-more-menu .btn-sm,
+.toolbar-more-menu .edit-only {
+    width: 100%;
+    text-align: left;
 }
 
 #env-panel select,
@@ -110,11 +199,7 @@ button {
 
 /* Inspector Sidebar */
 #inspector {
-    position: absolute;
-    top: 70px;
-    right: 20px;
-    width: 260px;
-    display: none;
+    width: 100%;
 }
 
 .prop-row {

@@ -229,9 +229,7 @@ const PANEL_CONFIG = [
     { selector: '#bindings-sheet', defaultSize: { w: 440, h: 520 } },
     { selector: '#host-panel-sheet', defaultSize: { w: 400, h: 480 } },
     { selector: '#world-sheet', defaultSize: { w: 420, h: 520 } },
-    { selector: '#env-panel', defaultSize: { w: 260, h: 320, anchor: 'top-left' } },
-    { selector: '#inspector', defaultSize: { w: 280, h: 420, anchor: 'top-right' } },
-    { selector: '#player-skin-panel', defaultSize: { w: 240, h: 300, anchor: 'bottom-right' } },
+
     { selector: '#json-modal', defaultSize: { w: 600, h: 500 } },
 ];
 

@@ -15,6 +15,10 @@ export function initCompiler() {
     document.getElementById('btn-comp-clear').addEventListener('click', () => Compiler.clear());
     document.getElementById('btn-comp-save-script').addEventListener('click', () => Compiler.saveScript());
     document.getElementById('btn-comp-save-project')?.addEventListener('click', () => Compiler.saveProject());
+    document.getElementById('btn-comp-load-project-code')?.addEventListener('click', () => {
+        const id = document.getElementById('comp-project-code')?.value?.trim();
+        if (id) Compiler.loadProject(id, false);
+    });
     document.getElementById('project-vault-list')?.addEventListener('click', (e) => {
         const loadBtn = e.target.closest('[data-project-load]');
         const worldBtn = e.target.closest('[data-project-world]');
@@ -42,6 +46,7 @@ export function initCompiler() {
 
     Compiler.renderLibrary();
     Compiler.renderProjectList();
+    Compiler.updateCloudHint();
     Compiler.syncHostDisplay();
     window.Compiler = Compiler;
 }
@@ -131,7 +136,8 @@ const Compiler = {
             const record = await ProjectVault.saveProject(name);
             document.getElementById('comp-project-name').value = record.name;
             this.renderProjectList();
-            this.statusEl.textContent = `SAVED ${record.id}`;
+            this.updateCloudHint();
+            this.statusEl.textContent = `SAVED ${record.id}${record.cloud ? ' ☁' : ''}`;
             this.statusEl.style.opacity = 1;
             setTimeout(() => { this.statusEl.style.opacity = 0; }, 2500);
         } catch (e) {
@@ -149,7 +155,7 @@ const Compiler = {
         }
         list.innerHTML = projects.map((p) => `
             <div class="project-vault-item">
-                <span><strong>${p.name}</strong> <code>${p.id}</code></span>
+                <span><strong>${p.name}</strong> <code>${p.id}</code>${p.cloud ? ' ☁' : ''}</span>
                 <div class="project-vault-actions">
                     <button type="button" class="comp-btn" data-project-load="${p.id}">SCRIPTS</button>
                     <button type="button" class="comp-btn" data-project-world="${p.id}">+ WORLD</button>
@@ -183,6 +189,11 @@ const Compiler = {
         if (!confirm('Delete this project from vault?')) return;
         await ProjectVault.deleteProject(id);
         this.renderProjectList();
+    },
+
+    updateCloudHint() {
+        const el = document.getElementById('project-cloud-hint');
+        if (el) el.textContent = ProjectVault.getCloudHint();
     },
 
     saveScript() {

@@ -29,13 +29,7 @@
         display: block !important;
     }
 
-    #env-panel {
-        display: none;
-    }
 
-    #env-panel.mobile-open {
-        display: block;
-    }
     #app-nav {
         padding: 0 10px;
         flex-wrap: wrap;
@@ -73,6 +67,38 @@
     .toolbar-actions .btn-sm {
         padding: 3px 6px !important;
         font-size: 0.55rem !important;
+    }
+
+    .toolbar-more-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        right: 0;
+        min-width: 140px;
+        background: var(--panel-bg);
+        border: 1px solid var(--border-color);
+        padding: 6px;
+        gap: 4px;
+        z-index: 30;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .toolbar-more-menu.open {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .toolbar-more-trigger {
+        display: inline-block !important;
+    }
+
+    #scene-dock {
+        top: calc(var(--nav-height, 50px) + 6px);
+        max-height: calc(100dvh - var(--nav-height, 50px) - 12px);
+    }
+
+    .scene-dock.expanded .dock-panels {
+        width: min(268px, 72vw);
     }
 
     #nav-toggle {
@@ -113,10 +139,7 @@
         display: none;
     }
 
-    .float-panel#env-panel,
-    .float-panel#inspector {
-        max-width: calc(100vw - 16px);
-    }
+
 
     #command-bar {
         margin: 10px;

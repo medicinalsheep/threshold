@@ -116,7 +116,8 @@ export const PlayerController = {
         if (this._lastFacing !== undefined) this.group.rotation.y = this._lastFacing;
 
         const speed = Math.hypot(this.body.velocity.x, this.body.velocity.z);
-        HumanMesh.updateWalk(this.group, speed);
+        const sprinting = window.Controls?.isAction?.('sprint') && speed > 0.5;
+        HumanMesh.updateWalk(this.group, speed, 0.016, sprinting);
 
         const forward = new THREE.Vector3();
         camera.getWorldDirection(forward);
@@ -141,8 +142,13 @@ export const PlayerController = {
     },
 
     applySkin({ bodyColor = 0x3366cc, headColor = 0xffcc99, roughness = 0.7 } = {}) {
-        if (!this.group) return;
+        if (!this.group || this.group.userData.isGltf) return;
         HumanMesh.applySkin(this.group, { bodyColor, headColor, roughness });
+    },
+
+    async applyModelUrl(url) {
+        if (!this.group) return;
+        await HumanMesh.loadGltf(this.group, url);
     },
 
     applyState(data) {

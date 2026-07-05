@@ -1,4 +1,5 @@
 import { Sync } from './sync.js';
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config.js';
 
 const DB_NAME = 'threshold_projects_v1';
 const STORE = 'projects';
@@ -38,6 +39,8 @@ function setIndex(list) {
 }
 
 export const ProjectVault = {
+    cloudEnabled: Boolean(SUPABASE_URL && SUPABASE_ANON_KEY),
+
     captureCurrent() {
         return {
             scriptInput: document.getElementById('comp-input')?.value || '',
@@ -65,21 +68,47 @@ export const ProjectVault = {
             tx.onerror = () => reject(tx.error);
         });
 
+        let cloud = false;
+        if (this.cloudEnabled) {
+            try {
+                await this._cloudUpsert(record);
+                cloud = true;
+            } catch (e) {
+                console.warn('Cloud project save failed:', e);
+            }
+        }
+
         const index = getIndex().filter((e) => e.id !== id);
-        index.unshift({ id, name: record.name, savedAt: record.savedAt });
+        index.unshift({ id, name: record.name, savedAt: record.savedAt, cloud });
         setIndex(index);
-        return record;
+        return { ...record, cloud };
     },
 
     async loadProject(id) {
+        const trimmed = String(id || '').trim().toUpperCase();
+        if (!trimmed) throw new Error('Enter a project ID');
+
         const db = await openDb();
-        const record = await new Promise((resolve, reject) => {
+        let record = await new Promise((resolve, reject) => {
             const tx = db.transaction(STORE, 'readonly');
-            const req = tx.objectStore(STORE).get(id);
+            const req = tx.objectStore(STORE).get(trimmed);
             req.onsuccess = () => resolve(req.result);
             req.onerror = () => reject(req.error);
         });
-        if (!record) throw new Error('Project not found');
+
+        if (!record && this.cloudEnabled) {
+            record = await this._cloudLoad(trimmed);
+            if (record) {
+                await new Promise((resolve, reject) => {
+                    const tx = db.transaction(STORE, 'readwrite');
+                    tx.objectStore(STORE).put(record);
+                    tx.oncomplete = resolve;
+                    tx.onerror = () => reject(tx.error);
+                });
+            }
+        }
+
+        if (!record) throw new Error('Project not found on this device or cloud');
         return record;
     },
 
@@ -109,6 +138,56 @@ export const ProjectVault = {
         }
         window.Compiler?.checkReady?.();
     },
+
+    getCloudHint() {
+        return this.cloudEnabled
+            ? 'Cloud sync enabled — project IDs work across devices.'
+            : 'Local vault only — set Supabase env for cloud project sync.';
+    },
+
+    async _cloudUpsert(record) {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/projects`, {
+            method: 'POST',
+            headers: {
+                apikey: SUPABASE_ANON_KEY,
+                Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json',
+                Prefer: 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify({
+                id: record.id,
+                name: record.name,
+                script_input: record.scriptInput || '',
+                script_output: record.scriptOutput || '',
+                running_code: record.runningCode || '',
+                world: record.world || null,
+                updated_at: new Date().toISOString()
+            })
+        });
+        if (!res.ok) throw new Error(await res.text());
+    },
+
+    async _cloudLoad(id) {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/projects?id=eq.${id}&select=*`, {
+            headers: {
+                apikey: SUPABASE_ANON_KEY,
+                Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+            }
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const rows = await res.json();
+        const row = rows[0];
+        if (!row) return null;
+        return {
+            id: row.id,
+            name: row.name,
+            savedAt: new Date(row.updated_at).getTime(),
+            scriptInput: row.script_input,
+            scriptOutput: row.script_output,
+            runningCode: row.running_code,
+            world: row.world
+        };
+    }
 };
 
 window.ProjectVault = ProjectVault;

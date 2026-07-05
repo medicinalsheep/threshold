@@ -100,16 +100,19 @@
                     </div>
                 </div>
                 <div class="toolbar-actions">
-                    <span id="sim-mode-badge" class="sim-mode-badge edit">EDIT</span>
-                    <button id="btn-env-toggle" class="btn-sm" title="Environment">ENV</button>
-                    <button id="btn-control-mode" class="btn-sm" title="Walk / Fly">FLY</button>
-                    <button id="btn-bindings" class="btn-sm" title="Key bindings">KEYS</button>
-                    <button id="btn-save-world" class="btn-sm" title="Save persistent world">SAVE WORLD</button>
-                    <button id="btn-load-world" class="btn-sm" title="Load saved world">WORLDS</button>
-                    <button id="btn-save" class="edit-only">EXPORT</button>
-                    <button id="btn-load" class="edit-only">IMPORT</button>
-                    <button id="btn-console-toggle" class="btn-sm" type="button" title="Toggle command console">CON</button>
-                    <button id="btn-touch-toggle" class="btn-sm mobile-only" type="button" title="Toggle on-screen touch controls">TOUCH</button>
+                    <span id="sim-mode-badge" class="sim-mode-badge edit toolbar-keep">EDIT</span>
+                    <button id="btn-control-mode" class="btn-sm toolbar-keep" title="Walk / Fly">FLY</button>
+                    <button id="btn-bindings" class="btn-sm toolbar-keep" title="Key bindings">KEYS</button>
+                    <button id="btn-toolbar-more" class="btn-sm toolbar-more-trigger" type="button" title="More tools">MORE ▾</button>
+                    <div id="toolbar-more-menu" class="toolbar-more-menu">
+                        <button id="btn-env-toggle" class="btn-sm" title="Environment panel">ENV</button>
+                        <button id="btn-save-world" class="btn-sm" title="Save persistent world">SAVE WORLD</button>
+                        <button id="btn-load-world" class="btn-sm" title="Load saved world">WORLDS</button>
+                        <button id="btn-save" class="edit-only btn-sm">EXPORT</button>
+                        <button id="btn-load" class="edit-only btn-sm">IMPORT</button>
+                        <button id="btn-console-toggle" class="btn-sm" type="button" title="Toggle command console">CON</button>
+                        <button id="btn-touch-toggle" class="btn-sm mobile-only" type="button" title="Toggle touch controls">TOUCH</button>
+                    </div>
                 </div>
             </div>
 
@@ -127,9 +130,19 @@
                 <button type="button" class="touch-btn touch-btn-action" data-touch-btn="action" aria-label="Interact">ACT</button>
             </div>
 
-            <!-- Environment Panel (hideable) -->
-            <div id="env-panel" class="panel hidden">
-                <div class="prop-row panel-drag-handle">
+            <div id="controls-hint">WASD fly · QE up/down · right-click menu</div>
+
+            <!-- Right dock: ENV / EDIT / SKIN -->
+            <div id="scene-dock" class="scene-dock collapsed">
+                <div class="dock-tab-bar">
+                    <button type="button" class="dock-tab" data-dock-tab="env" title="Environment">ENV</button>
+                    <button type="button" class="dock-tab" data-dock-tab="inspect" title="Edit object">EDIT</button>
+                    <button type="button" class="dock-tab" data-dock-tab="skin" title="Player skin">SKIN</button>
+                    <button type="button" id="dock-collapse" class="dock-collapse" title="Collapse dock">◀</button>
+                </div>
+                <div class="dock-panels">
+            <div id="env-panel" class="panel dock-panel hidden" data-dock-panel="env">
+                <div class="prop-row">
                     <h3 style="margin:0;">ENVIRONMENT</h3>
                     <button id="btn-env-close" class="btn-sm" type="button">✕</button>
                 </div>
@@ -167,11 +180,8 @@
                 </div>
             </div>
 
-            <div id="controls-hint">WASD fly · QE up/down · right-click menu</div>
-
-            <!-- Inspector — EDIT mode object panels -->
-            <div id="inspector" class="panel">
-                <div class="prop-row panel-drag-handle">
+            <div id="inspector" class="panel dock-panel" data-dock-panel="inspect" style="display:none;">
+                <div class="prop-row">
                     <h3 style="margin:0;">EDIT OBJECT</h3>
                     <button id="btn-lock" style="font-size:0.6rem;">UNLOCK</button>
                 </div>
@@ -212,15 +222,19 @@
                 </div>
             </div>
 
-            <!-- Player skin panel — PLAY mode -->
-            <div id="player-skin-panel" class="panel">
-                <div class="prop-row panel-drag-handle"><h3 style="margin:0;">PLAYER SKIN</h3></div>
+            <div id="player-skin-panel" class="panel dock-panel" data-dock-panel="skin" style="display:none;">
+                <div class="prop-row"><h3 style="margin:0;">PLAYER SKIN</h3></div>
                 <p class="insert-hint" style="margin:0 0 8px;">PLAY mode: edit your avatar only. World stays locked.</p>
                 <div class="prop-row"><label>Body</label><input type="color" id="skin-body-color" value="#3366cc"></div>
                 <div class="prop-row"><label>Skin</label><input type="color" id="skin-head-color" value="#ffcc99"></div>
                 <div class="prop-row"><label>Shine</label><input type="range" id="skin-rough" min="0" max="1" step="0.05" value="0.7"></div>
+                <label class="insert-hint">GLTF model URL (optional)</label>
+                <input type="url" id="skin-model-url" class="insert-input" placeholder="https://.../avatar.glb" style="margin-bottom:6px;">
+                <button id="btn-load-model" type="button" style="width:100%;margin-bottom:6px;">LOAD GLTF MODEL</button>
                 <button id="btn-reload-skin" type="button" style="width:100%;margin-top:6px;">RELOAD SKIN</button>
                 <button id="btn-player-code" type="button" class="edit-only" style="width:100%;margin-top:6px;">EDIT PLAYER CODE</button>
+            </div>
+                </div>
             </div>
 
             <!-- Console & Status -->
@@ -359,7 +373,10 @@
                     <p style="font-size:0.65rem;color:#888;margin:4px 0 8px;">Save scripts + live world together. Build later on this device.</p>
                     <input type="text" id="comp-project-name" class="comp-textarea" style="padding:5px; height:auto; margin-bottom:5px;" placeholder="project name...">
                     <button id="btn-comp-save-project" class="comp-btn" style="width:100%; border-color:var(--accent-color); color:var(--accent-color); margin-bottom:8px;">SAVE PROJECT</button>
+                    <input type="text" id="comp-project-code" class="comp-textarea" style="padding:5px; height:auto; margin-bottom:5px;" placeholder="Load by project ID..." maxlength="8">
+                    <button id="btn-comp-load-project-code" class="comp-btn" style="width:100%; margin-bottom:8px;">LOAD PROJECT ID</button>
                     <div id="project-vault-list" class="project-vault-list"></div>
+                    <p id="project-cloud-hint" class="ref-summary" style="margin:6px 0 0;"></p>
                 </div>
 
                 <!-- Save Script Controls -->
