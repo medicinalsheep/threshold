@@ -58,8 +58,18 @@ export function engineClipForVehicle(vehicleId) {
     return ENGINE_MAP[vehicleId] || ENGINE_MAP.tc_run;
 }
 
+const METAL_HIT_POOL = ['starter_metal_hit', 'starter_metal_hit_user'];
+
 export function playStarterSfx(clipId, volume = 0.85) {
     window.AudioSys?.playClip?.(clipId, volume);
+}
+
+export function playMetalImpact(volume = 0.68) {
+    const clipId = METAL_HIT_POOL[Math.floor(Math.random() * METAL_HIT_POOL.length)];
+    window.AudioSys?.playClipVariation?.(clipId, {
+        volume,
+        playbackRate: 0.92 + Math.random() * 0.14,
+    });
 }
 
 function findObjectRoot(obj) {
@@ -97,7 +107,10 @@ export function fireStarterGun() {
     if (!Engine?.camera || !THREE || State?.isPaused) return false;
     if (window.Controls?.isHolstered?.()) return false;
 
-    playStarterSfx('starter_gun_pistol', 0.78);
+    window.AudioSys?.playClipVariation?.('starter_gun_pistol', {
+        volume: 0.72 + Math.random() * 0.12,
+        playbackRate: 0.96 + Math.random() * 0.08,
+    });
 
     const origin = new THREE.Vector3();
     const dir = new THREE.Vector3();
@@ -123,7 +136,7 @@ export function fireStarterGun() {
             return true;
         }
         if (id === 'gun_target' || id === 'starter_crate') {
-            playStarterSfx('starter_metal_hit', 0.68);
+            playMetalImpact(0.68);
             return true;
         }
     }
@@ -165,5 +178,6 @@ window.StarterSfx = {
     wireStarterVehicleEngines,
     engineClipForVehicle,
     playStarterSfx,
+    playMetalImpact,
     fireStarterGun,
 };

@@ -1,0 +1,118 @@
+{
+  "format": "threshold-recorded-sound-sources",
+  "version": 1,
+  "sourceFile": "sounds/import/recordings/phone-link-new-recording.m4a",
+  "sourcePath": "C:\\Users\\White\\Downloads\\Phone Link\\New Recording.m4a",
+  "license": "Original — user field recording (Threshold)",
+  "analyzedSec": 74.52,
+  "segments": [
+    {
+      "id": "rec_birds_opening",
+      "clipId": "starter_rec_birds",
+      "name": "Recorded — Birds (opening)",
+      "tag": "birds",
+      "outFile": "rec_birds",
+      "trimSec": { "start": 0.12, "duration": 11.5 },
+      "fadeSec": 0.8,
+      "gain": 3.2,
+      "category": "ambient",
+      "dynamic": { "tag": "birds", "loop": true, "layer": "wildlife" }
+    },
+    {
+      "id": "rec_plastic",
+      "clipId": "starter_rec_plastic",
+      "name": "Recorded — Plastic rustle",
+      "tag": "plastic",
+      "outFile": "rec_plastic",
+      "trimSec": { "start": 28.75, "duration": 1.85 },
+      "fadeSec": 0.12,
+      "gain": 1.35,
+      "category": "foley",
+      "dynamic": { "tag": "plastic", "oneshot": true, "pool": "prop" }
+    },
+    {
+      "id": "rec_papers",
+      "clipId": "starter_rec_papers",
+      "name": "Recorded — Papers shuffle",
+      "tag": "papers",
+      "outFile": "rec_papers",
+      "trimSec": { "start": 37.95, "duration": 3.25 },
+      "fadeSec": 0.15,
+      "gain": 1.5,
+      "category": "foley",
+      "dynamic": { "tag": "papers", "oneshot": true, "pool": "prop" }
+    },
+    {
+      "id": "rec_papers_short",
+      "clipId": "starter_rec_papers_short",
+      "name": "Recorded — Paper flick",
+      "tag": "papers",
+      "outFile": "rec_papers_short",
+      "trimSec": { "start": 40.18, "duration": 0.95 },
+      "fadeSec": 0.08,
+      "gain": 1.4,
+      "category": "foley",
+      "dynamic": { "tag": "papers", "oneshot": true, "pool": "prop" }
+    },
+    {
+      "id": "rec_water_jug",
+      "clipId": "starter_rec_water_jug",
+      "name": "Recorded — Water jug",
+      "tag": "water_jug",
+      "outFile": "rec_water_jug",
+      "trimSec": { "start": 48.18, "duration": 1.05 },
+      "fadeSec": 0.1,
+      "gain": 1.25,
+      "category": "foley",
+      "dynamic": { "tag": "water_jug", "oneshot": true, "pool": "prop" }
+    },
+    {
+      "id": "rec_metal_glass",
+      "clipId": "starter_rec_metal_glass",
+      "name": "Recorded — Metal on glass",
+      "tag": "metal_glass",
+      "outFile": "rec_metal_glass",
+      "trimSec": { "start": 50.62, "duration": 0.95 },
+      "fadeSec": 0.06,
+      "gain": 1.0,
+      "category": "foley",
+      "dynamic": { "tag": "metal_glass", "oneshot": true, "pool": "prop" }
+    },
+    {
+      "id": "rec_metal_glass_2",
+      "clipId": "starter_rec_metal_glass_b",
+      "name": "Recorded — Metal on glass (2)",
+      "tag": "metal_glass",
+      "outFile": "rec_metal_glass_b",
+      "trimSec": { "start": 59.42, "duration": 0.85 },
+      "fadeSec": 0.06,
+      "gain": 1.0,
+      "category": "foley",
+      "dynamic": { "tag": "metal_glass", "oneshot": true, "pool": "prop" }
+    },
+    {
+      "id": "rec_plastic_tap",
+      "clipId": "starter_rec_plastic_tap",
+      "name": "Recorded — Plastic tap",
+      "tag": "plastic",
+      "outFile": "rec_plastic_tap",
+      "trimSec": { "start": 36.42, "duration": 1.15 },
+      "fadeSec": 0.1,
+      "gain": 1.3,
+      "category": "foley",
+      "dynamic": { "tag": "plastic", "oneshot": true, "pool": "prop" }
+    },
+    {
+      "id": "rec_metal_tap",
+      "clipId": "starter_rec_metal_tap",
+      "name": "Recorded — Metal tap",
+      "tag": "metal",
+      "outFile": "rec_metal_tap",
+      "trimSec": { "start": 55.02, "duration": 0.55 },
+      "fadeSec": 0.05,
+      "gain": 1.1,
+      "category": "foley",
+      "dynamic": { "tag": "metal", "oneshot": true, "pool": "prop" }
+    }
+  ]
+}

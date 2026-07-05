@@ -1,0 +1,110 @@
+{
+  "format": "threshold-recorded-sound-tags",
+  "version": 1,
+  "source": "sounds/import/recordings/phone-link-new-recording.m4a",
+  "license": "Original — user field recording (Threshold)",
+  "tags": {
+    "birds": [
+      {
+        "clipId": "starter_rec_birds",
+        "name": "Recorded — Birds (opening)",
+        "trimSec": {
+          "start": 0.12,
+          "duration": 11.5
+        },
+        "oneshot": false,
+        "loop": true
+      }
+    ],
+    "plastic": [
+      {
+        "clipId": "starter_rec_plastic",
+        "name": "Recorded — Plastic rustle",
+        "trimSec": {
+          "start": 28.75,
+          "duration": 1.85
+        },
+        "oneshot": true,
+        "loop": false
+      },
+      {
+        "clipId": "starter_rec_plastic_tap",
+        "name": "Recorded — Plastic tap",
+        "trimSec": {
+          "start": 36.42,
+          "duration": 1.15
+        },
+        "oneshot": true,
+        "loop": false
+      }
+    ],
+    "papers": [
+      {
+        "clipId": "starter_rec_papers",
+        "name": "Recorded — Papers shuffle",
+        "trimSec": {
+          "start": 37.95,
+          "duration": 3.25
+        },
+        "oneshot": true,
+        "loop": false
+      },
+      {
+        "clipId": "starter_rec_papers_short",
+        "name": "Recorded — Paper flick",
+        "trimSec": {
+          "start": 40.18,
+          "duration": 0.95
+        },
+        "oneshot": true,
+        "loop": false
+      }
+    ],
+    "water_jug": [
+      {
+        "clipId": "starter_rec_water_jug",
+        "name": "Recorded — Water jug",
+        "trimSec": {
+          "start": 48.18,
+          "duration": 1.05
+        },
+        "oneshot": true,
+        "loop": false
+      }
+    ],
+    "metal_glass": [
+      {
+        "clipId": "starter_rec_metal_glass",
+        "name": "Recorded — Metal on glass",
+        "trimSec": {
+          "start": 50.62,
+          "duration": 0.95
+        },
+        "oneshot": true,
+        "loop": false
+      },
+      {
+        "clipId": "starter_rec_metal_glass_b",
+        "name": "Recorded — Metal on glass (2)",
+        "trimSec": {
+          "start": 59.42,
+          "duration": 0.85
+        },
+        "oneshot": true,
+        "loop": false
+      }
+    ],
+    "metal": [
+      {
+        "clipId": "starter_rec_metal_tap",
+        "name": "Recorded — Metal tap",
+        "trimSec": {
+          "start": 55.02,
+          "duration": 0.55
+        },
+        "oneshot": true,
+        "loop": false
+      }
+    ]
+  }
+}

@@ -2,7 +2,7 @@
 
 A collaborative 3D creative playground — design worlds, generate code with AI, record sounds, spawn characters, play together, and **ship games** to stores (Play, Windows, Steam) via a guided export walkthrough.
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 6.4.1
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 6.6.0
 
 ---
 
@@ -27,7 +27,7 @@ Lobby → Engine (3D world) ↔ Compiler (code) ↔ PromptGen (AI prompts)
 
 1. **Lobby → SOLO PLAY** — starter scene: platform, surface pads (grass/wood/gravel/asphalt), Alex/Jordan/Sam NPCs.
 2. **Move** — WASD walk, Shift sprint, **V** toggle FPS/TPS, **R** ADS in FPS, **T** Third Eye.
-3. **Try** — **E** interact terminals, **G** shoot glass target, walk different pads for footstep sounds.
+3. **Try** — **LMB** shoot (real SFX), **E** interact, walk pads for recorded footsteps; rain + thunder roll in after intro.
 4. **Tutorial** — 9-step overlay; **MORE → TUTORIAL** to replay.
 5. **EDIT** — pause, drag panels, **+** insert, Texture tab or **INSERT → GLTF** for GIMP/Blender art.
 6. **Hyper** render mode — PBR textures + normal maps on starter meshes.
@@ -98,6 +98,9 @@ Details: [docs/REALISTIC_GAMEPLAY.md](docs/REALISTIC_GAMEPLAY.md)
 | Step | Command | Output |
 |------|---------|--------|
 | Full pack | `npm run assets:pack` | textures + avatars + sounds + WebP + build + bundle + kit |
+| Real weather SFX | `npm run sounds:fetch:ambient` | Mixkit rain/thunder → OGG |
+| Real combat SFX | `npm run sounds:fetch:sfx` | guns, glass, metal, horn, footsteps (Mixkit) |
+| Tag your recording | `npm run sounds:tag:recording` | clip + tag field recordings → starter bundle |
 | Verify | `npm run assets:verify` | smoke test modules, NPCs, SFX, texture budget |
 | GIMP live | `textures:watch` + `dev` | hot-reload on GIMP export |
 | Fork pack | `npm run kit:export` | ~1.4 MB WebP starter kit in `exports/starter-texture-kit/` |

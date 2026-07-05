@@ -1,6 +1,6 @@
 # Threshold documentation index
 
-**Version:** 6.5.0 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 6.6.0 · **Live:** https://medicinalsheep.github.io/threshold/
 
 This page is the **full scope map** — what ships today, what is TC vs starter vs yours, and where to read more.
 
@@ -55,7 +55,7 @@ flowchart TB
 | Clone & develop locally | [GETTING_STARTED.md](GETTING_STARTED.md) | `npm install` → `npm run quickstart` |
 | Realistic action defaults | [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | Lobby → SOLO → walk pads, FPS, ADS |
 | FiveM-style controls | [CONTROLS_FIVEM.md](CONTROLS_FIVEM.md) | LMB/RMB · F vehicle · KEYS menu |
-| Ambient asset queue | [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) | Wind, highway, wildlife roadmap |
+| Ambient + weather | [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) | Real rain/thunder, recorded foley, roadmap |
 | Full asset pipeline | [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | `npm run assets:pack` → `assets:verify` |
 | GIMP textures | [GIMP_TEXTURES.md](GIMP_TEXTURES.md) | `gimp:install` + `textures:watch` + `dev` |
 | Blender avatars | [BLENDER_AVATARS.md](BLENDER_AVATARS.md) | `blender:avatar` |
@@ -73,6 +73,8 @@ flowchart TB
 | **9** | 6.3.0 | GIMP r8 parity, `starter-textures.json` UV tiling, `blender:avatar` |
 | **10** | 6.4.0 | GIMP live SYNC, `kit:export` starter texture pack (~1.4 MB) |
 | **10.1** | 6.4.1 | Doc truth pass, `old/` archive, `quickstart` onboarding |
+| **11** | 6.5.0 | FiveM controls, procedural ambient iteration 1, starter scene props |
+| **12** | 6.6.0 | Real weather + combat SFX, user recording tags, `WeatherSystem` |
 
 Earlier phases (export, TC, circuit, Steam): [NEXT_PHASES.md](NEXT_PHASES.md) · [CHANGELOG.md](CHANGELOG.md)
 
@@ -90,6 +92,9 @@ npm run textures:watch          # GIMP live SYNC (with dev)
 npm run kit:export              # fork-friendly WebP pack
 npm run tc:build                # TC GLBs + textures
 npm run tc:verify               # TC smoke test
+npm run sounds:fetch:sfx        # real guns/impacts/footsteps (Mixkit)
+npm run sounds:fetch:ambient    # real rain/thunder
+npm run sounds:tag:recording    # clip user field recording
 ```
 
 ---

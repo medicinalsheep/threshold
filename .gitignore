@@ -34,6 +34,8 @@ import/*.gltf
 !import/.gitkeep
 !import/threshold_blender_manifest.json
 reference/_dev-seeds/
+sounds/import/**
+!sounds/import/.gitkeep
 video/*.webm
 video/*.mp4
 !video/tc_intro.webm

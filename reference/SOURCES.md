@@ -2,7 +2,25 @@
 
 ## Threshold Child (shipped)
 
-All bundled reference content is **Threshold-original**. See [docs/THRESHOLD_CHILD_ASSETS.md](../docs/THRESHOLD_CHILD_ASSETS.md).
+All bundled reference content is **Threshold-original**, except **weather ambient clips** (v6.6.0+).
+
+### Weather SFX (Mixkit — shipped in starter bundle)
+
+| Clip IDs | Source | License |
+|----------|--------|---------|
+| `starter_rain_*`, `starter_thunder_*`, `starter_wind_gust_real` | [mixkit.co/free-sound-effects](https://mixkit.co/free-sound-effects/) | Mixkit License — free for commercial use |
+
+Fetched via `npm run sounds:fetch:ambient` from `config/ambient-sound-sources.json`. Credits included in EXPORT manifest.
+
+### User field recording (v6.6+)
+
+| Clip IDs | Tags | Source |
+|----------|------|--------|
+| `starter_rec_birds`, `starter_rec_plastic*`, `starter_rec_papers*`, `starter_rec_water_jug`, `starter_rec_metal_*` | birds, plastic, papers, water_jug, metal_glass | User recording — `npm run sounds:tag:recording` |
+
+Tag index: `config/recorded-sound-tags.json`. Play in-scene: `World.playRecordedSfx('metal_glass')`.
+
+See [docs/THRESHOLD_CHILD_ASSETS.md](../docs/THRESHOLD_CHILD_ASSETS.md) for procedural SFX.
 
 ## External material (not shipped)
 

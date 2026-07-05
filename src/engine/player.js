@@ -367,11 +367,11 @@ export const PlayerController = {
             parts.armR.rotation.x = -1.2;
             setTimeout(() => { if (parts?.armR) parts.armR.rotation.x = -0.35; }, 180);
         }
-        window.StarterSfx?.playStarterSfx?.('starter_metal_hit', 0.42);
+        window.StarterSfx?.playMetalImpact?.(0.38);
     },
 
     playReload() {
-        window.StarterSfx?.playStarterSfx?.('starter_gun_rifle', 0.35);
+        window.StarterSfx?.playStarterSfx?.('starter_gun_reload', 0.42);
         window.FpsViewmodel?.playReload?.();
     },
 

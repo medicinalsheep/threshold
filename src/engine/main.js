@@ -44,6 +44,8 @@ import '../shared/footsteps.js';
 import '../shared/fpsViewmodel.js';
 import '../shared/avatarLoader.js';
 import '../shared/ambientAudio.js';
+import '../shared/weatherSystem.js';
+import '../shared/recordedAmbient.js';
 import '../shared/starterAnim.js';
 import { bootstrapReferenceIfRequested } from '../shared/referenceEdition.js';
 import { GameExport } from '../shared/gameExport.js';
@@ -419,6 +421,33 @@ const AudioSys = {
         } catch (e) {
             console.warn('Loop playback failed:', e);
             return null;
+        }
+    },
+
+    playClipVariation: async function (clipId, opts = {}) {
+        if (!clipId) return;
+        const volume = opts.volume ?? 0.85;
+        const playbackRate = opts.playbackRate ?? 1;
+        this.ensureContext();
+        try {
+            let buffer = this.clipCache.get(clipId);
+            if (!buffer) {
+                const blob = await SoundLibrary.getBlob(clipId);
+                if (!blob) return;
+                const arr = await blob.arrayBuffer();
+                buffer = await this.ctx.decodeAudioData(arr.slice(0));
+                this.clipCache.set(clipId, buffer);
+            }
+            const src = this.ctx.createBufferSource();
+            const gain = this.ctx.createGain();
+            src.buffer = buffer;
+            src.playbackRate.value = playbackRate;
+            gain.gain.value = volume;
+            src.connect(gain);
+            gain.connect(this.ctx.destination);
+            src.start();
+        } catch (e) {
+            console.warn('Variation playback failed:', e);
         }
     },
 
@@ -1132,7 +1161,7 @@ const Engine = {
         }
         window.WorldInteract?.tick?.();
         ThirdEye.tick();
-        window.AmbientAudio?.tick?.();
+        window.AmbientAudio?.tick?.(dt);
         window.StarterAnim?.tick?.(time);
         if (Controls.consumeJustPressed('cameraReset')) {
             PlayerController.resetCameraBehind?.();
@@ -1436,6 +1465,9 @@ const World = {
     },
     enterTcRace: function (options = {}) {
         return window.TcDrive?.enterTcRace?.(options);
+    },
+    setWeather: function (options = {}) {
+        return window.WeatherSystem?.setWeather?.(options);
     },
     // NEW: Dynamic import for limitless extensions (e.g., loaders, controls)
     importModule: async function (modulePath, alias) {

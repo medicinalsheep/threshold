@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Procedural starter SFX — engines, guns, brakes, locks, glass, impacts.
- * No third-party audio ripped. Optional: drop WAV into sounds/import/ → sounds:compress
+ * Procedural starter SFX — engines + UI chirp only.
+ * Combat/impact/footsteps/ambient: npm run sounds:fetch:sfx (+ sounds:tag:recording)
  */
 const fs = require('fs');
 const path = require('path');
@@ -352,30 +352,11 @@ function synthMetalHit(sec = 0.28) {
     return out;
 }
 
+/** Procedural-only — combat/impact/footsteps/ambient use sounds:fetch:sfx + recorded clips */
 const CLIPS = [
     { id: 'starter_eng_two_stroke', name: 'Two-Stroke Engine', file: 'engine_two_stroke', synth: synthTwoStroke, category: 'engine', vehicle: 'tc_run' },
     { id: 'starter_eng_v8', name: 'V8 Engine Idle', file: 'engine_v8', synth: synthV8, category: 'engine', vehicle: 'tc_haul' },
     { id: 'starter_terminal_chirp', name: 'Terminal Chirp', file: 'terminal_chirp', synth: synthTerminalChirp, category: 'ui' },
-    { id: 'starter_gun_pistol', name: 'Gun — Pistol', file: 'gun_pistol', synth: synthGunPistol, category: 'gun' },
-    { id: 'starter_gun_rifle', name: 'Gun — Rifle', file: 'gun_rifle', synth: synthGunRifle, category: 'gun' },
-    { id: 'starter_brake_squeal', name: 'Brake Squeal', file: 'brake_squeal', synth: synthBrake, category: 'vehicle' },
-    { id: 'starter_door_lock', name: 'Door Lock', file: 'door_lock', synth: synthDoorLock, category: 'door' },
-    { id: 'starter_door_unlock', name: 'Door Unlock', file: 'door_unlock', synth: synthDoorUnlock, category: 'door' },
-    { id: 'starter_glass_break', name: 'Glass Break', file: 'glass_break', synth: synthGlassBreak, category: 'impact' },
-    { id: 'starter_tire_skid', name: 'Tire Skid', file: 'tire_skid', synth: synthTireSkid, category: 'vehicle' },
-    { id: 'starter_metal_hit', name: 'Metal Impact', file: 'metal_hit', synth: synthMetalHit, category: 'impact' },
-    { id: 'starter_footstep_concrete', name: 'Footstep — Concrete', file: 'footstep_concrete', synth: synthFootstepConcrete, category: 'footstep' },
-    { id: 'starter_footstep_metal', name: 'Footstep — Metal', file: 'footstep_metal', synth: synthFootstepMetal, category: 'footstep' },
-    { id: 'starter_footstep_grass', name: 'Footstep — Grass', file: 'footstep_grass', synth: synthFootstepGrass, category: 'footstep' },
-    { id: 'starter_footstep_wood', name: 'Footstep — Wood', file: 'footstep_wood', synth: synthFootstepWood, category: 'footstep' },
-    { id: 'starter_footstep_gravel', name: 'Footstep — Gravel', file: 'footstep_gravel', synth: synthFootstepGravel, category: 'footstep' },
-    { id: 'starter_footstep_asphalt', name: 'Footstep — Asphalt', file: 'footstep_asphalt', synth: synthFootstepAsphalt, category: 'footstep' },
-    { id: 'starter_amb_wind', name: 'Ambient — Wind', file: 'amb_wind', synth: synthWindLoop, category: 'ambient' },
-    { id: 'starter_amb_highway', name: 'Ambient — Highway', file: 'amb_highway', synth: synthHighwayLoop, category: 'ambient' },
-    { id: 'starter_amb_bird', name: 'Ambient — Bird', file: 'amb_bird', synth: synthBirdChirp, category: 'ambient' },
-    { id: 'starter_amb_cicada', name: 'Ambient — Cicadas', file: 'amb_cicada', synth: synthCicadaLoop, category: 'ambient' },
-    { id: 'starter_amb_dust', name: 'Ambient — Dust Gust', file: 'amb_dust', synth: synthDustGust, category: 'ambient' },
-    { id: 'starter_horn', name: 'Vehicle Horn', file: 'horn', synth: synthHorn, category: 'vehicle' },
 ];
 
 function tryCompress(wavPath, oggPath) {
@@ -393,16 +374,24 @@ function tryCompress(wavPath, oggPath) {
     return false;
 }
 
+function mergeManifest(newClips) {
+    const existing = fs.existsSync(MANIFEST)
+        ? JSON.parse(fs.readFileSync(MANIFEST, 'utf8'))
+        : { format: 'threshold-starter-sounds', version: 4, sampleRate: SR, clips: [] };
+    const proceduralIds = new Set(CLIPS.map((c) => c.id));
+    const preserved = (existing.clips || []).filter((c) => !proceduralIds.has(c.id));
+    const byId = new Map(preserved.map((c) => [c.id, c]));
+    newClips.forEach((c) => byId.set(c.id, c));
+    existing.clips = [...byId.values()];
+    existing.sampleRate = SR;
+    existing.version = Math.max(existing.version || 4, 4);
+    return existing;
+}
+
 function main() {
     OUT_DIRS.forEach((d) => fs.mkdirSync(d, { recursive: true }));
 
-    const manifest = {
-        format: 'threshold-starter-sounds',
-        version: 3,
-        sampleRate: SR,
-        clips: [],
-    };
-
+    const newClips = [];
     let compressed = 0;
     for (const clip of CLIPS) {
         const samples = clip.synth();
@@ -424,7 +413,7 @@ function main() {
         const stat = fs.statSync(wavPath);
         const oggExists = fs.existsSync(oggPath);
         const oggBytes = oggExists ? fs.statSync(oggPath).size : null;
-        manifest.clips.push({
+        newClips.push({
             id: clip.id,
             name: clip.name,
             wav: `sounds/starter/${wavName}`,
@@ -439,6 +428,7 @@ function main() {
         console.log(`[gen-starter-sfx] ${clip.id} → ${wavName} (${(stat.size / 1024).toFixed(1)} KB)`);
     }
 
+    const manifest = mergeManifest(newClips);
     const manifestJson = JSON.stringify(manifest, null, 2);
     fs.writeFileSync(MANIFEST, manifestJson);
     for (const dir of OUT_DIRS) {

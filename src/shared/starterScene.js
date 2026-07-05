@@ -489,6 +489,9 @@ export function bootstrapStarterScene() {
     seedStarterSounds().then(() => {
         wireStarterSounds();
         window.AmbientAudio?.start?.();
+        setTimeout(() => {
+            window.WeatherSystem?.start?.({ intensity: 0.48 });
+        }, 3200);
     });
     wireStarterTextures().then((tex) => {
         if (tex.maps) window.UI?.status?.(`Starter textures applied (${tex.maps} maps)`);
@@ -496,7 +499,7 @@ export function bootstrapStarterScene() {
     window.StarterAnim?.wireScene?.();
 
     if (terminal && modelKiosk) {
-        window.UI?.status?.('FiveM controls — LMB shoot · RMB aim · F vehicle · M Third Eye · walk the pads');
+        window.UI?.status?.('FiveM controls — rain rolling in · LMB shoot · RMB aim · F vehicle · World.setWeather()');
     }
 
     State.ctxTargetPos.set(0, 0, 0);

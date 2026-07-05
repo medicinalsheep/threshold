@@ -20,12 +20,22 @@ Queued additions for the starter scene and TC editions — **one asset at a time
 
 ---
 
-## Iteration 2 — Environment (recommended next)
+## Iteration 2 — Environment (shipped 6.6.0)
 
 | Asset | Notes |
 |-------|-------|
-| **Rain loop** | Weather toggle; wet roughness on asphalt |
-| **Thunder one-shot** | Random during rain |
+| **Rain loops** | Real Mixkit clips — light / heavy / roof; crossfade via `WeatherSystem` |
+| **Thunder one-shots** | 3 near + 3 distant pools; pitch/volume variation; staggered scheduling |
+| **Wind gust** | Real storm gust clip during heavy rain |
+| **Rain particles** | `Points` field over starter scene |
+| **Wet surfaces** | Asphalt/concrete roughness + fog pull-in when raining |
+| **API** | `World.setWeather({ rain: true, intensity: 0.7 })` |
+| **Pipeline** | `npm run sounds:fetch:ambient` → ffmpeg trim + OGG compress |
+
+## Iteration 2b — Environment (queued)
+
+| Asset | Notes |
+|-------|-------|
 | **River / creek** | Water plane + flow normal anim |
 | **Power lines** | Distant hum + swaying cables |
 | **Fence chain** | Metal rattle on wind gusts |

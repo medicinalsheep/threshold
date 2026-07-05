@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "6.5.0",
+  "version": "6.6.0",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
@@ -47,6 +47,10 @@
     "kit:export": "node scripts/export-starter-kit.cjs",
     "kit:verify": "node scripts/kit-verify.cjs",
     "sounds:gen": "node scripts/gen-starter-sfx.cjs",
+    "sounds:tag:recording": "node scripts/tag-recorded-clip.cjs",
+    "sounds:fetch:sfx": "node scripts/fetch-real-sfx.cjs",
+    "sounds:fetch:ambient": "node scripts/fetch-real-ambient.cjs",
+    "sounds:process:ambient": "node scripts/fetch-real-ambient.cjs --local-only",
     "sounds:compress": "node scripts/compress-starter-sfx.cjs",
     "sounds:verify": "node scripts/sounds-verify.cjs",
     "tc:gen:vid": "node scripts/tc-gen-vid.cjs",

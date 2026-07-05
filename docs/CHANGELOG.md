@@ -1,5 +1,17 @@
 # Changelog
 
+## 6.6.0 — Phase 12: Real weather audio + dynamic storms (iteration 2)
+
+- **Real combat SFX** — `sounds:fetch:sfx` replaces procedural gun (drum-like), glass, metal, horn, brakes, footsteps with Mixkit + your recordings
+- **User recording pipeline** — `sounds:tag:recording` clips + tags field recording (birds, plastic, papers, water jug, metal/glass)
+- **RecordedAmbient** — bird loop + proximity foley; `World.playRecordedSfx('metal_glass')`
+- **Real ambient clips** — Mixkit field recordings: rain light/heavy/roof, 6 thunder variants, wind gust
+- **Pipeline** — `sounds:fetch:ambient` downloads, trims, normalizes → 22 kHz mono WAV + OGG
+- **WeatherSystem** — crossfaded rain layers, random thunder pools with pitch/volume variation, wet asphalt
+- **Visuals** — rain particle field, fog intensifies during storms
+- **API** — `World.setWeather({ intensity: 0.7 })` · auto-starts in starter scene after intro
+- Docs: [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iteration 2 shipped
+
 ## 6.5.0 — Phase 11: FiveM controls + ambient makeover (iteration 1)
 
 - **Controls** — FiveM-style defaults: LMB fire, RMB aim, F vehicle, Ctrl crouch, grouped KEYS menu

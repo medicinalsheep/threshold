@@ -1,6 +1,6 @@
 {
   "format": "threshold-starter-sounds",
-  "version": 3,
+  "version": 5,
   "sampleRate": 22050,
   "clips": [
     {
@@ -41,243 +41,665 @@
     },
     {
       "id": "starter_gun_pistol",
-      "name": "Gun — Pistol",
+      "name": "Gun — Pistol shot (real)",
       "wav": "sounds/starter/gun_pistol.wav",
-      "ogg": null,
+      "ogg": "sounds/starter/gun_pistol.ogg",
       "category": "gun",
       "vehicle": null,
-      "bytes": 16802,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
+      "bytes": 18600,
+      "oggBytes": 6034,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:1662",
+      "replaces": "procedural"
     },
     {
       "id": "starter_gun_rifle",
-      "name": "Gun — Rifle",
+      "name": "Gun — Rifle / heavy shot",
       "wav": "sounds/starter/gun_rifle.wav",
-      "ogg": null,
+      "ogg": "sounds/starter/gun_rifle.ogg",
       "category": "gun",
       "vehicle": null,
-      "bytes": 21212,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
+      "bytes": 24334,
+      "oggBytes": 7482,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:1693",
+      "replaces": "procedural"
     },
     {
       "id": "starter_brake_squeal",
-      "name": "Brake Squeal",
+      "name": "Brake / tire squeal",
       "wav": "sounds/starter/brake_squeal.wav",
-      "ogg": null,
+      "ogg": "sounds/starter/brake_squeal.ogg",
       "category": "vehicle",
       "vehicle": null,
-      "bytes": 27386,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
+      "bytes": 30948,
+      "oggBytes": 8170,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:1484",
+      "replaces": "procedural"
     },
     {
       "id": "starter_door_lock",
-      "name": "Door Lock",
+      "name": "Door Lock (real)",
       "wav": "sounds/starter/door_lock.wav",
-      "ogg": null,
+      "ogg": "sounds/starter/door_lock.ogg",
       "category": "door",
       "vehicle": null,
-      "bytes": 6218,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
+      "bytes": 17718,
+      "oggBytes": 6455,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:2858",
+      "replaces": "procedural"
     },
     {
       "id": "starter_door_unlock",
-      "name": "Door Unlock",
+      "name": "Door Unlock (real)",
       "wav": "sounds/starter/door_unlock.wav",
-      "ogg": null,
+      "ogg": "sounds/starter/door_unlock.ogg",
       "category": "door",
       "vehicle": null,
-      "bytes": 5336,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
+      "bytes": 13308,
+      "oggBytes": 5182,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:2857",
+      "replaces": "procedural"
     },
     {
       "id": "starter_glass_break",
-      "name": "Glass Break",
+      "name": "Glass Break (real)",
       "wav": "sounds/starter/glass_break.wav",
-      "ogg": null,
+      "ogg": "sounds/starter/glass_break.ogg",
       "category": "impact",
       "vehicle": null,
-      "bytes": 31796,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
+      "bytes": 33154,
+      "oggBytes": 10407,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:759",
+      "replaces": "procedural"
     },
     {
       "id": "starter_tire_skid",
-      "name": "Tire Skid",
+      "name": "Tire skid / pass-by",
       "wav": "sounds/starter/tire_skid.wav",
-      "ogg": null,
+      "ogg": "sounds/starter/tire_skid.ogg",
       "category": "vehicle",
       "vehicle": null,
-      "bytes": 37528,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
+      "bytes": 48588,
+      "oggBytes": 10042,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:1538",
+      "replaces": "procedural"
     },
     {
       "id": "starter_metal_hit",
-      "name": "Metal Impact",
+      "name": "Metal Impact (real)",
       "wav": "sounds/starter/metal_hit.wav",
-      "ogg": null,
+      "ogg": "sounds/starter/metal_hit.ogg",
       "category": "impact",
       "vehicle": null,
-      "bytes": 12392,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
+      "bytes": 19924,
+      "oggBytes": 5578,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:833",
+      "replaces": "procedural"
     },
     {
       "id": "starter_footstep_concrete",
       "name": "Footstep — Concrete",
       "wav": "sounds/starter/footstep_concrete.wav",
-      "ogg": null,
+      "ogg": "sounds/starter/footstep_concrete.ogg",
       "category": "footstep",
       "vehicle": null,
-      "bytes": 5336,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
+      "bytes": 12426,
+      "oggBytes": 5721,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:542",
+      "replaces": "procedural"
     },
     {
       "id": "starter_footstep_metal",
-      "name": "Footstep — Metal",
+      "name": "Footstep — Metal grate",
       "wav": "sounds/starter/footstep_metal.wav",
-      "ogg": null,
+      "ogg": "sounds/starter/footstep_metal.ogg",
       "category": "footstep",
       "vehicle": null,
-      "bytes": 4454,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
+      "bytes": 13308,
+      "oggBytes": 6331,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:1274",
+      "replaces": "procedural"
     },
     {
       "id": "starter_footstep_grass",
       "name": "Footstep — Grass",
       "wav": "sounds/starter/footstep_grass.wav",
-      "ogg": null,
+      "ogg": "sounds/starter/footstep_grass.ogg",
       "category": "footstep",
       "vehicle": null,
-      "bytes": 4894,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
+      "bytes": 15514,
+      "oggBytes": 7317,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:532",
+      "replaces": "procedural"
     },
     {
       "id": "starter_footstep_wood",
-      "name": "Footstep — Wood",
+      "name": "Footstep — Wood deck",
       "wav": "sounds/starter/footstep_wood.wav",
-      "ogg": null,
+      "ogg": "sounds/starter/footstep_wood.ogg",
       "category": "footstep",
       "vehicle": null,
-      "bytes": 4454,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
+      "bytes": 15514,
+      "oggBytes": 6394,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:1230",
+      "replaces": "procedural"
     },
     {
       "id": "starter_footstep_gravel",
       "name": "Footstep — Gravel",
       "wav": "sounds/starter/footstep_gravel.wav",
-      "ogg": null,
+      "ogg": "sounds/starter/footstep_gravel.ogg",
       "category": "footstep",
       "vehicle": null,
-      "bytes": 5336,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
+      "bytes": 14190,
+      "oggBytes": 5733,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:1269",
+      "replaces": "procedural"
     },
     {
       "id": "starter_footstep_asphalt",
       "name": "Footstep — Asphalt",
       "wav": "sounds/starter/footstep_asphalt.wav",
-      "ogg": null,
+      "ogg": "sounds/starter/footstep_asphalt.ogg",
       "category": "footstep",
       "vehicle": null,
-      "bytes": 4454,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
+      "bytes": 11104,
+      "oggBytes": 5149,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:542",
+      "replaces": "procedural"
     },
     {
       "id": "starter_amb_wind",
-      "name": "Ambient — Wind",
+      "name": "Ambient — Wind (real)",
       "wav": "sounds/starter/amb_wind.wav",
-      "ogg": null,
+      "ogg": "sounds/starter/amb_wind.ogg",
       "category": "ambient",
       "vehicle": null,
-      "bytes": 242594,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
+      "bytes": 352878,
+      "oggBytes": 45765,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:2658",
+      "replaces": "procedural"
     },
     {
       "id": "starter_amb_highway",
-      "name": "Ambient — Highway",
+      "name": "Ambient — Highway traffic",
       "wav": "sounds/starter/amb_highway.wav",
-      "ogg": null,
+      "ogg": "sounds/starter/amb_highway.ogg",
       "category": "ambient",
       "vehicle": null,
-      "bytes": 211724,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
-    },
-    {
-      "id": "starter_amb_bird",
-      "name": "Ambient — Bird",
-      "wav": "sounds/starter/amb_bird.wav",
-      "ogg": null,
-      "category": "ambient",
-      "vehicle": null,
-      "bytes": 24298,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
-    },
-    {
-      "id": "starter_amb_cicada",
-      "name": "Ambient — Cicadas",
-      "wav": "sounds/starter/amb_cicada.wav",
-      "ogg": null,
-      "category": "ambient",
-      "vehicle": null,
-      "bytes": 141164,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
-    },
-    {
-      "id": "starter_amb_dust",
-      "name": "Ambient — Dust Gust",
-      "wav": "sounds/starter/amb_dust.wav",
-      "ogg": null,
-      "category": "ambient",
-      "vehicle": null,
-      "bytes": 39734,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
+      "bytes": 441078,
+      "oggBytes": 56983,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:2463",
+      "replaces": "procedural"
     },
     {
       "id": "starter_horn",
-      "name": "Vehicle Horn",
+      "name": "Vehicle Horn (real)",
       "wav": "sounds/starter/horn.wav",
-      "ogg": null,
+      "ogg": "sounds/starter/horn.ogg",
       "category": "vehicle",
       "vehicle": null,
-      "bytes": 28708,
-      "oggBytes": null,
-      "preferred": "wav",
-      "license": "Original — Threshold procedural"
+      "bytes": 29184,
+      "oggBytes": 7174,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:718",
+      "replaces": "procedural"
+    },
+    {
+      "id": "starter_rain_light",
+      "name": "Rain — Light (field loop)",
+      "wav": "sounds/starter/rain_light.wav",
+      "ogg": "sounds/starter/rain_light.ogg",
+      "category": "weather",
+      "vehicle": null,
+      "bytes": 1234878,
+      "oggBytes": 180795,
+      "preferred": "ogg",
+      "license": "Mixkit License — free for commercial use (mixkit.co)",
+      "source": "https://mixkit.co/free-sound-effects/",
+      "dynamic": {
+        "layer": "rain",
+        "intensity": 0.32,
+        "loop": true
+      }
+    },
+    {
+      "id": "starter_rain_heavy",
+      "name": "Rain — Heavy storm loop",
+      "wav": "sounds/starter/rain_heavy.wav",
+      "ogg": "sounds/starter/rain_heavy.ogg",
+      "category": "weather",
+      "vehicle": null,
+      "bytes": 705678,
+      "oggBytes": 97017,
+      "preferred": "ogg",
+      "license": "Mixkit License — free for commercial use (mixkit.co)",
+      "source": "https://mixkit.co/free-sound-effects/",
+      "dynamic": {
+        "layer": "rain",
+        "intensity": 0.88,
+        "loop": true
+      }
+    },
+    {
+      "id": "starter_rain_roof",
+      "name": "Rain — On metal roof",
+      "wav": "sounds/starter/rain_roof.wav",
+      "ogg": "sounds/starter/rain_roof.ogg",
+      "category": "weather",
+      "vehicle": null,
+      "bytes": 970278,
+      "oggBytes": 144495,
+      "preferred": "ogg",
+      "license": "Mixkit License — free for commercial use (mixkit.co)",
+      "source": "https://mixkit.co/free-sound-effects/",
+      "dynamic": {
+        "layer": "rain",
+        "intensity": 0.55,
+        "loop": true
+      }
+    },
+    {
+      "id": "starter_thunder_near",
+      "name": "Thunder — Close strike",
+      "wav": "sounds/starter/thunder_near.wav",
+      "ogg": "sounds/starter/thunder_near.ogg",
+      "category": "weather",
+      "vehicle": null,
+      "bytes": 286728,
+      "oggBytes": 38542,
+      "preferred": "ogg",
+      "license": "Mixkit License — free for commercial use (mixkit.co)",
+      "source": "https://mixkit.co/free-sound-effects/",
+      "dynamic": {
+        "layer": "thunder",
+        "intensity": 1,
+        "oneshot": true,
+        "pool": "near"
+      }
+    },
+    {
+      "id": "starter_thunder_near_b",
+      "name": "Thunder — Cinematic crack",
+      "wav": "sounds/starter/thunder_near_b.wav",
+      "ogg": "sounds/starter/thunder_near_b.ogg",
+      "category": "weather",
+      "vehicle": null,
+      "bytes": 220578,
+      "oggBytes": 29449,
+      "preferred": "ogg",
+      "license": "Mixkit License — free for commercial use (mixkit.co)",
+      "source": "https://mixkit.co/free-sound-effects/",
+      "dynamic": {
+        "layer": "thunder",
+        "intensity": 0.95,
+        "oneshot": true,
+        "pool": "near"
+      }
+    },
+    {
+      "id": "starter_thunder_near_c",
+      "name": "Thunder — Close explosion",
+      "wav": "sounds/starter/thunder_near_c.wav",
+      "ogg": "sounds/starter/thunder_near_c.ogg",
+      "category": "weather",
+      "vehicle": null,
+      "bytes": 308778,
+      "oggBytes": 45570,
+      "preferred": "ogg",
+      "license": "Mixkit License — free for commercial use (mixkit.co)",
+      "source": "https://mixkit.co/free-sound-effects/",
+      "dynamic": {
+        "layer": "thunder",
+        "intensity": 0.9,
+        "oneshot": true,
+        "pool": "near"
+      }
+    },
+    {
+      "id": "starter_thunder_distant",
+      "name": "Thunder — Distant rumble",
+      "wav": "sounds/starter/thunder_distant.wav",
+      "ogg": "sounds/starter/thunder_distant.ogg",
+      "category": "weather",
+      "vehicle": null,
+      "bytes": 441078,
+      "oggBytes": 46750,
+      "preferred": "ogg",
+      "license": "Mixkit License — free for commercial use (mixkit.co)",
+      "source": "https://mixkit.co/free-sound-effects/",
+      "dynamic": {
+        "layer": "thunder",
+        "intensity": 0.42,
+        "oneshot": true,
+        "pool": "distant"
+      }
+    },
+    {
+      "id": "starter_thunder_distant_b",
+      "name": "Thunder — Deep roll",
+      "wav": "sounds/starter/thunder_distant_b.wav",
+      "ogg": "sounds/starter/thunder_distant_b.ogg",
+      "category": "weather",
+      "vehicle": null,
+      "bytes": 529278,
+      "oggBytes": 70682,
+      "preferred": "ogg",
+      "license": "Mixkit License — free for commercial use (mixkit.co)",
+      "source": "https://mixkit.co/free-sound-effects/",
+      "dynamic": {
+        "layer": "thunder",
+        "intensity": 0.38,
+        "oneshot": true,
+        "pool": "distant"
+      }
+    },
+    {
+      "id": "starter_thunder_distant_c",
+      "name": "Thunder — Far storm",
+      "wav": "sounds/starter/thunder_distant_c.wav",
+      "ogg": "sounds/starter/thunder_distant_c.ogg",
+      "category": "weather",
+      "vehicle": null,
+      "bytes": 410628,
+      "oggBytes": 50331,
+      "preferred": "ogg",
+      "license": "Mixkit License — free for commercial use (mixkit.co)",
+      "source": "https://mixkit.co/free-sound-effects/",
+      "dynamic": {
+        "layer": "thunder",
+        "intensity": 0.35,
+        "oneshot": true,
+        "pool": "distant"
+      }
+    },
+    {
+      "id": "starter_wind_gust_real",
+      "name": "Wind — Storm gust",
+      "wav": "sounds/starter/wind_gust_real.wav",
+      "ogg": "sounds/starter/wind_gust_real.ogg",
+      "category": "weather",
+      "vehicle": null,
+      "bytes": 111740,
+      "oggBytes": 16263,
+      "preferred": "ogg",
+      "license": "Mixkit License — free for commercial use (mixkit.co)",
+      "source": "https://mixkit.co/free-sound-effects/",
+      "dynamic": {
+        "layer": "wind",
+        "intensity": 0.55,
+        "oneshot": true
+      }
+    },
+    {
+      "id": "starter_rec_birds",
+      "name": "Recorded — Birds (opening)",
+      "tag": "birds",
+      "wav": "sounds/starter/rec_birds.wav",
+      "ogg": "sounds/starter/rec_birds.ogg",
+      "category": "ambient",
+      "vehicle": null,
+      "bytes": 507228,
+      "oggBytes": 68085,
+      "preferred": "ogg",
+      "license": "Original — user field recording (Threshold)",
+      "source": "sounds/import/recordings/phone-link-new-recording.m4a",
+      "trimSec": {
+        "start": 0.12,
+        "duration": 11.5
+      },
+      "dynamic": {
+        "tag": "birds",
+        "loop": true,
+        "layer": "wildlife"
+      }
+    },
+    {
+      "id": "starter_rec_plastic",
+      "name": "Recorded — Plastic rustle",
+      "tag": "plastic",
+      "wav": "sounds/starter/rec_plastic.wav",
+      "ogg": "sounds/starter/rec_plastic.ogg",
+      "category": "foley",
+      "vehicle": null,
+      "bytes": 81664,
+      "oggBytes": 16950,
+      "preferred": "ogg",
+      "license": "Original — user field recording (Threshold)",
+      "source": "sounds/import/recordings/phone-link-new-recording.m4a",
+      "trimSec": {
+        "start": 28.75,
+        "duration": 1.85
+      },
+      "dynamic": {
+        "tag": "plastic",
+        "oneshot": true,
+        "pool": "prop"
+      }
+    },
+    {
+      "id": "starter_rec_papers",
+      "name": "Recorded — Papers shuffle",
+      "tag": "papers",
+      "wav": "sounds/starter/rec_papers.wav",
+      "ogg": "sounds/starter/rec_papers.ogg",
+      "category": "foley",
+      "vehicle": null,
+      "bytes": 143404,
+      "oggBytes": 27434,
+      "preferred": "ogg",
+      "license": "Original — user field recording (Threshold)",
+      "source": "sounds/import/recordings/phone-link-new-recording.m4a",
+      "trimSec": {
+        "start": 37.95,
+        "duration": 3.25
+      },
+      "dynamic": {
+        "tag": "papers",
+        "oneshot": true,
+        "pool": "prop"
+      }
+    },
+    {
+      "id": "starter_rec_papers_short",
+      "name": "Recorded — Paper flick",
+      "tag": "papers",
+      "wav": "sounds/starter/rec_papers_short.wav",
+      "ogg": "sounds/starter/rec_papers_short.ogg",
+      "category": "foley",
+      "vehicle": null,
+      "bytes": 41974,
+      "oggBytes": 10863,
+      "preferred": "ogg",
+      "license": "Original — user field recording (Threshold)",
+      "source": "sounds/import/recordings/phone-link-new-recording.m4a",
+      "trimSec": {
+        "start": 40.18,
+        "duration": 0.95
+      },
+      "dynamic": {
+        "tag": "papers",
+        "oneshot": true,
+        "pool": "prop"
+      }
+    },
+    {
+      "id": "starter_rec_water_jug",
+      "name": "Recorded — Water jug",
+      "tag": "water_jug",
+      "wav": "sounds/starter/rec_water_jug.wav",
+      "ogg": "sounds/starter/rec_water_jug.ogg",
+      "category": "foley",
+      "vehicle": null,
+      "bytes": 46384,
+      "oggBytes": 8995,
+      "preferred": "ogg",
+      "license": "Original — user field recording (Threshold)",
+      "source": "sounds/import/recordings/phone-link-new-recording.m4a",
+      "trimSec": {
+        "start": 48.18,
+        "duration": 1.05
+      },
+      "dynamic": {
+        "tag": "water_jug",
+        "oneshot": true,
+        "pool": "prop"
+      }
+    },
+    {
+      "id": "starter_rec_metal_glass",
+      "name": "Recorded — Metal on glass",
+      "tag": "metal_glass",
+      "wav": "sounds/starter/rec_metal_glass.wav",
+      "ogg": "sounds/starter/rec_metal_glass.ogg",
+      "category": "foley",
+      "vehicle": null,
+      "bytes": 41974,
+      "oggBytes": 8942,
+      "preferred": "ogg",
+      "license": "Original — user field recording (Threshold)",
+      "source": "sounds/import/recordings/phone-link-new-recording.m4a",
+      "trimSec": {
+        "start": 50.62,
+        "duration": 0.95
+      },
+      "dynamic": {
+        "tag": "metal_glass",
+        "oneshot": true,
+        "pool": "prop"
+      }
+    },
+    {
+      "id": "starter_rec_metal_glass_b",
+      "name": "Recorded — Metal on glass (2)",
+      "tag": "metal_glass",
+      "wav": "sounds/starter/rec_metal_glass_b.wav",
+      "ogg": "sounds/starter/rec_metal_glass_b.ogg",
+      "category": "foley",
+      "vehicle": null,
+      "bytes": 37564,
+      "oggBytes": 8433,
+      "preferred": "ogg",
+      "license": "Original — user field recording (Threshold)",
+      "source": "sounds/import/recordings/phone-link-new-recording.m4a",
+      "trimSec": {
+        "start": 59.42,
+        "duration": 0.85
+      },
+      "dynamic": {
+        "tag": "metal_glass",
+        "oneshot": true,
+        "pool": "prop"
+      }
+    },
+    {
+      "id": "starter_rec_plastic_tap",
+      "name": "Recorded — Plastic tap",
+      "tag": "plastic",
+      "wav": "sounds/starter/rec_plastic_tap.wav",
+      "ogg": "sounds/starter/rec_plastic_tap.ogg",
+      "category": "foley",
+      "vehicle": null,
+      "bytes": 50794,
+      "oggBytes": 11529,
+      "preferred": "ogg",
+      "license": "Original — user field recording (Threshold)",
+      "source": "sounds/import/recordings/phone-link-new-recording.m4a",
+      "trimSec": {
+        "start": 36.42,
+        "duration": 1.15
+      },
+      "dynamic": {
+        "tag": "plastic",
+        "oneshot": true,
+        "pool": "prop"
+      }
+    },
+    {
+      "id": "starter_rec_metal_tap",
+      "name": "Recorded — Metal tap",
+      "tag": "metal",
+      "wav": "sounds/starter/rec_metal_tap.wav",
+      "ogg": "sounds/starter/rec_metal_tap.ogg",
+      "category": "foley",
+      "vehicle": null,
+      "bytes": 24334,
+      "oggBytes": 8328,
+      "preferred": "ogg",
+      "license": "Original — user field recording (Threshold)",
+      "source": "sounds/import/recordings/phone-link-new-recording.m4a",
+      "trimSec": {
+        "start": 55.02,
+        "duration": 0.55
+      },
+      "dynamic": {
+        "tag": "metal",
+        "oneshot": true,
+        "pool": "prop"
+      }
+    },
+    {
+      "id": "starter_gun_reload",
+      "name": "Gun — Reload / chamber click",
+      "wav": "sounds/starter/gun_reload.wav",
+      "ogg": "sounds/starter/gun_reload.ogg",
+      "category": "gun",
+      "vehicle": null,
+      "bytes": 15514,
+      "oggBytes": 5735,
+      "preferred": "ogg",
+      "license": "Mixkit License — mixkit.co",
+      "source": "mixkit:1660",
+      "replaces": "procedural"
+    },
+    {
+      "id": "starter_metal_hit_user",
+      "name": "Metal tap (user recording)",
+      "wav": "sounds/starter/metal_hit_user.ogg",
+      "ogg": "sounds/starter/metal_hit_user.ogg",
+      "category": "impact",
+      "vehicle": null,
+      "bytes": 8328,
+      "oggBytes": 8328,
+      "preferred": "ogg",
+      "license": "Original — user field recording",
+      "source": "starter_rec_metal_tap",
+      "replaces": "none"
     }
-  ]
+  ],
+  "realAmbient": true,
+  "recordedAmbient": true,
+  "realSfx": true
 }
