@@ -13,7 +13,10 @@ export function getSceneContext() {
         physics: !!o.userData?.hasPhysics,
         rotating: !!o.userData?.isRotating,
         isHuman: !!(o.userData?.isHuman || o.userData?.isCharacter),
-        isPlayer: !!o.userData?.isPlayer
+        isPlayer: !!o.userData?.isPlayer,
+        soundMode: o.userData?.soundMode || null,
+        soundClipId: o.userData?.soundClipId || null,
+        soundTrigger: o.userData?.soundTrigger || null,
     }));
     const humanNpcCount = objects.filter((o) => o.isHuman && !o.isPlayer).length;
 
@@ -47,7 +50,10 @@ ${playerLine}
 - Human NPCs: ${humanNpcCount} (static characters for reference)
 
 OBJECTS:
-${objects.length ? objects.map((o) => `  - ${o.name} (${o.type}) @ (${o.position.x},${o.position.y},${o.position.z})`).join('\n') : '  (empty scene)'}
+${objects.length ? objects.map((o) => {
+        const snd = o.soundClipId ? ` [sound:${o.soundClipId}/${o.soundTrigger || 'collision'}]` : '';
+        return `  - ${o.name} (${o.type}) @ (${o.position.x},${o.position.y},${o.position.z})${snd}`;
+    }).join('\n') : '  (empty scene)'}
 
 CURRENTLY RUNNING CODE:
 ${runningCode}

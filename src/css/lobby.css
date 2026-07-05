@@ -2,12 +2,31 @@
     position: fixed;
     inset: 0;
     z-index: 2000;
-    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 70%);
+    background: radial-gradient(ellipse at 30% 20%, #1f1030 0%, #0a0a12 55%, #050508 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
     box-sizing: border-box;
+    overflow: hidden;
+}
+
+.lobby-bg-grid {
+    position: absolute;
+    inset: -20%;
+    background-image:
+        linear-gradient(rgba(255, 51, 102, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 51, 102, 0.06) 1px, transparent 1px);
+    background-size: 48px 48px;
+    transform: perspective(500px) rotateX(58deg) translateY(-8%);
+    animation: lobbyGridDrift 24s linear infinite;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+@keyframes lobbyGridDrift {
+    from { background-position: 0 0, 0 0; }
+    to { background-position: 0 96px, 96px 0; }
 }
 
 #lobby-overlay.hidden {
@@ -15,25 +34,49 @@
 }
 
 #lobby-card {
+    position: relative;
     width: 100%;
-    max-width: 420px;
-    background: var(--panel-bg);
+    max-width: 440px;
+    background: rgba(5, 5, 8, 0.94);
     border: 1px solid var(--accent-color);
-    padding: 28px;
+    padding: 28px 26px;
     box-sizing: border-box;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55), 0 0 40px rgba(255, 51, 102, 0.12);
+    animation: lobbyCardIn 0.7s ease-out;
 }
 
-#lobby-card h1 {
-    margin: 0 0 4px;
-    font-size: 1.4rem;
-    letter-spacing: 3px;
+@keyframes lobbyCardIn {
+    from { opacity: 0; transform: translateY(18px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.lobby-hero h1 {
+    margin: 0 0 6px;
+    font-size: 1.55rem;
+    letter-spacing: 4px;
 }
 
 #lobby-card .tagline {
-    color: #888;
-    font-size: 0.8rem;
-    margin: 0 0 24px;
-    line-height: 1.5;
+    color: #aaa;
+    font-size: 0.82rem;
+    margin: 0 0 18px;
+    line-height: 1.55;
+}
+
+.lobby-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 18px;
+}
+
+.lobby-pill {
+    font-size: 0.58rem;
+    letter-spacing: 0.5px;
+    padding: 4px 8px;
+    border: 1px solid var(--border-color);
+    color: var(--accent-color);
+    background: rgba(255, 51, 102, 0.08);
 }
 
 .lobby-input {
@@ -46,6 +89,12 @@
     font-family: var(--font-mono);
     margin-bottom: 12px;
     font-size: 1rem;
+    border-radius: 4px;
+}
+
+.lobby-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
 }
 
 .lobby-btn {
@@ -53,17 +102,20 @@
     padding: 14px !important;
     margin-bottom: 8px;
     font-size: 0.85rem !important;
+    border-radius: 4px;
 }
 
 .lobby-btn-primary {
     background: var(--accent-color) !important;
     color: #000 !important;
     border: none !important;
+    font-weight: bold;
 }
 
 .lobby-btn-ghost {
     background: transparent !important;
     color: var(--text-color) !important;
+    border: 1px dashed var(--border-color) !important;
 }
 
 #lobby-status {
@@ -74,12 +126,35 @@
 }
 
 .lobby-steps {
-    font-size: 0.7rem;
-    color: #666;
-    margin: 16px 0;
+    font-size: 0.68rem;
+    color: #777;
+    margin: 16px 0 0;
     padding: 12px;
     border: 1px solid var(--border-color);
-    line-height: 1.6;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.lobby-step {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.lobby-step-num {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-color);
+    color: #000;
+    font-size: 0.62rem;
+    font-weight: bold;
 }
 
 #host-panel-modal #session-share-link {
@@ -103,4 +178,19 @@
 #host-panel-modal.host-view .host-only-link {
     display: block;
     margin-bottom: 4px;
+}
+
+@media (max-width: 480px) {
+    #lobby-card {
+        padding: 22px 18px;
+    }
+
+    .lobby-hero h1 {
+        font-size: 1.25rem;
+        letter-spacing: 2px;
+    }
+
+    .lobby-pill {
+        font-size: 0.52rem;
+    }
 }

@@ -11,6 +11,11 @@ export function initLobby(onReady) {
         joinInput.value = urlRoom.toUpperCase();
     }
 
+    const savedName = localStorage.getItem('threshold_player_name');
+    if (savedName && document.getElementById('lobby-name')) {
+        document.getElementById('lobby-name').value = savedName;
+    }
+
     const setStatus = (msg, isError = false) => {
         if (statusEl) {
             statusEl.textContent = msg;

@@ -26,6 +26,7 @@ import { ViewPrefs } from '../shared/viewPrefs.js';
 import { SceneDock } from '../shared/sceneDock.js';
 import { SoundLibrary } from '../shared/soundLibrary.js';
 import { SoundPrompt } from '../shared/soundPrompt.js';
+import { bootstrapStarterScene } from '../shared/starterScene.js';
 
 const IS_TOUCH_DEVICE = window.matchMedia('(pointer: coarse)').matches;
 
@@ -96,7 +97,11 @@ export function initEngine() {
         Persistence.loadWorld(worldCode)
             .then((r) => UI.status(`Loaded world ${r.name} (${r.code})`))
             .catch((e) => UI.status(e.message));
+    } else {
+        setTimeout(() => bootstrapStarterScene(), 120);
     }
+
+    UI.showWelcomeIfNeeded();
 }
 
 // --- GLOBAL STATE ---
@@ -773,6 +778,35 @@ const Engine = {
             Environment.updateWater(time);
         }
         UI.updateControlsHint?.();
+
+        if (State.introPlaying) {
+            const elapsed = performance.now() - (State.introStart || 0);
+            const t = Math.min(1, elapsed / (State.introDuration || 2500));
+            const ease = 1 - Math.pow(1 - t, 3);
+            if (State.introFrom && State.introTo) {
+                if (!this._introFromVec) {
+                    this._introFromVec = new THREE.Vector3();
+                    this._introToVec = new THREE.Vector3();
+                    this._introTargetVec = new THREE.Vector3();
+                }
+                this._introFromVec.set(State.introFrom.x, State.introFrom.y, State.introFrom.z);
+                this._introToVec.set(State.introTo.x, State.introTo.y, State.introTo.z);
+                this.camera.position.lerpVectors(this._introFromVec, this._introToVec, ease);
+                if (State.introTarget) {
+                    this._introTargetVec.set(State.introTarget.x, State.introTarget.y, State.introTarget.z);
+                    this.controls.target.lerp(this._introTargetVec, ease * 0.35 + 0.1);
+                }
+            }
+            if (t >= 1) State.introPlaying = false;
+        }
+
+        const dt = 0.016;
+        State.objects.forEach((obj) => {
+            if (obj.userData?.isHuman && !obj.userData?.isPlayer && !obj.userData?.isGltf) {
+                HumanMesh.updateIdle(obj, time * 0.001, dt);
+            }
+        });
+
         this.controls.update();
         // Visual Rotation (Only for non-physics objects or purely visual effect)
         if (!State.isPaused) {
@@ -1393,6 +1427,15 @@ const UI = {
         const consoleVisible = ViewPrefs.get('consoleVisible', !mobile);
         this.setConsoleBarVisible(consoleVisible, false);
         this.updateTouchToggle();
+    },
+    showWelcomeIfNeeded: function () {
+        if (ViewPrefs.get('welcomeSeen', false)) return;
+        const el = document.getElementById('engine-welcome');
+        el?.classList.remove('hidden');
+        document.getElementById('engine-welcome-dismiss')?.addEventListener('click', () => {
+            el?.classList.add('hidden');
+            ViewPrefs.set('welcomeSeen', true);
+        }, { once: true });
     },
     setConsoleBarVisible: function (visible, persist = true) {
         document.body.classList.toggle('console-visible', visible);

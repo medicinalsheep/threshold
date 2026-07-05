@@ -12,17 +12,27 @@
 
     <!-- LOBBY: Create or join a session -->
     <div id="lobby-overlay">
+        <div class="lobby-bg-grid" aria-hidden="true"></div>
         <div id="lobby-card" class="panel">
-            <h1>THRESHOLD</h1>
-            <p class="tagline">Create, code, and play together in 3D.</p>
+            <div class="lobby-hero">
+                <h1>THRESHOLD</h1>
+                <p class="tagline">Create worlds · record sounds · play together in 3D.</p>
+            </div>
+            <div class="lobby-pills">
+                <span class="lobby-pill">3D ENGINE</span>
+                <span class="lobby-pill">AI PROMPTS</span>
+                <span class="lobby-pill">SOUND LIBRARY</span>
+                <span class="lobby-pill">MULTIPLAYER</span>
+            </div>
             <input type="text" id="lobby-name" class="lobby-input" placeholder="Your name" maxlength="20">
             <button id="lobby-create" class="lobby-btn lobby-btn-primary">CREATE SESSION</button>
             <input type="text" id="lobby-join-code" class="lobby-input" placeholder="Room code to join" maxlength="8">
             <button id="lobby-join" class="lobby-btn">JOIN FRIENDS</button>
-            <button id="lobby-solo" class="lobby-btn lobby-btn-ghost">SOLO PLAY</button>
+            <button id="lobby-solo" class="lobby-btn lobby-btn-ghost">SOLO PLAY →</button>
             <div class="lobby-steps">
-                <strong>With friends:</strong> Create → copy link → friends open link → Join.<br>
-                Then: generate code · insert characters · design together.
+                <div class="lobby-step"><span class="lobby-step-num">1</span> Enter the engine — drag panels, tap FULL for immersive view</div>
+                <div class="lobby-step"><span class="lobby-step-num">2</span> PromptGen + Compiler — AI builds your world (reference your recorded sounds)</div>
+                <div class="lobby-step"><span class="lobby-step-num">3</span> SFX tab — record sounds · link to objects, collisions, emotes</div>
             </div>
             <div id="lobby-status"></div>
         </div>
@@ -86,6 +96,15 @@
         </div>
 
         <!-- 3. UI Overlay Layer -->
+        <div id="engine-welcome" class="engine-welcome hidden">
+            <div class="engine-welcome-card panel">
+                <h3>WELCOME</h3>
+                <p>Drag <strong>TOOLS</strong> and <strong>SCENE</strong> panels anywhere · LOCK when set.</p>
+                <p>Tap <strong>PLAY</strong> to walk · <strong>+</strong> to insert · <strong>SFX</strong> to record sounds.</p>
+                <button id="engine-welcome-dismiss" type="button">GOT IT</button>
+            </div>
+        </div>
+
         <div id="ui-layer">
             <!-- Session + Toolbar -->
             <div class="panel engine-toolbar" id="engine-toolbar">
@@ -522,6 +541,17 @@
                 </div>
                 <div class="prompt-input-group">
                     <label><input type="checkbox" id="prompt-use-scene" checked> Include live scene + running code</label>
+                </div>
+                <div class="prompt-input-group">
+                    <label><input type="checkbox" id="prompt-use-sounds" checked> Include sound library + assignments</label>
+                </div>
+                <div id="prompt-sound-panel" class="prompt-sound-panel">
+                    <div class="prompt-sound-toolbar">
+                        <span class="prompt-sound-label">Reference clips</span>
+                        <button type="button" id="prompt-sound-all" class="btn-sm">ALL</button>
+                        <button type="button" id="prompt-sound-none" class="btn-sm">NONE</button>
+                    </div>
+                    <div id="prompt-sound-list" class="prompt-sound-list"></div>
                 </div>
                 <button id="btn-prompt-gen">GENERATE PROMPT</button>
             </aside>

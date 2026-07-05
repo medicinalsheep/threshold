@@ -3,21 +3,62 @@ import { IS_GROK_EDITION, APP_URL, VERSION } from '../config.js';
 import { Auth } from '../auth/main.js';
 import { generateScript } from '../grok/client.js';
 import { getSceneContext } from '../shared/sceneContext.js';
+import { getSoundContext } from '../shared/soundContext.js';
 import { getReferencePromptBlock } from '../shared/referenceLibrary.js';
+import { SoundLibrary } from '../shared/soundLibrary.js';
+
+function renderSoundPicker() {
+    const list = document.getElementById('prompt-sound-list');
+    if (!list) return;
+    const clips = SoundLibrary.list();
+    if (!clips.length) {
+        list.innerHTML = '<p class="prompt-sound-empty">No recordings yet — use ENGINE → SFX tab to record sounds.</p>';
+        return;
+    }
+    list.innerHTML = clips.map((c) => `
+        <label class="prompt-sound-item">
+            <input type="checkbox" class="prompt-sound-check" value="${c.id}" checked>
+            <span>${c.name}</span>
+            <code>${c.id}</code>
+        </label>
+    `).join('');
+}
 
 export function initPrompter() {
     console.log('Initializing Prompter...');
     document.getElementById('btn-prompt-gen').addEventListener('click', () => Prompter.generate());
     document.getElementById('btn-prompt-copy').addEventListener('click', () => Prompter.copy());
+    document.getElementById('prompt-use-sounds')?.addEventListener('change', () => Prompter.syncSoundPanel());
+    document.getElementById('prompt-sound-all')?.addEventListener('click', () => {
+        document.querySelectorAll('.prompt-sound-check').forEach((el) => { el.checked = true; });
+    });
+    document.getElementById('prompt-sound-none')?.addEventListener('click', () => {
+        document.querySelectorAll('.prompt-sound-check').forEach((el) => { el.checked = false; });
+    });
+
+    SoundLibrary.init().then(() => renderSoundPicker());
+    window.addEventListener('sound-library-change', renderSoundPicker);
 
     const grokBtn = document.getElementById('btn-prompt-grok');
     if (grokBtn) {
         grokBtn.style.display = IS_GROK_EDITION ? 'inline-block' : 'none';
         grokBtn.addEventListener('click', () => Prompter.generateWithGrok());
     }
+
+    Prompter.syncSoundPanel();
 }
 
 const Prompter = {
+    getSelectedSoundIds() {
+        return [...document.querySelectorAll('.prompt-sound-check:checked')].map((el) => el.value);
+    },
+
+    syncSoundPanel() {
+        const on = document.getElementById('prompt-use-sounds')?.checked;
+        const panel = document.getElementById('prompt-sound-panel');
+        if (panel) panel.style.display = on ? 'block' : 'none';
+    },
+
     apiContext: `
 TOOL: THRESHOLD SUITE v${VERSION}
 LIVE APP: ${APP_URL}
@@ -40,6 +81,7 @@ GLOBAL API: World, State, Engine, THREE, Physics, PlayerController, Persistence,
 OBJECT EDIT METADATA (set in code for inspector):
 - material: color, roughness, metalness, emissive, emissiveIntensity
 - userData: hasPhysics, mass, friction, restitution, soundFreq, soundType, isHuman, isPlayer
+- userData: soundMode ('clip'|'tone'), soundClipId (from user library), soundTrigger (collision|interact|emote|ambient)
 
 RENDER MODES (parallel depth-layer grids):
 - 0 Threshold, 1 1-Bit, 2 Terminal (green bands), 3 SMPTE, 4 Hyper (physics+bloom)
@@ -52,6 +94,7 @@ ${getReferencePromptBlock()}
         const idea = document.getElementById('prompt-idea').value;
         const taskType = document.getElementById('prompt-task')?.value || 'extend';
         const useScene = document.getElementById('prompt-use-scene')?.checked;
+        const useSounds = document.getElementById('prompt-use-sounds')?.checked;
 
         const taskLines = {
             extend: idea ? `Extend the live world: "${idea}"` : 'Extend the current live world.',
@@ -62,12 +105,16 @@ ${getReferencePromptBlock()}
         };
 
         const sceneBlock = useScene ? `\n\n${getSceneContext()}\n\nBuild on this scene. World.clearWorld() only if explicitly requested.` : '';
+        const soundBlock = useSounds
+            ? `\n\n${getSoundContext(this.getSelectedSoundIds())}\n\nWhen generated features need audio, reference clip IDs above or leave soundClipId null for user to record later.`
+            : '';
 
         return {
             idea,
             prompt: `
 ${this.apiContext}
 ${sceneBlock}
+${soundBlock}
 
 TASK: ${taskLines[taskType] || taskLines.extend}
 
@@ -76,11 +123,13 @@ OUTPUT REQUIREMENTS:
 - Reference Compiler library patterns (players/worlds/techniques) where applicable
 - Return runnable JS for COMPILER at ${APP_URL}
 - Note which inspector panels users will use (Texture/Collision/Audio)
+- If sounds are listed, wire userData.soundClipId + soundTrigger on matching objects
 `.trim()
         };
     },
 
     generate() {
+        this.syncSoundPanel();
         document.getElementById('prompt-output').value = this.buildPrompt().prompt;
     },
 

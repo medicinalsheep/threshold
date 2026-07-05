@@ -74,3 +74,61 @@
     gap: 15px;
     padding-bottom: 35px; /* Extra breathing room at bottom */
 }
+
+.prompt-sound-panel {
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.35);
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.prompt-sound-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.prompt-sound-label {
+    flex: 1;
+    font-size: 0.65rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.prompt-sound-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.prompt-sound-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.68rem;
+    padding: 4px 0;
+    cursor: pointer;
+}
+
+.prompt-sound-item span {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.prompt-sound-item code {
+    font-size: 0.58rem;
+    opacity: 0.65;
+}
+
+.prompt-sound-empty {
+    margin: 0;
+    font-size: 0.68rem;
+    color: #666;
+    line-height: 1.4;
+}

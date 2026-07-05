@@ -62,6 +62,20 @@ export const REFERENCE_LIBRARY = {
 // 4. RUN IN ENGINE (switches to Engine tab, executes if paused)
 // 5. Inspect results in EDIT → Texture/Collision panels
 // Reference: Compiler → WORKFLOWS + TECHNIQUES templates`
+        },
+        {
+            id: 'sound_prompt_loop',
+            title: 'Sounds in AI Prompts',
+            summary: 'Record in SFX tab → check clips in PromptGen → AI wires soundClipId on objects.',
+            checklist: ['Record sounds in ENGINE → SFX', 'PromptGen: Include sound library', 'Select which clips to reference', 'EDIT → Audio to tweak triggers'],
+            code: `// Example — assign library clip to new object:
+const m = World.createObject('cube', 'Chime Block', 0xffaa00, true);
+m.userData.soundMode = 'clip';
+m.userData.soundClipId = 'sfx_xxx'; // from PromptGen sound list
+m.userData.soundTrigger = 'collision';
+
+// Triggers: collision | interact | emote | ambient
+// User records after AI runs if clip ID not set — SFX tab + prompt modal`
         }
     ],
     players: [
