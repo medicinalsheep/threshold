@@ -200,6 +200,8 @@ function woodAlbedo(x, y, w, h, pal) {
     const grain = Math.sin(u * 42 + noise(x, y, 91) * 2) * 0.5 + 0.5;
     let base = plank ? pal.grain : pal.dark;
     if (grain > 0.72) base = pal.ring;
+    const gap = Math.abs((v * 6) % 1 - 0.5) < 0.03;
+    if (gap) base = [Math.max(0, base[0] - 28), Math.max(0, base[1] - 28), Math.max(0, base[2] - 28)];
     const n = noise(x, y, 93) * 10;
     return [Math.min(255, base[0] + n), Math.min(255, base[1] + n), Math.min(255, base[2] + n), 255];
 }

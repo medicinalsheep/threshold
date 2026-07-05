@@ -211,6 +211,19 @@
       "style": "fabric"
     },
     {
+      "slug": "starter_bench",
+      "objectName": "Starter Bench",
+      "tcEd": "tc-lite",
+      "surfaceType": "wood",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "grain": [108, 82, 54],
+        "dark": [78, 56, 36],
+        "ring": [128, 98, 68]
+      },
+      "style": "wood"
+    },
+    {
       "slug": "starter_metal_grate",
       "objectName": "Metal Grate",
       "tcEd": "tc-lite",

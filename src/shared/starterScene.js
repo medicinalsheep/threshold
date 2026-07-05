@@ -262,6 +262,22 @@ export function bootstrapStarterScene() {
         matOpts: { metalness: 0.55, roughness: 0.42 },
     });
 
+    const bannerMat = new THREE.MeshStandardMaterial({
+        color: 0x6a5888,
+        roughness: 0.92,
+        metalness: 0.02,
+        side: THREE.DoubleSide,
+        envMapIntensity: 0.18,
+    });
+    const banner = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 2.4), bannerMat);
+    banner.position.set(-5.8, 1.35, -1.2);
+    banner.rotation.y = Math.PI / 2;
+    banner.castShadow = true;
+    banner.receiveShadow = true;
+    banner.userData = { id: 'starter_banner', name: 'Fabric Banner', type: 'decor', locked: true };
+    Engine.scene.add(banner);
+    State.objects.push(banner);
+
     const benchMat = new THREE.MeshStandardMaterial({ color: 0x4a4038, roughness: 0.78, metalness: 0.05 });
     const bench = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.42, 0.45), benchMat);
     bench.position.set(-2.8, 0.21, -0.6);

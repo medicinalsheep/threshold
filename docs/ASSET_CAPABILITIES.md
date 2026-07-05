@@ -2,7 +2,7 @@
 
 Threshold ships a **full starter pipeline** for realistic action games: procedural PBR textures with HILOD, WebP/KTX2 codecs, Blender import, rigged avatars, surface footstep SFX, and FPS combat (ADS).
 
-**Current version:** v6.2.0 (Phase 8)
+**Current version:** v6.3.0 (Phase 9)
 
 ---
 
@@ -60,6 +60,19 @@ flowchart TB
 | base `.png` | 512 | source |
 
 Runtime picks variant via `TextureHilod` + graphics profile `textureMax`.
+
+### GIMP override
+
+```bash
+npm run gimp:install
+# Filters → Threshold → Build TC Textures (R8)
+```
+
+See [GIMP_TEXTURES.md](GIMP_TEXTURES.md) — full parity with `tc-gen-tex.cjs`.
+
+### Starter UV tiling
+
+`config/starter-textures.json` — per-object `uvRepeat` / `normalScale` after manifest bind (512px maps tile on 14m ground).
 
 ### Codecs
 

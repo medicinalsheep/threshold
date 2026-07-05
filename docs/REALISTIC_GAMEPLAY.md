@@ -2,7 +2,7 @@
 
 Threshold ships a **walk/drive action control** template in the SOLO lobby. Use it as the baseline for shooters, RPGs, and vehicle scenes.
 
-**Current default version:** v6.2.0 realism defaults (Phase 8)
+**Current default version:** v6.3.0 realism defaults (Phase 9)
 
 ---
 
@@ -126,6 +126,15 @@ npm run assets:verify  # smoke test
 Build your game by replacing props, keeping the control + physics + asset pipeline.
 
 ---
+
+## Phase 9 additions (v6.3)
+
+| Feature | Notes |
+|---------|-------|
+| GIMP R8 parity | All surface styles + HILOD — `docs/GIMP_TEXTURES.md` |
+| Blender avatar CLI | `npm run blender:avatar` |
+| Starter UV tiling | `config/starter-textures.json` — immersive defaults, lightweight files |
+| Fabric banner | Starter scene decor with fabric preset |
 
 ## Phase 8 additions (v6.2)
 

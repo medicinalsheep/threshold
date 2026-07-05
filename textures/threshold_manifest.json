@@ -1516,6 +1516,114 @@
       ]
     },
     {
+      "id": "starter_bench_albedo",
+      "objectName": "Starter Bench",
+      "slot": "albedo",
+      "file": "starter_bench_albedo.png",
+      "path": "textures/starter_bench_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_bench_albedo_512.png",
+          "path": "textures/starter_bench_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_bench_albedo_1k.png",
+          "path": "textures/starter_bench_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_bench_albedo_2k.png",
+          "path": "textures/starter_bench_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_bench_albedo_4k.png",
+          "path": "textures/starter_bench_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_bench_roughness",
+      "objectName": "Starter Bench",
+      "slot": "roughness",
+      "file": "starter_bench_roughness.png",
+      "path": "textures/starter_bench_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_bench_roughness_512.png",
+          "path": "textures/starter_bench_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_bench_roughness_1k.png",
+          "path": "textures/starter_bench_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_bench_roughness_2k.png",
+          "path": "textures/starter_bench_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_bench_roughness_4k.png",
+          "path": "textures/starter_bench_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_bench_normal",
+      "objectName": "Starter Bench",
+      "slot": "normal",
+      "file": "starter_bench_normal.png",
+      "path": "textures/starter_bench_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_bench_normal_512.png",
+          "path": "textures/starter_bench_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_bench_normal_1k.png",
+          "path": "textures/starter_bench_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_bench_normal_2k.png",
+          "path": "textures/starter_bench_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_bench_normal_4k.png",
+          "path": "textures/starter_bench_normal_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
       "id": "starter_metal_grate_albedo",
       "objectName": "Metal Grate",
       "slot": "albedo",
@@ -1662,5 +1770,5 @@
   ],
   "exportDir": "textures",
   "tcRealism": "r8",
-  "exportedAt": "2026-07-05T11:32:59.967Z"
+  "exportedAt": "2026-07-05T11:40:35.742Z"
 }

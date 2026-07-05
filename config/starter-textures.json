@@ -1,0 +1,28 @@
+{
+  "format": "threshold-starter-textures",
+  "version": 1,
+  "note": "UV tiling + finish pass after manifest wiring — keeps 512px maps lightweight on large meshes",
+  "defaults": {
+    "uvRepeat": [2, 2],
+    "normalScale": 1,
+    "envMapIntensity": 0.28
+  },
+  "objects": {
+    "Starter Ground": { "uvRepeat": [7, 7], "normalScale": 0.75, "envMapIntensity": 0.24 },
+    "Starter Wall": { "uvRepeat": [4, 2], "normalScale": 0.9, "envMapIntensity": 0.22 },
+    "Welcome Platform": { "uvRepeat": [3, 3], "normalScale": 0.65, "envMapIntensity": 0.26 },
+    "Grass Patch": { "uvRepeat": [4, 4], "normalScale": 0.7 },
+    "Wood Deck": { "uvRepeat": [3, 2], "normalScale": 0.55 },
+    "Gravel Path": { "uvRepeat": [5, 3], "normalScale": 0.95 },
+    "Asphalt Lane": { "uvRepeat": [4, 3], "normalScale": 0.5 },
+    "Metal Grate": { "uvRepeat": [2, 2], "normalScale": 0.8, "envMapIntensity": 0.38 },
+    "Starter Stripe": { "uvRepeat": [1, 6], "envMapIntensity": 0.2 },
+    "Starter Bench": { "uvRepeat": [2, 1], "normalScale": 0.5 },
+    "Fabric Banner": { "uvRepeat": [2, 3], "envMapIntensity": 0.18 },
+    "AI Build Station": { "uvRepeat": [1, 1], "envMapIntensity": 0.32 },
+    "Model Kiosk": { "uvRepeat": [1, 1], "envMapIntensity": 0.32 }
+  },
+  "aliases": {
+    "starter_bench": "Starter Bench"
+  }
+}

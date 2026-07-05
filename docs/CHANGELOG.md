@@ -1,5 +1,14 @@
 # Changelog
 
+## 6.3.0 — Phase 9: GIMP parity, Blender avatar export, immersive starter textures
+
+- GIMP `build_tc_tex.py` — full r8 parity with Node (all 12 surface styles + `_4k` HILOD)
+- `blender:avatar` — headless rigged GLB export with animations
+- `config/starter-textures.json` — UV tiling + normal scale for lightweight PBR on large meshes
+- `starterTex.js` — multi-mesh wiring, alias support, finish pass
+- Starter scene: fabric banner, bench wood preset, tiled surface pads
+- [GIMP_TEXTURES.md](GIMP_TEXTURES.md) — install, batch, override workflow
+
 ## 6.2.0 — Phase 8: texture expansion, KTX2, ADS, Blender avatars, surfaces
 
 - **Texture presets** — grass, wood, gravel, asphalt, fabric, metal_grate (+ `_4k` HILOD tier, r8)

@@ -46,10 +46,18 @@ Use this when replacing procedural starter avatars with Blender-rigged character
 
 ---
 
-## Headless batch export
+## Headless avatar export (rigged + animations)
 
 ```bash
-npm run blender:export -- --blend characters.blend --object "PlayerRig" --output import
+npm run blender:avatar -- --blend characters.blend --object Armature --file my_avatar.glb
+```
+
+Uses `plugins/threshold-blender/export_avatar.py` — exports GLB with skins + all actions.
+
+## Props / LOD export
+
+```bash
+npm run blender:export -- --blend scene.blend --object "Stone Block" --output import --lod
 ```
 
 ---
