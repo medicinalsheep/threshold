@@ -284,7 +284,7 @@ Support ongoing development:
 | **Ship** | 9-step EXPORT → `store:prep` → APK / Windows / iOS / **Steam** |
 | **Scale** | Optional **relay/** — [AWS free tier](relay/README.md) |
 
-**Current:** v5.6.0 — R2 Child vehicles GLB+LOD + Child policy. [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) · [docs/NEXT_PHASES.md](docs/NEXT_PHASES.md) · [docs/PRODUCT_ROADMAP.md](docs/PRODUCT_ROADMAP.md)
+**Current:** v5.7.0 — R3 Child showcase (characters, audio, full export demo). [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) · [docs/NEXT_PHASES.md](docs/NEXT_PHASES.md) · [docs/PRODUCT_ROADMAP.md](docs/PRODUCT_ROADMAP.md)
 
 ---
 

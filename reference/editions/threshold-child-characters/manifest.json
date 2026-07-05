@@ -1,0 +1,14 @@
+{
+  "format": "threshold-reference-edition",
+  "version": 1,
+  "id": "threshold-child-characters",
+  "label": "Threshold Child Characters",
+  "license": "Original — Threshold Child edition",
+  "author": "Threshold",
+  "loader": "procedural",
+  "source": "src/shared/thresholdChildCharacters.js",
+  "assets": [
+    { "id": "child_marshal", "label": "Threshold Marshal", "kind": "character", "spawn": "HumanMesh" },
+    { "id": "child_mechanic", "label": "Threshold Mechanic", "kind": "character", "spawn": "HumanMesh" }
+  ]
+}

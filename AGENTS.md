@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **5.6.0**)
+**Version:** `src/config.js` → `VERSION` (currently **5.7.0**)
 
 ---
 
@@ -18,7 +18,7 @@ Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blen
 | Creative | `textureBridge.js`, `gltfImport.js`, `creativeWatch.js` |
 | Export | `gameExport.js`, `exportWizard.js`, `exportWalkthrough.js` |
 | Store / Steam | `scripts/store-*.cjs`, `scripts/steam-*.cjs`, `electron/steam*.cjs` |
-| Threshold Child assets | `thresholdChildVehicles.js`, `thresholdChildAssets.js`, `referenceEdition.js` |
+| Threshold Child assets | `thresholdChildShowcase.js`, `thresholdChildVehicles.js`, `thresholdChildCharacters.js`, `thresholdChildAudio.js`, `childAssetsPrompt.js` |
 | Native | `electron/`, `capacitor.config.json`, `thresholdShell.js` |
 | Plugins | `plugins/threshold-gimp/`, `plugins/threshold-blender/` |
 

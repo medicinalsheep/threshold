@@ -1,6 +1,7 @@
 import { GraphicsProfile } from './graphicsProfile.js';
 import { sanitizeUserDataForSync } from './lodSync.js';
 import { LOD_DISTANCES } from './lodConfig.js';
+import { getChildAssetsPromptBlock } from './childAssetsPrompt.js';
 
 const MODE_NAMES = ['Threshold', '1-Bit', 'Terminal', 'SMPTE', 'Hyper'];
 
@@ -122,6 +123,9 @@ export function getAssetContext() {
         return paths;
     });
 
+    const hasChild = (State?.objects || []).some((o) => o.userData?.isThresholdChild);
+    const childBlock = hasChild ? `\n\n${getChildAssetsPromptBlock()}` : '';
+
     return `
 ASSET MANIFEST (for PromptGen / Compiler — user imports files after RUN if paths are local):
 - Texture library clips (IndexedDB): ${textureClips.length ? textureClips.map((t) => `${t.id} (${t.path || t.name})`).join('; ') : 'none'}
@@ -138,7 +142,7 @@ ${sceneAssets.length ? sceneAssets.map((a) => {
 - GIMP export folder: textures/ + threshold_manifest.json → Engine Texture → GIMP SYNC
 - Blender export folder: import/ + threshold_blender_manifest.json → INSERT → GLTF
 - Dev hot-reload: npm run textures:watch (pairs with npm run dev)
-- Cutscenes: video/*.mp4|webm → World.playCutscene('video/intro.mp4') — HTML5 VideoTexture
+- Cutscenes: video/*.mp4|webm → World.playCutscene('video/intro.mp4') — HTML5 VideoTexture${childBlock}
 `.trim();
 }
 

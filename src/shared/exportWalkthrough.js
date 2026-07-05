@@ -3,6 +3,9 @@ import { TextureLibrary } from './textureLibrary.js';
 import { TextureHilod } from './textureHilod.js';
 import { getChildCreditEntries } from './thresholdChildAssets.js';
 import { getChildVehicleCreditEntries } from './thresholdChildVehicles.js';
+import { getChildCharacterCreditEntries } from './thresholdChildCharacters.js';
+import { getChildAudioCreditEntries } from './thresholdChildAudio.js';
+import { getChildShowcaseCreditEntries } from './thresholdChildShowcase.js';
 import storeAssetsConfig from '../../config/store-assets.json';
 
 
@@ -189,6 +192,9 @@ export function ensureCreditEntries(draft, inventory) {
 
     getChildCreditEntries().forEach((c) => add(c.id, c.label, c.kind, c));
     getChildVehicleCreditEntries().forEach((c) => add(c.id, c.label, c.kind, c));
+    getChildCharacterCreditEntries().forEach((c) => add(c.id, c.label, c.kind, c));
+    getChildAudioCreditEntries().forEach((c) => add(c.id, c.label, c.kind, c));
+    getChildShowcaseCreditEntries().forEach((c) => add(c.id, c.label, c.kind, c));
 
     inventory.sceneObjects
         .filter((o) => o.isThresholdChild)

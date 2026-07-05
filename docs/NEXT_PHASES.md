@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v5.6.0 — Phase R2 Child vehicles GLB + LOD; Tier 2 docs + Child policy.
+**Current:** v5.7.0 — Phase R3 Child showcase (characters, audio, full export demo).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -219,7 +219,17 @@ npm run child:vehicles:build
 npm run blender:export -- --blend plugins/threshold-blender/child_vehicles.blend --object "Threshold Runner" --lod
 ```
 
-**Next (R3+):** characters, audio, showcase scene, PromptGen ASSETS block samples.
+### Phase R3 — Characters, audio, showcase (v5.7) ✅
+
+| Step | Status |
+|------|--------|
+| R3.1 `thresholdChildCharacters.js` — Marshal + Mechanic | ✅ |
+| R3.2 `thresholdChildAudio.js` — synthesized SFX seeds | ✅ |
+| R3.3 `thresholdChildShowcase.js` — full export demo world | ✅ |
+| R3.4 PromptGen `childAssetsPrompt.js` ASSETS block | ✅ |
+| R3.5 Lobby showcase default; CREDITS/PACKS character + sound kinds | ✅ |
+
+**Next:** Blender Child character GLB, texture Child exports, cutscene showcase video.
 
 ### Phase K — Cinematic layer (v4.9) ✅
 

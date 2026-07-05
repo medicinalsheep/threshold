@@ -40,11 +40,11 @@ Developers may use `reference/_dev-seeds/` locally to **compare** workflows; tho
 | Edition | Status | Contents |
 |---------|--------|----------|
 | `threshold` | Active | Core starter scene only |
-| `threshold-child-vehicles` | **Active (default lobby)** | Runner, Hauler — GLB + LOD @ 12m/28m; Circuit Span procedural companion |
+| `threshold-child-showcase` | **Active (default lobby)** | Full export demo — vehicles, NPCs, SFX, checkpoint |
+| `threshold-child-vehicles` | **Active** | Runner, Hauler — GLB + LOD @ 12m/28m; Circuit Span companion |
+| `threshold-child-characters` | **Active** | Marshal + Mechanic HumanMesh NPCs |
+| `threshold-child-audio` | **Active** | 5 synthesized original SFX seeds |
 | `threshold-child-lite` | **Active (fallback)** | Procedural Runner, Hauler, Circuit Span v1.1 |
-| `threshold-child-characters` | Planned | Unique humanoid variants |
-| `threshold-child-audio` | Planned | Original SFX timbres (not ripped footstep banks) |
-| `threshold-child-showcase` | Planned | Full demo world + cutscene |
 
 Config: `config/reference-editions.json`
 
@@ -72,7 +72,7 @@ Use Child assets as **design seeds** — same objects can anchor many game types
 | Cinematic establishing shot | `World.playCutscene` + camera path |
 | HILOD / LOD teaching | Duplicate in Blender as Child GLB with LOD1/2 |
 
-### Characters (planned Child)
+### Characters (R3 Child)
 
 | Gameplay idea | Dev hook |
 |---------------|----------|
@@ -80,7 +80,7 @@ Use Child assets as **design seeds** — same objects can anchor many game types
 | Avatar skin swap | Player insert + GLTF URL |
 | Dialogue | Grok NPC + persona |
 
-### Audio (planned Child)
+### Audio (R3 Child)
 
 | Gameplay idea | Dev hook |
 |---------------|----------|
@@ -118,7 +118,20 @@ Use Child assets as **design seeds** — same objects can anchor many game types
 | Web bundle | `public/bundle/import/*.glb` (dev) · `npm run bundle:assets` (ship) |
 | Loader | `src/shared/thresholdChildVehicles.js` — `MeshLod` @ `[0, 12, 28]` |
 
-Lobby **THRESHOLD CHILD** loads GLB vehicles when manifest is present; falls back to Child Lite procedural.
+Lobby **THRESHOLD CHILD** loads the **Showcase** (vehicles + NPCs + SFX); falls back to vehicles-only or Child Lite procedural.
+
+---
+
+## R3 — Characters, audio, showcase
+
+| Module | Loader | Contents |
+|--------|--------|----------|
+| Characters | `thresholdChildCharacters.js` | Marshal (circuit), Mechanic (garage) |
+| Audio | `thresholdChildAudio.js` | 5 synthesized WAV clips → SoundLibrary |
+| Showcase | `thresholdChildShowcase.js` | Orchestrates R2+R3 + checkpoint beacon |
+| PromptGen | `childAssetsPrompt.js` | `// ASSETS:` block in scene context |
+
+Audio clips wire automatically: `child_sfx_vehicle_impact` → vehicles, `child_sfx_footstep` → NPCs, etc.
 
 ---
 

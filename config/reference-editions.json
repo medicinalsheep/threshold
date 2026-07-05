@@ -1,8 +1,8 @@
 {
   "format": "threshold-reference-editions",
-  "version": 3,
+  "version": 4,
   "policy": "docs/THRESHOLD_CHILD_ASSETS.md",
-  "defaultEdition": "threshold-child-vehicles",
+  "defaultEdition": "threshold-child-showcase",
   "editions": {
     "threshold": {
       "id": "threshold",
@@ -10,6 +10,16 @@
       "description": "Procedural starter scene only",
       "status": "active",
       "license": "Original — Threshold"
+    },
+    "threshold-child-showcase": {
+      "id": "threshold-child-showcase",
+      "label": "Threshold Child Showcase",
+      "description": "Full export demo — GLB vehicles + LOD, characters, SFX, checkpoint — R3",
+      "status": "active",
+      "license": "Original — Threshold Child edition",
+      "loader": "src/shared/thresholdChildShowcase.js",
+      "lobbyButton": "THRESHOLD CHILD",
+      "attribution": "reference/ATTRIBUTION.md"
     },
     "threshold-child-vehicles": {
       "id": "threshold-child-vehicles",
@@ -20,7 +30,24 @@
       "loader": "src/shared/thresholdChildVehicles.js",
       "blenderManifest": "import/threshold_blender_manifest.json",
       "buildCli": "npm run child:vehicles:build",
-      "lobbyButton": "THRESHOLD CHILD",
+      "attribution": "reference/ATTRIBUTION.md"
+    },
+    "threshold-child-characters": {
+      "id": "threshold-child-characters",
+      "label": "Threshold Child Characters",
+      "description": "Marshal + Mechanic HumanMesh NPCs — R3",
+      "status": "active",
+      "license": "Original — Threshold Child edition",
+      "loader": "src/shared/thresholdChildCharacters.js",
+      "attribution": "reference/ATTRIBUTION.md"
+    },
+    "threshold-child-audio": {
+      "id": "threshold-child-audio",
+      "label": "Threshold Child Audio",
+      "description": "Synthesized original SFX seeds — R3",
+      "status": "active",
+      "license": "Original — Threshold Child edition",
+      "loader": "src/shared/thresholdChildAudio.js",
       "attribution": "reference/ATTRIBUTION.md"
     },
     "threshold-child-lite": {
@@ -36,11 +63,7 @@
   "deprecated": {
     "threshold-ref-lite": "Removed — raw external CC0 drops replaced by Threshold Child originals (v5.5)"
   },
-  "planned": {
-    "threshold-child-characters": "Unique humanoid Child meshes",
-    "threshold-child-audio": "Original SFX library seeds",
-    "threshold-child-showcase": "Full demo world for export tutorial"
-  },
+  "planned": {},
   "devOnly": {
     "externalSeedsDir": "reference/_dev-seeds/",
     "fetchCli": "npm run reference:fetch",

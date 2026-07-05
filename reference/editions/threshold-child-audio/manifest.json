@@ -1,0 +1,17 @@
+{
+  "format": "threshold-reference-edition",
+  "version": 1,
+  "id": "threshold-child-audio",
+  "label": "Threshold Child Audio",
+  "license": "Original — Threshold Child edition",
+  "author": "Threshold",
+  "loader": "synthesized",
+  "source": "src/shared/thresholdChildAudio.js",
+  "assets": [
+    { "id": "child_sfx_vehicle_impact", "label": "Child Vehicle Impact", "kind": "sound" },
+    { "id": "child_sfx_footstep", "label": "Child Footstep", "kind": "sound" },
+    { "id": "child_sfx_engine_idle", "label": "Child Engine Idle", "kind": "sound" },
+    { "id": "child_sfx_checkpoint", "label": "Child Checkpoint", "kind": "sound" },
+    { "id": "child_sfx_start_beep", "label": "Child Start Beep", "kind": "sound" }
+  ]
+}

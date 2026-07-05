@@ -1,6 +1,7 @@
 import { ViewPrefs } from './viewPrefs.js';
 import { spawnThresholdChildLite } from './thresholdChildAssets.js';
 import { spawnThresholdChildVehicles } from './thresholdChildVehicles.js';
+import { spawnThresholdChildShowcase } from './thresholdChildShowcase.js';
 
 /** @deprecated Dev-only external seed — use Threshold Child editions */
 export async function spawnExternalSeedLite() {
@@ -25,6 +26,9 @@ export async function bootstrapReferenceIfRequested() {
     if (!shouldLoadThresholdChild()) return null;
     ViewPrefs.set('loadThresholdChild', false);
 
+    const showcase = await spawnThresholdChildShowcase();
+    if (showcase.spawned >= 4) return showcase;
+
     const vehicles = await spawnThresholdChildVehicles();
     if (vehicles.spawned >= 2) return vehicles;
 
@@ -35,6 +39,7 @@ export async function bootstrapReferenceIfRequested() {
 window.ReferenceEdition = {
     spawnThresholdChildLite,
     spawnThresholdChildVehicles,
+    spawnThresholdChildShowcase,
     setLoadThresholdChild,
     setLoadReferenceLite,
     shouldLoadThresholdChild,

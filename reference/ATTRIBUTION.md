@@ -7,6 +7,10 @@
 | Threshold Runner | `threshold-child-vehicles` | Original — Threshold Child edition (GLB+LOD) | Threshold |
 | Threshold Hauler | `threshold-child-vehicles` | Original — Threshold Child edition (GLB+LOD) | Threshold |
 | Threshold Circuit Span | `threshold-child-lite` | Original — Threshold Child edition | Threshold |
+| Threshold Marshal | `threshold-child-characters` | Original — Threshold Child edition | Threshold |
+| Threshold Mechanic | `threshold-child-characters` | Original — Threshold Child edition | Threshold |
+| Threshold Checkpoint | `threshold-child-showcase` | Original — Threshold Child edition | Threshold |
+| Child SFX (5 clips) | `threshold-child-audio` | Original — Threshold Child edition (synthesized) | Threshold |
 
 Procedural meshes generated in-engine — see `src/shared/thresholdChildAssets.js`.
 

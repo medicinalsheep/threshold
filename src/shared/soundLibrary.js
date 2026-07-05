@@ -65,6 +65,39 @@ export const SoundLibrary = {
         });
     },
 
+    async saveClipWithId(id, name, blob, meta = {}) {
+        const existing = this.list().find((c) => c.id === id);
+        if (existing) return existing;
+
+        const record = {
+            id,
+            name: name || id,
+            createdAt: Date.now(),
+            mime: blob.type || 'audio/wav',
+            size: blob.size,
+            context: meta.context || '',
+            targetType: meta.targetType || 'world',
+            targetId: meta.targetId || null,
+            isThresholdChild: !!meta.isThresholdChild,
+            childEdition: meta.childEdition || null,
+            license: meta.license || null,
+        };
+
+        const db = await openDb();
+        await new Promise((resolve, reject) => {
+            const tx = db.transaction(STORE, 'readwrite');
+            tx.objectStore(STORE).put({ id, blob, meta: record });
+            tx.oncomplete = resolve;
+            tx.onerror = () => reject(tx.error);
+        });
+
+        const index = getIndex();
+        index.unshift(record);
+        setIndex(index);
+        window.dispatchEvent(new CustomEvent('sound-library-change'));
+        return record;
+    },
+
     async saveClip(name, blob, meta = {}) {
         const id = randomId();
         const record = {

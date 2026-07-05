@@ -205,22 +205,20 @@ m.userData.textureHint = 'textures/stone_albedo.png';
         },
         {
             id: 'threshold_child_assets',
-            title: 'Threshold Child — GLB + LOD Vehicles (R2)',
-            summary: 'Lobby THRESHOLD CHILD loads GLB Runner/Hauler with LOD @ 12m/28m + procedural Circuit Span. CREDITS/PACKS pre-fill.',
-            checklist: ['Lobby → THRESHOLD CHILD', 'Fly back — LOD switches at 12m/28m', 'EXPORT → SCENE shows gltf + scene objects', 'PACKS: childvehicles.* SKUs'],
-            code: `// THRESHOLD CHILD R2 (bundled originals — GLB+LOD):
-// 1. Lobby → THRESHOLD CHILD → GLB vehicles + Circuit Span
-// 2. Hyper mode auto-selected · MeshLod.update every frame
-// 3. PLAY — push vehicles; Circuit Span static collision
-// 4. EXPORT → SCENE / CREDITS / PACKS — childEdition threshold-child-vehicles
-// 5. Rebuild assets: npm run child:vehicles:build
-// 6. Blender refine: plugins/threshold-blender/build_child_vehicles.py
+            title: 'Threshold Child Showcase — Full EXPORT Demo (R3)',
+            summary: 'Lobby THRESHOLD CHILD loads showcase: GLB+LOD vehicles, Marshal/Mechanic NPCs, 5 SFX seeds, checkpoint. PromptGen ASSETS block included.',
+            checklist: ['Lobby → THRESHOLD CHILD', 'SFX tab — 5 Child clips seeded', 'PromptGen + Include live scene → ASSETS block', 'EXPORT → CREDITS lists character + sound kinds'],
+            code: `// THRESHOLD CHILD SHOWCASE (R3):
+// 1. Lobby → THRESHOLD CHILD → vehicles + circuit + NPCs + checkpoint + SFX
+// 2. PromptGen → Include live scene → prompt includes // ASSETS: Child block
+// 3. Compiler paste should preserve ASSETS comment for CREDITS step
+// 4. EXPORT → SCENE / CREDITS / PACKS — character + vehicle + sound SKUs
 (function() {
-  const runner = State.objects.find(o => o.userData?.id === 'child_runner');
-  if (runner) runner.userData.mass = 4.0;
-  UI.status('Child Runner retuned — pause to inspect Collision');
+  const marshal = State.objects.find(o => o.userData?.id === 'child_marshal');
+  if (marshal) marshal.rotation.y += 0.02;
+  UI.status('Marshal patrol tick — extend with Compiler timer');
 })();
-// See docs/THRESHOLD_CHILD_ASSETS.md`
+// ASSETS: see childAssetsPrompt.js · docs/THRESHOLD_CHILD_ASSETS.md`
         },
         {
             id: 'export_game_package',

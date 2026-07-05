@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.7.0 — Phase R3: Characters, audio, showcase
+
+- `threshold-child-showcase` — full EXPORT demo (vehicles + NPCs + SFX + checkpoint)
+- Marshal + Mechanic HumanMesh NPCs; 5 synthesized Child SFX seeds
+- PromptGen `// ASSETS:` block via `childAssetsPrompt.js`
+- Lobby THRESHOLD CHILD loads showcase by default
+
 ## 5.6.0 — Phase R2: Child vehicles GLB + LOD
 
 - `threshold-child-vehicles` edition — Runner/Hauler GLB + LOD1/LOD2, procedural Circuit Span
