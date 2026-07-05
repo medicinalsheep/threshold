@@ -84,6 +84,7 @@ OBJECT EDIT METADATA (set in code for inspector):
 - userData: hasPhysics, mass, friction, restitution, soundFreq, soundType, isHuman, isPlayer
 - userData: soundMode ('clip'|'tone'), soundClipId (from user library), soundTrigger (collision|interact|emote|ambient)
 - userData: textures ({ albedo, roughness, metalness } clip IDs from Texture tab), textureHint (local path string for GIMP/Blender export)
+- GIMP: plugins/threshold-gimp/threshold_export.py writes textures/* + threshold_manifest.json — Engine GIMP SYNC matches objectName
 
 RENDER MODES (all remain true 3D — post-process stylizes, depth bands preserve space):
 ${getRenderModePromptBlock()}
@@ -129,7 +130,7 @@ OUTPUT REQUIREMENTS:
 - Return runnable JS for COMPILER at ${APP_URL}
 - Note which inspector panels users will use (Texture/Collision/Audio)
 - If sounds are listed, wire userData.soundClipId + soundTrigger on matching objects
-- If textures are listed, set userData.textures IDs or textureHint paths; user imports maps in ENGINE Texture tab
+- If textures are listed, set userData.textureHint paths (textures/slug_albedo.png); user runs GIMP export then ENGINE GIMP SYNC
 `.trim()
         };
     },

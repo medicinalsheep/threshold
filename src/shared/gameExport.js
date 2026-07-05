@@ -70,6 +70,12 @@ export const GameExport = {
                 ...t,
                 note: 'Blob stored locally — re-import or bundle in native export',
             })),
+            gimp: {
+                manifestName: 'threshold_manifest.json',
+                pluginPath: 'plugins/threshold-gimp/threshold_export.py',
+                install: 'npm run gimp:install',
+                note: 'Export maps in GIMP → Engine Texture tab → GIMP SYNC (Electron loads files from disk)',
+            },
             agents: options.agents || window.AgentHub?.exportConfigs?.() || [],
             relay: {
                 mode: options.relayMode || (import.meta.env.VITE_PEER_HOST ? 'custom' : 'peerjs-cloud'),

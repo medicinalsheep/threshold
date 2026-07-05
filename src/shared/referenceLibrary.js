@@ -47,6 +47,24 @@ export const REFERENCE_LIBRARY = {
 // Inspector Collision: mass/friction/restitution still per-object`
         },
         {
+            id: 'gimp_texture_export',
+            title: 'GIMP Export → Engine GIMP SYNC',
+            summary: 'Paint PBR maps in GIMP, export via Threshold plugin, sync to mesh by object name.',
+            checklist: ['npm run gimp:install', 'GIMP: Filters → Threshold → Export PBR Maps', 'Object name = mesh name in Engine', 'Texture tab → GIMP SYNC'],
+            code: `// GIMP + ENGINE WORKFLOW (not runnable in Compiler):
+// 1. npm run gimp:install — restart GIMP
+// 2. Paint albedo on active layer; optional layers: roughness, metalness, normal
+// 3. Filters → Threshold → Export PBR Maps…
+//    Object name: "Stone Block" (must match Engine inspector Name)
+//    Export folder: <your-project>/textures
+// 4. Compiler / PromptGen snap mesh:
+const m = World.createObject('cube', 'Stone Block', 0xffffff, true);
+m.userData.textureHint = 'textures/stone_block_albedo.png';
+// 5. Engine EDIT → select Stone Block → Texture → GIMP SYNC
+//    Electron: auto-loads from threshold_manifest.json + PNG paths
+//    Web: manifest lists files — import via ALBEDO / ROUGH / METAL buttons`
+        },
+        {
             id: 'texture_local_import',
             title: 'Local Texture Import — Inspector Texture Tab',
             summary: 'Import PNG/JPG albedo, roughness, and metalness maps onto selected meshes. Stored in IndexedDB; included in EXPORT manifest.',

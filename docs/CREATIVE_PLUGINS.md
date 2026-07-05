@@ -22,20 +22,28 @@
 
 ---
 
-## Phase B — GIMP plugin (v4.0)
+## Phase B — GIMP plugin (v3.4)
 
-Python-Fu / Script-Fu scaffold:
+Python-Fu scaffold:
 
 ```
 plugins/threshold-gimp/
-  threshold_export.py   # Export layer → textures/MyObject_albedo.png (+ normal optional)
-  threshold_manifest.json  # IDs for PromptGen / Compiler
+  threshold_export.py      # Filters → Threshold → Export PBR Maps…
+  threshold_manifest.json  # Example manifest for PromptGen / Compiler
 ```
+
+Install: `npm run gimp:install` (copies plugin to GIMP plug-ins folder). Restart GIMP.
+
+**Export workflow:**
+1. GIMP — name layers `roughness`, `metalness`, optional `normal`
+2. **Filters → Threshold → Export PBR Maps…** — object name must match Engine mesh name
+3. Export folder → project `textures/` (writes `threshold_manifest.json`)
+4. Engine — EDIT → select mesh → Texture tab → **GIMP SYNC** (Electron loads maps from disk; web shows paths to import manually)
 
 **AI workflow:**
 1. PromptGen asks for material description
 2. User runs GIMP plugin or AI script locally
-3. Compiler references `textures/foo_albedo.png` in `World.createObject` material loader
+3. Compiler sets `userData.textureHint = 'textures/foo_albedo.png'` — GIMP SYNC or Texture tab import applies maps
 
 ---
 

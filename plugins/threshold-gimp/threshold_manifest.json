@@ -1,0 +1,30 @@
+{
+  "format": "threshold-gimp-manifest",
+  "formatVersion": 1,
+  "engineVersion": "3.4.0",
+  "exportedAt": null,
+  "exportDir": "textures",
+  "textures": [
+    {
+      "id": "stone_block_albedo",
+      "objectName": "Stone Block",
+      "slot": "albedo",
+      "file": "stone_block_albedo.png",
+      "path": "textures/stone_block_albedo.png"
+    },
+    {
+      "id": "stone_block_roughness",
+      "objectName": "Stone Block",
+      "slot": "roughness",
+      "file": "stone_block_roughness.png",
+      "path": "textures/stone_block_roughness.png"
+    },
+    {
+      "id": "stone_block_metalness",
+      "objectName": "Stone Block",
+      "slot": "metalness",
+      "file": "stone_block_metalness.png",
+      "path": "textures/stone_block_metalness.png"
+    }
+  ]
+}

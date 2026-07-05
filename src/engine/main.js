@@ -1281,6 +1281,7 @@ const UI = {
         document.getElementById('insp-texture-rough')?.addEventListener('click', () => UI.importTextureSlot('roughness'));
         document.getElementById('insp-texture-metal')?.addEventListener('click', () => UI.importTextureSlot('metalness'));
         document.getElementById('insp-texture-clear')?.addEventListener('click', () => UI.clearTextureMaps());
+        document.getElementById('insp-texture-gimp')?.addEventListener('click', () => UI.syncGimpManifest());
 
         let sfxRecording = false;
         document.getElementById('sfx-record-btn')?.addEventListener('click', async () => {
@@ -1474,7 +1475,7 @@ const UI = {
             return;
         }
         const textures = obj.userData?.textures || {};
-        if (status) status.textContent = TextureBridge.formatSlotStatus(textures);
+        if (status) status.textContent = TextureBridge.formatSlotStatus(textures, obj.userData?.textureHint);
         if (preview) {
             const url = await TextureBridge.previewUrlForSlot(textures, 'albedo');
             if (url) {
@@ -1511,6 +1512,25 @@ const UI = {
         TextureBridge.clearMaps(obj);
         UI.syncTextureInspector(obj);
         UI.status('Texture maps cleared');
+    },
+    syncGimpManifest: async function () {
+        const obj = State.selectedObject;
+        if (!obj || !SimMode.canEditObject(obj)) {
+            UI.status('Select an object in EDIT mode — name must match GIMP Object name');
+            return;
+        }
+        if (!obj.material) {
+            UI.status('This object has no material — pick a primitive mesh');
+            return;
+        }
+        try {
+            const result = await TextureBridge.pickAndApplyGimpManifest(obj);
+            if (!result) return;
+            UI.syncTextureInspector(obj);
+            UI.status(result.message || 'GIMP manifest synced');
+        } catch (e) {
+            UI.status(e.message || 'GIMP manifest sync failed');
+        }
     },
     applyInspectorFromUi: function () {
         const obj = State.selectedObject;

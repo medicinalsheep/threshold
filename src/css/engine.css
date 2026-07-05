@@ -1092,6 +1092,11 @@ body.shell-capacitor .engine-toolbar {
     padding: 5px 4px !important;
 }
 
+.insp-texture-gimp {
+    border-color: #3a6a3a !important;
+    color: #8fdf8f !important;
+}
+
 .insp-texture-clear {
     color: #ff7777 !important;
     border-color: #884444 !important;

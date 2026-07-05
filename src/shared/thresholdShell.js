@@ -79,6 +79,12 @@ export const ThresholdShell = {
         return null;
     },
 
+    async readText(filePath) {
+        const api = shellApi();
+        if (api?.fs?.readText) return api.fs.readText(filePath);
+        return null;
+    },
+
     micSupported() {
         const api = shellApi();
         if (api?.mic?.supported != null) return api.mic.supported;

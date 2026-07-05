@@ -270,12 +270,14 @@
                     <div class="prop-row"><button id="btn-delete" style="color:#ff5555;border-color:#ff5555;width:100%;">DELETE</button></div>
                 </div>
                 <div class="insp-panel" data-insp-panel="texture">
-                    <p class="insert-hint insp-texture-hint">Import PNG/JPG maps — stored locally in your browser.</p>
+                    <p class="insert-hint insp-texture-hint">Import PNG/JPG maps — or GIMP SYNC from threshold_manifest.json.</p>
                     <input type="file" id="insp-texture-file" accept="image/png,image/jpeg,image/webp" hidden>
+                    <input type="file" id="insp-texture-manifest" accept=".json,application/json" hidden>
                     <div class="insp-texture-actions">
                         <button type="button" id="insp-texture-albedo" class="btn-sm">ALBEDO</button>
                         <button type="button" id="insp-texture-rough" class="btn-sm">ROUGH</button>
                         <button type="button" id="insp-texture-metal" class="btn-sm">METAL</button>
+                        <button type="button" id="insp-texture-gimp" class="btn-sm insp-texture-gimp">GIMP SYNC</button>
                         <button type="button" id="insp-texture-clear" class="btn-sm insp-texture-clear">CLEAR</button>
                     </div>
                     <div class="insp-texture-preview-wrap">

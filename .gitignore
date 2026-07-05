@@ -14,3 +14,8 @@ ios/
 .DS_Store
 Thumbs.db
 *.log
+textures/*.png
+textures/*.jpg
+textures/*.jpeg
+textures/*.webp
+!textures/.gitkeep

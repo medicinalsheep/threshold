@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { TextureLibrary } from './textureLibrary.js';
+import { TextureManifest } from './textureManifest.js';
 import { ThresholdShell } from './thresholdShell.js';
 
 const SLOT_PROPS = {
@@ -9,6 +10,10 @@ const SLOT_PROPS = {
 };
 
 const IMAGE_FILTERS = [{ name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'webp'] }];
+const MANIFEST_FILTERS = [
+    { name: 'Threshold GIMP Manifest', extensions: ['json'] },
+    { name: 'JSON', extensions: ['json'] },
+];
 
 const loader = new THREE.TextureLoader();
 const urlCache = new Map();
@@ -75,6 +80,126 @@ export const TextureBridge = {
         });
     },
 
+    async loadFileFromPath(filePath) {
+        if (!filePath) return null;
+        if (ThresholdShell.isNative) {
+            const buf = await ThresholdShell.readBinary(filePath);
+            if (!buf) return null;
+            const mime = mimeFromPath(filePath);
+            const name = filePath.split(/[/\\]/).pop();
+            const blob = new Blob([buf], { type: mime });
+            const file = new File([blob], name, { type: mime });
+            return TextureLibrary.saveFromFile(file, { name, sourcePath: filePath });
+        }
+        throw new Error('Load from disk requires Threshold desktop (Electron) build');
+    },
+
+    async applyPathToObject(obj, slot, filePath) {
+        if (!obj?.material || !SLOT_PROPS[slot] || !filePath) return null;
+        const record = await this.loadFileFromPath(filePath);
+        await this.applySlot(obj, slot, record.id);
+        const textures = ensureTexturesUserData(obj);
+        textures[slot] = record.id;
+        if (slot === 'albedo') obj.userData.textureHint = filePath;
+        return record;
+    },
+
+    async pickManifestPayload() {
+        if (ThresholdShell.isNative) {
+            const manifestPath = await ThresholdShell.pickFile(MANIFEST_FILTERS);
+            if (!manifestPath) return null;
+            const text = await ThresholdShell.readText(manifestPath);
+            if (!text) return null;
+            const manifestDir = manifestPath.replace(/\\/g, '/').replace(/\/[^/]+$/, '');
+            return { text, manifestDir, manifestPath };
+        }
+
+        const input = document.getElementById('insp-texture-manifest');
+        if (!input) return null;
+        return new Promise((resolve) => {
+            const onChange = () => {
+                input.removeEventListener('change', onChange);
+                const file = input.files?.[0];
+                input.value = '';
+                if (!file) {
+                    resolve(null);
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = () => {
+                    resolve({
+                        text: reader.result,
+                        manifestDir: '',
+                        manifestPath: file.name,
+                        webOnly: true,
+                    });
+                };
+                reader.onerror = () => resolve(null);
+                reader.readAsText(file);
+            };
+            input.addEventListener('change', onChange);
+            input.click();
+        });
+    },
+
+    async applyFromGimpManifest(obj, manifest, manifestDir, options = {}) {
+        const entries = TextureManifest.entriesForObject(manifest, obj.userData?.name);
+        if (!entries.length) {
+            return {
+                applied: 0,
+                entries: [],
+                message: `No maps in manifest for "${obj.userData?.name || 'object'}"`,
+            };
+        }
+
+        if (options.webOnly || !ThresholdShell.isNative) {
+            const summary = TextureManifest.summarizeForObject(manifest, obj.userData?.name);
+            obj.userData.textureHint = entries.find((e) => e.slot === 'albedo')?.path
+                || entries[0]?.path
+                || obj.userData.textureHint;
+            return {
+                applied: 0,
+                entries,
+                message: `Manifest loaded (web): ${summary}. Import each file via ALBEDO/ROUGH/METAL.`,
+            };
+        }
+
+        let applied = 0;
+        const errors = [];
+        for (const entry of entries) {
+            const filePath = TextureManifest.resolveFilePath(manifestDir, entry, manifest);
+            try {
+                await this.applyPathToObject(obj, entry.slot, filePath);
+                applied += 1;
+            } catch (e) {
+                errors.push(`${entry.slot}: ${e.message || filePath}`);
+            }
+        }
+
+        obj.userData.gimpManifestPath = options.manifestPath || null;
+        const albedo = entries.find((e) => e.slot === 'albedo');
+        if (albedo?.path) obj.userData.textureHint = albedo.path;
+
+        return {
+            applied,
+            entries,
+            errors,
+            message: applied
+                ? `GIMP SYNC: ${applied} map(s) applied to ${obj.userData?.name}`
+                : `GIMP SYNC failed — ${errors.join('; ') || 'files not found'}`,
+        };
+    },
+
+    async pickAndApplyGimpManifest(obj) {
+        const payload = await this.pickManifestPayload();
+        if (!payload?.text) return null;
+        const manifest = TextureManifest.parse(payload.text);
+        return this.applyFromGimpManifest(obj, manifest, payload.manifestDir, {
+            manifestPath: payload.manifestPath,
+            webOnly: payload.webOnly,
+        });
+    },
+
     async pickAndApplyToObject(obj, slot) {
         if (!obj?.material || !SLOT_PROPS[slot]) return null;
         const picked = await this.pickImageFile();
@@ -138,7 +263,9 @@ export const TextureBridge = {
         }
     },
 
-    formatSlotStatus(textures = {}) {
+    formatSlotStatus(textures = {}, hint = '') {
+        const lines = [];
+        if (hint) lines.push(`hint: ${hint.split(/[/\\]/).pop() || hint}`);
         const parts = ['albedo', 'roughness', 'metalness'].map((slot) => {
             const id = textures[slot];
             if (!id) return `${slot}: —`;
@@ -146,7 +273,8 @@ export const TextureBridge = {
             const label = meta?.sourcePath?.split(/[/\\]/).pop() || meta?.name || id.slice(-6);
             return `${slot}: ${label}`;
         });
-        return parts.join(' · ');
+        lines.push(parts.join(' · '));
+        return lines.join('\n');
     },
 
     async previewUrlForSlot(textures = {}, slot = 'albedo') {
