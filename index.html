@@ -48,51 +48,76 @@
         <div id="ctx-menu" class="panel">
             <div id="ctx-header" style="font-size:0.7rem; color:#666; padding:5px; border-bottom:1px solid #333; margin-bottom:5px;">MENU</div>
 
-            <!-- Spawn Items -->
-            <div id="ctx-group-spawn" style="display:flex; flex-direction:column;">
-                <button id="ctx-spawn-cube">ADD CUBE</button>
-                <button id="ctx-spawn-sphere">ADD SPHERE</button>
-                <button id="ctx-spawn-cone">ADD CONE</button>
-                <button id="ctx-spawn-torus">ADD TORUS</button>
+            <div id="ctx-group-ground" style="display:flex; flex-direction:column;">
+                <button id="ctx-insert">INSERT OBJECT</button>
+                <button id="ctx-clear" style="color:#ffaa00; border-color:#ffaa00;">CLEAR WORLD</button>
             </div>
 
-            <!-- Edit Items -->
             <div id="ctx-group-edit" style="display:none; flex-direction:column;">
-                <button id="ctx-edit-inspect">INSPECT / EDIT</button>
+                <button id="ctx-edit-inspect">INSPECT</button>
                 <button id="ctx-edit-delete" style="color:#ff5555; border-color:#ff5555;">DELETE</button>
             </div>
 
-            <!-- Global Tools -->
-            <div style="border-top:1px solid #333; margin-top:5px; padding-top:5px; display:flex; flex-direction:column;">
-                <button id="ctx-record">TOGGLE RECORD</button>
-                <button id="ctx-close">CANCEL</button>
+            <div style="border-top:1px solid #333; margin-top:5px; padding-top:5px;">
+                <button id="ctx-close" style="width:100%;">CLOSE</button>
             </div>
         </div>
 
         <!-- 3. UI Overlay Layer -->
         <div id="ui-layer">
-            <!-- Toolbar -->
-            <div class="panel" style="display: flex; justify-content: space-between; align-items: center; margin: 10px 20px;">
-                <div><div id="mode-display" style="font-size:0.8rem; font-weight:bold; color:var(--accent-color);">RENDER: COMPAT (RAW)</div></div>
-                <div style="display:flex; gap:10px; align-items: center;">
-                    <!-- Record Controls -->
-                    <div style="border: 1px solid var(--border-color); padding: 2px; display:flex; align-items:center;">
-                        <button id="btn-rec-start" title="Start Rec">●</button>
-                        <button id="btn-rec-stop" title="Stop Rec" style="display:none;">■</button>
-                        <button id="btn-rec-save" title="Save Video" style="display:none;">↓</button>
-                        <div class="rec-dot" id="rec-indicator" style="margin: 0 5px; width: 8px; height: 8px; background: red; border-radius: 50%; display:none;"></div>
-                    </div>
-                    <div style="width:1px; height:20px; background:var(--border-color);"></div>
-                    <!-- Engine Controls -->
-                    <button id="btn-mode">MODE</button>
-                    <button id="btn-grid">GRID: ON</button>
+            <!-- Slim Toolbar -->
+            <div class="panel engine-toolbar">
+                <div id="mode-display">HYPER (BLOOM)</div>
+                <div class="toolbar-actions">
+                    <button id="btn-rec-start" title="Record">REC</button>
+                    <button id="btn-rec-stop" title="Stop" style="display:none;">STOP</button>
+                    <button id="btn-rec-save" title="Save" style="display:none;">SAVE</button>
+                    <span class="rec-dot" id="rec-indicator" style="display:none;"></span>
                     <button id="btn-save">EXPORT</button>
                     <button id="btn-load">IMPORT</button>
-                    <button id="btn-audio">AUDIO: OFF</button>
                 </div>
             </div>
 
-            <div id="controls-hint">[WASD] Fly &nbsp; [MOUSE/TOUCH] Orbit &nbsp; [R-CLICK/LONG-PRESS] Menu</div>
+            <!-- Environment Panel -->
+            <div id="env-panel" class="panel">
+                <div class="prop-row">
+                    <h3 style="margin:0;">ENVIRONMENT</h3>
+                </div>
+                <hr style="border-color:var(--border-color); margin:8px 0;">
+                <div class="prop-row">
+                    <label>Render</label>
+                    <select id="env-mode">
+                        <option value="0">Threshold</option>
+                        <option value="1">1-Bit</option>
+                        <option value="2">Terminal</option>
+                        <option value="3">SMPTE</option>
+                        <option value="4" selected>Hyper</option>
+                    </select>
+                </div>
+                <div class="prop-row">
+                    <label>Time</label>
+                    <input type="range" id="env-time" min="0" max="24" step="0.25" value="14">
+                    <span id="env-time-label" class="env-val">14:00</span>
+                </div>
+                <div class="prop-row">
+                    <label>Fog</label>
+                    <input type="range" id="env-fog" min="0" max="0.08" step="0.002" value="0.02">
+                </div>
+                <div class="prop-row">
+                    <label>Water</label>
+                    <button id="env-water-toggle">OFF</button>
+                </div>
+                <div class="prop-row">
+                    <label>Atmosphere</label>
+                    <button id="env-atmo-toggle">OFF</button>
+                </div>
+                <div class="prop-row">
+                    <label>Grid</label>
+                    <button id="btn-grid">ON</button>
+                </div>
+            </div>
+
+            <div id="controls-hint">WASD fly · touch orbit · right-click menu</div>
 
             <!-- Inspector Panel -->
             <div id="inspector" class="panel">

@@ -47,6 +47,61 @@ button {
         color: var(--accent-color);
     }
 
+.engine-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 20px;
+    gap: 10px;
+}
+
+.engine-toolbar #mode-display {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.toolbar-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.rec-dot {
+    width: 8px;
+    height: 8px;
+    background: red;
+    border-radius: 50%;
+}
+
+#env-panel {
+    position: absolute;
+    top: 70px;
+    left: 20px;
+    width: 240px;
+}
+
+#env-panel select,
+#env-panel input[type="range"] {
+    flex: 1;
+    max-width: 120px;
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    border: 1px solid var(--border-color);
+}
+
+.env-val {
+    font-size: 0.7rem;
+    min-width: 36px;
+    text-align: right;
+    color: #888;
+}
+
+#env-panel button.active {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
 /* Inspector Sidebar */
 #inspector {
     position: absolute;

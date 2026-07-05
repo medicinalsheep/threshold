@@ -43,15 +43,11 @@ export function initEngine() {
         Engine.updateBackground();
     });
 
-    Physics.init(); // NEW: Start Physics
+    Physics.init();
     Engine.init();
+    Environment.init();
     UI.init();
-
-    // Create a floor for physics
     Physics.createFloor();
-
-    // Spawn a physics cube
-    World.createObject('cube', 'physics_box', 0xff3366, true);
 }
 
 // --- GLOBAL STATE ---
@@ -61,13 +57,21 @@ const State = {
     darkMode: true,
     gridVisible: true,
     renderMode: 4,
-    objects: [], // Visual Meshes
-    physicsObjects: [], // { mesh: THREE.Mesh, body: CANNON.Body }
+    objects: [],
+    physicsObjects: [],
     keys: {},
     clipboardAllowed: false,
     ctxTargetPos: new THREE.Vector3(),
-    isRecording: false
+    isRecording: false,
+    env: {
+        timeOfDay: 14,
+        fogDensity: 0.02,
+        waterEnabled: false,
+        atmosphereEnabled: false
+    }
 };
+
+const OBJECT_TYPES = ['cube', 'sphere', 'cone', 'torus'];
 
 const Modes = [
     { name: "THRESHOLD (5-BAND)", desc: "Quantized Grayscale" },
@@ -217,6 +221,143 @@ const Recorder = {
     }
 };
 
+// --- ENVIRONMENT ---
+const Environment = {
+    sunLight: null,
+    hemiLight: null,
+    waterMesh: null,
+    waterBasePositions: null,
+
+    init: function () {
+        this.bindUi();
+        this.setTimeOfDay(State.env.timeOfDay);
+        this.setFog(State.env.fogDensity);
+    },
+
+    bindUi: function () {
+        document.getElementById('env-mode')?.addEventListener('change', (e) => {
+            const idx = parseInt(e.target.value, 10);
+            Engine.setRenderMode(idx);
+        });
+        document.getElementById('env-time')?.addEventListener('input', (e) => {
+            this.setTimeOfDay(parseFloat(e.target.value));
+        });
+        document.getElementById('env-fog')?.addEventListener('input', (e) => {
+            this.setFog(parseFloat(e.target.value));
+        });
+        document.getElementById('env-water-toggle')?.addEventListener('click', () => this.toggleWater());
+        document.getElementById('env-atmo-toggle')?.addEventListener('click', () => this.toggleAtmosphere());
+    },
+
+    setTimeOfDay: function (hours) {
+        State.env.timeOfDay = hours;
+        const label = document.getElementById('env-time-label');
+        const h = Math.floor(hours);
+        const m = Math.round((hours - h) * 60);
+        if (label) label.textContent = `${h}:${String(m).padStart(2, '0')}`;
+
+        const t = hours / 24;
+        const sunAngle = (t - 0.25) * Math.PI * 2;
+        const sunHeight = Math.sin(sunAngle);
+        const warmth = Math.max(0, sunHeight);
+        const sunX = Math.cos(sunAngle) * 40;
+        const sunY = Math.max(sunHeight * 40, -5);
+        const sunZ = 20;
+
+        if (this.sunLight) {
+            this.sunLight.position.set(sunX, sunY, sunZ);
+            const r = 0.4 + warmth * 0.6;
+            const g = 0.35 + warmth * 0.55;
+            const b = 0.5 + warmth * 0.4;
+            this.sunLight.color.setRGB(r, g, b);
+            this.sunLight.intensity = 0.15 + warmth * 1.85;
+        }
+
+        if (Engine.scene?.fog) {
+            const sky = new THREE.Color().setHSL(0.58, 0.35, 0.08 + warmth * 0.35);
+            if (!State.darkMode) sky.setHSL(0.58, 0.2, 0.65);
+            Engine.scene.fog.color.copy(sky);
+            if (State.env.atmosphereEnabled) Engine.scene.background = sky.clone();
+        }
+    },
+
+    setFog: function (density) {
+        State.env.fogDensity = density;
+        if (Engine.scene?.fog) Engine.scene.fog.density = density;
+    },
+
+    toggleWater: function () {
+        State.env.waterEnabled = !State.env.waterEnabled;
+        const btn = document.getElementById('env-water-toggle');
+        if (State.env.waterEnabled) {
+            this.createWater();
+            if (btn) { btn.textContent = 'ON'; btn.classList.add('active'); }
+            if (Engine.groundPlane) Engine.groundPlane.visible = false;
+        } else {
+            this.removeWater();
+            if (btn) { btn.textContent = 'OFF'; btn.classList.remove('active'); }
+            if (Engine.groundPlane) Engine.groundPlane.visible = true;
+        }
+    },
+
+    createWater: function () {
+        if (this.waterMesh) return;
+        const geo = new THREE.PlaneGeometry(120, 120, 48, 48);
+        geo.rotateX(-Math.PI / 2);
+        this.waterBasePositions = geo.attributes.position.array.slice();
+        const mat = new THREE.MeshStandardMaterial({
+            color: 0x1a6b8a,
+            transparent: true,
+            opacity: 0.82,
+            metalness: 0.75,
+            roughness: 0.15
+        });
+        this.waterMesh = new THREE.Mesh(geo, mat);
+        this.waterMesh.position.y = 0.02;
+        this.waterMesh.receiveShadow = true;
+        Engine.scene.add(this.waterMesh);
+    },
+
+    removeWater: function () {
+        if (!this.waterMesh) return;
+        Engine.scene.remove(this.waterMesh);
+        this.waterMesh.geometry.dispose();
+        this.waterMesh.material.dispose();
+        this.waterMesh = null;
+        this.waterBasePositions = null;
+    },
+
+    updateWater: function (time) {
+        if (!this.waterMesh || !this.waterBasePositions) return;
+        const pos = this.waterMesh.geometry.attributes.position;
+        const t = time * 0.001;
+        for (let i = 0; i < pos.count; i++) {
+            const x = this.waterBasePositions[i * 3];
+            const z = this.waterBasePositions[i * 3 + 2];
+            pos.setY(i, Math.sin(x * 0.25 + t * 1.5) * 0.12 + Math.cos(z * 0.2 + t) * 0.1);
+        }
+        pos.needsUpdate = true;
+    },
+
+    toggleAtmosphere: function () {
+        State.env.atmosphereEnabled = !State.env.atmosphereEnabled;
+        const btn = document.getElementById('env-atmo-toggle');
+        if (State.env.atmosphereEnabled) {
+            if (!this.hemiLight) {
+                this.hemiLight = new THREE.HemisphereLight(0x87ceeb, 0x2d1b0e, 0.55);
+                Engine.scene.add(this.hemiLight);
+            }
+            this.hemiLight.visible = true;
+            if (btn) { btn.textContent = 'ON'; btn.classList.add('active'); }
+            this.setTimeOfDay(State.env.timeOfDay);
+        } else {
+            if (this.hemiLight) this.hemiLight.visible = false;
+            if (btn) { btn.textContent = 'OFF'; btn.classList.remove('active'); }
+            Engine.updateBackground();
+        }
+    }
+};
+
 // --- CORE ENGINE ---
 const Engine = {
     scene: null, camera: null, renderer: null, composer: null, shaderPass: null, bloomPass: null,
@@ -238,12 +379,12 @@ const Engine = {
         // Lighting (Realism Upgrade)
         const amb = new THREE.AmbientLight(0x404040, 1.0);
         this.scene.add(amb);
-        const dir = new THREE.DirectionalLight(0xffffff, 2.0);
-        dir.position.set(10, 20, 10);
-        dir.castShadow = true; // SHADOWS!
-        dir.shadow.mapSize.width = 2048;
-        dir.shadow.mapSize.height = 2048;
-        this.scene.add(dir);
+        Environment.sunLight = new THREE.DirectionalLight(0xffffff, 2.0);
+        Environment.sunLight.position.set(10, 20, 10);
+        Environment.sunLight.castShadow = true;
+        Environment.sunLight.shadow.mapSize.width = 2048;
+        Environment.sunLight.shadow.mapSize.height = 2048;
+        this.scene.add(Environment.sunLight);
         // Visual Helpers
         this.gridHelper = new THREE.GridHelper(40, 40, 0x666666, 0x333333);
         this.scene.add(this.gridHelper);
@@ -263,7 +404,8 @@ const Engine = {
         this.scene.add(this.transformControl);
         this.raycaster = new THREE.Raycaster();
         this.setupPipeline();
-        this.setRenderMode(4); // Default to Hyper/Compat
+        this.setRenderMode(4);
+        UI.updateModeDisplay(4);
         window.addEventListener('resize', () => this.onResize());
         window.addEventListener('keydown', (e) => {
             State.keys[e.code] = true;
@@ -294,60 +436,69 @@ const Engine = {
         return State.gridVisible;
     },
     setupPipeline: function () {
+        const size = new THREE.Vector2(window.innerWidth, window.innerHeight - (document.getElementById('app-nav')?.offsetHeight || 50));
         this.composer = new EffectComposer(this.renderer);
         this.composer.addPass(new RenderPass(this.scene, this.camera));
-        // 1. UNREAL BLOOM (The Glow)
-        this.bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-        this.bloomPass.enabled = false; // Off by default until Hyper mode
-        this.composer.addPass(this.bloomPass);
-        // 2. THRESHOLD SHADER (The Retro)
+
         const ThresholdShader = {
-            uniforms: { "tDiffuse": { value: null }, "mode": { value: 0 }, "time": { value: 0 } },
+            uniforms: { tDiffuse: { value: null }, mode: { value: 4 }, time: { value: 0 } },
             vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
             fragmentShader: `
-                uniform sampler2D tDiffuse; uniform int mode; uniform float time; varying vec2 vUv;
+                uniform sampler2D tDiffuse;
+                uniform int mode;
+                uniform float time;
+                varying vec2 vUv;
                 void main() {
                     vec4 texel = texture2D(tDiffuse, vUv);
-                   
-                    if (mode == 4) { // HYPER MODE (Passthrough)
-                        gl_FragColor = texel;
-                        return;
-                    }
-                   
+                    if (mode == 4) { gl_FragColor = texel; return; }
                     float luma = dot(texel.rgb, vec3(0.299, 0.587, 0.114));
                     vec3 outColor;
-                    if (mode == 0) { // 5-BAND
-                        float q = 0.0; if (luma>0.8) q=1.0; else if (luma>0.6) q=0.75; else if (luma>0.4) q=0.5; else if (luma>0.2) q=0.25;
+                    if (mode == 0) {
+                        float q = 0.0;
+                        if (luma > 0.8) q = 1.0;
+                        else if (luma > 0.6) q = 0.75;
+                        else if (luma > 0.4) q = 0.5;
+                        else if (luma > 0.2) q = 0.25;
                         outColor = vec3(q);
-                    }
-                    else if (mode == 1) { // 1-BIT
+                    } else if (mode == 1) {
                         outColor = (luma > 0.4) ? vec3(1.0) : vec3(0.0);
-                    }
-                    else if (mode == 2) { // TERMINAL
-                        float q = (luma > 0.5) ? 1.0 : ((luma > 0.2) ? 0.3 : 0.0); outColor = vec3(0.0, q, 0.0);
+                    } else if (mode == 2) {
+                        float q = (luma > 0.5) ? 1.0 : ((luma > 0.2) ? 0.3 : 0.0);
+                        outColor = vec3(0.0, q, 0.0);
                         if (mod(gl_FragCoord.y, 4.0) < 2.0) outColor *= 0.8;
-                    }
-                    else if (mode == 3) { // SMPTE
+                    } else if (mode == 3) {
                         outColor = floor(texel.rgb * 4.0) / 4.0;
+                    } else {
+                        outColor = texel.rgb;
                     }
                     gl_FragColor = vec4(outColor, 1.0);
                 }
             `
         };
         this.shaderPass = new ShaderPass(ThresholdShader);
+        this.shaderPass.renderToScreen = false;
         this.composer.addPass(this.shaderPass);
+
+        this.bloomPass = new UnrealBloomPass(size, 1.5, 0.4, 0.85);
+        this.bloomPass.enabled = true;
+        this.bloomPass.renderToScreen = true;
+        this.composer.addPass(this.bloomPass);
     },
     setRenderMode: function (idx) {
         State.renderMode = idx;
+        if (!this.shaderPass || !this.bloomPass) return;
         this.shaderPass.uniforms.mode.value = idx;
-        // Enable Bloom only in HYPER mode (4)
-        if (idx === 4) {
-            this.bloomPass.enabled = true;
+        const isHyper = idx === 4;
+        this.bloomPass.enabled = isHyper;
+        this.bloomPass.renderToScreen = isHyper;
+        this.shaderPass.renderToScreen = !isHyper;
+        if (isHyper) {
             this.bloomPass.strength = 1.5;
             this.bloomPass.radius = 0.5;
-        } else {
-            this.bloomPass.enabled = false;
         }
+        UI.updateModeDisplay(idx);
+        const select = document.getElementById('env-mode');
+        if (select) select.value = String(idx);
     },
     onPointerDown: function (e) {
         if (e.button !== 0) { UI.closeCtx(); return; }
@@ -382,10 +533,12 @@ const Engine = {
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight - navHeight);
         this.composer.setSize(window.innerWidth, window.innerHeight - navHeight);
+        if (this.bloomPass) this.bloomPass.setSize(window.innerWidth, window.innerHeight - navHeight);
     },
     animate: function (time) {
         requestAnimationFrame((t) => this.animate(t));
-        Physics.update(); // Step Physics
+        Physics.update();
+        Environment.updateWater(time);
         if (this.shaderPass) this.shaderPass.uniforms.time.value = time * 0.001;
         // Camera Logic (OrbitControls handles mouse, we handle keys)
         const speed = 0.2;
@@ -465,15 +618,21 @@ const World = {
         return mesh;
     },
     spawnAtCursor: function (type) {
-        // Spawn with physics by default on right click
         const mesh = this.createObject(type, type, Math.random() * 0xffffff, true);
         if (mesh) {
-            // Need to update physics body position, not just mesh
-            const body = State.physicsObjects.find(o => o.mesh === mesh).body;
-            body.position.set(State.ctxTargetPos.x, State.ctxTargetPos.y + 2, State.ctxTargetPos.z);
-            body.velocity.set(0, 0, 0);
+            const entry = State.physicsObjects.find((o) => o.mesh === mesh);
+            if (entry) {
+                entry.body.position.set(State.ctxTargetPos.x, State.ctxTargetPos.y + 2, State.ctxTargetPos.z);
+                entry.body.velocity.set(0, 0, 0);
+            } else {
+                mesh.position.set(State.ctxTargetPos.x, State.ctxTargetPos.y + 1, State.ctxTargetPos.z);
+            }
         }
         UI.closeCtx();
+    },
+    insertRandomObject: function () {
+        const type = OBJECT_TYPES[Math.floor(Math.random() * OBJECT_TYPES.length)];
+        this.spawnAtCursor(type);
     },
     deleteObject: function (obj) {
         if (!obj) return;
@@ -557,11 +716,8 @@ const UI = {
         document.getElementById('btn-rec-stop').onclick = () => Recorder.stop();
         document.getElementById('btn-rec-save').onclick = () => Recorder.save();
 
-        document.getElementById('ctx-spawn-cube').onclick = () => World.spawnAtCursor('cube');
-        document.getElementById('ctx-spawn-sphere').onclick = () => World.spawnAtCursor('sphere');
-        document.getElementById('ctx-spawn-cone').onclick = () => World.spawnAtCursor('cone');
-        document.getElementById('ctx-spawn-torus').onclick = () => World.spawnAtCursor('torus');
-        document.getElementById('ctx-record').onclick = () => Recorder.toggle();
+        document.getElementById('ctx-insert').onclick = () => World.insertRandomObject();
+        document.getElementById('ctx-clear').onclick = () => { World.clearWorld(); UI.closeCtx(); UI.status('World cleared'); };
         document.getElementById('ctx-close').onclick = () => UI.closeCtx();
 
         document.getElementById('ctx-edit-inspect').onclick = () => { if (State.selectedObject) UI.selectObject(State.selectedObject); UI.closeCtx(); };
@@ -579,20 +735,17 @@ const UI = {
         const cmd = document.getElementById('cmd-input');
         cmd.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); this.runCmd(); } });
 
-        // Additional UI handlers from your snippet
-        document.getElementById('btn-mode').onclick = () => {
-            const next = (State.renderMode + 1) % Modes.length;
-            Engine.setRenderMode(next);
-            document.getElementById('mode-display').innerText = `RENDER: ${Modes[next].name}`;
-        };
         document.getElementById('btn-grid').onclick = () => {
             const vis = Engine.toggleGrid();
-            document.getElementById('btn-grid').innerText = vis ? "GRID: ON" : "GRID: OFF";
+            document.getElementById('btn-grid').innerText = vis ? 'ON' : 'OFF';
         };
         document.getElementById('btn-save').onclick = () => IO.exportScene();
         document.getElementById('btn-load').onclick = () => IO.importScene();
         document.getElementById('file-input').addEventListener('change', (e) => IO.handleFileSelect(e));
-        document.getElementById('btn-audio').onclick = () => AudioSys.toggle();
+    },
+    updateModeDisplay: function (idx) {
+        const el = document.getElementById('mode-display');
+        if (el && Modes[idx]) el.textContent = Modes[idx].name;
     },
     selectObject: function (obj) {
         if (State.selectedObject === obj) return;
@@ -614,16 +767,20 @@ const UI = {
     openCtx: function (x, y, contextType, targetObj = null) {
         const menu = document.getElementById('ctx-menu');
         const header = document.getElementById('ctx-header');
-        const spawnGroup = document.getElementById('ctx-group-spawn');
+        const groundGroup = document.getElementById('ctx-group-ground');
         const editGroup = document.getElementById('ctx-group-edit');
         menu.style.display = 'flex'; menu.style.left = x + 'px'; menu.style.top = y + 'px';
         if (contextType === 'object' && targetObj) {
             State.selectedObject = targetObj;
-            if (header) header.innerText = "EDIT: " + (targetObj.userData.name || "Object");
-            spawnGroup.style.display = 'none'; editGroup.style.display = 'flex'; editGroup.style.flexDirection = 'column';
+            if (header) header.innerText = 'OBJECT: ' + (targetObj.userData.name || 'Object');
+            groundGroup.style.display = 'none';
+            editGroup.style.display = 'flex';
+            editGroup.style.flexDirection = 'column';
         } else {
-            if (header) header.innerText = "SPAWN NEW (PHYSICS)";
-            spawnGroup.style.display = 'flex'; spawnGroup.style.flexDirection = 'column'; editGroup.style.display = 'none';
+            if (header) header.innerText = 'SCENE';
+            groundGroup.style.display = 'flex';
+            groundGroup.style.flexDirection = 'column';
+            editGroup.style.display = 'none';
         }
     },
     closeCtx: function () { document.getElementById('ctx-menu').style.display = 'none'; },
