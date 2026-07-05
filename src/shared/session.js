@@ -55,7 +55,7 @@ export const Session = {
     },
 
     canControlPause() {
-        return this.isHost;
+        return this.isHost || window.Network?.mode === 'solo';
     },
 
     setPaused(paused) {

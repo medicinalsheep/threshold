@@ -16,6 +16,7 @@ import { Network } from '../shared/network.js';
 import { PlayerController } from './player.js';
 import { Persistence } from '../shared/persistence.js';
 import { Sync } from '../shared/sync.js';
+import { Controls, CONTROL_ACTIONS } from '../shared/controls.js';
 
 const IS_TOUCH_DEVICE = window.matchMedia('(pointer: coarse)').matches;
 
@@ -53,6 +54,8 @@ export function initEngine() {
     window.PlayerController = PlayerController;
     window.Persistence = Persistence;
     window.Sync = Sync;
+    window.Controls = Controls;
+    Controls.init();
 
     window.addEventListener('theme-change', () => {
         State.darkMode = !document.body.classList.contains('light-mode');
@@ -446,8 +449,14 @@ const Engine = {
         UI.updateModeDisplay(4);
         window.addEventListener('resize', () => this.onResize());
         window.addEventListener('keydown', (e) => {
+            if (Controls._rebind) return;
             State.keys[e.code] = true;
             if (e.code === 'Delete') World.deleteObject(State.selectedObject);
+            const action = Controls.getActionForCode(e.code);
+            if (!e.repeat) {
+                if (action === 'toggleMode') UI.toggleControlMode();
+                if (action === 'pause' && Controls.canUse('pause')) UI.togglePause();
+            }
         });
         window.addEventListener('keyup', (e) => State.keys[e.code] = false);
         this.renderer.domElement.addEventListener('pointerdown', (e) => this.onPointerDown(e));
@@ -577,6 +586,10 @@ const Engine = {
         requestAnimationFrame((t) => this.animate(t));
         if (this.shaderPass) this.shaderPass.uniforms.time.value = time * 0.001;
 
+        Controls.pollGamepad();
+        if (Controls.consumeJustPressed('toggleMode')) UI.toggleControlMode();
+        if (Controls.consumeJustPressed('pause')) UI.togglePause();
+
         if (!State.isPaused) {
             if (State.controlMode === 'walk' && PlayerController.spawned) {
                 PlayerController.prePhysics(State.keys);
@@ -588,15 +601,16 @@ const Engine = {
                 const speed = 0.2;
                 const fwd = new THREE.Vector3(); this.camera.getWorldDirection(fwd); fwd.y = 0; fwd.normalize();
                 const rgt = new THREE.Vector3(); rgt.crossVectors(fwd, this.camera.up).normalize();
-                if (State.keys['KeyW']) { this.camera.position.addScaledVector(fwd, speed); this.controls.target.addScaledVector(fwd, speed); }
-                if (State.keys['KeyS']) { this.camera.position.addScaledVector(fwd, -speed); this.controls.target.addScaledVector(fwd, -speed); }
-                if (State.keys['KeyA']) { this.camera.position.addScaledVector(rgt, -speed); this.controls.target.addScaledVector(rgt, -speed); }
-                if (State.keys['KeyD']) { this.camera.position.addScaledVector(rgt, speed); this.controls.target.addScaledVector(rgt, speed); }
-                if (State.keys['KeyQ']) { this.camera.position.y += speed; this.controls.target.y += speed; }
-                if (State.keys['KeyE']) { this.camera.position.y -= speed; this.controls.target.y -= speed; }
+                if (Controls.isAction('forward')) { this.camera.position.addScaledVector(fwd, speed); this.controls.target.addScaledVector(fwd, speed); }
+                if (Controls.isAction('back')) { this.camera.position.addScaledVector(fwd, -speed); this.controls.target.addScaledVector(fwd, -speed); }
+                if (Controls.isAction('left')) { this.camera.position.addScaledVector(rgt, -speed); this.controls.target.addScaledVector(rgt, -speed); }
+                if (Controls.isAction('right')) { this.camera.position.addScaledVector(rgt, speed); this.controls.target.addScaledVector(rgt, speed); }
+                if (Controls.isAction('up')) { this.camera.position.y += speed; this.controls.target.y += speed; }
+                if (Controls.isAction('down')) { this.camera.position.y -= speed; this.controls.target.y -= speed; }
             }
             Environment.updateWater(time);
         }
+        UI.updateControlsHint?.();
         this.controls.update();
         // Visual Rotation (Only for non-physics objects or purely visual effect)
         if (!State.isPaused) {
@@ -861,14 +875,7 @@ const UI = {
         document.getElementById('import-player-file')?.addEventListener('change', (e) => UI.importPlayerFile(e));
 
         document.getElementById('btn-copy-link')?.addEventListener('click', () => UI.copySessionLink());
-        document.getElementById('btn-host-pause')?.addEventListener('click', () => {
-            if (!Session.isHost) { UI.status('Only the host can pause'); return; }
-            const paused = !State.isPaused;
-            Actions.dispatch('PAUSE', { paused });
-            State.isPaused = paused;
-            Session.isPaused = paused;
-            Session.updateUi();
-        });
+        document.getElementById('btn-host-pause')?.addEventListener('click', () => UI.togglePause());
         document.getElementById('btn-env-toggle')?.addEventListener('click', () => {
             document.getElementById('env-panel')?.classList.toggle('mobile-open');
         });
@@ -907,6 +914,19 @@ const UI = {
         document.getElementById('world-export-btn')?.addEventListener('click', () => UI.exportCurrentWorld());
         document.getElementById('world-import-file')?.addEventListener('change', (e) => UI.importWorldFile(e));
         document.getElementById('btn-control-mode')?.addEventListener('click', () => UI.toggleControlMode());
+        document.getElementById('btn-bindings')?.addEventListener('click', () => UI.openBindingsModal());
+        document.getElementById('bindings-close')?.addEventListener('click', () => UI.closeBindingsModal());
+        document.getElementById('bindings-modal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'bindings-modal') UI.closeBindingsModal();
+        });
+        document.getElementById('bindings-profile')?.addEventListener('change', (e) => UI.switchBindingsProfile(e.target.value));
+        document.getElementById('bindings-reset')?.addEventListener('click', () => UI.resetBindingsProfile());
+        document.getElementById('bindings-list')?.addEventListener('click', (e) => {
+            const bindBtn = e.target.closest('[data-bind]');
+            const clearBtn = e.target.closest('[data-clear]');
+            if (bindBtn) UI.startBinding(bindBtn.dataset.bind);
+            if (clearBtn) UI.clearBinding(clearBtn.dataset.clear);
+        });
         document.getElementById('world-list')?.addEventListener('click', (e) => {
             const btn = e.target.closest('[data-world-code]');
             if (btn) UI.loadWorldByCode(btn.dataset.worldCode);
@@ -1040,14 +1060,67 @@ const UI = {
     },
     updateControlMode: function () {
         const btn = document.getElementById('btn-control-mode');
-        const hint = document.getElementById('controls-hint');
         const mode = State.controlMode === 'walk' && PlayerController.spawned ? 'walk' : 'fly';
         if (btn) btn.textContent = mode === 'walk' ? 'WALK' : 'FLY';
-        if (hint) {
-            hint.textContent = mode === 'walk'
-                ? 'WASD walk · Space jump · touch orbit'
-                : 'WASD fly · QE up/down · right-click menu';
+        this.updateControlsHint();
+    },
+    updateControlsHint: function () {
+        const hint = document.getElementById('controls-hint');
+        if (hint && Controls) hint.textContent = Controls.getHint() + ' · right-click menu';
+    },
+    updateGamepadStatus: function () {
+        const el = document.getElementById('gamepad-status');
+        if (!el) return;
+        el.textContent = Controls.gamepad
+            ? `Controller: ${Controls.gamepadName.slice(0, 40)}`
+            : 'Controller: none (plug in gamepad)';
+    },
+    togglePause: function () {
+        if (Network.mode === 'guest') {
+            this.status('Only the host can pause');
+            return;
         }
+        const paused = !State.isPaused;
+        Actions.dispatch('PAUSE', { paused });
+        State.isPaused = paused;
+        Session.isPaused = paused;
+        Session.updateUi();
+    },
+    openBindingsModal: function () {
+        const profile = Controls.getProfile();
+        const select = document.getElementById('bindings-profile');
+        if (select) select.value = profile;
+        Controls.renderEditor(profile);
+        this.updateGamepadStatus();
+        document.getElementById('bindings-modal')?.classList.add('open');
+    },
+    closeBindingsModal: function () {
+        Controls._rebind = null;
+        document.getElementById('bindings-modal')?.classList.remove('open');
+        this.updateControlsHint();
+    },
+    switchBindingsProfile: function (profile) {
+        Controls.renderEditor(profile || 'host');
+    },
+    resetBindingsProfile: function () {
+        const profile = document.getElementById('bindings-profile')?.value || 'host';
+        Controls.resetProfile(profile);
+        Controls.renderEditor(profile);
+        this.status(`${profile === 'host' ? 'Host' : 'Guest'} bindings reset`);
+    },
+    startBinding: function (action) {
+        const profile = document.getElementById('bindings-profile')?.value || 'host';
+        const btn = document.querySelector(`[data-bind="${action}"]`);
+        if (btn) btn.textContent = 'Press key… (Esc cancel)';
+        Controls.startRebind(profile, action, (ok) => {
+            Controls.renderEditor(profile);
+            if (ok) this.status(`Bound ${CONTROL_ACTIONS[action]?.label || action}`);
+        });
+    },
+    clearBinding: function (action) {
+        const profile = document.getElementById('bindings-profile')?.value || 'host';
+        Controls.clearBinding(profile, action);
+        Controls.renderEditor(profile);
     },
     toggleControlMode: function () {
         if (PlayerController.spawned) {

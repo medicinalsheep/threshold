@@ -104,6 +104,7 @@
                     <button id="btn-rec-save" title="Save" style="display:none;">SAVE</button>
                     <span class="rec-dot" id="rec-indicator" style="display:none;"></span>
                     <button id="btn-control-mode" class="btn-sm" title="Walk / Fly">FLY</button>
+                    <button id="btn-bindings" class="btn-sm" title="Key bindings">KEYS</button>
                     <button id="btn-save-world" class="btn-sm" title="Save persistent world">SAVE WORLD</button>
                     <button id="btn-load-world" class="btn-sm" title="Load saved world">WORLDS</button>
                     <button id="btn-save">EXPORT</button>
@@ -213,6 +214,28 @@
                     <textarea id="insert-custom-code" class="insert-code" placeholder="World.createObject('sphere', 'mine', 0xff00ff, true);"></textarea>
                     <button id="insert-code-run" class="insert-action">RUN CODE</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Key bindings modal -->
+        <div id="bindings-modal" class="modal-backdrop">
+            <div id="bindings-sheet" class="panel insert-sheet">
+                <div class="insert-header">
+                    <h3 style="margin:0;">CONTROLS</h3>
+                    <button id="bindings-close">✕</button>
+                </div>
+                <p class="insert-hint">Separate binding profiles for <strong>Host</strong> (session creator / solo) and <strong>Guest</strong> (joined players). Active profile switches automatically.</p>
+                <div class="prop-row">
+                    <label>Edit profile</label>
+                    <select id="bindings-profile" class="insert-input">
+                        <option value="host">Host / Solo</option>
+                        <option value="user">Guest / User</option>
+                    </select>
+                </div>
+                <p id="gamepad-status" class="insert-hint">Controller: none</p>
+                <p class="insert-hint" style="font-size:0.65rem;">Gamepad defaults: left stick move · A jump · LB/RB up/down · Y toggle walk/fly · Start pause (host/solo)</p>
+                <div id="bindings-list"></div>
+                <button id="bindings-reset" class="insert-action secondary">RESET PROFILE</button>
             </div>
         </div>
 

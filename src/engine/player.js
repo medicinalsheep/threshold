@@ -100,11 +100,12 @@ export const PlayerController = {
         forward.normalize();
         const right = new THREE.Vector3().crossVectors(forward, camera.up).normalize();
 
+        const Controls = window.Controls;
         const move = new CANNON.Vec3(0, 0, 0);
-        if (keys['KeyW']) move.vadd(new CANNON.Vec3(forward.x, 0, forward.z), move);
-        if (keys['KeyS']) move.vsub(new CANNON.Vec3(forward.x, 0, forward.z), move);
-        if (keys['KeyA']) move.vsub(new CANNON.Vec3(right.x, 0, right.z), move);
-        if (keys['KeyD']) move.vadd(new CANNON.Vec3(right.x, 0, right.z), move);
+        if (Controls?.isAction('forward')) move.vadd(new CANNON.Vec3(forward.x, 0, forward.z), move);
+        if (Controls?.isAction('back')) move.vsub(new CANNON.Vec3(forward.x, 0, forward.z), move);
+        if (Controls?.isAction('left')) move.vsub(new CANNON.Vec3(right.x, 0, right.z), move);
+        if (Controls?.isAction('right')) move.vadd(new CANNON.Vec3(right.x, 0, right.z), move);
 
         if (move.length() > 0) {
             move.normalize();
@@ -118,7 +119,7 @@ export const PlayerController = {
         }
 
         if (Math.abs(this.body.velocity.y) < 0.08) this.canJump = true;
-        if (keys['Space'] && this.canJump) {
+        if (Controls?.isAction('jump') && this.canJump) {
             this.body.velocity.y = this.jumpForce;
             this.canJump = false;
         }
