@@ -2,6 +2,10 @@ node_modules/
 dist/
 dist-pages/
 dist-grok/
+dist-electron/
+android/
+ios/
+.capacitor/
 .vite/
 .vs/
 *.local

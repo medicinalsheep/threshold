@@ -1,4 +1,5 @@
 import { ViewPrefs } from './viewPrefs.js';
+import { ThresholdShell } from './thresholdShell.js';
 
 function nativeElement() {
     return document.fullscreenElement || document.webkitFullscreenElement || null;
@@ -50,12 +51,20 @@ export function setImmersive(on, { persist = true } = {}) {
 }
 
 async function enterImmersive() {
-    await requestNative();
+    if (ThresholdShell.isNative) {
+        await ThresholdShell.enterFullscreen();
+    } else {
+        await requestNative();
+    }
     setImmersive(true);
 }
 
 async function leaveImmersive() {
-    await exitNative();
+    if (ThresholdShell.isNative) {
+        await ThresholdShell.exitFullscreen();
+    } else {
+        await exitNative();
+    }
     setImmersive(false);
 }
 

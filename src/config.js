@@ -1,4 +1,4 @@
-export const VERSION = '2.2.0';
+export const VERSION = '3.0.0';
 export const EDITION = import.meta.env.VITE_EDITION || 'web';
 export const IS_GROK_EDITION = EDITION === 'grok';
 export const BASE_PATH = import.meta.env.VITE_BASE_PATH || '/';

@@ -32,6 +32,7 @@ import { AgentHub } from '../shared/agentHub.js';
 import { NpcAgent } from '../grok/npcAgent.js';
 import { DevAgent } from '../grok/devAgent.js';
 import { Walkthrough } from '../shared/walkthrough.js';
+import { ExportWizard } from '../shared/exportWizard.js';
 
 const IS_TOUCH_DEVICE = window.matchMedia('(pointer: coarse)').matches;
 
@@ -1230,7 +1231,11 @@ const UI = {
             if (btn) UI.loadWorldByCode(btn.dataset.worldCode);
         });
 
-        document.getElementById('btn-export-game')?.addEventListener('click', () => UI.exportGamePackage());
+        document.getElementById('btn-export-game')?.addEventListener('click', () => {
+            document.getElementById('toolbar-more-menu')?.classList.remove('open');
+            ExportWizard.open();
+        });
+        ExportWizard.bindOnce();
         document.getElementById('btn-restart-walkthrough')?.addEventListener('click', () => {
             document.getElementById('toolbar-more-menu')?.classList.remove('open');
             Walkthrough.restart();
@@ -1450,12 +1455,7 @@ const UI = {
         this.updateTouchToggle();
     },
     exportGamePackage: function () {
-        const name = prompt('Game / package name?', `My Threshold Game`);
-        if (!name) return;
-        const manifest = GameExport.downloadManifest({ name, author: Session.playerName });
-        const profiles = Object.values(GameExport.getBuildProfiles()).map((p) => p.label).join(' · ');
-        this.status(`Exported ${manifest.game.name} — next: ${profiles}`);
-        document.querySelector('[data-target="view-compiler"]')?.click();
+        ExportWizard.open();
     },
     syncAgentPanel: function () {
         const npcCfg = AgentHub.getConfig('grok_npc');

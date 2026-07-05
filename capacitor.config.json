@@ -1,0 +1,11 @@
+{
+  "appId": "com.threshold.suite",
+  "appName": "Threshold",
+  "webDir": "dist-pages",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

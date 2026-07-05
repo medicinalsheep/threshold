@@ -64,7 +64,7 @@ const STEPS = [
     },
     {
         title: 'Save & ship',
-        body: '<strong>MORE</strong> → <strong>SAVE WORLD</strong> for share links. When your game is ready, <strong>MORE</strong> → <strong>EXPORT</strong> downloads a <code>.threshold-game.json</code> manifest for APK / Windows / Steam paths.',
+        body: '<strong>MORE</strong> → <strong>SAVE WORLD</strong> for share links. When your game is ready, <strong>MORE</strong> → <strong>EXPORT</strong> opens the packaging wizard (manifest + <code>package:android</code> / <code>package:win</code>).',
         highlight: '#btn-toolbar-more',
     },
     {

@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → add AI agents to NPCs and your dev workflow.
 
-**Current version:** 2.2.0 (foundation + walkthrough) → **3.x** (packaged exports) → **4.x** (Steam + commercial tier)
+**Current version:** 3.0.0 (native shells scaffold) → **3.5** (Steam) → **4.x** (scale + commercial tier)
 
 ---
 
@@ -45,13 +45,16 @@
 - [x] First-session walkthrough (8 steps) + MORE → TUTORIAL replay
 - [ ] PWA manifest (light) — deferred to Phase 2 shell work
 
-### Phase 2 — Native shells (v3.0, **next**)
+### Phase 2 — Native shells (v3.0, **scaffold shipped**)
 
-- [ ] **Capacitor** — Android APK from `dist-pages`
-- [ ] **Electron** or **Tauri** — Windows `.exe`, macOS `.app`
-- [ ] CLI: `npm run package:android` / `package:win`
-- [ ] Mic, fullscreen, filesystem bridges in shell
-- [ ] Export wizard in UI (step-by-step after manifest)
+- [x] **Capacitor** — Android APK from `dist-pages` (`capacitor.config.json`, `init:native`)
+- [x] **Electron** — Windows portable `.exe` (`electron/`, `package:win`)
+- [x] CLI: `npm run package:android` / `package:win` / `electron:dev`
+- [x] Shell bridges — `ThresholdShell` (fullscreen, fs save, mic note)
+- [x] Export wizard — MORE → EXPORT (4-step UI)
+- [ ] Signed APK / store-ready builds (release keystore, icons)
+- [ ] macOS `.app` notarization polish
+- [ ] Capacitor Filesystem plugin for world import on device
 
 ### Phase 3 — Steam & distribution (v3.5)
 
@@ -82,8 +85,8 @@
 | Target | Technology | Status v2.1 |
 |--------|------------|---------------|
 | **Web** | Vite → GitHub Pages | ✅ Live |
-| **APK** | Capacitor + WebView | 📦 Manifest + docs |
-| **Windows** | Electron/Tauri | 📦 Manifest + docs |
+| **APK** | Capacitor + WebView | 🔧 Scaffold + `package:android` |
+| **Windows** | Electron | 🔧 Scaffold + `package:win` |
 | **Steam** | Electron + Steamworks | 📋 Planned v3.5 |
 | **Self-host** | Static `dist-pages` + optional `relay/` | ✅ |
 

@@ -14,6 +14,7 @@ import { initCompiler } from './compiler/main.js';
 import { initPrompter } from './prompter/main.js';
 import { ViewPrefs } from './shared/viewPrefs.js';
 import { initFullscreen } from './shared/fullscreen.js';
+import { initThresholdShell } from './shared/thresholdShell.js';
 
 console.log(`Starting Threshold Suite v${VERSION}...`);
 
@@ -108,6 +109,8 @@ document.getElementById('global-theme-btn')?.addEventListener('click', () => {
     document.body.classList.toggle('light-mode');
     window.dispatchEvent(new CustomEvent('theme-change'));
 });
+
+initThresholdShell();
 
 initLobby(() => {
     initEngine();

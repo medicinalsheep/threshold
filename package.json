@@ -1,19 +1,31 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "2.2.0",
+  "version": "3.0.0",
   "type": "module",
+  "main": "electron/main.cjs",
   "scripts": {
     "dev": "vite",
     "dev:grok": "vite --mode grok",
     "build": "vite build --mode pages",
     "build:grok": "vite build --mode grok",
-    "preview": "vite preview --outDir dist-pages"
+    "preview": "vite preview --outDir dist-pages",
+    "electron:dev": "npm run build && electron .",
+    "init:native": "node scripts/init-native.cjs",
+    "cap:sync": "npx cap sync",
+    "cap:open": "npx cap open android",
+    "package:android": "node scripts/package-android.cjs",
+    "package:win": "node scripts/package-win.cjs"
   },
   "devDependencies": {
+    "@capacitor/android": "^7.2.0",
+    "@capacitor/cli": "^7.2.0",
+    "electron": "^34.5.8",
+    "electron-builder": "^25.1.8",
     "vite": "^6.2.0"
   },
   "dependencies": {
+    "@capacitor/core": "^7.2.0",
     "cannon-es": "^0.20.0",
     "peerjs": "^1.5.4",
     "three": "^0.182.0"

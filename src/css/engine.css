@@ -738,6 +738,72 @@ body.ui-immersive.touch-off #status-msg {
     display: block;
 }
 
+.export-wizard-sheet {
+    max-height: min(85vh, 560px);
+    overflow-y: auto;
+}
+
+.export-wizard-progress {
+    display: flex;
+    gap: 6px;
+    margin: 10px 0 12px;
+    flex-wrap: wrap;
+}
+
+.export-wizard-progress span {
+    font-size: 0.58rem;
+    letter-spacing: 0.5px;
+    padding: 4px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    color: #666;
+}
+
+.export-wizard-progress span.active {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.export-wizard-summary {
+    margin: 8px 0;
+    padding-left: 18px;
+    font-size: 0.72rem;
+    line-height: 1.6;
+    color: #bbb;
+}
+
+.export-wizard-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    margin: 8px 0;
+    color: #ccc;
+    cursor: pointer;
+}
+
+.export-wizard-nav {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.export-wizard-nav button {
+    flex: 1;
+    min-height: 40px;
+}
+
+#export-wizard-next {
+    background: var(--accent-color) !important;
+    color: #000 !important;
+    border: none !important;
+}
+
+body.shell-electron .engine-toolbar,
+body.shell-capacitor .engine-toolbar {
+    padding-top: env(safe-area-inset-top, 0);
+}
+
 .insert-sheet {
     width: 100%;
     max-width: 480px;

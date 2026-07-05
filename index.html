@@ -447,6 +447,27 @@
             </div>
         </div>
 
+        <!-- Export wizard (APK / Windows / manifest) -->
+        <div id="export-wizard-modal" class="modal-backdrop">
+            <div id="export-wizard-sheet" class="panel insert-sheet export-wizard-sheet">
+                <div class="insert-header panel-drag-handle">
+                    <h3 style="margin:0;">EXPORT GAME</h3>
+                    <button id="export-wizard-close" type="button">✕</button>
+                </div>
+                <div class="export-wizard-progress" aria-hidden="true">
+                    <span data-wizard-step="0" class="active">INFO</span>
+                    <span data-wizard-step="1">REVIEW</span>
+                    <span data-wizard-step="2">TARGETS</span>
+                    <span data-wizard-step="3">PACKAGE</span>
+                </div>
+                <div id="export-wizard-body"></div>
+                <div class="export-wizard-nav">
+                    <button id="export-wizard-back" type="button" class="btn-sm">BACK</button>
+                    <button id="export-wizard-next" type="button">NEXT</button>
+                </div>
+            </div>
+        </div>
+
         <!-- World persistence modal -->
         <div id="world-modal" class="modal-backdrop">
             <div id="world-sheet" class="panel insert-sheet">

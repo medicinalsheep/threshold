@@ -31,7 +31,7 @@ Lobby → Engine (3D world) ↔ Compiler (code) ↔ PromptGen (AI prompts)
 3. **EDIT** — drag **TOOLS** / **SCENE** panels; use **+** to insert; **SCENE → AI** for Grok NPC or switch to **PromptGen**.
 4. **PLAY** — resume simulation; test walk/fly and physics.
 5. **SAVE WORLD** — **MORE** menu; share `?world=CODE` links.
-6. **EXPORT** — **MORE → EXPORT** downloads `.threshold-game.json` for future APK / Windows / Steam packaging ([roadmap](docs/PRODUCT_ROADMAP.md)).
+6. **EXPORT** — **MORE → EXPORT** wizard → manifest + `npm run package:android` / `package:win` ([native shells](docs/NATIVE_SHELLS.md)).
 
 Deeper workflows: Compiler sidebar → **WORKFLOWS** (Quick Start, agents, relay, sounds).
 
@@ -210,6 +210,17 @@ npm run build        # production build (GitHub Pages)
 
 Push to `main` — GitHub Pages updates automatically at the live URL above.
 
+### Native packaging (v3.0)
+
+```bash
+npm run init:native       # first time: Capacitor Android project
+npm run package:android   # sync web build → Android Studio APK
+npm run package:win       # Windows portable .exe (Electron)
+npm run electron:dev      # preview desktop shell
+```
+
+Full guide: [docs/NATIVE_SHELLS.md](docs/NATIVE_SHELLS.md)
+
 Optional env (`.env` / build modes):
 
 | Variable | Purpose |
@@ -228,7 +239,7 @@ Support ongoing development:
 
 ---
 
-## Product roadmap (v2.2+)
+## Product roadmap (v3.0+)
 
 **Design → Play → Ship → Scale**
 

@@ -12,15 +12,15 @@ const BUILD_PROFILES = {
     },
     android: {
         label: 'Android APK (Capacitor)',
-        status: 'manifest',
+        status: 'scaffold',
         tool: 'capacitor',
-        notes: 'Phase 3: wrap dist-pages in Capacitor WebView. Use this manifest for assets + config.',
+        notes: 'npm run init:native then package:android — open Android Studio to build APK.',
     },
     windows: {
         label: 'Windows (.exe)',
-        status: 'manifest',
+        status: 'scaffold',
         tool: 'electron',
-        notes: 'Phase 3: Electron shell loads dist-pages/index.html offline.',
+        notes: 'npm run package:win — Electron portable .exe from dist-pages.',
     },
     steam: {
         label: 'Steam',

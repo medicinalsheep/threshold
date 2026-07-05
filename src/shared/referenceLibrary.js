@@ -82,12 +82,13 @@ export const REFERENCE_LIBRARY = {
             id: 'export_game_package',
             title: 'Export Game Package (APK / Windows / Steam path)',
             summary: 'Download .threshold-game.json manifest → wrap with Capacitor/Electron in Phase 3.',
-            checklist: ['TOOLS → MORE → EXPORT', 'Includes world + scripts + sound IDs', 'See docs/PRODUCT_ROADMAP.md', 'Self-host relay/ optional'],
+            checklist: ['MORE → EXPORT wizard (4 steps)', 'npm run package:android / package:win', 'docs/NATIVE_SHELLS.md', 'Self-host relay optional'],
             code: `// After designing your game:
-// 1. TOOLS → MORE → EXPORT — saves MyGame.threshold-game.json
-// 2. manifest.buildProfiles lists: web, android, windows, steam, selfhost
-// 3. Phase 3 CLI: Capacitor APK, Electron .exe, Steam depot
-// 4. relay/README.md — AWS free tier when you need owned signaling`
+// 1. MORE → EXPORT — wizard: name, review, targets, download manifest
+// 2. npm run init:native (first time Android)
+// 3. npm run package:android — open Android Studio → Build APK
+// 4. npm run package:win — Threshold-x.x.x-win-portable.exe
+// 5. relay/README.md — AWS free tier when you need owned signaling`
         },
         {
             id: 'relay_aws_host',
