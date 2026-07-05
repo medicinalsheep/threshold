@@ -287,6 +287,45 @@ body.light-mode .lobby-logo-light {
     }
 }
 
+.lobby-voip-wrap {
+    margin: 10px 0 12px;
+    text-align: left;
+    font-size: 0.72rem;
+    color: #888;
+}
+
+.lobby-voip-wrap summary {
+    cursor: pointer;
+    color: var(--accent-color);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.lobby-voip-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 0 4px;
+}
+
+.lobby-voip-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.lobby-voip-select {
+    margin-bottom: 0 !important;
+    font-size: 0.75rem !important;
+}
+
+.lobby-voip-hint {
+    margin: 4px 0 0;
+    font-size: 0.62rem;
+    line-height: 1.4;
+    color: #666;
+}
+
 @media (max-width: 480px) {
     .lobby-hero h1 {
         font-size: 1.25rem;

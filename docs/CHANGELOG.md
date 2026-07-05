@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.13.0 — Proximity VOIP + Discord parallel
+
+- Lobby voice settings (host before CREATE): WebRTC proximity, PTT/open mic, Discord link
+- `voip.js` — PeerJS audio mesh, distance falloff, PTT (V + on-screen), mute/deafen
+- `PLAYER_POS` sync for proximity · default: WebRTC + PTT + 24m falloff
+- Discord opens external invite (true embed not available in web SPA)
+
 ## 5.12.0 — S1 TC export E2E ship path
 
 - `tc-export-lib.cjs` + `tc:export:manifest` — synthesize `exports/tc-show.threshold-game.json` from disk

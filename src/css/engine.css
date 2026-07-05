@@ -1376,3 +1376,68 @@ body.shell-steam.shell-electron::after {
 .cutscene-skip-hint.visible {
     opacity: 1;
 }
+
+.voip-hud {
+    display: none;
+    position: fixed;
+    left: 50%;
+    bottom: max(72px, calc(env(safe-area-inset-bottom, 0px) + 56px));
+    transform: translateX(-50%);
+    z-index: 95;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: rgba(5, 8, 5, 0.88);
+    border: 1px solid rgba(57, 255, 20, 0.35);
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    pointer-events: auto;
+}
+
+.voip-hud.active {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: min(96vw, 520px);
+}
+
+.voip-summary {
+    color: #9f9;
+    margin-right: 4px;
+    white-space: nowrap;
+}
+
+.voip-links {
+    color: #666;
+    font-size: 9px;
+}
+
+.voip-btn {
+    padding: 5px 8px;
+    font-size: 9px;
+    border: 1px solid #333;
+    background: #111;
+    color: #ccc;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.voip-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.voip-ptt.voip-ptt-active,
+.voip-btn.voip-muted {
+    background: rgba(57, 255, 20, 0.15);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.voip-discord {
+    border-color: #5865f2;
+    color: #aab2ff;
+}

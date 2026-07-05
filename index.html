@@ -34,6 +34,32 @@
             <input type="text" id="lobby-name" class="lobby-input" placeholder="Your name" maxlength="20">
             <button id="lobby-create" class="lobby-btn lobby-btn-primary">CREATE SESSION</button>
             <input type="text" id="lobby-join-code" class="lobby-input" placeholder="Room code to join" maxlength="8">
+            <details class="lobby-voip-wrap" open>
+                <summary>Voice — host sets before CREATE</summary>
+                <div class="lobby-voip-grid">
+                    <label class="lobby-voip-row"><input type="checkbox" id="lobby-voip-enabled" checked> Enable voice</label>
+                    <label class="lobby-voip-row">Mode
+                        <select id="lobby-voip-mode" class="lobby-input lobby-voip-select">
+                            <option value="webrtc" selected>In-game proximity (WebRTC)</option>
+                            <option value="hybrid">In-game + Discord link</option>
+                            <option value="discord">Discord only (external app)</option>
+                            <option value="off">Off</option>
+                        </select>
+                    </label>
+                    <label class="lobby-voip-row lobby-voip-webrtc-only">Transmit
+                        <select id="lobby-voip-transmission" class="lobby-input lobby-voip-select">
+                            <option value="ptt" selected>Push-to-talk (V) — recommended</option>
+                            <option value="open">Open mic (proximity gated)</option>
+                        </select>
+                    </label>
+                    <label class="lobby-voip-row lobby-voip-webrtc-only"><input type="checkbox" id="lobby-voip-proximity" checked> Proximity falloff (hear nearby)</label>
+                    <label class="lobby-voip-row lobby-voip-discord-only">Discord invite
+                        <input type="text" id="lobby-voip-discord" class="lobby-input" placeholder="https://discord.gg/… or invite code">
+                    </label>
+                    <label class="lobby-voip-row"><input type="checkbox" id="lobby-voip-spec-hear"> Spectators hear voice</label>
+                    <p class="lobby-voip-hint">Default: WebRTC + PTT + proximity — works in browser without Discord. True Discord/TeamSpeak embed is not available in web; hybrid opens Discord in parallel.</p>
+                </div>
+            </details>
             <button id="lobby-join" class="lobby-btn">JOIN FRIENDS</button>
             <button id="lobby-solo" class="lobby-btn lobby-btn-ghost">SOLO PLAY →</button>
             <button id="lobby-tc" class="lobby-btn lobby-btn-ghost" title="TC showcase — veh, chr GLB+LOD, sfx, cp — EXPORT demo">TC →</button>
@@ -196,6 +222,15 @@
             </div>
 
             <button id="btn-mobile-insert" class="mobile-fab" aria-label="Insert">+</button>
+
+            <div id="voip-hud" class="voip-hud" aria-label="Voice chat">
+                <span id="voip-summary" class="voip-summary">Voice</span>
+                <span id="voip-links" class="voip-links"></span>
+                <button id="voip-ptt-btn" type="button" class="voip-btn voip-ptt" title="Hold V or tap — push to talk">PTT</button>
+                <button id="voip-mute-btn" type="button" class="voip-btn" title="Mute mic">MIC</button>
+                <button id="voip-deafen-btn" type="button" class="voip-btn" title="Deafen (mute others)">DEAF</button>
+                <button id="voip-discord-btn" type="button" class="voip-btn voip-discord" title="Open Discord voice channel">DISCORD</button>
+            </div>
 
             <div id="touch-controls">
                 <div id="touch-stick-left" class="touch-stick-zone" aria-label="Move">
@@ -522,6 +557,7 @@
                 <input type="text" id="session-share-link" class="insert-input" readonly placeholder="Create session to get link">
                 <button id="host-copy-link" type="button" class="insert-action secondary">COPY INVITE LINK</button>
                 <div id="host-player-list"></div>
+                <p id="host-voip-summary" class="insert-hint"></p>
                 <hr style="border-color:var(--border-color); margin:12px 0;">
                 <label class="insert-hint"><input type="checkbox" id="host-auto-coding-pause" checked> Auto-pause when host opens Compiler / PromptGen</label>
                 <button id="host-push-bindings" class="insert-action secondary" type="button">PUSH CONTROLS TO ALL</button>

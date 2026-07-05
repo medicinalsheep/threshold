@@ -41,6 +41,7 @@ export const Sync = {
             hostBindings: window.Controls?.exportHostControls?.() || window.Controls?.exportHostBindings?.(),
             admins: window.Session?.getAdminList?.() || [],
             players: Network?.mode === 'host' ? Network.getPlayerList() : undefined,
+            playerPositions: Network?.getPlayerPositions?.() || {},
             camera,
         };
     },

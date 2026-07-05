@@ -1475,6 +1475,9 @@ const UI = {
         document.getElementById('host-auto-coding-pause')?.addEventListener('change', (e) => {
             Session.setAutoCodingPause(e.target.checked);
         });
+        document.getElementById('voip-mute-btn')?.addEventListener('click', () => window.Voip?.toggleMute?.());
+        document.getElementById('voip-deafen-btn')?.addEventListener('click', () => window.Voip?.toggleDeafen?.());
+        document.getElementById('voip-discord-btn')?.addEventListener('click', () => window.Voip?.openDiscord?.());
         document.getElementById('host-push-bindings')?.addEventListener('click', () => {
             Controls.saveHostAndBroadcast();
             UI.status('Host keyboard + controller profiles pushed to all players');
@@ -2151,6 +2154,12 @@ const UI = {
 
         const codingCb = document.getElementById('host-auto-coding-pause');
         if (codingCb) codingCb.checked = Session.autoCodingPause;
+
+        const voipEl = document.getElementById('host-voip-summary');
+        if (voipEl && Network.mode !== 'solo') {
+            const summary = window.VoipConfig?.summarizeVoipConfig?.(Network.voipConfig) || '';
+            voipEl.textContent = summary ? `Voice: ${summary}` : '';
+        } else if (voipEl) voipEl.textContent = '';
     },
     openBindingsModal: function () {
         const profile = Controls.getProfile();

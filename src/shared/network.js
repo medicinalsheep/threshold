@@ -3,6 +3,7 @@ import { getPeerOptions } from '../config.js';
 import { Session } from './session.js';
 import { Sync } from './sync.js';
 import { Permissions } from './permissions.js';
+import { defaultVoipHostConfig, normalizeVoipConfig, summarizeVoipConfig } from './voipConfig.js';
 
 export const Network = {
     peer: null,
@@ -12,7 +13,10 @@ export const Network = {
     mode: 'solo',
     roomId: '',
     peerCount: 0,
+    voipConfig: defaultVoipHostConfig(),
+    playerPositions: new Map(),
     _broadcastTimer: null,
+    _voipReady: false,
 
     getShareUrl() {
         if (!this.roomId) return window.location.href.split('?')[0];
@@ -28,9 +32,11 @@ export const Network = {
         return list;
     },
 
-    async startHost(roomId) {
+    async startHost(roomId, options = {}) {
         this.mode = 'host';
         this.roomId = roomId;
+        this.voipConfig = normalizeVoipConfig(options.voipConfig || this.voipConfig);
+        this.playerPositions.clear();
         Session.isHost = true;
         Session.hostKey = roomId;
         Session.grantAdmin(Session.playerKey);
@@ -38,6 +44,7 @@ export const Network = {
 
         return new Promise((resolve, reject) => {
             this.peer = new Peer(roomId, getPeerOptions());
+            this._wirePeerVoip(this.peer);
 
             this.peer.on('open', () => {
                 this.updateUi();
@@ -70,6 +77,7 @@ export const Network = {
 
         return new Promise((resolve, reject) => {
             this.peer = new Peer(getPeerOptions());
+            this._wirePeerVoip(this.peer);
             this.peer.on('open', () => {
                 const conn = this.peer.connect(roomId, { reliable: true });
                 this.hostConnection = conn;
@@ -79,6 +87,7 @@ export const Network = {
                         type: 'JOIN',
                         playerKey: Session.playerKey,
                         playerName: Session.playerName,
+                        peerId: this.peer.id,
                         spectate: true,
                     });
                     this.updateUi();
@@ -100,6 +109,7 @@ export const Network = {
 
         return new Promise((resolve, reject) => {
             this.peer = new Peer(getPeerOptions());
+            this._wirePeerVoip(this.peer);
 
             this.peer.on('open', () => {
                 const conn = this.peer.connect(roomId, { reliable: true });
@@ -110,7 +120,8 @@ export const Network = {
                     conn.send({
                         type: 'JOIN',
                         playerKey: Session.playerKey,
-                        playerName: Session.playerName
+                        playerName: Session.playerName,
+                        peerId: this.peer.id,
                     });
                     this.updateUi();
                     resolve(roomId);
@@ -126,18 +137,32 @@ export const Network = {
     startSolo() {
         this.mode = 'solo';
         this.roomId = '';
+        this.playerPositions.clear();
         Session.isHost = false;
         Session.isSpectator = false;
         Session.hostKey = '';
         Session.grantAdmin(Session.playerKey);
         Session.updateUi();
         this.updateUi();
+        window.Voip?.destroy?.();
+    },
+
+    _wirePeerVoip(peer) {
+        if (!peer || peer._voipWired) return;
+        peer._voipWired = true;
+        peer.on('call', (call) => window.Voip?.answerIncoming?.(call));
     },
 
     _onGuestConnect(conn) {
         this._setupConn(conn);
         conn.on('open', () => {
-            conn.send({ type: 'WELCOME', playerKey: Session.playerKey });
+            conn.send({
+                type: 'WELCOME',
+                playerKey: Session.playerKey,
+                voipConfig: this.voipConfig,
+                voipSummary: summarizeVoipConfig(this.voipConfig),
+            });
+            this._broadcastVoipRoster();
             this._broadcastState();
         });
     },
@@ -149,10 +174,12 @@ export const Network = {
         conn.on('close', () => {
             const meta = this.players.get(conn);
             if (meta && window.UI?.status) window.UI.status(`${meta.name} left`);
+            if (meta?.key) this.playerPositions.delete(meta.key);
             this.players.delete(conn);
             this.connections = this.connections.filter((c) => c !== conn);
             this.updateUi();
             window.UI?.renderHostPanel?.();
+            if (this.mode === 'host') this._broadcastVoipRoster();
         });
 
         this.updateUi();
@@ -166,9 +193,68 @@ export const Network = {
             name: data.playerName || `Player-${key}`,
             admin: spectator ? false : Session.isAdmin(key),
             spectator,
-            conn
+            peerId: data.peerId || conn.peer || null,
+            conn,
         });
         window.UI?.renderHostPanel?.();
+        this._broadcastVoipRoster();
+    },
+
+    getVoipRoster() {
+        const roster = [{
+            key: Session.playerKey,
+            name: Session.playerName,
+            peerId: this.peer?.id || this.roomId,
+            spectator: false,
+        }];
+        this.players.forEach((p) => {
+            roster.push({
+                key: p.key,
+                name: p.name,
+                peerId: p.peerId,
+                spectator: !!p.spectator,
+            });
+        });
+        return roster;
+    },
+
+    getPlayerPositions() {
+        const out = {};
+        this.playerPositions.forEach((pos, key) => { out[key] = pos; });
+        return out;
+    },
+
+    setPlayerPosition(key, pos) {
+        if (!key || !pos) return;
+        this.playerPositions.set(String(key).toUpperCase(), pos);
+        if (this.mode === 'host') this.scheduleBroadcast();
+    },
+
+    _broadcastVoipRoster() {
+        if (this.mode !== 'host') return;
+        const msg = {
+            type: 'VOIP_ROSTER',
+            roster: this.getVoipRoster(),
+            voipConfig: this.voipConfig,
+            playerPositions: this.getPlayerPositions(),
+        };
+        this.connections.forEach((c) => { if (c.open) c.send(msg); });
+        window.Voip?.setConfig?.(this.voipConfig);
+        window.Voip?.setRoster?.(msg.roster);
+        window.Voip?.setPlayerPositions?.(msg.playerPositions);
+        window.Voip?.startIfNeeded?.();
+    },
+
+    async _applyVoipSession(voipConfig, voipSummary) {
+        if (voipConfig) {
+            this.voipConfig = normalizeVoipConfig(voipConfig);
+            window.Voip?.init?.(this.voipConfig);
+            window.Voip?.setConfig?.(this.voipConfig);
+        }
+        if (voipSummary && window.UI?.status) {
+            window.UI.status(`Voice: ${voipSummary}`);
+        }
+        await window.Voip?.startIfNeeded?.();
     },
 
     _handleMessage(data, conn) {
@@ -188,6 +274,10 @@ export const Network = {
                     conn.send?.({ type: 'DENIED', action: data.action, message: 'Spectators are read-only' });
                     return;
                 }
+                if (data.action === 'PLAYER_POS') {
+                    if (meta?.key) this.setPlayerPosition(meta.key, data.payload?.position);
+                    return;
+                }
                 if (Permissions.isWorldEditAction(data.action) && !Permissions.canEditWorld(from)) {
                     conn.send?.({ type: 'DENIED', action: data.action, message: 'No admin permission' });
                     return;
@@ -198,11 +288,20 @@ export const Network = {
         } else if (this.mode === 'guest' || this.mode === 'spectate') {
             if (data.type === 'FULL_STATE') {
                 Sync.applyState(data.state);
+                if (data.state?.playerPositions) window.Voip?.setPlayerPositions?.(data.state.playerPositions);
                 window.UI?.renderHostPanel?.();
                 window.Spectate?.updateHud?.();
             }
-            if (data.type === 'WELCOME' && window.UI?.status) {
-                window.UI.status('Connected to host — synced bindings & scene');
+            if (data.type === 'WELCOME') {
+                if (window.UI?.status) window.UI.status('Connected to host — synced bindings & scene');
+                this._applyVoipSession(data.voipConfig, data.voipSummary);
+            }
+            if (data.type === 'VOIP_ROSTER') {
+                if (data.voipConfig) this.voipConfig = normalizeVoipConfig(data.voipConfig);
+                window.Voip?.setConfig?.(this.voipConfig);
+                window.Voip?.setRoster?.(data.roster || []);
+                window.Voip?.setPlayerPositions?.(data.playerPositions || {});
+                window.Voip?.startIfNeeded?.();
             }
             if (data.type === 'DENIED' && window.UI?.status) {
                 window.UI.status(data.message || 'Action denied by host');
@@ -211,8 +310,18 @@ export const Network = {
     },
 
     sendToHost(action, payload = {}) {
+        if (action === 'PLAYER_POS' && this.mode === 'guest') {
+            if (!this.hostConnection?.open) return;
+            this.hostConnection.send({
+                type: 'ACTION',
+                action: 'PLAYER_POS',
+                payload,
+                from: Session.playerKey,
+            });
+            return;
+        }
         if (this.mode === 'spectate') {
-            if (window.UI?.status) window.UI.status('Spectators cannot send actions');
+            if (action !== 'PLAYER_POS' && window.UI?.status) window.UI.status('Spectators cannot send actions');
             return;
         }
         if (this.mode !== 'guest' || !this.hostConnection?.open) {
@@ -286,13 +395,16 @@ export const Network = {
 
     destroy() {
         clearTimeout(this._broadcastTimer);
+        window.Voip?.destroy?.();
         this.connections.forEach((c) => c.close());
         this.hostConnection?.close();
         this.peer?.destroy();
         this.connections = [];
         this.players.clear();
+        this.playerPositions.clear();
         this.hostConnection = null;
         this.peer = null;
+        this._voipReady = false;
     }
 };
 

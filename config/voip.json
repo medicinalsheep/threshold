@@ -1,0 +1,29 @@
+{
+  "format": "threshold-voip-config",
+  "version": 1,
+  "description": "Multiplayer voice defaults — host overrides in lobby before CREATE SESSION",
+  "defaults": {
+    "enabled": true,
+    "mode": "webrtc",
+    "transmission": "ptt",
+    "proximity": true,
+    "maxDistance": 24,
+    "minVolume": 0.08,
+    "falloff": "linear",
+    "pttKey": "KeyV",
+    "discordInvite": "",
+    "spectatorsHear": false,
+    "spectatorsSpeak": false
+  },
+  "modes": {
+    "off": "No voice — text/session only",
+    "webrtc": "In-game WebRTC — proximity + PTT or open mic (browser/Electron/Capacitor)",
+    "discord": "Discord voice channel link — opens Discord app (most compatible external)",
+    "hybrid": "In-game WebRTC + optional Discord parallel channel"
+  },
+  "notes": [
+    "True Discord/TeamSpeak embed is not available in a generic web SPA — use external invite or built-in WebRTC.",
+    "Default transmission is PTT (V key) — avoids echo and works better on mobile with on-screen PTT.",
+    "Proximity uses player avatar position, or camera position in fly mode."
+  ]
+}

@@ -18,6 +18,7 @@ import { ViewPrefs } from './shared/viewPrefs.js';
 import { initFullscreen } from './shared/fullscreen.js';
 import { initThresholdShell } from './shared/thresholdShell.js';
 import { initSteamBridge } from './shared/steamBridge.js';
+import './shared/voip.js';
 
 console.log(`Starting Threshold Suite v${VERSION}...`);
 

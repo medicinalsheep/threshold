@@ -1,6 +1,11 @@
 import { Session } from '../shared/session.js';
 import { Network } from '../shared/network.js';
 import { setLoadTC } from '../shared/referenceEdition.js';
+import {
+    applyLobbyVoipVisibility,
+    readLobbyVoipConfig,
+    summarizeVoipConfig,
+} from '../shared/voipConfig.js';
 
 export function initLobby(onReady) {
     const overlay = document.getElementById('lobby-overlay');
@@ -24,6 +29,10 @@ export function initLobby(onReady) {
         }
     };
 
+    document.getElementById('lobby-voip-mode')?.addEventListener('change', applyLobbyVoipVisibility);
+    document.getElementById('lobby-voip-enabled')?.addEventListener('change', applyLobbyVoipVisibility);
+    applyLobbyVoipVisibility();
+
     const enterApp = () => {
         overlay?.classList.add('hidden');
         onReady?.();
@@ -38,9 +47,12 @@ export function initLobby(onReady) {
                 Session.playerName = name;
                 localStorage.setItem('threshold_player_name', name);
             }
+            const voipConfig = readLobbyVoipConfig();
             const roomId = Session.playerKey;
-            await Network.startHost(roomId);
-            setStatus('Session live — share your link!');
+            await Network.startHost(roomId, { voipConfig });
+            window.Voip?.init?.(voipConfig);
+            await window.Voip?.startIfNeeded?.();
+            setStatus(`Session live — ${summarizeVoipConfig(voipConfig)}`);
             enterApp();
         } catch (e) {
             setStatus(e.message || 'Failed to create session', true);
