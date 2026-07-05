@@ -1,0 +1,33 @@
+{
+  "format": "threshold-reference-edition",
+  "version": 1,
+  "id": "threshold-child-lite",
+  "label": "Threshold Child Lite",
+  "license": "Original — Threshold Child edition",
+  "author": "Threshold",
+  "loader": "procedural",
+  "source": "src/shared/thresholdChildAssets.js",
+  "assets": [
+    {
+      "id": "child_runner",
+      "label": "Threshold Runner",
+      "kind": "vehicle",
+      "spawn": "procedural",
+      "license": "Original — Threshold Child edition"
+    },
+    {
+      "id": "child_hauler",
+      "label": "Threshold Hauler",
+      "kind": "vehicle",
+      "spawn": "procedural",
+      "license": "Original — Threshold Child edition"
+    },
+    {
+      "id": "child_circuit_span",
+      "label": "Threshold Circuit Span",
+      "kind": "scene",
+      "spawn": "procedural",
+      "license": "Original — Threshold Child edition"
+    }
+  ]
+}

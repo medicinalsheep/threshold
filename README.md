@@ -35,7 +35,7 @@ Lobby → Engine (3D world) ↔ Compiler (code) ↔ PromptGen (AI prompts)
 7. **EXPORT** — 9-step wizard (icons, credits, packs, ship) → `.threshold-game.json` ([walkthrough](docs/EXPORT_WALKTHROUGH.md)).
 8. **Ship** — `store:prep` → `package:android` / `package:win` / `package:steam` ([store](docs/STORE_RELEASE.md) · [Steam](docs/STEAM_RELEASE.md)).
 
-**Optional:** Lobby → **REFERENCE LITE (CC0)** — Kenney vehicles to practice GLTF + export ([reference editions](docs/REFERENCE_EDITIONS.md)).
+**Optional:** Lobby → **THRESHOLD CHILD** — original procedural vehicles to practice export SCENE + CREDITS ([Child policy](docs/THRESHOLD_CHILD_ASSETS.md) · [getting started](docs/GETTING_STARTED.md)).
 
 Deeper workflows: Compiler sidebar → **WORKFLOWS** (Quick Start, agents, relay, sounds).
 
@@ -228,14 +228,15 @@ npm run electron:dev      # preview desktop shell
 
 Guides: [NATIVE_SHELLS](docs/NATIVE_SHELLS.md) · [STORE_RELEASE](docs/STORE_RELEASE.md) · [STEAM_RELEASE](docs/STEAM_RELEASE.md) · [EXPORT_WALKTHROUGH](docs/EXPORT_WALKTHROUGH.md)
 
-### Reference assets (CC0)
+### Threshold Child assets (bundled originals)
+
+Lobby → **THRESHOLD CHILD** spawns Runner, Hauler, and Circuit Span — procedural assets authored for Threshold, not third-party drops.
 
 ```bash
-npm run reference:fetch   # Kenney vehicles (first time)
-npm run reference:sync    # → import/ + dev bundle
+npm run reference:fetch   # optional dev-only CC0 seeds → reference/_dev-seeds/ (gitignored)
 ```
 
-[docs/REFERENCE_EDITIONS.md](docs/REFERENCE_EDITIONS.md)
+[docs/THRESHOLD_CHILD_ASSETS.md](docs/THRESHOLD_CHILD_ASSETS.md) · [docs/REFERENCE_EDITIONS.md](docs/REFERENCE_EDITIONS.md) · [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)
 
 Full guide: [docs/NATIVE_SHELLS.md](docs/NATIVE_SHELLS.md)
 
@@ -270,19 +271,19 @@ Support ongoing development:
 
 ---
 
-## Product roadmap (v5.4)
+## Product roadmap (v5.5)
 
 **Design → Art → Play → Ship → Scale**
 
 | Stage | What |
 |-------|------|
 | **Design** | Engine, Compiler, PromptGen, SFX, 9-step tutorial |
-| **Art** | GIMP, Blender, reference CC0 editions, `textures:watch` |
+| **Art** | GIMP, Blender, **Threshold Child** originals, `textures:watch` |
 | **Play** | Solo / host / guest, EDIT·PLAY, graphics tiers, cutscenes |
 | **Ship** | 9-step EXPORT → `store:prep` → APK / Windows / iOS / **Steam** |
 | **Scale** | Optional **relay/** — [AWS free tier](relay/README.md) |
 
-**Current:** v5.4.0 — reference editions + store/Steam pipeline. [docs/NEXT_PHASES.md](docs/NEXT_PHASES.md) · [docs/PRODUCT_ROADMAP.md](docs/PRODUCT_ROADMAP.md)
+**Current:** v5.5.0 — Threshold Child policy + Tier 2 docs. [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) · [docs/NEXT_PHASES.md](docs/NEXT_PHASES.md) · [docs/PRODUCT_ROADMAP.md](docs/PRODUCT_ROADMAP.md)
 
 ---
 

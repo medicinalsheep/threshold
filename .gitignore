@@ -27,6 +27,5 @@ textures/*.webp
 import/*.glb
 import/*.gltf
 !import/.gitkeep
-!reference/**/*.glb
-!reference/**/*.png
+reference/_dev-seeds/
 public/bundle/

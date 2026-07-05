@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **5.4.0**)
+**Version:** `src/config.js` → `VERSION` (currently **5.5.0**)
 
 ---
 
@@ -18,7 +18,7 @@ Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blen
 | Creative | `textureBridge.js`, `gltfImport.js`, `creativeWatch.js` |
 | Export | `gameExport.js`, `exportWizard.js`, `exportWalkthrough.js` |
 | Store / Steam | `scripts/store-*.cjs`, `scripts/steam-*.cjs`, `electron/steam*.cjs` |
-| Reference editions | `reference/`, `config/reference-editions.json`, `referenceEdition.js` |
+| Threshold Child assets | `thresholdChildAssets.js`, `referenceEdition.js`, `config/reference-editions.json` |
 | Native | `electron/`, `capacitor.config.json`, `thresholdShell.js` |
 | Plugins | `plugins/threshold-gimp/`, `plugins/threshold-blender/` |
 
@@ -42,8 +42,8 @@ npm run package:android:release
 npm run package:win            # Electron portable + NSIS
 npm run package:steam -- --manifest <game>.threshold-game.json
 npm run steam:depot -- --manifest <game>.threshold-game.json
-npm run reference:fetch        # Download CC0 reference assets (Kenney)
-npm run reference:sync         # Copy reference edition → import/ + public/bundle/
+npm run reference:fetch        # Dev-only CC0 seeds → reference/_dev-seeds/ (gitignored)
+npm run reference:sync         # No-op — Child assets are procedural (see thresholdChildAssets.js)
 ```
 
 ---
@@ -95,7 +95,10 @@ Engine tutorial = 9 steps. PromptGen is the primary codegen path.
 | [docs/STORE_RELEASE.md](docs/STORE_RELEASE.md) | Play / App Store / Windows |
 | [docs/STORE_ASSETS.md](docs/STORE_ASSETS.md) | IAP / depot / registry maps |
 | [docs/STEAM_RELEASE.md](docs/STEAM_RELEASE.md) | Steamworks + depot upload |
-| [docs/REFERENCE_EDITIONS.md](docs/REFERENCE_EDITIONS.md) | CC0 bundled reference assets |
+| [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) | Lobby → ship linear path |
+| [docs/THRESHOLD_CHILD_ASSETS.md](docs/THRESHOLD_CHILD_ASSETS.md) | Child policy — original bundled assets only |
+| [docs/REFERENCE_EDITIONS.md](docs/REFERENCE_EDITIONS.md) | Child editions registry |
+| [docs/CHANGELOG.md](docs/CHANGELOG.md) | Version history |
 | [docs/CREATIVE_WORKFLOW.md](docs/CREATIVE_WORKFLOW.md) | GIMP/Blender/Engine loop |
 | [docs/NATIVE_SHELLS.md](docs/NATIVE_SHELLS.md) | APK / Windows / iOS / Steam |
 | [docs/NEXT_PHASES.md](docs/NEXT_PHASES.md) | Phase history + open work |
@@ -105,4 +108,4 @@ Engine tutorial = 9 steps. PromptGen is the primary codegen path.
 
 ## Contributing
 
-Vanilla JS + Vite. No React. One SPA for web, Capacitor, Electron. Update roadmap when shipping features. Reference assets must be **CC0 or equivalent** — see `reference/ATTRIBUTION.md`.
+Vanilla JS + Vite. No React. One SPA for web, Capacitor, Electron. Update roadmap when shipping features. **Shipped Child editions must be original Threshold content** — see `docs/THRESHOLD_CHILD_ASSETS.md`. External seeds are dev-only in `reference/_dev-seeds/`.

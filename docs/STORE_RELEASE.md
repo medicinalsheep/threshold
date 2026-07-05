@@ -178,6 +178,9 @@ Game exports include:
 
 ## Related
 
+- [GETTING_STARTED.md](GETTING_STARTED.md) — lobby → export → package path
+- [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) — bundled Child assets vs user-sourced art
+- [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) — 9-step wizard
 - [NATIVE_SHELLS.md](NATIVE_SHELLS.md) — Capacitor / Electron setup
 - [NEXT_PHASES.md](NEXT_PHASES.md) — Phase M (Steam), Phase L checklist
 - [PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md) — distribution pillars

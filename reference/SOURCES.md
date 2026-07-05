@@ -1,36 +1,38 @@
-# Reference asset sources
+# Asset sources policy
 
-Legal, redistributable sources for Threshold Reference editions.
+## Threshold Child (shipped)
 
-## Active (Reference Lite)
+All bundled reference content is **Threshold-original**. See [docs/THRESHOLD_CHILD_ASSETS.md](../docs/THRESHOLD_CHILD_ASSETS.md).
 
-| Pack | URL | License | Notes |
-|------|-----|---------|-------|
-| Kenney Starter Kit: Racing | https://github.com/KenneyNL/Starter-Kit-Racing | CC0 / MIT | Vehicles + track GLB used in `threshold-ref-lite` |
-| Kenney Car Kit | https://kenney.nl/assets/car-kit | CC0 | Planned for `threshold-ref-vehicles` expansion |
-| Kenney Nature Kit | https://kenney.nl/assets | CC0 | Props / environment |
+## External material (not shipped)
 
-## Planned sources (Phase R2+)
+| Use | Allowed |
+|-----|---------|
+| Developer local comparison in `reference/_dev-seeds/` | CC0 packs via `reference:fetch` — **gitignored** |
+| Copy into `reference/editions/` without Child transformation | **No** |
+| Ship unmodified third-party GLB/texture in Threshold repo | **No** |
 
-| Category | Suggested sources | License |
-|----------|-------------------|---------|
-| Textures | [Poly Haven](https://polyhaven.com), ambientCG | CC0 |
-| Characters | [Quaternius](https://quaternius.com) modular packs | CC0 |
-| Audio | Freesound CC0 filter, Kenney audio | CC0 |
+## User-built games
 
-## Workflow inspiration (do not rip assets)
+Users may reference external assets in **their** projects when they have rights. Complete EXPORT **CREDITS** honestly. Threshold does not provide or endorse:
 
-| Community | Learn from | Threshold feature |
-|-----------|------------|-------------------|
-| Battlefield 2 / 2142 mods | Vehicle + kit structure | `assetRegistry` vehicle `kind` |
-| Fallout mod kits | Loose file trees | `bundle:assets` paths |
-| COD mod tools | Surface footstep sets | SFX taxonomy (R4 audio) |
-| FiveM debadged packs | Spawn lists only | Use **Kenney/CC0** meshes instead |
+- Ripped files from Fallout, Battlefield, Call of Duty, or other commercial games
+- Unlicensed FiveM / mod packs
+- Any asset without clear redistribution rights
 
-## Refresh assets
+## Workflow inspiration (not asset sources)
+
+| Community | Learn |
+|-----------|-------|
+| Battlefield mods | Vehicle roles, kit structure |
+| Fallout mods | Loose-file folder conventions |
+| COD mod tools | Surface-based sound categories |
+| Open asset sites (Kenney, Poly Haven, etc.) | **Users** may use for **their** games — not our shipped Child drops |
+
+## Refresh dev seeds (optional)
 
 ```bash
-npm run reference:fetch    # re-download from Kenney GitHub raw
-npm run reference:sync       # copy → import/, textures/, public/bundle/
-npm run bundle:assets        # ship in native builds
+npm run reference:fetch   # → reference/_dev-seeds/ only
 ```
+
+Never run `reference:sync` into shipped editions without a Child authoring pass.

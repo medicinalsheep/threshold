@@ -1,21 +1,23 @@
 #!/usr/bin/env node
 /**
- * Download CC0 reference assets into reference/editions/threshold-ref-lite/
+ * DEV ONLY — download external CC0 packs to reference/_dev-seeds/ for comparison.
+ * NOT shipped. Do not copy into Child editions without transformation.
+ * See docs/THRESHOLD_CHILD_ASSETS.md
  */
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
 const ROOT = path.join(__dirname, '..');
-const EDITION = path.join(ROOT, 'reference', 'editions', 'threshold-ref-lite');
+const SEED_DIR = path.join(ROOT, 'reference', '_dev-seeds', 'kenney-racing');
 const KENNEY = 'https://raw.githubusercontent.com/KenneyNL/Starter-Kit-Racing/main';
 
 const DOWNLOADS = [
-    { url: `${KENNEY}/models/vehicle-motorcycle.glb`, rel: 'import/kenney_motorcycle.glb' },
-    { url: `${KENNEY}/models/vehicle-truck-green.glb`, rel: 'import/kenney_truck_green.glb' },
-    { url: `${KENNEY}/models/track-straight.glb`, rel: 'import/kenney_track_straight.glb' },
-    { url: `${KENNEY}/models/Textures/colormap.png`, rel: 'textures/ref_kenney_colormap.png' },
-    { url: `${KENNEY}/LICENSE`, rel: 'LICENSE-kenney-racing.txt' },
+    { url: `${KENNEY}/models/vehicle-motorcycle.glb`, rel: 'vehicle-motorcycle.glb' },
+    { url: `${KENNEY}/models/vehicle-truck-green.glb`, rel: 'vehicle-truck-green.glb' },
+    { url: `${KENNEY}/models/track-straight.glb`, rel: 'track-straight.glb' },
+    { url: `${KENNEY}/models/Textures/colormap.png`, rel: 'colormap.png' },
+    { url: `${KENNEY}/LICENSE`, rel: 'LICENSE.txt' },
 ];
 
 function fetchUrl(url) {
@@ -37,16 +39,18 @@ function fetchUrl(url) {
 }
 
 async function main() {
-    console.log('Fetching Threshold Reference Lite (Kenney CC0)…\n');
+    console.log('DEV ONLY — external seeds (gitignored, not shipped)\n');
+    console.log('Policy: transform into Threshold Child assets before any internal use.\n');
     for (const item of DOWNLOADS) {
-        const dest = path.join(EDITION, item.rel);
+        const dest = path.join(SEED_DIR, item.rel);
         fs.mkdirSync(path.dirname(dest), { recursive: true });
         process.stdout.write(`  ${item.rel} … `);
         const buf = await fetchUrl(item.url);
         fs.writeFileSync(dest, buf);
         console.log(`${buf.length} bytes`);
     }
-    console.log('\nDone. Run: npm run reference:sync');
+    console.log(`\nWrote → ${path.relative(ROOT, SEED_DIR)}/`);
+    console.log('Next: kit-bash in Blender → threshold_child_*.glb → new Child edition');
 }
 
 main().catch((err) => {

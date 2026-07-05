@@ -20,8 +20,8 @@ export const REFERENCE_LIBRARY = {
 // 8. CHECK CODE READY → RUN IN ENGINE
 // 9. PLAY — test walk + physics + Hyper for PBR
 // 10. MORE → EXPORT — 9 steps (INFO→SHIP) → store:prep → package:*
-// Optional: Lobby REFERENCE LITE (CC0 Kenney vehicles) — docs/REFERENCE_EDITIONS.md
-// See docs/EXPORT_WALKTHROUGH.md`
+// Optional: Lobby THRESHOLD CHILD (original vehicles) — docs/THRESHOLD_CHILD_ASSETS.md
+// See docs/GETTING_STARTED.md · docs/EXPORT_WALKTHROUGH.md`
         },
         {
             id: 'render_modes_3d',
@@ -464,6 +464,7 @@ export function getWorkflowPromptBlock() {
     lines.push('\nCREATIVE ASSETS (v3.6+):');
     lines.push('- GIMP → textures/ + GIMP SYNC · Blender → import/ + INSERT GLTF');
     lines.push('- Dev: npm run textures:watch + npm run dev · docs/CREATIVE_WORKFLOW.md');
+    lines.push('- Bundled: Threshold Child originals (lobby THRESHOLD CHILD) — docs/THRESHOLD_CHILD_ASSETS.md');
     lines.push('- PromptGen includes ASSET MANIFEST when live scene is checked');
     return lines.join('\n');
 }

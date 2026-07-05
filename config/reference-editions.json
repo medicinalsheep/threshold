@@ -1,31 +1,39 @@
 {
   "format": "threshold-reference-editions",
-  "version": 1,
-  "defaultEdition": "threshold-ref-lite",
+  "version": 2,
+  "policy": "docs/THRESHOLD_CHILD_ASSETS.md",
+  "defaultEdition": "threshold-child-lite",
   "editions": {
     "threshold": {
       "id": "threshold",
       "label": "Threshold Core",
-      "description": "Procedural starter scene only — no bundled reference assets",
-      "status": "active"
-    },
-    "threshold-ref-lite": {
-      "id": "threshold-ref-lite",
-      "label": "Threshold Reference Lite",
-      "description": "CC0 Kenney vehicles + colormap texture — learn INSERT GLTF, export CREDITS/SCENE",
+      "description": "Procedural starter scene only",
       "status": "active",
-      "license": "CC0",
-      "manifest": "reference/editions/threshold-ref-lite/manifest.json",
-      "attribution": "reference/ATTRIBUTION.md",
-      "sources": "reference/SOURCES.md",
-      "syncCli": "npm run reference:sync",
-      "fetchCli": "npm run reference:fetch"
+      "license": "Original — Threshold"
+    },
+    "threshold-child-lite": {
+      "id": "threshold-child-lite",
+      "label": "Threshold Child Lite",
+      "description": "Original procedural vehicles + circuit — Runner, Hauler, Circuit Span",
+      "status": "active",
+      "license": "Original — Threshold Child edition",
+      "loader": "src/shared/thresholdChildAssets.js",
+      "lobbyButton": "THRESHOLD CHILD",
+      "attribution": "reference/ATTRIBUTION.md"
     }
   },
+  "deprecated": {
+    "threshold-ref-lite": "Removed — raw external CC0 drops replaced by Threshold Child originals (v5.5)"
+  },
   "planned": {
-    "threshold-ref-vehicles": "Extended CC0 vehicle pack",
-    "threshold-ref-characters": "Modular humanoids",
-    "threshold-ref-audio": "CC0 SFX seed library",
-    "threshold-ref-showcase": "Pre-built world combining all editions"
+    "threshold-child-vehicles": "Blender-authored Child GLB + LOD",
+    "threshold-child-characters": "Unique humanoid Child meshes",
+    "threshold-child-audio": "Original SFX library seeds",
+    "threshold-child-showcase": "Full demo world for export tutorial"
+  },
+  "devOnly": {
+    "externalSeedsDir": "reference/_dev-seeds/",
+    "fetchCli": "npm run reference:fetch",
+    "note": "Local comparison only — gitignored, not shipped"
   }
 }

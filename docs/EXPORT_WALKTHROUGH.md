@@ -1,4 +1,4 @@
-# Export walkthrough (v5.4)
+# Export walkthrough (v5.5)
 
 Guided **MORE → EXPORT** flow — from game identity through icons, scene content, asset credits, store packs, and download.
 
@@ -111,6 +111,8 @@ See [STORE_ASSETS.md](STORE_ASSETS.md) for platform upload steps.
 
 ## Related
 
+- [GETTING_STARTED.md](GETTING_STARTED.md) — lobby → ship linear path
+- [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) — bundled original assets + CREDITS examples
 - [STORE_ASSETS.md](STORE_ASSETS.md) — Play / Steam / itch / registry maps
 - [STORE_RELEASE.md](STORE_RELEASE.md) — signing, AAB, TestFlight
 - [NATIVE_SHELLS.md](NATIVE_SHELLS.md) — Capacitor / Electron
