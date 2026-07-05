@@ -47,6 +47,25 @@ export const REFERENCE_LIBRARY = {
 // Inspector Collision: mass/friction/restitution still per-object`
         },
         {
+            id: 'creative_cli_watch',
+            title: 'Creative CLI — textures:watch + blender:export',
+            summary: 'Dev hot-reload loop: watch folder saves GIMP/Blender output into live Engine.',
+            checklist: ['npm run textures:watch', 'npm run dev in second terminal', 'Save PNG to textures/ or GLB to import/', 'Object name must match filename slug'],
+            code: `// CREATIVE CLI (terminal — not Compiler JS):
+// Terminal A:
+npm run textures:watch
+// Terminal B:
+npm run dev
+//
+// GIMP export → textures/stone_block_albedo.png
+// Engine hot-reloads meshes named "Stone Block" (slug stone_block)
+//
+// Headless Blender (CI / batch):
+npm run blender:export -- --blend scene.blend --object "Stone Block"
+// → import/stone_block.glb + threshold_blender_manifest.json
+// Watch relay also hot-reloads GLTF in import/`
+        },
+        {
             id: 'blender_gltf_export',
             title: 'Blender GLTF → Engine INSERT',
             summary: 'Export textured GLB from Blender addon; insert at cursor with physics bbox collision.',

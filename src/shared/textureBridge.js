@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { TextureLibrary } from './textureLibrary.js';
 import { TextureManifest } from './textureManifest.js';
 import { ThresholdShell } from './thresholdShell.js';
+import { CREATIVE_WATCH_URL } from '../config.js';
 
 const SLOT_PROPS = {
     albedo: 'map',
@@ -17,6 +18,49 @@ const MANIFEST_FILTERS = [
 
 const loader = new THREE.TextureLoader();
 const urlCache = new Map();
+
+function slugify(name = '') {
+    return String(name)
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '') || 'object';
+}
+
+function parseTextureFile(fileName = '') {
+    const lower = fileName.toLowerCase();
+    for (const slot of ['albedo', 'roughness', 'metalness']) {
+        const suffix = `_${slot}`;
+        const exts = ['.png', '.jpg', '.jpeg', '.webp'];
+        for (const ext of exts) {
+            if (lower.endsWith(`${suffix}${ext}`)) {
+                const slug = lower.slice(0, lower.length - suffix.length - ext.length);
+                return { slot, slug };
+            }
+        }
+    }
+    return null;
+}
+
+function revokeCachedUrl(texId) {
+    const url = urlCache.get(texId);
+    if (url) URL.revokeObjectURL(url);
+    urlCache.delete(texId);
+}
+
+function findObjectsForTextureWatch(event = {}) {
+    const State = window.State;
+    if (!State?.objects) return [];
+    const slug = event.slug || (event.file ? parseTextureFile(event.file)?.slug : null);
+    const base = event.file?.split(/[/\\]/).pop();
+
+    return State.objects.filter((obj) => {
+        if (!obj.material) return false;
+        if (slug && slugify(obj.userData?.name) === slug) return true;
+        if (base && obj.userData?.textureHint?.includes(base)) return true;
+        return false;
+    });
+}
 
 function mimeFromPath(filePath = '') {
     const lower = filePath.toLowerCase();
@@ -281,6 +325,84 @@ export const TextureBridge = {
         const id = textures[slot];
         if (!id) return null;
         return this.getObjectUrl(id);
+    },
+
+    async loadFromWatchSource(event) {
+        const fileName = event.file || event.path?.split(/[/\\]/).pop() || 'texture.png';
+        if (!event.watchUrl) {
+            throw new Error('No watch source — run npm run textures:watch');
+        }
+        const res = await fetch(`${event.watchUrl}${event.watchUrl.includes('?') ? '&' : '?'}t=${Date.now()}`);
+        if (!res.ok) throw new Error(`Watch fetch failed: ${fileName}`);
+        const blob = await res.blob();
+        const file = new File([blob], fileName, { type: blob.type || mimeFromPath(fileName) });
+        return TextureLibrary.saveFromFile(file, {
+            name: fileName,
+            sourcePath: event.path || fileName,
+        });
+    },
+
+    async hotReloadFromWatch(event = {}) {
+        const parsed = parseTextureFile(event.file || '') || {};
+        const slot = event.slot || parsed.slot;
+        if (!slot) return { applied: 0, message: `Skipped ${event.file || event.path} — unknown slot` };
+
+        const targets = findObjectsForTextureWatch({ ...event, slug: event.slug || parsed.slug });
+        if (!targets.length) {
+            return { applied: 0, message: `No mesh matched ${event.file || event.path}` };
+        }
+
+        let record;
+        try {
+            record = await this.loadFromWatchSource(event);
+        } catch (e) {
+            window.UI?.status?.(e.message || 'Texture hot-reload failed');
+            return { applied: 0, error: e };
+        }
+
+        let applied = 0;
+        for (const obj of targets) {
+            const textures = ensureTexturesUserData(obj);
+            if (textures[slot]) revokeCachedUrl(textures[slot]);
+            await this.applySlot(obj, slot, record.id);
+            textures[slot] = record.id;
+            if (slot === 'albedo') obj.userData.textureHint = event.path || record.meta?.sourcePath;
+            applied += 1;
+        }
+
+        const msg = `Hot-reloaded ${event.file || slot} on ${applied} object(s)`;
+        window.UI?.status?.(msg);
+        if (window.State?.selectedObject) window.UI?.syncTextureInspector?.(window.State.selectedObject);
+        return { applied, message: msg };
+    },
+
+    async hotReloadManifestFromWatch(event = {}) {
+        if (!event.watchUrl) return null;
+        try {
+            const res = await fetch(`${event.watchUrl}?t=${Date.now()}`);
+            const manifest = TextureManifest.parse(await res.text());
+            const base = CREATIVE_WATCH_URL.replace(/\/$/, '');
+            let applied = 0;
+            for (const obj of window.State?.objects || []) {
+                const entries = TextureManifest.entriesForObject(manifest, obj.userData?.name);
+                for (const entry of entries) {
+                    const assetPath = (entry.path || `textures/${entry.file}`).replace(/\\/g, '/');
+                    const result = await this.hotReloadFromWatch({
+                        type: 'texture',
+                        file: entry.file,
+                        path: assetPath,
+                        slot: entry.slot,
+                        watchUrl: `${base}/asset?path=${encodeURIComponent(assetPath)}`,
+                    });
+                    applied += result?.applied || 0;
+                }
+            }
+            if (applied) window.UI?.status?.(`GIMP manifest hot-reload: ${applied} map(s)`);
+            return { applied };
+        } catch (e) {
+            window.UI?.status?.(e.message || 'Manifest hot-reload failed');
+            return null;
+        }
     },
 };
 

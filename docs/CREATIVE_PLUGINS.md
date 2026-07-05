@@ -72,11 +72,22 @@ Install: `npm run blender:install` → enable add-on in Blender Preferences.
 
 ---
 
-## Phase D — Unified creative CLI (v4.5)
+## Phase D — Unified creative CLI (v3.6)
 
 ```bash
-npm run textures:watch   # watches ./textures → hot-reload on Engine materials
-npm run blender:export   # headless Blender export hook
+npm run textures:watch   # SSE relay on :3927 — hot-reload textures/ + import/ in Engine (dev)
+npm run blender:export   # headless Blender → import/*.glb + manifest
+npm run creative:watch   # alias for textures:watch (textures + GLTF folders)
+```
+
+**Hot-reload loop (dev):**
+1. Terminal A: `npm run textures:watch`
+2. Terminal B: `npm run dev` (or `electron:dev`)
+3. GIMP/Blender saves to `textures/` or `import/` → Engine updates live materials / GLTF meshes
+
+**Headless Blender:**
+```bash
+npm run blender:export -- --blend scene.blend --object "Stone Block"
 ```
 
 ---

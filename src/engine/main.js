@@ -30,6 +30,7 @@ import { TextureLibrary } from '../shared/textureLibrary.js';
 import { TextureBridge } from '../shared/textureBridge.js';
 import { GltfImport } from '../shared/gltfImport.js';
 import { ThresholdShell } from '../shared/thresholdShell.js';
+import { CreativeWatch } from '../shared/creativeWatch.js';
 import { bootstrapStarterScene } from '../shared/starterScene.js';
 import { GameExport } from '../shared/gameExport.js';
 import { AgentHub } from '../shared/agentHub.js';
@@ -1463,6 +1464,7 @@ const UI = {
         UI.initViewToggles();
         initPanelDrag();
         SceneDock.init();
+        CreativeWatch.init();
     },
     updateModeDisplay: function (idx) {
         const el = document.getElementById('mode-display');

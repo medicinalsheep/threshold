@@ -81,7 +81,14 @@ export const GameExport = {
                 addonPath: 'plugins/threshold-blender/threshold_blender',
                 install: 'npm run blender:install',
                 importDir: 'import/',
+                headlessExport: 'npm run blender:export -- --blend scene.blend --object "Name"',
                 note: 'Blender File → Export → Threshold GLTF (.glb) → Engine INSERT → GLTF',
+            },
+            creativeCli: {
+                texturesWatch: 'npm run textures:watch',
+                blenderExport: 'npm run blender:export',
+                watchUrl: 'http://127.0.0.1:3927',
+                note: 'Run textures:watch alongside npm run dev for live GIMP/Blender → Engine hot-reload',
             },
             agents: options.agents || window.AgentHub?.exportConfigs?.() || [],
             relay: {

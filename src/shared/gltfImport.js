@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { BlenderManifest } from './blenderManifest.js';
 import { ThresholdShell } from './thresholdShell.js';
+import { CREATIVE_WATCH_URL } from '../config.js';
 
 const loader = new GLTFLoader();
 const GLTF_FILTERS = [
@@ -13,6 +14,54 @@ const MANIFEST_FILTERS = [
 
 function mimeFromPath(filePath = '') {
     return filePath.toLowerCase().endsWith('.gltf') ? 'model/gltf+json' : 'model/gltf-binary';
+}
+
+function slugify(name = '') {
+    return String(name)
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '') || 'model';
+}
+
+function disposeObject3D(root) {
+    root.traverse((c) => {
+        if (c.geometry) c.geometry.dispose?.();
+        if (c.material) {
+            if (Array.isArray(c.material)) c.material.forEach((m) => m.dispose?.());
+            else c.material.dispose?.();
+        }
+    });
+}
+
+function findGltfTargets(event = {}) {
+    const State = window.State;
+    if (!State?.objects) return [];
+    const file = event.file || event.path?.split(/[/\\]/).pop() || '';
+    const slug = event.slug || slugify(file.replace(/\.(glb|gltf)$/i, ''));
+    return State.objects.filter((obj) => {
+        if (obj.userData?.type !== 'gltf') return false;
+        if (slug && slugify(obj.userData?.name) === slug) return true;
+        if (file && (obj.userData?.gltfFile === file || obj.userData?.gltfPath?.includes(file))) return true;
+        return false;
+    });
+}
+
+function removeGltfFromWorld(root) {
+    const State = window.State;
+    const Engine = window.Engine;
+    const Physics = window.Physics;
+    if (!root || !State || !Engine) return;
+
+    if (State.selectedObject === root) window.UI?.deselectObject?.();
+    const physIdx = State.physicsObjects.findIndex((p) => p.mesh === root);
+    if (physIdx >= 0) {
+        Physics?.world?.removeBody(State.physicsObjects[physIdx].body);
+        State.physicsObjects.splice(physIdx, 1);
+    }
+    Engine.scene.remove(root);
+    State.objects = State.objects.filter((o) => o !== root);
+    disposeObject3D(root);
 }
 
 function groundAndScale(root, targetHeight = null) {
@@ -261,6 +310,78 @@ export const GltfImport = {
         throw new Error(
             `Manifest loaded for "${model.objectName}" — use GLTF file picker or URL (desktop app loads paths automatically)`
         );
+    },
+
+    async hotReloadFromWatch(event = {}) {
+        const targets = findGltfTargets(event);
+        if (!targets.length) {
+            return { applied: 0, message: `No GLTF matched ${event.file || event.path}` };
+        }
+        if (!event.watchUrl) {
+            window.UI?.status?.('GLTF hot-reload requires npm run textures:watch');
+            return { applied: 0 };
+        }
+
+        const scene = await this.loadFromUrl(`${event.watchUrl}${event.watchUrl.includes('?') ? '&' : '?'}t=${Date.now()}`);
+        let applied = 0;
+
+        for (const old of targets) {
+            const ud = { ...old.userData };
+            const transform = {
+                pos: { x: old.position.x, y: old.position.y, z: old.position.z },
+                rot: { x: old.rotation.x, y: old.rotation.y, z: old.rotation.z },
+                scl: { x: old.scale.x, y: old.scale.y, z: old.scale.z },
+            };
+            removeGltfFromWorld(old);
+
+            const clone = scene.clone(true);
+            this.registerRoot(clone, {
+                name: ud.name,
+                usePhysics: !!ud.hasPhysics,
+                skipAutoPlacement: true,
+                pos: transform.pos,
+                rot: transform.rot,
+                scl: transform.scl,
+                meta: {
+                    ...ud,
+                    gltfUrl: event.watchUrl,
+                    gltfPath: event.path || ud.gltfPath,
+                    gltfFile: event.file || ud.gltfFile,
+                },
+            });
+            applied += 1;
+        }
+
+        const msg = `Hot-reloaded GLTF ${event.file || ''} on ${applied} object(s)`;
+        window.UI?.status?.(msg.trim());
+        return { applied, message: msg };
+    },
+
+    async hotReloadManifestFromWatch(event = {}) {
+        if (!event.watchUrl) return null;
+        try {
+            const res = await fetch(`${event.watchUrl}?t=${Date.now()}`);
+            const manifest = BlenderManifest.parse(await res.text());
+            const base = CREATIVE_WATCH_URL.replace(/\/$/, '');
+            let applied = 0;
+            for (const model of manifest.models || []) {
+                const assetPath = (model.path || `import/${model.file}`).replace(/\\/g, '/');
+                const result = await this.hotReloadFromWatch({
+                    type: 'gltf',
+                    file: model.file,
+                    path: assetPath,
+                    slug: model.id,
+                    objectName: model.objectName,
+                    watchUrl: `${base}/asset?path=${encodeURIComponent(assetPath)}`,
+                });
+                applied += result?.applied || 0;
+            }
+            if (applied) window.UI?.status?.(`Blender manifest hot-reload: ${applied} model(s)`);
+            return { applied };
+        } catch (e) {
+            window.UI?.status?.(e.message || 'Blender manifest hot-reload failed');
+            return null;
+        }
     },
 };
 

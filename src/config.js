@@ -1,4 +1,5 @@
-export const VERSION = '3.5.0';
+export const VERSION = '3.6.0';
+export const CREATIVE_WATCH_URL = import.meta.env.VITE_CREATIVE_WATCH_URL || 'http://127.0.0.1:3927';
 export const EDITION = import.meta.env.VITE_EDITION || 'web';
 export const IS_GROK_EDITION = EDITION === 'grok';
 export const BASE_PATH = import.meta.env.VITE_BASE_PATH || '/';
