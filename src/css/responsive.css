@@ -53,7 +53,9 @@
 
     .engine-toolbar {
         margin: 6px 8px !important;
+        margin-right: max(8px, var(--dock-gutter, 56px)) !important;
         gap: 6px !important;
+        max-width: calc(100% - 16px - var(--dock-gutter, 56px)) !important;
     }
 
     .engine-toolbar #mode-display {
@@ -62,6 +64,16 @@
 
     .session-bar {
         font-size: 0.58rem;
+        flex-wrap: nowrap;
+    }
+
+    #session-player-key,
+    .session-peers {
+        display: none;
+    }
+
+    .session-bar .btn-sm:not(#btn-copy-link):not(#btn-host-pause) {
+        display: none;
     }
 
     .toolbar-actions .btn-sm {
@@ -93,8 +105,8 @@
     }
 
     #scene-dock {
-        top: calc(var(--nav-height, 50px) + 6px);
-        max-height: calc(100dvh - var(--nav-height, 50px) - 12px);
+        top: calc(var(--chrome-top, var(--nav-height, 50px)) + 6px);
+        max-height: calc(100dvh - var(--chrome-top, var(--nav-height, 50px)) - 12px);
     }
 
     .scene-dock.expanded .dock-panels {
@@ -213,9 +225,11 @@
     }
 
     #global-theme-btn,
-    #auth-logout-btn {
-        padding: 6px 8px;
+    #auth-logout-btn,
+    .nav-fullscreen-btn {
+        padding: 8px 10px;
         font-size: 0.65rem;
+        min-height: 44px;
     }
 
     .edition-badge {

@@ -52,10 +52,12 @@ button {
     justify-content: space-between;
     align-items: flex-start;
     margin: 10px 20px;
+    margin-right: max(20px, var(--dock-gutter, 56px));
     gap: 10px;
-    max-width: calc(100% - 40px);
+    max-width: calc(100% - 40px - var(--dock-gutter, 56px));
     flex-wrap: wrap;
     z-index: 20;
+    box-sizing: border-box;
 }
 
 .engine-toolbar #mode-display {
@@ -87,14 +89,14 @@ button {
 
 #scene-dock {
     position: fixed;
-    top: calc(var(--nav-height, 50px) + 12px);
+    top: calc(var(--chrome-top, var(--nav-height, 50px)) + 8px);
     right: 0;
-    z-index: 18;
+    z-index: 24;
     display: flex;
     flex-direction: row-reverse;
     align-items: stretch;
     pointer-events: none;
-    max-height: calc(100dvh - var(--nav-height, 50px) - 24px);
+    max-height: calc(100dvh - var(--chrome-top, var(--nav-height, 50px)) - 16px);
 }
 
 .scene-dock .dock-tab-bar,
@@ -155,7 +157,7 @@ button {
     overflow-y: auto;
     border: none !important;
     margin: 0 !important;
-    max-height: calc(100dvh - var(--nav-height, 50px) - 40px);
+    max-height: calc(100dvh - var(--chrome-top, var(--nav-height, 50px)) - 32px);
 }
 
 .toolbar-more-menu {
@@ -303,7 +305,7 @@ body.console-hidden .console-restore-tab {
     bottom: 52px;
     left: 50%;
     transform: translateX(-50%);
-    max-width: min(92%, 640px);
+    max-width: min(calc(100% - 32px), 640px);
     font-size: 0.62rem;
     opacity: 0.55;
     pointer-events: none;
@@ -315,6 +317,60 @@ body.console-hidden .console-restore-tab {
     background: rgba(0, 0, 0, 0.45);
     border-radius: 3px;
     z-index: 5;
+}
+
+.btn-exit-immersive {
+    position: fixed;
+    top: max(8px, env(safe-area-inset-top));
+    left: max(8px, env(safe-area-inset-left));
+    z-index: 220;
+    min-width: 48px;
+    min-height: 44px;
+    padding: 10px 14px !important;
+    font-size: 0.72rem !important;
+    background: var(--panel-bg);
+    border: 1px solid var(--accent-color) !important;
+    color: var(--accent-color) !important;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+}
+
+body.ui-immersive #app-nav,
+body.ui-immersive .nav-restore-btn,
+body.ui-immersive #view-engine .engine-toolbar,
+body.ui-immersive #controls-hint,
+body.ui-immersive #btn-fullscreen-toolbar {
+    display: none !important;
+}
+
+body.ui-immersive .view-section {
+    top: 0 !important;
+    height: 100dvh !important;
+}
+
+body.ui-immersive #scene-dock {
+    top: max(8px, env(safe-area-inset-top));
+    max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 16px);
+}
+
+body.ui-immersive .dock-panel {
+    max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px);
+}
+
+body.ui-immersive.console-hidden .console-restore-tab {
+    left: auto;
+    right: max(8px, env(safe-area-inset-right));
+    transform: none;
+    bottom: max(8px, env(safe-area-inset-bottom));
+}
+
+body.ui-immersive.touch-on #status-msg {
+    bottom: max(140px, calc(120px + env(safe-area-inset-bottom)));
+}
+
+body.ui-immersive.touch-off #status-msg {
+    bottom: max(16px, env(safe-area-inset-bottom));
 }
 
 /* Context Menu */
@@ -362,6 +418,8 @@ body.console-hidden .console-restore-tab {
     align-items: center;
     margin-top: 4px;
     font-size: 0.65rem;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .session-label {
@@ -396,7 +454,8 @@ body.console-hidden .console-restore-tab {
     gap: 2px;
     flex: 1;
     min-width: 0;
-    max-width: 100%;
+    max-width: calc(100% - var(--dock-gutter, 56px));
+    overflow: hidden;
 }
 
 #btn-host-pause.active,

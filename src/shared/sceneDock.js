@@ -21,6 +21,7 @@ function setExpanded(expanded, persist = true) {
         btn.title = expanded ? 'Collapse panel dock' : 'Expand panel dock';
     }
     if (persist) ViewPrefs.set('dockExpanded', expanded);
+    window.dispatchEvent(new Event('resize'));
 }
 
 export const SceneDock = {

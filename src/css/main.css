@@ -88,6 +88,20 @@ body {
     align-items: center;
 }
 
+.nav-fullscreen-btn {
+    padding: 8px 12px !important;
+    font-size: 0.68rem !important;
+    min-width: 44px;
+    min-height: 44px;
+    border-color: var(--accent-color) !important;
+    color: var(--accent-color) !important;
+}
+
+.nav-fullscreen-btn[aria-pressed="true"] {
+    background: var(--accent-color) !important;
+    color: #000 !important;
+}
+
 .nav-collapse-btn {
     padding: 4px 10px !important;
     font-size: 0.7rem !important;

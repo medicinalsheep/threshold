@@ -51,12 +51,14 @@
             <button class="tab-btn" data-target="view-prompter">PROMPTGEN</button>
         </div>
         <div class="nav-actions">
+            <button id="btn-fullscreen" class="nav-fullscreen-btn" type="button" aria-label="Enter fullscreen" aria-pressed="false" title="Fullscreen">FULL</button>
             <button id="nav-collapse-btn" class="nav-collapse-btn mobile-only" type="button" aria-label="Hide top menu" title="Hide top menu">▲</button>
             <button id="auth-logout-btn">LOGOUT</button>
             <button id="global-theme-btn">THEME</button>
         </div>
     </nav>
     <button id="nav-restore-btn" class="nav-restore-btn" type="button" aria-label="Show top menu" title="Show top menu">▼ MENU</button>
+    <button id="btn-exit-immersive" class="btn-exit-immersive" type="button" hidden aria-label="Exit fullscreen" title="Exit fullscreen">✕ EXIT</button>
 
     <!-- VIEW: ENGINE -->
     <div id="view-engine" class="view-section active">
@@ -101,6 +103,7 @@
                 </div>
                 <div class="toolbar-actions">
                     <span id="sim-mode-badge" class="sim-mode-badge edit toolbar-keep">EDIT</span>
+                    <button id="btn-fullscreen-toolbar" class="btn-sm toolbar-keep mobile-only" type="button" aria-label="Enter fullscreen" title="Fullscreen">FULL</button>
                     <button id="btn-control-mode" class="btn-sm toolbar-keep" title="Walk / Fly">FLY</button>
                     <button id="btn-bindings" class="btn-sm toolbar-keep" title="Key bindings">KEYS</button>
                     <button id="btn-toolbar-more" class="btn-sm toolbar-more-trigger" type="button" title="More tools">MORE ▾</button>

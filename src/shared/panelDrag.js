@@ -3,13 +3,16 @@ const MIN_W = 220;
 const MIN_H = 140;
 
 function readBounds() {
-    const nav = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-height'), 10) || 50;
+    const root = getComputedStyle(document.documentElement);
+    const chromeTop = parseInt(root.getPropertyValue('--chrome-top'), 10)
+        || parseInt(root.getPropertyValue('--nav-height'), 10)
+        || 50;
     const pad = 8;
     return {
-        nav,
+        nav: chromeTop,
         pad,
         maxW: window.innerWidth - pad * 2,
-        maxH: window.innerHeight - nav - pad * 2,
+        maxH: window.innerHeight - chromeTop - pad * 2,
     };
 }
 

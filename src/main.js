@@ -13,18 +13,52 @@ import { initEngine } from './engine/main.js';
 import { initCompiler } from './compiler/main.js';
 import { initPrompter } from './prompter/main.js';
 import { ViewPrefs } from './shared/viewPrefs.js';
+import { initFullscreen } from './shared/fullscreen.js';
 
 console.log(`Starting Threshold Suite v${VERSION}...`);
 
 const versionEl = document.getElementById('app-version');
 if (versionEl) versionEl.textContent = `v${VERSION}`;
 
-function updateNavHeight() {
+function isEngineViewActive() {
+    const engine = document.getElementById('view-engine');
+    if (!engine) return false;
+    return engine.classList.contains('active') && engine.style.display !== 'none';
+}
+
+function updateChromeMetrics() {
+    const immersive = document.body.classList.contains('ui-immersive');
     const collapsed = document.body.classList.contains('nav-collapsed');
     const nav = document.getElementById('app-nav');
-    const h = collapsed ? 0 : (nav?.offsetHeight || 50);
-    document.documentElement.style.setProperty('--nav-height', `${h}px`);
+
+    let navH = 0;
+    if (!immersive && !collapsed) {
+        navH = nav?.offsetHeight || 50;
+    }
+
+    let toolbarH = 0;
+    if (!immersive && isEngineViewActive()) {
+        const toolbar = document.querySelector('#view-engine .engine-toolbar');
+        if (toolbar) {
+            const rect = toolbar.getBoundingClientRect();
+            toolbarH = Math.max(0, Math.ceil(rect.bottom));
+        }
+    }
+
+    const chromeTop = Math.max(navH, toolbarH);
+    document.documentElement.style.setProperty('--nav-height', `${navH}px`);
+    document.documentElement.style.setProperty('--toolbar-height', `${toolbarH}px`);
+    document.documentElement.style.setProperty('--chrome-top', `${chromeTop}px`);
+
+    const dock = document.getElementById('scene-dock');
+    let dockGutter = 0;
+    if (!immersive && dock) {
+        dockGutter = dock.classList.contains('expanded') ? 280 : 56;
+    }
+    document.documentElement.style.setProperty('--dock-gutter', `${dockGutter}px`);
 }
+
+const updateNavHeight = updateChromeMetrics;
 
 function setNavCollapsed(collapsed) {
     document.body.classList.toggle('nav-collapsed', collapsed);
@@ -37,8 +71,11 @@ if (ViewPrefs.get('navCollapsed', false)) {
     document.body.classList.add('nav-collapsed');
 }
 
-updateNavHeight();
-window.addEventListener('resize', updateNavHeight);
+updateChromeMetrics();
+window.addEventListener('resize', updateChromeMetrics);
+window.addEventListener('immersive-change', updateChromeMetrics);
+
+initFullscreen();
 
 document.getElementById('nav-collapse-btn')?.addEventListener('click', () => setNavCollapsed(true));
 document.getElementById('nav-restore-btn')?.addEventListener('click', () => setNavCollapsed(false));
@@ -63,8 +100,13 @@ tabs.forEach((tab) => {
         tabsContainer?.classList.remove('open');
 
         if (targetId === 'view-engine') {
-            setTimeout(() => window.dispatchEvent(new Event('resize')), 10);
+            setTimeout(() => {
+                updateChromeMetrics();
+                window.dispatchEvent(new Event('resize'));
+            }, 10);
             window.UI?.setCodingPause?.(false);
+        } else {
+            setTimeout(updateChromeMetrics, 0);
         }
         if (targetId === 'view-compiler' || targetId === 'view-prompter') {
             window.UI?.setCodingPause?.(true);
