@@ -32,6 +32,7 @@ function parseArgs(argv) {
         blendObject: '',
         output: 'import',
         noPhysics: false,
+        lod: false,
         mass: '1',
         friction: '0.3',
         restitution: '0.5',
@@ -44,6 +45,7 @@ function parseArgs(argv) {
         else if (arg === '--blend-object') out.blendObject = argv[++i] || '';
         else if (arg === '--output') out.output = argv[++i] || 'import';
         else if (arg === '--no-physics') out.noPhysics = true;
+        else if (arg === '--lod') out.lod = true;
         else if (arg === '--mass') out.mass = argv[++i] || '1';
         else if (arg === '--friction') out.friction = argv[++i] || '0.3';
         else if (arg === '--restitution') out.restitution = argv[++i] || '0.5';
@@ -77,6 +79,7 @@ Options:
   --object <name>        Engine object name (required)
   --blend-object <name>  Blender object name if different
   --output <dir>         Export folder (default: import)
+  --lod                  Export LOD1/LOD2 ({name}_LOD1, _LOD2 in blend)
   --no-physics           Disable physics in manifest
   --mass <n>             Manifest mass (default: 1)
   --friction <n>         Manifest friction (default: 0.3)
@@ -126,6 +129,7 @@ function main() {
         '--restitution', args.restitution,
     ];
     if (args.blendObject) pyArgs.push('--blend-object', args.blendObject);
+    if (args.lod) pyArgs.push('--lod');
     if (args.noPhysics) pyArgs.push('--no-physics');
 
     const result = spawnSync(

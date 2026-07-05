@@ -2,14 +2,13 @@
 Headless Threshold GLTF export — no UI required.
 
   blender --background scene.blend --python headless_export.py -- \\
-    --object "Stone Block" [--blend-object Cube] [--output import] [--no-physics]
+    --object "Stone Block" [--blend-object Cube] [--output import] [--lod] [--no-physics]
 """
 from __future__ import annotations
 
 import argparse
 import json
 import os
-import re
 import sys
 from datetime import datetime, timezone
 
@@ -17,12 +16,14 @@ import bpy
 
 MANIFEST_NAME = "threshold_blender_manifest.json"
 MANIFEST_FORMAT = "threshold-blender-manifest"
-ENGINE_VERSION = "4.5.0"
+ENGINE_VERSION = "4.6.0"
 
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+_PKG = os.path.join(_SCRIPT_DIR, "threshold_blender")
+if _PKG not in sys.path:
+    sys.path.insert(0, _PKG)
 
-def slugify(name: str) -> str:
-    s = re.sub(r"[^a-zA-Z0-9]+", "_", (name or "model").strip().lower())
-    return s.strip("_") or "model"
+from lod_export import build_lod_entries, slugify  # noqa: E402
 
 
 def parse_cli() -> argparse.Namespace:
@@ -36,6 +37,7 @@ def parse_cli() -> argparse.Namespace:
     parser.add_argument("--object", required=True, help="Engine object name")
     parser.add_argument("--blend-object", default="", help="Blender object name (defaults to --object)")
     parser.add_argument("--output", default="import", help="Export directory")
+    parser.add_argument("--lod", action="store_true", help="Export LOD1/LOD2 objects ({name}_LOD1, _LOD2)")
     parser.add_argument("--no-physics", action="store_true", help="Disable physics metadata")
     parser.add_argument("--mass", type=float, default=1.0)
     parser.add_argument("--friction", type=float, default=0.3)
@@ -65,14 +67,7 @@ def merge_manifest(manifest: dict, export_dir: str, entry: dict) -> dict:
     manifest["exportDir"] = export_dir.replace("\\", "/")
 
     models = manifest.get("models") or []
-    models = [
-        m
-        for m in models
-        if not (
-            m.get("objectName") == entry.get("objectName")
-            and m.get("file") == entry.get("file")
-        )
-    ]
+    models = [m for m in models if m.get("objectName") != entry.get("objectName")]
     models.append(entry)
     manifest["models"] = models
     return manifest
@@ -88,34 +83,26 @@ def main() -> int:
         print(f"[threshold] Blender object not found: {blend_name}", file=sys.stderr)
         return 1
 
-    bpy.ops.object.select_all(action="DESELECT")
-    obj.select_set(True)
-    bpy.context.view_layer.objects.active = obj
-
     export_dir = os.path.abspath(args.output)
     os.makedirs(export_dir, exist_ok=True)
 
     slug = slugify(display_name)
-    filepath = os.path.join(export_dir, f"{slug}.glb")
-
-    bpy.ops.export_scene.gltf(
-        filepath=filepath,
-        export_format="GLB",
-        use_selection=True,
-        export_apply=True,
-        export_texcoords=True,
-        export_normals=True,
-        export_materials="EXPORT",
-        export_image_format="AUTO",
+    filepath, lods = build_lod_entries(
+        display_name,
+        obj,
+        export_dir,
+        export_lods=args.lod,
+        slug=slug,
     )
 
-    rel_dir = os.path.basename(export_dir.rstrip("/\\")) or "import"
     filename = os.path.basename(filepath)
     entry = {
         "id": slug,
         "objectName": display_name,
         "file": filename,
-        "path": f"{rel_dir}/{filename}".replace("\\", "/"),
+        "path": lods[0]["path"],
+        "lods": lods,
+        "lodDistances": [lod["distance"] for lod in lods],
         "hasPhysics": not args.no_physics,
         "mass": args.mass,
         "friction": args.friction,
@@ -129,6 +116,8 @@ def main() -> int:
         handle.write("\n")
 
     print(f"[threshold] Exported {filepath}")
+    if len(lods) > 1:
+        print(f"[threshold] LOD chain: {len(lods)} level(s)")
     print(f"[threshold] Manifest {manifest_path}")
     return 0
 

@@ -41,6 +41,7 @@ import { ExportWizard } from '../shared/exportWizard.js';
 import { getRenderMode } from '../shared/renderModes.js';
 import { GraphicsProfile } from '../shared/graphicsProfile.js';
 import { GraphicsPrompt } from '../shared/graphicsPrompt.js';
+import { MeshLod } from '../shared/meshLod.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 
@@ -993,6 +994,7 @@ const Engine = {
         });
 
         AgentHub.tick(dt);
+        MeshLod.update(this.camera);
 
         this.controls.update();
         // Visual Rotation (Only for non-physics objects or purely visual effect)

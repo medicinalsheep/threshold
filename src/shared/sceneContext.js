@@ -23,6 +23,7 @@ export function getSceneContext() {
         textureHint: o.userData?.textureHint || null,
         gltfUrl: o.userData?.gltfUrl || null,
         gltfPath: o.userData?.gltfPath || null,
+        lodPaths: o.userData?.lodPaths || null,
     }));
     const humanNpcCount = objects.filter((o) => o.isHuman && !o.isPlayer).length;
 
@@ -64,7 +65,10 @@ ${objects.length ? objects.map((o) => {
         const tex = o.textures
             ? ` [tex:${Object.entries(o.textures).filter(([, v]) => v).map(([k, v]) => `${k}:${v}`).join(',')}]`
             : '';
-        const gltf = o.type === 'gltf' ? ` [gltf:${o.gltfPath || o.gltfUrl || '?'}]` : '';
+        const lodCount = o.lodPaths?.length;
+        const gltf = o.type === 'gltf'
+            ? ` [gltf:${o.gltfPath || o.gltfUrl || '?'}${lodCount > 1 ? ` lod×${lodCount}` : ''}]`
+            : '';
         return `  - ${o.name} (${o.type}) @ (${o.position.x},${o.position.y},${o.position.z})${snd}${tex}${gltf}`;
     }).join('\n') : '  (empty scene)'}
 

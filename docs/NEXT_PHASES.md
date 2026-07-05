@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v4.5.0 — Phase J (targeted graphics export CLI per platform profile).
+**Current:** v4.6.0 — Phase H (mesh LOD chain: Blender export + Engine distance switch).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -57,15 +57,15 @@ Deliverables:
 - ✅ Persist `graphics.tier` in sync + export manifest
 - ✅ PromptGen `GRAPHICS TIERS` block in system prompt
 
-### Phase H — Mesh LOD (v4.2)
+### Phase H — Mesh LOD (v4.6) ✅
 
-| Step | Work |
-|------|------|
-| H1 | Blender addon: export LOD0/LOD1/LOD2 GLB chain |
-| H2 | `userData.lodPaths` + distance switch in Engine |
-| H3 | `blender:export --lod` headless batch |
-| H4 | Manifest `models[].lods[]` |
-| H5 | Physics: single collider from LOD0 bbox (unchanged) |
+| Step | Status |
+|------|--------|
+| H1 Blender addon LOD0/1/2 export | ✅ `{name}_LOD1` / `_LOD2` → `slug_lod1.glb` |
+| H2 `userData.lodPaths` + distance switch | ✅ `MeshLod.update()` in Engine loop |
+| H3 `blender:export --lod` | ✅ headless + UI `export_lods` |
+| H4 Manifest `models[].lods[]` | ✅ Blender + game export `models[]` |
+| H5 Physics LOD0 collider | ✅ `MeshLod.physicsSource()` uses LOD0 bbox |
 
 ### Phase I — HILOD textures & streaming (v4.3–4.4)
 

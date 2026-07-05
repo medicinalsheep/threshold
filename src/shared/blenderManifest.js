@@ -1,5 +1,6 @@
 export const BLENDER_MANIFEST_FORMAT = 'threshold-blender-manifest';
 export const BLENDER_MANIFEST_NAME = 'threshold_blender_manifest.json';
+export const DEFAULT_LOD_DISTANCES = [0, 12, 28];
 
 function normName(name = '') {
     return String(name).trim().toLowerCase();
@@ -25,17 +26,34 @@ export const BlenderManifest = {
         return (manifest.models || []).find((m) => normName(m.objectName) === target) || null;
     },
 
-    resolveModelPath(manifestDir, model, manifest) {
-        const file = model.file || model.path?.split(/[/\\]/).pop();
+    lodsForModel(model) {
+        if (model?.lods?.length) return model.lods;
+        const file = model?.file || model?.path?.split(/[/\\]/).pop();
+        return [{
+            level: 0,
+            file,
+            path: model?.path || (file ? `import/${file}` : null),
+            distance: 0,
+        }];
+    },
+
+    lodDistances(model) {
+        if (model?.lodDistances?.length) return model.lodDistances;
+        const lods = this.lodsForModel(model);
+        return lods.map((l) => l.distance ?? 0);
+    },
+
+    resolveLodPath(manifestDir, lod, manifest) {
+        const file = lod.file || lod.path?.split(/[/\\]/).pop();
         if (!file) return null;
 
         const candidates = [];
-        if (model.path) {
-            const normalized = model.path.replace(/\\/g, '/');
+        if (lod.path) {
+            const normalized = lod.path.replace(/\\/g, '/');
             if (/^[a-zA-Z]:\//.test(normalized) || normalized.startsWith('/')) {
-                candidates.push(model.path);
+                candidates.push(lod.path);
             } else {
-                candidates.push(joinPath(manifestDir, model.path));
+                candidates.push(joinPath(manifestDir, lod.path));
                 if (manifest?.exportDir) {
                     candidates.push(joinPath(manifestDir, '..', manifest.exportDir, file));
                 }
@@ -45,7 +63,21 @@ export const BlenderManifest = {
         if (manifest?.exportDir) {
             candidates.push(joinPath(manifestDir, manifest.exportDir, file));
         }
+        candidates.push(joinPath('import', file));
+        candidates.push(joinPath('bundle', 'import', file));
         return candidates[0] || joinPath(manifestDir, file);
+    },
+
+    resolveModelPath(manifestDir, model, manifest) {
+        const lods = this.lodsForModel(model);
+        return this.resolveLodPath(manifestDir, lods[0], manifest);
+    },
+
+    resolveLodPaths(manifestDir, model, manifest) {
+        return this.lodsForModel(model).map((lod) => ({
+            ...lod,
+            path: this.resolveLodPath(manifestDir, lod, manifest),
+        }));
     },
 };
 

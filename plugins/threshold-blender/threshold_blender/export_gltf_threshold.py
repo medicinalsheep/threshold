@@ -7,14 +7,11 @@ import bpy
 from bpy.props import BoolProperty, FloatProperty, StringProperty
 from bpy_extras.io_utils import ExportHelper
 
+from .lod_export import build_lod_entries, slugify
+
 MANIFEST_NAME = "threshold_blender_manifest.json"
 MANIFEST_FORMAT = "threshold-blender-manifest"
-ENGINE_VERSION = "4.5.0"
-
-
-def slugify(name: str) -> str:
-    s = re.sub(r"[^a-zA-Z0-9]+", "_", (name or "model").strip().lower())
-    return s.strip("_") or "model"
+ENGINE_VERSION = "4.6.0"
 
 
 def load_manifest(path: str) -> dict:
@@ -39,14 +36,7 @@ def merge_manifest(manifest: dict, export_dir: str, entry: dict) -> dict:
     manifest["exportDir"] = export_dir.replace("\\", "/")
 
     models = manifest.get("models") or []
-    models = [
-        m
-        for m in models
-        if not (
-            m.get("objectName") == entry.get("objectName")
-            and m.get("file") == entry.get("file")
-        )
-    ]
+    models = [m for m in models if m.get("objectName") != entry.get("objectName")]
     models.append(entry)
     manifest["models"] = models
     return manifest
@@ -61,7 +51,7 @@ def save_manifest(path: str, manifest: dict) -> None:
 class THRESHOLD_OT_export_gltf(bpy.types.Operator, ExportHelper):
     bl_idname = "threshold.export_gltf"
     bl_label = "Threshold GLTF (.glb)"
-    bl_description = "Export GLB with embedded textures + threshold_blender_manifest.json"
+    bl_description = "Export GLB chain (LOD0/1/2) + threshold_blender_manifest.json"
     bl_options = {"PRESET"}
 
     filename_ext = ".glb"
@@ -71,6 +61,11 @@ class THRESHOLD_OT_export_gltf(bpy.types.Operator, ExportHelper):
         name="Engine Object Name",
         description="Must match the mesh name in Threshold Engine inspector",
         default="",
+    )
+    export_lods: BoolProperty(
+        name="Export LOD chain",
+        description="Also export {name}_LOD1 / _LOD2 objects as slug_lod1.glb, slug_lod2.glb",
+        default=True,
     )
     export_physics: BoolProperty(
         name="Enable Physics",
@@ -103,6 +98,7 @@ class THRESHOLD_OT_export_gltf(bpy.types.Operator, ExportHelper):
             return {"CANCELLED"}
 
         display_name = (self.object_name or context.active_object.name).strip()
+        blend_obj = context.active_object
         slug = slugify(display_name)
         filepath = bpy.path.abspath(self.filepath)
         export_dir = os.path.dirname(filepath)
@@ -111,24 +107,22 @@ class THRESHOLD_OT_export_gltf(bpy.types.Operator, ExportHelper):
         if not filepath.lower().endswith(".glb"):
             filepath = os.path.splitext(filepath)[0] + ".glb"
 
-        bpy.ops.export_scene.gltf(
-            filepath=filepath,
-            export_format="GLB",
-            use_selection=True,
-            export_apply=True,
-            export_texcoords=True,
-            export_normals=True,
-            export_materials="EXPORT",
-            export_image_format="AUTO",
+        filepath, lods = build_lod_entries(
+            display_name,
+            blend_obj,
+            export_dir,
+            export_lods=self.export_lods,
+            slug=slug,
         )
 
-        rel_dir = os.path.basename(export_dir.rstrip("/\\")) or "import"
         filename = os.path.basename(filepath)
         entry = {
             "id": slug,
             "objectName": display_name,
             "file": filename,
-            "path": f"{rel_dir}/{filename}".replace("\\", "/"),
+            "path": lods[0]["path"],
+            "lods": lods,
+            "lodDistances": [lod["distance"] for lod in lods],
             "hasPhysics": self.export_physics,
             "mass": self.mass,
             "friction": self.friction,
@@ -139,9 +133,10 @@ class THRESHOLD_OT_export_gltf(bpy.types.Operator, ExportHelper):
         manifest = merge_manifest(load_manifest(manifest_path), export_dir, entry)
         save_manifest(manifest_path, manifest)
 
+        lod_note = f" + {len(lods) - 1} LOD(s)" if len(lods) > 1 else ""
         self.report(
             {"INFO"},
-            f"Exported {filename} — Engine: INSERT → GLTF or load {MANIFEST_NAME}",
+            f"Exported {filename}{lod_note} — Engine INSERT → GLTF",
         )
         return {"FINISHED"}
 

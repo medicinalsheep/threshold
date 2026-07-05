@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { BlenderManifest } from './blenderManifest.js';
 import { ThresholdShell } from './thresholdShell.js';
+import { MeshLod } from './meshLod.js';
 import { CREATIVE_WATCH_URL } from '../config.js';
 
 const loader = new GLTFLoader();
@@ -61,7 +62,15 @@ function removeGltfFromWorld(root) {
     }
     Engine.scene.remove(root);
     State.objects = State.objects.filter((o) => o !== root);
+    MeshLod.dispose(root);
     disposeObject3D(root);
+}
+
+function applySnapshotTransform(root, snapshot) {
+    if (!root || !snapshot) return;
+    if (snapshot.pos) root.position.set(snapshot.pos.x, snapshot.pos.y, snapshot.pos.z);
+    if (snapshot.rot) root.rotation.set(snapshot.rot.x, snapshot.rot.y, snapshot.rot.z);
+    if (snapshot.scl) root.scale.set(snapshot.scl.x, snapshot.scl.y, snapshot.scl.z);
 }
 
 function groundAndScale(root, targetHeight = null) {
@@ -108,7 +117,7 @@ export const GltfImport = {
         return loaded;
     },
 
-    registerRoot(root, options = {}) {
+    async registerRoot(root, options = {}) {
         const World = window.World;
         const State = window.State;
         const Engine = window.Engine;
@@ -141,7 +150,30 @@ export const GltfImport = {
             root.position.y = (root.position.y || 0) + (p.y || 0) + 0.05;
         }
 
-        root.userData = {
+        let registry = root;
+        const lodPaths = meta.lodPaths || meta.lods;
+        if (lodPaths?.length > 1) {
+            const container = new THREE.Group();
+            const wp = new THREE.Vector3();
+            const wq = new THREE.Quaternion();
+            const ws = new THREE.Vector3();
+            root.updateMatrixWorld(true);
+            root.matrixWorld.decompose(wp, wq, ws);
+            container.position.copy(wp);
+            container.quaternion.copy(wq);
+            container.scale.copy(ws);
+            root.position.set(0, 0, 0);
+            root.rotation.set(0, 0, 0);
+            root.scale.set(1, 1, 1);
+            container.add(root);
+            await MeshLod.initChain(container, root, lodPaths, {
+                distances: meta.lodDistances,
+            });
+            registry = container;
+        }
+
+        registry.userData = {
+            ...meta,
             id: meta.id || Date.now().toString(36),
             name,
             type: 'gltf',
@@ -154,20 +186,25 @@ export const GltfImport = {
             gltfUrl: meta.gltfUrl || null,
             gltfPath: meta.gltfPath || null,
             gltfFile: meta.gltfFile || null,
+            lodPaths: lodPaths || meta.lodPaths || null,
+            lodDistances: meta.lodDistances || MeshLod.DEFAULT_DISTANCES,
+            lodActive: 0,
             blenderManifestPath: meta.blenderManifestPath || null,
-            ...meta,
         };
 
-        Engine.scene.add(root);
-        State.objects.push(root);
+        Engine.scene.add(registry);
+        State.objects.push(registry);
 
         if (usePhysics && Physics?.addBodyFromObject) {
-            const body = Physics.addBodyFromObject(root, root.userData.mass);
-            State.physicsObjects.push({ mesh: root, body });
+            const body = Physics.addBodyFromObject(
+                MeshLod.physicsSource(registry),
+                registry.userData.mass
+            );
+            State.physicsObjects.push({ mesh: registry, body });
         }
 
         window.AudioSys?.playTone?.(360, 'triangle');
-        return root;
+        return registry;
     },
 
     async insertAtCursor(payload = {}) {
@@ -181,6 +218,8 @@ export const GltfImport = {
             friction = 0.3,
             restitution = 0.5,
             pos,
+            lodPaths = null,
+            lodDistances = null,
         } = payload;
 
         let scene;
@@ -210,12 +249,16 @@ export const GltfImport = {
             throw new Error('No GLTF source — pick a file, path, or URL');
         }
 
-        return this.registerRoot(scene, {
+        return await this.registerRoot(scene, {
             name,
             usePhysics,
             pos,
             skipAutoPlacement: !!pos,
-            meta,
+            meta: {
+                ...meta,
+                lodPaths,
+                lodDistances,
+            },
         });
     },
 
@@ -243,11 +286,16 @@ export const GltfImport = {
             return null;
         }
 
-        const root = this.registerRoot(scene, {
+        const root = await this.registerRoot(scene, {
             name: snapshot.name || ud.name || 'GLTF Model',
             usePhysics: !!ud.hasPhysics,
             pos: snapshot.pos,
-            meta,
+            skipAutoPlacement: true,
+            meta: {
+                ...meta,
+                lodPaths: ud.lodPaths || meta.lodPaths,
+                lodDistances: ud.lodDistances || meta.lodDistances,
+            },
         });
         applySnapshotTransform(root, snapshot);
         if (snapshot.userData) root.userData = { ...root.userData, ...snapshot.userData };
@@ -293,15 +341,19 @@ export const GltfImport = {
             throw new Error(`No model in manifest for "${objectName}"`);
         }
 
+        const lodPaths = BlenderManifest.resolveLodPaths(manifestDir, model, manifest);
+        const lod0 = lodPaths[0];
+
         if (ThresholdShell.isNative) {
-            const gltfPath = BlenderManifest.resolveModelPath(manifestDir, model, manifest);
             const root = await this.insertAtCursor({
-                path: gltfPath,
+                path: lod0.path,
                 name: model.objectName || objectName,
                 usePhysics: model.hasPhysics !== false,
                 mass: model.mass,
                 friction: model.friction,
                 restitution: model.restitution,
+                lodPaths,
+                lodDistances: BlenderManifest.lodDistances(model),
             });
             if (root) root.userData.blenderManifestPath = manifestPath;
             return root;
@@ -335,7 +387,7 @@ export const GltfImport = {
             removeGltfFromWorld(old);
 
             const clone = scene.clone(true);
-            this.registerRoot(clone, {
+            await this.registerRoot(clone, {
                 name: ud.name,
                 usePhysics: !!ud.hasPhysics,
                 skipAutoPlacement: true,

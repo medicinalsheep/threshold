@@ -157,6 +157,7 @@ export const GameExport = {
                 }),
                 ...getGraphicsExportBlock(resolveActiveGraphicsProfile(options.targets)),
             },
+            models: collectGltfModelEntries(world?.objects || []),
             agents: options.agents || window.AgentHub?.exportConfigs?.() || [],
             relay: {
                 mode: options.relayMode || (import.meta.env.VITE_PEER_HOST ? 'custom' : 'peerjs-cloud'),
@@ -209,6 +210,23 @@ export const GameExport = {
         return { ...BUILD_PROFILES };
     },
 };
+
+function collectGltfModelEntries(objects = []) {
+    return objects
+        .filter((o) => o.userData?.type === 'gltf' || o.type === 'gltf')
+        .map((o) => {
+            const ud = o.userData || {};
+            return {
+                objectName: ud.name,
+                gltfFile: ud.gltfFile,
+                gltfPath: ud.gltfPath,
+                lods: ud.lodPaths || (ud.gltfPath ? [{ level: 0, path: ud.gltfPath, file: ud.gltfFile, distance: 0 }] : []),
+                lodDistances: ud.lodDistances || [0, 12, 28],
+                hasPhysics: !!ud.hasPhysics,
+            };
+        })
+        .filter((m) => m.lods?.length || m.gltfPath);
+}
 
 function resolveActiveGraphicsProfile(targets = {}) {
     if (targets.steam) return 'steam';

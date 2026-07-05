@@ -97,7 +97,8 @@ function emitChange(kind, filePath) {
     }
 
     if (kind === 'import' && MODEL_EXT.has(ext)) {
-        const slug = fileName.replace(/\.(glb|gltf)$/i, '');
+        const lodMatch = fileName.match(/^(.+)_lod[12]\.(glb|gltf)$/i);
+        const slug = lodMatch ? lodMatch[1] : fileName.replace(/\.(glb|gltf)$/i, '');
         broadcast({
             type: 'gltf',
             path: relative,

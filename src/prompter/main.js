@@ -88,7 +88,8 @@ OBJECT EDIT METADATA (set in code for inspector):
 - userData: textures ({ albedo, roughness, metalness } clip IDs from Texture tab), textureHint (local path string for GIMP/Blender export)
 - GIMP: plugins/threshold-gimp/threshold_export.py writes textures/* + threshold_manifest.json — Engine GIMP SYNC matches objectName
 - Blender: plugins/threshold-blender exports import/*.glb + threshold_blender_manifest.json — Engine INSERT → GLTF or BLENDER MANIFEST
-- Dev CLI: npm run textures:watch (hot-reload) + npm run blender:export -- --blend file.blend --object "Name"
+- Dev CLI: npm run textures:watch (hot-reload) + npm run blender:export -- --blend file.blend --object "Name" [--lod]
+- Mesh LOD: name Blender duplicates {Object}_LOD1 / _LOD2 — manifest models[].lods[] — Engine distance switch
 
 RENDER MODES (all remain true 3D — post-process stylizes, depth bands preserve space):
 ${getRenderModePromptBlock()}

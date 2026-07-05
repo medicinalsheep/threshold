@@ -80,6 +80,8 @@ npm run creative:watch   # alias for textures:watch
 
 **Phase E (v3.8):** `VITE_CREATIVE_WATCH=true` for production; `npm run bundle:assets` before native package
 
+**Phase H (v4.6):** Blender LOD chain — duplicate mesh as `{Object}_LOD1` / `_LOD2` → exports `slug_lod1.glb`, `slug_lod2.glb`; Engine switches by camera distance (12m / 28m). Physics uses LOD0 collider only.
+
 ---
 
 ## PromptGen contract

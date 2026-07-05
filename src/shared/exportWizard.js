@@ -128,9 +128,10 @@ export const ExportWizard = {
         const objCount = this.manifest.world?.objects?.length ?? 0;
         const soundCount = this.manifest.sounds?.length ?? 0;
         const texCount = this.manifest.textures?.length ?? 0;
-        const gltfCount = (this.manifest.world?.objects || []).filter(
-            (o) => o.type === 'gltf' || o.userData?.type === 'gltf'
-        ).length;
+            const gltfCount = (this.manifest.world?.objects || []).filter(
+                (o) => o.type === 'gltf' || o.userData?.type === 'gltf'
+            ).length;
+            const lodModelCount = (this.manifest.models || []).filter((m) => m.lods?.length > 1).length;
         const hasScripts = !!(this.manifest.scripts?.running || this.manifest.scripts?.output);
         const hasGimp = !!this.manifest.gimp;
         const hasBlender = !!this.manifest.blender;
@@ -139,7 +140,7 @@ export const ExportWizard = {
             <p class="insert-hint">Manifest preview — engine v${this.manifest.engineVersion}</p>
             <ul class="export-wizard-summary">
                 <li><strong>${escapeText(this.manifest.game.name)}</strong> by ${escapeText(this.manifest.game.author)}</li>
-                <li>${objCount} world object(s)${gltfCount ? ` (${gltfCount} GLTF)` : ''}</li>
+                    <li>${objCount} world object(s)${gltfCount ? ` (${gltfCount} GLTF${lodModelCount ? `, ${lodModelCount} LOD chain(s)` : ''})` : ''}</li>
                 <li>${texCount} texture map reference(s) — ship via <code>bundle:assets</code></li>
                 <li>${soundCount} sound clip reference(s)${soundSidecar ? ' (base64 embedded)' : ''}</li>
                 <li>Scripts: ${hasScripts ? 'included' : 'empty (add in Compiler first)'}</li>

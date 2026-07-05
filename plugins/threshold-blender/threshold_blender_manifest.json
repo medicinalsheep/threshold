@@ -10,6 +10,12 @@
       "objectName": "Stone Block",
       "file": "stone_block.glb",
       "path": "import/stone_block.glb",
+      "lods": [
+        { "level": 0, "file": "stone_block.glb", "path": "import/stone_block.glb", "distance": 0 },
+        { "level": 1, "file": "stone_block_lod1.glb", "path": "import/stone_block_lod1.glb", "distance": 12 },
+        { "level": 2, "file": "stone_block_lod2.glb", "path": "import/stone_block_lod2.glb", "distance": 28 }
+      ],
+      "lodDistances": [0, 12, 28],
       "hasPhysics": true,
       "mass": 1.5,
       "friction": 0.42,
