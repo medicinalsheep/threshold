@@ -103,6 +103,9 @@
                     <button id="btn-rec-stop" title="Stop" style="display:none;">STOP</button>
                     <button id="btn-rec-save" title="Save" style="display:none;">SAVE</button>
                     <span class="rec-dot" id="rec-indicator" style="display:none;"></span>
+                    <button id="btn-control-mode" class="btn-sm" title="Walk / Fly">FLY</button>
+                    <button id="btn-save-world" class="btn-sm" title="Save persistent world">SAVE WORLD</button>
+                    <button id="btn-load-world" class="btn-sm" title="Load saved world">WORLDS</button>
                     <button id="btn-save">EXPORT</button>
                     <button id="btn-load">IMPORT</button>
                 </div>
@@ -149,7 +152,7 @@
                 </div>
             </div>
 
-            <div id="controls-hint">WASD fly · touch orbit · right-click menu</div>
+            <div id="controls-hint">WASD fly · QE up/down · right-click menu</div>
 
             <!-- Inspector Panel -->
             <div id="inspector" class="panel">
@@ -190,8 +193,9 @@
                     <button class="insert-tab" data-tab="code">CODE</button>
                 </div>
                 <div class="insert-panel active" data-panel="character">
-                    <p class="insert-hint">Spawn a simple character at the target point.</p>
-                    <button id="insert-character" class="insert-action">INSERT CHARACTER</button>
+                    <p class="insert-hint">Static NPC for scene dressing, or spawn yourself as a walkable human (reference for AI character design).</p>
+                    <button id="insert-character" class="insert-action">INSERT NPC</button>
+                    <button id="insert-spawn-player" class="insert-action secondary">SPAWN AS PLAYER</button>
                 </div>
                 <div class="insert-panel" data-panel="player">
                     <p class="insert-hint">Enter another player's key. They must share/export their player first.</p>
@@ -209,6 +213,28 @@
                     <textarea id="insert-custom-code" class="insert-code" placeholder="World.createObject('sphere', 'mine', 0xff00ff, true);"></textarea>
                     <button id="insert-code-run" class="insert-action">RUN CODE</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- World persistence modal -->
+        <div id="world-modal" class="modal-backdrop">
+            <div id="world-sheet" class="panel insert-sheet">
+                <div class="insert-header">
+                    <h3 style="margin:0;">SAVED WORLDS</h3>
+                    <button id="world-close">✕</button>
+                </div>
+                <p class="insert-hint">Worlds persist on this device (IndexedDB). Optional cloud sync when Supabase is configured. Share via <code>?world=CODE</code> links.</p>
+                <div id="world-list"></div>
+                <hr style="border-color:var(--border-color); margin:12px 0;">
+                <label class="insert-hint">Load by code</label>
+                <input type="text" id="world-code-input" class="insert-input" placeholder="WORLD CODE" maxlength="8">
+                <button id="world-load-btn" class="insert-action">LOAD WORLD</button>
+                <label class="insert-hint">Share link</label>
+                <input type="text" id="world-share-link" class="insert-input" readonly>
+                <button id="world-copy-link" class="insert-action secondary">COPY WORLD LINK</button>
+                <button id="world-export-btn" class="insert-action secondary">EXPORT FILE</button>
+                <label class="insert-hint">Import world file</label>
+                <input type="file" id="world-import-file" accept=".json">
             </div>
         </div>
 
@@ -282,7 +308,7 @@
                 <h2 style="margin:0; font-size:1rem; letter-spacing:1px; color:var(--accent-color);">SPEC GENERATOR</h2>
                 <div style="font-size: 0.75rem; color: #888; line-height: 1.5; border-bottom:1px solid var(--border-color); padding-bottom:15px;">
                     <strong>INSTRUCTIONS:</strong><br>
-                    1. Describe scene.<br>2. Select style.<br>3. Generate.<br>4. Paste to AI.<br>5. Run code in Engine.
+                    1. Describe scene.<br>2. Select style.<br>3. Generate.<br>4. Paste to AI/Grok.<br>5. Paste result into Compiler → RUN IN ENGINE.
                 </div>
                 <div class="prompt-input-group">
                     <label>YOUR IDEA</label>

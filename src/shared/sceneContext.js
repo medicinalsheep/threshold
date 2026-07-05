@@ -11,13 +11,20 @@ export function getSceneContext() {
         color: o.material?.color?.getHexString?.() || null,
         position: { x: +o.position.x.toFixed(2), y: +o.position.y.toFixed(2), z: +o.position.z.toFixed(2) },
         physics: !!o.userData?.hasPhysics,
-        rotating: !!o.userData?.isRotating
+        rotating: !!o.userData?.isRotating,
+        isHuman: !!(o.userData?.isHuman || o.userData?.isCharacter),
+        isPlayer: !!o.userData?.isPlayer
     }));
+    const humanNpcCount = objects.filter((o) => o.isHuman && !o.isPlayer).length;
 
     const env = State.env || {};
     const runningCode = window.Runtime?.runningCode || '(none)';
     const network = window.Network;
     const session = window.Session;
+    const player = window.PlayerController;
+    const playerLine = player?.spawned
+        ? `- Playable human: YES @ (${player.group.position.x.toFixed(1)}, ${player.group.position.y.toFixed(1)}, ${player.group.position.z.toFixed(1)})`
+        : '- Playable human: none (use World.spawnPlayablePlayer() or Insert → Spawn as Player)';
     const netLine = network?.mode === 'host'
         ? `- Session: HOST room ${network.roomId}, ${network.peerCount} guest(s)`
         : network?.mode === 'guest'
@@ -35,6 +42,9 @@ ${netLine}
 - Water: ${env.waterEnabled ? 'ON' : 'OFF'}
 - Atmosphere: ${env.atmosphereEnabled ? 'ON' : 'OFF'}
 - Paused: ${State.isPaused ? 'YES' : 'NO'}
+- Control mode: ${State.controlMode || 'fly'}
+${playerLine}
+- Human NPCs: ${humanNpcCount} (static characters for reference)
 
 OBJECTS:
 ${objects.length ? objects.map((o) => `  - ${o.name} (${o.type}) @ (${o.position.x},${o.position.y},${o.position.z})`).join('\n') : '  (empty scene)'}

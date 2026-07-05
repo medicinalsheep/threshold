@@ -13,6 +13,9 @@ import { Runtime } from '../shared/runtime.js';
 import { getSceneObjectsForSpawn } from '../shared/sceneContext.js';
 import { Actions } from '../shared/actions.js';
 import { Network } from '../shared/network.js';
+import { PlayerController } from './player.js';
+import { Persistence } from '../shared/persistence.js';
+import { Sync } from '../shared/sync.js';
 
 const IS_TOUCH_DEVICE = window.matchMedia('(pointer: coarse)').matches;
 
@@ -46,6 +49,10 @@ export function initEngine() {
     window.Runtime = Runtime;
     window.Actions = Actions;
     window.Network = Network;
+    window.Physics = Physics;
+    window.PlayerController = PlayerController;
+    window.Persistence = Persistence;
+    window.Sync = Sync;
 
     window.addEventListener('theme-change', () => {
         State.darkMode = !document.body.classList.contains('light-mode');
@@ -68,6 +75,13 @@ export function initEngine() {
         State.isPaused = !!e.detail?.paused;
         UI.status(State.isPaused ? 'Scene paused by host' : 'Scene resumed');
     });
+
+    const worldCode = new URLSearchParams(window.location.search).get('world');
+    if (worldCode) {
+        Persistence.loadWorld(worldCode)
+            .then((r) => UI.status(`Loaded world ${r.name} (${r.code})`))
+            .catch((e) => UI.status(e.message));
+    }
 }
 
 // --- GLOBAL STATE ---
@@ -84,6 +98,8 @@ const State = {
     ctxTargetPos: new THREE.Vector3(),
     isRecording: false,
     isPaused: false,
+    controlMode: 'fly',
+    playerRef: null,
     env: {
         timeOfDay: 14,
         fogDensity: 0.02,
@@ -559,21 +575,28 @@ const Engine = {
     },
     animate: function (time) {
         requestAnimationFrame((t) => this.animate(t));
+        if (this.shaderPass) this.shaderPass.uniforms.time.value = time * 0.001;
+
         if (!State.isPaused) {
+            if (State.controlMode === 'walk' && PlayerController.spawned) {
+                PlayerController.prePhysics(State.keys);
+            }
             Physics.update();
+            if (State.controlMode === 'walk' && PlayerController.spawned) {
+                PlayerController.postPhysics();
+            } else {
+                const speed = 0.2;
+                const fwd = new THREE.Vector3(); this.camera.getWorldDirection(fwd); fwd.y = 0; fwd.normalize();
+                const rgt = new THREE.Vector3(); rgt.crossVectors(fwd, this.camera.up).normalize();
+                if (State.keys['KeyW']) { this.camera.position.addScaledVector(fwd, speed); this.controls.target.addScaledVector(fwd, speed); }
+                if (State.keys['KeyS']) { this.camera.position.addScaledVector(fwd, -speed); this.controls.target.addScaledVector(fwd, -speed); }
+                if (State.keys['KeyA']) { this.camera.position.addScaledVector(rgt, -speed); this.controls.target.addScaledVector(rgt, -speed); }
+                if (State.keys['KeyD']) { this.camera.position.addScaledVector(rgt, speed); this.controls.target.addScaledVector(rgt, speed); }
+                if (State.keys['KeyQ']) { this.camera.position.y += speed; this.controls.target.y += speed; }
+                if (State.keys['KeyE']) { this.camera.position.y -= speed; this.controls.target.y -= speed; }
+            }
             Environment.updateWater(time);
         }
-        if (this.shaderPass) this.shaderPass.uniforms.time.value = time * 0.001;
-        // Camera Logic (OrbitControls handles mouse, we handle keys)
-        const speed = 0.2;
-        const fwd = new THREE.Vector3(); this.camera.getWorldDirection(fwd); fwd.y = 0; fwd.normalize();
-        const rgt = new THREE.Vector3(); rgt.crossVectors(fwd, this.camera.up).normalize();
-        if (State.keys['KeyW']) { this.camera.position.addScaledVector(fwd, speed); this.controls.target.addScaledVector(fwd, speed); }
-        if (State.keys['KeyS']) { this.camera.position.addScaledVector(fwd, -speed); this.controls.target.addScaledVector(fwd, -speed); }
-        if (State.keys['KeyA']) { this.camera.position.addScaledVector(rgt, -speed); this.controls.target.addScaledVector(rgt, -speed); }
-        if (State.keys['KeyD']) { this.camera.position.addScaledVector(rgt, speed); this.controls.target.addScaledVector(rgt, speed); }
-        if (State.keys['KeyQ']) { this.camera.position.y += speed; this.controls.target.y += speed; }
-        if (State.keys['KeyE']) { this.camera.position.y -= speed; this.controls.target.y -= speed; }
         this.controls.update();
         // Visual Rotation (Only for non-physics objects or purely visual effect)
         if (!State.isPaused) {
@@ -671,8 +694,17 @@ const World = {
         head.scale.set(0.45, 0.45, 0.45);
         head.position.set(x, y + 2.1, z);
         body.userData.isCharacter = true;
+        body.userData.isHuman = true;
         head.userData.isCharacter = true;
+        head.userData.isHuman = true;
         if (!silent) { UI.closeInsert(); UI.status('Character inserted'); }
+    },
+    spawnPlayablePlayer: function (silent = false) {
+        const x = State.ctxTargetPos.x;
+        const z = State.ctxTargetPos.z;
+        const y = State.ctxTargetPos.y + 1;
+        PlayerController.spawn(x, y, z);
+        if (!silent) { UI.closeInsert(); UI.updateControlMode(); }
     },
     insertPlayerByKey: function (key, silent = false) {
         const player = Session.getPlayer(key);
@@ -807,6 +839,10 @@ const UI = {
             Actions.dispatch('INSERT_CHARACTER', { pos: World.getCursorPos() });
             UI.closeInsert();
         });
+        document.getElementById('insert-spawn-player')?.addEventListener('click', () => {
+            Actions.dispatch('SPAWN_PLAYER', { pos: World.getCursorPos() });
+            UI.closeInsert();
+        });
         document.getElementById('insert-player-btn')?.addEventListener('click', () => {
             const key = document.getElementById('insert-player-key')?.value;
             Actions.dispatch('INSERT_PLAYER', { key });
@@ -859,6 +895,24 @@ const UI = {
         document.getElementById('btn-save').onclick = () => IO.exportScene();
         document.getElementById('btn-load').onclick = () => IO.importScene();
         document.getElementById('file-input').addEventListener('change', (e) => IO.handleFileSelect(e));
+
+        document.getElementById('btn-save-world')?.addEventListener('click', () => UI.saveWorld());
+        document.getElementById('btn-load-world')?.addEventListener('click', () => UI.openWorldModal());
+        document.getElementById('world-close')?.addEventListener('click', () => UI.closeWorldModal());
+        document.getElementById('world-modal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'world-modal') UI.closeWorldModal();
+        });
+        document.getElementById('world-load-btn')?.addEventListener('click', () => UI.loadWorldByCode());
+        document.getElementById('world-copy-link')?.addEventListener('click', () => UI.copyWorldLink());
+        document.getElementById('world-export-btn')?.addEventListener('click', () => UI.exportCurrentWorld());
+        document.getElementById('world-import-file')?.addEventListener('change', (e) => UI.importWorldFile(e));
+        document.getElementById('btn-control-mode')?.addEventListener('click', () => UI.toggleControlMode());
+        document.getElementById('world-list')?.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-world-code]');
+            if (btn) UI.loadWorldByCode(btn.dataset.worldCode);
+        });
+
+        UI.updateControlMode();
     },
     updateModeDisplay: function (idx) {
         const el = document.getElementById('mode-display');
@@ -983,5 +1037,117 @@ const UI = {
         } catch {
             this.status(link);
         }
+    },
+    updateControlMode: function () {
+        const btn = document.getElementById('btn-control-mode');
+        const hint = document.getElementById('controls-hint');
+        const mode = State.controlMode === 'walk' && PlayerController.spawned ? 'walk' : 'fly';
+        if (btn) btn.textContent = mode === 'walk' ? 'WALK' : 'FLY';
+        if (hint) {
+            hint.textContent = mode === 'walk'
+                ? 'WASD walk · Space jump · touch orbit'
+                : 'WASD fly · QE up/down · right-click menu';
+        }
+    },
+    toggleControlMode: function () {
+        if (PlayerController.spawned) {
+            if (State.controlMode === 'walk') {
+                State.controlMode = 'fly';
+                this.status('Fly camera mode');
+            } else {
+                State.controlMode = 'walk';
+                this.status('Walk mode — WASD + Space');
+            }
+        } else {
+            const pos = World.getCursorPos();
+            PlayerController.spawn(pos.x, pos.y + 1, pos.z);
+        }
+        this.updateControlMode();
+    },
+    saveWorld: async function () {
+        const name = prompt('World name?', `World-${Date.now().toString(36).slice(-4)}`);
+        if (!name) return;
+        try {
+            const record = await Persistence.saveWorld(name);
+            this._lastWorldCode = record.code;
+            document.getElementById('world-code-input').value = record.code;
+            document.getElementById('world-share-link').value = Persistence.getShareUrl(record.code);
+            this.refreshWorldList();
+            this.status(`World saved: ${record.name} (${record.code})`);
+        } catch (e) {
+            this.status('Save failed: ' + e.message);
+        }
+    },
+    openWorldModal: function () {
+        this.refreshWorldList();
+        document.getElementById('world-modal')?.classList.add('open');
+    },
+    closeWorldModal: function () {
+        document.getElementById('world-modal')?.classList.remove('open');
+    },
+    refreshWorldList: function () {
+        const list = document.getElementById('world-list');
+        if (!list) return;
+        const worlds = Persistence.listLocal();
+        if (!worlds.length) {
+            list.innerHTML = '<p class="insert-hint">No saved worlds on this device yet.</p>';
+            return;
+        }
+        list.innerHTML = worlds.map((w) => `
+            <button class="insert-action secondary world-item" data-world-code="${w.code}" type="button">
+                ${w.name} <code>${w.code}</code>${w.cloud ? ' ☁' : ''}
+            </button>
+        `).join('');
+    },
+    loadWorldByCode: async function (code) {
+        const input = document.getElementById('world-code-input');
+        const trimmed = (code || input?.value || '').trim().toUpperCase();
+        if (!trimmed) { this.status('Enter a world code'); return; }
+        try {
+            const record = await Persistence.loadWorld(trimmed);
+            this._lastWorldCode = record.code;
+            if (input) input.value = record.code;
+            document.getElementById('world-share-link').value = Persistence.getShareUrl(record.code);
+            this.updateControlMode();
+            this.closeWorldModal();
+            this.status(`Loaded world ${record.name} (${record.code})`);
+        } catch (e) {
+            this.status(e.message);
+        }
+    },
+    copyWorldLink: async function () {
+        const code = document.getElementById('world-code-input')?.value || this._lastWorldCode;
+        if (!code) { this.status('Save or load a world first'); return; }
+        const link = Persistence.getShareUrl(code);
+        document.getElementById('world-share-link').value = link;
+        try {
+            await navigator.clipboard.writeText(link);
+            this.status('World link copied');
+        } catch {
+            this.status(link);
+        }
+    },
+    exportCurrentWorld: function () {
+        const code = document.getElementById('world-code-input')?.value || this._lastWorldCode || 'SNAPSHOT';
+        const name = prompt('Export name?', 'world-export') || 'world-export';
+        const record = { code, name, data: Sync.capture(), savedAt: Date.now() };
+        Persistence.exportFile(record);
+        this.status('World file exported');
+    },
+    importWorldFile: async function (e) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        try {
+            const record = await Persistence.importFile(file);
+            this._lastWorldCode = record.code;
+            document.getElementById('world-code-input').value = record.code;
+            document.getElementById('world-share-link').value = Persistence.getShareUrl(record.code);
+            this.refreshWorldList();
+            this.updateControlMode();
+            this.status(`Imported world ${record.name || record.code}`);
+        } catch (err) {
+            this.status('Import failed: ' + err.message);
+        }
+        e.target.value = '';
     }
 };

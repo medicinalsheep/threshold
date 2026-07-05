@@ -1,5 +1,5 @@
 import { copyFromElement } from '../utils/clipboard.js';
-import { IS_GROK_EDITION } from '../config.js';
+import { IS_GROK_EDITION, APP_URL, VERSION } from '../config.js';
 import { Auth } from '../auth/main.js';
 import { generateScript } from '../grok/client.js';
 import { getSceneContext } from '../shared/sceneContext.js';
@@ -18,20 +18,48 @@ export function initPrompter() {
 
 const Prompter = {
     apiContext: `
-CONTEXT:
-You are an expert developer for "THRESHOLD ENGINE", a 3D sandbox using Three.js, Cannon-ES physics, and retro/hyper render modes.
+TOOL: THRESHOLD SUITE v${VERSION}
+LIVE APP: ${APP_URL}
 
-GLOBAL ACCESS: World, State, Engine, THREE, Physics, Utils, AudioSys, Runtime, Session
+You are an expert developer for THRESHOLD — a browser-based 3D sandbox (Engine + Compiler + PromptGen tabs).
+Stack: Three.js, Cannon-ES physics, 5 retro/hyper render modes, optional multiplayer sessions.
 
-API:
-- World.createObject(type, name, colorHex, usePhysics) — cube|sphere|cone|torus
+HOW TO DELIVER CODE:
+1. Output executable JavaScript only (no markdown fences unless the user prefers them).
+2. The user pastes your code into the COMPILER tab → clicks RUN IN ENGINE, or runs it in the Engine command bar (type "allow pasting" first for long snippets).
+3. Open the tool at ${APP_URL} to test. Multiplayer: create session → share ?room=CODE link.
+
+GLOBAL ACCESS (already on window): World, State, Engine, THREE, CANNON, Physics, PlayerController, Persistence, Runtime, Session, Network, Environment, Utils, AudioSys
+
+SCENE API:
+- World.createObject(type, name, colorHex, usePhysics) — types: cube|sphere|cone|torus
 - World.addCustom(geometry, material, name, usePhysics)
-- Engine.setRenderMode(0-4)
-- State.objects, State.env (time, fog, water, atmosphere)
+- World.spawnCharacter() — static NPC human (body cube + head sphere, userData.isHuman)
+- World.spawnPlayablePlayer() — spawns walkable player at cursor
+- World.clearWorld() — only when user wants a fresh scene
+- Engine.setRenderMode(0-4) — 0 Threshold, 1 1-Bit, 2 Terminal, 3 SMPTE, 4 Hyper (physics+bloom)
+- State.objects, State.env (timeOfDay, fogDensity, waterEnabled, atmosphereEnabled)
+- State.controlMode — 'walk' (third-person human) or 'fly' (free camera)
+
+HUMAN CHARACTER REFERENCE (for NPCs and playable avatars):
+Static NPC pattern (World.spawnCharacter):
+  - Body: scaled cube (0.55×1.1×0.35), color 0x3366cc, userData.isCharacter + isHuman
+  - Head: scaled sphere (0.45), skin 0xffcc99
+Playable human (PlayerController.spawn(x,y,z)):
+  - Full mesh: torso, head, arms, legs (THREE.Group, userData.isPlayer/isHuman)
+  - Cannon cylinder body (mass 70, fixedRotation) — WASD walk relative to camera, Space jump
+  - Third-person camera follow in walk mode; toggle fly with UI or despawn
+Custom humans: build a THREE.Group with MeshStandardMaterial limbs, optional Physics.addBody for ragdoll props
+
+PERSISTENCE API:
+- Persistence.saveWorld(name) — saves full scene to IndexedDB (+ cloud if configured), returns {code, name}
+- Persistence.loadWorld(code) — restores scene; share URL: ${APP_URL}?world=CODE
+- Persistence.getShareUrl(code), Persistence.listLocal(), Persistence.exportFile(record)
 
 RULES:
-- Prefer extending the CURRENT SCENE unless user asks to clear.
-- Wrap new scripts in an IIFE when replacing the whole scene.
+- Prefer extending the CURRENT SCENE unless the user asks to clear.
+- Use physics (usePhysics: true) for interactive/droppable objects in Hyper mode.
+- Wrap full scene replacements in an IIFE when appropriate.
 `,
 
     buildPrompt: function () {
@@ -70,6 +98,8 @@ ${idea ? `Extend/improve the scene: "${idea}"` : 'Improve the current live scene
 
 SPECIFICATIONS:
 ${instructions.map((i) => `- ${i}`).join('\n')}
+
+OUTPUT: Return runnable JavaScript for THRESHOLD. User will paste into Compiler at ${APP_URL} and click RUN IN ENGINE.
 
 ${style === 'spec' ? 'Provide a brief plan, then code.' : 'Provide code immediately.'}
 `.trim()

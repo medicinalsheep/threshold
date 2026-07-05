@@ -8,13 +8,16 @@ export const Sync = {
     capture() {
         const State = window.State;
         if (!State) return null;
+        const player = window.PlayerController?.getState?.();
         return {
-            objects: getSceneObjectsForSpawn(),
+            objects: getSceneObjectsForSpawn().filter((o) => !o.userData?.isPlayer),
             env: { ...State.env },
             renderMode: State.renderMode,
             runningCode: window.Runtime?.runningCode || '',
             isPaused: !!State.isPaused,
-            gridVisible: !!State.gridVisible
+            gridVisible: !!State.gridVisible,
+            player,
+            controlMode: State.controlMode || 'fly'
         };
     },
 
@@ -52,7 +55,14 @@ export const Sync = {
             if (Runtime && state.runningCode) Runtime.setRunningCode(state.runningCode, 'sync');
 
             State.isPaused = !!state.isPaused;
+            State.controlMode = state.controlMode || 'fly';
             window.dispatchEvent(new CustomEvent('threshold:pause', { detail: { paused: State.isPaused } }));
+            if (state.player && window.PlayerController) {
+                window.PlayerController.applyState(state.player);
+            } else if (state.controlMode === 'fly') {
+                window.PlayerController?.despawn();
+            }
+            window.UI?.updateControlMode?.();
         } finally {
             applying = false;
         }
@@ -73,6 +83,13 @@ export const Sync = {
                 const State = window.State;
                 if (payload.pos && State) State.ctxTargetPos.set(payload.pos.x, payload.pos.y, payload.pos.z);
                 World.spawnCharacter(true);
+                break;
+            }
+            case 'SPAWN_PLAYER': {
+                const State = window.State;
+                if (payload.pos && State) State.ctxTargetPos.set(payload.pos.x, payload.pos.y, payload.pos.z);
+                World.spawnPlayablePlayer(true);
+                window.UI?.updateControlMode?.();
                 break;
             }
             case 'INSERT_PLAYER':

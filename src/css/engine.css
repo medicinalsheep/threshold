@@ -347,6 +347,16 @@ button {
     display: block;
 }
 
+.world-item {
+    text-align: left;
+    margin-bottom: 6px;
+}
+
+.world-item code {
+    font-size: 0.85em;
+    opacity: 0.85;
+}
+
 .insert-hint {
     font-size: 0.75rem;
     color: #888;
