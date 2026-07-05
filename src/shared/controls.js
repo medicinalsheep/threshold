@@ -400,7 +400,7 @@ export const Controls = {
 
         const State = window.State;
         const PC = window.PlayerController;
-        if (State?.controlMode === 'walk' && PC?.spawned) {
+        if (State?.controlMode === 'walk' && PC?.spawned && !State?.isPaused) {
             PC.applyLookInput(x * 14, y * 14, 1.2);
             return;
         }
@@ -436,7 +436,8 @@ export const Controls = {
         const touch = window.TouchControls?.enabled ? ' · touch' : '';
         if (mode === 'walk') {
             const view = window.State?.viewMode === 'fps' ? 'FPS' : 'TPS';
-            return `${profile}${admin}: ${view} · WASD · Shift sprint · V view · T Third Eye · E interact${pad}${touch}`;
+            const lock = window.Engine?._lookPointerLocked ? ' · mouse aim' : ' · click canvas to aim';
+            return `${profile}${admin}: ${view} · WASD · Shift sprint · V view · T Third Eye · E interact${lock}${pad}${touch}`;
         }
         return `${profile}${admin}: fly · Y toggle · R-stick cam${pad}${touch}`;
     },

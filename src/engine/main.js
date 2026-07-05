@@ -128,6 +128,11 @@ export function initEngine() {
         UI.updateSimMode();
         const reason = e.detail?.reason;
         UI.status(State.isPaused ? (reason ? `EDIT: ${reason}` : 'EDIT mode — world editable') : 'PLAY mode — simulation running');
+        Engine._releaseLookLock?.();
+        PlayerController._syncWalkOrbit?.();
+        if (!State.isPaused && PlayerController.spawned && State.controlMode === 'walk') {
+            PlayerController._inheritLookFromCamera?.();
+        }
     });
 
     const worldCode = new URLSearchParams(window.location.search).get('world');
@@ -657,6 +662,7 @@ const Environment = {
 const Engine = {
     scene: null, camera: null, renderer: null, composer: null, shaderPass: null, bloomPass: null,
     controls: null, transformControl: null, raycaster: null, mouse: new THREE.Vector2(),
+    _lookPointerLocked: false,
     gridHelper: null, groundPlane: null,
     init: function () {
         this.scene = new THREE.Scene();
@@ -722,29 +728,64 @@ const Engine = {
             }
         });
         window.addEventListener('keyup', (e) => State.keys[e.code] = false);
-        this._lastPointer = { x: 0, y: 0 };
-        this.renderer.domElement.addEventListener('pointermove', (e) => {
-            if (State.controlMode !== 'walk' || !PlayerController.spawned || State.isPaused) return;
-            const dx = e.clientX - this._lastPointer.x;
-            const dy = e.clientY - this._lastPointer.y;
-            this._lastPointer.x = e.clientX;
-            this._lastPointer.y = e.clientY;
-            if (e.pointerType === 'touch') return;
-            if (Math.abs(dx) + Math.abs(dy) < 0.5) return;
-            const fps = State.viewMode === 'fps';
-            if (!fps && e.buttons === 0) return;
-            PlayerController.applyLookInput(dx, dy);
-        });
-        this.renderer.domElement.addEventListener('pointerdown', (e) => {
-            this._lastPointer.x = e.clientX;
-            this._lastPointer.y = e.clientY;
-        });
+        this._setupWalkLook();
         this.renderer.domElement.addEventListener('pointerdown', (e) => this.onPointerDown(e));
         this.renderer.domElement.addEventListener('pointerup', (e) => this.onPointerUp(e));
         this.renderer.domElement.addEventListener('pointermove', (e) => this.onPointerMove(e));
         this.renderer.domElement.addEventListener('contextmenu', (e) => this.onContextMenu(e));
         this.animate();
     },
+    _setupWalkLook() {
+        const canvas = this.renderer.domElement;
+        this._lastPointer = { x: 0, y: 0 };
+
+        document.addEventListener('pointerlockchange', () => {
+            this._lookPointerLocked = document.pointerLockElement === canvas;
+        });
+
+        canvas.addEventListener('pointermove', (e) => {
+            if (State.controlMode !== 'walk' || !PlayerController.spawned || State.isPaused) return;
+            if (e.pointerType === 'touch') return;
+
+            let dx = 0;
+            let dy = 0;
+            if (this._lookPointerLocked) {
+                dx = e.movementX;
+                dy = e.movementY;
+            } else {
+                dx = e.clientX - this._lastPointer.x;
+                dy = e.clientY - this._lastPointer.y;
+                this._lastPointer.x = e.clientX;
+                this._lastPointer.y = e.clientY;
+            }
+            if (Math.abs(dx) + Math.abs(dy) < 0.01) return;
+            PlayerController.applyLookInput(dx, dy, this._lookPointerLocked ? 1 : 0.9);
+        });
+
+        canvas.addEventListener('pointerdown', (e) => {
+            this._lastPointer.x = e.clientX;
+            this._lastPointer.y = e.clientY;
+        });
+    },
+
+    _requestLookLock() {
+        const canvas = this.renderer.domElement;
+        if (document.pointerLockElement === canvas) return;
+        if (State.controlMode !== 'walk' || !PlayerController.spawned || State.isPaused) return;
+        canvas.requestPointerLock?.();
+    },
+
+    _releaseLookLock() {
+        if (document.pointerLockElement === this.renderer.domElement) {
+            document.exitPointerLock();
+        }
+        this._lookPointerLocked = false;
+    },
+
+    _isWalkPlayLook() {
+        return State.controlMode === 'walk' && PlayerController.spawned && !State.isPaused;
+    },
+
     syncPhysicsFromMesh: function (mesh) {
         if (!mesh?.userData?.hasPhysics) return;
         const entry = State.physicsObjects.find((p) => p.mesh === mesh);
@@ -925,6 +966,11 @@ const Engine = {
         if (e.button !== 0) { UI.closeCtx(); return; }
         if (TouchControls.enabled && e.pointerType === 'touch') return;
 
+        if (this._isWalkPlayLook() && (e.pointerType === 'mouse' || e.pointerType === 'pen')) {
+            this._requestLookLock();
+            return;
+        }
+
         if (e.pointerType === 'mouse' || e.pointerType === 'pen') {
             clearTimeout(this._holdPointer?.timer);
             this._holdPointer = {
@@ -1097,7 +1143,7 @@ const Engine = {
         Cinematic.tick();
         window.TcGateFx?.tick?.();
 
-        this.controls.update();
+        if (this.controls.enabled) this.controls.update();
         // Visual Rotation (Only for non-physics objects or purely visual effect)
         if (!State.isPaused) {
             State.objects.forEach(obj => {
@@ -2213,7 +2259,9 @@ const UI = {
         Session.isPaused = paused;
         Session.pauseReason = pauseReason;
         Session.updateUi();
-        this.status(paused ? `Paused${pauseReason ? `: ${pauseReason}` : ''}` : 'Scene resumed');
+        Engine._releaseLookLock?.();
+        PlayerController._syncWalkOrbit?.();
+        this.status(paused ? `Paused${pauseReason ? `: ${pauseReason}` : ''}` : 'Scene resumed — click canvas to aim');
     },
     setCodingPause: function (on) {
         if (!Permissions.canPause() || !Session.autoCodingPause) return;
@@ -2341,12 +2389,14 @@ const UI = {
         if (PlayerController.spawned) {
             if (State.controlMode === 'walk') {
                 State.controlMode = 'fly';
+                Engine._releaseLookLock?.();
                 if (Engine.controls) Engine.controls.enabled = true;
                 this.status('Fly camera mode');
             } else {
                 State.controlMode = 'walk';
+                PlayerController._inheritLookFromCamera?.();
                 PlayerController._syncWalkOrbit?.();
-                this.status('Walk — action controls active');
+                this.status('Walk — click canvas to capture mouse · WASD move');
             }
         } else {
             const pos = World.getCursorPos();

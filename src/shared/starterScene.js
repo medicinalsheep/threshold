@@ -418,7 +418,7 @@ export function bootstrapStarterScene() {
     });
 
     if (terminal && modelKiosk) {
-        window.UI?.status?.('TPS walk — E interact · G shoot · V view · T Third Eye · Shift sprint');
+        window.UI?.status?.('TPS walk — click canvas to aim · E interact · G shoot · V view · T Third Eye');
     }
 
     State.ctxTargetPos.set(0, 0, 0);
@@ -454,7 +454,7 @@ function scheduleStarterPlayerSpawn() {
         State.viewMode = 'tps';
         window.UI?.updateControlMode?.();
         window.ThirdEye?.updateHud?.();
-        window.UI?.status('Spawned — action controls ready (V FPS/TPS · T Third Eye)');
+        window.UI?.status('Spawned — click canvas to aim · WASD move · V FPS/TPS');
     }, delay);
 }
 

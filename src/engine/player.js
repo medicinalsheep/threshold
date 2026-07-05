@@ -71,18 +71,17 @@ export const PlayerController = {
         State.controlMode = 'walk';
         State.playerRef = this;
 
-        this._camYaw = Math.PI;
-        this._camPitch = 0.28;
         this._velX = 0;
         this._velZ = 0;
         await tryLoadAvatarGroup(this.group, 'starter_avatar.glb');
 
+        this._inheritLookFromCamera();
         this._syncWalkOrbit();
         this._applyViewMode();
         window.FpsViewmodel?.mount?.(Engine.camera);
 
         if (window.UI?.status) {
-            window.UI.status('Action controls — WASD move · Shift sprint · V FPS/TPS · T Third Eye · E interact');
+            window.UI.status('Action controls — click canvas to aim · WASD move · Shift sprint · V FPS/TPS · Esc release mouse');
         }
         window.ThirdEye?.updateHud?.();
         return this.group;
@@ -105,6 +104,7 @@ export const PlayerController = {
         State.controlMode = 'fly';
         State.playerRef = null;
         window.FpsViewmodel?.unmount?.(window.Engine?.camera);
+        window.Engine?._releaseLookLock?.();
         this._syncWalkOrbit();
         window.ThirdEye?.updateHud?.();
     },
@@ -135,11 +135,36 @@ export const PlayerController = {
         const State = window.State;
         if (!Engine?.controls) return;
         const walk = State.controlMode === 'walk' && this.spawned;
-        Engine.controls.enabled = !walk;
+        const play = walk && !State.isPaused;
+        Engine.controls.enabled = !play;
+        if (walk && this.group) {
+            const chest = this.group.position.clone().add(new THREE.Vector3(0, 1.4, 0));
+            if (!play) Engine.controls.target.copy(chest);
+        }
+    },
+
+    _inheritLookFromCamera() {
+        const camera = window.Engine?.camera;
+        if (!camera || !this.group) {
+            this._camYaw = Math.PI;
+            this._camPitch = 0.28;
+            return;
+        }
+        const chest = this.group.position.clone().add(new THREE.Vector3(0, 1.4, 0));
+        const offset = camera.position.clone().sub(chest);
+        if (offset.lengthSq() < 0.25) {
+            this._camYaw = Math.PI;
+            this._camPitch = 0.28;
+            return;
+        }
+        this._camYaw = Math.atan2(offset.x, offset.z);
+        const horiz = Math.hypot(offset.x, offset.z) || 1;
+        this._camPitch = Math.atan2(offset.y - TPS_HEIGHT, horiz);
+        this._camPitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, this._camPitch));
     },
 
     applyLookInput(dx, dy, sens = 1) {
-        if (!this.spawned || window.State?.controlMode !== 'walk') return;
+        if (!this.spawned || window.State?.controlMode !== 'walk' || window.State?.isPaused) return;
         this._camYaw -= dx * 0.003 * sens;
         this._camPitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, this._camPitch + dy * 0.0025 * sens));
     },
@@ -271,8 +296,10 @@ export const PlayerController = {
             );
             const desired = chest.clone().add(offset);
             camera.position.lerp(desired, 0.14);
-            camera.lookAt(chest);
-            Engine.controls.target.lerp(chest, 0.16);
+            camera.rotation.order = 'YXZ';
+            camera.rotation.y = this._camYaw;
+            camera.rotation.x = this._camPitch;
+            Engine.controls.target.copy(chest);
         }
     },
 

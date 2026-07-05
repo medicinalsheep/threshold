@@ -21,6 +21,7 @@ Threshold ships a **walk/drive action control** template in the SOLO lobby. Use 
 | Toggle fly (editor) | F | Y |
 
 - **TPS** is the default after intro spawn.
+- **Mouse look** — in PLAY mode, **click the canvas** to capture the cursor (pointer lock); move mouse to orbit/aim like standard FPS/TPS. **Esc** releases. In EDIT (paused), orbit controls work around your character.
 - **FPS** hides the body mesh and shows arms viewmodel + crosshair; **ADS** (`R` / LT) zooms FOV and tightens aim.
 - **Third Eye** shows a green circle HUD and highlights interactables / NPCs within ~18m.
 
