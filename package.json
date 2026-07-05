@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "7.1.0",
+  "version": "7.2.0",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
@@ -52,6 +52,7 @@
     "sounds:fetch:ambient": "node scripts/fetch-real-ambient.cjs",
     "sounds:process:ambient": "node scripts/fetch-real-ambient.cjs --local-only",
     "sounds:compress": "node scripts/compress-starter-sfx.cjs",
+    "sounds:compress:wav": "node scripts/compress-starter-wav.cjs",
     "sounds:verify": "node scripts/sounds-verify.cjs",
     "tc:gen:vid": "node scripts/tc-gen-vid.cjs",
     "tc:verify": "node scripts/tc-verify.cjs",
@@ -74,6 +75,7 @@
     "electron": "^34.5.8",
     "electron-builder": "^25.1.8",
     "png-to-ico": "^2.1.8",
+    "sharp": "^0.33.5",
     "vite": "^6.2.0"
   },
   "dependencies": {

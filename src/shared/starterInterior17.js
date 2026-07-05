@@ -10,9 +10,12 @@ export function buildStarterInterior17() {
         return null;
     }
 
-    const woodMat = new THREE.MeshStandardMaterial({ color: 0x5a4838, roughness: 0.82, metalness: 0.04 });
-    const wallMat = new THREE.MeshStandardMaterial({ color: 0x4a4e54, roughness: 0.78, metalness: 0.03 });
-    const metalMat = new THREE.MeshStandardMaterial({ color: 0x6a6e74, roughness: 0.38, metalness: 0.55 });
+    const SM = window.StarterMaterials;
+    const mats = SM?.createStarterMaterials?.(THREE);
+    const poleMat = mats?.pole || new THREE.MeshStandardMaterial({ color: 0x3a3e44, roughness: 0.42, metalness: 0.48 });
+    const woodMat = mats?.wood || new THREE.MeshStandardMaterial({ color: 0x5a4838, roughness: 0.82, metalness: 0.04 });
+    const wallMat = mats?.wall || new THREE.MeshStandardMaterial({ color: 0x4a4e54, roughness: 0.78, metalness: 0.03 });
+    const metalMat = mats?.metal || new THREE.MeshStandardMaterial({ color: 0x6a6e74, roughness: 0.38, metalness: 0.55 });
 
     // —— Coffee nook ——
     const coffeeGroup = new THREE.Group();
@@ -29,12 +32,15 @@ export function buildStarterInterior17() {
         new THREE.MeshStandardMaterial({ color: 0x8a4030, roughness: 0.72, emissive: 0x401810, emissiveIntensity: 0.08 })
     );
     awning.position.set(0, 2.15, 0.12);
+    const signTex = SM?.makeCoffeeSignTex?.(THREE);
     const sign = new THREE.Mesh(
         new THREE.PlaneGeometry(0.9, 0.28),
         new THREE.MeshStandardMaterial({
+            map: signTex || null,
             color: 0xf0e8d8,
-            emissive: 0xc8a060,
-            emissiveIntensity: 0.22,
+            emissive: signTex ? 0x806040 : 0xc8a060,
+            emissiveMap: signTex || null,
+            emissiveIntensity: 0.28,
             roughness: 0.65,
             side: THREE.DoubleSide,
         })
@@ -147,12 +153,15 @@ export function buildStarterInterior17() {
         new THREE.MeshStandardMaterial({ color: 0x3a4048, roughness: 0.45, metalness: 0.35 })
     );
     register.position.set(0.35, 0.98, 0.05);
+    const registerTex = SM?.makeRegisterTex?.(THREE);
     const registerScreen = new THREE.Mesh(
         new THREE.PlaneGeometry(0.22, 0.12),
         new THREE.MeshStandardMaterial({
+            map: registerTex || null,
             color: 0x102820,
             emissive: 0x208850,
-            emissiveIntensity: 0.35,
+            emissiveMap: registerTex || null,
+            emissiveIntensity: 0.38,
             roughness: 0.35,
         })
     );

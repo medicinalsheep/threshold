@@ -14,6 +14,18 @@ const DIRS = [
 ];
 const QUALITY = 82;
 
+let _sharp = null;
+
+function loadSharp() {
+    if (_sharp !== null) return _sharp;
+    try {
+        _sharp = require('sharp');
+    } catch {
+        _sharp = false;
+    }
+    return _sharp;
+}
+
 function hasFfmpeg() {
     try {
         execSync('ffmpeg -version', { stdio: 'pipe' });
@@ -23,11 +35,31 @@ function hasFfmpeg() {
     }
 }
 
-function compressPng(pngPath, webpPath, maxDim) {
+function compressPngFfmpeg(pngPath, webpPath, maxDim) {
     if (fs.existsSync(webpPath)) fs.unlinkSync(webpPath);
     const cmd = `ffmpeg -y -i "${pngPath}" -vf "scale='min(${maxDim},iw)':'min(${maxDim},ih)':force_original_aspect_ratio=decrease" -quality ${QUALITY} "${webpPath}"`;
     execSync(cmd, { stdio: 'pipe' });
     return fs.existsSync(webpPath);
+}
+
+async function compressPngSharp(pngPath, webpPath, maxDim) {
+    const sharp = loadSharp();
+    if (!sharp) return false;
+    if (fs.existsSync(webpPath)) fs.unlinkSync(webpPath);
+    await sharp(pngPath)
+        .resize(maxDim, maxDim, { fit: 'inside', withoutEnlargement: true })
+        .webp({ quality: QUALITY })
+        .toFile(webpPath);
+    return fs.existsSync(webpPath);
+}
+
+async function compressPng(pngPath, webpPath, maxDim) {
+    if (hasFfmpeg()) {
+        try {
+            return compressPngFfmpeg(pngPath, webpPath, maxDim);
+        } catch { /* fall through */ }
+    }
+    return compressPngSharp(pngPath, webpPath, maxDim);
 }
 
 function listPngs(dir) {
@@ -35,11 +67,14 @@ function listPngs(dir) {
     return fs.readdirSync(dir).filter((f) => f.endsWith('.png'));
 }
 
-function main() {
-    if (!hasFfmpeg()) {
-        console.log('[compress-textures] ffmpeg not on PATH — skip WebP (PNG fallback OK)');
+async function main() {
+    const useFfmpeg = hasFfmpeg();
+    const useSharp = !!loadSharp();
+    if (!useFfmpeg && !useSharp) {
+        console.log('[compress-textures] ffmpeg + sharp unavailable — skip WebP (PNG fallback OK)');
         process.exit(0);
     }
+    console.log(`[compress-textures] using ${useFfmpeg ? 'ffmpeg' : 'sharp'}`);
 
     const primary = DIRS[0];
     const pngs = listPngs(primary);
@@ -52,7 +87,7 @@ function main() {
         const webpPath = path.join(primary, webpName);
         const maxDim = maxDimFor(name);
         try {
-            if (compressPng(pngPath, webpPath, maxDim)) {
+            if (await compressPng(pngPath, webpPath, maxDim)) {
                 ok += 1;
                 saved += Math.max(0, fs.statSync(pngPath).size - fs.statSync(webpPath).size);
                 for (const dir of DIRS) {
@@ -70,4 +105,7 @@ function main() {
     console.log(`[compress-textures] ${ok}/${pngs.length} WebP @ q${QUALITY} (saved ~${mb} MB vs PNG)`);
 }
 
-main();
+main().catch((e) => {
+    console.error(e);
+    process.exit(1);
+});

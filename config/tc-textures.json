@@ -261,6 +261,71 @@
         "dark": [72, 58, 42]
       },
       "style": "dirt"
+    },
+    {
+      "slug": "starter_fence_tex",
+      "objectName": "Chain Fence",
+      "tcEd": "tc-lite",
+      "surfaceType": "metal",
+      "slots": ["albedo", "roughness", "metalness", "normal"],
+      "palette": {
+        "plate": [88, 92, 98],
+        "slot": [58, 62, 68],
+        "edge": [108, 112, 118]
+      },
+      "style": "metal_grate"
+    },
+    {
+      "slug": "starter_coffee",
+      "objectName": "Coffee Nook",
+      "tcEd": "tc-lite",
+      "surfaceType": "wood",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "grain": [98, 72, 48],
+        "dark": [68, 48, 32],
+        "ring": [118, 88, 58]
+      },
+      "style": "wood"
+    },
+    {
+      "slug": "starter_shop",
+      "objectName": "Corner Shop",
+      "tcEd": "tc-lite",
+      "surfaceType": "wood",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "grain": [112, 86, 58],
+        "dark": [82, 60, 40],
+        "ring": [132, 102, 72]
+      },
+      "style": "wood"
+    },
+    {
+      "slug": "starter_door_tex",
+      "objectName": "Creaky Door",
+      "tcEd": "tc-lite",
+      "surfaceType": "wood",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "grain": [92, 68, 44],
+        "dark": [62, 42, 28],
+        "ring": [108, 82, 54]
+      },
+      "style": "wood"
+    },
+    {
+      "slug": "starter_concrete",
+      "objectName": "Construction Zone",
+      "tcEd": "tc-lite",
+      "surfaceType": "concrete",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "base": [72, 74, 78],
+        "speck": [92, 94, 98],
+        "ring": [52, 54, 58]
+      },
+      "style": "concrete"
     }
   ]
 }

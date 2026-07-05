@@ -1,7 +1,7 @@
 {
   "format": "threshold-starter-textures",
-  "version": 1,
-  "note": "UV tiling + finish pass after manifest wiring — keeps 512px maps lightweight on large meshes",
+  "version": 2,
+  "note": "UV tiling + finish pass — lightweight 512px maps on low-poly meshes; canvas signs for RP props",
   "defaults": {
     "uvRepeat": [2, 2],
     "normalScale": 1,
@@ -24,10 +24,22 @@
     "Highway Strip": { "uvRepeat": [6, 2], "normalScale": 0.42, "envMapIntensity": 0.2 },
     "Street Lamp": { "envMapIntensity": 0.45 },
     "Dirt Mound": { "uvRepeat": [4, 3], "normalScale": 0.88, "envMapIntensity": 0.18 },
-    "Creek": { "envMapIntensity": 0.32 }
+    "Creek": { "envMapIntensity": 0.32 },
+    "Chain Fence": { "uvRepeat": [2, 1], "normalScale": 0.75, "envMapIntensity": 0.36 },
+    "Coffee Nook": { "uvRepeat": [2, 1], "normalScale": 0.55, "envMapIntensity": 0.24 },
+    "Corner Shop": { "uvRepeat": [2, 1], "normalScale": 0.5, "envMapIntensity": 0.26 },
+    "Creaky Door": { "uvRepeat": [1, 2], "normalScale": 0.45, "envMapIntensity": 0.22 },
+    "Construction Zone": { "uvRepeat": [3, 2], "normalScale": 0.6, "envMapIntensity": 0.28 }
   },
   "aliases": {
     "starter_bench": "Starter Bench",
-    "starter_dirt_mound": "Dirt Mound"
+    "starter_dirt_mound": "Dirt Mound",
+    "starter_fence": "Chain Fence",
+    "starter_interior_coffee": "Coffee Nook",
+    "starter_shop_counter": "Corner Shop",
+    "starter_interior_door": "Creaky Door",
+    "starter_construction": "Construction Zone",
+    "starter_highway": "Highway Strip",
+    "starter_lamp": "Street Lamp"
   }
 }

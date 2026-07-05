@@ -12,7 +12,9 @@ export function buildStarterEnv14() {
     const C = window.CANNON;
     if (!Engine?.scene || !THREE || !State) return { creek: null, fence: null, mound: null, power: null };
 
-    const poleMat = new THREE.MeshStandardMaterial({ color: 0x3a3e44, roughness: 0.42, metalness: 0.48 });
+    const SM = window.StarterMaterials;
+    const mats = SM?.createStarterMaterials?.(THREE);
+    const poleMat = mats?.pole || new THREE.MeshStandardMaterial({ color: 0x3a3e44, roughness: 0.42, metalness: 0.48 });
 
     // —— Creek / river ——
     const creekGroup = new THREE.Group();
@@ -61,7 +63,7 @@ export function buildStarterEnv14() {
         { x: 3.6, z: -6.0 },
     ];
     polePositions.forEach((p, i) => {
-        const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, 5.2, 8), poleMat);
+        const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, 5.2, 6), poleMat);
         pole.position.set(p.x, 2.6, p.z);
         pole.castShadow = true;
         powerGroup.add(pole);
@@ -94,7 +96,7 @@ export function buildStarterEnv14() {
     // —— Chain fence ——
     const fenceGroup = new THREE.Group();
     fenceGroup.name = 'starter_fence';
-    const fenceMat = new THREE.MeshStandardMaterial({ color: 0x6a6e72, roughness: 0.38, metalness: 0.72 });
+    const fenceMat = mats?.metal || new THREE.MeshStandardMaterial({ color: 0x6a6e72, roughness: 0.38, metalness: 0.72 });
     const postGeo = new THREE.CylinderGeometry(0.035, 0.04, 1.05, 6);
     [-1.8, -0.6, 0.6, 1.8].forEach((xOff) => {
         const post = new THREE.Mesh(postGeo, fenceMat);
@@ -126,7 +128,13 @@ export function buildStarterEnv14() {
         roughness: 0.94,
         metalness: 0.02,
         envMapIntensity: 0.2,
+        roughnessMap: mats?.noise || null,
     });
+    if (moundMat.roughnessMap) {
+        moundMat.roughnessMap.wrapS = THREE.RepeatWrapping;
+        moundMat.roughnessMap.wrapT = THREE.RepeatWrapping;
+        moundMat.roughnessMap.repeat.set(3, 3);
+    }
     const mound = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.38, 1.6), moundMat);
     mound.position.set(-3.4, 0.19, 3.6);
     mound.scale.set(1, 1, 0.85);

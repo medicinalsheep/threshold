@@ -10,8 +10,13 @@ export function buildStarterWildlife15() {
         return null;
     }
 
+    const SM = window.StarterMaterials;
     const bowlMat = new THREE.MeshStandardMaterial({ color: 0x6a5a48, roughness: 0.72, metalness: 0.12 });
-    const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.18, 0.06, 14), bowlMat);
+    const bowl = new THREE.Mesh(
+        SM?.cachedGeo?.('bowl_cyl', () => new THREE.CylinderGeometry(0.14, 0.18, 0.06, 8))
+            || new THREE.CylinderGeometry(0.14, 0.18, 0.06, 8),
+        bowlMat
+    );
     bowl.position.set(-0.55, 0.03, 0.75);
     bowl.receiveShadow = true;
     bowl.userData = {
@@ -29,7 +34,7 @@ export function buildStarterWildlife15() {
     const fur = new THREE.MeshStandardMaterial({ color: 0x4a4038, roughness: 0.88, metalness: 0.02 });
     const body = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.22, 0.55), fur);
     body.position.y = 0.18;
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 10), fur);
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.14, 8, 8), fur);
     head.position.set(0, 0.28, 0.28);
     head.scale.set(1, 0.9, 0.85);
     const earL = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.1, 4), fur);

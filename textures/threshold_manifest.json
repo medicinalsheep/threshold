@@ -1982,9 +1982,585 @@
           "maxPx": 1024
         }
       ]
+    },
+    {
+      "id": "starter_fence_tex_albedo",
+      "objectName": "Chain Fence",
+      "slot": "albedo",
+      "file": "starter_fence_tex_albedo.png",
+      "path": "textures/starter_fence_tex_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_fence_tex_albedo_512.png",
+          "path": "textures/starter_fence_tex_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_fence_tex_albedo_1k.png",
+          "path": "textures/starter_fence_tex_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_fence_tex_albedo_2k.png",
+          "path": "textures/starter_fence_tex_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_fence_tex_albedo_4k.png",
+          "path": "textures/starter_fence_tex_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_fence_tex_roughness",
+      "objectName": "Chain Fence",
+      "slot": "roughness",
+      "file": "starter_fence_tex_roughness.png",
+      "path": "textures/starter_fence_tex_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_fence_tex_roughness_512.png",
+          "path": "textures/starter_fence_tex_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_fence_tex_roughness_1k.png",
+          "path": "textures/starter_fence_tex_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_fence_tex_roughness_2k.png",
+          "path": "textures/starter_fence_tex_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_fence_tex_roughness_4k.png",
+          "path": "textures/starter_fence_tex_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_fence_tex_metalness",
+      "objectName": "Chain Fence",
+      "slot": "metalness",
+      "file": "starter_fence_tex_metalness.png",
+      "path": "textures/starter_fence_tex_metalness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_fence_tex_metalness_512.png",
+          "path": "textures/starter_fence_tex_metalness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_fence_tex_metalness_1k.png",
+          "path": "textures/starter_fence_tex_metalness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_fence_tex_metalness_2k.png",
+          "path": "textures/starter_fence_tex_metalness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_fence_tex_metalness_4k.png",
+          "path": "textures/starter_fence_tex_metalness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_fence_tex_normal",
+      "objectName": "Chain Fence",
+      "slot": "normal",
+      "file": "starter_fence_tex_normal.png",
+      "path": "textures/starter_fence_tex_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_fence_tex_normal_512.png",
+          "path": "textures/starter_fence_tex_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_fence_tex_normal_1k.png",
+          "path": "textures/starter_fence_tex_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_fence_tex_normal_2k.png",
+          "path": "textures/starter_fence_tex_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_fence_tex_normal_4k.png",
+          "path": "textures/starter_fence_tex_normal_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_coffee_albedo",
+      "objectName": "Coffee Nook",
+      "slot": "albedo",
+      "file": "starter_coffee_albedo.png",
+      "path": "textures/starter_coffee_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_coffee_albedo_512.png",
+          "path": "textures/starter_coffee_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_coffee_albedo_1k.png",
+          "path": "textures/starter_coffee_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_coffee_albedo_2k.png",
+          "path": "textures/starter_coffee_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_coffee_albedo_4k.png",
+          "path": "textures/starter_coffee_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_coffee_roughness",
+      "objectName": "Coffee Nook",
+      "slot": "roughness",
+      "file": "starter_coffee_roughness.png",
+      "path": "textures/starter_coffee_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_coffee_roughness_512.png",
+          "path": "textures/starter_coffee_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_coffee_roughness_1k.png",
+          "path": "textures/starter_coffee_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_coffee_roughness_2k.png",
+          "path": "textures/starter_coffee_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_coffee_roughness_4k.png",
+          "path": "textures/starter_coffee_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_coffee_normal",
+      "objectName": "Coffee Nook",
+      "slot": "normal",
+      "file": "starter_coffee_normal.png",
+      "path": "textures/starter_coffee_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_coffee_normal_512.png",
+          "path": "textures/starter_coffee_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_coffee_normal_1k.png",
+          "path": "textures/starter_coffee_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_coffee_normal_2k.png",
+          "path": "textures/starter_coffee_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_coffee_normal_4k.png",
+          "path": "textures/starter_coffee_normal_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_shop_albedo",
+      "objectName": "Corner Shop",
+      "slot": "albedo",
+      "file": "starter_shop_albedo.png",
+      "path": "textures/starter_shop_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_shop_albedo_512.png",
+          "path": "textures/starter_shop_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_shop_albedo_1k.png",
+          "path": "textures/starter_shop_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_shop_albedo_2k.png",
+          "path": "textures/starter_shop_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_shop_albedo_4k.png",
+          "path": "textures/starter_shop_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_shop_roughness",
+      "objectName": "Corner Shop",
+      "slot": "roughness",
+      "file": "starter_shop_roughness.png",
+      "path": "textures/starter_shop_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_shop_roughness_512.png",
+          "path": "textures/starter_shop_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_shop_roughness_1k.png",
+          "path": "textures/starter_shop_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_shop_roughness_2k.png",
+          "path": "textures/starter_shop_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_shop_roughness_4k.png",
+          "path": "textures/starter_shop_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_shop_normal",
+      "objectName": "Corner Shop",
+      "slot": "normal",
+      "file": "starter_shop_normal.png",
+      "path": "textures/starter_shop_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_shop_normal_512.png",
+          "path": "textures/starter_shop_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_shop_normal_1k.png",
+          "path": "textures/starter_shop_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_shop_normal_2k.png",
+          "path": "textures/starter_shop_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_shop_normal_4k.png",
+          "path": "textures/starter_shop_normal_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_door_tex_albedo",
+      "objectName": "Creaky Door",
+      "slot": "albedo",
+      "file": "starter_door_tex_albedo.png",
+      "path": "textures/starter_door_tex_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_door_tex_albedo_512.png",
+          "path": "textures/starter_door_tex_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_door_tex_albedo_1k.png",
+          "path": "textures/starter_door_tex_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_door_tex_albedo_2k.png",
+          "path": "textures/starter_door_tex_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_door_tex_albedo_4k.png",
+          "path": "textures/starter_door_tex_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_door_tex_roughness",
+      "objectName": "Creaky Door",
+      "slot": "roughness",
+      "file": "starter_door_tex_roughness.png",
+      "path": "textures/starter_door_tex_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_door_tex_roughness_512.png",
+          "path": "textures/starter_door_tex_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_door_tex_roughness_1k.png",
+          "path": "textures/starter_door_tex_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_door_tex_roughness_2k.png",
+          "path": "textures/starter_door_tex_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_door_tex_roughness_4k.png",
+          "path": "textures/starter_door_tex_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_door_tex_normal",
+      "objectName": "Creaky Door",
+      "slot": "normal",
+      "file": "starter_door_tex_normal.png",
+      "path": "textures/starter_door_tex_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_door_tex_normal_512.png",
+          "path": "textures/starter_door_tex_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_door_tex_normal_1k.png",
+          "path": "textures/starter_door_tex_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_door_tex_normal_2k.png",
+          "path": "textures/starter_door_tex_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_door_tex_normal_4k.png",
+          "path": "textures/starter_door_tex_normal_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_concrete_albedo",
+      "objectName": "Construction Zone",
+      "slot": "albedo",
+      "file": "starter_concrete_albedo.png",
+      "path": "textures/starter_concrete_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_concrete_albedo_512.png",
+          "path": "textures/starter_concrete_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_concrete_albedo_1k.png",
+          "path": "textures/starter_concrete_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_concrete_albedo_2k.png",
+          "path": "textures/starter_concrete_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_concrete_albedo_4k.png",
+          "path": "textures/starter_concrete_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_concrete_roughness",
+      "objectName": "Construction Zone",
+      "slot": "roughness",
+      "file": "starter_concrete_roughness.png",
+      "path": "textures/starter_concrete_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_concrete_roughness_512.png",
+          "path": "textures/starter_concrete_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_concrete_roughness_1k.png",
+          "path": "textures/starter_concrete_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_concrete_roughness_2k.png",
+          "path": "textures/starter_concrete_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_concrete_roughness_4k.png",
+          "path": "textures/starter_concrete_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_concrete_normal",
+      "objectName": "Construction Zone",
+      "slot": "normal",
+      "file": "starter_concrete_normal.png",
+      "path": "textures/starter_concrete_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_concrete_normal_512.png",
+          "path": "textures/starter_concrete_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_concrete_normal_1k.png",
+          "path": "textures/starter_concrete_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_concrete_normal_2k.png",
+          "path": "textures/starter_concrete_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_concrete_normal_4k.png",
+          "path": "textures/starter_concrete_normal_4k.png",
+          "maxPx": 1024
+        }
+      ]
     }
   ],
   "exportDir": "textures",
   "tcRealism": "r8",
-  "exportedAt": "2026-07-05T22:52:45.768Z"
+  "exportedAt": "2026-07-05T23:24:10.887Z"
 }

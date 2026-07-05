@@ -1,5 +1,13 @@
 # Changelog
 
+## 7.2.0 — Starter asset polish: low-poly, high-detail, compression pass
+
+- **Geometry** — reduced segment counts (platform 16, torus 24, shared geos); `InstancedMesh` for highway dashes + construction cones
+- **Materials** — `starterMaterials.js` shared presets + procedural canvas signs (billboard, coffee, register, tape) + noise roughness maps
+- **Textures** — 5 new PBR slugs (fence, coffee, shop, door, construction); extended `starter-textures.json` aliases
+- **Compression** — `tex:compress` sharp fallback when ffmpeg missing; `sounds:compress:wav` batch OGG script
+- **Draw calls** — shared materials across stripes, blades, birds, barrier posts
+
 ## 7.1.0 — Phase 17: Interior / RP (ambient iteration 5)
 
 - **Radio chatter** — muffled loop zone near AI Build terminal

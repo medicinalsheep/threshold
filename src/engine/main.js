@@ -54,6 +54,7 @@ import '../shared/starterInterior17.js';
 import '../shared/wildlifeAmbient.js';
 import '../shared/urbanAmbient.js';
 import '../shared/interiorAmbient.js';
+import '../shared/starterMaterials.js';
 import '../shared/starterAnim.js';
 import { bootstrapReferenceIfRequested } from '../shared/referenceEdition.js';
 import { GameExport } from '../shared/gameExport.js';

@@ -1,29 +1,5 @@
 /** Phase 16 — urban highway props: traffic lights, billboard, construction zone */
 
-function makeBillboardTexture(THREE) {
-    const size = 256;
-    const canvas = document.createElement('canvas');
-    canvas.width = size;
-    canvas.height = size;
-    const ctx = canvas.getContext('2d');
-    const bands = ['#1a4a6a', '#2a6a8a', '#e8c040', '#c84830', '#1a4a6a'];
-    const bandH = size / bands.length;
-    bands.forEach((color, i) => {
-        ctx.fillStyle = color;
-        ctx.fillRect(0, i * bandH, size, bandH);
-    });
-    ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    ctx.font = 'bold 28px system-ui,sans-serif';
-    ctx.fillText('THRESHOLD', 24, 52);
-    ctx.font = '18px system-ui,sans-serif';
-    ctx.fillText('HIGHWAY 16', 24, 82);
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.wrapS = THREE.RepeatWrapping;
-    tex.wrapT = THREE.ClampToEdgeWrapping;
-    tex.repeat.set(1.2, 1);
-    return tex;
-}
-
 export function buildStarterUrban16() {
     const Engine = window.Engine;
     const State = window.State;
@@ -34,12 +10,14 @@ export function buildStarterUrban16() {
         return null;
     }
 
-    const poleMat = new THREE.MeshStandardMaterial({ color: 0x3a3e44, roughness: 0.42, metalness: 0.48 });
+    const SM = window.StarterMaterials;
+    const mats = SM?.createStarterMaterials?.(THREE);
+    const poleMat = mats?.pole || new THREE.MeshStandardMaterial({ color: 0x3a3e44, roughness: 0.42, metalness: 0.48 });
 
     // —— Junction traffic lights ——
     const lightsGroup = new THREE.Group();
     lightsGroup.name = 'starter_traffic_lights';
-    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.4, 8), poleMat);
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.4, 6), poleMat);
     pole.position.y = 1.7;
     const housing = new THREE.Mesh(
         new THREE.BoxGeometry(0.28, 0.72, 0.22),
@@ -61,7 +39,7 @@ export function buildStarterUrban16() {
             roughness: 0.35,
             metalness: 0.1,
         });
-        const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 10), mat);
+        const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 8), mat);
         bulb.position.y = spec.y;
         bulb.userData.trafficPhase = spec.phase;
         bulbs[spec.phase] = bulb;
@@ -87,9 +65,15 @@ export function buildStarterUrban16() {
     // —— Billboard ——
     const billboardGroup = new THREE.Group();
     billboardGroup.name = 'starter_billboard';
-    const bbPole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.09, 4.2, 8), poleMat);
+    const bbPole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.09, 4.2, 6), poleMat);
     bbPole.position.y = 2.1;
-    const bbTex = makeBillboardTexture(THREE);
+    const bbTex = SM?.makeBillboardTex?.(THREE, 'THRESHOLD', 'HIGHWAY 16')
+        || new THREE.Texture();
+    if (bbTex.wrapS !== undefined) {
+        bbTex.wrapS = THREE.RepeatWrapping;
+        bbTex.wrapT = THREE.ClampToEdgeWrapping;
+        bbTex.repeat.set(1.2, 1);
+    }
     const bbFace = new THREE.Mesh(
         new THREE.PlaneGeometry(2.4, 1.35),
         new THREE.MeshStandardMaterial({
@@ -122,22 +106,34 @@ export function buildStarterUrban16() {
     const constructionGroup = new THREE.Group();
     constructionGroup.name = 'starter_construction';
     const coneMat = new THREE.MeshStandardMaterial({ color: 0xe86820, roughness: 0.72, metalness: 0.05 });
+    const tapeTex = SM?.makeTapeTex?.(THREE);
     const tapeMat = new THREE.MeshStandardMaterial({
+        map: tapeTex || null,
         color: 0xf0d030,
         emissive: 0xc0a010,
         emissiveIntensity: 0.12,
         roughness: 0.6,
     });
+    if (tapeTex) {
+        tapeTex.wrapS = THREE.RepeatWrapping;
+        tapeTex.repeat.set(3, 1);
+    }
+    const coneGeo = SM?.cachedGeo?.('cone_traffic', () => new THREE.ConeGeometry(0.14, 0.38, 6))
+        || new THREE.ConeGeometry(0.14, 0.38, 6);
+    const coneMesh = new THREE.InstancedMesh(coneGeo, coneMat, 3);
+    const coneDummy = new THREE.Object3D();
     [-0.55, 0, 0.55].forEach((xOff, i) => {
-        const cone = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.38, 8), coneMat);
-        cone.position.set(xOff, 0.19, 0);
-        cone.castShadow = true;
-        constructionGroup.add(cone);
-        if (i < 2) {
-            const tape = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.04, 0.04), tapeMat);
-            tape.position.set(xOff + 0.32, 0.28 + i * 0.12, 0);
-            constructionGroup.add(tape);
-        }
+        coneDummy.position.set(xOff, 0.19, 0);
+        coneDummy.updateMatrix();
+        coneMesh.setMatrixAt(i, coneDummy.matrix);
+    });
+    coneMesh.instanceMatrix.needsUpdate = true;
+    coneMesh.castShadow = true;
+    constructionGroup.add(coneMesh);
+    [0, 1].forEach((i) => {
+        const tape = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.04, 0.04), tapeMat);
+        tape.position.set(-0.23 + i * 0.55, 0.28 + i * 0.12, 0);
+        constructionGroup.add(tape);
     });
     const barrier = new THREE.Mesh(
         new THREE.BoxGeometry(1.6, 0.55, 0.08),
@@ -150,6 +146,7 @@ export function buildStarterUrban16() {
     constructionGroup.userData = {
         id: 'starter_construction',
         name: 'Construction Zone',
+        surfaceType: 'concrete',
         type: 'prop',
         locked: true,
         urbanHint: 'construction',

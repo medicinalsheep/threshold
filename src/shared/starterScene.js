@@ -112,7 +112,7 @@ export function bootstrapStarterScene() {
     State.objects.push(backdrop);
 
     const platform = new THREE.Mesh(
-        new THREE.CylinderGeometry(3.5, 3.8, 0.35, 32),
+        new THREE.CylinderGeometry(3.5, 3.8, 0.35, 16),
         new THREE.MeshStandardMaterial({ color: 0x2a2c30, roughness: 0.82, metalness: 0.06, envMapIntensity: 0.25 })
     );
     platform.position.set(0, 0.17, 0);
@@ -124,7 +124,7 @@ export function bootstrapStarterScene() {
     if (C) Physics?.addStaticBox?.(new C.Vec3(3.8, 0.175, 3.8), { x: 0, y: 0.175, z: 0 }, 'ground', 'concrete');
 
     const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(3.2, 0.06, 12, 48),
+        new THREE.TorusGeometry(3.2, 0.06, 8, 24),
         new THREE.MeshStandardMaterial({ color: 0x2a8844, emissive: 0x1a4428, emissiveIntensity: 0.1, roughness: 0.55 })
     );
     ring.rotation.x = Math.PI / 2;
@@ -202,9 +202,9 @@ export function bootstrapStarterScene() {
     });
     const gunTarget = new THREE.Group();
     gunTarget.name = 'gun_target';
-    const targetPost = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 1.1, 10), targetMat);
+    const targetPost = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 1.1, 6), targetMat);
     targetPost.position.y = 0.55;
-    const targetDisc = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.05, 20), targetMat);
+    const targetDisc = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.05, 12), targetMat);
     targetDisc.position.y = 1.15;
     targetDisc.rotation.x = Math.PI / 2;
     gunTarget.add(targetPost, targetDisc);
@@ -287,13 +287,15 @@ export function bootstrapStarterScene() {
     Engine.scene.add(bench);
     State.objects.push(bench);
 
-    const stripeMat = new THREE.MeshStandardMaterial({
+    const SM = window.StarterMaterials;
+    const starterMats = SM?.createStarterMaterials?.(THREE);
+    const stripeMat = starterMats?.stripe || new THREE.MeshStandardMaterial({
         color: 0xdaba44,
         roughness: 0.75,
         metalness: 0.04,
     });
     [-2.6, 0, 2.6].forEach((x, i) => {
-        const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.02, 2.8), stripeMat.clone());
+        const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.02, 2.8), stripeMat);
         stripe.position.set(x, 0.355, -3.15 + i * 0.04);
         stripe.rotation.y = i * 0.02;
         stripe.receiveShadow = true;
@@ -308,10 +310,10 @@ export function bootstrapStarterScene() {
         metalness: 0.35,
         envMapIntensity: 0.35,
     });
-    const highway = new THREE.Mesh(
-        new THREE.BoxGeometry(5.5, 0.08, 3.2),
-        new THREE.MeshStandardMaterial({ color: 0x24262a, roughness: 0.92, metalness: 0.02, envMapIntensity: 0.18 })
-    );
+    const highwayMat = starterMats?.asphalt || new THREE.MeshStandardMaterial({
+        color: 0x24262a, roughness: 0.92, metalness: 0.02, envMapIntensity: 0.18,
+    });
+    const highway = new THREE.Mesh(new THREE.BoxGeometry(5.5, 0.08, 3.2), highwayMat);
     highway.position.set(6.2, 0.04, -3.0);
     highway.receiveShadow = true;
     highway.userData = { id: 'starter_highway', name: 'Highway Strip', type: 'platform', locked: true, surfaceType: 'asphalt' };
@@ -319,28 +321,35 @@ export function bootstrapStarterScene() {
     State.objects.push(highway);
     if (C) Physics?.addStaticBox?.(new C.Vec3(2.75, 0.04, 1.6), { x: 6.2, y: 0.04, z: -3.0 }, 'ground', 'asphalt');
 
-    [-0.8, 1.4].forEach((zOff, i) => {
-        const dash = new THREE.Mesh(
-            new THREE.BoxGeometry(0.45, 0.015, 0.12),
-            new THREE.MeshStandardMaterial({ color: 0xe8d070, roughness: 0.7, emissive: 0x3a3010, emissiveIntensity: 0.08 })
-        );
-        dash.position.set(6.2 + (i % 2 ? 0.3 : -0.3), 0.09, -3.8 + zOff);
-        dash.userData = { id: `highway_dash_${i}`, name: 'Highway Marking', type: 'decor', locked: true, animDash: true };
-        Engine.scene.add(dash);
-        State.objects.push(dash);
+    const dashMat = starterMats?.dash || new THREE.MeshStandardMaterial({
+        color: 0xe8d070, roughness: 0.7, emissive: 0x3a3010, emissiveIntensity: 0.1,
     });
+    const dashGeo = SM?.cachedGeo?.('dash_box', () => new THREE.BoxGeometry(0.45, 0.015, 0.12))
+        || new THREE.BoxGeometry(0.45, 0.015, 0.12);
+    const dashMesh = new THREE.InstancedMesh(dashGeo, dashMat, 2);
+    dashMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    const dashDummy = new THREE.Object3D();
+    [-0.8, 1.4].forEach((zOff, i) => {
+        dashDummy.position.set(6.2 + (i % 2 ? 0.3 : -0.3), 0.09, -3.8 + zOff);
+        dashDummy.updateMatrix();
+        dashMesh.setMatrixAt(i, dashDummy.matrix);
+    });
+    dashMesh.instanceMatrix.needsUpdate = true;
+    dashMesh.userData = { id: 'starter_highway_dashes', name: 'Highway Marking', type: 'decor', locked: true, animDash: true };
+    Engine.scene.add(dashMesh);
+    State.objects.push(dashMesh);
 
     const lampGroup = new THREE.Group();
     lampGroup.name = 'street_lamp';
-    const poleMat = new THREE.MeshStandardMaterial({ color: 0x3a3e44, roughness: 0.4, metalness: 0.55 });
-    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.2, 8), poleMat);
+    const poleMat = starterMats?.pole || new THREE.MeshStandardMaterial({ color: 0x3a3e44, roughness: 0.4, metalness: 0.55 });
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.2, 6), poleMat);
     pole.position.y = 1.6;
     const arm = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.05, 0.05), poleMat);
     arm.position.set(0.25, 3.1, 0);
     const bulbMat = new THREE.MeshStandardMaterial({
         color: 0xfff0d8, emissive: 0xffe8c0, emissiveIntensity: 0.55, roughness: 0.3,
     });
-    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.12, 10, 10), bulbMat);
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 8), bulbMat);
     bulb.position.set(0.52, 3.05, 0);
     const lampLight = new THREE.PointLight(0xffe8c8, 0.9, 12, 1.6);
     lampLight.position.set(0.52, 2.9, 0);
@@ -352,16 +361,19 @@ export function bootstrapStarterScene() {
 
     const windmill = new THREE.Group();
     windmill.name = 'starter_windmill';
-    const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.18, 2.4, 8), poleMat);
+    const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.18, 2.4, 6), poleMat);
     tower.position.y = 1.2;
     const hub = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), poleMat);
     hub.position.y = 2.45;
+    const bladeMat = starterMats?.blade || new THREE.MeshStandardMaterial({
+        color: 0x6a7078, roughness: 0.55, metalness: 0.25,
+    });
+    const bladeGeo = SM?.cachedGeo?.('wind_blade', () => new THREE.BoxGeometry(0.08, 0.9, 0.04))
+        || new THREE.BoxGeometry(0.08, 0.9, 0.04);
     const blades = new THREE.Group();
     blades.position.y = 2.45;
     for (let b = 0; b < 3; b += 1) {
-        const blade = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.9, 0.04), new THREE.MeshStandardMaterial({
-            color: 0x6a7078, roughness: 0.55, metalness: 0.25,
-        }));
+        const blade = new THREE.Mesh(bladeGeo, bladeMat);
         blade.position.y = 0.45;
         blade.rotation.z = (b / 3) * Math.PI * 2;
         blades.add(blade);
@@ -372,25 +384,34 @@ export function bootstrapStarterScene() {
     Engine.scene.add(windmill);
     State.objects.push(windmill);
 
-    for (let b = 0; b < 4; b += 1) {
-        const bird = new THREE.Mesh(
-            new THREE.ConeGeometry(0.06, 0.18, 4),
-            new THREE.MeshStandardMaterial({ color: 0x2a2828, roughness: 0.8 })
-        );
+    const birdMat = starterMats?.bird || new THREE.MeshStandardMaterial({ color: 0x2a2828, roughness: 0.82 });
+    const birdGeo = SM?.cachedGeo?.('bird_cone', () => new THREE.ConeGeometry(0.06, 0.18, 4))
+        || new THREE.ConeGeometry(0.06, 0.18, 4);
+    const birdBases = [
+        { x: -2.5, y: 3.2, z: -5.5 },
+        { x: -1.4, y: 3.35, z: -5.8 },
+        { x: -0.3, y: 3.5, z: -6.1 },
+        { x: 0.8, y: 3.65, z: -6.4 },
+    ];
+    birdBases.forEach((base, b) => {
+        const bird = new THREE.Mesh(birdGeo, birdMat);
         bird.rotation.x = Math.PI;
-        bird.position.set(-2.5 + b * 1.1, 3.2 + b * 0.15, -5.5 - b * 0.3);
+        bird.position.set(base.x, base.y, base.z);
         bird.userData = { id: `starter_bird_${b}`, name: 'Bird', type: 'decor', locked: true, animBird: true };
         Engine.scene.add(bird);
         State.objects.push(bird);
-    }
+    });
 
     const barrier = new THREE.Group();
     barrier.name = 'starter_barrier';
-    const postL = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.95, 10), barrierMat);
+    const barrierMatUse = starterMats?.barrier || barrierMat;
+    const postGeo = SM?.cachedGeo?.('barrier_post', () => new THREE.CylinderGeometry(0.06, 0.07, 0.95, 6))
+        || new THREE.CylinderGeometry(0.06, 0.07, 0.95, 6);
+    const postL = new THREE.Mesh(postGeo, barrierMatUse);
     postL.position.set(-0.55, 0.48, -3.45);
     const postR = postL.clone();
     postR.position.x = 0.55;
-    const rail = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.07, 0.07), barrierMat);
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.07, 0.07), barrierMatUse);
     rail.position.set(0, 0.82, -3.45);
     const rail2 = rail.clone();
     rail2.position.y = 0.58;
