@@ -1039,6 +1039,7 @@ const UI = {
             if (clearBtn) UI.clearGamepadBinding(clearBtn.dataset.clearGp);
         });
         document.getElementById('btn-host-panel')?.addEventListener('click', () => UI.openHostPanel());
+        document.getElementById('host-copy-link')?.addEventListener('click', () => UI.copySessionLink());
         document.getElementById('host-panel-close')?.addEventListener('click', () => UI.closeHostPanel());
         document.getElementById('host-panel-modal')?.addEventListener('click', (e) => {
             if (e.target.id === 'host-panel-modal') UI.closeHostPanel();
@@ -1319,7 +1320,10 @@ const UI = {
     },
     updateControlsHint: function () {
         const hint = document.getElementById('controls-hint');
-        if (hint && Controls) hint.textContent = Controls.getHint() + ' · right-click menu';
+        if (hint && Controls) {
+            hint.textContent = Controls.getHint();
+            hint.title = 'Right-click or hold for scene menu';
+        }
     },
     updateGamepadStatus: function () {
         const el = document.getElementById('gamepad-status');
@@ -1360,9 +1364,13 @@ const UI = {
     renderHostPanel: function () {
         const list = document.getElementById('host-player-list');
         const roleEl = document.getElementById('host-panel-role');
+        const panelModal = document.getElementById('host-panel-modal');
+        const linkEl = document.getElementById('session-share-link');
         if (!list) return;
 
         const isHost = Network.mode === 'host';
+        panelModal?.classList.toggle('host-view', isHost);
+        if (linkEl) linkEl.value = isHost ? Network.getShareUrl() : '';
         if (roleEl) {
             roleEl.textContent = isHost ? 'You are HOST — manage players & permissions'
                 : (Session.isAdmin(Session.playerKey) ? 'You are GUEST (Admin)' : 'You are GUEST — personal bindings only');

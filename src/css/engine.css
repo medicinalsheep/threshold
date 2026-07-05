@@ -50,9 +50,12 @@ button {
 .engine-toolbar {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     margin: 10px 20px;
     gap: 10px;
+    max-width: calc(100% - 40px);
+    flex-wrap: wrap;
+    z-index: 20;
 }
 
 .engine-toolbar #mode-display {
@@ -65,6 +68,9 @@ button {
     display: flex;
     gap: 8px;
     align-items: center;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .rec-dot {
@@ -176,11 +182,21 @@ button {
 
 #controls-hint {
     position: absolute;
-    top: 70px;
-    left: 20px;
-    font-size: 0.7rem;
-    opacity: 0.5;
+    bottom: 52px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: min(92%, 640px);
+    font-size: 0.62rem;
+    opacity: 0.55;
     pointer-events: none;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 2px 8px;
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 3px;
+    z-index: 5;
 }
 
 /* Context Menu */
@@ -262,6 +278,9 @@ button {
     display: flex;
     flex-direction: column;
     gap: 2px;
+    flex: 1;
+    min-width: 0;
+    max-width: 100%;
 }
 
 #btn-host-pause.active,

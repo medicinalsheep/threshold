@@ -82,17 +82,25 @@
     line-height: 1.6;
 }
 
-#session-share-link {
+#host-panel-modal #session-share-link {
     width: 100%;
-    font-size: 0.6rem;
-    padding: 4px;
-    background: #080808;
-    color: #888;
-    border: 1px solid var(--border-color);
-    margin-top: 4px;
+    font-size: 0.65rem;
+    margin-bottom: 6px;
+}
+
+#host-panel-modal .host-only-link,
+#host-panel-modal #session-share-link,
+#host-panel-modal #host-copy-link {
     display: none;
 }
 
-.network-host #session-share-link {
+#host-panel-modal.host-view .host-only-link,
+#host-panel-modal.host-view #session-share-link,
+#host-panel-modal.host-view #host-copy-link {
     display: block;
+}
+
+#host-panel-modal.host-view .host-only-link {
+    display: block;
+    margin-bottom: 4px;
 }

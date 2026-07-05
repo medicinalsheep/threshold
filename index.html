@@ -96,7 +96,6 @@
                         <button id="btn-host-pause" class="btn-sm" disabled>PAUSE</button>
                         <button id="btn-host-panel" class="btn-sm" style="display:none;" title="Host / players">PLAYERS</button>
                     </div>
-                    <input type="text" id="session-share-link" readonly>
                 </div>
                 <div class="toolbar-actions">
                     <span id="sim-mode-badge" class="sim-mode-badge edit">EDIT</span>
@@ -300,6 +299,9 @@
                     <button id="host-panel-close">✕</button>
                 </div>
                 <p id="host-panel-role" class="insert-hint">Session roles & permissions</p>
+                <label class="insert-hint host-only-link">Invite link</label>
+                <input type="text" id="session-share-link" class="insert-input" readonly placeholder="Create session to get link">
+                <button id="host-copy-link" type="button" class="insert-action secondary">COPY INVITE LINK</button>
                 <div id="host-player-list"></div>
                 <hr style="border-color:var(--border-color); margin:12px 0;">
                 <label class="insert-hint"><input type="checkbox" id="host-auto-coding-pause" checked> Auto-pause when host opens Compiler / PromptGen</label>
