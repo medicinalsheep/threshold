@@ -1,6 +1,6 @@
 # Threshold documentation index
 
-**Version:** 6.8.0 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 6.9.0 · **Live:** https://medicinalsheep.github.io/threshold/
 
 This page is the **full scope map** — what ships today, what is TC vs starter vs yours, and where to read more.
 
@@ -78,6 +78,7 @@ flowchart TB
 | **12** | 6.6.0 | Real weather + combat SFX, user recording tags, `WeatherSystem` |
 | **13** | 6.7.0 | Manifest audio cache, weather multiplayer sync, pointer/pause hardening |
 | **14** | 6.8.0 | Creek, power lines, fence rattle, dirt mound + dust |
+| **15** | 6.9.0 | Dog/cat wildlife, cicadas/crickets, owl, fish splash |
 
 Earlier phases (export, TC, circuit, Steam): [NEXT_PHASES.md](NEXT_PHASES.md) · [CHANGELOG.md](CHANGELOG.md)
 

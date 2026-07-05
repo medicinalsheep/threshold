@@ -193,6 +193,10 @@ export const Sync = {
                     window.buildStarterEnv14?.();
                     window.StarterEnv14?.wireAnims?.();
                 }
+                if (isStarterWorld && !window.State?.objects?.some((o) => o.userData?.id === 'starter_wildlife_cat')) {
+                    window.buildStarterWildlife15?.();
+                    window.StarterWildlife15?.wireAnims?.();
+                }
             }
             if (state.weather) {
                 window.WeatherSystem?.applyNetworkState?.(state.weather, { smooth: false });

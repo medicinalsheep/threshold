@@ -381,6 +381,86 @@ function synthPowerHum(sec = 3.0) {
     return out;
 }
 
+function synthCicadaLoop(sec = 3.5) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const pulse = Math.max(0, Math.sin(2 * Math.PI * 42 * t)) ** 4;
+        const tone = Math.sin(2 * Math.PI * 4200 * t) * 0.08
+            + Math.sin(2 * Math.PI * 5100 * t) * 0.05;
+        const noise = (Math.random() * 2 - 1) * 0.04;
+        out[i] = (tone + noise) * pulse * 0.55;
+    }
+    return out;
+}
+
+function synthCricketsLoop(sec = 4.0) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const chirp = Math.sin(2 * Math.PI * 38 * t + Math.sin(t * 5) * 2);
+        const pulse = Math.max(0, chirp) ** 6;
+        const tone = Math.sin(2 * Math.PI * (3800 + Math.sin(t * 2.5) * 400) * t) * 0.07;
+        const bed = (Math.random() * 2 - 1) * 0.025;
+        out[i] = (tone * pulse + bed) * 0.48;
+    }
+    return out;
+}
+
+function synthDogBark(sec = 0.35) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const env = Math.exp(-t * 9);
+        const bark = Math.sin(2 * Math.PI * (280 - t * 120) * t) * 0.55;
+        const noise = (Math.random() * 2 - 1) * 0.25;
+        out[i] = (bark + noise) * env * 0.7;
+    }
+    return out;
+}
+
+function synthCatMeow(sec = 0.55) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const env = Math.exp(-t * 4.5);
+        const meow = Math.sin(2 * Math.PI * (520 + t * 380) * t) * 0.45;
+        const cry = Math.sin(2 * Math.PI * 1040 * t) * 0.12 * Math.exp(-t * 6);
+        out[i] = (meow + cry) * env * 0.62;
+    }
+    return out;
+}
+
+function synthOwlHoot(sec = 0.9) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const h1 = t < 0.22 ? Math.sin(2 * Math.PI * 320 * t) * 0.5 : 0;
+        const h2 = t > 0.28 && t < 0.5 ? Math.sin(2 * Math.PI * 280 * (t - 0.28)) * 0.42 : 0;
+        const env = Math.exp(-t * 3.2);
+        out[i] = (h1 + h2) * env * 0.65;
+    }
+    return out;
+}
+
+function synthFishSplash(sec = 0.28) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const env = Math.exp(-t * 14);
+        const splash = (Math.random() * 2 - 1) * 0.5;
+        const drip = Math.sin(2 * Math.PI * (180 + t * 200) * t) * 0.2;
+        out[i] = (splash + drip) * env * 0.55;
+    }
+    return out;
+}
+
 function synthFenceRattle(sec = 0.42) {
     const n = Math.floor(SR * sec);
     const out = new Float32Array(n);
@@ -403,6 +483,12 @@ const CLIPS = [
     { id: 'starter_amb_creek', name: 'Creek Water', file: 'amb_creek', synth: synthCreekLoop, category: 'ambient' },
     { id: 'starter_amb_power_hum', name: 'Power Line Hum', file: 'amb_power_hum', synth: synthPowerHum, category: 'ambient' },
     { id: 'starter_fence_rattle', name: 'Fence Chain Rattle', file: 'fence_rattle', synth: synthFenceRattle, category: 'ambient' },
+    { id: 'starter_amb_cicada', name: 'Cicadas (day)', file: 'amb_cicada', synth: synthCicadaLoop, category: 'ambient' },
+    { id: 'starter_amb_crickets', name: 'Crickets (night)', file: 'amb_crickets', synth: synthCricketsLoop, category: 'ambient' },
+    { id: 'starter_wildlife_dog_bark', name: 'Dog Bark', file: 'wildlife_dog_bark', synth: synthDogBark, category: 'wildlife' },
+    { id: 'starter_wildlife_cat_meow', name: 'Cat Meow', file: 'wildlife_cat_meow', synth: synthCatMeow, category: 'wildlife' },
+    { id: 'starter_wildlife_owl_hoot', name: 'Owl Hoot', file: 'wildlife_owl_hoot', synth: synthOwlHoot, category: 'wildlife' },
+    { id: 'starter_wildlife_fish_splash', name: 'Fish Splash', file: 'wildlife_fish_splash', synth: synthFishSplash, category: 'wildlife' },
 ];
 
 function tryCompress(wavPath, oggPath) {

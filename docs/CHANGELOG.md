@@ -1,5 +1,16 @@
 # Changelog
 
+## 6.9.0 — Phase 15: Wildlife & life (ambient iteration 3)
+
+- **Dog bark** — proximity to Sam (mechanic NPC) + dog bowl prop
+- **Alley cat** — meow when near west alley; tail sway anim
+- **Cicadas / crickets** — grass-patch loops swap by time of day (day / dusk / night)
+- **Owl hoot** — evening and night one-shots
+- **Fish splash** — random splashes when near creek
+- **Time-of-day** — `Environment.setTimeOfDay` fires `threshold:timeofday` for wildlife
+- **Module** — `wildlifeAmbient.js` + `starterWildlife15.js`
+- Docs: [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iteration 3 shipped
+
 ## 6.8.0 — Phase 14: Ambient iteration 2b (environment)
 
 - **Creek** — water plane west edge, babble loop, proximity zone audio

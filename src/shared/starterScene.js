@@ -498,8 +498,10 @@ export function bootstrapStarterScene() {
         if (tex.maps) window.UI?.status?.(`Starter textures applied (${tex.maps} maps)`);
     });
     window.buildStarterEnv14?.();
+    window.buildStarterWildlife15?.();
     window.StarterAnim?.wireScene?.();
     window.StarterEnv14?.wireAnims?.();
+    window.StarterWildlife15?.wireAnims?.();
 
     if (terminal && modelKiosk) {
         window.UI?.status?.('FiveM controls — creek & power lines · rain rolling in · World.setWeather()');

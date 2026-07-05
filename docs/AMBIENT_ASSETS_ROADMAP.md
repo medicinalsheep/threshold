@@ -43,20 +43,21 @@ Queued additions for the starter scene and TC editions — **one asset at a time
 
 ---
 
-## Iteration 3 — Wildlife & life (queued)
+## Iteration 3 — Wildlife & life (shipped 6.9.0)
 
 | Asset | Notes |
 |-------|-------|
-| **Dog bark** | Proximity trigger near NPC |
-| **Cat meow** | Alley spawn point |
-| **Crickets night** | Time-of-day swap with cicadas |
-| **Owl hoot** | Evening only |
+| **Dog bark** | Near Sam (`mechanic_npc`) + dog bowl prop |
+| **Cat meow** | Alley cat west of backdrop |
+| **Cicadas (day)** | Grass patch zone loop · 6:00–18:00 |
+| **Crickets (night)** | Grass patch swap · 21:00–6:00 · dusk blend |
+| **Owl hoot** | Evening/night random one-shots |
+| **Fish splash** | Creek proximity when near water |
 | **Flies / bees** | Near garbage prop (future) |
-| **Fish splash** | If water added |
 
 ---
 
-## Iteration 4 — Urban / highway
+## Iteration 4 — Urban / highway (queued)
 
 | Asset | Notes |
 |-------|-------|

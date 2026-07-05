@@ -48,6 +48,8 @@ import '../shared/weatherSystem.js';
 import '../shared/recordedAmbient.js';
 import '../shared/starterAudio.js';
 import '../shared/starterEnv14.js';
+import '../shared/starterWildlife15.js';
+import '../shared/wildlifeAmbient.js';
 import '../shared/starterAnim.js';
 import { bootstrapReferenceIfRequested } from '../shared/referenceEdition.js';
 import { GameExport } from '../shared/gameExport.js';
@@ -590,6 +592,7 @@ const Environment = {
 
     setTimeOfDay: function (hours) {
         State.env.timeOfDay = hours;
+        window.dispatchEvent(new CustomEvent('threshold:timeofday', { detail: { hours } }));
         const label = document.getElementById('env-time-label');
         const h = Math.floor(hours);
         const m = Math.round((hours - h) * 60);

@@ -733,6 +733,78 @@
       "oggBytes": null,
       "preferred": "wav",
       "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_amb_cicada",
+      "name": "Cicadas (day)",
+      "wav": "sounds/starter/amb_cicada.wav",
+      "ogg": null,
+      "category": "ambient",
+      "vehicle": null,
+      "bytes": 154394,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_amb_crickets",
+      "name": "Crickets (night)",
+      "wav": "sounds/starter/amb_crickets.wav",
+      "ogg": null,
+      "category": "ambient",
+      "vehicle": null,
+      "bytes": 176444,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_wildlife_dog_bark",
+      "name": "Dog Bark",
+      "wav": "sounds/starter/wildlife_dog_bark.wav",
+      "ogg": null,
+      "category": "wildlife",
+      "vehicle": null,
+      "bytes": 15478,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_wildlife_cat_meow",
+      "name": "Cat Meow",
+      "wav": "sounds/starter/wildlife_cat_meow.wav",
+      "ogg": null,
+      "category": "wildlife",
+      "vehicle": null,
+      "bytes": 24298,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_wildlife_owl_hoot",
+      "name": "Owl Hoot",
+      "wav": "sounds/starter/wildlife_owl_hoot.wav",
+      "ogg": null,
+      "category": "wildlife",
+      "vehicle": null,
+      "bytes": 39734,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_wildlife_fish_splash",
+      "name": "Fish Splash",
+      "wav": "sounds/starter/wildlife_fish_splash.wav",
+      "ogg": null,
+      "category": "wildlife",
+      "vehicle": null,
+      "bytes": 12392,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
     }
   ],
   "realAmbient": true,

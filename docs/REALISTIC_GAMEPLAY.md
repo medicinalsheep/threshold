@@ -2,7 +2,7 @@
 
 Threshold ships a **walk/drive action control** template in the SOLO lobby. Use it as the baseline for shooters, RPGs, and vehicle scenes.
 
-**Current default version:** v6.8.0 — FiveM controls, creek/power-line ambience, weather sync (Phase 14)
+**Current default version:** v6.9.0 — FiveM controls, wildlife ambience, weather sync (Phase 15)
 
 ---
 
@@ -143,6 +143,18 @@ Build your game by replacing props, keeping the control + physics + asset pipeli
 **First clone?** Run `npm run quickstart -- --pack` then `assets:verify` before `preview`.
 
 ---
+
+## Phase 15 additions (v6.9)
+
+| Feature | Notes |
+|---------|-------|
+| Dog bark | Near Sam (mechanic) when you walk close |
+| Alley cat | West alley — meow + tail sway |
+| Cicadas / crickets | Grass patch — swaps with ENV time slider |
+| Owl | Evening/night hoots |
+| Fish splash | Random splashes at the creek |
+
+Try **ENV panel → Time** to dusk (19:00) or night (22:00) for crickets and owl.
 
 ## Phase 14 additions (v6.8)
 

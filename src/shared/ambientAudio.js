@@ -47,6 +47,7 @@ export const AmbientAudio = {
         await this._playLoop('starter_amb_power_hum', 0.08, '_powerHandle');
         await delay(520);
         window.RecordedAmbient?.start?.();
+        await window.WildlifeAmbient?.startStaggered?.();
     },
 
     stop() {
@@ -57,6 +58,7 @@ export const AmbientAudio = {
         });
         window.WeatherSystem?.stop?.();
         window.RecordedAmbient?.stop?.();
+        window.WildlifeAmbient?.stop?.();
     },
 
     async _playLoop(clipId, vol, key) {
@@ -107,6 +109,7 @@ export const AmbientAudio = {
 
         window.WeatherSystem?.tick?.(dt);
         window.RecordedAmbient?.tick?.();
+        window.WildlifeAmbient?.tick?.(dt);
     },
 };
 

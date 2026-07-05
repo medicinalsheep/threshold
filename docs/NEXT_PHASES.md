@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v6.8.0 — Phase 14 Ambient iteration 2b (creek, power lines, fence, dirt mound).
+**Current:** v6.9.0 — Phase 15 Wildlife & life (dog, cat, crickets, owl, fish splash).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -472,16 +472,25 @@ await World.playCutscene('video/intro.mp4', {
 | 14.3 Fence chain rattle on wind gusts | ✅ |
 | 14.4 Dirt mound + dust particles + `dirt` texture | ✅ |
 
-### Phase 15 — Wildlife & life (queued · v6.9)
+### Phase 15 — Wildlife & life (v6.9.0) ✅
 
 | Step | Status |
 |------|--------|
-| 15.1 Dog bark proximity near NPC | ⏳ |
-| 15.2 Cat meow alley spawn | ⏳ |
-| 15.3 Crickets night / owl evening | ⏳ |
-| 15.4 Fish splash (creek hook) | ⏳ |
+| 15.1 Dog bark proximity near Sam + bowl prop | ✅ |
+| 15.2 Cat meow alley spawn + tail anim | ✅ |
+| 15.3 Cicadas day / crickets night time swap | ✅ |
+| 15.4 Owl evening + fish splash at creek | ✅ |
 
-See [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iterations 3–5.
+### Phase 16 — Urban / highway (queued · v7.0)
+
+| Step | Status |
+|------|--------|
+| 16.1 Semi truck Doppler pass | ⏳ |
+| 16.2 Motorcycle quick pass | ⏳ |
+| 16.3 Distant siren + construction beep | ⏳ |
+| 16.4 Traffic lights + billboard UV | ⏳ |
+
+See [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iterations 4–5.
 
 ```bash
 npm run quickstart
