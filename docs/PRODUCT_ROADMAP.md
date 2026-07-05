@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → add AI agents to NPCs and your dev workflow.
 
-**Current version:** 2.1.0 (foundation) → **3.x** (packaged exports) → **4.x** (Steam + commercial tier)
+**Current version:** 2.2.0 (foundation + walkthrough) → **3.x** (packaged exports) → **4.x** (Steam + commercial tier)
 
 ---
 
@@ -35,16 +35,17 @@
 
 ## Phase map
 
-### Phase 1 — Foundation (v2.1, **now**)
+### Phase 1 — Foundation (v2.2, **complete**)
 
 - [x] Game export manifest (`.threshold-game.json`) — world + scripts + build hints
 - [x] Relay config via env (`VITE_PEER_HOST`, ICE servers)
 - [x] `relay/` PeerJS server scaffold + AWS free-tier deploy notes
 - [x] **Agents** dock tab: Grok Dev, Grok NPC, Local Script
 - [x] Workflow entries: export, relay, agents
-- [ ] PWA manifest (light)
+- [x] First-session walkthrough (8 steps) + MORE → TUTORIAL replay
+- [ ] PWA manifest (light) — deferred to Phase 2 shell work
 
-### Phase 2 — Native shells (v3.0)
+### Phase 2 — Native shells (v3.0, **next**)
 
 - [ ] **Capacitor** — Android APK from `dist-pages`
 - [ ] **Electron** or **Tauri** — Windows `.exe`, macOS `.app`

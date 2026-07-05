@@ -435,7 +435,7 @@ body.console-hidden .console-restore-tab {
     z-index: 5;
 }
 
-.engine-welcome {
+.engine-walkthrough {
     position: fixed;
     inset: 0;
     z-index: 35;
@@ -444,43 +444,120 @@ body.console-hidden .console-restore-tab {
     justify-content: center;
     padding: 24px;
     pointer-events: none;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent 55%);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent 50%);
 }
 
-.engine-welcome.hidden {
+.engine-walkthrough.hidden {
     display: none;
 }
 
-.engine-welcome-card {
+.engine-walkthrough-card {
     pointer-events: auto;
-    max-width: 420px;
+    max-width: 440px;
     width: 100%;
-    padding: 16px 18px !important;
+    padding: 14px 16px !important;
     border-color: var(--accent-color) !important;
-    animation: welcomeSlide 0.5s ease-out;
+    animation: welcomeSlide 0.45s ease-out;
 }
 
-.engine-welcome-card h3 {
+.engine-walkthrough-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.walkthrough-step-label {
+    font-size: 0.62rem;
+    letter-spacing: 1px;
+    color: #888;
+}
+
+.walkthrough-skip {
+    opacity: 0.85;
+}
+
+.engine-walkthrough-card h3 {
     margin: 0 0 8px;
     color: var(--accent-color);
     letter-spacing: 1px;
+    font-size: 0.95rem;
 }
 
-.engine-welcome-card p {
-    margin: 0 0 6px;
+.engine-walkthrough-card p {
+    margin: 0 0 8px;
     font-size: 0.72rem;
-    line-height: 1.5;
+    line-height: 1.55;
     color: #bbb;
 }
 
-#engine-welcome-dismiss {
-    width: 100%;
-    margin-top: 10px;
+.engine-walkthrough-card code {
+    font-size: 0.68rem;
+    color: #ddd;
+}
+
+.walkthrough-action {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.walkthrough-action.hidden {
+    display: none;
+}
+
+.walkthrough-action-btn {
+    flex: 1 1 auto;
+    min-width: 120px;
+}
+
+.engine-walkthrough-nav {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.engine-walkthrough-nav button {
+    flex: 1;
+    min-height: 40px;
+}
+
+#walkthrough-next {
     background: var(--accent-color) !important;
     color: #000 !important;
     border: none !important;
-    padding: 10px !important;
-    min-height: 44px;
+}
+
+#walkthrough-back:disabled {
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.walkthrough-dots {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.walkthrough-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #444;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.walkthrough-dot.active {
+    background: var(--accent-color);
+    transform: scale(1.2);
+}
+
+.walkthrough-highlight {
+    outline: 2px solid var(--accent-color) !important;
+    outline-offset: 2px;
+    box-shadow: 0 0 12px rgba(255, 51, 102, 0.45);
 }
 
 @keyframes welcomeSlide {

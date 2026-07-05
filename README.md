@@ -17,10 +17,23 @@ A collaborative 3D creative playground — design worlds, generate code with AI,
 ```
 Lobby → Engine (3D world) ↔ Compiler (code) ↔ PromptGen (AI prompts)
               ↓
-     Insert · SFX recordings · floating panels · PLAY/EDIT
+     First visit: 8-step tutorial · replay via MORE → TUTORIAL
+              ↓
+     Insert · SFX · AI agents · EXPORT manifest · PLAY/EDIT
               ↓
      Share link → friends join → keep building together
 ```
+
+### First session (recommended)
+
+1. **Lobby → SOLO PLAY** — starter scene loads (platform, beacon, Guide NPC).
+2. **Tutorial** — 8-step overlay on first visit; skip anytime or **MORE → TUTORIAL** to replay.
+3. **EDIT** — drag **TOOLS** / **SCENE** panels; use **+** to insert; **SCENE → AI** for Grok NPC or switch to **PromptGen**.
+4. **PLAY** — resume simulation; test walk/fly and physics.
+5. **SAVE WORLD** — **MORE** menu; share `?world=CODE` links.
+6. **EXPORT** — **MORE → EXPORT** downloads `.threshold-game.json` for future APK / Windows / Steam packaging ([roadmap](docs/PRODUCT_ROADMAP.md)).
+
+Deeper workflows: Compiler sidebar → **WORKFLOWS** (Quick Start, agents, relay, sounds).
 
 ---
 
@@ -207,7 +220,15 @@ Optional env (`.env` / build modes):
 
 ---
 
-## Product roadmap (v2.1+)
+## Sponsors
+
+Support ongoing development:
+
+**[github.com/sponsors/medicinalsheep](https://github.com/sponsors/medicinalsheep)**
+
+---
+
+## Product roadmap (v2.2+)
 
 **Design → Play → Ship → Scale**
 

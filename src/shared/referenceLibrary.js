@@ -7,19 +7,34 @@ export const REFERENCE_LIBRARY = {
         {
             id: 'quick_start',
             title: 'Quick Start — Solo Game in 10 Steps',
-            summary: 'Lobby → build world (EDIT) → save → code → PLAY. Full loop for first playable scene.',
-            checklist: ['Start SOLO or HOST', 'Stay in EDIT (paused) while building', 'SAVE WORLD before big experiments', 'RUN CODE only when paused (host/admin)'],
+            summary: 'Lobby → in-engine tutorial → build (EDIT) → AI → PLAY → export. Full loop for first playable scene.',
+            checklist: ['Start SOLO or HOST', 'First visit: engine TUTORIAL (MORE → TUTORIAL to replay)', 'Stay in EDIT while building', 'MORE → EXPORT when ready to ship'],
             code: `// WORKFLOW (not runnable — follow in UI):
 // 1. Lobby → SOLO PLAY (or CREATE SESSION + copy link)
-// 2. ENGINE → EDIT badge (paused) — fly with WASD, right-click INSERT
-// 3. INSERT → SPAWN AS PLAYER for walkable avatar
-// 4. Build props: Compiler → Techniques → "Extend Scene" → RUN IN ENGINE
-// 5. Select objects → inspector Texture / Collision / Audio tabs
-// 6. SAVE WORLD (toolbar) — get ?world=CODE link
-// 7. PromptGen → describe idea → paste AI output in Compiler
+// 2. ENGINE → first-session walkthrough (8 steps) — skip or replay via MORE → TUTORIAL
+// 3. EDIT badge (paused) — fly WASD, + insert, right-click INSERT
+// 4. INSERT → SPAWN AS PLAYER for walkable avatar
+// 5. SCENE → AI: attach Grok to Guide NPC — OR PromptGen → Compiler
+// 6. Build props: Compiler → Techniques → "Extend Scene" → RUN IN ENGINE
+// 7. SAVE WORLD (MORE) — get ?world=CODE link
 // 8. CHECK CODE READY → RUN IN ENGINE (stays paused in EDIT)
-// 9. Toolbar PLAY (resume) — test walk + physics
-// 10. SAVE PROJECT in Compiler vault — script + world snapshot together`
+// 9. Toolbar PLAY — test walk + physics
+// 10. MORE → EXPORT manifest + SAVE PROJECT in Compiler vault`
+        },
+        {
+            id: 'first_session_walkthrough',
+            title: 'First Session Walkthrough (in-engine)',
+            summary: '8-step tutorial on first Engine visit: panels, EDIT/PLAY, build, AI paths, export.',
+            checklist: ['Auto-starts once per browser', 'MORE → TUTORIAL to replay', 'Step 5: Guide+AI or PromptGen', 'Step 7: SAVE WORLD + EXPORT manifest'],
+            code: `// Tutorial steps (engine overlay):
+// 1. Welcome + starter scene (Guide NPC, platform)
+// 2. Drag TOOLS / SCENE panels · LOCK headers
+// 3. EDIT vs PLAY badge
+// 4. Optional: "Add tutorial block" action
+// 5. "Guide + AI tab" OR "Open PromptGen"
+// 6. PLAY to playtest · WASD / FLY toggle
+// 7. MORE → SAVE WORLD · MORE → EXPORT (.threshold-game.json)
+// 8. Done — Compiler WORKFLOWS for deeper patterns`
         },
         {
             id: 'save_and_resume',

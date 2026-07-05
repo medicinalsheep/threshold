@@ -31,6 +31,7 @@ import { GameExport } from '../shared/gameExport.js';
 import { AgentHub } from '../shared/agentHub.js';
 import { NpcAgent } from '../grok/npcAgent.js';
 import { DevAgent } from '../grok/devAgent.js';
+import { Walkthrough } from '../shared/walkthrough.js';
 
 const IS_TOUCH_DEVICE = window.matchMedia('(pointer: coarse)').matches;
 
@@ -105,7 +106,7 @@ export function initEngine() {
         setTimeout(() => bootstrapStarterScene(), 120);
     }
 
-    UI.showWelcomeIfNeeded();
+    Walkthrough.startIfNeeded();
 }
 
 // --- GLOBAL STATE ---
@@ -1230,6 +1231,10 @@ const UI = {
         });
 
         document.getElementById('btn-export-game')?.addEventListener('click', () => UI.exportGamePackage());
+        document.getElementById('btn-restart-walkthrough')?.addEventListener('click', () => {
+            document.getElementById('toolbar-more-menu')?.classList.remove('open');
+            Walkthrough.restart();
+        });
         document.getElementById('agent-attach-npc')?.addEventListener('click', () => UI.attachNpcAgent());
         document.getElementById('agent-npc-talk')?.addEventListener('click', () => UI.talkToNpcAgent());
         document.getElementById('agent-dev-suggest')?.addEventListener('click', () => UI.devAgentSuggest());
@@ -1515,15 +1520,7 @@ const UI = {
         AgentHub.setConfig('local', { enabled: intervalMs > 0 && script.trim(), script, intervalMs });
         this.status(intervalMs > 0 ? 'Local agent saved — running on interval' : 'Local agent disabled');
     },
-    showWelcomeIfNeeded: function () {
-        if (ViewPrefs.get('welcomeSeen', false)) return;
-        const el = document.getElementById('engine-welcome');
-        el?.classList.remove('hidden');
-        document.getElementById('engine-welcome-dismiss')?.addEventListener('click', () => {
-            el?.classList.add('hidden');
-            ViewPrefs.set('welcomeSeen', true);
-        }, { once: true });
-    },
+
     setConsoleBarVisible: function (visible, persist = true) {
         document.body.classList.toggle('console-visible', visible);
         document.body.classList.toggle('console-hidden', !visible);

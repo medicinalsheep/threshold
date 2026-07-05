@@ -96,12 +96,20 @@
         </div>
 
         <!-- 3. UI Overlay Layer -->
-        <div id="engine-welcome" class="engine-welcome hidden">
-            <div class="engine-welcome-card panel">
-                <h3>WELCOME</h3>
-                <p>Drag <strong>TOOLS</strong> and <strong>SCENE</strong> panels anywhere · LOCK when set.</p>
-                <p>Tap <strong>PLAY</strong> to walk · <strong>+</strong> to insert · <strong>SFX</strong> / <strong>AI</strong> agents · <strong>EXPORT</strong> when ready to ship.</p>
-                <button id="engine-welcome-dismiss" type="button">GOT IT</button>
+        <div id="engine-walkthrough" class="engine-walkthrough hidden" role="dialog" aria-labelledby="walkthrough-title">
+            <div class="engine-walkthrough-card panel">
+                <div class="engine-walkthrough-header">
+                    <span id="walkthrough-step-label" class="walkthrough-step-label">1 / 8</span>
+                    <button id="walkthrough-skip" type="button" class="btn-sm walkthrough-skip">SKIP</button>
+                </div>
+                <h3 id="walkthrough-title">Welcome</h3>
+                <p id="walkthrough-body"></p>
+                <div id="walkthrough-action" class="walkthrough-action hidden"></div>
+                <div class="engine-walkthrough-nav">
+                    <button id="walkthrough-back" type="button" class="btn-sm">BACK</button>
+                    <button id="walkthrough-next" type="button">NEXT</button>
+                </div>
+                <div id="walkthrough-dots" class="walkthrough-dots" aria-hidden="true"></div>
             </div>
         </div>
 
@@ -141,6 +149,7 @@
                         <button id="btn-console-toggle" class="btn-sm" type="button" title="Toggle command console">CON</button>
                         <button id="btn-touch-toggle" class="btn-sm mobile-only" type="button" title="Toggle touch controls">TOUCH</button>
                         <button id="btn-export-game" class="btn-sm" type="button" title="Export game package manifest">EXPORT</button>
+                        <button id="btn-restart-walkthrough" class="btn-sm" type="button" title="Replay first-session tutorial">TUTORIAL</button>
                     </div>
                 </div>
                 </div>
