@@ -292,7 +292,22 @@ npm run tc:gen:vid   # pip install pillow imageio imageio-ffmpeg
 # Lobby → TC → → intro plays once · ESC to skip
 ```
 
-**Next (S1):** export E2E → `store:prep` / `package:*`.
+### Phase S1 — TC export E2E ship path (v5.12) ✅
+
+| Step | Status |
+|------|--------|
+| S1.1 `tc-export-manifest.cjs` — TC Show `.threshold-game.json` | ✅ |
+| S1.2 `npm run tc:ship` — build → bundle → manifest → `store:prep` | ✅ |
+| S1.3 `npm run tc:ship:verify` — dist-store + bundle + preview smoke | ✅ |
+| S1.4 `exports/tc-show.threshold-game.json` whitelisted in git | ✅ |
+
+```bash
+npm run tc:ship
+npm run tc:ship:verify -- --preview-smoke   # uses preview on :4173 if running
+npm run package:win                           # optional — heavy Electron build
+```
+
+**Next:** G1 multiplayer lap sync smoke.
 
 ### Phase G1 — TC Circuit game-dev path (v5.8.1) ✅
 
@@ -301,7 +316,7 @@ npm run tc:gen:vid   # pip install pillow imageio imageio-ffmpeg
 | G1.1 `referenceLibrary.js` workflow — lap timer + `tc_cp` checkpoint | ✅ |
 | G1.2 PromptGen extends TC scene without `World.clearWorld()` | ✅ |
 
-**Next:** Multiplayer lap sync smoke, export E2E (S1).
+**Next:** Multiplayer lap sync smoke.
 
 ### Phase K — Cinematic layer (v4.9) ✅
 

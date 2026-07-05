@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **5.8.0**)
+**Version:** `src/config.js` → `VERSION` (currently **5.12.0**)
 
 ---
 
@@ -46,6 +46,9 @@ npm run reference:fetch        # Dev-only CC0 seeds → reference/_dev-seeds/ (g
 npm run tc:build               # tc_*.glb veh+chr (Blender or Node)
 npm run tc:gen:veh             # veh GLB only
 npm run tc:gen:chr             # chr GLB only
+npm run tc:export:manifest     # TC Show .threshold-game.json
+npm run tc:ship                # E2E: build → bundle → store:prep
+npm run tc:ship:verify         # verify dist-store + bundle (+ --preview-smoke)
 ```
 
 ---

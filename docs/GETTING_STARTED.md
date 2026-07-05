@@ -75,6 +75,15 @@ Detail: [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md)
 
 ## Ship checklist
 
+**TC Show (automated — no browser EXPORT wizard):**
+
+```bash
+npm run tc:ship
+npm run tc:ship:verify -- --preview-smoke   # optional HTTP smoke on :4173
+```
+
+**Custom game (MORE → EXPORT wizard):**
+
 ```bash
 # After EXPORT → download my-game.threshold-game.json
 npm run store:prep -- --manifest my-game.threshold-game.json --contact you@example.com

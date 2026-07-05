@@ -34,6 +34,13 @@ const VIDEO_SCRIPTS = [
     'plugins/threshold-video/build_tc_intro.py',
     'scripts/tc-gen-vid.cjs',
 ];
+
+const SHIP_SCRIPTS = [
+    'scripts/tc-export-lib.cjs',
+    'scripts/tc-export-manifest.cjs',
+    'scripts/tc-ship-e2e.cjs',
+    'scripts/tc-ship-verify.cjs',
+];
 const VIDEO_DIR = path.join(ROOT, 'video');
 const PUB_VID = path.join(ROOT, 'public', 'bundle', 'video');
 
@@ -76,6 +83,9 @@ GIMP_SCRIPTS.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`mi
 
 console.log('[tc-verify] video R7');
 VIDEO_SCRIPTS.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`missing ${f}`)));
+
+console.log('[tc-verify] ship S1');
+SHIP_SCRIPTS.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`missing ${f}`)));
 
 console.log('[tc-verify] modules');
 MODULES.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`missing ${f}`)));

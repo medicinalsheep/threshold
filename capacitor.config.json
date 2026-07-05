@@ -1,6 +1,6 @@
 {
-  "appId": "com.threshold.suite",
-  "appName": "Threshold",
+  "appId": "com.threshold.tc",
+  "appName": "TC Show",
   "webDir": "dist-pages",
   "server": {
     "androidScheme": "https",

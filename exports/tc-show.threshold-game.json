@@ -1,0 +1,1947 @@
+{
+  "format": "threshold-game",
+  "formatVersion": 1,
+  "engineVersion": "5.12.0",
+  "exportedAt": "2026-07-05T09:31:46.631Z",
+  "source": "tc-export-manifest",
+  "tcEdition": "tc-show",
+  "game": {
+    "name": "TC Show",
+    "description": "TC showcase — full EXPORT demo (veh+chr GLB+LOD, SFX, textures, intro cutscene).",
+    "author": "Threshold"
+  },
+  "branding": {
+    "bundleId": "com.threshold.tc",
+    "iconPath": "icons/appicon512.png",
+    "iconCustomized": false,
+    "checklist": {
+      "replacedAppIcon": false,
+      "ranBuildIcons": false,
+      "ranCapAssets": false
+    }
+  },
+  "credits": {
+    "global": "Original TC assets — Threshold Child showcase edition.",
+    "entries": {
+      "tc_span": {
+        "id": "tc_span",
+        "label": "TC Span",
+        "kind": "scene",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC procedural",
+        "storeSku": "tc.scene.span",
+        "registryUri": "threshold://com.threshold.tc/a/span"
+      },
+      "tc_run": {
+        "id": "tc_run",
+        "label": "TC Runner",
+        "kind": "vehicle",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC GLB+LOD",
+        "storeSku": "tc.vehicle.run",
+        "registryUri": "threshold://com.threshold.tc/a/run"
+      },
+      "tc_haul": {
+        "id": "tc_haul",
+        "label": "TC Hauler",
+        "kind": "vehicle",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC GLB+LOD",
+        "storeSku": "tc.vehicle.haul",
+        "registryUri": "threshold://com.threshold.tc/a/haul"
+      },
+      "tc_msh": {
+        "id": "tc_msh",
+        "label": "TC Marshal",
+        "kind": "character",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC GLB or HumanMesh",
+        "storeSku": "tc.character.msh",
+        "registryUri": "threshold://com.threshold.tc/a/msh"
+      },
+      "tc_mec": {
+        "id": "tc_mec",
+        "label": "TC Mechanic",
+        "kind": "character",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC GLB or HumanMesh",
+        "storeSku": "tc.character.mec",
+        "registryUri": "threshold://com.threshold.tc/a/mec"
+      },
+      "tc_sfx_imp": {
+        "id": "tc_sfx_imp",
+        "label": "TC Impact",
+        "kind": "sound",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC synth",
+        "storeSku": "tc.sound.imp",
+        "registryUri": "threshold://com.threshold.tc/a/imp"
+      },
+      "tc_sfx_ft": {
+        "id": "tc_sfx_ft",
+        "label": "TC Footstep",
+        "kind": "sound",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC synth",
+        "storeSku": "tc.sound.ft",
+        "registryUri": "threshold://com.threshold.tc/a/ft"
+      },
+      "tc_sfx_eng": {
+        "id": "tc_sfx_eng",
+        "label": "TC Engine",
+        "kind": "sound",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC synth",
+        "storeSku": "tc.sound.eng",
+        "registryUri": "threshold://com.threshold.tc/a/eng"
+      },
+      "tc_sfx_cp": {
+        "id": "tc_sfx_cp",
+        "label": "TC Checkpoint",
+        "kind": "sound",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC synth",
+        "storeSku": "tc.sound.cp",
+        "registryUri": "threshold://com.threshold.tc/a/cp"
+      },
+      "tc_sfx_go": {
+        "id": "tc_sfx_go",
+        "label": "TC Start",
+        "kind": "sound",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC synth",
+        "storeSku": "tc.sound.go",
+        "registryUri": "threshold://com.threshold.tc/a/go"
+      },
+      "tc_cp": {
+        "id": "tc_cp",
+        "label": "TC Checkpoint",
+        "kind": "scene",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC show prop",
+        "storeSku": "tc.scene.cp",
+        "registryUri": "threshold://com.threshold.tc/a/cp"
+      },
+      "tc_tex_run": {
+        "id": "tc_tex_run",
+        "label": "TC Runner PBR",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "tc-gen-tex r6",
+        "storeSku": "tc.texture.tc_runner_pbr",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_runner_pbr"
+      },
+      "tc_tex_haul": {
+        "id": "tc_tex_haul",
+        "label": "TC Hauler PBR",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "tc-gen-tex r6",
+        "storeSku": "tc.texture.tc_hauler_pbr",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_hauler_pbr"
+      },
+      "tc_tex_msh": {
+        "id": "tc_tex_msh",
+        "label": "TC Marshal PBR",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "tc-gen-tex r6",
+        "storeSku": "tc.texture.tc_marshal_pbr",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_marshal_pbr"
+      },
+      "tc_tex_mec": {
+        "id": "tc_tex_mec",
+        "label": "TC Mechanic PBR",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "tc-gen-tex r6",
+        "storeSku": "tc.texture.tc_mechanic_pbr",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_mechanic_pbr"
+      },
+      "tc_tex_span": {
+        "id": "tc_tex_span",
+        "label": "TC Span PBR",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "tc-gen-tex r6",
+        "storeSku": "tc.texture.tc_span_pbr",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_span_pbr"
+      },
+      "tc_intro": {
+        "id": "tc_intro",
+        "label": "TC Intro Cutscene",
+        "kind": "video",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "video/tc_intro.webm",
+        "storeSku": "tc.video.intro",
+        "registryUri": "threshold://com.threshold.tc/a/intro"
+      },
+      "tc_run_albedo": {
+        "id": "tc_run_albedo",
+        "label": "TC Runner",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_runner",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_runner"
+      },
+      "tc_run_roughness": {
+        "id": "tc_run_roughness",
+        "label": "TC Runner",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_runner",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_runner"
+      },
+      "tc_run_metalness": {
+        "id": "tc_run_metalness",
+        "label": "TC Runner",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_runner",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_runner"
+      },
+      "tc_haul_albedo": {
+        "id": "tc_haul_albedo",
+        "label": "TC Hauler",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_hauler",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_hauler"
+      },
+      "tc_haul_roughness": {
+        "id": "tc_haul_roughness",
+        "label": "TC Hauler",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_hauler",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_hauler"
+      },
+      "tc_haul_metalness": {
+        "id": "tc_haul_metalness",
+        "label": "TC Hauler",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_hauler",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_hauler"
+      },
+      "tc_msh_albedo": {
+        "id": "tc_msh_albedo",
+        "label": "TC Marshal",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_marshal",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_marshal"
+      },
+      "tc_msh_roughness": {
+        "id": "tc_msh_roughness",
+        "label": "TC Marshal",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_marshal",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_marshal"
+      },
+      "tc_mec_albedo": {
+        "id": "tc_mec_albedo",
+        "label": "TC Mechanic",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_mechanic",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_mechanic"
+      },
+      "tc_mec_roughness": {
+        "id": "tc_mec_roughness",
+        "label": "TC Mechanic",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_mechanic",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_mechanic"
+      },
+      "tc_span_albedo": {
+        "id": "tc_span_albedo",
+        "label": "TC Span",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_span",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_span"
+      },
+      "tc_span_roughness": {
+        "id": "tc_span_roughness",
+        "label": "TC Span",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_span",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_span"
+      },
+      "video/tc_intro.webm": {
+        "id": "video/tc_intro.webm",
+        "label": "tc_intro.webm",
+        "kind": "video",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.video.tc_intro_webm",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_intro_webm"
+      },
+      "video/tc_intro.mp4": {
+        "id": "video/tc_intro.mp4",
+        "label": "tc_intro.mp4",
+        "kind": "video",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.video.tc_intro_mp4",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_intro_mp4"
+      }
+    }
+  },
+  "assetRegistry": {
+    "format": "threshold-asset-registry",
+    "formatVersion": 2,
+    "game": "TC Show",
+    "author": "Threshold",
+    "bundleId": "com.threshold.tc",
+    "inventory": {
+      "objects": 6,
+      "sounds": 5,
+      "textures": 12,
+      "models": 4,
+      "videos": 2,
+      "hilodGroups": 12
+    },
+    "assets": [
+      {
+        "id": "tc_span",
+        "label": "TC Span",
+        "kind": "scene",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC procedural",
+        "storeSku": "tc.scene.span",
+        "registryUri": "threshold://com.threshold.tc/a/span"
+      },
+      {
+        "id": "tc_run",
+        "label": "TC Runner",
+        "kind": "vehicle",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC GLB+LOD",
+        "storeSku": "tc.vehicle.run",
+        "registryUri": "threshold://com.threshold.tc/a/run"
+      },
+      {
+        "id": "tc_haul",
+        "label": "TC Hauler",
+        "kind": "vehicle",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC GLB+LOD",
+        "storeSku": "tc.vehicle.haul",
+        "registryUri": "threshold://com.threshold.tc/a/haul"
+      },
+      {
+        "id": "tc_msh",
+        "label": "TC Marshal",
+        "kind": "character",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC GLB or HumanMesh",
+        "storeSku": "tc.character.msh",
+        "registryUri": "threshold://com.threshold.tc/a/msh"
+      },
+      {
+        "id": "tc_mec",
+        "label": "TC Mechanic",
+        "kind": "character",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC GLB or HumanMesh",
+        "storeSku": "tc.character.mec",
+        "registryUri": "threshold://com.threshold.tc/a/mec"
+      },
+      {
+        "id": "tc_sfx_imp",
+        "label": "TC Impact",
+        "kind": "sound",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC synth",
+        "storeSku": "tc.sound.imp",
+        "registryUri": "threshold://com.threshold.tc/a/imp"
+      },
+      {
+        "id": "tc_sfx_ft",
+        "label": "TC Footstep",
+        "kind": "sound",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC synth",
+        "storeSku": "tc.sound.ft",
+        "registryUri": "threshold://com.threshold.tc/a/ft"
+      },
+      {
+        "id": "tc_sfx_eng",
+        "label": "TC Engine",
+        "kind": "sound",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC synth",
+        "storeSku": "tc.sound.eng",
+        "registryUri": "threshold://com.threshold.tc/a/eng"
+      },
+      {
+        "id": "tc_sfx_cp",
+        "label": "TC Checkpoint",
+        "kind": "sound",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC synth",
+        "storeSku": "tc.sound.cp",
+        "registryUri": "threshold://com.threshold.tc/a/cp"
+      },
+      {
+        "id": "tc_sfx_go",
+        "label": "TC Start",
+        "kind": "sound",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC synth",
+        "storeSku": "tc.sound.go",
+        "registryUri": "threshold://com.threshold.tc/a/go"
+      },
+      {
+        "id": "tc_cp",
+        "label": "TC Checkpoint",
+        "kind": "scene",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "TC show prop",
+        "storeSku": "tc.scene.cp",
+        "registryUri": "threshold://com.threshold.tc/a/cp"
+      },
+      {
+        "id": "tc_tex_run",
+        "label": "TC Runner PBR",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "tc-gen-tex r6",
+        "storeSku": "tc.texture.tc_runner_pbr",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_runner_pbr"
+      },
+      {
+        "id": "tc_tex_haul",
+        "label": "TC Hauler PBR",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "tc-gen-tex r6",
+        "storeSku": "tc.texture.tc_hauler_pbr",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_hauler_pbr"
+      },
+      {
+        "id": "tc_tex_msh",
+        "label": "TC Marshal PBR",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "tc-gen-tex r6",
+        "storeSku": "tc.texture.tc_marshal_pbr",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_marshal_pbr"
+      },
+      {
+        "id": "tc_tex_mec",
+        "label": "TC Mechanic PBR",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "tc-gen-tex r6",
+        "storeSku": "tc.texture.tc_mechanic_pbr",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_mechanic_pbr"
+      },
+      {
+        "id": "tc_tex_span",
+        "label": "TC Span PBR",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "tc-gen-tex r6",
+        "storeSku": "tc.texture.tc_span_pbr",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_span_pbr"
+      },
+      {
+        "id": "tc_intro",
+        "label": "TC Intro Cutscene",
+        "kind": "video",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "video/tc_intro.webm",
+        "storeSku": "tc.video.intro",
+        "registryUri": "threshold://com.threshold.tc/a/intro"
+      },
+      {
+        "id": "tc_run_albedo",
+        "label": "TC Runner",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_runner",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_runner"
+      },
+      {
+        "id": "tc_run_roughness",
+        "label": "TC Runner",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_runner",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_runner"
+      },
+      {
+        "id": "tc_run_metalness",
+        "label": "TC Runner",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_runner",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_runner"
+      },
+      {
+        "id": "tc_haul_albedo",
+        "label": "TC Hauler",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_hauler",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_hauler"
+      },
+      {
+        "id": "tc_haul_roughness",
+        "label": "TC Hauler",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_hauler",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_hauler"
+      },
+      {
+        "id": "tc_haul_metalness",
+        "label": "TC Hauler",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_hauler",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_hauler"
+      },
+      {
+        "id": "tc_msh_albedo",
+        "label": "TC Marshal",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_marshal",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_marshal"
+      },
+      {
+        "id": "tc_msh_roughness",
+        "label": "TC Marshal",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_marshal",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_marshal"
+      },
+      {
+        "id": "tc_mec_albedo",
+        "label": "TC Mechanic",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_mechanic",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_mechanic"
+      },
+      {
+        "id": "tc_mec_roughness",
+        "label": "TC Mechanic",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_mechanic",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_mechanic"
+      },
+      {
+        "id": "tc_span_albedo",
+        "label": "TC Span",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_span",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_span"
+      },
+      {
+        "id": "tc_span_roughness",
+        "label": "TC Span",
+        "kind": "texture",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.texture.tc_span",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_span"
+      },
+      {
+        "id": "video/tc_intro.webm",
+        "label": "tc_intro.webm",
+        "kind": "video",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.video.tc_intro_webm",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_intro_webm"
+      },
+      {
+        "id": "video/tc_intro.mp4",
+        "label": "tc_intro.mp4",
+        "kind": "video",
+        "author": "Threshold",
+        "license": "Original — TC",
+        "source": "",
+        "storeSku": "tc.video.tc_intro_mp4",
+        "registryUri": "threshold://com.threshold.tc/asset/tc_intro_mp4"
+      }
+    ],
+    "branding": {
+      "bundleId": "com.threshold.tc",
+      "iconPath": "icons/appicon512.png",
+      "iconCustomized": false,
+      "checklist": {
+        "replacedAppIcon": false,
+        "ranBuildIcons": false,
+        "ranCapAssets": false
+      }
+    },
+    "globalCredits": "Original TC assets — Threshold Child showcase edition.",
+    "storeAssets": {
+      "format": "threshold-store-assets",
+      "version": 2,
+      "status": "mapped",
+      "mappedCount": 31,
+      "platforms": {
+        "play": {
+          "label": "Google Play",
+          "productTypes": [
+            "managed",
+            "subscription"
+          ],
+          "outputFile": "play-in-app-products.json",
+          "docs": "Play Console → Monetize → Products → Create product with SKU"
+        },
+        "steam": {
+          "label": "Steam",
+          "outputFile": "steam-depot-assets.json",
+          "docs": "Steamworks → App Admin → Depots → upload bundle/ paths via steamcmd"
+        },
+        "itch": {
+          "label": "itch.io",
+          "outputFile": "itch-asset-packs.json",
+          "docs": "itch.io → Edit game → Upload DLC / separate files per pack"
+        },
+        "registry": {
+          "label": "Collectible registry",
+          "outputFile": "collectible-registry.json",
+          "uriScheme": "threshold://",
+          "docs": "Optional registryUri per asset — IPFS, on-chain metadata, or threshold:// pointer"
+        }
+      },
+      "opportunity": {
+        "registryEnabled": true,
+        "steam": {
+          "appId": "",
+          "depotId": ""
+        },
+        "play": {
+          "applicationId": "com.threshold.tc"
+        },
+        "itch": {
+          "gameSlug": "tc-show"
+        },
+        "packs": []
+      },
+      "packs": [
+        {
+          "id": "scene-pack",
+          "label": "Scene pack",
+          "kind": "scene",
+          "assetIds": [
+            "tc_span",
+            "tc_cp"
+          ],
+          "storeSku": "tc.scenes",
+          "playSku": "scenes_pack",
+          "steamDepotSubdir": "bundle/scenes/",
+          "itchPackId": "tc-show-scenes"
+        },
+        {
+          "id": "vehicle-pack",
+          "label": "Vehicle pack",
+          "kind": "vehicle",
+          "assetIds": [
+            "tc_run",
+            "tc_haul"
+          ],
+          "storeSku": "tc.vehicles",
+          "playSku": "vehicles_pack",
+          "steamDepotSubdir": "bundle/vehicles/",
+          "itchPackId": "tc-show-vehicles"
+        },
+        {
+          "id": "character-pack",
+          "label": "Character pack",
+          "kind": "character",
+          "assetIds": [
+            "tc_msh",
+            "tc_mec"
+          ],
+          "storeSku": "tc.characters",
+          "playSku": "characters_pack",
+          "steamDepotSubdir": "bundle/characters/",
+          "itchPackId": "tc-show-characters"
+        },
+        {
+          "id": "sound-pack",
+          "label": "Sound pack",
+          "kind": "sound",
+          "assetIds": [
+            "tc_sfx_imp",
+            "tc_sfx_ft",
+            "tc_sfx_eng",
+            "tc_sfx_cp",
+            "tc_sfx_go"
+          ],
+          "storeSku": "tc.sounds",
+          "playSku": "sounds_pack",
+          "steamDepotSubdir": "bundle/sounds/",
+          "itchPackId": "tc-show-sounds"
+        },
+        {
+          "id": "texture-pack",
+          "label": "Texture pack",
+          "kind": "texture",
+          "assetIds": [
+            "tc_tex_run",
+            "tc_tex_haul",
+            "tc_tex_msh",
+            "tc_tex_mec",
+            "tc_tex_span",
+            "tc_run_albedo",
+            "tc_run_roughness",
+            "tc_run_metalness",
+            "tc_haul_albedo",
+            "tc_haul_roughness",
+            "tc_haul_metalness",
+            "tc_msh_albedo",
+            "tc_msh_roughness",
+            "tc_mec_albedo",
+            "tc_mec_roughness",
+            "tc_span_albedo",
+            "tc_span_roughness"
+          ],
+          "storeSku": "tc.textures",
+          "playSku": "textures_pack",
+          "steamDepotSubdir": "bundle/textures/",
+          "itchPackId": "tc-show-textures"
+        },
+        {
+          "id": "video-pack",
+          "label": "Video pack",
+          "kind": "video",
+          "assetIds": [
+            "tc_intro",
+            "video/tc_intro.webm",
+            "video/tc_intro.mp4"
+          ],
+          "storeSku": "tc.videos",
+          "playSku": "videos_pack",
+          "steamDepotSubdir": "bundle/videos/",
+          "itchPackId": "tc-show-videos"
+        }
+      ],
+      "items": [
+        {
+          "assetId": "tc_span",
+          "label": "TC Span",
+          "kind": "scene",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.scene.span",
+          "registryUri": "threshold://com.threshold.tc/a/span",
+          "play": {
+            "sku": "tc.scene.span",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-scene-tc_span"
+          }
+        },
+        {
+          "assetId": "tc_run",
+          "label": "TC Runner",
+          "kind": "vehicle",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.vehicle.run",
+          "registryUri": "threshold://com.threshold.tc/a/run",
+          "play": {
+            "sku": "tc.vehicle.run",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-vehicle-tc_runner"
+          }
+        },
+        {
+          "assetId": "tc_haul",
+          "label": "TC Hauler",
+          "kind": "vehicle",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.vehicle.haul",
+          "registryUri": "threshold://com.threshold.tc/a/haul",
+          "play": {
+            "sku": "tc.vehicle.haul",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-vehicle-tc_hauler"
+          }
+        },
+        {
+          "assetId": "tc_msh",
+          "label": "TC Marshal",
+          "kind": "character",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.character.msh",
+          "registryUri": "threshold://com.threshold.tc/a/msh",
+          "play": {
+            "sku": "tc.character.msh",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-character-tc_marshal"
+          }
+        },
+        {
+          "assetId": "tc_mec",
+          "label": "TC Mechanic",
+          "kind": "character",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.character.mec",
+          "registryUri": "threshold://com.threshold.tc/a/mec",
+          "play": {
+            "sku": "tc.character.mec",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-character-tc_mechanic"
+          }
+        },
+        {
+          "assetId": "tc_sfx_imp",
+          "label": "TC Impact",
+          "kind": "sound",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.sound.imp",
+          "registryUri": "threshold://com.threshold.tc/a/imp",
+          "play": {
+            "sku": "tc.sound.imp",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-sound-tc_impact"
+          }
+        },
+        {
+          "assetId": "tc_sfx_ft",
+          "label": "TC Footstep",
+          "kind": "sound",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.sound.ft",
+          "registryUri": "threshold://com.threshold.tc/a/ft",
+          "play": {
+            "sku": "tc.sound.ft",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-sound-tc_footstep"
+          }
+        },
+        {
+          "assetId": "tc_sfx_eng",
+          "label": "TC Engine",
+          "kind": "sound",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.sound.eng",
+          "registryUri": "threshold://com.threshold.tc/a/eng",
+          "play": {
+            "sku": "tc.sound.eng",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-sound-tc_engine"
+          }
+        },
+        {
+          "assetId": "tc_sfx_cp",
+          "label": "TC Checkpoint",
+          "kind": "sound",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.sound.cp",
+          "registryUri": "threshold://com.threshold.tc/a/cp",
+          "play": {
+            "sku": "tc.sound.cp",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-sound-tc_checkpoint"
+          }
+        },
+        {
+          "assetId": "tc_sfx_go",
+          "label": "TC Start",
+          "kind": "sound",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.sound.go",
+          "registryUri": "threshold://com.threshold.tc/a/go",
+          "play": {
+            "sku": "tc.sound.go",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-sound-tc_start"
+          }
+        },
+        {
+          "assetId": "tc_cp",
+          "label": "TC Checkpoint",
+          "kind": "scene",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.scene.cp",
+          "registryUri": "threshold://com.threshold.tc/a/cp",
+          "play": {
+            "sku": "tc.scene.cp",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-scene-tc_checkpoint"
+          }
+        },
+        {
+          "assetId": "tc_tex_run",
+          "label": "TC Runner PBR",
+          "kind": "texture",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.texture.tc_runner_pbr",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_runner_pbr",
+          "play": {
+            "sku": "tc.texture.tc_runner_pbr",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-texture-tc_runner_pbr"
+          }
+        },
+        {
+          "assetId": "tc_tex_haul",
+          "label": "TC Hauler PBR",
+          "kind": "texture",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.texture.tc_hauler_pbr",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_hauler_pbr",
+          "play": {
+            "sku": "tc.texture.tc_hauler_pbr",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-texture-tc_hauler_pbr"
+          }
+        },
+        {
+          "assetId": "tc_tex_msh",
+          "label": "TC Marshal PBR",
+          "kind": "texture",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.texture.tc_marshal_pbr",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_marshal_pbr",
+          "play": {
+            "sku": "tc.texture.tc_marshal_pbr",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-texture-tc_marshal_pbr"
+          }
+        },
+        {
+          "assetId": "tc_tex_mec",
+          "label": "TC Mechanic PBR",
+          "kind": "texture",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.texture.tc_mechanic_pbr",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_mechanic_pbr",
+          "play": {
+            "sku": "tc.texture.tc_mechanic_pbr",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-texture-tc_mechanic_pbr"
+          }
+        },
+        {
+          "assetId": "tc_tex_span",
+          "label": "TC Span PBR",
+          "kind": "texture",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.texture.tc_span_pbr",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_span_pbr",
+          "play": {
+            "sku": "tc.texture.tc_span_pbr",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-texture-tc_span_pbr"
+          }
+        },
+        {
+          "assetId": "tc_intro",
+          "label": "TC Intro Cutscene",
+          "kind": "video",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.video.intro",
+          "registryUri": "threshold://com.threshold.tc/a/intro",
+          "play": {
+            "sku": "tc.video.intro",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-video-tc_intro_cutscene"
+          }
+        },
+        {
+          "assetId": "tc_run_albedo",
+          "label": "TC Runner",
+          "kind": "texture",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.texture.tc_runner",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_runner",
+          "play": {
+            "sku": "tc.texture.tc_runner",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-texture-tc_runner"
+          }
+        },
+        {
+          "assetId": "tc_run_roughness",
+          "label": "TC Runner",
+          "kind": "texture",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.texture.tc_runner",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_runner",
+          "play": {
+            "sku": "tc.texture.tc_runner",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-texture-tc_runner"
+          }
+        },
+        {
+          "assetId": "tc_run_metalness",
+          "label": "TC Runner",
+          "kind": "texture",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.texture.tc_runner",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_runner",
+          "play": {
+            "sku": "tc.texture.tc_runner",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-texture-tc_runner"
+          }
+        },
+        {
+          "assetId": "tc_haul_albedo",
+          "label": "TC Hauler",
+          "kind": "texture",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.texture.tc_hauler",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_hauler",
+          "play": {
+            "sku": "tc.texture.tc_hauler",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-texture-tc_hauler"
+          }
+        },
+        {
+          "assetId": "tc_haul_roughness",
+          "label": "TC Hauler",
+          "kind": "texture",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.texture.tc_hauler",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_hauler",
+          "play": {
+            "sku": "tc.texture.tc_hauler",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-texture-tc_hauler"
+          }
+        },
+        {
+          "assetId": "tc_haul_metalness",
+          "label": "TC Hauler",
+          "kind": "texture",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.texture.tc_hauler",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_hauler",
+          "play": {
+            "sku": "tc.texture.tc_hauler",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-texture-tc_hauler"
+          }
+        },
+        {
+          "assetId": "tc_msh_albedo",
+          "label": "TC Marshal",
+          "kind": "texture",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.texture.tc_marshal",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_marshal",
+          "play": {
+            "sku": "tc.texture.tc_marshal",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-texture-tc_marshal"
+          }
+        },
+        {
+          "assetId": "tc_msh_roughness",
+          "label": "TC Marshal",
+          "kind": "texture",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.texture.tc_marshal",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_marshal",
+          "play": {
+            "sku": "tc.texture.tc_marshal",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-texture-tc_marshal"
+          }
+        },
+        {
+          "assetId": "tc_mec_albedo",
+          "label": "TC Mechanic",
+          "kind": "texture",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.texture.tc_mechanic",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_mechanic",
+          "play": {
+            "sku": "tc.texture.tc_mechanic",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-texture-tc_mechanic"
+          }
+        },
+        {
+          "assetId": "tc_mec_roughness",
+          "label": "TC Mechanic",
+          "kind": "texture",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.texture.tc_mechanic",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_mechanic",
+          "play": {
+            "sku": "tc.texture.tc_mechanic",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-texture-tc_mechanic"
+          }
+        },
+        {
+          "assetId": "tc_span_albedo",
+          "label": "TC Span",
+          "kind": "texture",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.texture.tc_span",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_span",
+          "play": {
+            "sku": "tc.texture.tc_span",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-texture-tc_span"
+          }
+        },
+        {
+          "assetId": "tc_span_roughness",
+          "label": "TC Span",
+          "kind": "texture",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.texture.tc_span",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_span",
+          "play": {
+            "sku": "tc.texture.tc_span",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-texture-tc_span"
+          }
+        },
+        {
+          "assetId": "video/tc_intro.webm",
+          "label": "tc_intro.webm",
+          "kind": "video",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.video.tc_intro_webm",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_intro_webm",
+          "play": {
+            "sku": "tc.video.tc_intro_webm",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-video-tc_intro_webm"
+          }
+        },
+        {
+          "assetId": "video/tc_intro.mp4",
+          "label": "tc_intro.mp4",
+          "kind": "video",
+          "license": "Original — TC",
+          "author": "Threshold",
+          "storeSku": "tc.video.tc_intro_mp4",
+          "registryUri": "threshold://com.threshold.tc/asset/tc_intro_mp4",
+          "play": {
+            "sku": "tc.video.tc_intro_mp4",
+            "productType": "managed"
+          },
+          "steam": null,
+          "itch": {
+            "packId": "tc-show-video-tc_intro_mp4"
+          }
+        }
+      ]
+    }
+  },
+  "assetOpportunity": {
+    "registryEnabled": true,
+    "steam": {
+      "appId": "",
+      "depotId": ""
+    },
+    "play": {
+      "applicationId": "com.threshold.tc"
+    },
+    "itch": {
+      "gameSlug": "tc-show"
+    },
+    "packs": []
+  },
+  "store": {
+    "contactEmail": "",
+    "supportUrl": "",
+    "privacyPolicyUrl": ""
+  },
+  "exportWalkthrough": {
+    "version": 2,
+    "docs": "docs/EXPORT_WALKTHROUGH.md",
+    "storeAssetsDocs": "docs/STORE_ASSETS.md",
+    "steps": [
+      "info",
+      "branding",
+      "content",
+      "credits",
+      "review",
+      "targets",
+      "store",
+      "packs",
+      "package"
+    ]
+  },
+  "targets": {
+    "web": true,
+    "android": true,
+    "windows": true,
+    "ios": false,
+    "steam": false
+  },
+  "videos": [
+    {
+      "id": "tc_intro",
+      "label": "TC Intro",
+      "file": "tc_intro.webm",
+      "path": "video/tc_intro.webm",
+      "format": "webm",
+      "tcEd": "tc-show",
+      "license": "Original — TC",
+      "realism": "r7",
+      "durationSec": 3.6,
+      "resolution": [
+        640,
+        352
+      ],
+      "trigger": "lobby-tc",
+      "api": "World.playCutscene('video/tc_intro.webm', { skippable: true })"
+    }
+  ],
+  "textures": [
+    {
+      "id": "tc_run_albedo",
+      "objectName": "TC Runner",
+      "slot": "albedo",
+      "file": "tc_run_albedo.png",
+      "path": "textures/tc_run_albedo.png",
+      "tcEd": "tc-veh",
+      "license": "Original — TC",
+      "realism": "r6",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "tc_run_albedo_512.png",
+          "path": "textures/tc_run_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "tc_run_albedo_1k.png",
+          "path": "textures/tc_run_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "tc_run_albedo_2k.png",
+          "path": "textures/tc_run_albedo_2k.png",
+          "maxPx": 512
+        }
+      ]
+    },
+    {
+      "id": "tc_run_roughness",
+      "objectName": "TC Runner",
+      "slot": "roughness",
+      "file": "tc_run_roughness.png",
+      "path": "textures/tc_run_roughness.png",
+      "tcEd": "tc-veh",
+      "license": "Original — TC",
+      "realism": "r6",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "tc_run_roughness_512.png",
+          "path": "textures/tc_run_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "tc_run_roughness_1k.png",
+          "path": "textures/tc_run_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "tc_run_roughness_2k.png",
+          "path": "textures/tc_run_roughness_2k.png",
+          "maxPx": 512
+        }
+      ]
+    },
+    {
+      "id": "tc_run_metalness",
+      "objectName": "TC Runner",
+      "slot": "metalness",
+      "file": "tc_run_metalness.png",
+      "path": "textures/tc_run_metalness.png",
+      "tcEd": "tc-veh",
+      "license": "Original — TC",
+      "realism": "r6",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "tc_run_metalness_512.png",
+          "path": "textures/tc_run_metalness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "tc_run_metalness_1k.png",
+          "path": "textures/tc_run_metalness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "tc_run_metalness_2k.png",
+          "path": "textures/tc_run_metalness_2k.png",
+          "maxPx": 512
+        }
+      ]
+    },
+    {
+      "id": "tc_haul_albedo",
+      "objectName": "TC Hauler",
+      "slot": "albedo",
+      "file": "tc_haul_albedo.png",
+      "path": "textures/tc_haul_albedo.png",
+      "tcEd": "tc-veh",
+      "license": "Original — TC",
+      "realism": "r6",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "tc_haul_albedo_512.png",
+          "path": "textures/tc_haul_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "tc_haul_albedo_1k.png",
+          "path": "textures/tc_haul_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "tc_haul_albedo_2k.png",
+          "path": "textures/tc_haul_albedo_2k.png",
+          "maxPx": 512
+        }
+      ]
+    },
+    {
+      "id": "tc_haul_roughness",
+      "objectName": "TC Hauler",
+      "slot": "roughness",
+      "file": "tc_haul_roughness.png",
+      "path": "textures/tc_haul_roughness.png",
+      "tcEd": "tc-veh",
+      "license": "Original — TC",
+      "realism": "r6",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "tc_haul_roughness_512.png",
+          "path": "textures/tc_haul_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "tc_haul_roughness_1k.png",
+          "path": "textures/tc_haul_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "tc_haul_roughness_2k.png",
+          "path": "textures/tc_haul_roughness_2k.png",
+          "maxPx": 512
+        }
+      ]
+    },
+    {
+      "id": "tc_haul_metalness",
+      "objectName": "TC Hauler",
+      "slot": "metalness",
+      "file": "tc_haul_metalness.png",
+      "path": "textures/tc_haul_metalness.png",
+      "tcEd": "tc-veh",
+      "license": "Original — TC",
+      "realism": "r6",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "tc_haul_metalness_512.png",
+          "path": "textures/tc_haul_metalness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "tc_haul_metalness_1k.png",
+          "path": "textures/tc_haul_metalness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "tc_haul_metalness_2k.png",
+          "path": "textures/tc_haul_metalness_2k.png",
+          "maxPx": 512
+        }
+      ]
+    },
+    {
+      "id": "tc_msh_albedo",
+      "objectName": "TC Marshal",
+      "slot": "albedo",
+      "file": "tc_msh_albedo.png",
+      "path": "textures/tc_msh_albedo.png",
+      "tcEd": "tc-chr",
+      "license": "Original — TC",
+      "realism": "r6",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "tc_msh_albedo_512.png",
+          "path": "textures/tc_msh_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "tc_msh_albedo_1k.png",
+          "path": "textures/tc_msh_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "tc_msh_albedo_2k.png",
+          "path": "textures/tc_msh_albedo_2k.png",
+          "maxPx": 512
+        }
+      ]
+    },
+    {
+      "id": "tc_msh_roughness",
+      "objectName": "TC Marshal",
+      "slot": "roughness",
+      "file": "tc_msh_roughness.png",
+      "path": "textures/tc_msh_roughness.png",
+      "tcEd": "tc-chr",
+      "license": "Original — TC",
+      "realism": "r6",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "tc_msh_roughness_512.png",
+          "path": "textures/tc_msh_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "tc_msh_roughness_1k.png",
+          "path": "textures/tc_msh_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "tc_msh_roughness_2k.png",
+          "path": "textures/tc_msh_roughness_2k.png",
+          "maxPx": 512
+        }
+      ]
+    },
+    {
+      "id": "tc_mec_albedo",
+      "objectName": "TC Mechanic",
+      "slot": "albedo",
+      "file": "tc_mec_albedo.png",
+      "path": "textures/tc_mec_albedo.png",
+      "tcEd": "tc-chr",
+      "license": "Original — TC",
+      "realism": "r6",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "tc_mec_albedo_512.png",
+          "path": "textures/tc_mec_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "tc_mec_albedo_1k.png",
+          "path": "textures/tc_mec_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "tc_mec_albedo_2k.png",
+          "path": "textures/tc_mec_albedo_2k.png",
+          "maxPx": 512
+        }
+      ]
+    },
+    {
+      "id": "tc_mec_roughness",
+      "objectName": "TC Mechanic",
+      "slot": "roughness",
+      "file": "tc_mec_roughness.png",
+      "path": "textures/tc_mec_roughness.png",
+      "tcEd": "tc-chr",
+      "license": "Original — TC",
+      "realism": "r6",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "tc_mec_roughness_512.png",
+          "path": "textures/tc_mec_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "tc_mec_roughness_1k.png",
+          "path": "textures/tc_mec_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "tc_mec_roughness_2k.png",
+          "path": "textures/tc_mec_roughness_2k.png",
+          "maxPx": 512
+        }
+      ]
+    },
+    {
+      "id": "tc_span_albedo",
+      "objectName": "TC Span",
+      "slot": "albedo",
+      "file": "tc_span_albedo.png",
+      "path": "textures/tc_span_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r6",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "tc_span_albedo_512.png",
+          "path": "textures/tc_span_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "tc_span_albedo_1k.png",
+          "path": "textures/tc_span_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "tc_span_albedo_2k.png",
+          "path": "textures/tc_span_albedo_2k.png",
+          "maxPx": 512
+        }
+      ]
+    },
+    {
+      "id": "tc_span_roughness",
+      "objectName": "TC Span",
+      "slot": "roughness",
+      "file": "tc_span_roughness.png",
+      "path": "textures/tc_span_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r6",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "tc_span_roughness_512.png",
+          "path": "textures/tc_span_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "tc_span_roughness_1k.png",
+          "path": "textures/tc_span_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "tc_span_roughness_2k.png",
+          "path": "textures/tc_span_roughness_2k.png",
+          "maxPx": 512
+        }
+      ]
+    }
+  ],
+  "models": [
+    {
+      "objectName": "TC Runner",
+      "gltfFile": "tc_run.glb",
+      "gltfPath": "import/tc_run.glb",
+      "lods": [
+        {
+          "level": 0,
+          "file": "tc_run.glb",
+          "path": "import/tc_run.glb",
+          "distance": 0
+        },
+        {
+          "level": 1,
+          "file": "tc_run_l1.glb",
+          "path": "import/tc_run_l1.glb",
+          "distance": 12
+        },
+        {
+          "level": 2,
+          "file": "tc_run_l2.glb",
+          "path": "import/tc_run_l2.glb",
+          "distance": 28
+        }
+      ],
+      "lodDistances": [
+        0,
+        12,
+        28
+      ],
+      "hasPhysics": true,
+      "tcEd": "tc-veh",
+      "realism": "r5"
+    },
+    {
+      "objectName": "TC Hauler",
+      "gltfFile": "tc_haul.glb",
+      "gltfPath": "import/tc_haul.glb",
+      "lods": [
+        {
+          "level": 0,
+          "file": "tc_haul.glb",
+          "path": "import/tc_haul.glb",
+          "distance": 0
+        },
+        {
+          "level": 1,
+          "file": "tc_haul_l1.glb",
+          "path": "import/tc_haul_l1.glb",
+          "distance": 12
+        },
+        {
+          "level": 2,
+          "file": "tc_haul_l2.glb",
+          "path": "import/tc_haul_l2.glb",
+          "distance": 28
+        }
+      ],
+      "lodDistances": [
+        0,
+        12,
+        28
+      ],
+      "hasPhysics": true,
+      "tcEd": "tc-veh",
+      "realism": "r5"
+    },
+    {
+      "objectName": "TC Marshal",
+      "gltfFile": "tc_msh.glb",
+      "gltfPath": "import/tc_msh.glb",
+      "lods": [
+        {
+          "level": 0,
+          "file": "tc_msh.glb",
+          "path": "import/tc_msh.glb",
+          "distance": 0
+        },
+        {
+          "level": 1,
+          "file": "tc_msh_l1.glb",
+          "path": "import/tc_msh_l1.glb",
+          "distance": 12
+        },
+        {
+          "level": 2,
+          "file": "tc_msh_l2.glb",
+          "path": "import/tc_msh_l2.glb",
+          "distance": 28
+        }
+      ],
+      "lodDistances": [
+        0,
+        12,
+        28
+      ],
+      "hasPhysics": false,
+      "tcEd": "tc-chr",
+      "realism": "r5"
+    },
+    {
+      "objectName": "TC Mechanic",
+      "gltfFile": "tc_mec.glb",
+      "gltfPath": "import/tc_mec.glb",
+      "lods": [
+        {
+          "level": 0,
+          "file": "tc_mec.glb",
+          "path": "import/tc_mec.glb",
+          "distance": 0
+        },
+        {
+          "level": 1,
+          "file": "tc_mec_l1.glb",
+          "path": "import/tc_mec_l1.glb",
+          "distance": 12
+        },
+        {
+          "level": 2,
+          "file": "tc_mec_l2.glb",
+          "path": "import/tc_mec_l2.glb",
+          "distance": 28
+        }
+      ],
+      "lodDistances": [
+        0,
+        12,
+        28
+      ],
+      "hasPhysics": false,
+      "tcEd": "tc-chr",
+      "realism": "r5"
+    }
+  ],
+  "bundle": {
+    "dir": "dist-pages/bundle/",
+    "dirs": [
+      "textures",
+      "import",
+      "video"
+    ],
+    "index": "bundle/bundle-index.json",
+    "note": "npm run bundle:assets copies textures/ + import/ + video/ into native/web builds"
+  },
+  "packaging": {
+    "webRoot": "dist-pages/",
+    "entry": "index.html",
+    "capacitor": {
+      "webDir": "dist-pages",
+      "appId": "com.threshold.tc",
+      "appName": "TC Show"
+    },
+    "electron": {
+      "main": "electron/main.cjs",
+      "preload": "electron/preload.cjs"
+    },
+    "android": {
+      "packageName": "com.threshold.tc",
+      "appName": "TC Show",
+      "cli": "npm run package:android",
+      "releaseCli": "npm run package:android:release"
+    },
+    "storeRelease": {
+      "prepCli": "npm run store:prep -- --manifest exports/tc-show.threshold-game.json",
+      "assetsCli": "npm run store:assets -- --manifest exports/tc-show.threshold-game.json",
+      "docs": "docs/STORE_RELEASE.md"
+    }
+  },
+  "ship": {
+    "cli": "npm run tc:ship",
+    "verifyCli": "npm run tc:ship:verify",
+    "manifestPath": "exports/tc-show.threshold-game.json"
+  }
+}

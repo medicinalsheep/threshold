@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.12.0 — S1 TC export E2E ship path
+
+- `tc-export-lib.cjs` + `tc:export:manifest` — synthesize `exports/tc-show.threshold-game.json` from disk
+- `npm run tc:ship` — `tc:build` → `tc:verify` → `build` → `bundle:assets` → manifest → `store:prep`
+- `npm run tc:ship:verify` — dist-store + bundle-index checks; `--preview-smoke` against `:4173`
+- Mirrors MORE → EXPORT credits/registry for TC Show (`com.threshold.tc`, mapped store SKUs)
+
 ## 5.11.0 — R7 TC intro cutscene
 
 - `video/tc_intro.webm` — TC showcase intro (3.6s, skippable)
