@@ -1,6 +1,6 @@
 import { Session } from '../shared/session.js';
 import { Network } from '../shared/network.js';
-import { setLoadThresholdChild } from '../shared/referenceEdition.js';
+import { setLoadTC } from '../shared/referenceEdition.js';
 
 export function initLobby(onReady) {
     const overlay = document.getElementById('lobby-overlay');
@@ -76,16 +76,16 @@ export function initLobby(onReady) {
         enterApp();
     });
 
-    document.getElementById('lobby-threshold-child')?.addEventListener('click', () => {
+    document.getElementById('lobby-tc')?.addEventListener('click', () => {
         Session.init();
         const name = document.getElementById('lobby-name')?.value?.trim();
         if (name) {
             Session.playerName = name;
             localStorage.setItem('threshold_player_name', name);
         }
-        setLoadThresholdChild(true);
+        setLoadTC(true);
         Network.startSolo();
-        setStatus('Threshold Child — original vehicles loading…');
+        setStatus('TC showcase loading…');
         enterApp();
     });
 

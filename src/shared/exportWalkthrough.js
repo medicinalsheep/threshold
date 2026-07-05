@@ -1,11 +1,11 @@
 import { SoundLibrary } from './soundLibrary.js';
 import { TextureLibrary } from './textureLibrary.js';
 import { TextureHilod } from './textureHilod.js';
-import { getChildCreditEntries } from './thresholdChildAssets.js';
-import { getChildVehicleCreditEntries } from './thresholdChildVehicles.js';
-import { getChildCharacterCreditEntries } from './thresholdChildCharacters.js';
-import { getChildAudioCreditEntries } from './thresholdChildAudio.js';
-import { getChildShowcaseCreditEntries } from './thresholdChildShowcase.js';
+import { getTcLiteCredits } from './tcLite.js';
+import { getTcVehCredits } from './tcVeh.js';
+import { getTcChrCredits } from './tcChr.js';
+import { getTcSfxCredits } from './tcSfx.js';
+import { getTcShowCredits } from './tcShow.js';
 import storeAssetsConfig from '../../config/store-assets.json';
 
 
@@ -105,12 +105,12 @@ export function collectContentInventory() {
             textureHint: o.userData?.textureHint || null,
             gltfPath: o.userData?.gltfPath || null,
             soundClipId: o.userData?.soundClipId || null,
-            isThresholdChild: !!o.userData?.isThresholdChild,
-            childEdition: o.userData?.childEdition || null,
+            isTC: !!(o.userData?.isTC || o.userData?.isThresholdChild),
+            tcEd: o.userData?.tcEd || o.userData?.childEdition || null,
             license: o.userData?.license || null,
             author: o.userData?.author || null,
-            storeSku: o.userData?.storeSku || null,
-            registryUri: o.userData?.registryUri || null,
+            sku: o.userData?.storeSku || null,
+            uri: o.userData?.registryUri || null,
         }));
 
     const textureRefs = textures.map((t) => ({
@@ -190,20 +190,20 @@ export function ensureCreditEntries(draft, inventory) {
         if (!entries[id].registryUri) entries[id].registryUri = suggestRegistryUri(bundleId, entries[id]);
     };
 
-    getChildCreditEntries().forEach((c) => add(c.id, c.label, c.kind, c));
-    getChildVehicleCreditEntries().forEach((c) => add(c.id, c.label, c.kind, c));
-    getChildCharacterCreditEntries().forEach((c) => add(c.id, c.label, c.kind, c));
-    getChildAudioCreditEntries().forEach((c) => add(c.id, c.label, c.kind, c));
-    getChildShowcaseCreditEntries().forEach((c) => add(c.id, c.label, c.kind, c));
+    getTcLiteCredits().forEach((c) => add(c.id, c.label, c.kind, c));
+    getTcVehCredits().forEach((c) => add(c.id, c.label, c.kind, c));
+    getTcChrCredits().forEach((c) => add(c.id, c.label, c.kind, c));
+    getTcSfxCredits().forEach((c) => add(c.id, c.label, c.kind, c));
+    getTcShowCredits().forEach((c) => add(c.id, c.label, c.kind, c));
 
     inventory.sceneObjects
-        .filter((o) => o.isThresholdChild)
+        .filter((o) => o.isTC)
         .forEach((o) => add(o.id, o.name, o.assetKind || o.type, {
             author: o.author || 'Threshold',
-            license: o.license || 'Original — Threshold Child edition',
-            source: 'Threshold Child edition (scene)',
-            storeSku: o.storeSku || '',
-            registryUri: o.registryUri || '',
+            license: o.license || 'Original — TC',
+            source: 'TC scene',
+            storeSku: o.sku || '',
+            registryUri: o.uri || '',
         }));
 
     inventory.soundRefs.forEach((s) => add(s.id, s.name, 'sound'));

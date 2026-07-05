@@ -1,72 +1,38 @@
 {
   "format": "threshold-reference-editions",
-  "version": 4,
+  "version": 5,
   "policy": "docs/THRESHOLD_CHILD_ASSETS.md",
-  "defaultEdition": "threshold-child-showcase",
+  "defaultEdition": "tc-show",
   "editions": {
-    "threshold": {
-      "id": "threshold",
-      "label": "Threshold Core",
-      "description": "Procedural starter scene only",
+    "threshold": { "id": "threshold", "label": "Core", "status": "active", "license": "Original — Threshold" },
+    "tc-show": {
+      "id": "tc-show",
+      "label": "TC Show",
+      "description": "Full EXPORT demo — veh+chr GLB+LOD, sfx, cp",
       "status": "active",
-      "license": "Original — Threshold"
+      "license": "Original — TC",
+      "loader": "src/shared/tcShow.js",
+      "lobbyButton": "TC",
+      "buildCli": "npm run tc:build"
     },
-    "threshold-child-showcase": {
-      "id": "threshold-child-showcase",
-      "label": "Threshold Child Showcase",
-      "description": "Full export demo — GLB vehicles + LOD, characters, SFX, checkpoint — R3",
-      "status": "active",
-      "license": "Original — Threshold Child edition",
-      "loader": "src/shared/thresholdChildShowcase.js",
-      "lobbyButton": "THRESHOLD CHILD",
-      "attribution": "reference/ATTRIBUTION.md"
-    },
-    "threshold-child-vehicles": {
-      "id": "threshold-child-vehicles",
-      "label": "Threshold Child Vehicles",
-      "description": "Blender/Node Child GLB + LOD (Runner, Hauler) + procedural Circuit Span — R2",
-      "status": "active",
-      "license": "Original — Threshold Child edition",
-      "loader": "src/shared/thresholdChildVehicles.js",
+    "tc-veh": {
+      "id": "tc-veh",
+      "label": "TC Veh",
+      "loader": "src/shared/tcVeh.js",
       "blenderManifest": "import/threshold_blender_manifest.json",
-      "buildCli": "npm run child:vehicles:build",
-      "attribution": "reference/ATTRIBUTION.md"
+      "license": "Original — TC",
+      "status": "active"
     },
-    "threshold-child-characters": {
-      "id": "threshold-child-characters",
-      "label": "Threshold Child Characters",
-      "description": "Marshal + Mechanic HumanMesh NPCs — R3",
-      "status": "active",
-      "license": "Original — Threshold Child edition",
-      "loader": "src/shared/thresholdChildCharacters.js",
-      "attribution": "reference/ATTRIBUTION.md"
-    },
-    "threshold-child-audio": {
-      "id": "threshold-child-audio",
-      "label": "Threshold Child Audio",
-      "description": "Synthesized original SFX seeds — R3",
-      "status": "active",
-      "license": "Original — Threshold Child edition",
-      "loader": "src/shared/thresholdChildAudio.js",
-      "attribution": "reference/ATTRIBUTION.md"
-    },
-    "threshold-child-lite": {
-      "id": "threshold-child-lite",
-      "label": "Threshold Child Lite",
-      "description": "Procedural fallback — vehicles + circuit v1.1",
-      "status": "active",
-      "license": "Original — Threshold Child edition",
-      "loader": "src/shared/thresholdChildAssets.js",
-      "attribution": "reference/ATTRIBUTION.md"
-    }
+    "tc-chr": { "id": "tc-chr", "label": "TC Chr", "loader": "src/shared/tcChr.js", "license": "Original — TC", "status": "active" },
+    "tc-sfx": { "id": "tc-sfx", "label": "TC Sfx", "loader": "src/shared/tcSfx.js", "license": "Original — TC", "status": "active" },
+    "tc-lite": { "id": "tc-lite", "label": "TC Lite", "loader": "src/shared/tcLite.js", "license": "Original — TC", "status": "active" }
   },
   "deprecated": {
-    "threshold-ref-lite": "Removed — raw external CC0 drops replaced by Threshold Child originals (v5.5)"
+    "threshold-ref-lite": "removed v5.5",
+    "threshold-child-*": "renamed tc-* v5.8"
   },
-  "planned": {},
   "devOnly": {
-    "externalSeedsDir": "reference/_dev-seeds/",
-    "fetchCli": "npm run reference:fetch",
-    "note": "Local comparison only — gitignored, not shipped"
+    "seeds": "reference/_dev-seeds/",
+    "fetch": "npm run reference:fetch"
   }
 }

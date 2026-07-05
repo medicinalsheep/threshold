@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "5.7.0",
+  "version": "5.8.0",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
@@ -31,8 +31,9 @@
     "blender:install": "node scripts/install-blender-addon.cjs",
     "textures:watch": "node scripts/creative-watch.cjs",
     "blender:export": "node scripts/blender-export.cjs",
-    "child:vehicles:generate": "node scripts/generate-child-vehicle-glb.cjs",
-    "child:vehicles:build": "node scripts/child-vehicles-build.cjs",
+    "tc:build": "node scripts/tc-build.cjs",
+    "tc:gen:veh": "node scripts/tc-gen-veh.cjs",
+    "tc:gen:chr": "node scripts/tc-gen-chr.cjs",
     "creative:watch": "node scripts/creative-watch.cjs",
     "bundle:assets": "node scripts/bundle-assets.cjs",
     "export:graphics": "node scripts/export-graphics.cjs",

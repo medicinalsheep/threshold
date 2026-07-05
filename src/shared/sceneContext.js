@@ -1,7 +1,7 @@
 import { GraphicsProfile } from './graphicsProfile.js';
 import { sanitizeUserDataForSync } from './lodSync.js';
 import { LOD_DISTANCES } from './lodConfig.js';
-import { getChildAssetsPromptBlock } from './childAssetsPrompt.js';
+import { getTcPromptBlock } from './tcPrompt.js';
 
 const MODE_NAMES = ['Threshold', '1-Bit', 'Terminal', 'SMPTE', 'Hyper'];
 
@@ -29,10 +29,10 @@ export function getSceneContext() {
         lodPaths: o.userData?.lodPaths || null,
         lodDistances: o.userData?.lodDistances || LOD_DISTANCES,
         textureHilod: o.userData?.textureHilod || null,
-        isThresholdChild: !!o.userData?.isThresholdChild,
-        childEdition: o.userData?.childEdition || null,
+        isTC: !!(o.userData?.isTC || o.userData?.isThresholdChild),
+        tcEd: o.userData?.tcEd || o.userData?.childEdition || null,
         license: o.userData?.license || null,
-        storeSku: o.userData?.storeSku || null,
+        sku: o.userData?.storeSku || null,
     }));
     const humanNpcCount = objects.filter((o) => o.isHuman && !o.isPlayer).length;
 
@@ -78,10 +78,10 @@ ${objects.length ? objects.map((o) => {
         const gltf = o.type === 'gltf'
             ? ` [gltf:${o.gltfPath || o.gltfUrl || '?'}${lodCount > 1 ? ` lod×${lodCount}` : ''}]`
             : '';
-        const child = o.isThresholdChild
-            ? ` [child:${o.childEdition || 'threshold-child'} license:${o.license || 'Original'}${o.storeSku ? ` sku:${o.storeSku}` : ''}]`
+        const tc = o.isTC
+            ? ` [tc:${o.tcEd || 'tc-show'} lic:${o.license || 'TC'}${o.sku ? ` sku:${o.sku}` : ''}]`
             : '';
-        return `  - ${o.name} (${o.type}) @ (${o.position.x},${o.position.y},${o.position.z})${snd}${tex}${gltf}${child}`;
+        return `  - ${o.name} (${o.type}) @ (${o.position.x},${o.position.y},${o.position.z})${snd}${tex}${gltf}${tc}`;
     }).join('\n') : '  (empty scene)'}
 
 CURRENTLY RUNNING CODE:
@@ -123,8 +123,8 @@ export function getAssetContext() {
         return paths;
     });
 
-    const hasChild = (State?.objects || []).some((o) => o.userData?.isThresholdChild);
-    const childBlock = hasChild ? `\n\n${getChildAssetsPromptBlock()}` : '';
+    const hasTc = (State?.objects || []).some((o) => o.userData?.isTC || o.userData?.isThresholdChild);
+    const tcBlock = hasTc ? `\n\n${getTcPromptBlock()}` : '';
 
     return `
 ASSET MANIFEST (for PromptGen / Compiler — user imports files after RUN if paths are local):
@@ -142,7 +142,7 @@ ${sceneAssets.length ? sceneAssets.map((a) => {
 - GIMP export folder: textures/ + threshold_manifest.json → Engine Texture → GIMP SYNC
 - Blender export folder: import/ + threshold_blender_manifest.json → INSERT → GLTF
 - Dev hot-reload: npm run textures:watch (pairs with npm run dev)
-- Cutscenes: video/*.mp4|webm → World.playCutscene('video/intro.mp4') — HTML5 VideoTexture${childBlock}
+- Cutscenes: video/*.mp4|webm → World.playCutscene('video/intro.mp4') — HTML5 VideoTexture${tcBlock}
 `.trim();
 }
 

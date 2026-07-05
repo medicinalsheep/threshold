@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.8.0 — TC abbreviation + chr GLB+LOD
+
+- Renamed editions/ids: `tc-show`, `tc-veh`, `tc-chr`, `tc-sfx`, `tc-lite`
+- Modules: `tcMeta`, `tcVeh`, `tcChr`, `tcSfx`, `tcShow`, `tcLite`, `tcPrompt`
+- GLB files: `tc_run.glb`, `tc_msh.glb`, etc. · `npm run tc:build`
+- userData: `isTC`, `tcEd`, `tcVer` (legacy `isThresholdChild` still read)
+- Lobby button: **TC →** · Blender: `build_tc_veh.py`
+
 ## 5.7.0 — Phase R3: Characters, audio, showcase
 
 - `threshold-child-showcase` — full EXPORT demo (vehicles + NPCs + SFX + checkpoint)

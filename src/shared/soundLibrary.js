@@ -78,8 +78,8 @@ export const SoundLibrary = {
             context: meta.context || '',
             targetType: meta.targetType || 'world',
             targetId: meta.targetId || null,
-            isThresholdChild: !!meta.isThresholdChild,
-            childEdition: meta.childEdition || null,
+            isTC: !!(meta.isTC || meta.isThresholdChild),
+            tcEd: meta.tcEd || meta.childEdition || null,
             license: meta.license || null,
         };
 

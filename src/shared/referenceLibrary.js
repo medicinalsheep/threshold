@@ -205,20 +205,17 @@ m.userData.textureHint = 'textures/stone_albedo.png';
         },
         {
             id: 'threshold_child_assets',
-            title: 'Threshold Child Showcase — Full EXPORT Demo (R3)',
-            summary: 'Lobby THRESHOLD CHILD loads showcase: GLB+LOD vehicles, Marshal/Mechanic NPCs, 5 SFX seeds, checkpoint. PromptGen ASSETS block included.',
-            checklist: ['Lobby → THRESHOLD CHILD', 'SFX tab — 5 Child clips seeded', 'PromptGen + Include live scene → ASSETS block', 'EXPORT → CREDITS lists character + sound kinds'],
-            code: `// THRESHOLD CHILD SHOWCASE (R3):
-// 1. Lobby → THRESHOLD CHILD → vehicles + circuit + NPCs + checkpoint + SFX
-// 2. PromptGen → Include live scene → prompt includes // ASSETS: Child block
-// 3. Compiler paste should preserve ASSETS comment for CREDITS step
-// 4. EXPORT → SCENE / CREDITS / PACKS — character + vehicle + sound SKUs
+            title: 'TC Showcase — EXPORT demo',
+            summary: 'Lobby TC → veh+chr GLB+LOD, sfx, cp. PromptGen // ASSETS block when live scene included.',
+            checklist: ['Lobby → TC', 'SFX — tc_sfx_* clips', 'PromptGen + scene → ASSETS', 'EXPORT CREDITS'],
+            code: `// TC SHOW:
+// 1. Lobby → TC
+// 2. npm run tc:build — regenerate tc_*.glb
 (function() {
-  const marshal = State.objects.find(o => o.userData?.id === 'child_marshal');
-  if (marshal) marshal.rotation.y += 0.02;
-  UI.status('Marshal patrol tick — extend with Compiler timer');
+  const m = State.objects.find(o => o.userData?.id === 'tc_msh');
+  if (m) m.rotation.y += 0.02;
 })();
-// ASSETS: see childAssetsPrompt.js · docs/THRESHOLD_CHILD_ASSETS.md`
+// ASSETS: tcPrompt.js`
         },
         {
             id: 'export_game_package',

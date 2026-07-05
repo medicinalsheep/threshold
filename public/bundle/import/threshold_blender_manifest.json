@@ -4,27 +4,27 @@
   "engineVersion": "5.6.0",
   "models": [
     {
-      "id": "threshold_child_runner",
-      "objectName": "Threshold Runner",
-      "file": "threshold_child_runner.glb",
-      "path": "import/threshold_child_runner.glb",
+      "id": "tc_run",
+      "objectName": "TC Runner",
+      "file": "tc_run.glb",
+      "path": "import/tc_run.glb",
       "lods": [
         {
           "level": 0,
-          "file": "threshold_child_runner.glb",
-          "path": "import/threshold_child_runner.glb",
+          "file": "tc_run.glb",
+          "path": "import/tc_run.glb",
           "distance": 0
         },
         {
           "level": 1,
-          "file": "threshold_child_runner_lod1.glb",
-          "path": "import/threshold_child_runner_lod1.glb",
+          "file": "tc_run_l1.glb",
+          "path": "import/tc_run_l1.glb",
           "distance": 12
         },
         {
           "level": 2,
-          "file": "threshold_child_runner_lod2.glb",
-          "path": "import/threshold_child_runner_lod2.glb",
+          "file": "tc_run_l2.glb",
+          "path": "import/tc_run_l2.glb",
           "distance": 28
         }
       ],
@@ -37,31 +37,31 @@
       "mass": 3.4,
       "friction": 0.36,
       "restitution": 0.14,
-      "childEdition": "threshold-child-vehicles",
-      "license": "Original — Threshold Child edition"
+      "tcEd": "tc-veh",
+      "license": "Original — TC"
     },
     {
-      "id": "threshold_child_hauler",
-      "objectName": "Threshold Hauler",
-      "file": "threshold_child_hauler.glb",
-      "path": "import/threshold_child_hauler.glb",
+      "id": "tc_haul",
+      "objectName": "TC Hauler",
+      "file": "tc_haul.glb",
+      "path": "import/tc_haul.glb",
       "lods": [
         {
           "level": 0,
-          "file": "threshold_child_hauler.glb",
-          "path": "import/threshold_child_hauler.glb",
+          "file": "tc_haul.glb",
+          "path": "import/tc_haul.glb",
           "distance": 0
         },
         {
           "level": 1,
-          "file": "threshold_child_hauler_lod1.glb",
-          "path": "import/threshold_child_hauler_lod1.glb",
+          "file": "tc_haul_l1.glb",
+          "path": "import/tc_haul_l1.glb",
           "distance": 12
         },
         {
           "level": 2,
-          "file": "threshold_child_hauler_lod2.glb",
-          "path": "import/threshold_child_hauler_lod2.glb",
+          "file": "tc_haul_l2.glb",
+          "path": "import/tc_haul_l2.glb",
           "distance": 28
         }
       ],
@@ -74,11 +74,82 @@
       "mass": 5.8,
       "friction": 0.44,
       "restitution": 0.1,
-      "childEdition": "threshold-child-vehicles",
-      "license": "Original — Threshold Child edition"
+      "tcEd": "tc-veh",
+      "license": "Original — TC"
+    },
+    {
+      "id": "tc_msh",
+      "objectName": "TC Marshal",
+      "file": "tc_msh.glb",
+      "path": "import/tc_msh.glb",
+      "lods": [
+        {
+          "level": 0,
+          "file": "tc_msh.glb",
+          "path": "import/tc_msh.glb",
+          "distance": 0
+        },
+        {
+          "level": 1,
+          "file": "tc_msh_l1.glb",
+          "path": "import/tc_msh_l1.glb",
+          "distance": 12
+        },
+        {
+          "level": 2,
+          "file": "tc_msh_l2.glb",
+          "path": "import/tc_msh_l2.glb",
+          "distance": 28
+        }
+      ],
+      "lodDistances": [
+        0,
+        12,
+        28
+      ],
+      "hasPhysics": false,
+      "mass": 0,
+      "tcEd": "tc-chr",
+      "license": "Original — TC"
+    },
+    {
+      "id": "tc_mec",
+      "objectName": "TC Mechanic",
+      "file": "tc_mec.glb",
+      "path": "import/tc_mec.glb",
+      "lods": [
+        {
+          "level": 0,
+          "file": "tc_mec.glb",
+          "path": "import/tc_mec.glb",
+          "distance": 0
+        },
+        {
+          "level": 1,
+          "file": "tc_mec_l1.glb",
+          "path": "import/tc_mec_l1.glb",
+          "distance": 12
+        },
+        {
+          "level": 2,
+          "file": "tc_mec_l2.glb",
+          "path": "import/tc_mec_l2.glb",
+          "distance": 28
+        }
+      ],
+      "lodDistances": [
+        0,
+        12,
+        28
+      ],
+      "hasPhysics": false,
+      "mass": 0,
+      "tcEd": "tc-chr",
+      "license": "Original — TC"
     }
   ],
   "exportDir": "import",
-  "exportedAt": "2026-07-05T08:57:43.461Z",
-  "childEdition": "threshold-child-vehicles"
+  "exportedAt": "2026-07-05T09:05:36.163Z",
+  "childEdition": "threshold-child-vehicles",
+  "tcEd": "tc-chr"
 }

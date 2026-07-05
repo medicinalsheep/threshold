@@ -1,47 +1,40 @@
 import { ViewPrefs } from './viewPrefs.js';
-import { spawnThresholdChildLite } from './thresholdChildAssets.js';
-import { spawnThresholdChildVehicles } from './thresholdChildVehicles.js';
-import { spawnThresholdChildShowcase } from './thresholdChildShowcase.js';
+import { spawnTcLite } from './tcLite.js';
+import { spawnTcVeh } from './tcVeh.js';
+import { spawnTcShow } from './tcShow.js';
 
-/** @deprecated Dev-only external seed — use Threshold Child editions */
-export async function spawnExternalSeedLite() {
-    console.warn('[reference] External seed editions are dev-only — use Threshold Child (lobby button)');
-    return { spawned: 0, edition: null, error: 'external seeds disabled in shipped builds' };
+export function shouldLoadTC() {
+    return !!(ViewPrefs.get('loadTC', false) || ViewPrefs.get('loadThresholdChild', false));
 }
 
-export function shouldLoadThresholdChild() {
-    return !!ViewPrefs.get('loadThresholdChild', false);
-}
-
-export function setLoadThresholdChild(on) {
+export function setLoadTC(on) {
+    ViewPrefs.set('loadTC', !!on);
     ViewPrefs.set('loadThresholdChild', !!on);
 }
 
-/** @deprecated alias */
-export function setLoadReferenceLite(on) {
-    setLoadThresholdChild(on);
-}
+/** @deprecated */
+export function setLoadThresholdChild(on) { setLoadTC(on); }
+export function shouldLoadThresholdChild() { return shouldLoadTC(); }
 
 export async function bootstrapReferenceIfRequested() {
-    if (!shouldLoadThresholdChild()) return null;
-    ViewPrefs.set('loadThresholdChild', false);
+    if (!shouldLoadTC()) return null;
+    setLoadTC(false);
 
-    const showcase = await spawnThresholdChildShowcase();
-    if (showcase.spawned >= 4) return showcase;
+    const show = await spawnTcShow();
+    if (show.n >= 4) return show;
 
-    const vehicles = await spawnThresholdChildVehicles();
-    if (vehicles.spawned >= 2) return vehicles;
+    const veh = await spawnTcVeh();
+    if (veh.n >= 2) return veh;
 
-    console.warn('[child] GLB vehicles unavailable — procedural Child Lite fallback');
-    return spawnThresholdChildLite();
+    return spawnTcLite();
 }
 
 window.ReferenceEdition = {
-    spawnThresholdChildLite,
-    spawnThresholdChildVehicles,
-    spawnThresholdChildShowcase,
+    spawnTcShow,
+    spawnTcVeh,
+    spawnTcLite,
+    setLoadTC,
     setLoadThresholdChild,
-    setLoadReferenceLite,
-    shouldLoadThresholdChild,
+    shouldLoadTC,
     bootstrapReferenceIfRequested,
 };
