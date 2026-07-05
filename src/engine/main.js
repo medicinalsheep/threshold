@@ -27,6 +27,10 @@ import { SceneDock } from '../shared/sceneDock.js';
 import { SoundLibrary } from '../shared/soundLibrary.js';
 import { SoundPrompt } from '../shared/soundPrompt.js';
 import { bootstrapStarterScene } from '../shared/starterScene.js';
+import { GameExport } from '../shared/gameExport.js';
+import { AgentHub } from '../shared/agentHub.js';
+import { NpcAgent } from '../grok/npcAgent.js';
+import { DevAgent } from '../grok/devAgent.js';
 
 const IS_TOUCH_DEVICE = window.matchMedia('(pointer: coarse)').matches;
 
@@ -807,6 +811,8 @@ const Engine = {
             }
         });
 
+        AgentHub.tick(dt);
+
         this.controls.update();
         // Visual Rotation (Only for non-physics objects or purely visual effect)
         if (!State.isPaused) {
@@ -1223,6 +1229,16 @@ const UI = {
             if (btn) UI.loadWorldByCode(btn.dataset.worldCode);
         });
 
+        document.getElementById('btn-export-game')?.addEventListener('click', () => UI.exportGamePackage());
+        document.getElementById('agent-attach-npc')?.addEventListener('click', () => UI.attachNpcAgent());
+        document.getElementById('agent-npc-talk')?.addEventListener('click', () => UI.talkToNpcAgent());
+        document.getElementById('agent-dev-suggest')?.addEventListener('click', () => UI.devAgentSuggest());
+        document.getElementById('agent-dev-apply')?.addEventListener('click', () => UI.devAgentApply());
+        document.getElementById('agent-local-save')?.addEventListener('click', () => UI.saveLocalAgent());
+        window.addEventListener('agent-config-change', () => UI.syncAgentPanel());
+
+        UI.syncAgentPanel();
+
         UI.updateControlMode();
         UI.updateSimMode();
         UI.initViewToggles();
@@ -1427,6 +1443,77 @@ const UI = {
         const consoleVisible = ViewPrefs.get('consoleVisible', !mobile);
         this.setConsoleBarVisible(consoleVisible, false);
         this.updateTouchToggle();
+    },
+    exportGamePackage: function () {
+        const name = prompt('Game / package name?', `My Threshold Game`);
+        if (!name) return;
+        const manifest = GameExport.downloadManifest({ name, author: Session.playerName });
+        const profiles = Object.values(GameExport.getBuildProfiles()).map((p) => p.label).join(' · ');
+        this.status(`Exported ${manifest.game.name} — next: ${profiles}`);
+        document.querySelector('[data-target="view-compiler"]')?.click();
+    },
+    syncAgentPanel: function () {
+        const npcCfg = AgentHub.getConfig('grok_npc');
+        const localCfg = AgentHub.getConfig('local');
+        const persona = document.getElementById('agent-npc-persona');
+        const interval = document.getElementById('agent-local-interval');
+        const script = document.getElementById('agent-local-script');
+        if (persona) persona.value = npcCfg.persona || '';
+        if (interval) interval.value = localCfg.intervalMs || 0;
+        if (script) script.value = localCfg.script || '';
+    },
+    attachNpcAgent: function () {
+        const persona = document.getElementById('agent-npc-persona')?.value?.trim();
+        if (!AgentHub.attachNpcAgent(persona)) {
+            this.status('Select an NPC (not player) in EDIT → inspect first');
+            return;
+        }
+        SceneDock.openTab('agents');
+        this.status('Grok NPC agent attached — use NPC TALK');
+    },
+    talkToNpcAgent: async function () {
+        const npc = AgentHub.getActiveNpc() || State.objects.find((o) => o.userData?.agentType === 'grok_npc');
+        if (!npc) {
+            this.status('Attach agent to an NPC first');
+            return;
+        }
+        const msg = document.getElementById('agent-npc-input')?.value?.trim() || 'Hello';
+        const replyEl = document.getElementById('agent-npc-reply');
+        if (replyEl) replyEl.textContent = 'Thinking...';
+        try {
+            const { line } = await NpcAgent.talk(npc, msg);
+            if (replyEl) replyEl.textContent = `${npc.userData.name}: ${line}`;
+            this.status(`${npc.userData.name} replied`);
+        } catch (e) {
+            if (replyEl) replyEl.textContent = '';
+            this.status(e.message || 'NPC talk failed');
+        }
+    },
+    devAgentSuggest: async function () {
+        try {
+            const code = await DevAgent.suggestFromCompiler();
+            const out = document.getElementById('comp-output');
+            if (out) out.value = code;
+            document.querySelector('[data-target="view-compiler"]')?.click();
+            this.status('Grok Dev suggestion in Compiler output');
+        } catch (e) {
+            this.status(e.message || 'Dev agent failed');
+        }
+    },
+    devAgentApply: async function () {
+        try {
+            await DevAgent.applySuggestion();
+            document.querySelector('[data-target="view-compiler"]')?.click();
+            this.status('Grok Dev applied to Compiler');
+        } catch (e) {
+            this.status(e.message || 'Dev agent apply failed');
+        }
+    },
+    saveLocalAgent: function () {
+        const script = document.getElementById('agent-local-script')?.value || '';
+        const intervalMs = parseInt(document.getElementById('agent-local-interval')?.value, 10) || 0;
+        AgentHub.setConfig('local', { enabled: intervalMs > 0 && script.trim(), script, intervalMs });
+        this.status(intervalMs > 0 ? 'Local agent saved — running on interval' : 'Local agent disabled');
     },
     showWelcomeIfNeeded: function () {
         if (ViewPrefs.get('welcomeSeen', false)) return;

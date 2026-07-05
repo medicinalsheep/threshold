@@ -207,10 +207,25 @@ Optional env (`.env` / build modes):
 
 ---
 
+## Product roadmap (v2.1+)
+
+**Design → Play → Ship → Scale**
+
+| Stage | What |
+|-------|------|
+| **Design** | Engine, Compiler, PromptGen, SFX, agents |
+| **Play** | Solo / host / guest, EDIT·PLAY, walk·fly |
+| **Ship** | **EXPORT** → `.threshold-game.json` manifest (APK / Windows / Steam paths in [docs/PRODUCT_ROADMAP.md](docs/PRODUCT_ROADMAP.md)) |
+| **Scale** | Optional **relay/** server — local or [AWS free tier](relay/README.md) |
+
+**Agents (SCENE dock → AI):** Grok NPC dialogue, Grok Dev Compiler helper, local script timer.
+
+---
+
 ## Tech
 
 - **Three.js** + **Cannon-ES** physics + post-processing render modes
-- **PeerJS** (WebRTC) — host-authoritative sync, no backend required for sessions
+- **PeerJS** (WebRTC) — host-authoritative sync; optional custom relay via `VITE_PEER_HOST`
 - **IndexedDB** — worlds, projects, sound library
 - **Vite** — build tooling
 
@@ -218,4 +233,4 @@ Optional env (`.env` / build modes):
 
 ## License
 
-MIT
+MIT — commercial terms planned as product matures (see prior README discussion).

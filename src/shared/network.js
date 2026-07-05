@@ -1,4 +1,5 @@
 import Peer from 'peerjs';
+import { getPeerOptions } from '../config.js';
 import { Session } from './session.js';
 import { Sync } from './sync.js';
 import { Permissions } from './permissions.js';
@@ -36,7 +37,7 @@ export const Network = {
         Session.updateUi();
 
         return new Promise((resolve, reject) => {
-            this.peer = new Peer(roomId, { debug: 1 });
+            this.peer = new Peer(roomId, getPeerOptions());
 
             this.peer.on('open', () => {
                 this.updateUi();
@@ -64,7 +65,7 @@ export const Network = {
         Session.updateUi();
 
         return new Promise((resolve, reject) => {
-            this.peer = new Peer();
+            this.peer = new Peer(getPeerOptions());
 
             this.peer.on('open', () => {
                 const conn = this.peer.connect(roomId, { reliable: true });

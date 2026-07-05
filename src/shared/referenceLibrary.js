@@ -64,6 +64,38 @@ export const REFERENCE_LIBRARY = {
 // Reference: Compiler → WORKFLOWS + TECHNIQUES templates`
         },
         {
+            id: 'export_game_package',
+            title: 'Export Game Package (APK / Windows / Steam path)',
+            summary: 'Download .threshold-game.json manifest → wrap with Capacitor/Electron in Phase 3.',
+            checklist: ['TOOLS → MORE → EXPORT', 'Includes world + scripts + sound IDs', 'See docs/PRODUCT_ROADMAP.md', 'Self-host relay/ optional'],
+            code: `// After designing your game:
+// 1. TOOLS → MORE → EXPORT — saves MyGame.threshold-game.json
+// 2. manifest.buildProfiles lists: web, android, windows, steam, selfhost
+// 3. Phase 3 CLI: Capacitor APK, Electron .exe, Steam depot
+// 4. relay/README.md — AWS free tier when you need owned signaling`
+        },
+        {
+            id: 'relay_aws_host',
+            title: 'Self-Host Relay (local or AWS)',
+            summary: 'PeerJS signaling on your machine or free-tier VPS for reliable multiplayer.',
+            checklist: ['cd relay && npm start', 'Set VITE_PEER_HOST in build env', 'Rebuild web app', 'HTTPS + nginx on AWS'],
+            code: `// Local relay:
+// cd relay && npm install && npm start
+// .env: VITE_PEER_HOST=localhost VITE_PEER_PORT=9000 VITE_PEER_SECURE=false
+// npm run build
+// AWS: see relay/README.md`
+        },
+        {
+            id: 'agents_grok_npc_dev',
+            title: 'AI Agents — Grok NPC + Dev + Local',
+            summary: 'SCENE dock → AI tab. Attach Grok to NPCs; Dev agent suggests Compiler code.',
+            checklist: ['Grok API key (auth overlay)', 'Select NPC → ATTACH TO NPC', 'NPC TALK for dialogue', 'GROK DEV for Compiler'],
+            code: `// NPC: select human NPC → SCENE → AI → ATTACH TO NPC
+// Dev: write draft in Compiler → SCENE → AI → GROK DEV: APPLY
+// Local: interval script in AI tab — no API key
+// userData.agentType / agentPersona on NPCs persist in world export`
+        },
+        {
             id: 'sound_prompt_loop',
             title: 'Sounds in AI Prompts',
             summary: 'Record in SFX tab → check clips in PromptGen → AI wires soundClipId on objects.',

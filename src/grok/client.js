@@ -1,7 +1,7 @@
 import { Auth } from '../auth/main.js';
 
-const API_URL = import.meta.env.VITE_XAI_API_URL || 'https://api.x.ai/v1/chat/completions';
-const MODEL = import.meta.env.VITE_XAI_MODEL || 'grok-build-0.1';
+export const API_URL = import.meta.env.VITE_XAI_API_URL || 'https://api.x.ai/v1/chat/completions';
+export const MODEL = import.meta.env.VITE_XAI_MODEL || 'grok-build-0.1';
 
 export async function generateScript(systemPrompt, userIdea) {
     if (!Auth.isLoggedIn()) {

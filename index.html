@@ -100,7 +100,7 @@
             <div class="engine-welcome-card panel">
                 <h3>WELCOME</h3>
                 <p>Drag <strong>TOOLS</strong> and <strong>SCENE</strong> panels anywhere · LOCK when set.</p>
-                <p>Tap <strong>PLAY</strong> to walk · <strong>+</strong> to insert · <strong>SFX</strong> to record sounds.</p>
+                <p>Tap <strong>PLAY</strong> to walk · <strong>+</strong> to insert · <strong>SFX</strong> / <strong>AI</strong> agents · <strong>EXPORT</strong> when ready to ship.</p>
                 <button id="engine-welcome-dismiss" type="button">GOT IT</button>
             </div>
         </div>
@@ -140,6 +140,7 @@
                         <button id="btn-load" class="edit-only btn-sm">IMPORT</button>
                         <button id="btn-console-toggle" class="btn-sm" type="button" title="Toggle command console">CON</button>
                         <button id="btn-touch-toggle" class="btn-sm mobile-only" type="button" title="Toggle touch controls">TOUCH</button>
+                        <button id="btn-export-game" class="btn-sm" type="button" title="Export game package manifest">EXPORT</button>
                     </div>
                 </div>
                 </div>
@@ -174,6 +175,7 @@
                     <button type="button" class="dock-tab" data-dock-tab="inspect" title="Edit object">EDIT</button>
                     <button type="button" class="dock-tab" data-dock-tab="skin" title="Player skin">SKIN</button>
                     <button type="button" class="dock-tab" data-dock-tab="sfx" title="Sound library">SFX</button>
+                    <button type="button" class="dock-tab" data-dock-tab="agents" title="AI agents">AI</button>
                     <button type="button" id="dock-collapse" class="dock-collapse" title="Collapse dock">◀</button>
                 </div>
                 <div class="dock-panels">
@@ -285,6 +287,26 @@
                 </div>
                 <p id="sfx-record-status" class="insert-hint" style="margin:6px 0;">Tap RECORD — mic permission required once.</p>
                 <div id="sfx-library-list" class="sfx-library-list"></div>
+            </div>
+
+            <div id="agents-panel" class="panel dock-panel" data-dock-panel="agents" style="display:none;">
+                <div class="prop-row"><h3 style="margin:0;">AGENTS</h3></div>
+                <p class="insert-hint" style="margin:0 0 8px;">Local scripts or Grok-powered dev/NPC helpers. Grok needs API key (Grok edition / auth).</p>
+                <label class="insert-hint">Grok NPC persona</label>
+                <input type="text" id="agent-npc-persona" class="insert-input" placeholder="Friendly merchant, quest giver..." style="margin-bottom:6px;">
+                <div class="prop-row">
+                    <button id="agent-attach-npc" type="button">ATTACH TO NPC</button>
+                    <button id="agent-npc-talk" type="button">NPC TALK</button>
+                </div>
+                <input type="text" id="agent-npc-input" class="insert-input" placeholder="Say something to NPC..." style="margin:6px 0;">
+                <p id="agent-npc-reply" class="insert-hint" style="min-height:2.5em;margin:0 0 8px;"></p>
+                <hr style="border-color:var(--border-color);margin:8px 0;">
+                <button id="agent-dev-suggest" type="button" style="width:100%;margin-bottom:6px;">GROK DEV: SUGGEST CODE</button>
+                <button id="agent-dev-apply" type="button" style="width:100%;margin-bottom:6px;">GROK DEV: APPLY TO COMPILER</button>
+                <label class="insert-hint">Local script agent (interval ms, 0=off)</label>
+                <input type="number" id="agent-local-interval" class="insert-input" value="0" min="0" step="1000" style="margin-bottom:6px;">
+                <textarea id="agent-local-script" class="insert-input" rows="3" placeholder="// e.g. console.log('tick')" style="margin-bottom:6px;font-family:var(--font-mono);font-size:0.65rem;"></textarea>
+                <button id="agent-local-save" type="button" style="width:100%;">SAVE LOCAL AGENT</button>
             </div>
 
             <div id="player-skin-panel" class="panel dock-panel" data-dock-panel="skin" style="display:none;">
