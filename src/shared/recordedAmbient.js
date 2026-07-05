@@ -24,6 +24,7 @@ const POOLS = {
 
 export const RecordedAmbient = {
     _birdHandle: null,
+    _birdStarting: false,
     _nextFoley: 0,
     _active: false,
     _tags: null,
@@ -46,17 +47,24 @@ export const RecordedAmbient = {
 
     stop() {
         this._active = false;
+        this._birdStarting = false;
         this._birdHandle?.stop?.();
         this._birdHandle = null;
     },
 
     async _startBirdLoop() {
+        if (this._birdStarting || this._birdHandle) return;
         const rain = window.WeatherSystem?.getIntensity?.() ?? 0;
         if (rain > 0.35) return;
         const AudioSys = window.AudioSys;
         if (!AudioSys?.playClipLoop) return;
-        this._birdHandle?.stop?.();
-        this._birdHandle = await AudioSys.playClipLoop('starter_rec_birds', 0.12);
+        this._birdStarting = true;
+        try {
+            this._birdHandle?.stop?.();
+            this._birdHandle = await AudioSys.playClipLoop('starter_rec_birds', 0.12);
+        } finally {
+            this._birdStarting = false;
+        }
     },
 
     _nearestProp(pos, tag) {
@@ -109,8 +117,8 @@ export const RecordedAmbient = {
         if (rain > 0.4 && this._birdHandle) {
             this._birdHandle.stop?.();
             this._birdHandle = null;
-        } else if (rain < 0.3 && !this._birdHandle) {
-            this._startBirdLoop();
+        } else if (rain < 0.3 && !this._birdHandle && !this._birdStarting) {
+            void this._startBirdLoop();
         }
         if (this._birdHandle?.setVolume) {
             this._birdHandle.setVolume(0.08 + (1 - rain) * 0.14);

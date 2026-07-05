@@ -1128,6 +1128,11 @@ const Engine = {
         requestAnimationFrame((t) => this.animate(t));
         if (this.shaderPass) this.shaderPass.uniforms.time.value = time * 0.001;
 
+        const dt = this._lastAnimTime
+            ? Math.min(0.05, (time - this._lastAnimTime) / 1000)
+            : 0.016;
+        this._lastAnimTime = time;
+
         Controls.pollGamepad();
         Controls.applyCameraStick();
         if (Controls.consumeJustPressed('toggleMode')) UI.toggleControlMode();
@@ -1218,7 +1223,6 @@ const Engine = {
             if (t >= 1) State.introPlaying = false;
         }
 
-        const dt = 0.016;
         window.NpcPatrol?.tick?.(dt);
         State.objects.forEach((obj) => {
             if (obj.userData?.patrolId) return;

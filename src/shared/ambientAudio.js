@@ -20,8 +20,8 @@ export const AmbientAudio = {
         if (this._active) return;
         this._active = true;
         this.init();
-        this._playLoop('starter_amb_wind', 0.18, '_windHandle');
-        this._playLoop('starter_amb_highway', 0.14, '_highwayHandle');
+        void this._playLoop('starter_amb_wind', 0.18, '_windHandle');
+        void this._playLoop('starter_amb_highway', 0.14, '_highwayHandle');
         window.RecordedAmbient?.start?.();
     },
 
@@ -35,13 +35,14 @@ export const AmbientAudio = {
         window.RecordedAmbient?.stop?.();
     },
 
-    _playLoop(clipId, vol, key) {
+    async _playLoop(clipId, vol, key) {
         const AudioSys = window.AudioSys;
         if (!AudioSys?.playClipLoop) {
             AudioSys?.playClip?.(clipId, vol * 0.6);
             return;
         }
-        this[key] = AudioSys.playClipLoop(clipId, vol);
+        const handle = await AudioSys.playClipLoop(clipId, vol);
+        if (this._active) this[key] = handle;
     },
 
     _listenerPos() {

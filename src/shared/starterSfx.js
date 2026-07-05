@@ -2,10 +2,13 @@ import { SoundLibrary } from './soundLibrary.js';
 import { AssetBundle } from './assetBundle.js';
 
 let seeded = false;
+let seedingPromise = null;
 
 export async function seedStarterSounds(force = false) {
     if (seeded && !force) return { n: 0, skipped: true };
+    if (seedingPromise && !force) return seedingPromise;
 
+    seedingPromise = (async () => {
     let manifest;
     try {
         const res = await fetch(AssetBundle.getUrl('sounds/starter/starter-sounds.json'));
@@ -47,6 +50,13 @@ export async function seedStarterSounds(force = false) {
 
     seeded = true;
     return { n, clips: manifest.clips?.length || 0 };
+    })();
+
+    try {
+        return await seedingPromise;
+    } finally {
+        seedingPromise = null;
+    }
 }
 
 const ENGINE_MAP = {
