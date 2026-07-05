@@ -149,6 +149,10 @@ export const GameExport = {
                 index: 'bundle/bundle-index.json',
                 note: 'npm run bundle:assets copies textures/ + import/ into native/web builds',
             },
+            graphics: window.GraphicsProfile?.exportSnapshot?.() || {
+                tier: options.graphicsTier || 'realistic',
+                renderMode: 4,
+            },
             agents: options.agents || window.AgentHub?.exportConfigs?.() || [],
             relay: {
                 mode: options.relayMode || (import.meta.env.VITE_PEER_HOST ? 'custom' : 'peerjs-cloud'),

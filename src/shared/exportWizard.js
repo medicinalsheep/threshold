@@ -143,6 +143,7 @@ export const ExportWizard = {
                 <li>${soundCount} sound clip reference(s)${soundSidecar ? ' (base64 embedded)' : ''}</li>
                 <li>Scripts: ${hasScripts ? 'included' : 'empty (add in Compiler first)'}</li>
                 <li>Creative: ${hasGimp ? 'GIMP manifest' : '—'} · ${hasBlender ? 'Blender GLTF' : '—'}</li>
+                <li>Graphics: ${escapeText(this.manifest.graphics?.tier || 'realistic')} (render ${this.manifest.graphics?.renderMode ?? 4})</li>
                 <li>Dev CLI: <code>textures:watch</code> · <code>blender:export</code> · <code>bundle:assets</code></li>
                 <li>Relay: ${escapeText(this.manifest.relay?.mode || 'peerjs-cloud')}</li>
             </ul>

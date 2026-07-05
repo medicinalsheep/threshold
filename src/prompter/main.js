@@ -6,6 +6,7 @@ import { getSceneContext, getAssetContext } from '../shared/sceneContext.js';
 import { getSoundContext } from '../shared/soundContext.js';
 import { getReferencePromptBlock } from '../shared/referenceLibrary.js';
 import { getRenderModePromptBlock } from '../shared/renderModes.js';
+import { GraphicsProfile } from '../shared/graphicsProfile.js';
 import { SoundLibrary } from '../shared/soundLibrary.js';
 
 function renderSoundPicker() {
@@ -91,7 +92,12 @@ OBJECT EDIT METADATA (set in code for inspector):
 RENDER MODES (all remain true 3D — post-process stylizes, depth bands preserve space):
 ${getRenderModePromptBlock()}
 
-LEGO FIT: extend live scene via World.createObject — no clearWorld. Snap props with offsets from World.getCursorPos(). Set userData mass/friction/restitution for Collision panel. Hyper(4) default for realism.
+GRAPHICS TIERS (Engine suggests on first run; override in SCENE → ENV):
+${GraphicsProfile.getPromptBlock()}
+- Match tier to scene: retro galleries → compatibility/balanced; PBR textures/GLTF → realistic/ultra (Hyper mode 4)
+- Persisted in world export as graphics.tier — respect active tier when generating worlds
+
+LEGO FIT: extend live scene via World.createObject — no clearWorld. Snap props with offsets from World.getCursorPos(). Set userData mass/friction/restitution for Collision panel. Use active graphics tier render mode (Hyper=4 for realistic/ultra).
 
 SPECTATE: guests can watch via lobby SPECTATE or nav SPECTATE tab (read-only orbit).
 

@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v4.0.0 — Phase F scaffold (iOS Capacitor, package:ios, export wizard iOS target, TestFlight docs).
+**Current:** v4.1.0 — Phase G (suggested graphics tiers, first-run prompt, ENV override, export persistence).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -39,23 +39,23 @@
 
 **Left for store release:** signed archive, App Store screenshots, privacy questionnaire, notarized macOS (separate).
 
-### Phase G — Suggested graphics & quality tiers (v4.1)
+### Phase G — Suggested graphics & quality tiers (v4.1) ✅
 
-*“Suggested graphics” — Engine picks defaults; user can override.*
+*Shipped in v4.1.0 — Engine detects device tier; user overrides in ENV.*
 
 | Tier | Target | Render mode | Features |
 |------|--------|-------------|----------|
-| **Compatibility** | Old phones, retro aesthetic | Threshold / 1-Bit | No bloom, no water, low physics cost |
-| **Balanced** | Mid devices | SMPTE / Terminal | Post-process only, optional fog |
-| **Realistic** | Desktop / flagship | Hyper | PBR, water, bloom, atmosphere |
-| **Ultra** | High-end desktop | Hyper + future HILOD | Full texture res, MSAA, post stack |
+| **Compatibility** | Old phones, retro aesthetic | Threshold (0) | No bloom, no water, lighter physics |
+| **Balanced** | Mid devices | SMPTE (3) | Atmosphere + fog, no water |
+| **Realistic** | Desktop / flagship | Hyper (4) | PBR, water, bloom, atmosphere |
+| **Ultra** | High-end desktop | Hyper (4) | Higher DPR cap, bloom, shadow res |
 
 Deliverables:
 
-- `GraphicsProfile.detect()` — GPU tier, `navigator.hardwareConcurrency`, memory heuristic
-- First-run prompt: “Suggested: Balanced” with override in ENV panel
-- Persist `userData.graphicsTier` in world export
-- PromptGen documents tier when generating worlds
+- ✅ `GraphicsProfile.detect()` — GPU heuristic, cores, `deviceMemory`
+- ✅ First-run prompt after tutorial — “Suggested: …” + ENV override
+- ✅ Persist `graphics.tier` in sync + export manifest
+- ✅ PromptGen `GRAPHICS TIERS` block in system prompt
 
 ### Phase H — Mesh LOD (v4.2)
 
@@ -144,6 +144,7 @@ CLI: `npm run export:graphics -- --profile android` → pruned asset folder + ma
 | **3.7** | Docs, prompts, walkthrough, export UX |
 | **3.8** | Phase E — normal maps, bundling, web GIMP batch, sound sidecar |
 | **4.0** | iOS Capacitor scaffold + export wizard + TestFlight docs |
+| **4.1** | Suggested graphics tiers + first-run prompt + ENV presets |
 | **4.1** | Suggested graphics tiers |
 | **4.2** | Mesh LOD |
 | **4.3–4.4** | HILOD textures |

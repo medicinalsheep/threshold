@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → local GIMP/Blender art → AI agents on NPCs.
 
-**Current version:** **4.0.0** (Phase F — iOS Capacitor scaffold, export wizard iOS target)
+**Current version:** **4.1.0** (Phase G — suggested graphics tiers, ENV presets, export persistence)
 
 **Detailed next phases:** [NEXT_PHASES.md](NEXT_PHASES.md) (LOD, HILOD, iOS, Phase E leftovers)
 
@@ -70,11 +70,11 @@ See [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md).
 
 *Android + Windows + iOS scaffold exist; store submission is per-developer.*
 
-### Phase 4 — Graphics intelligence (v4.1–4.5) 📋
+### Phase 4 — Graphics intelligence (v4.1–4.5) 🔧
 
 See [NEXT_PHASES.md](NEXT_PHASES.md):
 
-- [ ] Suggested graphics tiers (Compatibility / Balanced / Realistic / Ultra)
+- [x] Suggested graphics tiers (Compatibility / Balanced / Realistic / Ultra) — v4.1
 - [ ] Mesh LOD (Blender multi-GLB)
 - [ ] HILOD textures (distance + tier-based maps)
 - [ ] Targeted graphics export CLI per platform

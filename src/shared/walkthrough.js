@@ -1,5 +1,6 @@
 import { ViewPrefs } from './viewPrefs.js';
 import { SceneDock } from './sceneDock.js';
+import { GraphicsPrompt } from './graphicsPrompt.js';
 
 const STEPS = [
     {
@@ -64,12 +65,12 @@ const STEPS = [
     },
     {
         title: 'Playtest',
-        body: 'Tap <strong>PLAY</strong> (or <strong>PAUSE</strong> for EDIT). <strong>WASD</strong> to move. Try <strong>Hyper</strong> render mode (ENV) when using PBR textures. Switch <strong>FLY</strong> / walk with the mode button.',
+        body: 'Tap <strong>PLAY</strong> (or <strong>PAUSE</strong> for EDIT). <strong>WASD</strong> to move. After this tour, Threshold suggests a <strong>graphics tier</strong> for your device — override anytime in <strong>SCENE → ENV</strong>. Use <strong>Hyper</strong> for PBR textures.',
         highlight: '#btn-host-pause',
     },
     {
         title: 'Save & ship',
-        body: '<strong>MORE → SAVE WORLD</strong> for share links. <strong>MORE → EXPORT</strong> downloads a manifest listing world, sounds, <strong>textures</strong>, and Blender/GIMP paths. Then <code>package:android</code> or <code>package:win</code> — iOS pipeline coming soon (see docs/NEXT_PHASES.md).',
+        body: '<strong>MORE → SAVE WORLD</strong> for share links. <strong>MORE → EXPORT</strong> downloads a manifest (includes <strong>graphics tier</strong>). Ship with <code>package:android</code>, <code>package:win</code>, or <code>package:ios</code>.',
         highlight: '#btn-toolbar-more',
     },
     {
@@ -185,6 +186,7 @@ export const Walkthrough = {
         ViewPrefs.set('welcomeSeen', true);
         this.hide();
         window.UI?.status('Tutorial complete — MORE → TUTORIAL to replay');
+        GraphicsPrompt.startIfNeeded();
     },
 
     hide() {

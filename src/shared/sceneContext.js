@@ -1,3 +1,5 @@
+import { GraphicsProfile } from './graphicsProfile.js';
+
 const MODE_NAMES = ['Threshold', '1-Bit', 'Terminal', 'SMPTE', 'Hyper'];
 
 export function getSceneContext() {
@@ -44,6 +46,7 @@ export function getSceneContext() {
 CURRENT LIVE SCENE (use as base — extend, do not blindly clear unless asked):
 ${netLine}
 - Your player key: ${session?.playerKey || '?'}
+- Graphics tier: ${State.graphicsTier || 'realistic'}${State.graphicsDetectedTier ? ` (detected: ${State.graphicsDetectedTier})` : ''}
 - Render mode: ${MODE_NAMES[State.renderMode] || State.renderMode}
 - Object count: ${objects.length}
 - Time of day: ${env.timeOfDay ?? '?'}h

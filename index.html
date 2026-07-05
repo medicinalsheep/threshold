@@ -117,6 +117,23 @@
         </div>
 
         <!-- 3. UI Overlay Layer -->
+        <div id="engine-graphics-prompt" class="engine-graphics-prompt hidden" role="dialog" aria-labelledby="graphics-prompt-title">
+            <div class="engine-graphics-prompt-card panel">
+                <div class="engine-graphics-prompt-header">
+                    <span class="graphics-prompt-badge">GRAPHICS</span>
+                    <button id="graphics-prompt-skip" type="button" class="btn-sm">SKIP</button>
+                </div>
+                <h3 id="graphics-prompt-title">Suggested graphics</h3>
+                <p id="graphics-prompt-body" class="graphics-prompt-body"></p>
+                <label class="insert-hint">Quality tier</label>
+                <select id="graphics-prompt-tier" class="insert-input"></select>
+                <div class="engine-graphics-prompt-nav">
+                    <button id="graphics-prompt-env" type="button" class="btn-sm">CUSTOMIZE IN ENV</button>
+                    <button id="graphics-prompt-accept" type="button">USE SUGGESTED</button>
+                </div>
+            </div>
+        </div>
+
         <div id="engine-walkthrough" class="engine-walkthrough hidden" role="dialog" aria-labelledby="walkthrough-title">
             <div class="engine-walkthrough-card panel">
                 <div class="engine-walkthrough-header">
@@ -215,6 +232,17 @@
                     <button id="btn-env-close" class="btn-sm" type="button">✕</button>
                 </div>
                 <hr style="border-color:var(--border-color); margin:8px 0;">
+                <div class="prop-row">
+                    <label>Graphics</label>
+                    <select id="env-graphics-tier">
+                        <option value="compatibility">Compatibility</option>
+                        <option value="balanced">Balanced</option>
+                        <option value="realistic" selected>Realistic</option>
+                        <option value="ultra">Ultra</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                </div>
+                <p id="env-graphics-info" class="env-mode-info"></p>
                 <div class="prop-row">
                     <label>Render</label>
                     <select id="env-mode">

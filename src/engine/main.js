@@ -39,6 +39,8 @@ import { DevAgent } from '../grok/devAgent.js';
 import { Walkthrough } from '../shared/walkthrough.js';
 import { ExportWizard } from '../shared/exportWizard.js';
 import { getRenderMode } from '../shared/renderModes.js';
+import { GraphicsProfile } from '../shared/graphicsProfile.js';
+import { GraphicsPrompt } from '../shared/graphicsPrompt.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 
@@ -88,6 +90,7 @@ export function initEngine() {
 
     Physics.init();
     Engine.init();
+    GraphicsProfile.bootstrap();
     Environment.init();
     UI.init();
     Physics.createFloor();
@@ -116,6 +119,9 @@ export function initEngine() {
     }
 
     Walkthrough.startIfNeeded();
+    if (ViewPrefs.get('walkthroughDone') || ViewPrefs.get('welcomeSeen')) {
+        GraphicsPrompt.startIfNeeded();
+    }
 }
 
 // --- GLOBAL STATE ---
@@ -125,6 +131,8 @@ const State = {
     darkMode: true,
     gridVisible: true,
     renderMode: 4,
+    graphicsTier: 'realistic',
+    graphicsDetectedTier: null,
     objects: [],
     physicsObjects: [],
     keys: {},
@@ -435,9 +443,18 @@ const Environment = {
     },
 
     bindUi: function () {
+        document.getElementById('env-graphics-tier')?.addEventListener('change', (e) => {
+            const tierId = e.target.value;
+            if (tierId === 'custom') {
+                GraphicsProfile.markCustom();
+                return;
+            }
+            GraphicsProfile.apply(tierId);
+        });
         document.getElementById('env-mode')?.addEventListener('change', (e) => {
             const idx = parseInt(e.target.value, 10);
             Engine.setRenderMode(idx);
+            GraphicsProfile.markCustom();
         });
         document.getElementById('env-time')?.addEventListener('input', (e) => {
             this.setTimeOfDay(parseFloat(e.target.value));
@@ -503,7 +520,9 @@ const Environment = {
     createWater: function () {
         if (this.waterReflector) return;
 
-        const texSize = IS_TOUCH_DEVICE ? 512 : 1024;
+        const tier = State.graphicsTier || 'realistic';
+        const tierPreset = GraphicsProfile.getTier(tier);
+        const texSize = tierPreset.waterTexSize || (IS_TOUCH_DEVICE ? 512 : 1024);
         const reflectorGeo = new THREE.PlaneGeometry(120, 120);
         this.waterReflector = new Reflector(reflectorGeo, {
             clipBias: 0.003,
@@ -795,6 +814,7 @@ const Engine = {
         const meta = getRenderMode(idx);
         if (info) info.textContent = `${meta.tagline} — ${meta.limits}`;
         window.Spectate?.updateHud?.();
+        GraphicsProfile.syncUi();
     },
     openContextAtScreen: function (clientX, clientY) {
         const rect = this.renderer.domElement.getBoundingClientRect();

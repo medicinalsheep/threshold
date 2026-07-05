@@ -435,6 +435,73 @@ body.console-hidden .console-restore-tab {
     z-index: 5;
 }
 
+.engine-graphics-prompt {
+    position: fixed;
+    inset: 0;
+    z-index: 36;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.72);
+}
+
+.engine-graphics-prompt.hidden {
+    display: none;
+}
+
+.engine-graphics-prompt-card {
+    max-width: 420px;
+    width: 100%;
+    padding: 16px 18px !important;
+    border-color: var(--accent-color) !important;
+    animation: welcomeSlide 0.45s ease-out;
+}
+
+.engine-graphics-prompt-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.graphics-prompt-badge {
+    font-size: 0.62rem;
+    letter-spacing: 1.5px;
+    color: var(--accent-color);
+}
+
+.graphics-prompt-body {
+    margin: 0 0 12px;
+    font-size: 0.72rem;
+    line-height: 1.55;
+    color: #bbb;
+}
+
+.engine-graphics-prompt-nav {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.engine-graphics-prompt-nav button {
+    flex: 1;
+    min-height: 40px;
+}
+
+#graphics-prompt-accept {
+    background: var(--accent-color) !important;
+    color: #000 !important;
+    border: none !important;
+}
+
+.env-mode-info {
+    font-size: 0.65rem;
+    line-height: 1.45;
+    color: #888;
+    margin: 4px 0 8px;
+}
+
 .engine-walkthrough {
     position: fixed;
     inset: 0;

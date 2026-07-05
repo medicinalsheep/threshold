@@ -1,4 +1,5 @@
 import { getSceneObjectsForSpawn } from './sceneContext.js';
+import { GraphicsProfile } from './graphicsProfile.js';
 
 let applying = false;
 
@@ -30,6 +31,7 @@ export const Sync = {
             objects: getSceneObjectsForSpawn().filter((o) => !o.userData?.isPlayer),
             env: { ...State.env },
             renderMode: State.renderMode,
+            graphics: GraphicsProfile.exportSnapshot(),
             runningCode: window.Runtime?.runningCode || '',
             isPaused: !!State.isPaused,
             pauseReason: window.Session?.pauseReason || '',
@@ -73,14 +75,31 @@ export const Sync = {
                 window.GltfImport?.spawnSnapshots?.(gltfSnapshots);
             }
 
-            if (state.env && Environment) {
-                Environment.setTimeOfDay(state.env.timeOfDay ?? 14);
-                Environment.setFog(state.env.fogDensity ?? 0.02);
-                if (!!state.env.waterEnabled !== !!State.env.waterEnabled) Environment.toggleWater();
-                if (!!state.env.atmosphereEnabled !== !!State.env.atmosphereEnabled) Environment.toggleAtmosphere();
+            if (state.graphics) {
+                GraphicsProfile.applyFromSync(state.graphics);
+            } else {
+                if (state.env && Environment) {
+                    Object.assign(State.env, state.env);
+                    Environment.setTimeOfDay(state.env.timeOfDay ?? 14);
+                    Environment.setFog(state.env.fogDensity ?? 0.02);
+                    if (!!state.env.waterEnabled !== !!Environment.waterReflector) {
+                        if (state.env.waterEnabled) Environment.createWater();
+                        else Environment.removeWater();
+                    }
+                    if (!!state.env.atmosphereEnabled !== !!Environment.hemiLight?.visible) {
+                        if (state.env.atmosphereEnabled) {
+                            if (!Environment.hemiLight && Engine?.scene && window.THREE) {
+                                Environment.hemiLight = new window.THREE.HemisphereLight(0x87ceeb, 0x1a2a12, 0.55);
+                                Engine.scene.add(Environment.hemiLight);
+                            }
+                            if (Environment.hemiLight) Environment.hemiLight.visible = true;
+                        } else if (Environment.hemiLight) {
+                            Environment.hemiLight.visible = false;
+                        }
+                    }
+                }
+                if (typeof state.renderMode === 'number') Engine.setRenderMode(state.renderMode);
             }
-
-            if (typeof state.renderMode === 'number') Engine.setRenderMode(state.renderMode);
             if (typeof state.gridVisible === 'boolean' && state.gridVisible !== State.gridVisible) Engine.toggleGrid();
 
             if (Runtime && state.runningCode) Runtime.setRunningCode(state.runningCode, 'sync');
