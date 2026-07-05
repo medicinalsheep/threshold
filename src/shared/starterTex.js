@@ -4,7 +4,7 @@ import starterTexCfg from '../../config/starter-textures.json';
 
 const MAN = 'textures/threshold_manifest.json';
 
-function finishMaterial(mesh, settings = {}) {
+export function finishMaterial(mesh, settings = {}) {
     const mat = mesh?.material;
     if (!mat) return;
     const rep = settings.uvRepeat || starterTexCfg.defaults?.uvRepeat || [2, 2];
@@ -26,7 +26,7 @@ function finishMaterial(mesh, settings = {}) {
     mat.needsUpdate = true;
 }
 
-function resolveFinishSettings(obj) {
+export function resolveFinishSettings(obj) {
     const name = obj.userData?.name;
     const byName = name && starterTexCfg.objects?.[name];
     if (byName) return byName;
@@ -98,4 +98,4 @@ export async function wireStarterTextures() {
     return { n: wired, maps };
 }
 
-window.StarterTex = { wireStarterTextures, finishMaterial };
+window.StarterTex = { wireStarterTextures, finishMaterial, resolveFinishSettings };

@@ -26,7 +26,19 @@ except ImportError as exc:
 MANIFEST_NAME = "threshold_manifest.json"
 MANIFEST_FORMAT = "threshold-gimp-manifest"
 ENGINE_VERSION = "4.8.0"
-HILOD_VARIANTS = [(512, "_512"), (1024, "_1k"), (2048, "_2k")]
+_CFG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "config", "tc-textures.json")
+
+
+def _load_hilod():
+    try:
+        with open(_CFG_PATH, "r", encoding="utf-8") as handle:
+            cfg = json.load(handle)
+        tiers = cfg.get("hilod") or []
+        if tiers:
+            return [(int(t["maxPx"]), t["suffix"]) for t in tiers]
+    except OSError:
+        pass
+    return [(128, "_512"), (256, "_1k"), (512, "_2k"), (1024, "_4k")]
 
 
 def slugify(name: str) -> str:
@@ -86,7 +98,7 @@ def export_slot_with_hilod(image, layer, export_dir: str, slug: str, slot: str, 
     }
     if export_hilod:
         base, ext = os.path.splitext(filepath)
-        for max_px, suffix in HILOD_VARIANTS:
+        for max_px, suffix in _load_hilod():
             variant_name = f"{slug}_{slot}{suffix}{ext}"
             variant_path = os.path.join(export_dir, variant_name)
             export_layer_scaled(image, layer, variant_path, max_px)
@@ -223,10 +235,11 @@ def threshold_export_pbr(
         f"Threshold export complete.\n"
         f"Object: {display_name}\n"
         f"Maps: {len(entries)}\n"
-        f"HILOD: {'512/1K/2K variants' if export_hilod else 'full-res only'}\n"
+        f"HILOD: {'tier variants from tc-textures.json' if export_hilod else 'full-res only'}\n"
         f"Folder: {export_dir}\n"
         f"Manifest: {manifest_path}\n\n"
-        f"In Engine: select mesh → Texture tab → GIMP SYNC"
+        f"Live: npm run textures:watch + npm run dev (hot-reload)\n"
+        f"Manual: Engine → Texture tab → GIMP SYNC"
     )
 
 

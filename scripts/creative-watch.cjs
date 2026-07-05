@@ -7,6 +7,7 @@
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
+const { spawn } = require('child_process');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = parseInt(process.env.CREATIVE_WATCH_PORT || '3927', 10);
@@ -84,6 +85,24 @@ function parseTextureFile(fileName) {
     return null;
 }
 
+function mirrorToBundle(relPath) {
+    const src = path.join(ROOT, relPath);
+    const dest = path.join(ROOT, 'public', 'bundle', relPath);
+    if (!fs.existsSync(src) || !fs.statSync(src).isFile()) return;
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    try {
+        fs.copyFileSync(src, dest);
+    } catch {
+        /* optional */
+    }
+}
+
+function compressWebpSibling(filePath) {
+    if (!filePath.toLowerCase().endsWith('.png')) return;
+    const script = path.join(__dirname, 'compress-one.cjs');
+    spawn(process.execPath, [script, filePath], { stdio: 'ignore', cwd: ROOT }).unref();
+}
+
 function emitChange(kind, filePath) {
     const relative = rel(filePath);
     const fileName = path.basename(filePath);
@@ -102,7 +121,13 @@ function emitChange(kind, filePath) {
         return;
     }
 
+    if (kind === 'textures' && ext === '.png') {
+        compressWebpSibling(filePath);
+        mirrorToBundle(relative);
+    }
+
     if (kind === 'textures' && IMAGE_EXT.has(ext)) {
+        mirrorToBundle(relative);
         const parsed = parseTextureFile(fileName);
         broadcast({
             type: 'texture',
@@ -180,6 +205,20 @@ const server = http.createServer((req, res) => {
     }
 
     const url = new URL(req.url, `http://127.0.0.1:${PORT}`);
+
+    if (url.pathname === '/gimp-sync' && req.method === 'POST') {
+        const manPath = path.join(ROOT, 'textures', MANIFESTS.textures);
+        if (fs.existsSync(manPath)) {
+            broadcast({
+                type: 'gimp-manifest',
+                path: 'textures/threshold_manifest.json',
+                watchUrl: assetUrl('textures/threshold_manifest.json'),
+            });
+        }
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true }));
+        return;
+    }
 
     if (url.pathname === '/health') {
         res.writeHead(200, { 'Content-Type': 'application/json' });

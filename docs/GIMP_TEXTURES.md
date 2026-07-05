@@ -54,6 +54,39 @@ After manifest wiring, `config/starter-textures.json` applies UV repeat + normal
 
 ---
 
+## Live SYNC (paint → see in Engine)
+
+Terminal 1:
+
+```bash
+npm run textures:watch
+```
+
+Terminal 2:
+
+```bash
+npm run dev
+```
+
+1. Paint in GIMP → **Filters → Threshold → Export PBR Maps**
+2. Object name must match mesh `userData.name` (e.g. `Starter Ground`)
+3. Engine hot-reloads maps + reapplies UV tiling from `starter-textures.json`
+
+No GIMP SYNC button needed while watch is running.
+
+---
+
+## Starter texture kit (fork / reference)
+
+```bash
+npm run kit:export    # → exports/starter-texture-kit/ (~2 MB WebP base + _512)
+npm run kit:verify
+```
+
+Includes manifest subset, `starter-textures.json`, and footstep OGG clips.
+
+---
+
 ## Pipeline
 
 ```bash

@@ -1,5 +1,12 @@
 # Changelog
 
+## 6.4.0 — Phase 10: GIMP live SYNC + starter texture kit
+
+- **Live SYNC** — `textures:watch` auto-WebP, bundle mirror, manifest hot-reload + UV finish pass
+- **Starter kit** — `npm run kit:export` → lightweight WebP pack for forks (`exports/starter-texture-kit/`)
+- GIMP export plugin reads HILOD tiers from `tc-textures.json` (incl. `_4k`)
+- Creative watch connects on localhost preview; POST `/gimp-sync` trigger
+
 ## 6.3.0 — Phase 9: GIMP parity, Blender avatar export, immersive starter textures
 
 - GIMP `build_tc_tex.py` — full r8 parity with Node (all 12 surface styles + `_4k` HILOD)

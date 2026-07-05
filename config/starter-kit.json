@@ -1,0 +1,35 @@
+{
+  "format": "threshold-starter-kit",
+  "version": 1,
+  "description": "Lightweight starter PBR pack for new projects — WebP base + _512 HILOD",
+  "objectNames": [
+    "Starter Ground",
+    "Starter Wall",
+    "Welcome Platform",
+    "Grass Patch",
+    "Wood Deck",
+    "Gravel Path",
+    "Asphalt Lane",
+    "Metal Grate",
+    "Starter Bench",
+    "Fabric Banner",
+    "Starter Stripe",
+    "AI Build Station",
+    "Model Kiosk"
+  ],
+  "includeTiers": ["", "_512"],
+  "preferWebp": true,
+  "includeConfigs": [
+    "config/starter-textures.json",
+    "config/tc-textures.json",
+    "config/lod-distances.json"
+  ],
+  "includeSounds": [
+    "starter_footstep_concrete",
+    "starter_footstep_grass",
+    "starter_footstep_wood",
+    "starter_footstep_gravel",
+    "starter_footstep_asphalt",
+    "starter_footstep_metal"
+  ]
+}

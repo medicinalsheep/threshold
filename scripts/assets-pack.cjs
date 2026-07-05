@@ -24,4 +24,5 @@ spawnSync(npm, ['run', 'tex:ktx2'], { cwd: ROOT, stdio: 'inherit', shell: false 
 run('basis', ['basis:copy']);
 run('build', ['build']);
 run('bundle', ['bundle:assets']);
-console.log('\n[assets-pack] DONE — run npm run assets:verify');
+run('kit', ['kit:export']);
+console.log('\n[assets-pack] DONE — run npm run assets:verify && npm run kit:verify');

@@ -11,6 +11,9 @@ function shouldConnect() {
     if (import.meta.env.DEV) return true;
     if (import.meta.env.VITE_CREATIVE_WATCH === 'true') return true;
     if (import.meta.env.VITE_CREATIVE_WATCH === '1') return true;
+    if (typeof window !== 'undefined' && /localhost|127\.0\.0\.1/.test(window.location?.hostname || '')) {
+        return true;
+    }
     return false;
 }
 

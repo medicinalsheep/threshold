@@ -6,6 +6,7 @@ import { AssetBundle } from './assetBundle.js';
 import { CREATIVE_WATCH_URL } from '../config.js';
 import { TextureHilod, parseTextureFileName } from './textureHilod.js';
 import { NativeTextureCodec } from './nativeTextureCodec.js';
+import { finishMaterial, resolveFinishSettings } from './starterTex.js';
 
 const SLOT_PROPS = {
     albedo: 'map',
@@ -337,6 +338,7 @@ export const TextureBridge = {
         await TextureHilod.discoverVariantsFromBundle(obj);
         const albedo = entries.find((e) => e.slot === 'albedo');
         if (albedo?.path) obj.userData.textureHint = albedo.path;
+        if (applied) finishMaterial(obj, resolveFinishSettings(obj));
 
         return {
             applied,
@@ -510,6 +512,7 @@ export const TextureBridge = {
                 if (obj.userData.textureHilod) obj.userData.textureHilod.activeBySlot[slot] = hilodSuffix;
             }
             if (slot === 'albedo' && shouldApply) obj.userData.textureHint = filePath;
+            if (shouldApply) finishMaterial(obj, resolveFinishSettings(obj));
             applied += 1;
         }
 
@@ -540,7 +543,10 @@ export const TextureBridge = {
                     applied += result?.applied || 0;
                 }
             }
-            if (applied) window.UI?.status?.(`GIMP manifest hot-reload: ${applied} map(s)`);
+            for (const obj of window.State?.objects || []) {
+                if (obj?.material) finishMaterial(obj, resolveFinishSettings(obj));
+            }
+            if (applied) window.UI?.status?.(`GIMP live SYNC: ${applied} map(s)`);
             return { applied };
         } catch (e) {
             window.UI?.status?.(e.message || 'Manifest hot-reload failed');

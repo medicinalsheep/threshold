@@ -2,7 +2,7 @@
 
 Threshold ships a **full starter pipeline** for realistic action games: procedural PBR textures with HILOD, WebP/KTX2 codecs, Blender import, rigged avatars, surface footstep SFX, and FPS combat (ADS).
 
-**Current version:** v6.3.0 (Phase 9)
+**Current version:** v6.4.0 (Phase 10)
 
 ---
 
@@ -69,6 +69,23 @@ npm run gimp:install
 ```
 
 See [GIMP_TEXTURES.md](GIMP_TEXTURES.md) — full parity with `tc-gen-tex.cjs`.
+
+### GIMP live SYNC
+
+```bash
+npm run textures:watch   # terminal 1
+npm run dev              # terminal 2
+# GIMP Export PBR Maps → instant hot-reload in Engine
+```
+
+### Starter texture kit
+
+```bash
+npm run kit:export   # WebP base + _512 · ~2 MB fork pack
+npm run kit:verify
+```
+
+Output: `exports/starter-texture-kit/`
 
 ### Starter UV tiling
 

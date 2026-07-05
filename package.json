@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "6.3.0",
+  "version": "6.4.0",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
@@ -43,6 +43,8 @@
     "avatar:gen": "node scripts/gen-starter-avatar.cjs",
     "assets:pack": "node scripts/assets-pack.cjs",
     "assets:verify": "node scripts/assets-verify.cjs",
+    "kit:export": "node scripts/export-starter-kit.cjs",
+    "kit:verify": "node scripts/kit-verify.cjs",
     "sounds:gen": "node scripts/gen-starter-sfx.cjs",
     "sounds:compress": "node scripts/compress-starter-sfx.cjs",
     "sounds:verify": "node scripts/sounds-verify.cjs",
