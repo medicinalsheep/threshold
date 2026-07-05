@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v3.8.0 — Phase E complete (normal maps, asset bundling, web GIMP SYNC batch, sound sidecar).
+**Current:** v4.0.0 — Phase F scaffold (iOS Capacitor, package:ios, export wizard iOS target, TestFlight docs).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -22,20 +22,22 @@
 | Capacitor Filesystem import | ✅ scaffold v3.8 | `NativeAssets` + `@capacitor/filesystem` for device manifest load |
 | Doc/version drift | ✅ v3.8 | Roadmap + workflow docs updated |
 
-### Phase F — iOS & Apple App Store (v4.0)
+### Phase F — iOS & Apple App Store (v4.0) 🔧
 
-*iOS is **not** started today — Android + Windows only.*
+*iOS scaffold shipped — archive/upload still requires macOS + Apple Developer account.*
 
-| Step | Work |
-|------|------|
-| F1 | `@capacitor/ios`, `npx cap add ios`, `ios/` platform (un-gitignore template) |
-| F2 | `npm run package:ios`, `cap:open:ios` → Xcode |
-| F3 | Signing, provisioning, App Store Connect metadata |
-| F4 | `cap:assets` → real iOS icon/splash set |
-| F5 | TestFlight pipeline + doc in NATIVE_SHELLS.md |
-| F6 | Export wizard checkbox: **iOS** target + manifest `packaging.ios` block |
+| Step | Status | Work |
+|------|--------|------|
+| F1 | ✅ v4.0 | `@capacitor/ios`, `init:native` adds `ios/` (gitignored, generated locally) |
+| F2 | ✅ v4.0 | `npm run package:ios`, `cap:open:ios` → Xcode |
+| F3 | 📋 manual | Signing, provisioning, App Store Connect metadata (per-developer) |
+| F4 | ✅ v4.0 | `cap:assets` generates iOS icon/splash from `icons/` |
+| F5 | ✅ v4.0 | TestFlight pipeline documented in NATIVE_SHELLS.md |
+| F6 | ✅ v4.0 | Export wizard **iOS** checkbox + manifest `packaging.ios` block |
 
-**Compatibility notes:** WebGL on iOS WebView, safe-area insets, touch controls (already scaffolded), mic HTTPS, no Electron on iOS.
+**Compatibility notes:** WebGL on iOS WebView, safe-area insets (`viewport-fit=cover`), touch controls, mic HTTPS, no Electron on iOS.
+
+**Left for store release:** signed archive, App Store screenshots, privacy questionnaire, notarized macOS (separate).
 
 ### Phase G — Suggested graphics & quality tiers (v4.1)
 
@@ -141,7 +143,7 @@ CLI: `npm run export:graphics -- --profile android` → pruned asset folder + ma
 |---------|--------|
 | **3.7** | Docs, prompts, walkthrough, export UX |
 | **3.8** | Phase E — normal maps, bundling, web GIMP batch, sound sidecar |
-| **4.0** | iOS + App Store scaffold |
+| **4.0** | iOS Capacitor scaffold + export wizard + TestFlight docs |
 | **4.1** | Suggested graphics tiers |
 | **4.2** | Mesh LOD |
 | **4.3–4.4** | HILOD textures |

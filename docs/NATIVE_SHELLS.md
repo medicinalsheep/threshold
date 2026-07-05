@@ -1,4 +1,4 @@
-# Native shells (v3.8)
+# Native shells (v4.0)
 
 Threshold stays a **single Vite SPA** (`dist-pages/`). Native targets wrap that build — no runtime fork.
 
@@ -7,7 +7,7 @@ Threshold stays a **single Vite SPA** (`dist-pages/`). Native targets wrap that 
 | **Web** | Static host / GitHub Pages | `npm run build` | ✅ |
 | **Android APK** | Capacitor WebView | `npm run package:android` | 🔧 Scaffold |
 | **Windows .exe** | Electron | `npm run package:win` | 🔧 Scaffold |
-| **iOS** | Capacitor WebView | `npm run package:ios` | ❌ Phase F — not started |
+| **iOS** | Capacitor WebView | `npm run package:ios` | 🔧 Scaffold (Xcode archive on macOS) |
 
 ---
 
@@ -16,6 +16,7 @@ Threshold stays a **single Vite SPA** (`dist-pages/`). Native targets wrap that 
 - **Node 18+** and `npm install` in repo root
 - **Android:** [Android Studio](https://developer.android.com/studio) + SDK (API 33+)
 - **Windows:** No extra SDK — `electron-builder` downloads Electron on first `package:win`
+- **iOS:** macOS + [Xcode](https://developer.apple.com/xcode/) 15+ + Apple Developer account ($99/yr for App Store / TestFlight)
 
 ---
 
@@ -25,7 +26,7 @@ Brand assets live in `icons/` (neon rocket). Web favicon + lobby logo use `appic
 
 ```bash
 npm run build:icons   # Electron .ico (Windows)
-npm run cap:assets    # Capacitor Android mipmaps + splash
+npm run cap:assets    # Capacitor Android + iOS icons + splash
 ```
 
 `init:native` and `package:win` invoke these when needed.
@@ -40,7 +41,7 @@ npm run build:icons
 npm run init:native
 ```
 
-This builds `dist-pages`, adds the Capacitor Android project (if missing), and syncs web assets.
+This builds `dist-pages`, adds Capacitor Android + iOS projects (if missing), and syncs web assets.
 
 ---
 
@@ -52,7 +53,7 @@ Before packaging native builds, copy GIMP/Blender output into the web bundle:
 npm run bundle:assets   # textures/ + import/ → dist-pages/bundle/
 ```
 
-`package:win` and `package:android` run this automatically after `npm run build`.
+`package:win`, `package:android`, and `package:ios` run this automatically after `npm run build`.
 
 Electron reads bundled assets via `shell:bundle:readBinary`; web/Capacitor fetch from `./bundle/`.
 
@@ -64,7 +65,7 @@ Electron reads bundled assets via `shell:bundle:readBinary`; web/Capacitor fetch
 2. **MORE → EXPORT** — 4-step wizard:
    - Game name / author
    - Manifest review (world, scripts, sounds, textures, GLTF refs)
-   - Target checkboxes (web / Android / Windows)
+   - Target checkboxes (web / Android / Windows / iOS)
    - Download `.threshold-game.json`
 3. Run packaging CLI below.
 
@@ -140,24 +141,69 @@ After changing app name in export wizard, update `appName` in `capacitor.config.
 
 ---
 
-## iOS & App Store (planned — Phase F)
+## iOS & TestFlight (v4.0)
 
-**Not implemented yet.** No `@capacitor/ios`, no Xcode project in repo.
+Capacitor iOS wraps the same `dist-pages` SPA. **Archive and upload require macOS.**
 
-Planned steps (see [NEXT_PHASES.md](NEXT_PHASES.md)):
+### First-time iOS setup
 
-1. `npm install @capacitor/ios` + `npx cap add ios`
-2. `npm run package:ios` — build + `cap sync`
-3. `npm run cap:open:ios` — Xcode archive → TestFlight → App Store
-4. Export wizard **iOS** target + manifest `packaging.ios` block
+```bash
+npm install
+npm run init:native          # adds android/ + ios/ (generated locally, gitignored)
+# or iOS only:
+npm run init:native -- --ios
+```
 
-Until Phase F ships, ship **web** (Safari) or **Android** for mobile.
+### Sync web assets
+
+```bash
+npm run package:ios          # build + bundle:assets + cap sync ios
+npm run cap:open:ios         # open Xcode (macOS only)
+```
+
+### Xcode archive → TestFlight
+
+1. Open `ios/App/App.xcworkspace` in Xcode (use **workspace**, not `.xcodeproj`).
+2. Select **Any iOS Device (arm64)** as run destination.
+3. **Signing & Capabilities** — set your Team; bundle ID must match manifest `packaging.ios.bundleId` (default `com.threshold.game` per exported game).
+4. **Product → Archive**.
+5. In Organizer: **Distribute App** → **App Store Connect** → **Upload**.
+6. In [App Store Connect](https://appstoreconnect.apple.com): create app record → **TestFlight** tab → add internal/external testers.
+7. For App Store release: fill metadata, screenshots, privacy policy → submit for review.
+
+### App Store Connect checklist
+
+| Field | Source |
+|-------|--------|
+| Bundle ID | `packaging.ios.bundleId` in `.threshold-game.json` |
+| App name | Export wizard game name |
+| Category | Games |
+| Privacy | Mic (SFX recording), multiplayer (PeerJS) — declare in App Privacy |
+| Screenshots | iPhone 6.7" + 6.5" required; capture from simulator or device |
+
+### iOS-specific behavior
+
+- **Safe areas:** `viewport-fit=cover` + `env(safe-area-inset-*)` in CSS (engine toolbar, lobby, touch controls).
+- **WebGL:** Runs in WKWebView — same Three.js path as Android.
+- **Mic:** `getUserMedia` requires HTTPS scheme (`iosScheme: https` in `capacitor.config.json`).
+- **Touch:** On-screen joystick + look pad (see `touchControls.js`).
+- **No Electron:** iOS uses Capacitor only; Windows `.exe` is separate.
+
+### Troubleshooting (iOS)
+
+| Issue | Fix |
+|-------|-----|
+| `cap open ios` fails on Windows/Linux | Expected — open project on Mac via `npm run cap:open:ios` |
+| Signing errors | Xcode → Signing → select Team; match bundle ID in App Store Connect |
+| Blank WebView | Run `npm run package:ios` first; verify `dist-pages/index.html` exists |
+| Mic denied | iOS Settings → App → Microphone → Allow |
+| CocoaPods errors | `cd ios/App && pod install` (macOS) |
 
 ---
 
 ## Creative assets in native builds
 
-Export manifest documents `textures/` and `import/` paths. **Blob bundling** into APK/exe (copy assets beside WebView) is Phase E — today users re-import or use hosted GLB URLs.
+Export manifest documents `textures/` and `import/` paths. Run `npm run bundle:assets` before native package — copies assets into `dist-pages/bundle/` for APK, `.exe`, and iOS.
 
 Dev hot-reload: `npm run textures:watch` (localhost only).
 

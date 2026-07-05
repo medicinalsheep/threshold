@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → local GIMP/Blender art → AI agents on NPCs.
 
-**Current version:** **3.8.0** (Phase E — normal maps, asset bundling, web GIMP batch)
+**Current version:** **4.0.0** (Phase F — iOS Capacitor scaffold, export wizard iOS target)
 
 **Detailed next phases:** [NEXT_PHASES.md](NEXT_PHASES.md) (LOD, HILOD, iOS, Phase E leftovers)
 
@@ -60,14 +60,15 @@ See [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md).
 - [x] Native bundle of `textures/` + `import/` via `bundle:assets` (v3.8)
 - [x] Sound blob sidecar — base64 in export manifest (v3.8)
 
-### Phase 3 — iOS & Apple (v4.0) 📋
+### Phase 3 — iOS & Apple (v4.0) 🔧
 
-- [ ] `@capacitor/ios` + Xcode project
-- [ ] `npm run package:ios` + TestFlight docs
-- [ ] Export wizard iOS target checkbox
-- [ ] App Store metadata from manifest
+- [x] `@capacitor/ios` + `init:native` generates Xcode project locally
+- [x] `npm run package:ios` + `cap:open:ios` + TestFlight docs (NATIVE_SHELLS.md)
+- [x] Export wizard iOS target checkbox + `packaging.ios` in manifest
+- [ ] App Store Connect metadata automation (manual per release today)
+- [ ] Signed TestFlight / App Store archive (requires macOS + developer account)
 
-*Android + Windows exist today; iOS does not.*
+*Android + Windows + iOS scaffold exist; store submission is per-developer.*
 
 ### Phase 4 — Graphics intelligence (v4.1–4.5) 📋
 

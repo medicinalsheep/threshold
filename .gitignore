@@ -4,7 +4,8 @@ dist-pages/
 dist-grok/
 dist-electron/
 android/
-ios/
+ios/*
+!ios/README.md
 .capacitor/
 .vite/
 .vs/

@@ -11,7 +11,7 @@ export const ExportWizard = {
         author: '',
         description: '',
         includeSoundBlobs: false,
-        targets: { web: true, android: true, windows: true },
+        targets: { web: true, android: true, windows: true, ios: false },
     },
     manifest: null,
 
@@ -51,6 +51,7 @@ export const ExportWizard = {
         this.draft.targets.web = !!document.getElementById('export-target-web')?.checked;
         this.draft.targets.android = !!document.getElementById('export-target-android')?.checked;
         this.draft.targets.windows = !!document.getElementById('export-target-windows')?.checked;
+        this.draft.targets.ios = !!document.getElementById('export-target-ios')?.checked;
     },
 
     readReviewFromUi() {
@@ -63,6 +64,7 @@ export const ExportWizard = {
             author: this.draft.author,
             description: this.draft.description,
             includeSoundBlobs: this.draft.includeSoundBlobs,
+            targets: { ...this.draft.targets },
         });
     },
 
@@ -105,9 +107,10 @@ export const ExportWizard = {
                 <label class="export-wizard-check"><input type="checkbox" id="export-target-web" ${this.draft.targets.web ? 'checked' : ''}> ${profiles.web.label}</label>
                 <label class="export-wizard-check"><input type="checkbox" id="export-target-android" ${this.draft.targets.android ? 'checked' : ''}> ${profiles.android.label}</label>
                 <label class="export-wizard-check"><input type="checkbox" id="export-target-windows" ${this.draft.targets.windows ? 'checked' : ''}> ${profiles.windows.label}</label>
+                <label class="export-wizard-check"><input type="checkbox" id="export-target-ios" ${this.draft.targets.ios ? 'checked' : ''}> ${profiles.ios.label}</label>
                 <p class="insert-hint" style="margin-top:10px;">CLI after download:<br>
                 <code>npm run bundle:assets</code> (auto in package scripts)<br>
-                <code>npm run package:android</code> · <code>npm run package:win</code><br>
+                <code>npm run package:android</code> · <code>npm run package:win</code> · <code>npm run package:ios</code> (macOS archive)<br>
                 First time: <code>npm run init:native</code></p>
             `;
             return;
@@ -165,6 +168,7 @@ export const ExportWizard = {
         if (this.draft.targets.web) targets.push('web');
         if (this.draft.targets.android) targets.push('android');
         if (this.draft.targets.windows) targets.push('windows');
+        if (this.draft.targets.ios) targets.push('ios');
 
         body.innerHTML = `
             <p class="insert-hint">Ready to export <strong>${escapeText(m.game.name)}</strong>.</p>
@@ -202,7 +206,7 @@ export const ExportWizard = {
         a.download = filename;
         a.click();
         URL.revokeObjectURL(url);
-        window.UI?.status(`Exported ${m.game.name} — run package:android or package:win`);
+        window.UI?.status(`Exported ${m.game.name} — run package:android, package:win, or package:ios`);
         this.close();
         return m;
     },

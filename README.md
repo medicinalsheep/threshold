@@ -32,7 +32,7 @@ Lobby → Engine (3D world) ↔ Compiler (code) ↔ PromptGen (AI prompts)
 4. **Optional AI** — PromptGen → Compiler, or SCENE → AI agents on NPCs.
 5. **PLAY** — test walk/fly; use **Hyper** render mode for PBR textures.
 6. **SAVE WORLD** — **MORE** menu; share `?world=CODE` links.
-7. **EXPORT** — manifest lists textures, GLTF, sounds → `package:android` / `package:win` ([native shells](docs/NATIVE_SHELLS.md); iOS planned).
+7. **EXPORT** — manifest lists textures, GLTF, sounds → `package:android` / `package:win` / `package:ios` ([native shells](docs/NATIVE_SHELLS.md)).
 
 Deeper workflows: Compiler sidebar → **WORKFLOWS** (Quick Start, agents, relay, sounds).
 
@@ -220,7 +220,7 @@ npm run package:win       # Windows portable .exe (Electron)
 npm run electron:dev      # preview desktop shell
 ```
 
-**iOS / App Store:** not yet — see [docs/NEXT_PHASES.md](docs/NEXT_PHASES.md) Phase F.
+**iOS / App Store:** scaffold in v4.0 — `npm run package:ios` + Xcode archive on macOS. See [docs/NATIVE_SHELLS.md](docs/NATIVE_SHELLS.md).
 
 Full guide: [docs/NATIVE_SHELLS.md](docs/NATIVE_SHELLS.md)
 
@@ -264,7 +264,7 @@ Support ongoing development:
 | **Design** | Engine, Compiler, PromptGen, SFX |
 | **Art** | GIMP textures, Blender GLTF, `textures:watch` |
 | **Play** | Solo / host / guest, EDIT·PLAY, retro + Hyper |
-| **Ship** | EXPORT manifest (textures, GLTF, sounds) → APK / Windows / iOS (planned) |
+| **Ship** | EXPORT manifest (textures, GLTF, sounds) → APK / Windows / iOS (Capacitor) |
 | **Scale** | Optional **relay/** — [AWS free tier](relay/README.md) |
 
 **Agents (optional):** SCENE → AI — Grok NPC, Grok Dev, local script.

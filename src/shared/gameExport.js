@@ -23,6 +23,12 @@ const BUILD_PROFILES = {
         tool: 'electron',
         notes: 'npm run package:win — Electron portable .exe from dist-pages.',
     },
+    ios: {
+        label: 'iOS (Capacitor / App Store)',
+        status: 'scaffold',
+        tool: 'capacitor+xcode',
+        notes: 'npm run package:ios — requires macOS + Xcode. Archive → TestFlight → App Store.',
+    },
     steam: {
         label: 'Steam',
         status: 'planned',
@@ -135,7 +141,7 @@ export const GameExport = {
                 bundleAssets: 'npm run bundle:assets',
                 watchUrl: 'http://127.0.0.1:3927',
                 watchEnv: 'VITE_CREATIVE_WATCH=true',
-                note: 'textures:watch for dev hot-reload; bundle:assets before package:win / package:android',
+                note: 'textures:watch for dev hot-reload; bundle:assets before package:win / package:android / package:ios',
             },
             bundle: {
                 dir: 'dist-pages/bundle/',
@@ -149,11 +155,30 @@ export const GameExport = {
                 peerHost: import.meta.env.VITE_PEER_HOST || null,
             },
             buildProfiles: BUILD_PROFILES,
+            targets: options.targets || { web: true, android: true, windows: true, ios: false },
             packaging: {
                 webRoot: 'dist-pages/',
                 entry: 'index.html',
-                capacitor: { webDir: 'dist-pages', appId: 'com.threshold.game', appName: name },
+                capacitor: {
+                    webDir: 'dist-pages',
+                    appId: options.bundleId || 'com.threshold.game',
+                    appName: name,
+                },
                 electron: { main: 'electron/main.cjs', preload: 'electron/preload.cjs' },
+                ios: {
+                    bundleId: options.bundleId || 'com.threshold.game',
+                    appName: name,
+                    minOsVersion: '14.0',
+                    scheme: 'https',
+                    cli: 'npm run package:ios',
+                    openXcode: 'npm run cap:open:ios',
+                    init: 'npm run init:native',
+                    testFlight: 'Xcode → Product → Archive → Distribute → TestFlight',
+                    appStoreConnect: 'Create app record matching bundleId; upload build from Xcode Organizer',
+                    signing: 'Apple Developer account + provisioning profile in Xcode Signing & Capabilities',
+                    safeArea: 'viewport-fit=cover + env(safe-area-inset-*) in CSS',
+                    note: 'Build/archive requires macOS. Sync assets on any OS via package:ios.',
+                },
                 steam: { appId: null, depotId: null, note: 'Assign after Steamworks partner setup' },
             },
         };

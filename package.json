@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "3.8.0",
+  "version": "4.0.0",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
@@ -14,7 +14,9 @@
     "init:native": "node scripts/init-native.cjs",
     "cap:sync": "npx cap sync",
     "cap:open": "npx cap open android",
+    "cap:open:ios": "npx cap open ios",
     "package:android": "node scripts/package-android.cjs",
+    "package:ios": "node scripts/package-ios.cjs",
     "package:win": "node scripts/package-win.cjs",
     "build:icons": "node scripts/build-icons.cjs",
     "gimp:install": "node scripts/install-gimp-plugin.cjs",
@@ -26,16 +28,17 @@
     "cap:assets": "npx capacitor-assets generate --assetPath icons --iconBackgroundColor \"#000000\" --iconBackgroundColorDark \"#000000\" --splashBackgroundColor \"#000000\" --splashBackgroundColorDark \"#000000\""
   },
   "devDependencies": {
-    "@capacitor/android": "^7.2.0",
+    "@capacitor/android": "^7.6.0",
     "@capacitor/assets": "^3.0.5",
-    "@capacitor/cli": "^7.2.0",
+    "@capacitor/cli": "^7.6.0",
+    "@capacitor/ios": "^7.6.0",
     "electron": "^34.5.8",
     "electron-builder": "^25.1.8",
     "png-to-ico": "^2.1.8",
     "vite": "^6.2.0"
   },
   "dependencies": {
-    "@capacitor/core": "^7.2.0",
+    "@capacitor/core": "^7.6.0",
     "@capacitor/filesystem": "^7.1.1",
     "cannon-es": "^0.20.0",
     "peerjs": "^1.5.4",
