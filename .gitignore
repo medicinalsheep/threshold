@@ -19,3 +19,6 @@ textures/*.jpg
 textures/*.jpeg
 textures/*.webp
 !textures/.gitkeep
+import/*.glb
+import/*.gltf
+!import/.gitkeep

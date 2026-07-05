@@ -47,6 +47,24 @@ export const REFERENCE_LIBRARY = {
 // Inspector Collision: mass/friction/restitution still per-object`
         },
         {
+            id: 'blender_gltf_export',
+            title: 'Blender GLTF → Engine INSERT',
+            summary: 'Export textured GLB from Blender addon; insert at cursor with physics bbox collision.',
+            checklist: ['npm run blender:install', 'File → Export → Threshold GLTF', 'INSERT → GLTF tab', 'Collision panel for mass/friction'],
+            code: `// BLENDER + ENGINE WORKFLOW (not runnable in Compiler):
+// 1. npm run blender:install — enable "Threshold Export" in Blender Preferences
+// 2. Model with PBR materials — select mesh
+// 3. File → Export → Threshold GLTF (.glb)
+//    Object name: "Stone Block" · export to <project>/import/
+// 4. Compiler snap + physics metadata:
+const m = World.createObject('cube', 'Stone Block', 0xffffff, true);
+m.userData.mass = 1.5;
+m.userData.friction = 0.42;
+// (Replace with INSERT → GLTF after Blender export for real mesh)
+// 5. Engine EDIT → INSERT → GLTF — pick .glb or BLENDER MANIFEST
+// 6. SAVE WORLD persists gltfUrl / gltfPath + transform`
+        },
+        {
             id: 'gimp_texture_export',
             title: 'GIMP Export → Engine GIMP SYNC',
             summary: 'Paint PBR maps in GIMP, export via Threshold plugin, sync to mesh by object name.',

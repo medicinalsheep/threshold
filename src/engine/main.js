@@ -28,6 +28,8 @@ import { SoundLibrary } from '../shared/soundLibrary.js';
 import { SoundPrompt } from '../shared/soundPrompt.js';
 import { TextureLibrary } from '../shared/textureLibrary.js';
 import { TextureBridge } from '../shared/textureBridge.js';
+import { GltfImport } from '../shared/gltfImport.js';
+import { ThresholdShell } from '../shared/thresholdShell.js';
 import { bootstrapStarterScene } from '../shared/starterScene.js';
 import { GameExport } from '../shared/gameExport.js';
 import { AgentHub } from '../shared/agentHub.js';
@@ -202,6 +204,24 @@ const Physics = {
             shape: shape
         });
 
+        this.world.addBody(body);
+        return body;
+    },
+
+    addBodyFromObject: function (root, mass = 1) {
+        const box = new THREE.Box3().setFromObject(root);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+        const half = new CANNON.Vec3(
+            Math.max(size.x / 2, 0.05),
+            Math.max(size.y / 2, 0.05),
+            Math.max(size.z / 2, 0.05)
+        );
+        const body = new CANNON.Body({
+            mass: mass ?? 1,
+            position: new CANNON.Vec3(root.position.x, root.position.y, root.position.z),
+            shape: new CANNON.Box(half),
+        });
         this.world.addBody(body);
         return body;
     },
@@ -1089,7 +1109,19 @@ const World = {
     spawnObjectSnapshot: function (objects) {
         const ox = State.ctxTargetPos.x;
         const oz = State.ctxTargetPos.z;
+        const gltfSnapshots = [];
         objects.forEach((d) => {
+            if (d.type === 'gltf' || d.userData?.type === 'gltf') {
+                gltfSnapshots.push({
+                    ...d,
+                    pos: {
+                        x: ox + (d.pos?.x || 0),
+                        y: d.pos?.y ?? 1,
+                        z: oz + (d.pos?.z || 0),
+                    },
+                });
+                return;
+            }
             const m = this.createObject(d.type, d.name, d.color, false);
             if (m) {
                 m.position.set(ox + (d.pos?.x || 0), d.pos?.y || 1, oz + (d.pos?.z || 0));
@@ -1099,6 +1131,18 @@ const World = {
             }
         });
         TextureBridge.rehydrateScene();
+        if (gltfSnapshots.length) GltfImport.spawnSnapshots(gltfSnapshots);
+    },
+    insertGltfAtCursor: async function (payload, silent = false) {
+        try {
+            const insertPayload = { ...payload };
+            if (!payload.pos) delete insertPayload.pos;
+            await GltfImport.insertAtCursor(insertPayload);
+            if (!silent) UI.closeInsert();
+            UI.status(`Inserted GLTF: ${payload.name || 'model'}`);
+        } catch (e) {
+            UI.status(e.message || 'GLTF insert failed');
+        }
     },
     runCustomAtCursor: function (code, silent = false) {
         const wrapped = `const _x=${State.ctxTargetPos.x}, _y=${State.ctxTargetPos.y}, _z=${State.ctxTargetPos.z};\n${code}`;
@@ -1157,7 +1201,7 @@ const IO = {
         const data = State.objects.map(o => ({
             type: o.userData.type, name: o.userData.name,
             pos: o.position, rot: o.rotation, scl: o.scale,
-            userData: o.userData, color: o.material.color.getHex()
+            userData: o.userData, color: o.material?.color?.getHex?.() ?? 0xffffff,
         }));
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
@@ -1174,8 +1218,19 @@ const IO = {
             try {
                 const data = JSON.parse(e.target.result);
                 World.clearWorld();
+                const gltfSnapshots = [];
                 data.forEach(d => {
-                    // Import assumes no physics to start (can be added later)
+                    if (d.type === 'gltf' || d.userData?.type === 'gltf') {
+                        gltfSnapshots.push({
+                            type: 'gltf',
+                            name: d.name,
+                            pos: d.pos,
+                            rot: d.rot,
+                            scl: d.scl,
+                            userData: d.userData,
+                        });
+                        return;
+                    }
                     const m = World.createObject(d.type, d.name, d.color, false);
                     if (m) {
                         m.position.copy(d.pos); m.rotation.set(d.rot._x, d.rot._y, d.rot._z);
@@ -1183,6 +1238,7 @@ const IO = {
                     }
                 });
                 TextureBridge.rehydrateScene();
+                if (gltfSnapshots.length) GltfImport.spawnSnapshots(gltfSnapshots);
                 UI.status("Scene Loaded");
             } catch (err) { UI.status("Error Loading"); }
         };
@@ -1232,6 +1288,8 @@ const UI = {
             Actions.dispatch('INSERT_CUSTOM', { code, pos: World.getCursorPos() });
             UI.closeInsert();
         });
+        document.getElementById('insert-gltf-btn')?.addEventListener('click', () => UI.insertGltfFromPanel());
+        document.getElementById('insert-gltf-manifest-btn')?.addEventListener('click', () => UI.insertGltfFromManifest());
         document.getElementById('import-player-file')?.addEventListener('change', (e) => UI.importPlayerFile(e));
 
         document.getElementById('btn-copy-link')?.addEventListener('click', () => UI.copySessionLink());
@@ -1560,7 +1618,9 @@ const UI = {
     syncObjectPhysics: function (obj, enabled) {
         const entry = State.physicsObjects.find((p) => p.mesh === obj);
         if (enabled && !obj.userData.hasPhysics) {
-            const body = Physics.addBody(obj, obj.userData.type || 'cube');
+            const body = obj.userData.type === 'gltf'
+                ? Physics.addBodyFromObject(obj, obj.userData.mass ?? 1)
+                : Physics.addBody(obj, obj.userData.type || 'cube');
             body.mass = obj.userData.mass ?? 1;
             State.physicsObjects.push({ mesh: obj, body });
             obj.userData.hasPhysics = true;
@@ -1861,6 +1921,56 @@ const UI = {
     switchInsertTab: function (tab) {
         document.querySelectorAll('.insert-tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === tab));
         document.querySelectorAll('.insert-panel').forEach((p) => p.classList.toggle('active', p.dataset.panel === tab));
+    },
+    insertGltfFromPanel: async function () {
+        const name = document.getElementById('insert-gltf-name')?.value?.trim() || 'GLTF Model';
+        const usePhysics = !!document.getElementById('insert-gltf-physics')?.checked;
+        const url = document.getElementById('insert-gltf-url')?.value?.trim();
+        const file = document.getElementById('insert-gltf-file')?.files?.[0];
+        const pos = World.getCursorPos();
+
+        if (file) {
+            try {
+                await GltfImport.insertAtCursor({ file, name, usePhysics, pos: null });
+                UI.closeInsert();
+                UI.status(`Inserted GLTF: ${name}`);
+            } catch (e) {
+                UI.status(e.message || 'GLTF insert failed');
+            }
+            return;
+        }
+
+        if (url) {
+            Actions.dispatch('INSERT_GLTF', { url, name, usePhysics, pos });
+            UI.closeInsert();
+            return;
+        }
+
+        if (ThresholdShell.isNative) {
+            const path = await ThresholdShell.pickFile([
+                { name: 'GLTF Models', extensions: ['glb', 'gltf'] },
+            ]);
+            if (!path) return;
+            Actions.dispatch('INSERT_GLTF', { path, name, usePhysics, pos });
+            UI.closeInsert();
+            return;
+        }
+
+        UI.status('Pick a .glb file, enter a URL, or use BLENDER MANIFEST');
+    },
+    insertGltfFromManifest: async function () {
+        const name = document.getElementById('insert-gltf-name')?.value?.trim();
+        if (!name) {
+            UI.status('Enter Object name matching Blender export');
+            return;
+        }
+        try {
+            await GltfImport.pickAndInsertFromManifest(name);
+            UI.closeInsert();
+            UI.status(`Inserted from Blender manifest: ${name}`);
+        } catch (e) {
+            UI.status(e.message || 'Blender manifest insert failed');
+        }
     },
     saveCurrentPlayer: function () {
         const name = prompt('Player name?', Session.playerName) || Session.playerName;

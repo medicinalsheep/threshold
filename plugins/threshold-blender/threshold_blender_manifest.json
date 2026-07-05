@@ -1,0 +1,19 @@
+{
+  "format": "threshold-blender-manifest",
+  "formatVersion": 1,
+  "engineVersion": "3.5.0",
+  "exportedAt": null,
+  "exportDir": "import",
+  "models": [
+    {
+      "id": "stone_block",
+      "objectName": "Stone Block",
+      "file": "stone_block.glb",
+      "path": "import/stone_block.glb",
+      "hasPhysics": true,
+      "mass": 1.5,
+      "friction": 0.42,
+      "restitution": 0.25
+    }
+  ]
+}

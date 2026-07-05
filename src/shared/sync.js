@@ -54,7 +54,13 @@ export const Sync = {
         applying = true;
         try {
             World.clearWorld(false);
+            const gltfSnapshots = [];
             (state.objects || []).forEach((d) => {
+                const isGltf = d.type === 'gltf' || d.userData?.type === 'gltf';
+                if (isGltf) {
+                    gltfSnapshots.push(d);
+                    return;
+                }
                 const m = World.createObject(d.type, d.name, d.color, !!d.userData?.hasPhysics);
                 if (m) {
                     m.position.set(d.pos?.x || 0, d.pos?.y || 1, d.pos?.z || 0);
@@ -63,6 +69,9 @@ export const Sync = {
                     if (d.userData) m.userData = { ...m.userData, ...d.userData };
                 }
             });
+            if (gltfSnapshots.length) {
+                window.GltfImport?.spawnSnapshots?.(gltfSnapshots);
+            }
 
             if (state.env && Environment) {
                 Environment.setTimeOfDay(state.env.timeOfDay ?? 14);
@@ -135,6 +144,12 @@ export const Sync = {
                 const State = window.State;
                 if (payload.pos && State) State.ctxTargetPos.set(payload.pos.x, payload.pos.y, payload.pos.z);
                 World.runCustomAtCursor(payload.code, true);
+                break;
+            }
+            case 'INSERT_GLTF': {
+                const State = window.State;
+                if (payload.pos && State) State.ctxTargetPos.set(payload.pos.x, payload.pos.y, payload.pos.z);
+                World.insertGltfAtCursor(payload, true);
                 break;
             }
             case 'CLEAR_WORLD':

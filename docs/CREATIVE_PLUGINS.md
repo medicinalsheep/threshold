@@ -47,18 +47,28 @@ Install: `npm run gimp:install` (copies plugin to GIMP plug-ins folder). Restart
 
 ---
 
-## Phase C — Blender addon (v4.0)
+## Phase C — Blender addon (v3.5)
 
 ```
 plugins/threshold-blender/
-  __init__.py
-  export_gltf_threshold.py  # GLTF + embedded textures → dist/import/
+  threshold_blender/
+    __init__.py
+    export_gltf_threshold.py   # GLB + embedded textures → import/
+  threshold_blender_manifest.json
 ```
+
+Install: `npm run blender:install` → enable add-on in Blender Preferences.
+
+**Export workflow:**
+1. Model in Blender with PBR materials (select object(s))
+2. **File → Export → Threshold GLTF (.glb)** — object name matches Engine inspector
+3. Export folder → project `import/` (writes `threshold_blender_manifest.json`)
+4. Engine — **INSERT → GLTF** — file, URL, or **BLENDER MANIFEST** (Electron loads paths)
 
 **AI workflow:**
 1. Model in Blender with PBR materials
-2. Export → Threshold **INSERT → GLTF** or drag to Engine
-3. Physics + collision from Compiler `userData.hasPhysics`
+2. Compiler sets `userData.hasPhysics`, mass, friction on snapped props
+3. Export GLB → INSERT → GLTF or BLENDER MANIFEST at cursor
 
 ---
 

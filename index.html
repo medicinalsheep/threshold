@@ -406,6 +406,7 @@
                 </div>
                 <div class="insert-tabs">
                     <button class="insert-tab active" data-tab="character">CHARACTER</button>
+                    <button class="insert-tab" data-tab="gltf">GLTF</button>
                     <button class="insert-tab" data-tab="player">PLAYER KEY</button>
                     <button class="insert-tab" data-tab="saved">SAVED</button>
                     <button class="insert-tab" data-tab="code">CODE</button>
@@ -414,6 +415,18 @@
                     <p class="insert-hint">Static NPC for scene dressing, or spawn yourself as a walkable human (reference for AI character design).</p>
                     <button id="insert-character" class="insert-action">INSERT NPC</button>
                     <button id="insert-spawn-player" class="insert-action secondary">SPAWN AS PLAYER</button>
+                </div>
+                <div class="insert-panel" data-panel="gltf">
+                    <p class="insert-hint">Blender export (.glb) or hosted URL. Object name should match Blender export for manifest sync.</p>
+                    <input type="text" id="insert-gltf-name" class="insert-input" placeholder="Object name (e.g. Stone Block)" maxlength="64">
+                    <label class="insert-hint"><input type="checkbox" id="insert-gltf-physics" checked> Physics (Collision panel editable)</label>
+                    <label class="insert-hint">GLTF / GLB file</label>
+                    <input type="file" id="insert-gltf-file" accept=".glb,.gltf,model/gltf-binary,model/gltf+json">
+                    <label class="insert-hint">Or URL</label>
+                    <input type="url" id="insert-gltf-url" class="insert-input" placeholder="https://.../model.glb">
+                    <input type="file" id="insert-gltf-manifest" accept=".json,application/json" hidden>
+                    <button id="insert-gltf-btn" class="insert-action">INSERT GLTF</button>
+                    <button id="insert-gltf-manifest-btn" class="insert-action secondary" type="button">BLENDER MANIFEST</button>
                 </div>
                 <div class="insert-panel" data-panel="player">
                     <p class="insert-hint">Enter another player's key. They must share/export their player first.</p>

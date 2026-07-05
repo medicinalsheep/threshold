@@ -19,6 +19,8 @@ export function getSceneContext() {
         soundTrigger: o.userData?.soundTrigger || null,
         textures: o.userData?.textures || null,
         textureHint: o.userData?.textureHint || null,
+        gltfUrl: o.userData?.gltfUrl || null,
+        gltfPath: o.userData?.gltfPath || null,
     }));
     const humanNpcCount = objects.filter((o) => o.isHuman && !o.isPlayer).length;
 
@@ -59,7 +61,8 @@ ${objects.length ? objects.map((o) => {
         const tex = o.textures
             ? ` [tex:${Object.entries(o.textures).filter(([, v]) => v).map(([k, v]) => `${k}:${v}`).join(',')}]`
             : '';
-        return `  - ${o.name} (${o.type}) @ (${o.position.x},${o.position.y},${o.position.z})${snd}${tex}`;
+        const gltf = o.type === 'gltf' ? ` [gltf:${o.gltfPath || o.gltfUrl || '?'}]` : '';
+        return `  - ${o.name} (${o.type}) @ (${o.position.x},${o.position.y},${o.position.z})${snd}${tex}${gltf}`;
     }).join('\n') : '  (empty scene)'}
 
 CURRENTLY RUNNING CODE:

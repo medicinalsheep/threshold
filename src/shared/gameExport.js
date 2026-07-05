@@ -76,6 +76,13 @@ export const GameExport = {
                 install: 'npm run gimp:install',
                 note: 'Export maps in GIMP → Engine Texture tab → GIMP SYNC (Electron loads files from disk)',
             },
+            blender: {
+                manifestName: 'threshold_blender_manifest.json',
+                addonPath: 'plugins/threshold-blender/threshold_blender',
+                install: 'npm run blender:install',
+                importDir: 'import/',
+                note: 'Blender File → Export → Threshold GLTF (.glb) → Engine INSERT → GLTF',
+            },
             agents: options.agents || window.AgentHub?.exportConfigs?.() || [],
             relay: {
                 mode: options.relayMode || (import.meta.env.VITE_PEER_HOST ? 'custom' : 'peerjs-cloud'),
