@@ -109,13 +109,23 @@ Use Child assets as **design seeds** — same objects can anchor many game types
 
 ---
 
+## R5 — Blender TC mesh realism (v5.9)
+
+| Step | Command / path |
+|------|----------------|
+| Shared mesh lib | `plugins/threshold-blender/tc_mesh_lib.py` |
+| Build veh blend | `build_tc_veh.py` → `tc_veh.blend` (wheels, nose, spoiler, LOD) |
+| Build chr blend | `build_tc_chr.py` → `tc_chr.blend` (Marshal cap, Mechanic badge) |
+| Headless export | `--slug tc_run --tc-ed tc-veh --realism r5` |
+| Manifest tag | `realism: r5` on each model |
+
 ## R2 — Blender TC GLB + LOD (vehicles)
 
 | Step | Command / path |
 |------|----------------|
-| Build GLBs | `npm run tc:build` (Blender if installed, else Node generator) |
+| Build GLBs | `npm run tc:build` (Blender R5 if installed, else Node R5 generator) |
 | Blender refine | `plugins/threshold-blender/build_tc_veh.py` → `tc_veh.blend` |
-| Export + LOD | `npm run blender:export -- --blend plugins/threshold-blender/tc_veh.blend --object "TC Runner" --lod --mass 3.4` |
+| Export + LOD | `npm run blender:export -- --blend plugins/threshold-blender/tc_veh.blend --object "TC Runner" --slug tc_run --lod --mass 3.4 --realism r5` |
 | Manifest | `import/threshold_blender_manifest.json` |
 | Web bundle | `public/bundle/import/tc_*.glb` (dev) · `npm run bundle:assets` (ship) |
 | Loader | `src/shared/tcVeh.js` — `MeshLod` @ `[0, 12, 28]` |

@@ -1,7 +1,7 @@
 {
   "format": "threshold-blender-manifest",
   "formatVersion": 1,
-  "engineVersion": "5.8.1",
+  "engineVersion": "5.9.0",
   "models": [
     {
       "id": "tc_run",
@@ -38,7 +38,8 @@
       "friction": 0.36,
       "restitution": 0.14,
       "tcEd": "tc-veh",
-      "license": "Original — TC"
+      "license": "Original — TC",
+      "realism": "r5"
     },
     {
       "id": "tc_haul",
@@ -75,7 +76,8 @@
       "friction": 0.44,
       "restitution": 0.1,
       "tcEd": "tc-veh",
-      "license": "Original — TC"
+      "license": "Original — TC",
+      "realism": "r5"
     },
     {
       "id": "tc_msh",
@@ -110,7 +112,8 @@
       "hasPhysics": false,
       "mass": 0,
       "tcEd": "tc-chr",
-      "license": "Original — TC"
+      "license": "Original — TC",
+      "realism": "r5"
     },
     {
       "id": "tc_mec",
@@ -145,10 +148,12 @@
       "hasPhysics": false,
       "mass": 0,
       "tcEd": "tc-chr",
-      "license": "Original — TC"
+      "license": "Original — TC",
+      "realism": "r5"
     }
   ],
   "exportDir": "import",
-  "exportedAt": "2026-07-05T09:12:01.168Z",
-  "tcEd": "tc-show"
+  "exportedAt": "2026-07-05T09:14:57.353Z",
+  "tcEd": "tc-show",
+  "realism": "r5"
 }

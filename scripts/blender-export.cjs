@@ -36,6 +36,10 @@ function parseArgs(argv) {
         mass: '1',
         friction: '0.3',
         restitution: '0.5',
+        slug: '',
+        tcEd: '',
+        license: '',
+        realism: '',
     };
 
     for (let i = 0; i < argv.length; i += 1) {
@@ -49,6 +53,10 @@ function parseArgs(argv) {
         else if (arg === '--mass') out.mass = argv[++i] || '1';
         else if (arg === '--friction') out.friction = argv[++i] || '0.3';
         else if (arg === '--restitution') out.restitution = argv[++i] || '0.5';
+        else if (arg === '--slug') out.slug = argv[++i] || '';
+        else if (arg === '--tc-ed') out.tcEd = argv[++i] || '';
+        else if (arg === '--license') out.license = argv[++i] || '';
+        else if (arg === '--realism') out.realism = argv[++i] || '';
         else if (arg === '--help' || arg === '-h') out.help = true;
     }
     return out;
@@ -84,6 +92,10 @@ Options:
   --mass <n>             Manifest mass (default: 1)
   --friction <n>         Manifest friction (default: 0.3)
   --restitution <n>      Manifest bounce (default: 0.5)
+  --slug <id>            GLB filename slug (e.g. tc_run)
+  --tc-ed <edition>      TC edition tag (e.g. tc-veh)
+  --license <text>       License string for manifest
+  --realism <tag>        Realism pass tag (e.g. r5)
 
 Environment:
   BLENDER_EXE            Path to blender executable
@@ -131,6 +143,10 @@ function main() {
     if (args.blendObject) pyArgs.push('--blend-object', args.blendObject);
     if (args.lod) pyArgs.push('--lod');
     if (args.noPhysics) pyArgs.push('--no-physics');
+    if (args.slug) pyArgs.push('--slug', args.slug);
+    if (args.tcEd) pyArgs.push('--tc-ed', args.tcEd);
+    if (args.license) pyArgs.push('--license', args.license);
+    if (args.realism) pyArgs.push('--realism', args.realism);
 
     const result = spawnSync(
         blender,

@@ -15,6 +15,12 @@ const GLBS = [
     'tc_mec.glb', 'tc_mec_l1.glb', 'tc_mec_l2.glb',
 ];
 
+const BLENDER_SCRIPTS = [
+    'plugins/threshold-blender/tc_mesh_lib.py',
+    'plugins/threshold-blender/build_tc_veh.py',
+    'plugins/threshold-blender/build_tc_chr.py',
+];
+
 const MODULES = [
     'src/shared/tcMeta.js',
     'src/shared/tcVeh.js',
@@ -39,6 +45,9 @@ let fail = 0;
 function ok(msg) { console.log(`  ✓ ${msg}`); }
 function bad(msg) { console.log(`  ✗ ${msg}`); fail += 1; }
 
+console.log('[tc-verify] blender R5');
+BLENDER_SCRIPTS.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`missing ${f}`)));
+
 console.log('[tc-verify] modules');
 MODULES.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`missing ${f}`)));
 
@@ -46,7 +55,7 @@ console.log('[tc-verify] GLBs import/');
 GLBS.forEach((f) => {
     const p = path.join(IMPORT, f);
     if (!fs.existsSync(p)) bad(`missing ${f}`);
-    else if (fs.statSync(p).size < 500) bad(`${f} too small`);
+    else if (fs.statSync(p).size < (f.endsWith('.glb') && !/_l2/.test(f) ? 1500 : 500)) bad(`${f} too small (R5)`);
     else ok(`${f} (${(fs.statSync(p).size / 1024).toFixed(1)} KB)`);
 });
 
@@ -66,13 +75,16 @@ if (!fs.existsSync(MAN)) {
     else ok('no childEdition');
     if (man.tcEd !== 'tc-show') bad(`root tcEd=${man.tcEd} (want tc-show)`);
     else ok('root tcEd=tc-show');
+    if (man.realism !== 'r5') bad(`root realism=${man.realism} (want r5)`);
+    else ok('root realism=r5');
     const ids = (man.models || []).map((m) => m.id);
     ['tc_run', 'tc_haul', 'tc_msh', 'tc_mec'].forEach((id) => {
         const m = man.models?.find((x) => x.id === id);
         if (!m) bad(`manifest missing ${id}`);
         else if ((m.lods || []).length < 3) bad(`${id} lods < 3`);
         else if (!m.tcEd) bad(`${id} missing tcEd`);
-        else ok(`${id} — ${m.lods.length} LODs, tcEd=${m.tcEd}, lic=${m.license}`);
+        else if (m.realism !== 'r5') bad(`${id} realism=${m.realism}`);
+        else ok(`${id} — ${m.lods.length} LODs, tcEd=${m.tcEd}, r5`);
     });
 }
 

@@ -41,8 +41,11 @@ Then **MORE → EXPORT** — **SCENE** shows TC GLTF objects; **CREDITS** + **PA
 
 ```bash
 npm run tc:build
-# Blender path (when installed):
-npm run blender:export -- --blend plugins/threshold-blender/tc_veh.blend --object "TC Runner" --lod --mass 3.4
+# Blender R5 path (when installed):
+blender --background --python plugins/threshold-blender/build_tc_veh.py
+blender --background --python plugins/threshold-blender/build_tc_chr.py
+npm run blender:export -- --blend plugins/threshold-blender/tc_veh.blend --object "TC Runner" --slug tc_run --lod --mass 3.4 --realism r5
+npm run blender:export -- --blend plugins/threshold-blender/tc_chr.blend --object "TC Marshal" --slug tc_msh --lod --no-physics --tc-ed tc-chr --realism r5
 ```
 
 Manifest: `import/threshold_blender_manifest.json` · Loaders: `src/shared/tcVeh.js`, `tcChr.js`, `tcShow.js`

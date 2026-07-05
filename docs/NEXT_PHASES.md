@@ -245,7 +245,24 @@ npm run tc:verify
 # Lobby → TC → → MORE → EXPORT (SCENE / CREDITS / PACKS)
 ```
 
-**Next (R5):** Blender TC mesh realism (`build_tc_chr.py`), refine veh silhouettes.
+### Phase R5 — Blender TC mesh realism (v5.9) ✅
+
+| Step | Status |
+|------|--------|
+| R5.1 `tc_mesh_lib.py` — shared veh+chr builders | ✅ |
+| R5.2 `build_tc_chr.py` → Marshal + Mechanic GLB+LOD | ✅ |
+| R5.3 `build_tc_veh.py` refine — wheels, nose, spoiler, tailgate | ✅ |
+| R5.4 `headless_export` — `--slug tc_run` etc. + `realism: r5` | ✅ |
+| R5.5 `tc-build` Blender chr path; Node R5 fallback | ✅ |
+
+```bash
+npm run tc:build
+# With Blender:
+blender --background --python plugins/threshold-blender/build_tc_chr.py
+npm run blender:export -- --blend plugins/threshold-blender/tc_chr.blend --object "TC Marshal" --slug tc_msh --lod --no-physics --tc-ed tc-chr --realism r5
+```
+
+**Next (R6):** TC GIMP textures + HILOD.
 
 ### Phase G1 — TC Circuit game-dev path (v5.8.1) ✅
 

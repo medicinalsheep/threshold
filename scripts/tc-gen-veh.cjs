@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** TC vehicle GLB + LOD generator (Node fallback when Blender unavailable) */
+/** TC vehicle GLB + LOD — R5 realism (Node fallback when Blender unavailable) */
 const fs = require('fs');
 const path = require('path');
 const THREE = require('three');
@@ -19,6 +19,7 @@ const IMPORT = path.join(ROOT, 'import');
 const PUB = path.join(ROOT, 'public', 'bundle', 'import');
 const LOD = require('../config/lod-distances.json').distances;
 const MAN = path.join(IMPORT, 'threshold_blender_manifest.json');
+const REALISM = 'r5';
 
 function mat(c, o = {}) {
     const m = new THREE.MeshStandardMaterial({ color: c, roughness: o.r ?? 0.45, metalness: o.m ?? 0.35 });
@@ -44,9 +45,13 @@ function runGrp(lv = 0) {
     if (lv >= 2) { part(g, new THREE.BoxGeometry(1.8, 0.9, 3.8), mat(0x1a2a44), { y: 0.45 }); return g; }
     part(g, new THREE.BoxGeometry(1.75, 0.38, 3.5), mat(0x1a2a44, { r: 0.32, m: 0.58 }), { y: 0.32 });
     part(g, new THREE.BoxGeometry(1.55, 0.22, 2.8), mat(0x0d1520), { y: 0.52, z: 0.15 });
-    if (!lv) part(g, new THREE.BoxGeometry(1.35, 0.42, 1.35), mat(0x0a1525, { r: 0.08, m: 0.65 }), { y: 0.78, z: -0.35 });
+    if (!lv) {
+        part(g, new THREE.BoxGeometry(1.35, 0.42, 1.35), mat(0x0a1525, { r: 0.08, m: 0.65 }), { y: 0.78, z: -0.35 });
+        part(g, new THREE.BoxGeometry(1.4, 0.28, 0.55), mat(0x1e2430, { r: 0.55, m: 0.48 }), { y: 0.48, z: 1.72 });
+        part(g, new THREE.BoxGeometry(1.5, 0.08, 0.35), mat(0x39ff14, { e: 0x39ff14, ei: 0.4 }), { y: 0.72, z: -1.82 });
+    }
     part(g, new THREE.BoxGeometry(1.76, 0.06, 3.52), mat(0x39ff14, { r: 0.18, e: 0x39ff14, ei: 0.4 }), { y: 0.54 });
-    [[-0.88, 0.3, 1.15], [0.88, 0.3, 1.15], [-0.88, 0.3, -1.15], [0.88, 0.3, -1.15]].forEach(([x, y, z]) => wheel(g, x, y, z, !lv));
+    [[-0.88, 0.3, 1.15], [0.88, 0.3, 1.15], [-0.88, 0.3, -1.15], [0.88, 0.3, -1.15]].forEach(([x, y, z]) => wheel(g, x, y, z, 0.32, 0.22, !lv));
     return g;
 }
 
@@ -56,6 +61,10 @@ function haulGrp(lv = 0) {
     if (lv >= 2) { part(g, new THREE.BoxGeometry(2.2, 1.2, 4.2), mat(0x2d4a35), { y: 0.6 }); return g; }
     part(g, new THREE.BoxGeometry(2.15, 0.85, 2.6), mat(0x2d4a35), { y: 0.52, z: -0.55 });
     part(g, new THREE.BoxGeometry(1.65, 1.05, 1.45), mat(0x3a5a48), { y: 0.78, z: 1.35 });
+    if (!lv) {
+        part(g, new THREE.BoxGeometry(1.45, 0.35, 0.22), mat(0x242830, { r: 0.62, m: 0.38 }), { y: 0.62, z: 2.12 });
+        part(g, new THREE.BoxGeometry(2.0, 0.55, 0.12), mat(0x242830, { r: 0.62, m: 0.38 }), { y: 0.68, z: -1.82 });
+    }
     part(g, new THREE.BoxGeometry(2.12, 0.07, 3.65), mat(0x00ffaa, { e: 0x00aa66, ei: 0.3 }), { y: 1.02, z: 0.1 });
     [[-0.95, 0.34, 1.35], [0.95, 0.34, 1.35], [-0.95, 0.34, -1.35], [0.95, 0.34, -1.35]].forEach(([x, y, z]) => wheel(g, x, y, z, 0.38, 0.28, !lv));
     return g;
@@ -97,11 +106,12 @@ async function veh(spec, builder) {
         restitution: spec.rest,
         tcEd: 'tc-veh',
         license: 'Original — TC',
+        realism: REALISM,
     };
 }
 
 async function main() {
-    let man = { format: 'threshold-blender-manifest', formatVersion: 1, engineVersion: '5.8.0', models: [] };
+    let man = { format: 'threshold-blender-manifest', formatVersion: 1, engineVersion: '5.9.0', models: [] };
     if (fs.existsSync(MAN)) {
         try {
             man = JSON.parse(fs.readFileSync(MAN, 'utf8'));
@@ -116,6 +126,7 @@ async function main() {
     man.exportDir = 'import';
     man.exportedAt = new Date().toISOString();
     man.tcEd = 'tc-veh';
+    man.realism = REALISM;
     delete man.childEdition;
     fs.writeFileSync(MAN, JSON.stringify(man, null, 2));
     fs.copyFileSync(MAN, path.join(PUB, 'threshold_blender_manifest.json'));

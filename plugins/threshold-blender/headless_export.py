@@ -42,6 +42,10 @@ def parse_cli() -> argparse.Namespace:
     parser.add_argument("--mass", type=float, default=1.0)
     parser.add_argument("--friction", type=float, default=0.3)
     parser.add_argument("--restitution", type=float, default=0.5)
+    parser.add_argument("--slug", default="", help="Override GLB filename slug (e.g. tc_run)")
+    parser.add_argument("--tc-ed", default="", help="TC edition tag for manifest (e.g. tc-veh)")
+    parser.add_argument("--license", default="", help="License string for manifest")
+    parser.add_argument("--realism", default="", help="Realism pass tag (e.g. r5)")
     return parser.parse_args(argv)
 
 
@@ -67,7 +71,12 @@ def merge_manifest(manifest: dict, export_dir: str, entry: dict) -> dict:
     manifest["exportDir"] = export_dir.replace("\\", "/")
 
     models = manifest.get("models") or []
-    models = [m for m in models if m.get("objectName") != entry.get("objectName")]
+    entry_id = entry.get("id")
+    entry_name = entry.get("objectName")
+    models = [
+        m for m in models
+        if m.get("objectName") != entry_name and m.get("id") != entry_id
+    ]
     models.append(entry)
     manifest["models"] = models
     return manifest
@@ -86,7 +95,7 @@ def main() -> int:
     export_dir = os.path.abspath(args.output)
     os.makedirs(export_dir, exist_ok=True)
 
-    slug = slugify(display_name)
+    slug = (args.slug or "").strip() or slugify(display_name)
     filepath, lods = build_lod_entries(
         display_name,
         obj,
@@ -108,6 +117,12 @@ def main() -> int:
         "friction": args.friction,
         "restitution": args.restitution,
     }
+    if args.tc_ed:
+        entry["tcEd"] = args.tc_ed.strip()
+    if args.license:
+        entry["license"] = args.license.strip()
+    if args.realism:
+        entry["realism"] = args.realism.strip()
 
     manifest_path = os.path.join(export_dir, MANIFEST_NAME)
     manifest = merge_manifest(load_manifest(manifest_path), export_dir, entry)

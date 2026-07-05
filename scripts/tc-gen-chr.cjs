@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** TC character GLB + LOD — abbreviated mesh export */
+/** TC character GLB + LOD — R5 realism (Node fallback when Blender unavailable) */
 const fs = require('fs');
 const path = require('path');
 const THREE = require('three');
@@ -19,9 +19,12 @@ const IMPORT = path.join(ROOT, 'import');
 const PUB = path.join(ROOT, 'public', 'bundle', 'import');
 const LOD = require('../config/lod-distances.json').distances;
 const MAN = path.join(IMPORT, 'threshold_blender_manifest.json');
+const REALISM = 'r5';
 
-function mat(c) {
-    return new THREE.MeshStandardMaterial({ color: c, roughness: 0.72 });
+function mat(c, o = {}) {
+    const m = new THREE.MeshStandardMaterial({ color: c, roughness: o.r ?? 0.72, metalness: o.m ?? 0.05 });
+    if (o.e != null) { m.emissive.setHex(o.e); m.emissiveIntensity = o.ei ?? 0.3; }
+    return m;
 }
 
 function part(g, geo, ma, y, x = 0, z = 0) {
@@ -39,12 +42,13 @@ function chrGrp(nm, slug, lv, cols) {
     }
     part(g, new THREE.BoxGeometry(0.44, 0.24, 0.28), mat(cols.pants), 0.9);
     part(g, new THREE.BoxGeometry(0.5, 0.64, 0.28), mat(cols.shirt), 1.34);
-    if (!lv) {
-        part(g, new THREE.SphereGeometry(0.21, 14, 12), mat(cols.skin), 1.78);
-        part(g, new THREE.BoxGeometry(0.12, 0.12, 0.04), mat(0x39ff14), 1.42, 0, 0.16);
-    }
     part(g, new THREE.BoxGeometry(0.15, 0.5, 0.15), mat(cols.skin), 1.1, -0.34);
     part(g, new THREE.BoxGeometry(0.15, 0.5, 0.15), mat(cols.skin), 1.1, 0.34);
+    if (!lv) {
+        part(g, new THREE.SphereGeometry(0.21, 14, 12), mat(cols.skin), 1.78);
+        part(g, new THREE.BoxGeometry(0.12, 0.12, 0.04), mat(cols.accent ?? 0x39ff14, { e: cols.accent ?? 0x39ff14, ei: 0.35 }), 1.42, 0, 0.16);
+        if (cols.cap) part(g, new THREE.BoxGeometry(0.46, 0.12, 0.3), mat(cols.cap), 1.92);
+    }
     return g;
 }
 
@@ -82,11 +86,12 @@ async function chr(spec) {
         mass: 0,
         tcEd: 'tc-chr',
         license: 'Original — TC',
+        realism: REALISM,
     };
 }
 
 async function main() {
-    let man = { format: 'threshold-blender-manifest', formatVersion: 1, engineVersion: '5.8.0', models: [] };
+    let man = { format: 'threshold-blender-manifest', formatVersion: 1, engineVersion: '5.9.0', models: [] };
     if (fs.existsSync(MAN)) {
         try {
             man = JSON.parse(fs.readFileSync(MAN, 'utf8'));
@@ -94,13 +99,20 @@ async function main() {
         } catch { /* fresh */ }
     }
     const specs = [
-        { slug: 'tc_msh', nm: 'TC Marshal', cols: { shirt: 0x1a2a44, pants: 0x111822, skin: 0xffd4b8 } },
-        { slug: 'tc_mec', nm: 'TC Mechanic', cols: { shirt: 0xcc6622, pants: 0x333344, skin: 0xe8b896 } },
+        {
+            slug: 'tc_msh', nm: 'TC Marshal',
+            cols: { shirt: 0x1a2a44, pants: 0x111822, skin: 0xffd4b8, accent: 0x39ff14, cap: 0x1a1010 },
+        },
+        {
+            slug: 'tc_mec', nm: 'TC Mechanic',
+            cols: { shirt: 0xcc6622, pants: 0x333344, skin: 0xe8b896, accent: 0xe69522 },
+        },
     ];
     for (const s of specs) man.models.push(await chr(s));
     man.exportDir = 'import';
     man.exportedAt = new Date().toISOString();
     man.tcEd = 'tc-show';
+    man.realism = REALISM;
     delete man.childEdition;
     fs.writeFileSync(MAN, JSON.stringify(man, null, 2));
     fs.copyFileSync(MAN, path.join(PUB, 'threshold_blender_manifest.json'));

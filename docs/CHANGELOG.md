@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.9.0 — R5 Blender TC mesh realism
+
+- `tc_mesh_lib.py` — shared R5 veh+chr builders (wheels, silhouette, LOD)
+- `build_tc_chr.py` → `tc_chr.blend` — Marshal + Mechanic humanoids
+- `build_tc_veh.py` refined — nose/spoiler/tailgate/grille, `_LOD1`/`_LOD2` naming
+- `headless_export.py` — `--slug`, `--tc-ed`, `--license`, `--realism`
+- `tc-build.cjs` — Blender chr pipeline; Node fallback upgraded to R5
+- Manifest `realism: r5` on all TC GLB models
+
 ## 5.8.1 — R4 walkthrough QA + doc truth
 
 - `npm run tc:verify` — modules, GLBs, manifest, alias map, ASSETS block
