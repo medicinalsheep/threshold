@@ -45,6 +45,7 @@ After **Lobby → TC →**, verify before export:
 | Render mode | Hyper (4) |
 | SFX tab | 5 TC clips seeded (`tc_sfx_*`) |
 | Textures | PBR maps auto-applied · HILOD `_512`/`_1k`/`_2k` on TC meshes |
+| Intro | `video/tc_intro.webm` plays once (ESC skip) |
 | EXPORT SCENE | All TC objects listed with `isTC` / `tcEd` |
 | EXPORT CREDITS | `Original — TC` pre-filled |
 | EXPORT PACKS | `tc.*` SKUs + `threshold://` registry URIs |

@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.11.0 — R7 TC intro cutscene
+
+- `video/tc_intro.webm` — TC showcase intro (3.6s, skippable)
+- `build_tc_intro.py` + `npm run tc:gen:vid` (Python imageio)
+- `tcIntro.js` — auto-play after Lobby **TC →** (once per browser via ViewPrefs)
+- `World.playCutscene('video/tc_intro.webm')` · video manifest `tcRealism: r7`
+- EXPORT CREDITS + PromptGen `// ASSETS:` video entry
+
 ## 5.10.0 — R6 TC GIMP textures + HILOD
 
 - `tc-gen-tex.cjs` — procedural PBR maps + `_512`/`_1k`/`_2k` HILOD per TC asset

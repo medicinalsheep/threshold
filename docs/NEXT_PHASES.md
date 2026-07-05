@@ -278,7 +278,21 @@ npm run tc:build
 # GIMP: Filters → Threshold → Build TC Textures (R6)
 ```
 
-**Next (R7):** TC intro cutscene · **S1:** export E2E → store prep.
+### Phase R7 — TC intro cutscene (v5.11) ✅
+
+| Step | Status |
+|------|--------|
+| R7.1 `video/tc_intro.webm` — TC showcase intro | ✅ |
+| R7.2 `build_tc_intro.py` + `tc:gen:vid` | ✅ |
+| R7.3 `tcIntro.js` — play after Lobby TC → (skippable) | ✅ |
+| R7.4 Video manifest + EXPORT / PromptGen ASSETS | ✅ |
+
+```bash
+npm run tc:gen:vid   # pip install pillow imageio imageio-ffmpeg
+# Lobby → TC → → intro plays once · ESC to skip
+```
+
+**Next (S1):** export E2E → `store:prep` / `package:*`.
 
 ### Phase G1 — TC Circuit game-dev path (v5.8.1) ✅
 

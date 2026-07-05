@@ -1,7 +1,37 @@
 {
   "format": "threshold-video-manifest",
   "formatVersion": 1,
-  "engineVersion": "4.9.0",
-  "videos": [],
-  "note": "Add MP4/WebM cutscenes here. Engine: World.playCutscene('video/intro.mp4')"
+  "engineVersion": "5.11.0",
+  "tcRealism": "r7",
+  "exportedAt": "2026-07-05T09:26:23.364351+00:00",
+  "exportDir": "video",
+  "videos": [
+    {
+      "id": "tc_intro",
+      "label": "TC Intro",
+      "file": "tc_intro.webm",
+      "path": "video/tc_intro.webm",
+      "format": "webm",
+      "tcEd": "tc-show",
+      "license": "Original \u2014 TC",
+      "realism": "r7",
+      "durationSec": 3.6,
+      "resolution": [
+        640,
+        352
+      ],
+      "trigger": "lobby-tc",
+      "api": "World.playCutscene('video/tc_intro.webm', { skippable: true })"
+    },
+    {
+      "id": "tc_intro_mp4",
+      "label": "TC Intro (MP4 fallback)",
+      "file": "tc_intro.mp4",
+      "path": "video/tc_intro.mp4",
+      "format": "mp4",
+      "tcEd": "tc-show",
+      "license": "Original \u2014 TC",
+      "realism": "r7"
+    }
+  ]
 }

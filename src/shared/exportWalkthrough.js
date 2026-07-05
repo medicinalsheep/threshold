@@ -7,6 +7,7 @@ import { getTcChrCredits } from './tcChr.js';
 import { getTcSfxCredits } from './tcSfx.js';
 import { getTcShowCredits } from './tcShow.js';
 import { getTcTexCredits } from './tcTex.js';
+import { getTcIntroCredits } from './tcIntro.js';
 import storeAssetsConfig from '../../config/store-assets.json';
 
 
@@ -197,6 +198,7 @@ export function ensureCreditEntries(draft, inventory) {
     getTcSfxCredits().forEach((c) => add(c.id, c.label, c.kind, c));
     getTcShowCredits().forEach((c) => add(c.id, c.label, c.kind, c));
     getTcTexCredits().forEach((c) => add(c.id, c.label, c.kind, c));
+    getTcIntroCredits().forEach((c) => add(c.id, c.label, c.kind, c));
 
     inventory.sceneObjects
         .filter((o) => o.isTC)

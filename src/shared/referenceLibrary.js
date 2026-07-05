@@ -123,6 +123,17 @@ m.userData.textureHint = 'textures/stone_albedo.png';
 // User imports the file in Texture tab — no cloud upload required`
         },
         {
+            id: 'tc_intro_cutscene',
+            title: 'TC Intro Cutscene (R7)',
+            summary: 'Lobby TC → plays video/tc_intro.webm once per browser — skippable, EXPORT credits.',
+            checklist: ['npm run tc:gen:vid', 'Lobby TC →', 'ESC or click to skip', 'EXPORT lists tc_intro video'],
+            code: `// TC INTRO (R7) — auto after TC showcase spawn:
+// await World.playCutscene('video/tc_intro.webm', { skippable: true });
+// Replay (Compiler): TcIntro.playTcIntro({ force: true })
+// Reset seen flag: ViewPrefs.set('tcIntroSeen', false)
+// Build: npm run tc:gen:vid (Python imageio)`
+        },
+        {
             id: 'tc_textures_hilod',
             title: 'TC Textures — GIMP + HILOD (R6)',
             summary: 'Bundled TC PBR maps with distance/tier HILOD. Regenerate via tc:gen:tex or GIMP Build TC Textures.',

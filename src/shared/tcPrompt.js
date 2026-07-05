@@ -12,6 +12,7 @@ export function getTcAssetsBlock() {
     L.push('// - tex: TC Marshal | textures/tc_msh_albedo.png+HILOD | TC | tc_msh');
     L.push('// - tex: TC Mechanic | textures/tc_mec_albedo.png+HILOD | TC | tc_mec');
     L.push('// - tex: TC Span | textures/tc_span_albedo.png+HILOD | TC | tc_span');
+    L.push('// - video: TC Intro | video/tc_intro.webm | TC | tc_intro');
     return L.join('\n');
 }
 

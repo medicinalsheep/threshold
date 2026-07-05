@@ -110,6 +110,16 @@ Use Child assets as **design seeds** — same objects can anchor many game types
 
 ---
 
+## R7 — TC intro cutscene (v5.11)
+
+| Step | Command / path |
+|------|----------------|
+| Build video | `npm run tc:gen:vid` (Python: pillow + imageio + imageio-ffmpeg) |
+| Asset | `video/tc_intro.webm` |
+| Runtime | `tcIntro.js` — auto after Lobby **TC →** (once per browser) |
+| API | `World.playCutscene('video/tc_intro.webm', { skippable: true })` |
+| Replay | `TcIntro.playTcIntro({ force: true })` in Compiler |
+
 ## R6 — TC GIMP textures + HILOD (v5.10)
 
 | Step | Command / path |

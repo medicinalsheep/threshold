@@ -30,6 +30,13 @@ const GIMP_SCRIPTS = [
     'scripts/tc-gen-tex.cjs',
 ];
 
+const VIDEO_SCRIPTS = [
+    'plugins/threshold-video/build_tc_intro.py',
+    'scripts/tc-gen-vid.cjs',
+];
+const VIDEO_DIR = path.join(ROOT, 'video');
+const PUB_VID = path.join(ROOT, 'public', 'bundle', 'video');
+
 const TC_TEX_CORE = [
     'tc_run_albedo.png', 'tc_run_albedo_512.png', 'tc_run_albedo_1k.png', 'tc_run_albedo_2k.png',
     'tc_haul_albedo.png', 'tc_msh_albedo.png', 'tc_span_albedo.png',
@@ -41,6 +48,7 @@ const MODULES = [
     'src/shared/tcChr.js',
     'src/shared/tcSfx.js',
     'src/shared/tcTex.js',
+    'src/shared/tcIntro.js',
     'src/shared/tcShow.js',
     'src/shared/tcLite.js',
     'src/shared/tcPrompt.js',
@@ -65,6 +73,9 @@ BLENDER_SCRIPTS.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(
 
 console.log('[tc-verify] gimp R6');
 GIMP_SCRIPTS.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`missing ${f}`)));
+
+console.log('[tc-verify] video R7');
+VIDEO_SCRIPTS.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`missing ${f}`)));
 
 console.log('[tc-verify] modules');
 MODULES.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`missing ${f}`)));
@@ -147,6 +158,8 @@ if (!show.includes('spawnTcVeh') || !show.includes('spawnTcChr') || !show.includ
 } else ok('tcShow: veh + chr + cp');
 if (!show.includes('wireTcTextures')) bad('tcShow missing wireTcTextures');
 else ok('tcShow wires TC textures (R6)');
+if (!show.includes('playTcIntroAfterShow')) bad('tcShow missing playTcIntroAfterShow');
+else ok('tcShow plays TC intro (R7)');
 
 console.log('[tc-verify] textures R6');
 TC_TEX_CORE.forEach((f) => {
@@ -169,6 +182,23 @@ if (!fs.existsSync(GIMP_MAN)) {
 }
 if (!fs.existsSync(path.join(PUB_TEX, 'tc_run_albedo.png'))) bad('pub missing tc_run_albedo');
 else ok('pub/tc_run_albedo.png');
+
+console.log('[tc-verify] cutscene R7');
+const webm = path.join(VIDEO_DIR, 'tc_intro.webm');
+if (!fs.existsSync(webm)) bad('missing video/tc_intro.webm');
+else if (fs.statSync(webm).size < 2000) bad('tc_intro.webm too small');
+else ok(`tc_intro.webm (${(fs.statSync(webm).size / 1024).toFixed(1)} KB)`);
+const vman = path.join(VIDEO_DIR, 'threshold_video_manifest.json');
+if (!fs.existsSync(vman)) bad('no video manifest');
+else {
+    const vm = JSON.parse(fs.readFileSync(vman, 'utf8'));
+    const intro = (vm.videos || []).find((v) => v.id === 'tc_intro');
+    if (!intro) bad('manifest missing tc_intro');
+    else if (vm.tcRealism !== 'r7') bad(`video tcRealism=${vm.tcRealism}`);
+    else ok(`video manifest tc_intro · r7`);
+}
+if (!fs.existsSync(path.join(PUB_VID, 'tc_intro.webm'))) bad('pub missing tc_intro.webm');
+else ok('pub/tc_intro.webm');
 if (vehSpecs < 1 || chrSpecs < 1) bad('veh/chr spec loaders');
 else ok('veh/chr spec loaders present (expect ≥6 scene objects in lobby TC →)');
 

@@ -10,6 +10,7 @@ export function shouldLoadTC() {
 export function setLoadTC(on) {
     ViewPrefs.set('loadTC', !!on);
     ViewPrefs.set('loadThresholdChild', !!on);
+    ViewPrefs.set('playTcIntro', !!on);
 }
 
 /** @deprecated */

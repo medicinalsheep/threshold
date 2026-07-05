@@ -2,6 +2,7 @@ import { spawnTcVeh } from './tcVeh.js';
 import { spawnTcChr } from './tcChr.js';
 import { seedTcSfx, wireTcSfx } from './tcSfx.js';
 import { wireTcTextures } from './tcTex.js';
+import { playTcIntroAfterShow } from './tcIntro.js';
 import { buildTcUd, TC_META, TC_IDS, TC_LIC, TC_AUTH, tcSku, tcUri } from './tcMeta.js';
 
 function spawnCp() {
@@ -35,12 +36,17 @@ export async function spawnTcShow() {
     const sfx = await seedTcSfx();
     const wired = wireTcSfx();
     const tex = await wireTcTextures();
+    const intro = await playTcIntroAfterShow(700);
     const n = (veh.n || 0) + (chr.n || 0) + cp;
     if (n) {
         window.Engine?.setRenderMode?.(4);
-        window.UI?.status?.(`TC show v${TC_META.show.ver}: ${n} obj · ${sfx.n} sfx · ${tex.maps || 0} tex · EXPORT`);
+        const introTag = intro.played ? ' · intro' : '';
+        window.UI?.status?.(`TC show v${TC_META.show.ver}: ${n} obj · ${sfx.n} sfx · ${tex.maps || 0} tex${introTag} · EXPORT`);
     }
-    return { n, ed: TC_META.show.ed, ver: TC_META.show.ver, veh: veh.n, chr: chr.n, sfx: sfx.n, wired, tex: tex.n, texMaps: tex.maps };
+    return {
+        n, ed: TC_META.show.ed, ver: TC_META.show.ver,
+        veh: veh.n, chr: chr.n, sfx: sfx.n, wired, tex: tex.n, texMaps: tex.maps, intro,
+    };
 }
 
 export function getTcShowCredits() {
