@@ -1,0 +1,223 @@
+/* Mobile & tablet layout */
+
+@media (max-width: 900px) {
+    #app-nav {
+        padding: 0 12px;
+        flex-wrap: wrap;
+        height: auto;
+        min-height: 50px;
+    }
+
+    .brand {
+        font-size: 1rem;
+    }
+
+    #nav-toggle {
+        display: inline-block;
+    }
+
+    #app-tabs {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        gap: 0;
+        border-top: 1px solid var(--border-color);
+        padding: 8px 0;
+    }
+
+    #app-tabs.open {
+        display: flex;
+    }
+
+    #app-tabs .tab-btn {
+        width: 100%;
+        text-align: left;
+        padding: 10px 0;
+        border-bottom: none;
+        border-left: 3px solid transparent;
+    }
+
+    #app-tabs .tab-btn.active {
+        border-left-color: var(--accent-color);
+        border-bottom-color: transparent;
+    }
+
+    .view-section {
+        height: calc(100dvh - var(--nav-height, 50px));
+    }
+
+    #controls-hint {
+        display: none;
+    }
+
+    #inspector {
+        top: auto;
+        bottom: 70px;
+        right: 10px;
+        left: 10px;
+        width: auto;
+        max-height: 40vh;
+        overflow-y: auto;
+    }
+
+    #command-bar {
+        margin: 10px;
+    }
+
+    #status-msg {
+        bottom: 70px;
+        left: 10px;
+        font-size: 0.75rem;
+    }
+
+    #ui-layer > .panel:first-child {
+        margin: 8px !important;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    #json-modal {
+        width: calc(100vw - 24px);
+        height: 70vh;
+        max-width: 600px;
+    }
+
+    .comp-container,
+    .prompt-container {
+        flex-direction: column;
+    }
+
+    .comp-sidebar,
+    .prompt-sidebar {
+        width: 100%;
+        max-height: 35vh;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 0;
+    }
+
+    .comp-main,
+    .prompt-main {
+        margin-bottom: 0;
+        padding: 12px;
+        min-height: 0;
+    }
+
+    .comp-main {
+        flex-direction: column;
+    }
+
+    .comp-column {
+        min-height: 180px;
+    }
+
+    .prompt-textarea {
+        min-height: 240px;
+    }
+
+    #auth-card {
+        width: calc(100vw - 32px);
+        max-width: 420px;
+    }
+}
+
+@media (max-width: 600px) {
+    button {
+        padding: 8px 10px;
+        font-size: 0.7rem;
+    }
+
+    #global-theme-btn,
+    #auth-logout-btn {
+        padding: 6px 8px;
+        font-size: 0.65rem;
+    }
+
+    .edition-badge {
+        font-size: 0.6rem;
+    }
+}
+
+#nav-toggle {
+    display: none;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 6px 10px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-weight: bold;
+}
+
+#auth-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+#auth-card {
+    width: 420px;
+    background: var(--panel-bg);
+    border: 1px solid var(--accent-color);
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+#auth-card h2 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+
+#auth-card p {
+    margin: 0 0 16px;
+    font-size: 0.8rem;
+    color: #888;
+    line-height: 1.5;
+}
+
+#auth-api-key {
+    width: 100%;
+    box-sizing: border-box;
+    background: #080808;
+    color: #fff;
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    font-family: var(--font-mono);
+    margin-bottom: 12px;
+}
+
+#auth-form button {
+    width: 100%;
+    background: var(--accent-color);
+    color: #000;
+    border: none;
+}
+
+.edition-badge {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border: 1px solid var(--border-color);
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.edition-badge.grok {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+#auth-logout-btn {
+    display: none;
+}
+
+#btn-prompt-grok {
+    background: var(--accent-color);
+    color: #000;
+    border: none;
+}

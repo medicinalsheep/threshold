@@ -1,0 +1,76 @@
+/* src/css/prompter.css */
+
+#view-prompter {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    background: var(--bg-color);
+    /* Remove global overflow hidden so content can flow */
+}
+
+.prompt-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.prompt-sidebar {
+    width: 300px;
+    background: var(--panel-bg);
+    border-right: 1px solid var(--border-color);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex-shrink: 0;
+    overflow-y: auto; /* Scroll sidebar if needed */
+    margin-bottom: 45px; /* Extra space for footer */
+}
+
+#btn-prompt-gen {
+    margin-top: auto; /* Push to bottom of sidebar */
+    background: var(--accent-color);
+    color: #000;
+    border: none;
+    padding: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+}
+
+.prompt-main {
+    flex-grow: 1;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+    /* Allow scrolling if screen is short */
+    overflow-y: auto;
+}
+
+.prompt-textarea {
+    flex: 1; /* Take up available space */
+    width: 100%;
+    min-height: 200px; /* Ensure it doesn't shrink to nothing */
+    background: #080808;
+    color: #fff;
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    resize: none;
+    outline: none;
+    line-height: 1.5;
+    box-sizing: border-box;
+    margin-bottom: 20px; /* Space before buttons */
+}
+
+.prompt-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+    padding-bottom: 35px; /* Extra breathing room at bottom */
+}

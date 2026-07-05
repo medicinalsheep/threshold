@@ -1,0 +1,108 @@
+:root {
+    /* DARK MODE (DEFAULT) */
+    --bg-color: #1a1a1a;
+    --nav-bg: #000000;
+    --panel-bg: rgba(5, 5, 5, 0.95);
+    --text-color: #d0d0d0;
+    --accent-color: #ff3366; /* Threshold Pink */
+    --border-color: #444;
+    --btn-bg: #000000;
+    --btn-text: #d0d0d0;
+    --font-mono: 'Courier New', Courier, monospace;
+}
+
+body.light-mode {
+    /* LIGHT MODE OVERRIDES */
+    --bg-color: #888888;
+    --nav-bg: #e0e0e0;
+    --panel-bg: rgba(240, 240, 240, 0.95);
+    --text-color: #000;
+    --accent-color: #0044ff; /* Engineer Blue */
+    --border-color: #999;
+    --btn-bg: #cccccc;
+    --btn-text: #000000;
+}
+
+body {
+    margin: 0;
+    overflow: hidden;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-mono);
+    transition: background 0.3s;
+}
+
+/* --- NAVIGATION BAR --- */
+#app-nav {
+    height: 50px;
+    background: var(--nav-bg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 100;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.brand {
+    font-weight: 900;
+    letter-spacing: 2px;
+    font-size: 1.2rem;
+}
+
+.accent {
+    color: var(--accent-color);
+}
+
+.tabs {
+    display: flex;
+    gap: 20px;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    font-family: var(--font-mono);
+    font-weight: bold;
+    cursor: pointer;
+    padding: 15px 10px; /* Taller padding for click target */
+    border-bottom: 3px solid transparent;
+    transition: 0.2s;
+}
+
+    .tab-btn:hover {
+        color: var(--accent-color);
+    }
+
+    .tab-btn.active {
+        border-bottom-color: var(--accent-color);
+        color: var(--accent-color);
+    }
+
+#global-theme-btn {
+    background: var(--btn-bg);
+    border: 1px solid var(--border-color);
+    color: var(--btn-text);
+    padding: 5px 10px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-weight: bold;
+}
+
+    #global-theme-btn:hover {
+        border-color: var(--accent-color);
+        color: var(--accent-color);
+    }
+
+/* --- VIEW CONTAINER --- */
+.view-section {
+    position: absolute;
+    top: var(--nav-height, 50px);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+}

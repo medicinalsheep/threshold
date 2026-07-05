@@ -1,0 +1,26 @@
+{
+  "name": "threshold",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:grok": "vite --mode grok",
+    "build": "vite build",
+    "build:pages": "vite build --mode pages",
+    "build:grok": "vite build --mode grok",
+    "preview": "vite preview",
+    "preview:pages": "vite preview --outDir dist-pages",
+    "preview:grok": "vite preview --outDir dist-grok"
+  },
+  "devDependencies": {
+    "vite": "npm:rolldown-vite@7.2.5"
+  },
+  "overrides": {
+    "vite": "npm:rolldown-vite@7.2.5"
+  },
+  "dependencies": {
+    "cannon-es": "^0.20.0",
+    "three": "^0.182.0"
+  }
+}
