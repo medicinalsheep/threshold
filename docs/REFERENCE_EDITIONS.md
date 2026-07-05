@@ -27,8 +27,9 @@ Legacy ids `threshold-child-*` map to `tc-*` (v5.8).
 
 ```bash
 npm run dev
-npm run tc:build      # ensure GLBs in import/ + public/bundle/import/
-npm run tc:verify     # smoke test modules, GLBs, manifest, aliases
+npm run tc:build      # GLBs + PBR/HILOD textures → import/ + textures/
+npm run tc:gen:tex    # textures only (48 PNGs + threshold_manifest.json)
+npm run tc:verify     # smoke test modules, GLBs, textures, HILOD, aliases
 ```
 
 Lobby → **TC →** — full showcase (≥6 objects): GLB vehicles + characters with LOD @ 12m/28m, TC Span, checkpoint, SFX.

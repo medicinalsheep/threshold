@@ -123,6 +123,20 @@ m.userData.textureHint = 'textures/stone_albedo.png';
 // User imports the file in Texture tab — no cloud upload required`
         },
         {
+            id: 'tc_textures_hilod',
+            title: 'TC Textures — GIMP + HILOD (R6)',
+            summary: 'Bundled TC PBR maps with distance/tier HILOD. Regenerate via tc:gen:tex or GIMP Build TC Textures.',
+            checklist: ['npm run tc:build (includes tc:gen:tex)', 'Lobby TC → auto-applies maps', 'Hyper mode for PBR', 'EXPORT lists texture credits'],
+            code: `// TC TEXTURES (R6):
+// Generate: npm run tc:gen:tex
+// Files: textures/tc_run_albedo.png + _512/_1k/_2k HILOD variants
+// Manifest: textures/threshold_manifest.json (tcRealism: r6)
+// GIMP: Filters → Threshold → Build TC Textures (R6)
+// Lobby → TC → spawns meshes + wireTcTextures() applies PBR + HILOD
+// Graphics tier picks map suffix — see ENV → Graphics tier
+// PromptGen // ASSETS block lists tc_* texture paths`
+        },
+        {
             id: 'tc_circuit',
             title: 'TC Circuit — Lap Timer + Checkpoint',
             summary: 'Extend the TC showcase into a time-trial loop: start at TC Span, hit TC Checkpoint, log laps without clearing the scene.',

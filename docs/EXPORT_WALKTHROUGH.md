@@ -115,7 +115,7 @@ Use **Lobby → TC →** to load the bundled export demo, then run the wizard:
 
 | Step | TC expectation |
 |------|----------------|
-| **SCENE** | ≥6 objects: `tc_run`, `tc_haul`, `tc_span`, `tc_msh`, `tc_mec`, `tc_cp` |
+| **SCENE** | ≥6 objects: `tc_run`, `tc_haul`, `tc_span`, `tc_msh`, `tc_mec`, `tc_cp` + PBR textures |
 | **CREDITS** | Pre-filled `Original — TC` per asset |
 | **PACKS** | `tc.vehicle.run`, `tc.character.msh`, etc. + `threshold://com.threshold.tc/a/*` |
 | **PromptGen** | Scene context includes `// ASSETS:` block when TC objects present |

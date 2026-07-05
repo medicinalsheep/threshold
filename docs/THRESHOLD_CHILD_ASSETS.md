@@ -90,13 +90,14 @@ Use Child assets as **design seeds** — same objects can anchor many game types
 | Vehicle engine loop | Ambient sound on vehicle root |
 | UI confirm | SFX tab record → PromptGen ASSETS block |
 
-### Textures (planned Child)
+### Textures (R6 TC)
 
 | Gameplay idea | Dev hook |
 |---------------|----------|
-| Zone theming | GIMP Child export → `textures/threshold_child_*` |
-| Graphics tier demo | HILOD `_512`/`_1k`/`_2k` variants |
-| Store asset pack | `assetRegistry` texture kind + PACKS SKU |
+| Zone theming | `npm run tc:gen:tex` or GIMP **Build TC Textures (R6)** |
+| Graphics tier demo | HILOD `_512`/`_1k`/`_2k` — `TextureHilod` distance + tier pick |
+| Store asset pack | EXPORT **CREDITS** lists `tc_tex_*` · PACKS texture SKU |
+| Auto apply | Lobby **TC →** → `wireTcTextures()` on spawn |
 
 ### Export & store (all editions)
 
@@ -108,6 +109,17 @@ Use Child assets as **design seeds** — same objects can anchor many game types
 | `store:prep` | `credits.md` lists Threshold as rights holder |
 
 ---
+
+## R6 — TC GIMP textures + HILOD (v5.10)
+
+| Step | Command / path |
+|------|----------------|
+| Generate maps | `npm run tc:gen:tex` (Node) or GIMP **Build TC Textures (R6)** |
+| Config | `config/tc-textures.json` |
+| Manifest | `textures/threshold_manifest.json` (`tcRealism: r6`) |
+| HILOD files | `textures/tc_run_albedo_512.png`, `_1k`, `_2k`, etc. |
+| Runtime | `src/shared/tcTex.js` — bundled apply + `TextureHilod` |
+| Verify | `npm run tc:verify` — texture + manifest smoke |
 
 ## R5 — Blender TC mesh realism (v5.9)
 

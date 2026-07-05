@@ -1,0 +1,77 @@
+{
+  "format": "threshold-tc-textures",
+  "version": 1,
+  "realism": "r6",
+  "baseSize": 256,
+  "hilod": [
+    { "suffix": "_512", "maxPx": 128 },
+    { "suffix": "_1k", "maxPx": 256 },
+    { "suffix": "_2k", "maxPx": 512 }
+  ],
+  "assets": [
+    {
+      "slug": "tc_run",
+      "objectName": "TC Runner",
+      "tcEd": "tc-veh",
+      "slots": ["albedo", "roughness", "metalness"],
+      "palette": {
+        "body": [26, 42, 68],
+        "trim": [13, 21, 32],
+        "accent": [57, 255, 20],
+        "metal": [136, 153, 170]
+      },
+      "style": "vehicle"
+    },
+    {
+      "slug": "tc_haul",
+      "objectName": "TC Hauler",
+      "tcEd": "tc-veh",
+      "slots": ["albedo", "roughness", "metalness"],
+      "palette": {
+        "body": [45, 74, 53],
+        "trim": [58, 90, 72],
+        "accent": [0, 255, 170],
+        "metal": [100, 110, 120]
+      },
+      "style": "vehicle"
+    },
+    {
+      "slug": "tc_msh",
+      "objectName": "TC Marshal",
+      "tcEd": "tc-chr",
+      "slots": ["albedo", "roughness"],
+      "palette": {
+        "shirt": [26, 42, 68],
+        "pants": [17, 24, 34],
+        "skin": [255, 212, 184],
+        "accent": [57, 255, 20]
+      },
+      "style": "character"
+    },
+    {
+      "slug": "tc_mec",
+      "objectName": "TC Mechanic",
+      "tcEd": "tc-chr",
+      "slots": ["albedo", "roughness"],
+      "palette": {
+        "shirt": [204, 102, 34],
+        "pants": [51, 51, 68],
+        "skin": [232, 184, 150],
+        "accent": [230, 149, 34]
+      },
+      "style": "character"
+    },
+    {
+      "slug": "tc_span",
+      "objectName": "TC Span",
+      "tcEd": "tc-lite",
+      "slots": ["albedo", "roughness"],
+      "palette": {
+        "deck": [34, 34, 51],
+        "rail": [51, 51, 68],
+        "accent": [57, 255, 20]
+      },
+      "style": "span"
+    }
+  ]
+}

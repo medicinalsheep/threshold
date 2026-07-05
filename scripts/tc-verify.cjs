@@ -6,7 +6,10 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const IMPORT = path.join(ROOT, 'import');
 const PUB = path.join(ROOT, 'public', 'bundle', 'import');
+const TEX = path.join(ROOT, 'textures');
+const PUB_TEX = path.join(ROOT, 'public', 'bundle', 'textures');
 const MAN = path.join(IMPORT, 'threshold_blender_manifest.json');
+const GIMP_MAN = path.join(TEX, 'threshold_manifest.json');
 
 const GLBS = [
     'tc_run.glb', 'tc_run_l1.glb', 'tc_run_l2.glb',
@@ -21,11 +24,23 @@ const BLENDER_SCRIPTS = [
     'plugins/threshold-blender/build_tc_chr.py',
 ];
 
+const GIMP_SCRIPTS = [
+    'plugins/threshold-gimp/build_tc_tex.py',
+    'config/tc-textures.json',
+    'scripts/tc-gen-tex.cjs',
+];
+
+const TC_TEX_CORE = [
+    'tc_run_albedo.png', 'tc_run_albedo_512.png', 'tc_run_albedo_1k.png', 'tc_run_albedo_2k.png',
+    'tc_haul_albedo.png', 'tc_msh_albedo.png', 'tc_span_albedo.png',
+];
+
 const MODULES = [
     'src/shared/tcMeta.js',
     'src/shared/tcVeh.js',
     'src/shared/tcChr.js',
     'src/shared/tcSfx.js',
+    'src/shared/tcTex.js',
     'src/shared/tcShow.js',
     'src/shared/tcLite.js',
     'src/shared/tcPrompt.js',
@@ -47,6 +62,9 @@ function bad(msg) { console.log(`  ✗ ${msg}`); fail += 1; }
 
 console.log('[tc-verify] blender R5');
 BLENDER_SCRIPTS.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`missing ${f}`)));
+
+console.log('[tc-verify] gimp R6');
+GIMP_SCRIPTS.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`missing ${f}`)));
 
 console.log('[tc-verify] modules');
 MODULES.forEach((f) => (fs.existsSync(path.join(ROOT, f)) ? ok(f) : bad(`missing ${f}`)));
@@ -127,6 +145,30 @@ const chrSpecs = (chr.match(/getTcChrSpecs\(\)/g) || []).length;
 if (!show.includes('spawnTcVeh') || !show.includes('spawnTcChr') || !show.includes('spawnCp')) {
     bad('tcShow missing spawn chain');
 } else ok('tcShow: veh + chr + cp');
+if (!show.includes('wireTcTextures')) bad('tcShow missing wireTcTextures');
+else ok('tcShow wires TC textures (R6)');
+
+console.log('[tc-verify] textures R6');
+TC_TEX_CORE.forEach((f) => {
+    const p = path.join(TEX, f);
+    if (!fs.existsSync(p)) bad(`missing ${f}`);
+    else ok(`${f} (${(fs.statSync(p).size / 1024).toFixed(1)} KB)`);
+});
+if (!fs.existsSync(GIMP_MAN)) {
+    bad('no threshold_manifest.json');
+} else {
+    const gm = JSON.parse(fs.readFileSync(GIMP_MAN, 'utf8'));
+    if (gm.tcRealism !== 'r6') bad(`gimp manifest tcRealism=${gm.tcRealism}`);
+    else ok('gimp manifest tcRealism=r6');
+    const tcEntries = (gm.textures || []).filter((t) => /^tc_/.test(t.id || ''));
+    if (tcEntries.length < 10) bad(`tc texture entries=${tcEntries.length}`);
+    else ok(`${tcEntries.length} TC texture manifest entries`);
+    const run = tcEntries.find((t) => t.id === 'tc_run_albedo');
+    if (!run || (run.variants || []).length < 3) bad('tc_run_albedo HILOD variants');
+    else ok('tc_run_albedo — 3 HILOD variants');
+}
+if (!fs.existsSync(path.join(PUB_TEX, 'tc_run_albedo.png'))) bad('pub missing tc_run_albedo');
+else ok('pub/tc_run_albedo.png');
 if (vehSpecs < 1 || chrSpecs < 1) bad('veh/chr spec loaders');
 else ok('veh/chr spec loaders present (expect ≥6 scene objects in lobby TC →)');
 

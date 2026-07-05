@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.10.0 — R6 TC GIMP textures + HILOD
+
+- `tc-gen-tex.cjs` — procedural PBR maps + `_512`/`_1k`/`_2k` HILOD per TC asset
+- `config/tc-textures.json` — Runner, Hauler, Marshal, Mechanic, Span slot specs
+- `tcTex.js` — auto-wire bundled textures + HILOD on Lobby **TC →** spawn
+- GIMP: `build_tc_tex.py` — Filters → Threshold → Build TC Textures (R6)
+- `threshold_manifest.json` merged with `tcRealism: r6` entries
+- `npm run tc:gen:tex` · included in `npm run tc:build`
+
 ## 5.9.0 — R5 Blender TC mesh realism
 
 - `tc_mesh_lib.py` — shared R5 veh+chr builders (wheels, silhouette, LOD)

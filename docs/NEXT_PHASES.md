@@ -262,7 +262,23 @@ blender --background --python plugins/threshold-blender/build_tc_chr.py
 npm run blender:export -- --blend plugins/threshold-blender/tc_chr.blend --object "TC Marshal" --slug tc_msh --lod --no-physics --tc-ed tc-chr --realism r5
 ```
 
-**Next (R6):** TC GIMP textures + HILOD.
+### Phase R6 — TC GIMP textures + HILOD (v5.10) ✅
+
+| Step | Status |
+|------|--------|
+| R6.1 `tc-gen-tex.cjs` — PBR + HILOD `_512`/`_1k`/`_2k` | ✅ |
+| R6.2 `config/tc-textures.json` + GIMP `build_tc_tex.py` | ✅ |
+| R6.3 `tcTex.js` — spawn-time texture + HILOD wire | ✅ |
+| R6.4 `threshold_manifest.json` TC entries + EXPORT credits | ✅ |
+| R6.5 `tc:verify` texture + HILOD smoke | ✅ |
+
+```bash
+npm run tc:gen:tex
+npm run tc:build
+# GIMP: Filters → Threshold → Build TC Textures (R6)
+```
+
+**Next (R7):** TC intro cutscene · **S1:** export E2E → store prep.
 
 ### Phase G1 — TC Circuit game-dev path (v5.8.1) ✅
 

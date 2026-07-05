@@ -23,6 +23,8 @@ textures/*.png
 textures/*.jpg
 textures/*.jpeg
 textures/*.webp
+!textures/tc_*.png
+!textures/threshold_manifest.json
 !textures/.gitkeep
 import/*.glb
 !import/tc_*.glb
@@ -32,6 +34,7 @@ import/*.gltf
 reference/_dev-seeds/
 public/bundle/*
 !public/bundle/import/
+!public/bundle/textures/
 public/bundle/import/*
 !public/bundle/import/tc_*.glb
-!public/bundle/import/threshold_blender_manifest.json
+!public/bundle/import/thresh

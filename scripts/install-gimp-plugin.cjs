@@ -7,7 +7,8 @@ const path = require('path');
 const os = require('os');
 
 const ROOT = path.join(__dirname, '..');
-const SOURCE = path.join(ROOT, 'plugins', 'threshold-gimp', 'threshold_export.py');
+const GIMP_DIR = path.join(ROOT, 'plugins', 'threshold-gimp');
+const PLUGINS = ['threshold_export.py', 'build_tc_tex.py'];
 
 const GIMP_VERSIONS = ['3.0', '2.10'];
 
@@ -31,29 +32,35 @@ function pickTargetDir() {
 }
 
 function main() {
-    if (!fs.existsSync(SOURCE)) {
-        console.error('Plugin source not found:', SOURCE);
-        process.exit(1);
-    }
-
     const { dir, ver } = pickTargetDir();
     fs.mkdirSync(dir, { recursive: true });
 
-    const dest = path.join(dir, 'threshold_export.py');
-    fs.copyFileSync(SOURCE, dest);
-
-    if (process.platform !== 'win32') {
-        try {
-            fs.chmodSync(dest, 0o755);
-        } catch {
-            /* ignore */
+    const installed = [];
+    for (const name of PLUGINS) {
+        const src = path.join(GIMP_DIR, name);
+        if (!fs.existsSync(src)) {
+            console.warn('Skip missing:', src);
+            continue;
+        }
+        const dest = path.join(dir, name);
+        fs.copyFileSync(src, dest);
+        installed.push(dest);
+        if (process.platform !== 'win32') {
+            try { fs.chmodSync(dest, 0o755); } catch { /* ignore */ }
         }
     }
 
-    console.log(`Installed Threshold GIMP plugin for GIMP ${ver}:`);
-    console.log(' ', dest);
+    if (!installed.length) {
+        console.error('No GIMP plugins found in', GIMP_DIR);
+        process.exit(1);
+    }
+
+    console.log(`Installed Threshold GIMP plugins for GIMP ${ver}:`);
+    installed.forEach((p) => console.log(' ', p));
     console.log('');
-    console.log('Restart GIMP, then use Filters → Threshold → Export PBR Maps…');
+    console.log('Restart GIMP:');
+    console.log('  Filters → Threshold → Export PBR Maps…');
+    console.log('  Filters → Threshold → Build TC Textures (R6)…');
     console.log('Export folder tip: point at your project textures/ directory.');
 }
 

@@ -7,6 +7,7 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const GEN_VEH = path.join(__dirname, 'tc-gen-veh.cjs');
 const GEN_CHR = path.join(__dirname, 'tc-gen-chr.cjs');
+const GEN_TEX = path.join(__dirname, 'tc-gen-tex.cjs');
 const BLEND_DIR = path.join(ROOT, 'plugins', 'threshold-blender');
 const BLEND_VEH = path.join(BLEND_DIR, 'tc_veh.blend');
 const BLEND_CHR = path.join(BLEND_DIR, 'tc_chr.blend');
@@ -127,6 +128,7 @@ function main() {
     }
 
     finalizeManifest();
+    runNode(GEN_TEX);
     console.log('[tc-build] done');
 }
 
