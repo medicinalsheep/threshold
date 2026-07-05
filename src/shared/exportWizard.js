@@ -10,6 +10,7 @@ export const ExportWizard = {
         name: 'My Threshold Game',
         author: '',
         description: '',
+        includeSoundBlobs: false,
         targets: { web: true, android: true, windows: true },
     },
     manifest: null,
@@ -52,11 +53,16 @@ export const ExportWizard = {
         this.draft.targets.windows = !!document.getElementById('export-target-windows')?.checked;
     },
 
-    buildManifest() {
+    readReviewFromUi() {
+        this.draft.includeSoundBlobs = !!document.getElementById('export-include-sounds')?.checked;
+    },
+
+    async buildManifest() {
         return GameExport.buildManifest({
             name: this.draft.name,
             author: this.draft.author,
             description: this.draft.description,
+            includeSoundBlobs: this.draft.includeSoundBlobs,
         });
     },
 
@@ -87,30 +93,8 @@ export const ExportWizard = {
         }
 
         if (this.step === 1) {
-            this.manifest = this.buildManifest();
-            const objCount = this.manifest.world?.objects?.length ?? 0;
-            const soundCount = this.manifest.sounds?.length ?? 0;
-            const texCount = this.manifest.textures?.length ?? 0;
-            const gltfCount = (this.manifest.world?.objects || []).filter(
-                (o) => o.type === 'gltf' || o.userData?.type === 'gltf'
-            ).length;
-            const hasScripts = !!(this.manifest.scripts?.running || this.manifest.scripts?.output);
-            const hasGimp = !!this.manifest.gimp;
-            const hasBlender = !!this.manifest.blender;
-            body.innerHTML = `
-                <p class="insert-hint">Manifest preview — engine v${this.manifest.engineVersion}</p>
-                <ul class="export-wizard-summary">
-                    <li><strong>${escapeText(this.manifest.game.name)}</strong> by ${escapeText(this.manifest.game.author)}</li>
-                    <li>${objCount} world object(s)${gltfCount ? ` (${gltfCount} GLTF)` : ''}</li>
-                    <li>${texCount} texture map reference(s)</li>
-                    <li>${soundCount} sound clip reference(s)</li>
-                    <li>Scripts: ${hasScripts ? 'included' : 'empty (add in Compiler first)'}</li>
-                    <li>Creative: ${hasGimp ? 'GIMP manifest' : '—'} · ${hasBlender ? 'Blender GLTF' : '—'}</li>
-                    <li>Dev CLI: <code>textures:watch</code> · <code>blender:export</code></li>
-                    <li>Relay: ${escapeText(this.manifest.relay?.mode || 'peerjs-cloud')}</li>
-                </ul>
-                <p class="insert-hint" style="margin-top:8px;">Texture/sound blobs stay on device until native bundle (Phase E). Paths in manifest document what to ship.</p>
-            `;
+            body.innerHTML = `<p class="insert-hint">Building manifest preview…</p>`;
+            this._renderReviewStep();
             return;
         }
 
@@ -122,13 +106,59 @@ export const ExportWizard = {
                 <label class="export-wizard-check"><input type="checkbox" id="export-target-android" ${this.draft.targets.android ? 'checked' : ''}> ${profiles.android.label}</label>
                 <label class="export-wizard-check"><input type="checkbox" id="export-target-windows" ${this.draft.targets.windows ? 'checked' : ''}> ${profiles.windows.label}</label>
                 <p class="insert-hint" style="margin-top:10px;">CLI after download:<br>
+                <code>npm run bundle:assets</code> (auto in package scripts)<br>
                 <code>npm run package:android</code> · <code>npm run package:win</code><br>
                 First time: <code>npm run init:native</code></p>
             `;
             return;
         }
 
-        const m = this.manifest || this.buildManifest();
+        this._renderPackageStep();
+    },
+
+    async _renderReviewStep() {
+        const body = document.getElementById('export-wizard-body');
+        if (!body) return;
+        this.readReviewFromUi();
+        this.manifest = await this.buildManifest();
+        const objCount = this.manifest.world?.objects?.length ?? 0;
+        const soundCount = this.manifest.sounds?.length ?? 0;
+        const texCount = this.manifest.textures?.length ?? 0;
+        const gltfCount = (this.manifest.world?.objects || []).filter(
+            (o) => o.type === 'gltf' || o.userData?.type === 'gltf'
+        ).length;
+        const hasScripts = !!(this.manifest.scripts?.running || this.manifest.scripts?.output);
+        const hasGimp = !!this.manifest.gimp;
+        const hasBlender = !!this.manifest.blender;
+        const soundSidecar = this.draft.includeSoundBlobs;
+        body.innerHTML = `
+            <p class="insert-hint">Manifest preview — engine v${this.manifest.engineVersion}</p>
+            <ul class="export-wizard-summary">
+                <li><strong>${escapeText(this.manifest.game.name)}</strong> by ${escapeText(this.manifest.game.author)}</li>
+                <li>${objCount} world object(s)${gltfCount ? ` (${gltfCount} GLTF)` : ''}</li>
+                <li>${texCount} texture map reference(s) — ship via <code>bundle:assets</code></li>
+                <li>${soundCount} sound clip reference(s)${soundSidecar ? ' (base64 embedded)' : ''}</li>
+                <li>Scripts: ${hasScripts ? 'included' : 'empty (add in Compiler first)'}</li>
+                <li>Creative: ${hasGimp ? 'GIMP manifest' : '—'} · ${hasBlender ? 'Blender GLTF' : '—'}</li>
+                <li>Dev CLI: <code>textures:watch</code> · <code>blender:export</code> · <code>bundle:assets</code></li>
+                <li>Relay: ${escapeText(this.manifest.relay?.mode || 'peerjs-cloud')}</li>
+            </ul>
+            <label class="export-wizard-check" style="margin-top:10px;">
+                <input type="checkbox" id="export-include-sounds" ${this.draft.includeSoundBlobs ? 'checked' : ''}>
+                Embed sound clips as base64 in manifest (larger file, portable)
+            </label>
+            <p class="insert-hint" style="margin-top:8px;">Textures/GLTF: run <code>npm run bundle:assets</code> before native package. Normal maps supported via GIMP SYNC.</p>
+        `;
+        document.getElementById('export-include-sounds')?.addEventListener('change', () => {
+            this.readReviewFromUi();
+            this._renderReviewStep();
+        });
+    },
+
+    _renderPackageStep() {
+        const body = document.getElementById('export-wizard-body');
+        if (!body || !this.manifest) return;
+        const m = this.manifest;
         const slug = (m.game.name || 'game').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
         const filename = `${slug}.threshold-game.json`;
         const targets = [];
@@ -142,18 +172,19 @@ export const ExportWizard = {
                 <li>File: <code>${escapeText(filename)}</code></li>
                 <li>Targets: ${targets.join(', ') || 'manifest only'}</li>
                 <li>Shell: ${ThresholdShell.isNative ? ThresholdShell.kind + ' (' + ThresholdShell.platform + ')' : 'browser — use CLI for APK / .exe'}</li>
+                <li>Bundle: <code>npm run bundle:assets</code> copies textures/ + import/ into dist-pages/bundle/</li>
             </ul>
             <p class="insert-hint">See <code>docs/NATIVE_SHELLS.md</code> for Android Studio and Windows build steps.</p>
         `;
         this._pendingFilename = filename;
         this._pendingJson = JSON.stringify(m, null, 2);
-        this.manifest = m;
     },
 
     async download() {
         this.readInfoFromUi();
         this.readTargetsFromUi();
-        const m = this.manifest || this.buildManifest();
+        this.readReviewFromUi();
+        const m = this.manifest || await this.buildManifest();
         const json = this._pendingJson || JSON.stringify(m, null, 2);
         const filename = this._pendingFilename || `${(m.game.name || 'game').replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.threshold-game.json`;
 
@@ -176,14 +207,19 @@ export const ExportWizard = {
         return m;
     },
 
-    next() {
+    async next() {
         if (this.step === 0) this.readInfoFromUi();
+        if (this.step === 1) this.readReviewFromUi();
         if (this.step === 2) this.readTargetsFromUi();
         if (this.step >= STEPS.length - 1) {
-            this.download();
+            await this.download();
             return;
         }
         this.step += 1;
+        if (this.step === 3) {
+            this.readReviewFromUi();
+            this.manifest = await this.buildManifest();
+        }
         this.render();
     },
 

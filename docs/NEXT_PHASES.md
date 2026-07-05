@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v3.6.0 — Creative pipeline A–D shipped (GIMP, Blender, watch CLI, GLTF insert).
+**Current:** v3.8.0 — Phase E complete (normal maps, asset bundling, web GIMP SYNC batch, sound sidecar).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -8,19 +8,19 @@
 
 ## Priority order (left behind first)
 
-### Phase E — Creative pipeline completion (v3.7–3.8)
+### Phase E — Creative pipeline completion (v3.7–3.8) ✅
 
-*Finish what A–D started before new graphics systems.*
+*Finished in v3.8.0 — proceed to Phase F (iOS).*
 
-| Item | Status today | Deliverable |
-|------|--------------|-------------|
-| Normal maps from GIMP | Exported, not applied in Engine | `material.normalMap` in TextureBridge |
-| Native asset bundling | Manifest metadata only | Electron/Capacitor pack `textures/` + `import/` into app bundle |
-| Web GIMP SYNC auto-apply | Manual ALBEDO/ROUGH/METAL per file | File System Access API or drag-drop batch |
-| `textures:watch` in production | Dev-only (`import.meta.env.DEV`) | Opt-in `VITE_CREATIVE_WATCH=true` for desktop builds |
-| Sound blob bundling | Same gap as textures | Base64 or sidecar folder in native export |
-| Capacitor Filesystem import | Roadmap unchecked | Load worlds + assets from device storage |
-| Doc/version drift | Partially fixed in 3.7 | Single source of truth in PRODUCT_ROADMAP |
+| Item | Status | Deliverable |
+|------|--------|-------------|
+| Normal maps from GIMP | ✅ v3.8 | `material.normalMap` + NORMAL button in TextureBridge |
+| Native asset bundling | ✅ v3.8 | `npm run bundle:assets` → `dist-pages/bundle/` in Electron/Capacitor |
+| Web GIMP SYNC auto-apply | ✅ v3.8 | Multi-file picker matches manifest slots (albedo/rough/metal/normal) |
+| `textures:watch` in production | ✅ v3.8 | Opt-in `VITE_CREATIVE_WATCH=true` (or `=1`) for desktop/native builds |
+| Sound blob bundling | ✅ v3.8 | Export wizard checkbox embeds base64 sound clips in manifest |
+| Capacitor Filesystem import | ✅ scaffold v3.8 | `NativeAssets` + `@capacitor/filesystem` for device manifest load |
+| Doc/version drift | ✅ v3.8 | Roadmap + workflow docs updated |
 
 ### Phase F — iOS & Apple App Store (v4.0)
 
@@ -139,8 +139,8 @@ CLI: `npm run export:graphics -- --profile android` → pruned asset folder + ma
 
 | Version | Focus |
 |---------|--------|
-| **3.7** | Docs, prompts, walkthrough, export UX (this release) |
-| **3.8** | Phase E leftovers (normal maps, bundling start) |
+| **3.7** | Docs, prompts, walkthrough, export UX |
+| **3.8** | Phase E — normal maps, bundling, web GIMP batch, sound sidecar |
 | **4.0** | iOS + App Store scaffold |
 | **4.1** | Suggested graphics tiers |
 | **4.2** | Mesh LOD |

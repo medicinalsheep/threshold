@@ -9,7 +9,7 @@ from bpy_extras.io_utils import ExportHelper
 
 MANIFEST_NAME = "threshold_blender_manifest.json"
 MANIFEST_FORMAT = "threshold-blender-manifest"
-ENGINE_VERSION = "3.7.0"
+ENGINE_VERSION = "3.8.0"
 
 
 def slugify(name: str) -> str:

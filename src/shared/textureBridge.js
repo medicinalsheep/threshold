@@ -2,13 +2,17 @@ import * as THREE from 'three';
 import { TextureLibrary } from './textureLibrary.js';
 import { TextureManifest } from './textureManifest.js';
 import { ThresholdShell } from './thresholdShell.js';
+import { AssetBundle } from './assetBundle.js';
 import { CREATIVE_WATCH_URL } from '../config.js';
 
 const SLOT_PROPS = {
     albedo: 'map',
     roughness: 'roughnessMap',
     metalness: 'metalnessMap',
+    normal: 'normalMap',
 };
+
+const SLOT_ORDER = ['albedo', 'roughness', 'metalness', 'normal'];
 
 const IMAGE_FILTERS = [{ name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'webp'] }];
 const MANIFEST_FILTERS = [
@@ -29,7 +33,7 @@ function slugify(name = '') {
 
 function parseTextureFile(fileName = '') {
     const lower = fileName.toLowerCase();
-    for (const slot of ['albedo', 'roughness', 'metalness']) {
+    for (const slot of SLOT_ORDER) {
         const suffix = `_${slot}`;
         const exts = ['.png', '.jpg', '.jpeg', '.webp'];
         for (const ext of exts) {
@@ -126,16 +130,24 @@ export const TextureBridge = {
 
     async loadFileFromPath(filePath) {
         if (!filePath) return null;
+        const name = filePath.split(/[/\\]/).pop();
+        const mime = mimeFromPath(filePath);
+
         if (ThresholdShell.isNative) {
-            const buf = await ThresholdShell.readBinary(filePath);
+            let buf = await ThresholdShell.readBinary(filePath);
+            if (!buf) buf = await AssetBundle.readBinary(filePath);
             if (!buf) return null;
-            const mime = mimeFromPath(filePath);
-            const name = filePath.split(/[/\\]/).pop();
             const blob = new Blob([buf], { type: mime });
             const file = new File([blob], name, { type: mime });
             return TextureLibrary.saveFromFile(file, { name, sourcePath: filePath });
         }
-        throw new Error('Load from disk requires Threshold desktop (Electron) build');
+
+        const bundleFile = await AssetBundle.loadFile(filePath, name);
+        if (bundleFile) {
+            return TextureLibrary.saveFromFile(bundleFile, { name, sourcePath: filePath });
+        }
+
+        throw new Error('Load from disk requires Threshold desktop (Electron) build or bundled assets');
     },
 
     async applyPathToObject(obj, slot, filePath) {
@@ -146,6 +158,26 @@ export const TextureBridge = {
         textures[slot] = record.id;
         if (slot === 'albedo') obj.userData.textureHint = filePath;
         return record;
+    },
+
+    async pickWebTextureBatch(entries = []) {
+        const needed = entries
+            .map((e) => e.file || e.path?.split(/[/\\]/).pop())
+            .filter(Boolean);
+        const hint = needed.length ? needed.join(', ') : 'texture maps';
+        const input = document.getElementById('insp-texture-batch');
+        if (!input) return null;
+        return new Promise((resolve) => {
+            const onChange = () => {
+                input.removeEventListener('change', onChange);
+                const files = [...(input.files || [])];
+                input.value = '';
+                resolve(files.length ? files : null);
+            };
+            input.addEventListener('change', onChange);
+            window.UI?.status?.(`Select map files: ${hint}`);
+            input.click();
+        });
     },
 
     async pickManifestPayload() {
@@ -197,27 +229,75 @@ export const TextureBridge = {
         }
 
         if (options.webOnly || !ThresholdShell.isNative) {
-            const summary = TextureManifest.summarizeForObject(manifest, obj.userData?.name);
-            obj.userData.textureHint = entries.find((e) => e.slot === 'albedo')?.path
-                || entries[0]?.path
-                || obj.userData.textureHint;
+            const batch = await this.pickWebTextureBatch(entries);
+            if (!batch?.length) {
+                const summary = TextureManifest.summarizeForObject(manifest, obj.userData?.name);
+                obj.userData.textureHint = entries.find((e) => e.slot === 'albedo')?.path
+                    || entries[0]?.path
+                    || obj.userData.textureHint;
+                return {
+                    applied: 0,
+                    entries,
+                    message: `Manifest loaded (web): ${summary}. Pick maps via GIMP SYNC again to batch-apply.`,
+                };
+            }
+
+            let applied = 0;
+            const errors = [];
+            const fileByName = new Map(batch.map((f) => [f.name.toLowerCase(), f]));
+
+            for (const entry of entries) {
+                const fileName = (entry.file || entry.path?.split(/[/\\]/).pop() || '').toLowerCase();
+                const file = fileByName.get(fileName)
+                    || batch.find((f) => f.name.toLowerCase().endsWith(fileName));
+                if (!file) {
+                    errors.push(`${entry.slot}: ${fileName || 'missing'}`);
+                    continue;
+                }
+                try {
+                    const record = await TextureLibrary.saveFromFile(file, {
+                        name: file.name,
+                        sourcePath: entry.path || file.name,
+                    });
+                    await this.applySlot(obj, entry.slot, record.id);
+                    const textures = ensureTexturesUserData(obj);
+                    textures[entry.slot] = record.id;
+                    applied += 1;
+                } catch (e) {
+                    errors.push(`${entry.slot}: ${e.message || file.name}`);
+                }
+            }
+
+            const albedo = entries.find((e) => e.slot === 'albedo');
+            if (albedo?.path) obj.userData.textureHint = albedo.path;
+
             return {
-                applied: 0,
+                applied,
                 entries,
-                message: `Manifest loaded (web): ${summary}. Import each file via ALBEDO/ROUGH/METAL.`,
+                errors,
+                message: applied
+                    ? `GIMP SYNC (web): ${applied} map(s) applied — ${obj.userData?.name}`
+                    : `GIMP SYNC (web) failed — ${errors.join('; ') || 'no files matched'}`,
             };
         }
 
         let applied = 0;
         const errors = [];
         for (const entry of entries) {
-            const filePath = TextureManifest.resolveFilePath(manifestDir, entry, manifest);
-            try {
-                await this.applyPathToObject(obj, entry.slot, filePath);
-                applied += 1;
-            } catch (e) {
-                errors.push(`${entry.slot}: ${e.message || filePath}`);
+            const candidates = TextureManifest.resolveFilePathCandidates(manifestDir, entry, manifest);
+            let lastErr = null;
+            let ok = false;
+            for (const filePath of candidates) {
+                try {
+                    await this.applyPathToObject(obj, entry.slot, filePath);
+                    applied += 1;
+                    ok = true;
+                    break;
+                } catch (e) {
+                    lastErr = e;
+                }
             }
+            if (!ok) errors.push(`${entry.slot}: ${lastErr?.message || candidates[0] || 'not found'}`);
         }
 
         obj.userData.gimpManifestPath = options.manifestPath || null;
@@ -278,7 +358,10 @@ export const TextureBridge = {
             texture.colorSpace = THREE.SRGBColorSpace;
         }
         mat[prop] = texture;
-        if (slot === 'albedo') mat.needsUpdate = true;
+        if (slot === 'normal' && mat.normalScale) {
+            mat.normalScale.set(1, 1);
+        }
+        mat.needsUpdate = true;
         return true;
     },
 
@@ -310,7 +393,7 @@ export const TextureBridge = {
     formatSlotStatus(textures = {}, hint = '') {
         const lines = [];
         if (hint) lines.push(`hint: ${hint.split(/[/\\]/).pop() || hint}`);
-        const parts = ['albedo', 'roughness', 'metalness'].map((slot) => {
+        const parts = SLOT_ORDER.map((slot) => {
             const id = textures[slot];
             if (!id) return `${slot}: —`;
             const meta = TextureLibrary.list().find((t) => t.id === id);

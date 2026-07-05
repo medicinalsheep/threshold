@@ -1,7 +1,7 @@
 export const GIMP_MANIFEST_FORMAT = 'threshold-gimp-manifest';
 export const GIMP_MANIFEST_NAME = 'threshold_manifest.json';
 
-const ENGINE_SLOTS = new Set(['albedo', 'roughness', 'metalness']);
+const ENGINE_SLOTS = new Set(['albedo', 'roughness', 'metalness', 'normal']);
 
 function normName(name = '') {
     return String(name).trim().toLowerCase();
@@ -36,28 +36,44 @@ export const TextureManifest = {
         );
     },
 
-    resolveFilePath(manifestDir, entry, manifest) {
+    resolveFilePathCandidates(manifestDir, entry, manifest) {
         const file = entry.file || splitPath(entry.path || '').file;
-        if (!file) return null;
+        if (!file) return [];
 
         const candidates = [];
+        const add = (p) => {
+            if (p && !candidates.includes(p)) candidates.push(p);
+        };
+
         if (entry.path) {
             const abs = entry.path.replace(/\\/g, '/');
             if (/^[a-zA-Z]:\//.test(abs) || abs.startsWith('/')) {
-                candidates.push(entry.path);
+                add(entry.path);
             } else {
-                candidates.push(joinPath(manifestDir, entry.path));
+                add(joinPath(manifestDir, entry.path));
+                add(abs);
                 if (manifest?.exportDir) {
-                    candidates.push(joinPath(manifestDir, '..', manifest.exportDir, file));
+                    add(joinPath(manifestDir, '..', manifest.exportDir, file));
                 }
             }
         }
-        candidates.push(joinPath(manifestDir, file));
+        add(joinPath(manifestDir, file));
         if (manifest?.exportDir) {
-            candidates.push(joinPath(manifestDir, manifest.exportDir, file));
+            add(joinPath(manifestDir, manifest.exportDir, file));
         }
 
-        return candidates.find(Boolean) || joinPath(manifestDir, file);
+        const rel = entry.path?.replace(/\\/g, '/') || `textures/${file}`;
+        add(rel);
+        add(`textures/${file}`);
+        add(`bundle/textures/${file}`);
+        add(`bundle/${rel}`);
+
+        return candidates;
+    },
+
+    resolveFilePath(manifestDir, entry, manifest) {
+        const candidates = this.resolveFilePathCandidates(manifestDir, entry, manifest);
+        return candidates[0] || null;
     },
 
     summarizeForObject(manifest, objectName) {

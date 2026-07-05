@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → local GIMP/Blender art → AI agents on NPCs.
 
-**Current version:** **3.7.0** (creative pipeline A–D shipped; UX/docs refresh)
+**Current version:** **3.8.0** (Phase E — normal maps, asset bundling, web GIMP batch)
 
 **Detailed next phases:** [NEXT_PHASES.md](NEXT_PHASES.md) (LOD, HILOD, iOS, Phase E leftovers)
 
@@ -56,8 +56,9 @@ See [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md).
 - [x] **Creative pipeline A–D** — [CREATIVE_PLUGINS.md](CREATIVE_PLUGINS.md)
 - [ ] Signed APK / store-ready builds
 - [ ] macOS `.app` notarization
-- [ ] Capacitor Filesystem for on-device world + asset import
-- [ ] Native bundle of `textures/` + `import/` + sound blobs (Phase E)
+- [x] Capacitor Filesystem scaffold for on-device world import (`NativeAssets`, v3.8)
+- [x] Native bundle of `textures/` + `import/` via `bundle:assets` (v3.8)
+- [x] Sound blob sidecar — base64 in export manifest (v3.8)
 
 ### Phase 3 — iOS & Apple (v4.0) 📋
 
@@ -76,7 +77,7 @@ See [NEXT_PHASES.md](NEXT_PHASES.md):
 - [ ] Mesh LOD (Blender multi-GLB)
 - [ ] HILOD textures (distance + tier-based maps)
 - [ ] Targeted graphics export CLI per platform
-- [ ] Normal maps in Engine (Phase E leftover)
+- [x] Normal maps in Engine (v3.8)
 
 ### Phase 5 — Steam & distribution (v3.5+) 📋
 

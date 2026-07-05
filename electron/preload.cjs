@@ -25,6 +25,9 @@ contextBridge.exposeInMainWorld('ThresholdShell', {
         pickSave: (defaultName, filters) => ipcRenderer.invoke('shell:fs:pickSave', defaultName, filters),
         saveManifest: (defaultName, json) => ipcRenderer.invoke('shell:saveManifest', defaultName, json),
     },
+    bundle: {
+        readBinary: (relPath) => ipcRenderer.invoke('shell:bundle:readBinary', relPath),
+    },
     mic: {
         supported: true,
         note: 'Uses WebView getUserMedia — grant mic permission in OS settings if needed.',

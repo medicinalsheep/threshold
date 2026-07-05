@@ -1339,6 +1339,7 @@ const UI = {
         document.getElementById('insp-texture-albedo')?.addEventListener('click', () => UI.importTextureSlot('albedo'));
         document.getElementById('insp-texture-rough')?.addEventListener('click', () => UI.importTextureSlot('roughness'));
         document.getElementById('insp-texture-metal')?.addEventListener('click', () => UI.importTextureSlot('metalness'));
+        document.getElementById('insp-texture-normal')?.addEventListener('click', () => UI.importTextureSlot('normal'));
         document.getElementById('insp-texture-clear')?.addEventListener('click', () => UI.clearTextureMaps());
         document.getElementById('insp-texture-gimp')?.addEventListener('click', () => UI.syncGimpManifest());
 

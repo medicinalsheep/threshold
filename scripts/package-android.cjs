@@ -16,6 +16,7 @@ function run(cmd) {
 }
 
 run('npm run build');
+run('npm run bundle:assets');
 
 if (!fs.existsSync(androidDir)) {
     console.log('Android platform missing — running init:native…');

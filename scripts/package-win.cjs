@@ -18,6 +18,8 @@ if (!fs.existsSync(distIndex)) {
     run('npm run build');
 }
 
+run('npm run bundle:assets');
+
 const icoPath = path.join(root, 'electron', 'resources', 'icon.ico');
 if (!fs.existsSync(icoPath)) {
     run('npm run build:icons');

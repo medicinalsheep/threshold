@@ -9,6 +9,7 @@ function shouldConnect() {
     if (!CREATIVE_WATCH_URL) return false;
     if (import.meta.env.DEV) return true;
     if (import.meta.env.VITE_CREATIVE_WATCH === 'true') return true;
+    if (import.meta.env.VITE_CREATIVE_WATCH === '1') return true;
     return false;
 }
 

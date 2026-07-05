@@ -31,8 +31,8 @@
 ### Multiplayer note
 
 - **Host** exports GIMP/Blender assets locally; guests receive mesh transforms + `userData` via sync.
-- **Texture blobs** and **GLB files** are device-local until native bundling ships (Phase E).
-- Use **hosted GLB URLs** or re-import on each client until bundle step exists.
+- **Texture blobs** and **GLB files** are device-local; run `npm run bundle:assets` before `package:win` / `package:android` to ship `textures/` + `import/` in the app.
+- Use **hosted GLB URLs** or bundled paths (`bundle/textures/`, `bundle/import/`) for guests.
 - PromptGen should set `textureHint` / `gltfPath` so every client knows which files to load.
 
 ---
@@ -64,7 +64,8 @@ m.userData.textureHint = 'textures/stone_block_albedo.png';
 |---------|---------|
 | `npm run gimp:install` | Install GIMP export plugin |
 | `npm run blender:install` | Install Blender addon |
-| `npm run textures:watch` | SSE hot-reload (dev) |
+| `npm run textures:watch` | SSE hot-reload (dev; `VITE_CREATIVE_WATCH=true` in production) |
+| `npm run bundle:assets` | Copy textures/ + import/ → dist-pages/bundle/ |
 | `npm run blender:export -- --blend scene.blend --object "Name"` | Headless GLB |
 | Engine → Texture → **GIMP SYNC** | Load `threshold_manifest.json` |
 | Engine → INSERT → **GLTF** | File, URL, or Blender manifest |
@@ -95,7 +96,7 @@ See `getAssetContext()` in live scene prompts for objects already in the world.
 - `blender` — addon path + headless export command
 - `creativeCli` — watch URL + npm scripts
 
-Sounds remain local IndexedDB blobs (bundle in Phase E).
+Sounds: IndexedDB locally; export wizard can embed base64 clips in manifest. Textures ship via `bundle:assets`.
 
 ---
 

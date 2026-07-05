@@ -3,6 +3,15 @@ const path = require('path');
 const fs = require('fs/promises');
 
 const DIST_INDEX = path.join(__dirname, '..', 'dist-pages', 'index.html');
+const BUNDLE_ROOT = path.join(__dirname, '..', 'dist-pages', 'bundle');
+
+function resolveBundlePath(relPath = '') {
+    const norm = String(relPath).replace(/\\/g, '/').replace(/^\/+/, '');
+    const safe = path.normalize(norm).replace(/^(\.\.(\/|\\|$))+/, '');
+    const resolved = path.resolve(BUNDLE_ROOT, safe);
+    if (!resolved.startsWith(BUNDLE_ROOT)) return null;
+    return resolved;
+}
 
 let mainWindow = null;
 
@@ -80,6 +89,17 @@ ipcMain.handle('shell:fs:pickSave', async (_e, defaultName, filters = []) => {
     });
     if (result.canceled || !result.filePath) return null;
     return result.filePath;
+});
+
+ipcMain.handle('shell:bundle:readBinary', async (_e, relPath) => {
+    const filePath = resolveBundlePath(relPath);
+    if (!filePath) return null;
+    try {
+        const buf = await fs.readFile(filePath);
+        return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+    } catch {
+        return null;
+    }
 });
 
 ipcMain.handle('shell:saveManifest', async (_e, defaultName, json) => {

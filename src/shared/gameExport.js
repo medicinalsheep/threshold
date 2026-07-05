@@ -37,12 +37,61 @@ const BUILD_PROFILES = {
     },
 };
 
+function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const dataUrl = reader.result || '';
+            const base64 = String(dataUrl).split(',')[1] || '';
+            resolve(base64);
+        };
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(blob);
+    });
+}
+
 export const GameExport = {
-    buildManifest(options = {}) {
+    async buildManifest(options = {}) {
         const name = options.name || `Threshold Game ${Date.now().toString(36).slice(-4)}`;
         const world = Sync.capture();
         const sounds = SoundLibrary.list();
         const project = ProjectVault.captureCurrent?.() || {};
+
+        let soundEntries = sounds.map((s) => ({
+            id: s.id,
+            name: s.name,
+            context: s.context,
+            mime: s.mime,
+            size: s.size,
+            note: options.includeSoundBlobs ? 'Base64 embedded in manifest' : 'Blob stored locally — enable sidecar or bundle in native export',
+        }));
+
+        if (options.includeSoundBlobs) {
+            soundEntries = await Promise.all(
+                sounds.map(async (s) => {
+                    const blob = await SoundLibrary.getBlob(s.id);
+                    if (!blob) {
+                        return {
+                            id: s.id,
+                            name: s.name,
+                            context: s.context,
+                            encoding: null,
+                            note: 'Blob missing from IndexedDB',
+                        };
+                    }
+                    const data = await blobToBase64(blob);
+                    return {
+                        id: s.id,
+                        name: s.name,
+                        context: s.context,
+                        mime: blob.type || s.mime || 'audio/webm',
+                        size: blob.size,
+                        encoding: 'base64',
+                        data,
+                    };
+                })
+            );
+        }
 
         return {
             format: 'threshold-game',
@@ -60,21 +109,17 @@ export const GameExport = {
                 output: project.scriptOutput || document.getElementById('comp-output')?.value || '',
                 running: project.runningCode || window.Runtime?.runningCode || '',
             },
-            sounds: sounds.map((s) => ({
-                id: s.id,
-                name: s.name,
-                context: s.context,
-                note: 'Blob stored locally — re-record or bundle in Phase 3 native export',
-            })),
+            sounds: soundEntries,
             textures: TextureLibrary.collectManifestEntries(world?.objects || []).map((t) => ({
                 ...t,
-                note: 'Blob stored locally — re-import or bundle in native export',
+                note: 'Re-import via GIMP SYNC or ship via npm run bundle:assets → dist-pages/bundle/',
             })),
             gimp: {
                 manifestName: 'threshold_manifest.json',
                 pluginPath: 'plugins/threshold-gimp/threshold_export.py',
                 install: 'npm run gimp:install',
-                note: 'Export maps in GIMP → Engine Texture tab → GIMP SYNC (Electron loads files from disk)',
+                slots: ['albedo', 'roughness', 'metalness', 'normal'],
+                note: 'Export maps in GIMP → Engine Texture tab → GIMP SYNC (Electron/bundle loads from disk)',
             },
             blender: {
                 manifestName: 'threshold_blender_manifest.json',
@@ -87,8 +132,16 @@ export const GameExport = {
             creativeCli: {
                 texturesWatch: 'npm run textures:watch',
                 blenderExport: 'npm run blender:export',
+                bundleAssets: 'npm run bundle:assets',
                 watchUrl: 'http://127.0.0.1:3927',
-                note: 'Run textures:watch alongside npm run dev for live GIMP/Blender → Engine hot-reload',
+                watchEnv: 'VITE_CREATIVE_WATCH=true',
+                note: 'textures:watch for dev hot-reload; bundle:assets before package:win / package:android',
+            },
+            bundle: {
+                dir: 'dist-pages/bundle/',
+                dirs: ['textures', 'import'],
+                index: 'bundle/bundle-index.json',
+                note: 'npm run bundle:assets copies textures/ + import/ into native/web builds',
             },
             agents: options.agents || window.AgentHub?.exportConfigs?.() || [],
             relay: {
@@ -106,8 +159,8 @@ export const GameExport = {
         };
     },
 
-    downloadManifest(options = {}) {
-        const manifest = this.buildManifest(options);
+    async downloadManifest(options = {}) {
+        const manifest = await this.buildManifest(options);
         const slug = (manifest.game.name || 'game').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
         const blob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);

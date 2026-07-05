@@ -58,7 +58,7 @@ function schedule(kind, filePath) {
 
 function parseTextureFile(fileName) {
     const lower = fileName.toLowerCase();
-    for (const slot of ['albedo', 'roughness', 'metalness']) {
+    for (const slot of ['albedo', 'roughness', 'metalness', 'normal']) {
         const suffix = `_${slot}`;
         if (lower.endsWith(`${suffix}.png`) || lower.endsWith(`${suffix}.jpg`) || lower.endsWith(`${suffix}.jpeg`) || lower.endsWith(`${suffix}.webp`)) {
             const slug = lower.slice(0, lower.lastIndexOf(suffix));

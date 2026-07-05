@@ -1,4 +1,4 @@
-# Native shells (v3.7)
+# Native shells (v3.8)
 
 Threshold stays a **single Vite SPA** (`dist-pages/`). Native targets wrap that build — no runtime fork.
 
@@ -41,6 +41,20 @@ npm run init:native
 ```
 
 This builds `dist-pages`, adds the Capacitor Android project (if missing), and syncs web assets.
+
+---
+
+## Creative asset bundling (v3.8)
+
+Before packaging native builds, copy GIMP/Blender output into the web bundle:
+
+```bash
+npm run bundle:assets   # textures/ + import/ → dist-pages/bundle/
+```
+
+`package:win` and `package:android` run this automatically after `npm run build`.
+
+Electron reads bundled assets via `shell:bundle:readBinary`; web/Capacitor fetch from `./bundle/`.
 
 ---
 

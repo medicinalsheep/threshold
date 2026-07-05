@@ -40,7 +40,7 @@ Install: `npm run gimp:install` (copies plugin to GIMP plug-ins folder). Restart
 3. Export folder → project `textures/` (writes `threshold_manifest.json`)
 4. Engine — EDIT → select mesh → Texture tab → **GIMP SYNC** (Electron loads maps from disk; web shows paths to import manually)
 
-**Left behind (Phase E):** normal map application in Engine; full web auto-apply
+**Phase E (v3.8):** normal maps via **NORMAL** button; web GIMP SYNC batch-picks all slots
 
 ---
 
@@ -78,7 +78,7 @@ npm run creative:watch   # alias for textures:watch
 2. Terminal B: `npm run dev`
 3. GIMP/Blender saves → Engine updates materials / GLTF meshes live
 
-**Left behind (Phase E):** production builds opt-in watch; native asset bundling
+**Phase E (v3.8):** `VITE_CREATIVE_WATCH=true` for production; `npm run bundle:assets` before native package
 
 ---
 
