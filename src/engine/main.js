@@ -54,6 +54,7 @@ import '../shared/starterInterior17.js';
 import '../shared/starterTeslaExterior18.js';
 import '../shared/starterTeslaLab18.js';
 import '../shared/starterTeslaInteract182.js';
+import '../shared/starterTeslaNpc183.js';
 import '../shared/teslaLabAmbient.js';
 import '../shared/wildlifeAmbient.js';
 import '../shared/urbanAmbient.js';
@@ -1232,6 +1233,7 @@ const Engine = {
         UI.updateControlsHint?.();
 
         if (State.introPlaying) {
+            window.TeslaIntroCaptions?.tick?.();
             const elapsed = performance.now() - (State.introStart || 0);
             const t = Math.min(1, elapsed / (State.introDuration || 2500));
             const ease = 1 - Math.pow(1 - t, 3);
@@ -1249,7 +1251,12 @@ const Engine = {
                     this.controls.target.lerp(this._introTargetVec, ease * 0.35 + 0.1);
                 }
             }
-            if (t >= 1) State.introPlaying = false;
+            if (t >= 1) {
+                State.introPlaying = false;
+                window.TeslaIntroCaptions?._hide?.();
+            }
+        } else {
+            window.TeslaIntroCaptions?._hide?.();
         }
 
         window.NpcPatrol?.tick?.(dt);

@@ -217,6 +217,9 @@ export const Sync = {
                     window.buildStarterTeslaInteract182?.();
                     window.StarterTeslaInteract182?.wireAnims?.();
                 }
+                if (isStarterWorld && !window.State?.objects?.some((o) => o.userData?.id === 'tesla_guide_npc')) {
+                    void window.spawnTeslaGuideNpc?.();
+                }
             }
             if (state.weather) {
                 window.WeatherSystem?.applyNetworkState?.(state.weather, { smooth: false });

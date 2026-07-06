@@ -525,6 +525,7 @@ export function bootstrapStarterScene() {
     window.buildStarterTeslaExterior18?.();
     window.buildStarterTeslaLab18?.();
     window.buildStarterTeslaInteract182?.();
+    void window.spawnTeslaGuideNpc?.();
     window.StarterAnim?.wireScene?.();
     window.StarterEnv14?.wireAnims?.();
     window.StarterWildlife15?.wireAnims?.();
@@ -535,7 +536,7 @@ export function bootstrapStarterScene() {
     window.StarterTeslaInteract182?.wireAnims?.();
 
     if (terminal && modelKiosk) {
-        window.UI?.status?.('Lab interactables — crank switch · tube rack · journal opens PromptGen');
+        window.UI?.status?.('Nikola patrols the lab — intro captions · coil radio zone west');
     }
 
     State.ctxTargetPos.set(0, 0, 0);

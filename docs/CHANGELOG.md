@@ -1,5 +1,12 @@
 # Changelog
 
+## 7.5.0 — Phase 18.3: Lab guide NPC + intro captions
+
+- **Nikola** — lab-coat guide NPC patrols bench ↔ coil ↔ tube rack (`tesla_guide_npc`)
+- **Intro captions** — cinematic subtitle lines during 6.2s Wardenclyffe flythrough (`#intro-caption`)
+- **Lab radio** — `starter_interior_radio_chatter` zone in annex (5.5 m, west of plaza terminal)
+- **Module** — `starterTeslaNpc183.js` + guest sync for guide spawn
+
 ## 7.4.0 — Phase 18.2: Lab interactables
 
 - **Rotary switch** — `[F]` crank anim, spark SFX, boosts coil arc + tube warmth + jar charge

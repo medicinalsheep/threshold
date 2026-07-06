@@ -1,6 +1,7 @@
 /** Phase 18.1 — Tesla lab ambience: coil hum loop + random spark crackles */
 
 const COIL_ZONE = { x: -9, y: 1.2, z: 2, radius: 6.0, volume: 0.38 };
+const LAB_RADIO_ZONE = { x: -9, y: 1.0, z: 2, radius: 5.5, volume: 0.24 };
 
 function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -23,7 +24,9 @@ function zoneVol(zone, pos, mul = 1) {
 export const TeslaLabAmbient = {
     _active: false,
     _humHandle: null,
+    _radioHandle: null,
     _humStarting: false,
+    _radioStarting: false,
     _sparkBusy: false,
 
     _listenerPos() {
@@ -43,14 +46,33 @@ export const TeslaLabAmbient = {
         this._active = true;
         await delay(620);
         await this._ensureHum();
+        await delay(520);
+        await this._ensureRadio();
     },
 
     stop() {
         this._active = false;
         this._humHandle?.stop?.();
+        this._radioHandle?.stop?.();
         this._humHandle = null;
+        this._radioHandle = null;
         this._humStarting = false;
+        this._radioStarting = false;
         this._sparkBusy = false;
+    },
+
+    async _ensureRadio() {
+        if (this._radioHandle || this._radioStarting) return;
+        const AudioSys = window.AudioSys;
+        if (!AudioSys?.playClipLoop) return;
+        this._radioStarting = true;
+        try {
+            const handle = await AudioSys.playClipLoop('starter_interior_radio_chatter', 0);
+            if (this._active) this._radioHandle = handle;
+            else handle?.stop?.();
+        } finally {
+            this._radioStarting = false;
+        }
     },
 
     async _ensureHum() {
@@ -72,9 +94,13 @@ export const TeslaLabAmbient = {
         if (!pos) return;
         const rain = window.WeatherSystem?.getIntensity?.() ?? 0;
         const rainMul = 1 - rain * 0.25;
-        const vol = zoneVol(COIL_ZONE, pos) * rainMul;
+        const hum = zoneVol(COIL_ZONE, pos) * rainMul;
+        const radio = zoneVol(LAB_RADIO_ZONE, pos) * (1 - rain * 0.35);
         if (this._humHandle?.setVolume) {
-            this._humHandle.setVolume(vol);
+            this._humHandle.setVolume(hum);
+        }
+        if (this._radioHandle?.setVolume) {
+            this._radioHandle.setVolume(radio);
         }
     },
 
@@ -96,6 +122,7 @@ export const TeslaLabAmbient = {
     tick(_dt) {
         if (!this._active || window.State?.isPaused) return;
         if (!this._humHandle) void this._ensureHum();
+        if (!this._radioHandle) void this._ensureRadio();
         this._updateVolume();
     },
 };

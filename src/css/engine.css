@@ -528,6 +528,33 @@ body.console-hidden .console-restore-tab {
     color: var(--accent-color);
 }
 
+.intro-caption {
+    position: absolute;
+    left: 50%;
+    bottom: 18%;
+    transform: translateX(-50%);
+    max-width: min(calc(100% - 48px), 720px);
+    margin: 0;
+    padding: 10px 18px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-align: center;
+    color: #f0e8d8;
+    background: rgba(8, 10, 14, 0.72);
+    border: 1px solid rgba(200, 160, 80, 0.35);
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s ease;
+    z-index: 18;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.85);
+}
+
+.intro-caption.visible {
+    opacity: 1;
+}
+
 body.third-eye-active #proximity-panel,
 body.third-eye-active #ui-layer .panel,
 body.third-eye-active #ui-layer button,
