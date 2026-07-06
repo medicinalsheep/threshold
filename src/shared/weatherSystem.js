@@ -157,6 +157,10 @@ export const WeatherSystem = {
                 volume: event.vol ?? 0.5,
                 playbackRate: event.rate ?? 1,
             });
+            window.StarterTeslaWeather184?.onThunderFlash?.({
+                near: (event.vol ?? 0) > 0.38,
+                intensity: this._intensity,
+            });
         } else if (event.type === 'gust') {
             window.AudioSys?.playClipVariation?.('starter_wind_gust_real', {
                 volume: event.vol ?? 0.28,
@@ -216,6 +220,21 @@ export const WeatherSystem = {
         return this._intensity;
     },
 
+    registerWetGlass(mesh) {
+        if (!mesh) return;
+        const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+        mats.forEach((m) => {
+            if (m && m.userData?._dryRoughness == null) {
+                m.userData = m.userData || {};
+                m.userData._dryRoughness = m.roughness ?? 0.06;
+                m.userData._dryOpacity = m.opacity ?? 1;
+                m.userData._dryTransmission = m.transmission ?? 0.78;
+            }
+        });
+        if (!this._wetGlassTargets) this._wetGlassTargets = [];
+        if (!this._wetGlassTargets.includes(mesh)) this._wetGlassTargets.push(mesh);
+    },
+
     _collectWetTargets() {
         const objects = window.State?.objects || [];
         this._wetTargets = objects.filter((o) => {
@@ -231,10 +250,29 @@ export const WeatherSystem = {
             });
             return mesh;
         });
+        objects.forEach((o) => {
+            if (o.userData?.wetGlass && o.isMesh) this.registerWetGlass(o);
+            o.traverse?.((c) => {
+                if (c.userData?.wetGlass && c.isMesh) this.registerWetGlass(c);
+            });
+        });
     },
 
     _applyWetness() {
         const wet = this._intensity;
+        (this._wetGlassTargets || []).forEach((mesh) => {
+            const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+            mats.forEach((m) => {
+                if (!m || m.userData?._dryRoughness == null) return;
+                m.roughness = lerp(m.userData._dryRoughness, m.userData._dryRoughness + 0.42, wet);
+                if (m.opacity != null && m.userData._dryOpacity != null) {
+                    m.opacity = lerp(m.userData._dryOpacity, Math.max(0.25, m.userData._dryOpacity - 0.12), wet);
+                }
+                if (m.transmission != null && m.userData._dryTransmission != null) {
+                    m.transmission = lerp(m.userData._dryTransmission, Math.max(0.4, m.userData._dryTransmission - 0.25), wet);
+                }
+            });
+        });
         this._wetTargets.forEach((mesh) => {
             const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
             mats.forEach((m) => {
@@ -309,6 +347,7 @@ export const WeatherSystem = {
             : 0.78 + Math.random() * 0.18;
         const payload = { type: 'thunder', clipId, vol: vol * i, rate };
         window.AudioSys?.playClipVariation?.(clipId, { volume: payload.vol, playbackRate: rate });
+        window.StarterTeslaWeather184?.onThunderFlash?.({ near: isNear, intensity: i });
         this._queueNetworkEvent(payload);
     },
 

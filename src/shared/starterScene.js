@@ -526,6 +526,7 @@ export function bootstrapStarterScene() {
     window.buildStarterTeslaLab18?.();
     window.buildStarterTeslaInteract182?.();
     void window.spawnTeslaGuideNpc?.();
+    window.buildStarterTeslaWeather184?.();
     window.StarterAnim?.wireScene?.();
     window.StarterEnv14?.wireAnims?.();
     window.StarterWildlife15?.wireAnims?.();
@@ -534,9 +535,10 @@ export function bootstrapStarterScene() {
     window.StarterTeslaExterior18?.wireAnims?.();
     window.StarterTeslaLab18?.wireAnims?.();
     window.StarterTeslaInteract182?.wireAnims?.();
+    window.StarterTeslaWeather184?.wireAnims?.();
 
     if (terminal && modelKiosk) {
-        window.UI?.status?.('Nikola patrols the lab — intro captions · coil radio zone west');
+        window.UI?.status?.('Annex weather — skylight rain · thunder flash · THRESHOLD LAB marquee');
     }
 
     State.ctxTargetPos.set(0, 0, 0);

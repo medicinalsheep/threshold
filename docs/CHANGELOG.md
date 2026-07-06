@@ -1,5 +1,13 @@
 # Changelog
 
+## 7.6.0 — Phase 18.4: Annex weather + exterior marquee
+
+- **Skylight** — glass pane in lab ceiling; wet roughness/opacity/transmission scales with rain
+- **Thunder flash** — lightning sync boosts coil arc, tower cage, bulbs, marquee emissive + spark SFX
+- **THRESHOLD LAB marquee** — emissive sign on approach path; pulses in rain and storms
+- **WeatherSystem** — `registerWetGlass()` + guest thunder flash via synced events
+- **Module** — `starterTeslaWeather184.js` · guest sync `starter_tesla_skylight`
+
 ## 7.5.0 — Phase 18.3: Lab guide NPC + intro captions
 
 - **Nikola** — lab-coat guide NPC patrols bench ↔ coil ↔ tube rack (`tesla_guide_npc`)

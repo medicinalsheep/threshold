@@ -55,6 +55,7 @@ import '../shared/starterTeslaExterior18.js';
 import '../shared/starterTeslaLab18.js';
 import '../shared/starterTeslaInteract182.js';
 import '../shared/starterTeslaNpc183.js';
+import '../shared/starterTeslaWeather184.js';
 import '../shared/teslaLabAmbient.js';
 import '../shared/wildlifeAmbient.js';
 import '../shared/urbanAmbient.js';

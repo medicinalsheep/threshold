@@ -75,7 +75,7 @@
 
 ---
 
-## Phase 18.4 — Annex weather + exterior (v7.6)
+## Phase 18.4 — Annex weather + exterior (v7.6.0) ✅
 
 | Item | Notes |
 |------|-------|
@@ -126,9 +126,9 @@ npm run blender:export -- --blend lab.blend --object TeslaCoil --slug tesla_coil
 1. **18.1** Lab shell + intro ✅
 2. **18.2** Interactables ✅
 3. **18.3** Lab NPC ✅
-4. **R8.2** Female avatar ← **current**
-5. **R8.3** Creatures / animals
-6. **18.4** Weather annex
+4. **18.4** Weather annex ✅
+5. **R8.2** Female avatar ← **current**
+6. **R8.3** Creatures / animals
 7. **18.5** Blender LOD pass
 
 ```bash

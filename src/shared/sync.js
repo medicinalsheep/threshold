@@ -220,6 +220,10 @@ export const Sync = {
                 if (isStarterWorld && !window.State?.objects?.some((o) => o.userData?.id === 'tesla_guide_npc')) {
                     void window.spawnTeslaGuideNpc?.();
                 }
+                if (isStarterWorld && !window.State?.objects?.some((o) => o.userData?.id === 'starter_tesla_skylight')) {
+                    window.buildStarterTeslaWeather184?.();
+                    window.StarterTeslaWeather184?.wireAnims?.();
+                }
             }
             if (state.weather) {
                 window.WeatherSystem?.applyNetworkState?.(state.weather, { smooth: false });

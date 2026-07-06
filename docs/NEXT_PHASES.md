@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v7.5.0 — Phase 18.3 lab guide NPC, intro captions, lab radio zone.
+**Current:** v7.6.0 — Phase 18.4 annex weather (skylight rain, thunder flash, marquee).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -508,7 +508,7 @@ See [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iteration 5 shipped.
 | 18.1 Lab shell + coil + doors + intro flythrough | ✅ | v7.3.0 |
 | 18.2 Interactables (rotary switch, tubes, jars) | ✅ | v7.4.0 |
 | 18.3 Lab coat NPC + intro captions | ✅ | v7.5.0 |
-| 18.4 Annex weather + skylight rain | ⏳ | v7.6 |
+| 18.4 Annex weather + skylight rain | ✅ | v7.6.0 |
 | 18.5 Blender GLB + mesh LOD | ⏳ | v7.7 |
 
 See [PHASE_18_TESLA_LAB.md](PHASE_18_TESLA_LAB.md) · [DEFAULT_ASSETS_ROADMAP.md](DEFAULT_ASSETS_ROADMAP.md).
