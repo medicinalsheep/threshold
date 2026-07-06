@@ -96,7 +96,7 @@ export const CreatorHud = {
             `mesh ${s.meshes}`,
             `draw ${s.draws}`,
             `tier ${tier}`,
-            `rm${mode}`,
+            mode === 4 ? 'pbr' : `retro${mode}`,
         ].join(' · ');
         this._perfEl.title = `${s.tris.toLocaleString()} triangles · \` toggles HUD`;
     },

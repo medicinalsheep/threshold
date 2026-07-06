@@ -44,7 +44,7 @@ Policy: shipped TC content is **original Threshold art** only — [THRESHOLD_CHI
 | Third Eye + F interact | `thirdEye.js`, `worldInteract.js` |
 | TC circuit + drive | `tcCircuit.js`, `tcDrive.js`, `tcGateFx.js` |
 | Footsteps + surface SFX | `footsteps.js`, `starterSfx.js` |
-| Graphics tiers | `graphicsProfile.js` — Compatibility → Ultra |
+| Graphics tiers | `graphicsProfile.js` — Lite/Mobile/Realistic/Ultra (all PBR; retro opt-in) |
 
 Full guide: [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) · Controls: [CONTROLS.md](CONTROLS.md)
 

@@ -250,7 +250,7 @@
                 </div>
                 <div class="engine-toolbar-body float-panel-scroll">
                 <div class="toolbar-left">
-                    <div id="mode-display">HYPER (BLOOM)</div>
+                    <div id="mode-display">REALISTIC (PBR)</div>
                     <div class="session-bar">
                         <span class="session-label">YOU</span>
                         <code id="session-player-key">------</code>
@@ -381,25 +381,27 @@
                 <div class="prop-row">
                     <label>Graphics</label>
                     <select id="env-graphics-tier">
-                        <option value="compatibility">Compatibility</option>
-                        <option value="balanced">Balanced</option>
+                        <option value="compatibility">Lite (PBR)</option>
+                        <option value="balanced">Mobile (PBR)</option>
                         <option value="realistic" selected>Realistic</option>
                         <option value="ultra">Ultra</option>
                         <option value="custom">Custom</option>
                     </select>
                 </div>
-                <p id="env-graphics-info" class="env-mode-info"></p>
+                <p id="env-graphics-info" class="env-mode-info">Full PBR default — scales textures &amp; effects per device.</p>
                 <div class="prop-row">
-                    <label>Render</label>
+                    <label>Style</label>
                     <select id="env-mode">
-                        <option value="0">Threshold</option>
-                        <option value="1">1-Bit</option>
-                        <option value="2">Terminal</option>
-                        <option value="3">SMPTE</option>
-                        <option value="4" selected>Hyper</option>
+                        <option value="4" selected>Realistic (PBR)</option>
+                        <optgroup label="Retro — opt in when creating">
+                            <option value="0">Threshold 5-band</option>
+                            <option value="1">1-Bit</option>
+                            <option value="2">Terminal</option>
+                            <option value="3">SMPTE 8-bit</option>
+                        </optgroup>
                     </select>
                 </div>
-                <p id="env-mode-info" class="env-mode-info"></p>
+                <p id="env-mode-info" class="env-mode-info">Default realistic lighting &amp; textures. Retro styles for AI galleries — ask in PromptGen.</p>
                 <div class="prop-row">
                     <label>Time</label>
                     <input type="range" id="env-time" min="0" max="24" step="0.25" value="14">

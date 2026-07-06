@@ -1,36 +1,37 @@
 import { ViewPrefs } from './viewPrefs.js';
 
+/** Device tiers — all use Hyper PBR (render mode 4). Scale quality, not retro shaders. */
 export const GRAPHICS_TIERS = {
     compatibility: {
         id: 'compatibility',
-        label: 'Compatibility',
-        description: 'Retro modes · no water · lighter physics — old phones & max reach',
-        renderMode: 0,
-        env: { waterEnabled: false, atmosphereEnabled: false, fogDensity: 0.022 },
+        label: 'Lite',
+        description: 'PBR realistic · no water · 512px textures — old phones & max reach',
+        renderMode: 4,
+        env: { waterEnabled: false, atmosphereEnabled: false, fogDensity: 0.02 },
         physicsIterations: 8,
         pixelRatioCap: 1,
         shadowMapSize: 1024,
-        bloomStrength: 0,
+        bloomStrength: 0.28,
         waterTexSize: 512,
         textureMax: 512,
     },
     balanced: {
         id: 'balanced',
-        label: 'Balanced',
-        description: 'SMPTE color · atmosphere · optional fog — mid devices',
-        renderMode: 3,
-        env: { waterEnabled: false, atmosphereEnabled: true, fogDensity: 0.018 },
+        label: 'Mobile',
+        description: 'PBR realistic · atmosphere · lighter bloom — phones & tablets',
+        renderMode: 4,
+        env: { waterEnabled: false, atmosphereEnabled: true, fogDensity: 0.016 },
         physicsIterations: 12,
         pixelRatioCap: 1.5,
         shadowMapSize: 2048,
-        bloomStrength: 0,
+        bloomStrength: 0.38,
         waterTexSize: 512,
         textureMax: 1024,
     },
     realistic: {
         id: 'realistic',
         label: 'Realistic',
-        description: 'Hyper PBR · water · bloom · full atmosphere — desktop & flagship',
+        description: 'Full PBR · water · bloom · 2K textures — desktop default',
         renderMode: 4,
         env: { waterEnabled: true, atmosphereEnabled: true, fogDensity: 0.015 },
         physicsIterations: 15,
@@ -43,7 +44,7 @@ export const GRAPHICS_TIERS = {
     ultra: {
         id: 'ultra',
         label: 'Ultra',
-        description: 'Hyper max · MSAA-scale sharpness · heavy post — high-end desktop',
+        description: 'PBR max · sharp shadows · 4K textures — high-end desktop',
         renderMode: 4,
         env: { waterEnabled: true, atmosphereEnabled: true, fogDensity: 0.012 },
         physicsIterations: 20,
@@ -56,7 +57,7 @@ export const GRAPHICS_TIERS = {
     custom: {
         id: 'custom',
         label: 'Custom',
-        description: 'Manual render/env overrides — tier preset not active',
+        description: 'Manual env / retro style overrides',
         renderMode: null,
         env: null,
         physicsIterations: null,
@@ -244,6 +245,12 @@ export const GraphicsProfile = {
         if (fog && State?.env) fog.value = String(State.env.fogDensity);
     },
 
+    getPromptBlock() {
+        return this.listTiers().map((t) =>
+            `- ${t.id} (${t.label}): ${t.description}`
+        ).join('\n');
+    },
+
     exportSnapshot() {
         const State = window.State;
         const tierId = State?.graphicsTier || null;
@@ -255,12 +262,6 @@ export const GraphicsProfile = {
             textureMax: tier?.textureMax ?? null,
             env: State?.env ? { ...State.env } : null,
         };
-    },
-
-    getPromptBlock() {
-        return this.listTiers().map((t) =>
-            `- ${t.id}: ${t.description} (render mode ${t.renderMode ?? 'manual'})`
-        ).join('\n');
     },
 
     applyFromSync(snapshot = {}) {

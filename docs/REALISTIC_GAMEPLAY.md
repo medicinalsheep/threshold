@@ -2,7 +2,7 @@
 
 Threshold ships a **walk/drive action control** template with a polished starter site (lab GLBs, courtyard props, weather, survival). Use it as the baseline for shooters, RPGs, and exploration games.
 
-**Current default:** v9.9 — guided PLAY/BUILD, golden-hour showcase, survival gameplay loop, action controls (LMB aim)
+**Current default:** v9.15 — realistic PBR on all devices (Lite/Mobile/Realistic/Ultra tiers). Retro shaders are opt-in via SCENE → ENV → Style.
 
 ---
 

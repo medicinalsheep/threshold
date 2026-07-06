@@ -27,8 +27,8 @@ export const GraphicsPrompt = {
         if (body) {
             body.innerHTML = `We detected a <strong>${tier.label}</strong> device. `
                 + `${tier.description}<br><br>`
-                + `Uses <strong>${meta.short || 'Hyper'}</strong> render mode. `
-                + `Change anytime in <strong>SCENE → ENV</strong>.`;
+                + `Default: <strong>realistic PBR</strong> lighting &amp; textures. `
+                + `Retro styles are optional in <strong>SCENE → ENV → Style</strong>.`;
         }
         if (select) {
             select.innerHTML = GraphicsProfile.listTiers().map((t) =>
@@ -69,7 +69,7 @@ export const GraphicsPrompt = {
         ViewPrefs.set('graphicsTierPrompted', true);
         SceneDock.openTab('env');
         this.hide();
-        window.UI?.status?.('Graphics tier applied — tweak render mode in ENV');
+        window.UI?.status?.('Graphics tier applied — realistic PBR default; retro opt-in under Style');
     },
 
     hide() {

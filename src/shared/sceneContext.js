@@ -3,7 +3,7 @@ import { sanitizeUserDataForSync } from './lodSync.js';
 import { LOD_DISTANCES } from './lodConfig.js';
 import { getTcPromptBlock } from './tcPrompt.js';
 
-const MODE_NAMES = ['Threshold', '1-Bit', 'Terminal', 'SMPTE', 'Hyper'];
+const MODE_NAMES = ['Retro:Threshold', 'Retro:1-Bit', 'Retro:Terminal', 'Retro:SMPTE', 'Realistic'];
 
 export function getSceneContext() {
     const State = window.State;

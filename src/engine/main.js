@@ -256,11 +256,11 @@ const State = {
 const OBJECT_TYPES = ['cube', 'sphere', 'cone', 'torus'];
 
 const Modes = [
-    { name: "THRESHOLD (5-BAND)", desc: "Quantized Grayscale" },
-    { name: "1-BIT (BINARY)", desc: "High Contrast B&W" },
-    { name: "TERMINAL (MATRIX)", desc: "Phosphor Green" },
-    { name: "SMPTE (8-BIT)", desc: "Quantized Color" },
-    { name: "HYPER (BLOOM)", desc: "Unreal Glow + Physics" } // NEW MODE
+    { name: "RETRO: THRESHOLD", desc: "Optional 5-band grayscale" },
+    { name: "RETRO: 1-BIT", desc: "Optional B&W" },
+    { name: "RETRO: TERMINAL", desc: "Optional phosphor green" },
+    { name: "RETRO: SMPTE", desc: "Optional 8-bit color" },
+    { name: "REALISTIC (PBR)", desc: "Default — full lighting & textures" },
 ];
 
 // --- PHYSICS SYSTEM (REALISM) ---
@@ -1029,15 +1029,15 @@ const Engine = {
     },
 
     applyRenderModeSceneTuning: function (idx) {
-        const isHyper = idx === 4;
-        if (Environment.sunLight) Environment.sunLight.intensity = isHyper ? 1.32 : 1.55;
-        if (this.renderer) this.renderer.toneMappingExposure = isHyper ? 0.8 : 0.84;
-        if (this.scene.fog) this.scene.fog.density = isHyper ? State.env.fogDensity : Math.max(State.env.fogDensity, 0.018);
+        const isRealistic = idx === 4;
+        if (Environment.sunLight) Environment.sunLight.intensity = isRealistic ? 1.38 : 1.5;
+        if (this.renderer) this.renderer.toneMappingExposure = isRealistic ? 0.88 : 0.78;
+        if (this.scene.fog) this.scene.fog.density = isRealistic ? State.env.fogDensity : Math.max(State.env.fogDensity, 0.02);
         State.objects.forEach((obj) => {
             if (!obj.material?.isMeshStandardMaterial) return;
-            obj.material.envMapIntensity = isHyper ? 0.38 : 0.22;
-            if (!isHyper && obj.material.emissive) {
-                obj.material.emissiveIntensity = Math.max(obj.material.emissiveIntensity || 0, 0.08);
+            obj.material.envMapIntensity = isRealistic ? 0.48 : 0.18;
+            if (!isRealistic && obj.material.emissive) {
+                obj.material.emissiveIntensity = Math.max(obj.material.emissiveIntensity || 0, 0.1);
             }
         });
     },
@@ -1061,7 +1061,10 @@ const Engine = {
         if (select) select.value = String(idx);
         const info = document.getElementById('env-mode-info');
         const meta = getRenderMode(idx);
-        if (info) info.textContent = `${meta.tagline} — ${meta.limits}`;
+        if (info) {
+            const prefix = meta.retro ? 'Retro style — ' : '';
+            info.textContent = `${prefix}${meta.tagline} — ${meta.limits}`;
+        }
         window.Spectate?.updateHud?.();
         GraphicsProfile.syncUi();
     },
@@ -1351,10 +1354,9 @@ const World = {
     createObject: function (type, name, color = 0xffffff, usePhysics = false) {
         let geo, mat = new THREE.MeshStandardMaterial({
             color: color,
-            roughness: 0.64,
-            metalness: 0.1,
-            envMapIntensity: 0.32,
-            envMapIntensity: 0.65,
+            roughness: 0.52,
+            metalness: 0.12,
+            envMapIntensity: 0.48,
         });
         if (type === 'cube') geo = new THREE.BoxGeometry(1, 1, 1);
         else if (type === 'sphere') geo = new THREE.SphereGeometry(0.7, 32, 32);

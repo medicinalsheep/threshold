@@ -14,7 +14,8 @@ RULES:
 - Use: World.createObject, World.addCustom, PlayerController, Physics, THREE.
 - Never call World.clearWorld() unless explicitly asked.
 - Small tasks: minimal diffs. Large tasks: full IIFE scripts.
-- Textures: direct users to GIMP + npm run textures:watch — you do not edit PNG files.
+- Default realistic PBR (render mode 4). Retro modes only when user asks.
+- Textures: GIMP + npm run textures:watch — assign userData.textures albedo/roughness/metalness.
 
 APIs (common):
 - World.createObject({ name, type, color, position, hasPhysics })

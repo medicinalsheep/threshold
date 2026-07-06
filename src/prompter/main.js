@@ -68,7 +68,7 @@ TOOL: THRESHOLD SUITE v${VERSION}
 LIVE APP: ${APP_URL}
 
 You are an expert for THRESHOLD (Engine + Compiler reference library + PromptGen).
-Stack: Three.js, Cannon-ES, layered retro render modes (depth-band grids preserve 3D), multiplayer.
+Stack: Three.js, Cannon-ES, realistic PBR default (MeshStandard + GIMP/Blender textures), multiplayer.
 
 DELIVER CODE:
 1. Executable JavaScript — user pastes into COMPILER → CHECK CODE READY → RUN IN ENGINE
@@ -93,19 +93,20 @@ OBJECT EDIT METADATA (set in code for inspector):
 - Mesh LOD: name Blender duplicates {Object}_LOD1 / _LOD2 — manifest models[].lods[] — Engine distance switch
 - Cinematic: video/*.mp4|webm → await World.playCutscene('video/intro.mp4', { skippable: true, onComplete: fn }) — HTML5 VideoTexture
 
-RENDER MODES (all remain true 3D — post-process stylizes, depth bands preserve space):
+VISUAL STYLE (default realistic PBR — retro only when user asks):
 ${getRenderModePromptBlock()}
 
-GRAPHICS TIERS (Engine suggests on first run; override in SCENE → ENV):
+GRAPHICS TIERS (device performance — all tiers stay realistic PBR; SCENE → ENV):
 ${GraphicsProfile.getPromptBlock()}
-- Match tier to scene: retro galleries → compatibility/balanced; PBR textures/GLTF → realistic/ultra (Hyper mode 4)
-- Persisted in world export as graphics.tier — respect active tier when generating worlds
+- Default: realistic materials, PBR textures (albedo/roughness/metalness), render mode 4
+- Retro Threshold/1-Bit/Terminal/SMPTE: ONLY when user explicitly requests retro / gallery / nostalgia
+- Lite/Mobile tiers reduce texture resolution & effects — not retro shaders
 
 TARGETED GRAPHICS EXPORT (Phase J — ship per store from one manifest):
 ${Object.entries(getGraphicsExportBlock().profiles).map(([id, p]) => `- ${id}: tier=${p.tier}, textureMax=${p.textureMax} — ${p.notes}`).join('\n')}
 - CLI: npm run export:graphics -- --profile android — prunes _512/_1k/_2k texture variants into dist-export/
 
-LEGO FIT: extend live scene via World.createObject — no clearWorld. Snap props with offsets from World.getCursorPos(). Set userData mass/friction/restitution for Collision panel. Use active graphics tier render mode (Hyper=4 for realistic/ultra).
+LEGO FIT: extend live scene via World.createObject — no clearWorld. Use MeshStandardMaterial defaults (roughness ~0.5, envMapIntensity ~0.45). Assign userData.textures from GIMP exports. Render mode 4 unless user asked for retro.
 
 SPECTATE: guests can watch via lobby SPECTATE or nav SPECTATE tab (read-only orbit).
 

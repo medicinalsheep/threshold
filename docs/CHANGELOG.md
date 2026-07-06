@@ -1,5 +1,14 @@
 # Changelog
 
+## 9.15.0 — Realism-first graphics overhaul
+
+- **All graphics tiers use PBR (render mode 4)** — Lite/Mobile scale textures & effects, not retro shaders
+- **ENV panel** — Graphics tier = device performance; **Style** dropdown = realistic default + retro opt-in group
+- **Materials** — higher default roughness/metalness/envMapIntensity on `World.createObject`
+- **AI prompts** — PromptGen, agents, reference library default realistic; retro only on explicit user request
+- **Tier labels** — Compatibility/Balanced → Lite (PBR) / Mobile (PBR)
+- Retro shaders (Threshold/1-Bit/Terminal/SMPTE) preserved for workflows & nostalgia — not default
+
 ## 9.14.0 — Threshold Training Bootcamp (Z: ramdisk)
 
 - **`Z:\Threshold training bootcamp`** — datasets (JSONL), modelfiles, builds, logs

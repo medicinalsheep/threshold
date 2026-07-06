@@ -74,18 +74,16 @@ applySurvivalWorldHooks();`
         },
         {
             id: 'render_modes_3d',
-            title: 'Render Modes — 3D Readable Across All Styles',
-            summary: 'Threshold/1-Bit/Terminal/SMPTE use depth+grid bands; Hyper is full PBR. Space props on Z for layers.',
-            checklist: ['0 Threshold = lightweight 5-band', '1 1-Bit = B&W only — spacing matters', '2 Terminal = green cross-hatch layers', '4 Hyper = water+physics+IBL default'],
-            code: `// RENDER MODES (Engine → ENV → Render):
-// 0 THRESHOLD — ultimate compatibility, 5 luminance+depth bands + crossed grid
-// 1 1-BIT — binary B&W; mid-tones lost — separate objects in Z/fog
-// 2 TERMINAL — phosphor green parallel+crossed hatch per depth band
-// 3 SMPTE — 4-level quantized color + depth tint
-// 4 HYPER — full lighting, bloom, water, IBL reflections, physics showcase
-//
-// AI layout rule: stagger Z every 2–3 units for retro modes
-// Engine.setRenderMode(4); // realism default`
+            title: 'Realistic PBR Default — Retro Opt-In',
+            summary: 'All devices use Hyper PBR (mode 4). Graphics tier scales textures/water/bloom — not retro shaders.',
+            checklist: ['Default render mode 4 (Realistic)', 'GIMP/Blender PBR textures via userData.textures', 'Retro modes 0–3 only when user asks', 'Lite/Mobile tiers = lower res, still PBR'],
+            code: `// DEFAULT — realistic PBR (do not use retro unless user asks):
+Engine.setRenderMode(4);
+// MeshStandardMaterial: roughness 0.45–0.65, metalness 0.05–0.4, envMapIntensity ~0.45
+// userData.textures: { albedo, roughness, metalness } from GIMP SYNC
+
+// OPT-IN RETRO (ENV → Style): 0 Threshold, 1 1-Bit, 2 Terminal, 3 SMPTE
+// AI: only call Engine.setRenderMode(0-3) when prompt says retro/gallery/terminal aesthetic`
         },
         {
             id: 'env_physics_atmosphere',

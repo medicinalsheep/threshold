@@ -1,6 +1,6 @@
 # Threshold documentation index
 
-**Version:** 9.13.0 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 9.15.0 · **Live:** https://medicinalsheep.github.io/threshold/
 
 This page is the **full scope map** — what ships today, what is TC vs showcase vs yours, and where to read more.
 

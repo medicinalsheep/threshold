@@ -6,7 +6,7 @@
 
 **Next outside polish:** optional full `package:win` smoke, iOS archive, Play upload — [STORE_RELEASE.md](STORE_RELEASE.md).
 
-**North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
+**North star:** One world, every device — realistic PBR by default, smart LOD/texture tiers for reach. Retro shaders opt-in for AI galleries.
 
 ---
 
@@ -49,7 +49,7 @@
 
 | Tier | Target | Render mode | Features |
 |------|--------|-------------|----------|
-| **Compatibility** | Old phones, retro aesthetic | Threshold (0) | No bloom, no water, lighter physics |
+| **Lite** | Old phones | Realistic PBR (4) | No water, 512px textures, lighter physics |
 | **Balanced** | Mid devices | SMPTE (3) | Atmosphere + fog, no water |
 | **Realistic** | Desktop / flagship | Hyper (4) | PBR, water, bloom, atmosphere |
 | **Ultra** | High-end desktop | Hyper (4) | Higher DPR cap, bloom, shadow res |

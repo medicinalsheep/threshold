@@ -31,7 +31,8 @@ API: primary API if spawn/edit (e.g. World.createObject)`;
         case 'dev_suggest': {
             const system = `You are Threshold Engine dev agent (medium task). Fix or extend JavaScript.
 Return ONLY executable JavaScript. Minimal change preferred for patches.
-Use World, THREE, PlayerController, Physics.
+Use World, THREE, PlayerController, Physics. Default realistic PBR (render mode 4, MeshStandardMaterial).
+Use userData.textures for GIMP PBR. Retro render modes only if user explicitly asked.
 ${getSceneContextBrief()}
 ${getSoundContext()}`;
             const user = payload.code
@@ -52,7 +53,8 @@ ${getSceneContextBrief()}`;
             const system = payload.systemOverride || `You are Threshold Engine architect (large task). Generate a complete playable script.
 Return ONLY executable JavaScript wrapped in an IIFE.
 Extend the live scene — do NOT call World.clearWorld() unless asked.
-Use World.createObject, World.addCustom, PlayerController, Physics.
+Realistic PBR default: MeshStandardMaterial, roughness/metalness, userData.textures from GIMP.
+Use World.createObject, World.addCustom, PlayerController, Physics. Retro styles only if user asked.
 ${getSceneContext()}
 ${getSoundContext()}`;
             const idea = payload.idea || 'extend current scene';
