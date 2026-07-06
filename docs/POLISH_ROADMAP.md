@@ -83,17 +83,17 @@
 
 ---
 
-## Sprint P — Multiplayer & session polish
+## Sprint P — Multiplayer & session polish ✅ (v9.6.0)
 
 **Goal:** Host handoff + collab guardrails feel invisible until needed.
 
-| Item | Deliverable |
-|------|-------------|
-| P1 | Vitals in `LIVE_STATE` player blob — guest HUD optional toggle |
-| P2 | Host migration includes vitals + sessionMode in snapshot |
-| P3 | Scene lock indicator on locked objects in Third Eye |
-| P4 | Reconnect restores mode + vitals from last LIVE_STATE |
-| P5 | Spectate banner shows host vitals summary |
+| Item | Status | Deliverable |
+|------|--------|-------------|
+| P1 | ✅ | `LIVE_STATE` includes `sessionMode` + `avatar.v`; guest vitals HUD toggle in PLAYERS |
+| P2 | ✅ | Handoff snapshot stores host vitals + sessionMode |
+| P3 | ✅ | Third Eye amber highlight on `userData.locked` objects |
+| P4 | ✅ | Reconnect + `applyLiveState` restore mode/vitals from last LIVE_STATE |
+| P5 | ✅ | Spectate HUD host vitals pill (HP/F/W) |
 
 ---
 

@@ -3,6 +3,24 @@ import { getRenderMode } from '../shared/renderModes.js';
 let active = false;
 let followHost = false;
 
+function resolveHostAvatar() {
+    const hostKey = String(window.Session?.hostKey || window.Network?.roomId || '').toUpperCase();
+    if (!hostKey) return null;
+
+    const avatars = window.State?.syncPlayerAvatars || window.Network?.getPlayerAvatars?.();
+    if (!avatars) return null;
+
+    if (avatars instanceof Map) return avatars.get(hostKey) || null;
+    return avatars[hostKey] || avatars[window.Session?.hostKey] || null;
+}
+
+function hostVitalsSummary() {
+    const av = resolveHostAvatar();
+    if (!av?.v || !Array.isArray(av.v) || av.v.length < 3) return '';
+    const [hp, food, water] = av.v;
+    return `Host · HP ${hp} · F ${food} · W ${water}`;
+}
+
 export const Spectate = {
     isActive() { return active; },
 
@@ -56,6 +74,14 @@ export const Spectate = {
         if (el) {
             el.textContent = `${mode.short} · ${netLabel} · ${follow ? 'host cam' : 'free cam'}${audioNote}`;
         }
+
+        const vitalsEl = document.getElementById('spectate-host-vitals');
+        const vitalsText = (net?.mode === 'spectate' || this.isSpectatorSession()) ? hostVitalsSummary() : '';
+        if (vitalsEl) {
+            vitalsEl.textContent = vitalsText;
+            vitalsEl.classList.toggle('visible', !!vitalsText);
+        }
+
         document.getElementById('spectate-follow-host')?.classList.toggle('active', follow);
         document.getElementById('spectate-free-cam')?.classList.toggle('active', !follow);
     },

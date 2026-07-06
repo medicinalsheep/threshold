@@ -49,6 +49,25 @@ body.spectate-mode #canvas-container {
     min-width: 120px;
 }
 
+.spectate-host-vitals {
+    display: none;
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    color: #8ec8a8;
+    padding: 3px 8px;
+    border: 1px solid rgba(120, 200, 160, 0.35);
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.spectate-host-vitals.visible {
+    display: inline-block;
+}
+
+.guest-survival-hud-row.hidden {
+    display: none;
+}
+
 .spectate-hud .btn-sm.active {
     border-color: var(--accent-color) !important;
     color: var(--accent-color) !important;

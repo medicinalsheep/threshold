@@ -2627,6 +2627,7 @@ const UI = {
 
         window.CollaborateGuard?._updateUi?.();
         window.HostMigration?.populateHandoffSelect?.();
+        window.SurvivalNeedsHud?.syncGuestToggleUi?.();
 
         const voipEl = document.getElementById('host-voip-summary');
         if (voipEl && Network.mode !== 'solo') {

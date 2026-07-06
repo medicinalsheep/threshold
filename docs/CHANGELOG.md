@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.6.0 — Sprint P: Multiplayer & session polish
+
+- **`sync.js`** — `LIVE_STATE` carries `sessionMode` + vitals; guest reconnect restores prefs from `lastLiveState`
+- **`survivalNeedsHud.js`** — optional guest vitals HUD toggle in PLAYERS panel
+- **`hostMigration.js`** — handoff payload includes host vitals + sessionMode
+- **`thirdEye.js`** — amber lock highlight on locked objects in range
+- **`spectate/main.js`** — spectate banner shows host HP/F/W from live sync
+
 ## 9.5.0 — Sprint O: Creator tooling polish
 
 - **`sceneHistory.js`** — checkpoint labels include BUILD/PLAY mode + author key

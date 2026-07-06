@@ -81,6 +81,9 @@ export const HostMigration = {
                 designateName: designate?.name || null,
                 hostKey: window.Session?.playerKey,
                 hostName: window.Session?.playerName,
+                sessionMode: window.GuidedSession?.getSavedMode?.()
+                    || (window.State?.isPaused ? 'build' : 'play'),
+                vitals: window.SurvivalNeeds?.pack?.() || null,
                 at: Date.now(),
                 playUrl: playUrlForCode(world.code),
             };
@@ -100,6 +103,12 @@ export const HostMigration = {
     onHandoffSnapshot(data) {
         if (!data?.code) return;
         const record = this.storeHandoff(data);
+        if (record.sessionMode === 'play' || record.sessionMode === 'build') {
+            ViewPrefs.set('sessionMode', record.sessionMode);
+        }
+        if (Array.isArray(record.vitals)) {
+            window.SurvivalNeeds?.unpack?.(record.vitals);
+        }
         const me = String(window.Session?.playerKey || '').toUpperCase();
         const successor = record.designateKey && String(record.designateKey).toUpperCase() === me;
         if (successor) {
@@ -139,6 +148,12 @@ export const HostMigration = {
 
         if (h?.code) {
             lines.push(`<p><strong>Saved snapshot:</strong> <code>${h.code}</code> — ${h.name || 'Handoff world'}</p>`);
+            if (h.sessionMode) {
+                lines.push(`<p>Host session mode: <strong>${String(h.sessionMode).toUpperCase()}</strong></p>`);
+            }
+            if (Array.isArray(h.vitals) && h.vitals.length >= 3) {
+                lines.push(`<p>Host vitals at handoff: HP <strong>${h.vitals[0]}</strong> · Food <strong>${h.vitals[1]}</strong> · Water <strong>${h.vitals[2]}</strong></p>`);
+            }
             if (amSuccessor) {
                 lines.push('<p class="host-migration-success"><strong>You are the designated successor.</strong> Go to lobby → <strong>CREATE SESSION</strong> → share the new room code. Others re-join with the new link.</p>');
             } else if (h.designateName) {

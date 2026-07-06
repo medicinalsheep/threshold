@@ -37,6 +37,11 @@ export const SurvivalNeedsHud = {
         this._visible = ViewPrefs.get('survivalHud', true);
         this._applyVisibility();
 
+        document.getElementById('guest-survival-hud')?.addEventListener('change', (e) => {
+            ViewPrefs.set('guestSurvivalHud', !!e.target.checked);
+            this._applyVisibility();
+        });
+
         window.addEventListener('keydown', (e) => {
             if (e.code !== 'KeyV' || e.ctrlKey || e.metaKey || e.altKey) return;
             if (isTypingTarget()) return;
@@ -64,9 +69,25 @@ export const SurvivalNeedsHud = {
         this._root?.classList.add('flash');
     },
 
-    tick() {
+    _shouldShow() {
         const SN = window.SurvivalNeeds;
-        const show = this._visible && SN?.isActive?.();
+        const mode = window.Network?.mode;
+        if (!this._visible || !SN?.isActive?.()) return false;
+        if (mode === 'guest') return ViewPrefs.get('guestSurvivalHud', false);
+        if (mode === 'spectate') return false;
+        return true;
+    },
+
+    syncGuestToggleUi() {
+        const cb = document.getElementById('guest-survival-hud');
+        if (!cb) return;
+        const isGuest = window.Network?.mode === 'guest';
+        cb.closest('.guest-survival-hud-row')?.classList.toggle('hidden', !isGuest);
+        cb.checked = ViewPrefs.get('guestSurvivalHud', false);
+    },
+
+    tick() {
+        const show = this._shouldShow();
         this._root?.classList.toggle('active', !!show);
         if (!show) return;
 

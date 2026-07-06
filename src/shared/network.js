@@ -560,6 +560,9 @@ export const Network = {
                     });
                     this._reconnectAttempts = 0;
                     this._reconnecting = false;
+                    if (!spectate && window.State?.lastLiveState) {
+                        window.Sync?.restoreSessionPrefs?.(window.State.lastLiveState);
+                    }
                     window.UI?.status?.('Reconnected to host');
                     this.updateUi();
                 });

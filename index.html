@@ -160,6 +160,7 @@
         <div id="spectate-hud" class="spectate-hud hidden">
             <span id="spectate-badge">SPECTATE</span>
             <span id="spectate-render-info">Hyper · solo preview</span>
+            <span id="spectate-host-vitals" class="spectate-host-vitals"></span>
             <button id="spectate-follow-host" type="button" class="btn-sm">FOLLOW</button>
             <button id="spectate-free-cam" type="button" class="btn-sm active">FREE CAM</button>
             <button id="spectate-exit" type="button" class="btn-sm">ENGINE</button>
@@ -720,6 +721,7 @@
                 <button id="host-copy-link" type="button" class="insert-action secondary">COPY INVITE LINK</button>
                 <div id="host-player-list"></div>
                 <p id="host-voip-summary" class="insert-hint"></p>
+                <label class="insert-hint guest-survival-hud-row hidden"><input type="checkbox" id="guest-survival-hud"> Show my vitals HUD (guest)</label>
                 <hr style="border-color:var(--border-color); margin:12px 0;">
                 <label class="insert-hint"><input type="checkbox" id="host-auto-coding-pause" checked> Auto-pause when host opens Compiler / PromptGen</label>
                 <label class="insert-hint host-only-link"><input type="checkbox" id="host-scene-lock"> Scene lock (host-only edits)</label>

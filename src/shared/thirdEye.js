@@ -3,6 +3,7 @@
 const SCAN_MS = 100;
 const RADIUS = 18;
 const HIGHLIGHT = 0x2acc44;
+const LOCK_HIGHLIGHT = 0xffa030;
 
 function getPlayerPosition() {
     const PC = window.PlayerController;
@@ -18,6 +19,7 @@ function distTo(pos, obj) {
 function isTarget(obj) {
     const ud = obj?.userData;
     if (!ud || ud.isPlayer) return false;
+    if (ud.locked) return true;
     return !!(ud.thirdEyeTarget || ud.interactAction || ud.isAiTerminal || ud.isCharacter);
 }
 
@@ -27,6 +29,7 @@ export const ThirdEye = {
     _crosshair: null,
     _saved: new Map(),
     _lastScan: 0,
+    _lockCount: 0,
 
     init() {
         this._indicator = document.getElementById('third-eye-indicator');
@@ -53,9 +56,17 @@ export const ThirdEye = {
         const fps = walk && window.State?.viewMode === 'fps';
         this._crosshair?.classList.toggle('visible', fps);
         this._indicator?.classList.toggle('visible', this.active);
+        if (this._indicator && this.active) {
+            const lockNote = this._lockCount
+                ? ` · ${this._lockCount} locked`
+                : '';
+            this._indicator.title = `Third Eye active${lockNote}`;
+        }
     },
 
-    _applyHighlight(root) {
+    _applyHighlight(root, locked = false) {
+        const color = locked ? LOCK_HIGHLIGHT : HIGHLIGHT;
+        const intensity = locked ? 0.38 : 0.32;
         root.traverse((c) => {
             if (!c.isMesh || !c.material) return;
             const mat = c.material;
@@ -68,8 +79,8 @@ export const ThirdEye = {
                 });
             }
             if (!mat.emissive) return;
-            mat.emissive.setHex(HIGHLIGHT);
-            mat.emissiveIntensity = 0.32 + Math.sin(performance.now() * 0.004) * 0.14;
+            mat.emissive.setHex(color);
+            mat.emissiveIntensity = intensity + Math.sin(performance.now() * 0.004) * 0.14;
         });
     },
 
@@ -82,6 +93,7 @@ export const ThirdEye = {
             mat.emissiveIntensity = snap.emissiveIntensity;
         });
         this._saved.clear();
+        this._lockCount = 0;
     },
 
     _scan() {
@@ -91,15 +103,25 @@ export const ThirdEye = {
 
         this._clearHighlights();
         const pulse = 0.32 + Math.sin(performance.now() * 0.004) * 0.14;
+        let lockCount = 0;
 
         State.objects.forEach((obj) => {
             if (!isTarget(obj)) return;
             if (distTo(pos, obj) > RADIUS) return;
-            this._applyHighlight(obj);
+            const locked = !!obj.userData?.locked;
+            if (locked) lockCount += 1;
+            this._applyHighlight(obj, locked);
             obj.traverse?.((c) => {
-                if (c.isMesh && c.material?.emissive) c.material.emissiveIntensity = pulse;
+                if (c.isMesh && c.material?.emissive) {
+                    c.material.emissiveIntensity = locked
+                        ? pulse + 0.08
+                        : pulse;
+                }
             });
         });
+
+        this._lockCount = lockCount;
+        this.updateHud();
     },
 
     tick() {

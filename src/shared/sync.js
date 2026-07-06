@@ -59,22 +59,74 @@ export const Sync = {
     captureLive() {
         const State = window.State;
         if (!State) return null;
+        const player = window.PlayerController?.getState?.();
+        const vitals = window.SurvivalNeeds?.pack?.();
+        const sessionMode = window.GuidedSession?.getSavedMode?.()
+            || (State.isPaused ? 'build' : 'play');
+
+        const playerAvatars = { ...(window.Network?.getPlayerAvatars?.() || {}) };
+        const selfKey = String(window.Session?.playerKey || '').toUpperCase();
+        if (selfKey && vitals) {
+            const prev = playerAvatars[selfKey] || {};
+            playerAvatars[selfKey] = { ...prev, v: vitals };
+        }
+
         return {
-            playerAvatars: window.Network?.getPlayerAvatars?.() || {},
+            playerAvatars,
             playerPositions: window.Network?.getPlayerPositions?.() || {},
             vehicleClaims: window.Network?.getVehicleClaims?.() || {},
             circuit: window.TcCircuit?.captureState?.() || null,
             isPaused: !!State.isPaused,
+            sessionMode,
             controlMode: State.controlMode || 'fly',
-            player: window.PlayerController?.getState?.() || null,
+            player: player ? { ...player, vitals: player.vitals || vitals } : null,
             weather: window.WeatherSystem?.captureState?.() || null,
         };
+    },
+
+    _restoreSelfVitals(state) {
+        const Session = window.Session;
+        const selfKey = String(Session?.playerKey || '').toUpperCase();
+        const avatars = state?.playerAvatars;
+        let packed = null;
+
+        if (avatars) {
+            const av = avatars[selfKey] || avatars[Session?.playerKey];
+            if (av?.v) packed = av.v;
+        }
+        if (!packed && state?.player?.vitals) packed = state.player.vitals;
+
+        if (packed) window.SurvivalNeeds?.unpack?.(packed);
+    },
+
+    _restoreSessionMode(state) {
+        const mode = state?.sessionMode;
+        if (mode !== 'play' && mode !== 'build') return;
+        window.ViewPrefs?.set?.('sessionMode', mode);
+        const build = mode === 'build';
+        if (typeof state?.isPaused === 'boolean') return;
+        window.State.isPaused = build;
+        window.Session.isPaused = build;
+        window.UI?.updateSimMode?.();
+    },
+
+    restoreSessionPrefs(state) {
+        if (!state) return;
+        this._restoreSessionMode(state);
+        this._restoreSelfVitals(state);
+        window.UI?.updateSimMode?.();
+        window.Spectate?.updateHud?.();
     },
 
     applyLiveState(state) {
         if (!state || applying) return;
         const State = window.State;
         if (!State) return;
+
+        const netMode = window.Network?.mode;
+        if (netMode === 'guest' || netMode === 'spectate') {
+            State.lastLiveState = state;
+        }
 
         if (state.vehicleClaims) window.TcDrive?.setClaims?.(state.vehicleClaims);
         if (state.playerAvatars) {
@@ -94,11 +146,21 @@ export const Sync = {
             window.Session.isPaused = state.isPaused;
             if (state.isPaused && !wasPaused) window.Engine?._releaseLookLock?.();
         }
+
+        this._restoreSessionMode(state);
+
         if (state.weather) window.WeatherSystem?.applyNetworkState?.(state.weather, { smooth: true });
         if (state.controlMode && !window.TcDrive?.active) State.controlMode = state.controlMode;
         if (state.player && window.PlayerController && !window.TcDrive?.active) {
             window.PlayerController.applyState(state.player);
         }
+
+        if (netMode === 'guest') {
+            this._restoreSelfVitals(state);
+        }
+
+        window.UI?.updateSimMode?.();
+        window.Spectate?.updateHud?.();
     },
 
     async applyState(state) {
