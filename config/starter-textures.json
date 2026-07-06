@@ -36,9 +36,21 @@
     "Tesla Bench": { "uvRepeat": [2, 1], "normalScale": 0.48, "envMapIntensity": 0.28 },
     "Tesla Coil": { "uvRepeat": [2, 2], "normalScale": 0.7, "envMapIntensity": 0.48 },
     "Tesla Lab Door": { "uvRepeat": [1, 2], "normalScale": 0.42, "envMapIntensity": 0.24 },
-    "Tesla Field": { "uvRepeat": [8, 6], "normalScale": 0.6, "envMapIntensity": 0.2 }
+    "Tesla Field": { "uvRepeat": [8, 6], "normalScale": 0.6, "envMapIntensity": 0.2 },
+    "Visitor Courtyard": { "uvRepeat": [9, 7], "normalScale": 0.82, "envMapIntensity": 0.3 },
+    "Approach Path": { "uvRepeat": [2, 14], "normalScale": 0.92, "envMapIntensity": 0.24 },
+    "Lab Threshold": { "uvRepeat": [3, 3], "normalScale": 0.88, "envMapIntensity": 0.22 },
+    "Visitor Gateway": { "uvRepeat": [3, 2], "normalScale": 0.75, "envMapIntensity": 0.32 },
+    "Approach Curb": { "uvRepeat": [2, 1], "normalScale": 0.7, "envMapIntensity": 0.28 },
+    "Compiler Kiosk": { "uvRepeat": [1, 1], "envMapIntensity": 0.34 }
   },
   "aliases": {
+    "starter_ground": "Starter Ground",
+    "starter_approach_path": "Gravel Path",
+    "starter_lab_apron": "Gravel Path",
+    "starter_tesla_threshold": "Gravel Path",
+    "showcase_gateway": "Starter Wall",
+    "compiler_kiosk": "AI Build Station",
     "starter_bench": "Starter Bench",
     "starter_dirt_mound": "Dirt Mound",
     "starter_fence": "Chain Fence",

@@ -1,5 +1,15 @@
 # Changelog
 
+## 9.2.0 — Sprint L: Showcase visual polish
+
+- **`makeWardenclyffeSignTex`** — procedural gateway plaque with emissive map
+- **`showcaseGateway.js`** — copper lamp arms, gravel inlay, curbs, rain-dampened lamp anim
+- **`starterSiteTerrain191.js`** — tiled plane courtyards/path, approach stone curbs, PBR object names
+- **`aiTerminal.js`** — showcase kiosk variant (wood top, copper trim, pedestal)
+- **`starterLighting195.js`** — approach + gateway fill lights, golden hour lock, rain dampening
+- **`starterScene.js`** — async bootstrap; textures applied before player spawn
+- **`starter-textures.json`** — Visitor Courtyard, Approach Path, Gateway aliases
+
 ## 9.1.0 — Sprint Q: Documentation truth pass
 
 - **`REALISTIC_GAMEPLAY.md`** — v9 showcase guide: PLAY/BUILD, survival vitals, gateway site map, F interact

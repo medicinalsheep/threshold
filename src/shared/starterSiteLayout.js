@@ -31,8 +31,8 @@ export const SITE = {
     highway: { x: 24, y: 0, z: 8 },
     creek: { x: -16, y: 0, z: 10 },
     treeLineZ: -22,
-    cameraSpawn: { x: 0, y: 1.72, z: 13.2 },
-    cameraTarget: { x: 0, y: 1.55, z: 4.5 },
+    cameraSpawn: { x: 0.35, y: 1.78, z: 13.4 },
+    cameraTarget: { x: 0, y: 1.62, z: 5.8 },
 };
 
 export const EXTERIOR_SPAWN = { ...SITE.spawn };

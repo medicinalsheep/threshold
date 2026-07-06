@@ -2,8 +2,9 @@
 
 import { LAB_ORIGIN, BUILDING_CENTER, BUILDING } from './starterSiteLayout.js';
 
-const DUSK_HOURS = 18.75;
-const DUSK_FOG = 0.022;
+const DUSK_HOURS = 18.82;
+const DUSK_FOG = 0.02;
+const SHOWCASE_SPAWN_HOURS = 18.82;
 
 export function applyWardenclyffeLighting195() {
     const Engine = window.Engine;
@@ -54,6 +55,14 @@ export function applyWardenclyffeLighting195() {
     courtFill.position.set(0, 3.2, 12);
     root.add(courtFill);
 
+    const approachLight = new THREE.PointLight(0xffc890, 0.88, 18, 1.65);
+    approachLight.position.set(0, 2.85, 12.8);
+    root.add(approachLight);
+
+    const gatewayFill = new THREE.PointLight(0xffe0b0, 0.62, 14, 1.7);
+    gatewayFill.position.set(0, 2.4, 14.2);
+    root.add(gatewayFill);
+
     const coil = State.objects.find((o) => o.userData?.id === 'starter_tesla_coil');
     (coil?.userData?.bulbs || []).forEach((bulb) => {
         if (!bulb?.material) return;
@@ -80,6 +89,8 @@ export function applyWardenclyffeLighting195() {
         facadeLight,
         courtFill,
         coilAccent,
+        approachLight,
+        gatewayFill,
     };
     Engine.scene.add(root);
     State.objects.push(root);
@@ -95,20 +106,43 @@ export const StarterLighting195 = {
         const root = window.State?.objects?.find((o) => o.userData?.id === 'starter_lighting_195');
         if (!root?.userData?.animLighting195) return;
 
-        const { labLight, facadeLight, courtFill, coilAccent } = root.userData;
+        const {
+            labLight, facadeLight, courtFill, coilAccent, approachLight, gatewayFill,
+        } = root.userData;
+
+        window.registerGatewayRainAnim?.();
 
         window.StarterAnim?.registerStarterAnim?.((t) => {
             const dusk = 0.92 + Math.sin(t * 0.45) * 0.04;
-            if (labLight) labLight.intensity = 1.2 + Math.sin(t * 2.8) * 0.12;
-            if (facadeLight) facadeLight.intensity = 0.75 + Math.sin(t * 1.4) * 0.1;
+            const rain = window.WeatherSystem?.getIntensity?.() ?? 0;
+            const rainDamp = 1 - rain * 0.22;
+
+            if (labLight) labLight.intensity = (1.2 + Math.sin(t * 2.8) * 0.12) * rainDamp;
+            if (facadeLight) facadeLight.intensity = (0.75 + Math.sin(t * 1.4) * 0.1) * dusk * (1 - rain * 0.15);
             if (courtFill) courtFill.intensity = 0.38 + Math.sin(t * 0.9) * 0.06;
             if (coilAccent) coilAccent.intensity = 0.48 + Math.sin(t * 5.5) * 0.14;
-
-            const rain = window.WeatherSystem?.getIntensity?.() ?? 0;
-            if (facadeLight) facadeLight.intensity *= dusk * (1 - rain * 0.15);
+            if (approachLight) {
+                approachLight.intensity = (0.82 + Math.sin(t * 1.1) * 0.08) * (1 - rain * 0.28);
+            }
+            if (gatewayFill) {
+                gatewayFill.intensity = (0.55 + Math.sin(t * 1.6) * 0.06) * (1 - rain * 0.35);
+            }
         });
     },
 };
 
+export function lockShowcaseGoldenHour() {
+    const State = window.State;
+    const Environment = window.Environment;
+    if (!State) return;
+    State.env.timeOfDay = SHOWCASE_SPAWN_HOURS;
+    State.env.fogDensity = DUSK_FOG;
+    Environment?.setTimeOfDay?.(SHOWCASE_SPAWN_HOURS);
+    Environment?.setFog?.(DUSK_FOG);
+    const envSlider = document.getElementById('env-time');
+    if (envSlider) envSlider.value = String(SHOWCASE_SPAWN_HOURS);
+}
+
 window.StarterLighting195 = StarterLighting195;
 window.applyWardenclyffeLighting195 = applyWardenclyffeLighting195;
+window.lockShowcaseGoldenHour = lockShowcaseGoldenHour;

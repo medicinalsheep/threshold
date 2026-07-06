@@ -15,7 +15,7 @@ function initLobbyReleaseStrip() {
     const el = document.getElementById('lobby-release-strip');
     if (!el) return;
     const logUrl = 'https://github.com/medicinalsheep/threshold/blob/main/docs/CHANGELOG.md';
-    el.innerHTML = `v${VERSION} · guided PLAY/BUILD · survival vitals · <a href="${logUrl}" target="_blank" rel="noopener noreferrer">changelog</a>`;
+    el.innerHTML = `v${VERSION} · showcase gateway · golden hour · <a href="${logUrl}" target="_blank" rel="noopener noreferrer">changelog</a>`;
 }
 
 function initLobbyModePicker() {

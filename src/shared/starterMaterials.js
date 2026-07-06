@@ -123,6 +123,25 @@ export function makeBillboardTex(THREE, title, subtitle) {
     }, 192);
 }
 
+export function makeWardenclyffeSignTex(THREE) {
+    return createCanvasTexture(THREE, (ctx, w, h) => {
+        ctx.fillStyle = '#1a1410';
+        ctx.fillRect(0, 0, w, h);
+        ctx.strokeStyle = '#8a6840';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(4, 4, w - 8, h - 8);
+        ctx.fillStyle = '#e8dcc8';
+        ctx.font = 'bold 20px Georgia, "Times New Roman", serif';
+        ctx.fillText('WARDENCLYFFE', 12, 32);
+        ctx.font = '11px system-ui,sans-serif';
+        ctx.fillStyle = '#c8a878';
+        ctx.fillText('Visitor Laboratory · 1901', 12, 50);
+        ctx.font = '10px system-ui,sans-serif';
+        ctx.fillStyle = '#9a8878';
+        ctx.fillText('PLAY · BUILD · EXPORT', 12, 66);
+    }, 256, 96);
+}
+
 export function makeCoffeeSignTex(THREE) {
     return createCanvasTexture(THREE, (ctx, w, h) => {
         ctx.fillStyle = '#2a1810';
@@ -167,6 +186,7 @@ window.StarterMaterials = {
     createNoiseMap,
     createStarterMaterials,
     makeBillboardTex,
+    makeWardenclyffeSignTex,
     makeCoffeeSignTex,
     makeRegisterTex,
     makeTapeTex,

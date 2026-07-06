@@ -60,7 +60,7 @@ export function scheduleTemplateSpawn(pos, opts = {}) {
         }
     }
 
-    const delay = skipIntro ? 380 : (State.introDuration || 2800) + 350;
+    const delay = opts.spawnDelay ?? (skipIntro ? 380 : (State.introDuration || 2800) + 350);
     setTimeout(() => {
         if (PlayerController.spawned) return;
         PlayerController.spawn(pos.x, Math.max(pos.y, 1.2), pos.z).then(() => {
@@ -280,7 +280,7 @@ export async function bootstrapSelectedTemplate() {
             await bootstrapTcCircuitTemplate();
             break;
         default:
-            bootstrapStarterScene();
+            await bootstrapStarterScene();
             break;
     }
     return id;

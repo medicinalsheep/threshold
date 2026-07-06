@@ -38,6 +38,7 @@ function placeShowcaseTerminals() {
         pos: court(2.4, 3.6),
         rotY: -0.55,
         interactHint: 'AI Build — Grok agents · local scripts · extend your game',
+        showcase: true,
     });
 
     const modelKiosk = spawnAiTerminal({
@@ -48,6 +49,7 @@ function placeShowcaseTerminals() {
         interactAction: 'skin',
         interactLabel: 'Avatar Kiosk',
         interactHint: 'Assign player skin · GLTF body · appearance export',
+        showcase: true,
     });
 
     const compilerKiosk = spawnAiTerminal({
@@ -56,8 +58,9 @@ function placeShowcaseTerminals() {
         pos: court(0.8, 5.8),
         rotY: Math.PI,
         interactAction: 'compiler',
-        interactLabel: 'Compiler',
+        interactLabel: 'Compiler Kiosk',
         interactHint: 'Run JavaScript — scene scripts · game logic',
+        showcase: true,
     });
 
     return { terminal, modelKiosk, compilerKiosk };
@@ -91,7 +94,7 @@ function placeShowcaseGuides() {
     });
 }
 
-export function bootstrapStarterScene() {
+export async function bootstrapStarterScene() {
     const Engine = window.Engine;
     const State = window.State;
     if (!Engine?.scene || !State) return;
@@ -102,18 +105,6 @@ export function bootstrapStarterScene() {
     buildShowcaseGateway();
     placeShowcaseTerminals();
     placeShowcaseGuides();
-
-    window.StarterAudio?.ensureStarterAudio?.({
-        weatherDelay: 1800,
-        weatherIntensity: 0.42,
-    }).then((seed) => {
-        if (seed?.skipped && seed.reason === 'manifest') {
-            window.UI?.status?.('Ambient audio ready');
-        }
-    });
-    wireStarterTextures().then((tex) => {
-        if (tex.maps) window.UI?.status?.(`Site textures applied (${tex.maps} maps)`);
-    });
 
     window.buildStarterEnv14?.();
     window.buildStarterWildlife15?.();
@@ -128,6 +119,18 @@ export function bootstrapStarterScene() {
     void window.spawnTeslaGuideNpc?.();
     window.buildStarterTeslaWeather184?.();
     window.applyWardenclyffeLighting195?.();
+    window.lockShowcaseGoldenHour?.();
+
+    const tex = await wireStarterTextures();
+    if (tex?.maps) {
+        window.UI?.status?.(`Site textures ready (${tex.maps} maps)`);
+    }
+
+    window.StarterAudio?.ensureStarterAudio?.({
+        weatherDelay: 1800,
+        weatherIntensity: 0.42,
+    }).catch(() => {});
+
     window.StarterAnim?.wireScene?.();
     window.StarterEnv14?.wireAnims?.();
     window.StarterWildlife15?.wireAnims?.();
@@ -153,7 +156,8 @@ export function bootstrapStarterScene() {
 
     scheduleTemplateSpawn(EXTERIOR_SPAWN, {
         skipIntro: true,
-        status: 'Wardenclyffe showcase — PLAY to explore · BUILD to edit · F on terminals & Nikola',
+        spawnDelay: 160,
+        status: 'Wardenclyffe showcase — golden hour · PLAY to explore · BUILD to edit',
     });
 }
 

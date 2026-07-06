@@ -24,18 +24,18 @@
 
 ---
 
-## Sprint L — Showcase visual polish
+## Sprint L — Showcase visual polish ✅ (v9.2.0)
 
 **Goal:** Visitor path and lab approach feel authored, not procedural boxes.
 
-| Item | Deliverable |
-|------|-------------|
-| L1 | Gateway sign texture (procedural or GIMP) — readable “Wardenclyffe” plaque |
-| L2 | Courtyard gravel PBR tile on `starter_site_terrain` apron (reduce flat box read) |
-| L3 | Approach path edging — low stone curb meshes along gravel strip |
-| L4 | Terminal kiosk GLB pass or higher-segment procedural desks |
-| L5 | Dusk lighting tune — spawn camera golden hour lock; rain dampening on gateway lamps |
-| L6 | `wireStarterTextures()` await before player spawn (no flash of untextured meshes) |
+| Item | Status | Deliverable |
+|------|--------|-------------|
+| L1 | ✅ | `makeWardenclyffeSignTex` — readable gateway plaque |
+| L2 | ✅ | PlaneGeometry courtyards/path/apron + PBR manifest aliases |
+| L3 | ✅ | Stone curb meshes along approach path + gateway curbs |
+| L4 | ✅ | Showcase kiosk variant — wood top, copper trim, pedestal |
+| L5 | ✅ | Golden hour lock, approach/gateway fill lights, rain lamp dampening |
+| L6 | ✅ | `bootstrapStarterScene` awaits `wireStarterTextures()` before spawn |
 
 ---
 
