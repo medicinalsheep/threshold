@@ -486,7 +486,7 @@ export const Controls = {
         const State = window.State;
         const PC = window.PlayerController;
         if (State?.controlMode === 'walk' && PC?.spawned && !State?.isPaused) {
-            PC.applyLookInput(x * 14, y * 14, 1.2);
+            PC.applyLookInput(-x * 14, y * 14, 1.2);
             return;
         }
 

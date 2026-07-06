@@ -34,7 +34,8 @@
     "Tesla Brick Wall": { "uvRepeat": [3, 2], "normalScale": 0.85, "envMapIntensity": 0.22 },
     "Tesla Bench": { "uvRepeat": [2, 1], "normalScale": 0.48, "envMapIntensity": 0.28 },
     "Tesla Coil": { "uvRepeat": [2, 2], "normalScale": 0.7, "envMapIntensity": 0.48 },
-    "Tesla Lab Door": { "uvRepeat": [1, 2], "normalScale": 0.42, "envMapIntensity": 0.24 }
+    "Tesla Lab Door": { "uvRepeat": [1, 2], "normalScale": 0.42, "envMapIntensity": 0.24 },
+    "Tesla Field": { "uvRepeat": [8, 6], "normalScale": 0.6, "envMapIntensity": 0.2 }
   },
   "aliases": {
     "starter_bench": "Starter Bench",
@@ -49,6 +50,8 @@
     "starter_tesla_coil": "Tesla Coil",
     "starter_tesla_bench": "Tesla Bench",
     "starter_tesla_door": "Tesla Lab Door",
-    "starter_tesla_lab": "Tesla Lab Floor"
+    "starter_tesla_lab": "Tesla Lab Floor",
+    "starter_tesla_exterior": "Tesla Field",
+    "starter_tesla_building": "Tesla Brick Wall"
   }
 }

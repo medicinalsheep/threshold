@@ -1,5 +1,14 @@
 # Changelog
 
+## 7.3.1 — Controls fix + Wardenclyffe exterior intro
+
+- **Mouse look** — fixed inverted horizontal (yaw) look; spawn inherits intro camera facing
+- **WASD** — fly camera no longer steals input during intro flythrough
+- **Wardenclyffe exterior** — brick lab building, 17 m lattice tower, grass field, tree line, dirt path
+- **Project build** — scaffold fades, windows/sign/tower power on over 28s with status captions
+- **Lab entrance** — south facade double doors teleport to annex; connects to existing interior lab
+- **Intro** — 6.2s aerial tower → path → spawn outside building
+
 ## 7.3.0 — Phase 18.1: Tesla lab intro shell
 
 - **Tesla lab annex** — west of plaza: wood floor, brick north wall, instrument bench, hanging bulbs

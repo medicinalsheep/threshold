@@ -380,6 +380,19 @@
       "style": "copper"
     },
     {
+      "slug": "starter_tesla_field",
+      "objectName": "Tesla Field",
+      "tcEd": "tc-lite",
+      "surfaceType": "grass",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "blade": [62, 118, 52],
+        "dark": [42, 88, 38],
+        "speck": [98, 142, 68]
+      },
+      "style": "grass"
+    },
+    {
       "slug": "starter_tesla_door_tex",
       "objectName": "Tesla Lab Door",
       "tcEd": "tc-lite",

@@ -51,6 +51,7 @@ import '../shared/starterEnv14.js';
 import '../shared/starterWildlife15.js';
 import '../shared/starterUrban16.js';
 import '../shared/starterInterior17.js';
+import '../shared/starterTeslaExterior18.js';
 import '../shared/starterTeslaLab18.js';
 import '../shared/teslaLabAmbient.js';
 import '../shared/wildlifeAmbient.js';
@@ -1214,7 +1215,7 @@ const Engine = {
                 window.TcDrive.postPhysics();
             } else if (State.controlMode === 'walk' && PlayerController.spawned) {
                 PlayerController.postPhysics();
-            } else {
+            } else if (!State.introPlaying) {
                 const speed = 0.2 * (Controls.getSprintMultiplier?.() || 1);
                 const fwd = new THREE.Vector3(); this.camera.getWorldDirection(fwd); fwd.y = 0; fwd.normalize();
                 const rgt = new THREE.Vector3(); rgt.crossVectors(fwd, this.camera.up).normalize();
@@ -1264,7 +1265,7 @@ const Engine = {
         Cinematic.tick();
         window.TcGateFx?.tick?.();
 
-        if (this.controls.enabled) this.controls.update();
+        if (this.controls.enabled && !State.introPlaying) this.controls.update();
         // Visual Rotation (Only for non-physics objects or purely visual effect)
         if (!State.isPaused) {
             State.objects.forEach(obj => {

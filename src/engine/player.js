@@ -80,10 +80,9 @@ export const PlayerController = {
         this._velZ = 0;
         await tryLoadAvatarGroup(this.group, 'starter_avatar.glb');
 
-        if (State.viewMode === 'fps') {
-            this._inheritLookFromCamera();
-        } else {
-            this.resetCameraBehind();
+        this._inheritLookFromCamera();
+        if (State.viewMode !== 'fps') {
+            this._camPitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, this._camPitch));
         }
         this._syncWalkOrbit();
         this._applyViewMode();
@@ -175,7 +174,7 @@ export const PlayerController = {
 
     applyLookInput(dx, dy, sens = 1) {
         if (!this.spawned || window.State?.controlMode !== 'walk' || window.State?.isPaused) return;
-        this._camYaw += dx * 0.003 * sens;
+        this._camYaw -= dx * 0.003 * sens;
         this._camPitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, this._camPitch + dy * 0.0025 * sens));
     },
 
