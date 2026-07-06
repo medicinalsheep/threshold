@@ -62,6 +62,34 @@ export const TextureLibrary = {
         });
     },
 
+    async saveWithId(id, blob, meta = {}) {
+        const existing = this.list().find((t) => t.id === id);
+        if (existing) return existing;
+
+        const record = {
+            id,
+            name: meta.name || id,
+            createdAt: Date.now(),
+            mime: meta.mime || blob.type || guessMime(meta.name || ''),
+            size: blob.size,
+            sourcePath: meta.sourcePath || null,
+        };
+
+        const db = await openDb();
+        await new Promise((resolve, reject) => {
+            const tx = db.transaction(STORE, 'readwrite');
+            tx.objectStore(STORE).put({ id, blob, meta: record });
+            tx.oncomplete = resolve;
+            tx.onerror = () => reject(tx.error);
+        });
+
+        const index = getIndex();
+        index.unshift(record);
+        setIndex(index);
+        window.dispatchEvent(new CustomEvent('texture-library-change'));
+        return record;
+    },
+
     async saveFromFile(file, meta = {}) {
         const id = randomId();
         const record = {

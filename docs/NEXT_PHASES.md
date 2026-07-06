@@ -1,6 +1,8 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v7.6.0 — Phase 18.4 annex weather (skylight rain, thunder flash, marquee).
+**Current:** v9.0.0 — Guided PLAY/BUILD session, showcase gateway, survival vitals (Sprints A–K).
+
+**Polish forward:** [POLISH_ROADMAP.md](POLISH_ROADMAP.md) — Sprints L–Q (visual, onboarding, survival depth, docs).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 

@@ -1,7 +1,11 @@
 /** Phase 17 — interior ambience: radio chatter at terminal, coffee murmur loop */
 
-const TERMINAL_ZONE = { x: 2.6, y: 0.5, z: 0.8, radius: 4.2, volume: 0.32 };
-const COFFEE_ZONE = { x: -3.75, y: 0.4, z: 1.25, radius: 3.8, volume: 0.28 };
+import { court } from './starterSiteLayout.js';
+
+const terminal = court(2.6, 0.8);
+const TERMINAL_ZONE = { x: terminal.x, y: 0.5, z: terminal.z, radius: 4.2, volume: 0.32 };
+const coffee = court(-5, 1.25);
+const COFFEE_ZONE = { x: coffee.x, y: 0.4, z: coffee.z, radius: 3.8, volume: 0.28 };
 
 function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));

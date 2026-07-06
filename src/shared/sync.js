@@ -1,5 +1,8 @@
 import { getSceneObjectsForSpawn } from './sceneContext.js';
 import { GraphicsProfile } from './graphicsProfile.js';
+import { isStarterWorldState, runGuestRebuilds } from './guestRebuild.js';
+import { buildHostAudioManifest } from './audioManifestSync.js';
+import { buildHostTextureManifest } from './textureManifestSync.js';
 
 let applying = false;
 
@@ -47,6 +50,9 @@ export const Sync = {
             circuit: window.TcCircuit?.captureState?.() || null,
             camera,
             weather: window.WeatherSystem?.captureState?.() || null,
+            audioManifest: window.Network?.mode === 'host' ? buildHostAudioManifest() : undefined,
+            textureManifest: window.Network?.mode === 'host' ? buildHostTextureManifest() : undefined,
+            collab: window.CollaborateGuard?.captureState?.() || null,
         };
     },
 
@@ -184,49 +190,22 @@ export const Sync = {
             await window.TextureHilod?.rehydrateAfterSync?.();
 
             const netMode = window.Network?.mode;
-            const isStarterWorld = (state.objects || []).some(
-                (o) => o.userData?.id === 'starter_ground' || o.userData?.id === 'starter_highway'
-            );
             if (netMode === 'guest' || netMode === 'spectate') {
                 await window.StarterAudio?.ensureStarterAudio?.({ deferWeather: true });
-                if (isStarterWorld && !window.State?.objects?.some((o) => o.userData?.id === 'starter_creek')) {
-                    window.buildStarterEnv14?.();
-                    window.StarterEnv14?.wireAnims?.();
+                if (isStarterWorldState(state)) {
+                    await runGuestRebuilds(state);
                 }
-                if (isStarterWorld && !window.State?.objects?.some((o) => o.userData?.id === 'starter_wildlife_cat')) {
-                    window.buildStarterWildlife15?.();
-                    window.StarterWildlife15?.wireAnims?.();
+                if (state.audioManifest?.length) {
+                    await window.AudioManifestSync?.onGuestManifest?.(state.audioManifest);
+                } else {
+                    window.AudioManifestSync?.resetGuest?.();
                 }
-                if (isStarterWorld && !window.State?.objects?.some((o) => o.userData?.id === 'starter_traffic_lights')) {
-                    window.buildStarterUrban16?.();
-                    window.StarterUrban16?.wireAnims?.();
+                if (state.textureManifest?.length) {
+                    await window.TextureManifestSync?.onGuestManifest?.(state.textureManifest);
+                } else {
+                    window.TextureManifestSync?.resetGuest?.();
                 }
-                if (isStarterWorld && !window.State?.objects?.some((o) => o.userData?.id === 'starter_interior_coffee')) {
-                    window.buildStarterInterior17?.();
-                    window.StarterInterior17?.wireAnims?.();
-                }
-                if (isStarterWorld && !window.State?.objects?.some((o) => o.userData?.id === 'starter_tesla_exterior')) {
-                    window.buildStarterTeslaExterior18?.();
-                    window.StarterTeslaExterior18?.wireAnims?.();
-                }
-                if (isStarterWorld && !window.State?.objects?.some((o) => o.userData?.id === 'starter_tesla_coil')) {
-                    window.buildStarterTeslaLab18?.();
-                    window.StarterTeslaLab18?.wireAnims?.();
-                }
-                if (isStarterWorld && window.State?.objects?.some((o) => o.userData?.id === 'starter_tesla_coil' && !o.userData?.glb185)) {
-                    void window.upgradeTeslaLabGlb185?.();
-                }
-                if (isStarterWorld && !window.State?.objects?.some((o) => o.userData?.id === 'starter_tesla_rotary')) {
-                    window.buildStarterTeslaInteract182?.();
-                    window.StarterTeslaInteract182?.wireAnims?.();
-                }
-                if (isStarterWorld && !window.State?.objects?.some((o) => o.userData?.id === 'tesla_guide_npc')) {
-                    void window.spawnTeslaGuideNpc?.();
-                }
-                if (isStarterWorld && !window.State?.objects?.some((o) => o.userData?.id === 'starter_tesla_skylight')) {
-                    window.buildStarterTeslaWeather184?.();
-                    window.StarterTeslaWeather184?.wireAnims?.();
-                }
+                if (state.collab) window.CollaborateGuard?.applyState?.(state.collab);
             }
             if (state.weather) {
                 window.WeatherSystem?.applyNetworkState?.(state.weather, { smooth: false });
@@ -249,7 +228,12 @@ export const Sync = {
 
         switch (action) {
             case 'RUN_CODE':
-                if (payload.code) Runtime?.execute(payload.code, payload.source || 'network');
+                if (payload.code) {
+                    window.SceneHistory?.push?.(`run:${payload.source || 'network'}`, {
+                        authorKey: payload.authorKey || window.Session?.playerKey,
+                    });
+                    Runtime?.execute(payload.code, payload.source || 'network');
+                }
                 break;
             case 'INSERT_CHARACTER': {
                 const State = window.State;

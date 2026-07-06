@@ -287,6 +287,8 @@ export const Voip = {
             }
             const pos = this.getLocalPosition();
             const av = { ...pos, mode: window.PlayerController?.spawned ? 'walk' : 'fly' };
+            const vitals = window.SurvivalNeeds?.pack?.();
+            if (vitals) av.v = vitals;
             if (net.mode === 'host') net.updateLocalAvatar(av);
             else if (net.mode === 'guest') net.sendPlayerAvatar(av);
         }, POS_INTERVAL_MS);

@@ -382,9 +382,9 @@
       "surfaceType": "wood",
       "slots": ["albedo", "roughness", "normal"],
       "palette": {
-        "grain": [102, 78, 52],
-        "dark": [72, 52, 34],
-        "ring": [122, 94, 64]
+        "grain": [118, 88, 58],
+        "dark": [82, 58, 38],
+        "ring": [142, 108, 74]
       },
       "style": "wood"
     },
@@ -408,11 +408,24 @@
       "surfaceType": "concrete",
       "slots": ["albedo", "roughness", "normal"],
       "palette": {
-        "brick": [138, 72, 52],
-        "mortar": [98, 92, 86],
-        "dark": [108, 58, 42]
+        "brick": [168, 88, 58],
+        "mortar": [108, 102, 94],
+        "dark": [128, 68, 48]
       },
       "style": "brick"
+    },
+    {
+      "slug": "starter_tesla_roof",
+      "objectName": "Tesla Roof",
+      "tcEd": "tc-lite",
+      "surfaceType": "concrete",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "base": [36, 34, 40],
+        "speck": [52, 50, 58],
+        "ring": [26, 24, 30]
+      },
+      "style": "concrete"
     },
     {
       "slug": "starter_tesla_copper",

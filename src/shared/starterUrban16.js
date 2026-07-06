@@ -1,4 +1,6 @@
-/** Phase 16 — urban highway props: traffic lights, billboard, construction zone */
+/** Phase 16 / 19 — urban highway props: traffic lights, billboard, construction zone */
+
+import { SITE } from './starterSiteLayout.js';
 
 export function buildStarterUrban16() {
     const Engine = window.Engine;
@@ -47,7 +49,7 @@ export function buildStarterUrban16() {
     });
 
     lightsGroup.add(pole, housing);
-    lightsGroup.position.set(7.8, 0, -3.6);
+    lightsGroup.position.set(SITE.highway.x, 0, SITE.highway.z);
     lightsGroup.rotation.y = -0.35;
     lightsGroup.userData = {
         id: 'starter_traffic_lights',
@@ -88,7 +90,7 @@ export function buildStarterUrban16() {
     );
     bbFace.position.set(0, 4.0, 0);
     billboardGroup.add(bbPole, bbFace);
-    billboardGroup.position.set(9.4, 0, -4.2);
+    billboardGroup.position.set(SITE.highway.x + 2, 0, SITE.highway.z - 4);
     billboardGroup.rotation.y = -0.55;
     billboardGroup.userData = {
         id: 'starter_billboard',
@@ -141,7 +143,7 @@ export function buildStarterUrban16() {
     );
     barrier.position.set(0, 0.28, -0.35);
     constructionGroup.add(barrier);
-    constructionGroup.position.set(5.4, 0, -1.35);
+    constructionGroup.position.set(SITE.highway.x - 2, 0, SITE.highway.z + 2);
     constructionGroup.rotation.y = 0.25;
     constructionGroup.userData = {
         id: 'starter_construction',

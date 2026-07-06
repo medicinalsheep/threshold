@@ -499,6 +499,7 @@ export function checkCodeReadiness(code) {
         { id: 'api', label: 'Uses World / PlayerController API', ok: /World\.|PlayerController\.|State\.|Engine\./.test(c) },
         { id: 'no_raw_scene', label: 'Avoids raw scene.add', ok: !/scene\.add\s*\(/.test(c) },
         { id: 'try_catch', label: 'Error handling (try/catch)', ok: /try\s*\{/.test(c) },
+        { id: 'no_clear', label: 'Extends scene (no clearWorld)', ok: !/World\.clearWorld/.test(c) },
         { id: 'play_safe', label: 'PLAY-safe OR EDIT guard', ok: /State\.isPaused|EDIT_ONLY|PlayerController\.|skin/i.test(c) || !/World\.createObject|World\.clearWorld/.test(c) }
     ];
 }

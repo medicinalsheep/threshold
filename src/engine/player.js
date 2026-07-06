@@ -212,11 +212,17 @@ export const PlayerController = {
         const crouching = Controls?.isAction?.('crouch');
         this._crouchBlend = THREE.MathUtils.lerp(this._crouchBlend, crouching ? 1 : 0, 0.18);
         const stealth = Controls?.isAction?.('stealthWalk');
-        const sprintMult = Controls?.isAction('sprint') && !crouching ? SPRINT_MULT : 1;
+        const wantsSprint = Controls?.isAction('sprint') && !crouching;
+        const survivalSprint = window.SurvivalNeeds?.getSprintMultiplier?.() ?? 1;
+        const survivalWalk = window.SurvivalNeeds?.getWalkSpeedMultiplier?.() ?? 1;
+        const survivalMove = window.SurvivalNeeds?.getMovementMultiplier?.() ?? 1;
+        const sprintMult = wantsSprint && window.SurvivalNeeds?.canSprint?.() !== false
+            ? SPRINT_MULT * survivalSprint
+            : 1;
         const adsMult = aiming ? ADS_WALK_MULT : 1;
         const crouchMult = THREE.MathUtils.lerp(1, 0.42, this._crouchBlend);
         const stealthMult = stealth ? 0.55 : 1;
-        const targetSpeed = this.walkSpeed * sprintMult * adsMult * crouchMult * stealthMult;
+        const targetSpeed = this.walkSpeed * sprintMult * adsMult * crouchMult * stealthMult * survivalWalk * survivalMove;
 
         if (len > 0) {
             mx /= len;
@@ -392,6 +398,21 @@ export const PlayerController = {
         }
     },
 
+    getMovementContext() {
+        if (!this.spawned || !this.body || !this.group) return null;
+        const speed = Math.hypot(this.body.velocity.x, this.body.velocity.z);
+        const sprinting = window.Controls?.isAction?.('sprint') && speed > 0.5;
+        return {
+            speed,
+            sprinting,
+            position: {
+                x: this.group.position.x,
+                y: this.group.position.y,
+                z: this.group.position.z,
+            },
+        };
+    },
+
     getState() {
         if (!this.spawned || !this.group) return null;
         return {
@@ -402,6 +423,7 @@ export const PlayerController = {
             },
             controlMode: window.State?.controlMode || 'fly',
             viewMode: window.State?.viewMode || 'tps',
+            vitals: window.SurvivalNeeds?.pack?.(),
         };
     },
 
@@ -435,6 +457,7 @@ export const PlayerController = {
         if (!data) return;
         if (data.controlMode) window.State.controlMode = data.controlMode;
         if (data.viewMode) window.State.viewMode = data.viewMode;
+        if (data.vitals) window.SurvivalNeeds?.unpack?.(data.vitals);
         if (data.position && this.spawned) {
             this.body.position.set(data.position.x, data.position.y + 0.86, data.position.z);
             this.group.position.set(data.position.x, data.position.y, data.position.z);

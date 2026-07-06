@@ -1,6 +1,6 @@
 /** Phase 18.2 — lab interactables: rotary switch, vacuum tubes, Leyden jars, journal */
 
-const LAB_ORIGIN = { x: -9, y: 0, z: 2 };
+import { labPos } from './starterSiteLayout.js';
 
 function glassJarMat(THREE, tint = 0xc8dce8) {
     return new THREE.MeshPhysicalMaterial({
@@ -68,7 +68,8 @@ export function buildStarterTeslaInteract182() {
     knob.position.set(0.28, 0.38, 0);
     knob.userData.switchKnob = true;
     rotaryGroup.add(switchBase, switchPost, crank, knob);
-    rotaryGroup.position.set(LAB_ORIGIN.x - 1.35, 0, LAB_ORIGIN.z - 1.05);
+    const rotaryPos = labPos(-4.2, -0.85);
+    rotaryGroup.position.set(rotaryPos.x, rotaryPos.y, rotaryPos.z);
     rotaryGroup.rotation.y = 0.35;
     rotaryGroup.userData = {
         id: 'starter_tesla_rotary',
@@ -129,7 +130,8 @@ export function buildStarterTeslaInteract182() {
         tubeGlow.push(filament);
         tubeGroup.add(socket, bulb, filament);
     });
-    tubeGroup.position.set(LAB_ORIGIN.x - 1.55, 0, LAB_ORIGIN.z + 1.65);
+    const tubePos = labPos(4.5, 0.9);
+    tubeGroup.position.set(tubePos.x, tubePos.y, tubePos.z);
     tubeGroup.rotation.y = -0.08;
     tubeGroup.userData = {
         id: 'starter_tesla_tubes',
@@ -170,7 +172,8 @@ export function buildStarterTeslaInteract182() {
         foilBands.push(foil);
         leydenGroup.add(jar, foil, cap);
     });
-    leydenGroup.position.set(LAB_ORIGIN.x - 1.85, 0, LAB_ORIGIN.z - 0.35);
+    const leydenPos = labPos(-4.6, 0.5);
+    leydenGroup.position.set(leydenPos.x, leydenPos.y, leydenPos.z);
     leydenGroup.rotation.y = 0.22;
     leydenGroup.userData = {
         id: 'starter_tesla_leyden',
@@ -213,7 +216,8 @@ export function buildStarterTeslaInteract182() {
     pen.position.set(0.12, 0.86, 0.18);
     pen.rotation.z = 0.4;
     journalGroup.add(lectern, journal, pen);
-    journalGroup.position.set(LAB_ORIGIN.x + 0.95, 0, LAB_ORIGIN.z + 1.35);
+    const journalPos = labPos(3.8, 1.1);
+    journalGroup.position.set(journalPos.x, journalPos.y, journalPos.z);
     journalGroup.rotation.y = -0.55;
     journalGroup.userData = {
         id: 'starter_tesla_journal',

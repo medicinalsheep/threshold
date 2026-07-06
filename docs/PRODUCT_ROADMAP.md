@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → local GIMP/Blender art → AI agents on NPCs.
 
-**Current version:** **6.7.0** — Phase 13 stability (audio cache, weather sync, session UX)
+**Current version:** **9.0.0** — Guided session, showcase world, survival vitals, collab + export stack (Sprints A–K)
 
 **Scope map:** [README.md](README.md) · **Phases:** [NEXT_PHASES.md](NEXT_PHASES.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
@@ -24,9 +24,10 @@
 ## User journey (target workflow)
 
 ```
-1. LOBBY        → Solo or Create Session
-2. PLAYTEST     → Walk pads, FPS, ADS, footsteps, Third Eye
-3. DESIGN       → EDIT: build map, SFX, insert NPCs / GLTF
+1. LOBBY        → PLAY or BUILD → ENTER (or Create Session)
+2. GUIDED TOUR  → Mode-aware 6-step walkthrough
+3. PLAYTEST     → Walk showcase, survival vitals, weather, Third Eye
+4. DESIGN       → BUILD: insert, Compiler, textures, agents
 4. ART          → GIMP textures · Blender GLB · textures:watch
 5. GENERATE     → PromptGen (+ assets) → Compiler → RUN IN ENGINE
 6. AGENTS       → Optional: Grok/local agents on NPCs

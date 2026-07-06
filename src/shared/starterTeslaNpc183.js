@@ -1,16 +1,20 @@
-/** Phase 18.3 — Tesla lab guide NPC, intro captions, lab radio zone */
+/** Phase 18.3 / 19.5 / R8.2.7 — Nikola lab guide, coat prop, intro captions */
 
 import { NpcPatrol } from './npcPatrol.js';
 import { spawnHumanWithAvatar } from './avatarLoader.js';
+import { AvatarManifest } from './avatarManifest.js';
+import { attachLabCoat } from './labCoatProp.js';
+import { labPos } from './starterSiteLayout.js';
 
-const LAB_BENCH = { x: -8.6, z: 3.45 };
-const LAB_COIL = { x: -9.35, z: 1.55 };
+const LAB_BENCH = labPos(-2.8, -1.2);
+const LAB_COIL = labPos(0.2, -0.35);
+const LAB_TUBES = labPos(4.5, 0.9);
+const LAB_ROTARY = labPos(-4.2, -0.85);
 
 export const INTRO_CAPTIONS = [
-    { at: 0, dur: 1150, text: 'THRESHOLD RESEARCH LAB — Wardenclyffe Annex' },
-    { at: 1200, dur: 1500, text: 'Lattice tower online · calibrating field coils' },
-    { at: 2800, dur: 1400, text: 'Brick facade · vacuum tubes · Leyden array' },
-    { at: 4300, dur: 1700, text: 'Approach the entrance — your project build begins here' },
+    { at: 0, dur: 1400, text: 'THRESHOLD — Wardenclyffe Research Lab' },
+    { at: 1500, dur: 1500, text: 'Lab north · courtyard demos south · Nikola on patrol' },
+    { at: 3100, dur: 1400, text: 'ESC to skip · F to talk · PromptGen extends your world' },
 ];
 
 export const TeslaIntroCaptions = {
@@ -61,16 +65,20 @@ export async function spawnTeslaGuideNpc() {
         return null;
     }
 
+    const THREE = window.THREE;
+    const roleBase = AvatarManifest.resolveProfileForRole('tesla_guide');
     const npc = await spawnHumanWithAvatar({
         id: 'tesla_guide_npc',
         appearance: {
-            bodyColor: 0xe8e4dc,
+            ...roleBase,
+            bodyColor: 0xf0ece4,
             pantsColor: 0x2a2830,
             skinColor: 0xd4a882,
             hairColor: 0x3a3028,
         },
     });
-    npc.position.set(LAB_COIL.x, 0, LAB_COIL.z);
+    if (THREE) attachLabCoat(npc, THREE);
+    npc.position.set(LAB_COIL.x, LAB_COIL.y, LAB_COIL.z);
     npc.rotation.y = 0.65;
     npc.userData = {
         id: 'tesla_guide_npc',
@@ -93,9 +101,9 @@ export async function spawnTeslaGuideNpc() {
     NpcPatrol.register(npc, [
         { x: LAB_COIL.x, z: LAB_COIL.z },
         { x: LAB_BENCH.x, z: LAB_BENCH.z },
-        { x: -10.5, z: 3.6 },
-        { x: -10.2, z: 1.0 },
-    ], 0.88);
+        { x: LAB_TUBES.x, z: LAB_TUBES.z },
+        { x: LAB_ROTARY.x, z: LAB_ROTARY.z },
+    ], 0.82);
 
     return npc;
 }

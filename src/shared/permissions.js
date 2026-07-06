@@ -15,7 +15,10 @@ export const Permissions = {
         const mode = Network.mode;
         if (Session.isSpectator || mode === 'spectate') return false;
         if (mode === 'solo' || mode === 'host') return true;
-        if (mode === 'guest') return Session.isAdmin(fromKey || Session.playerKey);
+        if (mode === 'guest') {
+            if (window.CollaborateGuard?.sceneLocked) return false;
+            return Session.isAdmin(fromKey || Session.playerKey);
+        }
         return false;
     },
 

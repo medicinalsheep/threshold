@@ -36,6 +36,9 @@ import/*.glb
 !import/tesla_coil*.glb
 !import/lab_bench.glb
 !import/lab_door.glb
+!import/wardenclyffe_building*.glb
+!import/lab_wood_liner.glb
+!import/wardenclyffe_door.glb
 !import/starter_avatar*.glb
 !import/starter_npc_*.glb
 !import/hair_*.glb
@@ -59,6 +62,9 @@ public/bundle/import/*
 !public/bundle/import/tesla_coil*.glb
 !public/bundle/import/lab_bench.glb
 !public/bundle/import/lab_door.glb
+!public/bundle/import/wardenclyffe_building*.glb
+!public/bundle/import/lab_wood_liner.glb
+!public/bundle/import/wardenclyffe_door.glb
 !public/bundle/import/starter_avatar*.glb
 !public/bundle/import/starter_npc_*.glb
 !public/bundle/import/hair_*.glb

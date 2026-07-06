@@ -1,4 +1,4 @@
-# Getting started with Threshold (v6.4)
+# Getting started with Threshold (v9.0)
 
 One linear path from lobby to shipping — plus the **realism starter** and **TC** export practice.
 
@@ -9,14 +9,14 @@ One linear path from lobby to shipping — plus the **realism starter** and **TC
 ## The loop
 
 ```
-Lobby → Tutorial → Build (EDIT) → Playtest → Export (9 steps) → Store prep → Package
+Lobby → PLAY or BUILD → Guided tour → Build (EDIT) or Playtest (PLAY) → Export → Package
 ```
 
 | Step | Where | What you learn |
 |------|--------|----------------|
-| 1 | **Lobby → SOLO PLAY** | TPS walk, surface pads, footstep SFX |
-| 2 | **Tutorial** (auto or MORE → TUTORIAL) | Panels, EDIT/PLAY, insert, optional AI |
-| 3 | **PLAY** | FPS (**V**), ADS (**R**), Third Eye (**T**), shoot (**G**) |
+| 1 | **Lobby → ENTER** | Choose **PLAY** or **BUILD** before entering |
+| 2 | **Guided tour** (auto or MORE → TUTORIAL) | Showcase site, PromptGen, export pipeline |
+| 3 | **PLAY** | Walk, survival vitals, **F** interact, weather, Nikola |
 | 4 | **EDIT** | Insert objects, textures, GLTF, SFX |
 | 5 | **SAVE WORLD** | Share links `?world=CODE` |
 | 6 | **MORE → EXPORT** | 9-step walkthrough → manifest |
@@ -48,14 +48,14 @@ npm run preview                 # http://localhost:4173
 
 ---
 
-## Realism starter (SOLO default)
+## Wardenclyffe showcase (SOLO default)
 
-After **SOLO PLAY**, try this 2-minute playtest:
+After **ENTER**, try this 2-minute playtest:
 
-1. Walk across **grass / wood / gravel / asphalt** pads — different footstep sounds.
-2. **V** → FPS mode; **R** hold → ADS; **G** → shoot glass target.
-3. **T** → Third Eye — highlights Alex, Jordan, Sam NPCs and terminals.
-4. **E** at AI Build Station / Model Kiosk.
+1. Spawn at the **visitor gateway** — walk the gravel path toward the lab.
+2. **PLAY** mode — survival vitals tick; **F** at coffee nook / creek / benches.
+3. **T** → Third Eye — terminals, Nikola, courtyard props.
+4. **F** at AI / Compiler / Avatar kiosks on the approach path.
 
 Full controls and recipes: [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md)
 

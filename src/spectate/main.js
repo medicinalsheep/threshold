@@ -51,8 +51,10 @@ export const Spectate = {
                 : net?.mode === 'guest' ? `guest ${net.roomId}` : 'solo preview';
         const el = document.getElementById('spectate-render-info');
         const follow = this.isFollowingHost();
+        const audio = window.AudioManifestSync?.getGuestStatus?.();
+        const audioNote = audio?.missing ? ` · audio ${audio.received}/${audio.total}` : '';
         if (el) {
-            el.textContent = `${mode.short} · ${netLabel} · ${follow ? 'host cam' : 'free cam'}`;
+            el.textContent = `${mode.short} · ${netLabel} · ${follow ? 'host cam' : 'free cam'}${audioNote}`;
         }
         document.getElementById('spectate-follow-host')?.classList.toggle('active', follow);
         document.getElementById('spectate-free-cam')?.classList.toggle('active', !follow);

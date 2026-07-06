@@ -67,6 +67,11 @@
     box-sizing: border-box; /* Crucial for width: 100% */
 }
 
+.comp-textarea.comp-error-highlight {
+    border-color: #ff6b6b;
+    box-shadow: 0 0 0 1px rgba(255, 107, 107, 0.35);
+}
+
 .comp-btn {
     text-align: left;
     background: transparent;

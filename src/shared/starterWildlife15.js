@@ -1,4 +1,6 @@
-/** Phase 15 — wildlife scene props: dog bowl near Sam, alley cat */
+/** Phase 15 / 19 — wildlife scene props: dog bowl near Sam, alley cat */
+
+import { court } from './starterSiteLayout.js';
 
 export function buildStarterWildlife15() {
     const Engine = window.Engine;
@@ -17,7 +19,7 @@ export function buildStarterWildlife15() {
             || new THREE.CylinderGeometry(0.14, 0.18, 0.06, 8),
         bowlMat
     );
-    bowl.position.set(-0.55, 0.03, 0.75);
+    bowl.position.set(court(-1.75, 1.15).x, 0.03, court(-1.75, 1.15).z);
     bowl.receiveShadow = true;
     bowl.userData = {
         id: 'starter_dog_bowl',
@@ -46,7 +48,7 @@ export function buildStarterWildlife15() {
     tail.rotation.x = 0.6;
     tail.userData.animCatTail = true;
     catGroup.add(body, head, earL, earR, tail);
-    catGroup.position.set(-6.65, 0, -5.05);
+    catGroup.position.set(court(-7, 5).x, 0, court(-7, 5).z);
     catGroup.rotation.y = 0.55;
     catGroup.userData = {
         id: 'starter_wildlife_cat',

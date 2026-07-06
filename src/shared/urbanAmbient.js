@@ -1,7 +1,9 @@
 /** Phase 16 — urban highway ambience: truck/moto Doppler, siren, construction beep */
 
-const HIGHWAY_ZONE = { x: 6.5, y: 0.5, z: -3.2, radius: 10, volume: 1 };
-const CONSTRUCTION_ZONE = { x: 5.4, y: 0.3, z: -1.35, radius: 5.5, volume: 0.55 };
+import { SITE } from './starterSiteLayout.js';
+
+const HIGHWAY_ZONE = { x: SITE.highway.x, y: 0.5, z: SITE.highway.z, radius: 12, volume: 1 };
+const CONSTRUCTION_ZONE = { x: SITE.highway.x - 2, y: 0.3, z: SITE.highway.z + 2, radius: 5.5, volume: 0.55 };
 
 function dist3(a, b) {
     const dx = a.x - b.x;

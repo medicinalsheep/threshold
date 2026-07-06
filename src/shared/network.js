@@ -2,6 +2,8 @@ import Peer from 'peerjs';
 import { getPeerOptions } from '../config.js';
 import { Session } from './session.js';
 import { Sync } from './sync.js';
+import { AudioManifestSync, buildHostAudioManifest } from './audioManifestSync.js';
+import { TextureManifestSync, buildHostTextureManifest } from './textureManifestSync.js';
 import { Permissions } from './permissions.js';
 import { defaultVoipHostConfig, normalizeVoipConfig, summarizeVoipConfig } from './voipConfig.js';
 
@@ -19,6 +21,9 @@ export const Network = {
     _broadcastTimer: null,
     _liveTimer: null,
     _voipReady: false,
+    _reconnectTimer: null,
+    _reconnectAttempts: 0,
+    _reconnecting: false,
 
     getShareUrl() {
         if (!this.roomId) return window.location.href.split('?')[0];
@@ -95,9 +100,12 @@ export const Network = {
                         peerId: this.peer.id,
                         spectate: true,
                     });
+                    this._reconnectAttempts = 0;
+                    this._reconnecting = false;
                     this.updateUi();
                     resolve(roomId);
                 });
+                conn.on('close', () => this._onHostLost());
                 conn.on('error', reject);
             });
             this.peer.on('error', reject);
@@ -128,9 +136,12 @@ export const Network = {
                         playerName: Session.playerName,
                         peerId: this.peer.id,
                     });
+                    this._reconnectAttempts = 0;
+                    this._reconnecting = false;
                     this.updateUi();
                     resolve(roomId);
                 });
+                conn.on('close', () => this._onHostLost());
 
                 conn.on('error', reject);
             });
@@ -343,6 +354,16 @@ export const Network = {
                 this._registerPlayer(conn, data);
                 if (window.UI?.status) window.UI.status(`${data.playerName || 'Player'} joined`);
                 this._broadcastState();
+                void this._pushAudioManifestToConn(conn);
+                void this._pushTextureManifestToConn(conn);
+                return;
+            }
+            if (data.type === 'AUDIO_PULL') {
+                void AudioManifestSync.hostHandlePull(conn, data.clipIds || []);
+                return;
+            }
+            if (data.type === 'TEXTURE_PULL') {
+                void TextureManifestSync.hostHandlePull(conn, data.textureIds || []);
                 return;
             }
             if (data.type === 'ACTION') {
@@ -367,11 +388,19 @@ export const Network = {
                     this.scheduleLiveSync();
                     return;
                 }
-                if (Permissions.isWorldEditAction(data.action) && !Permissions.canEditWorld(from)) {
-                    conn.send?.({ type: 'DENIED', action: data.action, message: 'No admin permission' });
+                if (data.action === 'RUN_CODE' && window.CollaborateGuard?.shouldQueueAiRun?.(data.payload, from)) {
+                    const entry = window.CollaborateGuard.queueRun(from, data.payload, conn);
+                    conn.send?.({ type: 'AI_RUN_PENDING', id: entry.id });
                     return;
                 }
-                Sync.applyAction(data.action, { ...data.payload, fromKey: from });
+                if (Permissions.isWorldEditAction(data.action) && !Permissions.canEditWorld(from)) {
+                    const msg = window.CollaborateGuard?.sceneLocked
+                        ? 'Scene locked — host-only edits'
+                        : 'No admin permission';
+                    conn.send?.({ type: 'DENIED', action: data.action, message: msg });
+                    return;
+                }
+                Sync.applyAction(data.action, { ...data.payload, fromKey: from, authorKey: from });
                 this.scheduleBroadcast();
             }
         } else if (this.mode === 'guest' || this.mode === 'spectate') {
@@ -382,8 +411,37 @@ export const Network = {
                 } else if (data.state?.playerPositions) {
                     window.Voip?.setPlayerPositions?.(data.state.playerPositions);
                 }
+                this._reconnectAttempts = 0;
+                this._reconnecting = false;
                 window.UI?.renderHostPanel?.();
                 window.Spectate?.updateHud?.();
+            }
+            if (data.type === 'AUDIO_MANIFEST') {
+                void AudioManifestSync.onGuestManifest(data.manifest || []);
+            }
+            if (data.type === 'AUDIO_CLIP') {
+                void AudioManifestSync.receiveClip(data);
+            }
+            if (data.type === 'AUDIO_CLIP_SKIP') {
+                AudioManifestSync.onClipSkipped(data);
+            }
+            if (data.type === 'TEXTURE_MANIFEST') {
+                void TextureManifestSync.onGuestManifest(data.manifest || []);
+            }
+            if (data.type === 'TEXTURE_BLOB') {
+                void TextureManifestSync.receiveTexture(data);
+            }
+            if (data.type === 'TEXTURE_BLOB_SKIP') {
+                TextureManifestSync.onTextureSkipped(data);
+            }
+            if (data.type === 'AI_RUN_PENDING') {
+                window.UI?.status?.('Waiting for host to approve AI / compiler run…');
+            }
+            if (data.type === 'AI_RUN_RESULT') {
+                window.CollaborateGuard?.onGuestResult?.(data);
+            }
+            if (data.type === 'HANDOFF_SNAPSHOT') {
+                window.HostMigration?.onHandoffSnapshot?.(data);
             }
             if (data.type === 'LIVE_STATE' && data.state) {
                 Sync.applyLiveState(data.state);
@@ -434,6 +492,88 @@ export const Network = {
             payload,
             from: Session.playerKey
         });
+    },
+
+    requestAudioClips(clipIds = []) {
+        if ((this.mode !== 'guest' && this.mode !== 'spectate') || !this.hostConnection?.open) return;
+        this.hostConnection.send({ type: 'AUDIO_PULL', clipIds });
+    },
+
+    requestTextureBlobs(textureIds = []) {
+        if ((this.mode !== 'guest' && this.mode !== 'spectate') || !this.hostConnection?.open) return;
+        this.hostConnection.send({ type: 'TEXTURE_PULL', textureIds });
+    },
+
+    async _pushAudioManifestToConn(conn) {
+        const manifest = buildHostAudioManifest();
+        if (!manifest.length || !conn?.open) return;
+        conn.send({ type: 'AUDIO_MANIFEST', manifest });
+        await AudioManifestSync.hostHandlePull(conn, manifest.map((m) => m.id));
+    },
+
+    async _pushTextureManifestToConn(conn) {
+        const manifest = buildHostTextureManifest();
+        if (!manifest.length || !conn?.open) return;
+        conn.send({ type: 'TEXTURE_MANIFEST', manifest });
+        await TextureManifestSync.hostHandlePull(conn, manifest.map((m) => m.id));
+    },
+
+    _onHostLost() {
+        if (this.mode !== 'guest' && this.mode !== 'spectate') return;
+        if (this._reconnecting) return;
+        this._reconnecting = true;
+        window.UI?.status?.('Host disconnected — reconnecting… (15s grace)');
+        this._scheduleReconnect();
+    },
+
+    _scheduleReconnect() {
+        clearTimeout(this._reconnectTimer);
+        if (this._reconnectAttempts >= 5) {
+            this._reconnecting = false;
+            window.UI?.status?.('Could not reconnect — see migration steps');
+            window.HostMigration?.onReconnectFailed?.();
+            return;
+        }
+        this._reconnectTimer = setTimeout(() => this._tryReconnect(), 3000);
+    },
+
+    _tryReconnect() {
+        const roomId = this.roomId;
+        if (!roomId || this.mode === 'solo' || this.mode === 'host') {
+            this._reconnecting = false;
+            return;
+        }
+        this._reconnectAttempts += 1;
+        const spectate = this.mode === 'spectate';
+        try {
+            if (this.peer?.open) {
+                const conn = this.peer.connect(roomId, { reliable: true });
+                this.hostConnection = conn;
+                this._setupConn(conn);
+                conn.on('open', () => {
+                    conn.send({
+                        type: 'JOIN',
+                        playerKey: Session.playerKey,
+                        playerName: Session.playerName,
+                        peerId: this.peer.id,
+                        spectate,
+                    });
+                    this._reconnectAttempts = 0;
+                    this._reconnecting = false;
+                    window.UI?.status?.('Reconnected to host');
+                    this.updateUi();
+                });
+                conn.on('close', () => this._onHostLost());
+                conn.on('error', () => this._scheduleReconnect());
+            } else {
+                const joiner = spectate ? this.spectateRoom.bind(this) : this.joinRoom.bind(this);
+                joiner(roomId).then(() => {
+                    window.UI?.status?.('Reconnected to host');
+                }).catch(() => this._scheduleReconnect());
+            }
+        } catch {
+            this._scheduleReconnect();
+        }
     },
 
     scheduleBroadcast() {
@@ -491,11 +631,19 @@ export const Network = {
 
         const hostPanelBtn = document.getElementById('btn-host-panel');
         if (hostPanelBtn) hostPanelBtn.style.display = (this.mode === 'host' || this.mode === 'guest' || this.mode === 'spectate') ? 'inline-block' : 'none';
+
+        const syncBtn = document.getElementById('btn-sync-story');
+        if (syncBtn) syncBtn.style.display = (this.mode === 'host' || this.mode === 'guest' || this.mode === 'spectate') ? 'inline-block' : 'none';
+
+        window.CreatorHud?.updateSync?.();
     },
 
     destroy() {
         clearTimeout(this._broadcastTimer);
         clearTimeout(this._liveTimer);
+        clearTimeout(this._reconnectTimer);
+        this._reconnectAttempts = 0;
+        this._reconnecting = false;
         window.Voip?.destroy?.();
         this.connections.forEach((c) => c.close());
         this.hostConnection?.close();

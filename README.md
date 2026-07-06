@@ -2,7 +2,7 @@
 
 A collaborative 3D creative playground — design worlds, generate code with AI, record sounds, spawn characters, play together, and **ship games** to stores (Play, Windows, Steam) via a guided export walkthrough.
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 7.2.0
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 9.0.0
 
 ---
 
@@ -10,7 +10,7 @@ A collaborative 3D creative playground — design worlds, generate code with AI,
 
 | Mode | How |
 |------|-----|
-| **Solo** | Lobby → **SOLO PLAY** — realistic action starter (walk, FPS, ADS, footstep pads) |
+| **Solo** | Lobby → choose **PLAY** or **BUILD** → **ENTER** — Wardenclyffe showcase site |
 | **Host** | Lobby → **CREATE SESSION** → **COPY LINK** → friends open link → **JOIN FRIENDS** |
 | **Guest** | Open host's link (or enter room code) → **JOIN FRIENDS** |
 | **TC demo** | Lobby → **TC →** — vehicles, NPCs, circuit, full export practice |
@@ -18,17 +18,17 @@ A collaborative 3D creative playground — design worlds, generate code with AI,
 ```
 Lobby → Engine (3D world) ↔ Compiler (code) ↔ PromptGen (AI prompts)
               ↓
-     First visit: 9-step tutorial · replay via MORE → TUTORIAL
+     First visit: PLAY/BUILD choice + 6-step guided tour · MORE → TUTORIAL (FULL)
               ↓
      Walk/FPS · PBR textures · footsteps · GLB avatars · EXPORT · ship
 ```
 
 ### First session (recommended)
 
-1. **Lobby → SOLO PLAY** — starter scene: platform, surface pads (grass/wood/gravel/asphalt), Alex/Jordan/Sam NPCs.
-2. **Move** — WASD walk, Shift sprint, **V** toggle FPS/TPS, **R** ADS in FPS, **T** Third Eye.
-3. **Try** — **LMB** shoot (real SFX), **E** interact, walk pads for recorded footsteps; rain + thunder roll in after intro.
-4. **Tutorial** — 9-step overlay; **MORE → TUTORIAL** to replay.
+1. **Lobby** — pick **PLAY** or **BUILD**, then **ENTER** (Wardenclyffe showcase).
+2. **Guided tour** — 6-step overlay; mode-aware PLAY/BUILD; **MORE → TUTORIAL** to replay.
+3. **Move** — WASD walk, Shift sprint, **F** interact, survival vitals HUD (**V** toggles HUD).
+4. **Explore** — lab GLBs north, visitor gateway, Nikola, weather, creek/coffee survival props.
 5. **EDIT** — pause, drag panels, **+** insert, Texture tab or **INSERT → GLTF** for GIMP/Blender art.
 6. **Hyper** render mode — PBR textures + normal maps on starter meshes.
 7. **SAVE WORLD** — **MORE** menu; share `?world=CODE` links.

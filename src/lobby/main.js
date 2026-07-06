@@ -1,12 +1,32 @@
 import { Session } from '../shared/session.js';
 import { Network } from '../shared/network.js';
 import { enterWindowedFullscreen } from '../shared/fullscreen.js';
-import { setLoadTC } from '../shared/referenceEdition.js';
+import { setSelectedTemplateId, initLobbyTemplatePicker } from '../shared/starterTemplates.js';
+import { ViewPrefs } from '../shared/viewPrefs.js';
+import { QuickExportPlay } from '../shared/quickExportPlay.js';
 import {
     applyLobbyVoipVisibility,
     readLobbyVoipConfig,
     summarizeVoipConfig,
 } from '../shared/voipConfig.js';
+
+function initLobbyModePicker() {
+    const saved = ViewPrefs.get('sessionMode', 'play');
+    const setActive = (mode) => {
+        document.querySelectorAll('.lobby-mode-btn').forEach((btn) => {
+            btn.classList.toggle('active', btn.dataset.mode === mode);
+        });
+        ViewPrefs.set('sessionMode', mode);
+    };
+    setActive(saved === 'build' ? 'build' : 'play');
+    document.getElementById('lobby-mode-play')?.addEventListener('click', () => setActive('play'));
+    document.getElementById('lobby-mode-build')?.addEventListener('click', () => setActive('build'));
+}
+
+function persistLobbyMode() {
+    const active = document.querySelector('.lobby-mode-btn.active')?.dataset?.mode;
+    if (active) ViewPrefs.set('sessionMode', active);
+}
 
 export function initLobby(onReady) {
     const overlay = document.getElementById('lobby-overlay');
@@ -32,6 +52,9 @@ export function initLobby(onReady) {
     document.getElementById('lobby-voip-mode')?.addEventListener('change', applyLobbyVoipVisibility);
     document.getElementById('lobby-voip-enabled')?.addEventListener('change', applyLobbyVoipVisibility);
     applyLobbyVoipVisibility();
+    initLobbyTemplatePicker();
+    QuickExportPlay.bindOnce();
+    initLobbyModePicker();
 
     const enterApp = () => {
         overlay?.classList.add('hidden');
@@ -54,6 +77,7 @@ export function initLobby(onReady) {
             window.Voip?.init?.(voipConfig);
             await window.Voip?.startIfNeeded?.();
             setStatus(`Session live — ${summarizeVoipConfig(voipConfig)}`);
+            persistLobbyMode();
             enterApp();
         } catch (e) {
             console.error('[lobby] create session', e);
@@ -73,6 +97,7 @@ export function initLobby(onReady) {
                 localStorage.setItem('threshold_player_name', name);
             }
             await Network.joinRoom(code);
+            persistLobbyMode();
             enterApp();
         } catch (e) {
             setStatus('Could not join — check code & host is online', true);
@@ -86,6 +111,9 @@ export function initLobby(onReady) {
             Session.playerName = name;
             localStorage.setItem('threshold_player_name', name);
         }
+        const tpl = document.getElementById('lobby-template')?.value || 'wardenclyffe';
+        setSelectedTemplateId(tpl);
+        persistLobbyMode();
         Network.startSolo();
         enterApp();
     });
@@ -97,9 +125,12 @@ export function initLobby(onReady) {
             Session.playerName = name;
             localStorage.setItem('threshold_player_name', name);
         }
-        setLoadTC(true);
+        setSelectedTemplateId('tc-circuit');
+        const sel = document.getElementById('lobby-template');
+        if (sel) sel.value = 'tc-circuit';
+        persistLobbyMode();
         Network.startSolo();
-        setStatus('TC showcase loading…');
+        setStatus('TC Circuit template loading…');
         enterApp();
     });
 
@@ -125,5 +156,20 @@ export function initLobby(onReady) {
 
     if (urlRoom) {
         setStatus(`Room code detected: ${urlRoom.toUpperCase()} — tap Join`);
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const worldCode = urlParams.get('world');
+    const autoplay = urlParams.get('autoplay') === '1';
+    if (worldCode && autoplay) {
+        Session.init();
+        const name = document.getElementById('lobby-name')?.value?.trim();
+        if (name) {
+            Session.playerName = name;
+            localStorage.setItem('threshold_player_name', name);
+        }
+        Network.startSolo();
+        setStatus(`Loading world ${worldCode.toUpperCase()}…`);
+        enterApp();
     }
 }

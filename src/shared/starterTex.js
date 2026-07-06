@@ -38,7 +38,7 @@ export function resolveFinishSettings(obj) {
     return starterTexCfg.defaults || {};
 }
 
-async function applyEntriesToMesh(mesh, entries, TB) {
+export async function applyEntriesToMesh(mesh, entries, TB) {
     let maps = 0;
     for (const entry of entries) {
         const filePath = entry.path || `textures/${entry.file}`;

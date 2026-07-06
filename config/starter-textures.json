@@ -30,8 +30,9 @@
     "Corner Shop": { "uvRepeat": [2, 1], "normalScale": 0.5, "envMapIntensity": 0.26 },
     "Creaky Door": { "uvRepeat": [1, 2], "normalScale": 0.45, "envMapIntensity": 0.22 },
     "Construction Zone": { "uvRepeat": [3, 2], "normalScale": 0.6, "envMapIntensity": 0.28 },
-    "Tesla Lab Floor": { "uvRepeat": [4, 3], "normalScale": 0.5, "envMapIntensity": 0.26 },
-    "Tesla Brick Wall": { "uvRepeat": [3, 2], "normalScale": 0.85, "envMapIntensity": 0.22 },
+    "Tesla Lab Floor": { "uvRepeat": [5, 4], "normalScale": 0.58, "envMapIntensity": 0.28 },
+    "Tesla Brick Wall": { "uvRepeat": [4, 3], "normalScale": 0.92, "envMapIntensity": 0.24 },
+    "Tesla Roof": { "uvRepeat": [5, 4], "normalScale": 0.7, "envMapIntensity": 0.18 },
     "Tesla Bench": { "uvRepeat": [2, 1], "normalScale": 0.48, "envMapIntensity": 0.28 },
     "Tesla Coil": { "uvRepeat": [2, 2], "normalScale": 0.7, "envMapIntensity": 0.48 },
     "Tesla Lab Door": { "uvRepeat": [1, 2], "normalScale": 0.42, "envMapIntensity": 0.24 },
@@ -52,6 +53,9 @@
     "starter_tesla_door": "Tesla Lab Door",
     "starter_tesla_lab": "Tesla Lab Floor",
     "starter_tesla_exterior": "Tesla Field",
-    "starter_tesla_building": "Tesla Brick Wall"
+    "starter_tesla_building": "Tesla Brick Wall",
+    "starter_tesla_building_shell": "Tesla Brick Wall",
+    "starter_tesla_building_liner": "Tesla Lab Floor",
+    "starter_tesla_exterior_door": "Tesla Lab Door"
   }
 }

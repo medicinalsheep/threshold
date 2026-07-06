@@ -83,17 +83,32 @@
                             <p class="lobby-voip-hint">Default: WebRTC + PTT + proximity — works in browser without Discord. True Discord/TeamSpeak embed is not available in web; hybrid opens Discord in parallel.</p>
                         </div>
                     </details>
+                    <div class="lobby-mode-row" role="group" aria-label="Start mode">
+                        <span class="lobby-mode-label">START IN</span>
+                        <button type="button" id="lobby-mode-play" class="lobby-mode-btn active" data-mode="play">PLAY</button>
+                        <button type="button" id="lobby-mode-build" class="lobby-mode-btn" data-mode="build">BUILD</button>
+                    </div>
+                    <p class="lobby-mode-hint">PLAY runs physics &amp; vitals · BUILD pauses to edit your world</p>
+                    <label class="lobby-template-row">
+                        <span class="lobby-template-label">STARTER WORLD</span>
+                        <select id="lobby-template" class="lobby-input lobby-template-select" title="Template loaded on SOLO">
+                            <option value="wardenclyffe">Wardenclyffe</option>
+                        </select>
+                    </label>
+                    <p id="lobby-template-desc" class="lobby-template-desc">Polished showcase site — lab GLBs, survival, weather, export-ready</p>
                     <div class="lobby-quick-row">
-                        <button id="lobby-solo" class="lobby-btn lobby-btn-ghost">SOLO →</button>
-                        <button id="lobby-tc" class="lobby-btn lobby-btn-ghost" title="TC showcase — veh, chr GLB+LOD, sfx, cp — EXPORT demo">TC →</button>
+                        <button id="lobby-solo" class="lobby-btn lobby-btn-primary">ENTER →</button>
+                        <button id="lobby-tc" class="lobby-btn lobby-btn-ghost" title="Shortcut — TC Circuit template">TC →</button>
                         <button id="lobby-spectate" class="lobby-btn lobby-btn-spectate">SPECTATE</button>
                     </div>
+                    <button id="lobby-play-last-export" class="lobby-btn lobby-btn-ghost lobby-export-play" type="button" title="Open last EXPORT &amp; PLAY tab">▶ PLAY LAST EXPORT</button>
                     <details class="lobby-steps-wrap">
                         <summary>Quick tips</summary>
                         <div class="lobby-steps">
-                            <div class="lobby-step"><span class="lobby-step-num">1</span> Tap <strong>SOLO PLAY</strong> — FULL for immersive · TOUCH for sticks</div>
-                            <div class="lobby-step"><span class="lobby-step-num">2</span> PromptGen + Compiler — AI builds your world</div>
-                            <div class="lobby-step"><span class="lobby-step-num">3</span> SFX tab — record sounds · link to objects</div>
+                            <div class="lobby-step"><span class="lobby-step-num">1</span> Choose <strong>PLAY</strong> or <strong>BUILD</strong>, then <strong>ENTER</strong></div>
+                            <div class="lobby-step"><span class="lobby-step-num">2</span> Guided tour — showcase site, PromptGen, export pipeline</div>
+                            <div class="lobby-step"><span class="lobby-step-num">3</span> Extend with EXAMPLES · ship via <strong>EXPORT &amp; PLAY</strong></div>
+                            <div class="lobby-step"><span class="lobby-step-num">4</span> Optional: <strong>TC →</strong> for vehicles &amp; lap challenge</div>
                         </div>
                     </details>
                     <div id="lobby-status"></div>
@@ -188,10 +203,28 @@
             </div>
         </div>
 
+        <div id="guided-session-modal" class="guided-session-modal" role="dialog" aria-labelledby="guided-session-title">
+            <div class="guided-session-card panel">
+                <p class="guided-session-kicker">Threshold</p>
+                <h2 id="guided-session-title">How do you want to start?</h2>
+                <p class="guided-session-body">Pick your session mode. You can switch anytime with the toolbar badge or <strong>PAUSE</strong>.</p>
+                <div class="guided-session-actions">
+                    <button type="button" id="guided-mode-play" class="guided-mode-btn guided-mode-play">
+                        <span class="guided-mode-title">PLAY</span>
+                        <span class="guided-mode-desc">Walk, test survival, weather, physics</span>
+                    </button>
+                    <button type="button" id="guided-mode-build" class="guided-mode-btn guided-mode-build">
+                        <span class="guided-mode-title">BUILD</span>
+                        <span class="guided-mode-desc">Pause sim · insert · Compiler · textures</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div id="engine-walkthrough" class="engine-walkthrough hidden" role="dialog" aria-labelledby="walkthrough-title">
             <div class="engine-walkthrough-card panel">
                 <div class="engine-walkthrough-header">
-                    <span id="walkthrough-step-label" class="walkthrough-step-label">1 / 8</span>
+                    <span id="walkthrough-step-label" class="walkthrough-step-label">1 / 5</span>
                     <button id="walkthrough-skip" type="button" class="btn-sm walkthrough-skip">SKIP</button>
                 </div>
                 <h3 id="walkthrough-title">Welcome</h3>
@@ -224,7 +257,9 @@
                         <button id="btn-copy-link" class="btn-sm">COPY LINK</button>
                         <button id="btn-host-pause" class="btn-sm" disabled>PAUSE</button>
                         <button id="btn-host-panel" class="btn-sm" style="display:none;" title="Host / players">PLAYERS</button>
+                        <button id="btn-sync-story" class="btn-sm" style="display:none;" title="What syncs in multiplayer">SYNC</button>
                     </div>
+                    <div id="creator-sync-chip" class="creator-sync-chip" aria-live="polite" title="Session sync status"></div>
                 </div>
                 <div class="toolbar-actions">
                     <span id="sim-mode-badge" class="sim-mode-badge edit toolbar-keep">EDIT</span>
@@ -240,8 +275,11 @@
                         <button id="btn-load" class="edit-only btn-sm">IMPORT</button>
                         <button id="btn-console-toggle" class="btn-sm" type="button" title="Toggle command console">CON</button>
                         <button id="btn-touch-toggle" class="btn-sm mobile-only" type="button" title="Toggle touch controls">TOUCH</button>
-                        <button id="btn-export-game" class="btn-sm" type="button" title="Export game package manifest">EXPORT</button>
-                        <button id="btn-restart-walkthrough" class="btn-sm" type="button" title="Replay first-session tutorial">TUTORIAL</button>
+                        <button id="btn-export-play" class="btn-sm" type="button" title="Save world + download manifest + open playable tab" style="border-color:var(--accent-color);color:var(--accent-color);">EXPORT &amp; PLAY</button>
+                        <button id="btn-export-game" class="btn-sm" type="button" title="Full export wizard (APK / Windows / Steam)">EXPORT</button>
+                        <button id="btn-restart-walkthrough" class="btn-sm" type="button" title="Replay 5-step quick tutorial">TUTORIAL</button>
+                        <button id="btn-restart-walkthrough-full" class="btn-sm" type="button" title="Full 9-step deep dive — GIMP, Blender, agents, store">TUTORIAL (FULL)</button>
+                        <button id="btn-perf-hud-toggle" class="btn-sm active" type="button" title="Toggle performance HUD (` backtick)">PERF</button>
                     </div>
                 </div>
                 </div>
@@ -277,7 +315,23 @@
                 <button type="button" class="touch-btn touch-btn-action" data-touch-btn="action" aria-label="Interact">ACT</button>
             </div>
 
+            <div id="creator-perf-hud" class="creator-perf-hud visible" aria-label="Performance HUD"></div>
+            <div id="survival-needs-hud" class="survival-needs-hud visible" aria-label="Survival vitals"></div>
             <div id="controls-hint">WASD fly · QE up/down · right-click menu</div>
+            <div id="action-hint-bar" class="action-hint-bar" aria-live="polite"></div>
+            <div id="action-hint-toast" class="action-hint-toast" aria-live="polite"></div>
+            <div id="intro-skip-pill" class="intro-skip-pill">
+                <span>Intro flythrough</span>
+                <button id="intro-skip-btn" type="button" class="btn-sm">SKIP · ESC</button>
+            </div>
+            <div id="tc-quest-card" class="tc-quest-card panel" role="complementary">
+                <p class="tc-quest-title">Optional side quest</p>
+                <p class="tc-quest-body">TC Circuit — 60s lap challenge with vehicles &amp; checkpoint gate. Exit to lobby → <strong>TC →</strong></p>
+                <div class="tc-quest-nav">
+                    <button id="tc-quest-dismiss" type="button" class="btn-sm">DISMISS</button>
+                    <button id="tc-quest-go" type="button" class="btn-sm">HOW TO</button>
+                </div>
+            </div>
             <div id="fps-crosshair" class="fps-crosshair" aria-hidden="true"></div>
             <p id="intro-caption" class="intro-caption" aria-live="polite"></p>
             <div id="third-eye-indicator" class="third-eye-indicator" aria-hidden="true" title="Third Eye active"></div>
@@ -635,8 +689,75 @@
                 <p id="host-voip-summary" class="insert-hint"></p>
                 <hr style="border-color:var(--border-color); margin:12px 0;">
                 <label class="insert-hint"><input type="checkbox" id="host-auto-coding-pause" checked> Auto-pause when host opens Compiler / PromptGen</label>
+                <label class="insert-hint host-only-link"><input type="checkbox" id="host-scene-lock"> Scene lock (host-only edits)</label>
+                <label class="insert-hint host-only-link"><input type="checkbox" id="host-ai-ack" checked> Require host approval for guest AI / compiler runs</label>
+                <p id="host-collab-guest-note" class="insert-hint" style="font-size:0.65rem;"></p>
                 <button id="host-push-bindings" class="insert-action secondary" type="button">PUSH CONTROLS TO ALL</button>
-                <p class="insert-hint" style="font-size:0.65rem;">Admins can add code & edit world. Guests customize personal keyboard + controller overrides in KEYS → Guest profile. Host control updates sync on broadcast.</p>
+                <hr style="border-color:var(--border-color); margin:12px 0;">
+                <p class="insert-hint host-only-link" style="font-size:0.65rem;">Before leaving — save world snapshot &amp; notify guests:</p>
+                <label class="insert-hint host-only-link">Designated successor</label>
+                <select id="host-handoff-player" class="insert-input host-only-link"></select>
+                <button id="host-handoff-btn" class="insert-action secondary host-only-link" type="button">SAVE &amp; HANDOFF</button>
+                <p id="host-handoff-status" class="insert-hint host-only-link" style="font-size:0.62rem;"></p>
+                <p class="insert-hint" style="font-size:0.65rem;">Admins can add code & edit world unless scene lock is on. Guests customize personal keyboard + controller overrides in KEYS → Guest profile.</p>
+            </div>
+        </div>
+
+        <!-- Sprint I — host migration / handoff -->
+        <div id="host-migration-modal" class="modal-backdrop">
+            <div id="host-migration-sheet" class="panel insert-sheet host-migration-sheet">
+                <div class="insert-header panel-drag-handle">
+                    <h3 id="host-migration-title" style="margin:0;">HOST DISCONNECTED</h3>
+                    <button id="host-migration-close" type="button">✕</button>
+                </div>
+                <div id="host-migration-body" class="host-migration-body"></div>
+                <div class="host-migration-nav">
+                    <button id="host-migration-lobby" type="button" class="btn-sm">LOBBY</button>
+                    <button id="host-migration-copy" type="button" class="btn-sm">COPY PLAY LINK</button>
+                    <button id="host-migration-play" type="button">PLAY SNAPSHOT</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sprint H — AI run approval queue (host) -->
+        <div id="ai-run-modal" class="modal-backdrop">
+            <div id="ai-run-sheet" class="panel insert-sheet ai-run-sheet">
+                <div class="insert-header panel-drag-handle">
+                    <h3 style="margin:0;">AI RUN REQUESTS</h3>
+                    <button id="ai-run-close" type="button">✕</button>
+                </div>
+                <p class="insert-hint">Guest compiler / Grok runs waiting for your approval.</p>
+                <div id="ai-run-queue" class="ai-run-queue"></div>
+            </div>
+        </div>
+
+        <!-- Sprint G — multiplayer sync story -->
+        <div id="sync-story-modal" class="modal-backdrop">
+            <div id="sync-story-sheet" class="panel insert-sheet sync-story-sheet">
+                <div class="insert-header panel-drag-handle">
+                    <h3 style="margin:0;">SYNC STORY</h3>
+                    <button id="sync-story-close" type="button">✕</button>
+                </div>
+                <div id="sync-story-body" class="sync-story-body"></div>
+                <div class="sync-story-nav">
+                    <button id="sync-story-dismiss" type="button">GOT IT</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sprint E — quick export preflight -->
+        <div id="export-preflight-modal" class="modal-backdrop">
+            <div id="export-preflight-sheet" class="panel insert-sheet export-preflight-sheet">
+                <div class="insert-header panel-drag-handle">
+                    <h3 style="margin:0;">EXPORT PREFLIGHT</h3>
+                    <button id="export-preflight-close" type="button">✕</button>
+                </div>
+                <div id="export-preflight-body" class="export-preflight-body"></div>
+                <div class="export-preflight-nav">
+                    <button id="export-preflight-cancel" type="button" class="btn-sm">CANCEL</button>
+                    <button id="export-preflight-force" type="button" class="btn-sm preflight-warn-btn">EXPORT ANYWAY</button>
+                    <button id="export-preflight-go" type="button">EXPORT &amp; PLAY</button>
+                </div>
             </div>
         </div>
 
@@ -741,6 +862,8 @@
                 <ul id="ref-checklist" class="ref-checklist"></ul>
                 <div id="comp-readiness" class="comp-readiness"></div>
                 <button id="btn-comp-check" class="comp-btn" style="border-color:var(--accent-color);color:var(--accent-color);">CHECK CODE READY?</button>
+                <label class="insert-hint" style="margin-top:8px; display:block;"><input type="checkbox" id="undo-mine-only"> Undo my edits only (multiplayer)</label>
+                <button id="btn-scene-undo" class="comp-btn" style="margin-top:4px; border-color:#5a8ab0; color:#8ab4d8;" disabled title="Ctrl+Z — restore scene before last script run">UNDO SCENE</button>
                 <button id="btn-comp-clear" class="comp-btn" style="margin-top:8px; border-color:#666; color:#888;">CLEAR</button>
             </aside>
             <main class="comp-main">
@@ -802,6 +925,13 @@
                         <button type="button" id="prompt-sound-none" class="btn-sm">NONE</button>
                     </div>
                     <div id="prompt-sound-list" class="prompt-sound-list"></div>
+                </div>
+                <div class="prompt-cookbook">
+                    <div class="prompt-cookbook-head">
+                        <span>EXAMPLES</span>
+                        <span class="prompt-cookbook-sub">Tested LEGO FIT prompts</span>
+                    </div>
+                    <div id="prompt-cookbook-list" class="prompt-cookbook-list"></div>
                 </div>
                 <button id="btn-prompt-gen">GENERATE PROMPT</button>
             </aside>

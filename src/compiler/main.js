@@ -4,6 +4,7 @@ import { Session } from '../shared/session.js';
 import { REFERENCE_LIBRARY, REFERENCE_SECTIONS, checkCodeReadiness, getReferenceItem } from '../shared/referenceLibrary.js';
 import { ProjectVault } from '../shared/projectVault.js';
 import { Sync } from '../shared/sync.js';
+import { initSceneHistory } from '../shared/sceneHistory.js';
 
 let activeSection = 'workflows';
 
@@ -43,6 +44,8 @@ export function initCompiler() {
         const el = document.getElementById('comp-running');
         if (el && e.detail?.code !== undefined) el.value = e.detail.code;
     });
+
+    initSceneHistory();
 
     Compiler.renderLibrary();
     Compiler.renderProjectList();
@@ -228,9 +231,7 @@ ${code}`;
         clean = clean.replace(/new THREE\.Mesh\(\s*new THREE\.SphereGeometry[^)]*\)/gi, "World.createObject('sphere')");
 
         const final = `(function() {
-    try {
-        ${clean}
-    } catch(e) { console.error("Script Error:", e); }
+    ${clean}
 })();`;
 
         this.output.value = final.trim();

@@ -20,7 +20,7 @@ export async function generateScript(systemPrompt, userIdea) {
                 { role: 'system', content: systemPrompt },
                 {
                     role: 'user',
-                    content: `Generate a complete Threshold Engine script for: "${userIdea}". Return only executable JavaScript wrapped in an IIFE starting with World.clearWorld().`
+                    content: `Generate a Threshold Engine script for: "${userIdea}". Extend the live scene using World.createObject, World.addCustom, PlayerController, and related APIs. Do NOT call World.clearWorld() unless the user explicitly asked to wipe the world. Return only executable JavaScript wrapped in an IIFE.`
                 }
             ],
             temperature: 0.4

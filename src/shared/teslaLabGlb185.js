@@ -169,7 +169,9 @@ export async function upgradeTeslaLabGlb185() {
         return { ok: false, reason: 'load-failed', err: String(e) };
     }
 
-    if (n) window.UI?.status?.(`Tesla lab GLB+LOD (${n} props)`);
+    if (n) {
+        await window.wireBuildingGlbTextures193?.();
+    }
     return { ok: true, n };
 }
 

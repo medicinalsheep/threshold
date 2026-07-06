@@ -2,80 +2,142 @@ import { ViewPrefs } from './viewPrefs.js';
 import { SceneDock } from './sceneDock.js';
 import { GraphicsPrompt } from './graphicsPrompt.js';
 
+function modeLabel(mode) {
+    return mode === 'build' ? 'BUILD (EDIT)' : 'PLAY';
+}
+
 const STEPS = [
     {
-        title: 'Welcome to Threshold',
-        body: 'Solo session with a starter scene — platform, beacon, and <strong>Guide</strong> NPC. This tour covers build, <strong>textures</strong>, optional <strong>AI agents</strong>, playtest, and export.',
-    },
-    {
-        title: 'Floating panels',
-        body: 'Drag <strong>TOOLS</strong> and <strong>SCENE</strong> anywhere. Tap <strong>LOCK</strong> on a panel header when the layout feels right.',
-        highlight: '#engine-toolbar',
-    },
-    {
-        title: 'EDIT vs PLAY',
-        body: '<strong>EDIT</strong> (paused) unlocks the world — insert, Compiler code, inspector panels. <strong>PLAY</strong> runs physics so you can walk and test.',
+        title: 'Your session mode',
+        body: (mode) => `You started in <strong>${modeLabel(mode)}</strong>. `
+            + '<strong>PLAY</strong> runs physics, survival vitals, and walk controls. '
+            + '<strong>BUILD</strong> pauses the sim so you can insert objects, run Compiler scripts, and edit textures. '
+            + 'Toggle anytime with the badge or <strong>PAUSE</strong>.',
         highlight: '#sim-mode-badge',
     },
     {
-        title: 'Build something',
-        body: 'Tap <strong>+</strong> or right-click the ground to insert. Add a small physics block now, or skip and build freely after the tour.',
-        action: {
-            label: 'Add tutorial block',
-            run() {
-                const World = window.World;
-                const m = World?.createObject('cube', 'Tutorial Block', 0xffaa44, true);
-                if (m) {
-                    m.position.set(0.5, 0.5, -0.8);
-                    m.scale.setScalar(0.6);
-                    window.UI?.status('Tutorial block added — drag it in EDIT');
-                }
-            },
-        },
+        title: 'Wardenclyffe showcase',
+        body: 'This is a production-style starter site — textured lab GLBs, courtyard props, weather, survival loops, and MP sync. '
+            + 'Walk north to the lab · <strong>F</strong> on terminals · Nikola patrols inside. '
+            + 'Use this as a reference world when building your own game.',
     },
     {
-        title: 'Textures & 3D models (optional)',
-        body: 'Select any mesh → <strong>SCENE → Inspect → Texture</strong> to import PNG maps or <strong>GIMP SYNC</strong>. For Blender models: <strong>+ → GLTF</strong>. Names must match your GIMP/Blender export (e.g. <em>Stone Block</em> → <code>stone_block_albedo.png</code>). Dev power-users: <code>npm run textures:watch</code> + <code>npm run dev</code> for live reload.',
-        highlight: '#inspector',
-    },
-    {
-        title: 'AI-assisted creation',
-        body: 'Pick one path (both work together later): <strong>PromptGen</strong> → Compiler for world code, or attach a <strong>Grok NPC</strong> agent to Guide for dialogue. Agents are optional — skip if you prefer pure building.',
+        title: 'Extend without wiping',
+        body: 'Fastest path: <strong>PromptGen → EXAMPLES</strong> — tested prompts that extend the scene safely. '
+            + 'Compiler kiosk and AI terminal are on the visitor path south of the lab.',
         actions: [
             {
-                label: 'Open PromptGen',
+                label: 'PromptGen EXAMPLES',
                 run() {
                     document.querySelector('[data-target="view-prompter"]')?.click();
-                    window.UI?.status('PromptGen — describe your scene; include live scene + assets');
+                    window.UI?.status('Pick an EXAMPLES prompt → RUN WITH GROK or paste into Compiler');
                 },
             },
             {
-                label: 'Guide + AI tab',
+                label: 'Open Compiler',
                 run() {
-                    let guide = null;
-                    window.Engine?.scene?.traverse((o) => {
-                        if (o.userData?.id === 'guide_npc') guide = o;
-                    });
-                    if (guide) window.UI?.selectObject(guide);
-                    SceneDock.openTab('agents');
-                    window.UI?.status('Optional: set persona → ATTACH TO NPC');
+                    document.querySelector('[data-target="view-compiler"]')?.click();
                 },
             },
         ],
     },
     {
+        title: 'Playtest your game',
+        body: 'Switch to <strong>PLAY</strong> to test walk, survival vitals (top-right HUD), interact props, and weather. '
+            + 'Graphics tier is suggested after this tour — tune in <strong>SCENE → ENV</strong>.',
+        highlight: '#btn-host-pause',
+    },
+    {
+        title: 'Ship when ready',
+        body: '<strong>MORE → EXPORT &amp; PLAY</strong> saves, downloads manifest, and opens a playable tab. '
+            + '<strong>SAVE WORLD</strong> shares <code>?world=CODE</code> links for collaborators.',
+        highlight: '#btn-toolbar-more',
+        actions: [
+            {
+                label: 'EXPORT & PLAY',
+                run() {
+                    document.getElementById('toolbar-more-menu')?.classList.remove('open');
+                    window.QuickExportPlay?.start?.();
+                },
+            },
+        ],
+    },
+    {
+        title: 'You are set',
+        body: 'Replay via <strong>MORE → TUTORIAL</strong>. Deep dive (textures, agents, store export): '
+            + '<strong>MORE → TUTORIAL (FULL)</strong> or <code>docs/CREATIVE_WORKFLOW.md</code>.',
+        actions: [
+            {
+                label: 'Open full guide',
+                run() {
+                    window.Walkthrough?.startFull?.(0);
+                },
+            },
+        ],
+    },
+];
+
+const FULL_STEPS = [
+    {
+        title: 'Welcome to Threshold',
+        body: 'A game-creation sandbox with a polished starter site, survival systems, multiplayer sync, and export pipeline. '
+            + 'This full tour covers build tools, textures, agents, playtest, and ship.',
+    },
+    {
+        title: 'PLAY vs BUILD',
+        body: '<strong>BUILD</strong> (paused) unlocks insert, Compiler, inspector, and scene edits. '
+            + '<strong>PLAY</strong> runs physics, NPC patrol, weather, and survival vitals.',
+        highlight: '#sim-mode-badge',
+    },
+    {
+        title: 'Floating panels',
+        body: 'Drag <strong>TOOLS</strong> and <strong>SCENE</strong> anywhere. Tap <strong>LOCK</strong> when layout feels right.',
+        highlight: '#engine-toolbar',
+    },
+    {
+        title: 'Build with PromptGen',
+        body: 'Describe features in PromptGen — attach live scene context. EXAMPLES sidebar has safe extend prompts.',
+        actions: [
+            {
+                label: 'Open PromptGen',
+                run() {
+                    document.querySelector('[data-target="view-prompter"]')?.click();
+                },
+            },
+        ],
+    },
+    {
+        title: 'Textures & 3D models',
+        body: 'Select mesh → <strong>SCENE → Inspect → Texture</strong> for PBR maps or GIMP sync. '
+            + '<strong>+ → GLTF</strong> for Blender exports.',
+        highlight: '#inspector',
+    },
+    {
+        title: 'AI-assisted creation',
+        body: 'Attach Grok or local agents at terminals · NPC personas in <strong>SCENE → Agents</strong>.',
+        actions: [
+            {
+                label: 'Agents tab',
+                run() {
+                    SceneDock.openTab('agents');
+                },
+            },
+        ],
+    },
+    {
+        title: 'Survival & interact',
+        body: 'In PLAY: vitals HUD (V toggle) · coffee/creek/bench on site · rain affects stress. '
+            + 'Wire your own props with <code>interactAction: \'survival\'</code>.',
+    },
+    {
         title: 'Playtest',
-        body: 'Tap <strong>PLAY</strong> (or <strong>PAUSE</strong> for EDIT). <strong>WASD</strong> to move. After this tour, Threshold suggests a <strong>graphics tier</strong> for your device — override anytime in <strong>SCENE → ENV</strong>. Use <strong>Hyper</strong> for PBR textures.',
+        body: 'Toggle <strong>PLAY</strong> · <strong>WASD</strong> move · <strong>F</strong> interact · export preflight checks your world.',
         highlight: '#btn-host-pause',
     },
     {
         title: 'Save & ship',
-        body: '<strong>MORE → SAVE WORLD</strong> for share links. <strong>MORE → EXPORT</strong> opens a 9-step walkthrough — icons, scene, credits, store packs (Play/Steam/itch SKUs) — then downloads <code>.threshold-game.json</code>. Ship with <code>store:prep</code>, <code>store:assets</code>, then <code>package:*</code>. Guides: <code>docs/EXPORT_WALKTHROUGH.md</code>, <code>docs/STORE_ASSETS.md</code>.',
+        body: '<strong>EXPORT &amp; PLAY</strong> for quick ship · <strong>MORE → EXPORT</strong> for store wizard.',
         highlight: '#btn-toolbar-more',
-    },
-    {
-        title: 'You are set',
-        body: 'Replay via <strong>MORE → TUTORIAL</strong>. Creative guide: <code>docs/CREATIVE_WORKFLOW.md</code>. Compiler <strong>WORKFLOWS</strong> has GIMP, Blender, and export paths. Have fun — same world, every device.',
     },
 ];
 
@@ -83,26 +145,41 @@ export const Walkthrough = {
     step: 0,
     root: null,
     active: false,
+    _mode: 'quick',
+    _sessionMode: 'play',
 
-    startIfNeeded() {
-        if (ViewPrefs.get('walkthroughDone', false)) return;
-        if (ViewPrefs.get('welcomeSeen', false)) {
-            ViewPrefs.set('walkthroughDone', true);
+    _steps() {
+        return this._mode === 'full' ? FULL_STEPS : STEPS;
+    },
+
+    startIfNeeded(sessionMode = null) {
+        if (ViewPrefs.get('walkthroughDone', false)) {
+            window.ActionHints?.onSessionReady?.();
             return;
         }
-        setTimeout(() => this.start(0), 400);
+        const mode = sessionMode || window.GuidedSession?.getSavedMode?.() || 'play';
+        setTimeout(() => this.start(0, 'quick', mode), 200);
     },
 
     restart() {
         ViewPrefs.set('walkthroughDone', false);
-        this.start(0);
+        const mode = window.GuidedSession?.getSavedMode?.() || 'play';
+        this.start(0, 'quick', mode);
     },
 
-    start(fromStep = 0) {
+    startFull(fromStep = 0) {
+        const mode = window.GuidedSession?.getSavedMode?.() || 'play';
+        this.start(fromStep, 'full', mode);
+    },
+
+    start(fromStep = 0, mode = 'quick', sessionMode = 'play') {
         this.root = document.getElementById('engine-walkthrough');
         if (!this.root) return;
 
-        this.step = Math.max(0, Math.min(fromStep, STEPS.length - 1));
+        this._mode = mode;
+        this._sessionMode = sessionMode === 'build' ? 'build' : 'play';
+        const steps = this._steps();
+        this.step = Math.max(0, Math.min(fromStep, steps.length - 1));
         this.active = true;
         this.root.classList.remove('hidden');
         this.bindOnce();
@@ -120,19 +197,23 @@ export const Walkthrough = {
             const btn = e.target.closest('[data-walk-action]');
             if (!btn) return;
             const idx = parseInt(btn.dataset.walkAction, 10);
-            const step = STEPS[this.step];
+            const step = this._steps()[this.step];
             const actions = step.actions || (step.action ? [step.action] : []);
             actions[idx]?.run?.();
         });
     },
 
     render() {
-        const step = STEPS[this.step];
-        const total = STEPS.length;
+        const steps = this._steps();
+        const step = steps[this.step];
+        const total = steps.length;
 
-        document.getElementById('walkthrough-step-label').textContent = `${this.step + 1} / ${total}`;
+        document.getElementById('walkthrough-step-label').textContent =
+            `${this.step + 1} / ${total}${this._mode === 'full' ? ' · FULL' : ''}`;
         document.getElementById('walkthrough-title').textContent = step.title;
-        document.getElementById('walkthrough-body').innerHTML = step.body;
+
+        const body = typeof step.body === 'function' ? step.body(this._sessionMode) : step.body;
+        document.getElementById('walkthrough-body').innerHTML = body;
 
         const backBtn = document.getElementById('walkthrough-back');
         const nextBtn = document.getElementById('walkthrough-next');
@@ -155,7 +236,7 @@ export const Walkthrough = {
 
         const dots = document.getElementById('walkthrough-dots');
         if (dots) {
-            dots.innerHTML = STEPS.map((_, i) =>
+            dots.innerHTML = steps.map((_, i) =>
                 `<span class="walkthrough-dot${i === this.step ? ' active' : ''}"></span>`
             ).join('');
         }
@@ -167,7 +248,8 @@ export const Walkthrough = {
     },
 
     next() {
-        if (this.step >= STEPS.length - 1) {
+        const steps = this._steps();
+        if (this.step >= steps.length - 1) {
             this.finish();
             return;
         }
@@ -185,8 +267,10 @@ export const Walkthrough = {
         ViewPrefs.set('walkthroughDone', true);
         ViewPrefs.set('welcomeSeen', true);
         this.hide();
-        window.UI?.status('Tutorial complete — MORE → TUTORIAL to replay');
+        const label = this._mode === 'full' ? 'Full tutorial complete' : 'Guided tour complete';
+        window.UI?.status(`${label} — MORE → TUTORIAL to replay`);
         GraphicsPrompt.startIfNeeded();
+        window.ActionHints?.onSessionReady?.();
     },
 
     hide() {
@@ -195,3 +279,5 @@ export const Walkthrough = {
         document.querySelectorAll('.walkthrough-highlight').forEach((el) => el.classList.remove('walkthrough-highlight'));
     },
 };
+
+window.Walkthrough = Walkthrough;

@@ -1,4 +1,6 @@
-/** Phase 14 — creek, power lines, fence chain, dirt mound + dust */
+/** Phase 14 / 19 — creek, power lines, fence chain, dirt mound + dust */
+
+import { SITE, court } from './starterSiteLayout.js';
 
 let dustPoints = null;
 let dustVel = null;
@@ -40,7 +42,7 @@ export function buildStarterEnv14() {
     creekWater.rotation.x = -Math.PI / 2;
     creekWater.position.y = 0.045;
     creekGroup.add(creekBed, creekWater);
-    creekGroup.position.set(-5.4, 0, 0.6);
+    creekGroup.position.set(SITE.creek.x, 0, SITE.creek.z);
     creekGroup.userData = {
         id: 'starter_creek',
         name: 'Creek',
@@ -52,15 +54,15 @@ export function buildStarterEnv14() {
     };
     Engine.scene.add(creekGroup);
     State.objects.push(creekGroup);
-    if (C) Physics?.addStaticBox?.(new C.Vec3(2.4, 0.03, 0.55), { x: -5.4, y: 0.03, z: 0.6 }, 'ground', 'concrete');
+    if (C) Physics?.addStaticBox?.(new C.Vec3(2.4, 0.03, 0.55), { x: SITE.creek.x, y: 0.03, z: SITE.creek.z }, 'ground', 'concrete');
 
     // —— Power lines ——
     const powerGroup = new THREE.Group();
     powerGroup.name = 'starter_power_lines';
     const cables = [];
     const polePositions = [
-        { x: -3.8, z: -6.1 },
-        { x: 3.6, z: -6.0 },
+        { x: court(-6, -4).x, z: court(-6, -4).z },
+        { x: court(6, -4).x, z: court(6, -4).z },
     ];
     polePositions.forEach((p, i) => {
         const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, 5.2, 6), poleMat);
@@ -76,7 +78,7 @@ export function buildStarterEnv14() {
         const cable = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 7.6, 6), cableMat);
         cable.rotation.z = Math.PI / 2;
         cable.rotation.y = 0.04;
-        cable.position.set(0, 4.55 - c * 0.22, -6.05);
+        cable.position.set(court(0, -4).x, 4.55 - c * 0.22, court(0, -4).z);
         cable.userData.swayPhase = c * 1.4;
         cables.push(cable);
         powerGroup.add(cable);
@@ -110,7 +112,7 @@ export function buildStarterEnv14() {
         wire.userData.fenceWire = true;
         fenceGroup.add(wire);
     }
-    fenceGroup.position.set(-4.8, 0, 0);
+    fenceGroup.position.set(court(-6.5, -1).x, 0, court(-6.5, -1).z);
     fenceGroup.userData = {
         id: 'starter_fence',
         name: 'Chain Fence',
@@ -136,7 +138,7 @@ export function buildStarterEnv14() {
         moundMat.roughnessMap.repeat.set(3, 3);
     }
     const mound = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.38, 1.6), moundMat);
-    mound.position.set(-3.4, 0.19, 3.6);
+    mound.position.set(court(-4, 2).x, 0.19, court(-4, 2).z);
     mound.scale.set(1, 1, 0.85);
     mound.rotation.y = 0.35;
     mound.castShadow = true;
@@ -151,7 +153,8 @@ export function buildStarterEnv14() {
     };
     Engine.scene.add(mound);
     State.objects.push(mound);
-    if (C) Physics?.addStaticBox?.(new C.Vec3(1.1, 0.19, 0.8), { x: -3.4, y: 0.19, z: 3.6 }, 'ground', 'dirt');
+    const moundPos = court(-4, 2);
+    if (C) Physics?.addStaticBox?.(new C.Vec3(1.1, 0.19, 0.8), { x: moundPos.x, y: 0.19, z: moundPos.z }, 'ground', 'dirt');
 
     _ensureDustParticles(THREE, Engine);
 
@@ -164,9 +167,10 @@ function _ensureDustParticles(THREE, Engine) {
     const pos = new Float32Array(count * 3);
     const vel = new Float32Array(count);
     for (let i = 0; i < count; i++) {
-        pos[i * 3] = -3.4 + (Math.random() - 0.5) * 2;
+        const mp = court(-4, 2);
+        pos[i * 3] = mp.x + (Math.random() - 0.5) * 2;
         pos[i * 3 + 1] = 0.35 + Math.random() * 0.5;
-        pos[i * 3 + 2] = 3.6 + (Math.random() - 0.5) * 1.4;
+        pos[i * 3 + 2] = mp.z + (Math.random() - 0.5) * 1.4;
         vel[i] = 0.4 + Math.random() * 0.8;
     }
     const geo = new THREE.BufferGeometry();

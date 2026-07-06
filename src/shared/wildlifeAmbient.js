@@ -1,8 +1,12 @@
 /** Phase 15 — wildlife ambience: dog, cat, crickets/cicadas, owl, fish splash */
 
-const GRASS_ZONE = { x: -4.2, y: 0.2, z: 2.4, radius: 5, volume: 0.2 };
-const ALLEY_CAT = { x: -6.6, y: 0.35, z: -5.0, radius: 4 };
-const CREEK_SPLASH = { x: -5.4, y: 0.2, z: 0.6, radius: 4.2 };
+import { SITE, court } from './starterSiteLayout.js';
+
+const grass = court(-4.2, 2.4);
+const GRASS_ZONE = { x: grass.x, y: 0.2, z: grass.z, radius: 5, volume: 0.2 };
+const cat = court(-7, 5);
+const ALLEY_CAT = { x: cat.x, y: 0.35, z: cat.z, radius: 4 };
+const CREEK_SPLASH = { x: SITE.creek.x, y: 0.2, z: SITE.creek.z, radius: 4.2 };
 const DOG_NPC_ID = 'mechanic_npc';
 
 function delay(ms) {

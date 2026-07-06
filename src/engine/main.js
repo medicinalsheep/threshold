@@ -32,7 +32,9 @@ import { TextureBridge } from '../shared/textureBridge.js';
 import { GltfImport } from '../shared/gltfImport.js';
 import { ThresholdShell } from '../shared/thresholdShell.js';
 import { CreativeWatch } from '../shared/creativeWatch.js';
-import { bootstrapStarterScene } from '../shared/starterScene.js';
+import '../shared/starterSiteLayout.js';
+import '../shared/starterSiteTerrain191.js';
+import { bootstrapSelectedTemplate } from '../shared/starterTemplates.js';
 import '../shared/worldInteract.js';
 import '../shared/aiTerminal.js';
 import '../shared/starterSfx.js';
@@ -63,20 +65,44 @@ import '../shared/starterTeslaLab18.js';
 import '../shared/starterTeslaInteract182.js';
 import '../shared/starterTeslaNpc183.js';
 import '../shared/starterTeslaWeather184.js';
+import '../shared/starterCourtyard194.js';
+import '../shared/starterLighting195.js';
+import '../shared/labCoatProp.js';
+import '../shared/creatorHud.js';
 import '../shared/teslaLabGlb185.js';
+import '../shared/teslaBuildingGlb192.js';
+import '../shared/starterBuildingTex193.js';
 import '../shared/teslaLabAmbient.js';
 import '../shared/wildlifeAmbient.js';
 import '../shared/urbanAmbient.js';
 import '../shared/interiorAmbient.js';
 import '../shared/starterMaterials.js';
 import '../shared/starterAnim.js';
-import { bootstrapReferenceIfRequested } from '../shared/referenceEdition.js';
+
 import { GameExport } from '../shared/gameExport.js';
 import { AgentHub } from '../shared/agentHub.js';
 import { NpcAgent } from '../grok/npcAgent.js';
 import { DevAgent } from '../grok/devAgent.js';
 import { Walkthrough } from '../shared/walkthrough.js';
+import '../shared/guidedSession.js';
+import '../shared/showcaseGateway.js';
 import { ExportWizard } from '../shared/exportWizard.js';
+import '../shared/exportPreflight.js';
+import { QuickExportPlay } from '../shared/quickExportPlay.js';
+import '../shared/introSkip.js';
+import '../shared/actionHints.js';
+import '../shared/guestRebuild.js';
+import '../shared/audioManifestSync.js';
+import { SyncStory } from '../shared/syncStory.js';
+import '../shared/collaborateGuard.js';
+import '../shared/textureManifestSync.js';
+import '../shared/guestRebuildTelemetry.js';
+import '../shared/hostMigration.js';
+import '../shared/survivalNeeds.js';
+import '../shared/survivalZones.js';
+import '../shared/survivalWorldHooks.js';
+import '../shared/survivalInteract.js';
+import '../shared/survivalNeedsHud.js';
 import { getRenderMode } from '../shared/renderModes.js';
 import { GraphicsProfile } from '../shared/graphicsProfile.js';
 import { GraphicsPrompt } from '../shared/graphicsPrompt.js';
@@ -141,6 +167,14 @@ export function initEngine() {
     GraphicsProfile.bootstrap();
     Environment.init();
     UI.init();
+    window.initCreatorHud?.();
+    window.initSurvivalNeeds?.();
+    window.initSurvivalNeedsHud?.();
+    window.GuidedSession?.init?.();
+    window.IntroSkip?.init?.();
+    window.ActionHints?.init?.();
+    window.CollaborateGuard?.init?.();
+    window.HostMigration?.bindOnce?.();
     Physics.createFloor();
     window.Environment = Environment;
     TouchControls.init();
@@ -160,6 +194,7 @@ export function initEngine() {
         if (!State.isPaused && PlayerController.spawned && State.controlMode === 'walk') {
             PlayerController._inheritLookFromCamera?.();
         }
+        window.CreatorHud?.updateSync?.();
     });
 
     const worldCode = new URLSearchParams(window.location.search).get('world');
@@ -169,15 +204,14 @@ export function initEngine() {
             .catch((e) => UI.status(e.message));
     } else {
         setTimeout(async () => {
-            bootstrapStarterScene();
-            await bootstrapReferenceIfRequested();
+            const tpl = await bootstrapSelectedTemplate();
+            if (tpl && tpl !== 'wardenclyffe') {
+                window.UI?.status?.(`Template: ${window.StarterTemplates?.STARTER_TEMPLATES?.[tpl]?.name || tpl}`);
+            }
         }, 120);
     }
 
-    Walkthrough.startIfNeeded();
-    if (ViewPrefs.get('walkthroughDone') || ViewPrefs.get('welcomeSeen')) {
-        GraphicsPrompt.startIfNeeded();
-    }
+    window.GuidedSession?.startIfNeeded?.();
 }
 
 // --- GLOBAL STATE ---
@@ -195,7 +229,7 @@ const State = {
     clipboardAllowed: false,
     ctxTargetPos: new THREE.Vector3(),
     isRecording: false,
-    isPaused: false,
+    isPaused: true,
     cutscenePlaying: false,
     cinematicCatalog: [],
     controlMode: 'fly',
@@ -1226,6 +1260,7 @@ const Engine = {
                 window.TcDrive.postPhysics();
             } else if (State.controlMode === 'walk' && PlayerController.spawned) {
                 PlayerController.postPhysics();
+                window.SurvivalNeeds?.tick?.(dt, PlayerController.getMovementContext?.());
             } else if (!State.introPlaying) {
                 const speed = 0.2 * (Controls.getSprintMultiplier?.() || 1);
                 const fwd = new THREE.Vector3(); this.camera.getWorldDirection(fwd); fwd.y = 0; fwd.normalize();
@@ -1240,6 +1275,9 @@ const Engine = {
             Environment.updateWater(time);
         }
         UI.updateControlsHint?.();
+
+        window.IntroSkip?.tick?.();
+        window.ActionHints?.tick?.(time);
 
         if (State.introPlaying) {
             window.TeslaIntroCaptions?.tick?.();
@@ -1263,6 +1301,7 @@ const Engine = {
             if (t >= 1) {
                 State.introPlaying = false;
                 window.TeslaIntroCaptions?._hide?.();
+                window.ActionHints?.onIntroEnded?.();
             }
         } else {
             window.TeslaIntroCaptions?._hide?.();
@@ -1294,6 +1333,7 @@ const Engine = {
             Recorder.stream.getVideoTracks()[0].requestFrame();
         }
         this.composer.render();
+        window.CreatorHud?.tick?.(time);
     }
 };
 
@@ -1483,6 +1523,7 @@ const World = {
         UI.deselectObject();
     },
     clearWorld: function (silent = false) {
+        window.SceneHistory?.push?.('before:clearWorld');
         State.physicsObjects.forEach(p => Physics.world.removeBody(p.body));
         State.physicsObjects = [];
         State.objects.forEach(o => Engine.scene.remove(o));
@@ -1803,9 +1844,15 @@ const UI = {
             ExportWizard.open();
         });
         ExportWizard.bindOnce();
+        QuickExportPlay.bindOnce();
+        SyncStory.bindOnce();
         document.getElementById('btn-restart-walkthrough')?.addEventListener('click', () => {
             document.getElementById('toolbar-more-menu')?.classList.remove('open');
             Walkthrough.restart();
+        });
+        document.getElementById('btn-restart-walkthrough-full')?.addEventListener('click', () => {
+            document.getElementById('toolbar-more-menu')?.classList.remove('open');
+            Walkthrough.startFull(0);
         });
         document.getElementById('agent-attach-npc')?.addEventListener('click', () => UI.attachNpcAgent());
         document.getElementById('agent-npc-talk')?.addEventListener('click', () => UI.talkToNpcAgent());
@@ -2539,6 +2586,9 @@ const UI = {
 
         const codingCb = document.getElementById('host-auto-coding-pause');
         if (codingCb) codingCb.checked = Session.autoCodingPause;
+
+        window.CollaborateGuard?._updateUi?.();
+        window.HostMigration?.populateHandoffSelect?.();
 
         const voipEl = document.getElementById('host-voip-summary');
         if (voipEl && Network.mode !== 'solo') {

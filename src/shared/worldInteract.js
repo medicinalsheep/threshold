@@ -99,6 +99,10 @@ export const WorldInteract = {
             window.UI?.openInsert?.();
             return true;
         }
+        if (action === 'survival') {
+            window.SurvivalInteract?.activate?.(root);
+            return true;
+        }
         if (action === 'rp') {
             const id = root.userData?.id;
             if (id === 'starter_interior_door') window.StarterInterior17?.onDoorInteract?.(root);
@@ -115,6 +119,7 @@ export const WorldInteract = {
         }
 
         window.UI?.status?.(`${label} — interact`);
+        window.ActionHints?.onFirstInteract?.();
         return true;
     },
 

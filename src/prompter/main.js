@@ -9,6 +9,7 @@ import { getRenderModePromptBlock } from '../shared/renderModes.js';
 import { GraphicsProfile } from '../shared/graphicsProfile.js';
 import { getGraphicsExportBlock } from '../shared/graphicsExportProfiles.js';
 import { SoundLibrary } from '../shared/soundLibrary.js';
+import { PROMPT_COOKBOOK } from '../shared/promptCookbook.js';
 
 function renderSoundPicker() {
     const list = document.getElementById('prompt-sound-list');
@@ -49,6 +50,7 @@ export function initPrompter() {
     }
 
     Prompter.syncSoundPanel();
+    Prompter.renderCookbook();
 }
 
 const Prompter = {
@@ -194,6 +196,33 @@ OUTPUT REQUIREMENTS:
             grokBtn.disabled = false;
             grokBtn.textContent = 'RUN WITH GROK';
         }
+    },
+
+    renderCookbook() {
+        const list = document.getElementById('prompt-cookbook-list');
+        if (!list) return;
+        list.innerHTML = PROMPT_COOKBOOK.map((entry) => `
+            <button type="button" class="prompt-cookbook-item" data-cookbook-id="${entry.id}" title="${entry.hint || ''}">
+                <strong>${entry.title}</strong>
+                <span>${entry.hint || entry.task}</span>
+            </button>
+        `).join('');
+        list.querySelectorAll('[data-cookbook-id]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const entry = PROMPT_COOKBOOK.find((e) => e.id === btn.dataset.cookbookId);
+                if (!entry) return;
+                const task = document.getElementById('prompt-task');
+                const idea = document.getElementById('prompt-idea');
+                if (task) task.value = entry.task;
+                if (idea) idea.value = entry.idea;
+                const flash = document.getElementById('prompt-flash');
+                if (flash) {
+                    flash.textContent = entry.title.toUpperCase();
+                    flash.style.opacity = 1;
+                    setTimeout(() => { flash.style.opacity = 0; }, 1600);
+                }
+            });
+        });
     },
 
     copy: async function () {

@@ -1,4 +1,6 @@
-/** Phase 17 — interior / RP props: coffee nook, door, elevator kiosk, shop counter */
+/** Phase 17 / 19 — interior / RP props: coffee nook, door, elevator kiosk, shop counter */
+
+import { court } from './starterSiteLayout.js';
 
 export function buildStarterInterior17() {
     const Engine = window.Engine;
@@ -49,7 +51,7 @@ export function buildStarterInterior17() {
     sign.rotation.y = 0.15;
     sign.userData.coffeeSign = true;
     coffeeGroup.add(counter, backWall, sideWall, awning, sign);
-    coffeeGroup.position.set(-3.75, 0, 1.25);
+    coffeeGroup.position.set(court(-5, 1.25).x, 0, court(-5, 1.25).z);
     coffeeGroup.rotation.y = 0.42;
     coffeeGroup.userData = {
         id: 'starter_interior_coffee',
@@ -73,7 +75,7 @@ export function buildStarterInterior17() {
     door.castShadow = true;
     door.userData.doorLeaf = true;
     doorGroup.add(frame, door);
-    doorGroup.position.set(-2.95, 0, 0.85);
+    doorGroup.position.set(court(-4, 0.85).x, 0, court(-4, 0.85).z);
     doorGroup.rotation.y = 0.35;
     doorGroup.userData = {
         id: 'starter_interior_door',
@@ -120,7 +122,7 @@ export function buildStarterInterior17() {
         elevatorGroup.add(btn);
     });
     elevatorGroup.add(kioskBody, panel);
-    elevatorGroup.position.set(-1.15, 0, -6.35);
+    elevatorGroup.position.set(court(-2, -6.35).x, 0, court(-2, -6.35).z);
     elevatorGroup.rotation.y = 0.05;
     elevatorGroup.userData = {
         id: 'starter_elevator_kiosk',
@@ -169,7 +171,7 @@ export function buildStarterInterior17() {
     registerScreen.rotation.x = -0.25;
     registerScreen.userData.registerScreen = true;
     shopGroup.add(shopCounter, register, registerScreen);
-    shopGroup.position.set(4.05, 0, 2.05);
+    shopGroup.position.set(court(5, 2.05).x, 0, court(5, 2.05).z);
     shopGroup.rotation.y = -0.55;
     shopGroup.userData = {
         id: 'starter_shop_counter',

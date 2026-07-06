@@ -3136,6 +3136,114 @@
       ]
     },
     {
+      "id": "starter_tesla_roof_albedo",
+      "objectName": "Tesla Roof",
+      "slot": "albedo",
+      "file": "starter_tesla_roof_albedo.png",
+      "path": "textures/starter_tesla_roof_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_roof_albedo_512.png",
+          "path": "textures/starter_tesla_roof_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_roof_albedo_1k.png",
+          "path": "textures/starter_tesla_roof_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_roof_albedo_2k.png",
+          "path": "textures/starter_tesla_roof_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_roof_albedo_4k.png",
+          "path": "textures/starter_tesla_roof_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_tesla_roof_roughness",
+      "objectName": "Tesla Roof",
+      "slot": "roughness",
+      "file": "starter_tesla_roof_roughness.png",
+      "path": "textures/starter_tesla_roof_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_roof_roughness_512.png",
+          "path": "textures/starter_tesla_roof_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_roof_roughness_1k.png",
+          "path": "textures/starter_tesla_roof_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_roof_roughness_2k.png",
+          "path": "textures/starter_tesla_roof_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_roof_roughness_4k.png",
+          "path": "textures/starter_tesla_roof_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_tesla_roof_normal",
+      "objectName": "Tesla Roof",
+      "slot": "normal",
+      "file": "starter_tesla_roof_normal.png",
+      "path": "textures/starter_tesla_roof_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_roof_normal_512.png",
+          "path": "textures/starter_tesla_roof_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_roof_normal_1k.png",
+          "path": "textures/starter_tesla_roof_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_roof_normal_2k.png",
+          "path": "textures/starter_tesla_roof_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_roof_normal_4k.png",
+          "path": "textures/starter_tesla_roof_normal_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
       "id": "starter_tesla_copper_albedo",
       "objectName": "Tesla Coil",
       "slot": "albedo",
@@ -3498,5 +3606,5 @@
   ],
   "exportDir": "textures",
   "tcRealism": "r8",
-  "exportedAt": "2026-07-06T01:20:25.366Z"
+  "exportedAt": "2026-07-06T01:54:10.706Z"
 }

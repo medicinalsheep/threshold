@@ -1,8 +1,10 @@
-/** Phase 18.1b — Wardenclyffe exterior: brick lab, lattice tower, field, project-build intro */
+/** Phase 18.1b / 19 — Wardenclyffe exterior: brick lab, lattice tower, unified site */
 
-export const EXTERIOR_SPAWN = { x: -32, y: 0, z: 12 };
-export const BUILDING_CENTER = { x: -32, y: 0, z: 0 };
-export const TOWER_BASE = { x: -22, y: 0, z: -5 };
+import {
+    SITE, BUILDING, EXTERIOR_SPAWN, BUILDING_CENTER, TOWER_BASE,
+} from './starterSiteLayout.js';
+
+export { EXTERIOR_SPAWN, BUILDING_CENTER, TOWER_BASE };
 
 function addStaticBox(Physics, C, half, pos, surfaceType = 'concrete') {
     if (C && Physics?.addStaticBox) {
@@ -61,17 +63,20 @@ export function buildStarterTeslaExterior18() {
     brickMat.userData = { name: 'Tesla Brick Wall' };
     const roofMat = new THREE.MeshStandardMaterial({ color: 0x2a2830, roughness: 0.82, metalness: 0.06 });
     const woodMat = mats?.wood?.clone?.() || new THREE.MeshStandardMaterial({ color: 0x6a5038, roughness: 0.84, metalness: 0.03 });
-    const fieldMat = new THREE.MeshStandardMaterial({ color: 0x4a8a42, roughness: 0.92, metalness: 0.01 });
-    const pathMat = new THREE.MeshStandardMaterial({ color: 0x8a7a62, roughness: 0.95, metalness: 0.02 });
     const treeMat = new THREE.MeshStandardMaterial({ color: 0x2e6838, roughness: 0.88, metalness: 0.01 });
-    const windowMat = new THREE.MeshStandardMaterial({
+    const linerMat = mats?.wood?.clone?.() || new THREE.MeshStandardMaterial({ color: 0x5a4838, roughness: 0.84, metalness: 0.03 });
+    const windowMat = new THREE.MeshPhysicalMaterial({
         color: 0x88a8c8,
-        roughness: 0.12,
-        metalness: 0.08,
+        roughness: 0.08,
+        metalness: 0.06,
+        transmission: 0.72,
+        transparent: true,
+        opacity: 0.58,
+        thickness: 0.08,
+        ior: 1.52,
         emissive: 0x203040,
         emissiveIntensity: 0.04,
-        transparent: true,
-        opacity: 0.72,
+        envMapIntensity: 0.45,
     });
     const doorMat = new THREE.MeshStandardMaterial({ color: 0xe8e4dc, roughness: 0.72, metalness: 0.04 });
     const cageMat = new THREE.MeshStandardMaterial({
@@ -85,85 +90,113 @@ export function buildStarterTeslaExterior18() {
     const root = new THREE.Group();
     root.name = 'starter_tesla_exterior';
 
-    // —— Field + path ——
-    const field = new THREE.Mesh(new THREE.BoxGeometry(52, 0.08, 44), fieldMat.clone());
-    field.position.set(-28, 0.04, 2);
-    field.receiveShadow = true;
-    field.userData = { name: 'Tesla Field', surfaceType: 'grass' };
-    root.add(field);
-    addStaticBox(Physics, C, { x: 26, y: 0.04, z: 22 }, { x: -28, y: 0.04, z: 2 }, 'grass');
-
-    const path = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.05, 16), pathMat.clone());
-    path.position.set(BUILDING_CENTER.x, 0.05, 8);
-    path.receiveShadow = true;
-    path.userData = { name: 'Tesla Field', surfaceType: 'gravel' };
-    root.add(path);
-
-    const connector = new THREE.Mesh(new THREE.BoxGeometry(14, 0.05, 2.2), pathMat.clone());
-    connector.position.set(-20, 0.05, 3);
-    connector.rotation.y = -0.18;
-    root.add(connector);
-
-    // —— Tree line ——
-    for (let i = 0; i < 14; i += 1) {
-        const tx = -48 + i * 3.6;
+    // —— Tree line (north property edge) ——
+    for (let i = 0; i < 16; i += 1) {
+        const tx = -28 + i * 3.6;
         const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 1.6, 5), woodMat.clone());
-        trunk.position.set(tx, 0.8, -16);
+        trunk.position.set(tx, 0.8, SITE.treeLineZ);
         const crown = new THREE.Mesh(new THREE.ConeGeometry(0.9 + (i % 3) * 0.15, 2.4, 6), treeMat.clone());
-        crown.position.set(tx, 2.5, -16);
+        crown.position.set(tx, 2.5, SITE.treeLineZ);
         root.add(trunk, crown);
     }
 
     // —— Brick laboratory building ——
     const building = new THREE.Group();
     building.name = 'starter_tesla_building';
-    const bw = 12;
-    const bd = 5.2;
-    const bh = 3.6;
+    const { w: bw, d: bd, h: bh, wall: wt, floorY, southZ, doorW } = BUILDING;
+    const wallY = bh / 2 + floorY;
+
+    const shellGroup = new THREE.Group();
+    shellGroup.name = 'starter_tesla_building_shell';
+    shellGroup.userData = { id: 'starter_tesla_building_shell', buildingShell: true };
+
+    const linerGroup = new THREE.Group();
+    linerGroup.name = 'starter_tesla_building_liner';
+    linerGroup.userData = { id: 'starter_tesla_building_liner', buildingLiner: true };
 
     const floorSlab = new THREE.Mesh(new THREE.BoxGeometry(bw, 0.14, bd), brickMat.clone());
-    floorSlab.position.set(0, 0.07, 0);
+    floorSlab.position.set(0, floorY - 0.07, 0);
     floorSlab.userData = { name: 'Tesla Brick Wall' };
-    building.add(floorSlab);
+    shellGroup.add(floorSlab);
 
-    const walls = [
-        { sx: bw, sz: 0.22, px: 0, pz: bd / 2, name: 'south' },
-        { sx: bw, sz: 0.22, px: 0, pz: -bd / 2, name: 'north' },
-        { sx: 0.22, sz: bd, px: -bw / 2, pz: 0, name: 'west' },
-        { sx: 0.22, sz: bd, px: bw / 2, pz: 0, name: 'east' },
-    ];
-    walls.forEach((w) => {
-        const mesh = new THREE.Mesh(new THREE.BoxGeometry(w.sx, bh, w.sz), brickMat.clone());
-        mesh.position.set(w.px, bh / 2 + 0.14, w.pz);
+    const addWall = (sx, sy, sz, px, py, pz, parent = shellGroup) => {
+        const mesh = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), brickMat.clone());
+        mesh.position.set(px, py, pz);
         mesh.castShadow = true;
         mesh.receiveShadow = true;
         mesh.userData = { name: 'Tesla Brick Wall', surfaceType: 'concrete' };
-        building.add(mesh);
-        addStaticBox(Physics, C, { x: w.sx / 2, y: bh / 2, z: w.sz / 2 }, {
-            x: BUILDING_CENTER.x + w.px,
-            y: bh / 2 + 0.14,
-            z: BUILDING_CENTER.z + w.pz,
-        });
-    });
+        parent.add(mesh);
+        return mesh;
+    };
+
+    const northZ = -bd / 2;
+    addWall(bw, bh, wt, 0, wallY, northZ);
+    addWall(wt, bh, bd, -bw / 2, wallY, 0);
+    addWall(wt, bh, bd, bw / 2, wallY, 0);
+
+    const doorHalf = doorW / 2;
+    const segW = (bw - doorW) / 2;
+    addWall(segW, bh, wt, -(doorHalf + segW / 2), wallY, southZ);
+    addWall(segW, bh, wt, doorHalf + segW / 2, wallY, southZ);
+    addWall(doorW, bh * 0.22, wt, 0, floorY + bh * 0.89, southZ);
 
     const roof = new THREE.Mesh(new THREE.BoxGeometry(bw + 0.4, 0.35, bd + 0.4), roofMat.clone());
-    roof.position.set(0, bh + 0.32, 0);
-    building.add(roof);
+    roof.position.set(0, floorY + bh + 0.18, 0);
+    shellGroup.add(roof);
 
     const chimney = new THREE.Mesh(new THREE.BoxGeometry(0.9, 2.6, 0.9), brickMat.clone());
-    chimney.position.set(-bw / 2 + 1.1, bh + 1.5, -bd / 2 + 0.8);
+    chimney.position.set(-bw / 2 + 1.1, floorY + bh + 1.5, -bd / 2 + 0.8);
     chimney.castShadow = true;
     chimney.userData = { name: 'Tesla Brick Wall' };
-    building.add(chimney);
+    shellGroup.add(chimney);
+
+    const linerInset = 0.12;
+    const linerH = bh - 0.25;
+    const linerY = floorY + linerH / 2 + 0.05;
+    const innerW = bw - wt * 2 - linerInset * 2;
+    const innerD = bd - wt * 2 - linerInset * 2;
+    [
+        { sx: innerW, sz: 0.06, px: 0, pz: -bd / 2 + wt + linerInset },
+        { sx: innerW, sz: 0.06, px: 0, pz: bd / 2 - wt - linerInset },
+        { sx: 0.06, sz: innerD, px: -bw / 2 + wt + linerInset, pz: 0 },
+        { sx: 0.06, sz: innerD, px: bw / 2 - wt - linerInset, pz: 0 },
+    ].forEach((seg) => {
+        const liner = new THREE.Mesh(new THREE.BoxGeometry(seg.sx, linerH, seg.sz), linerMat.clone());
+        liner.position.set(seg.px, linerY, seg.pz);
+        liner.receiveShadow = true;
+        liner.userData = { name: 'Tesla Lab Floor', surfaceType: 'wood' };
+        linerGroup.add(liner);
+    });
+
+    const ceiling = new THREE.Mesh(new THREE.BoxGeometry(bw - 0.35, 0.1, bd - 0.35), linerMat.clone());
+    ceiling.position.set(0, floorY + bh - 0.08, 0);
+    ceiling.receiveShadow = true;
+    ceiling.userData = { name: 'Tesla Lab Floor', surfaceType: 'wood' };
+    linerGroup.add(ceiling);
+
+    building.add(shellGroup, linerGroup);
+    addStaticBox(Physics, C, { x: bw / 2, y: bh / 2, z: bd / 2 }, {
+        x: BUILDING_CENTER.x,
+        y: wallY,
+        z: BUILDING_CENTER.z,
+    });
 
     const windowMeshes = [];
-    [-4.2, -2.1, 0, 2.1, 4.2].forEach((xOff, i) => {
+    [-4.2, -2.1, 2.1, 4.2].forEach((xOff, i) => {
         const frame = new THREE.Mesh(new THREE.BoxGeometry(1.05, 1.65, 0.08), brickMat.clone());
-        frame.position.set(xOff, 1.85, bd / 2 + 0.1);
+        frame.position.set(xOff, floorY + 1.85, southZ + 0.1);
         const glass = new THREE.Mesh(new THREE.BoxGeometry(0.82, 1.35, 0.05), windowMat.clone());
-        glass.position.set(xOff, 1.9, bd / 2 + 0.14);
+        glass.position.set(xOff, floorY + 1.9, southZ + 0.14);
         glass.userData.labWindow = true;
+        glass.userData.wetGlass = true;
+        glass.userData.surfaceType = 'glass';
         glass.userData.windowPhase = i * 0.9;
+        if (glass.material) {
+            glass.material.userData = glass.material.userData || {};
+            glass.material.userData._dryRoughness = glass.material.roughness;
+            glass.material.userData._dryOpacity = glass.material.opacity;
+            glass.material.userData._dryTransmission = glass.material.transmission;
+        }
         windowMeshes.push(glass);
         building.add(frame, glass);
     });
@@ -181,19 +214,19 @@ export function buildStarterTeslaExterior18() {
             side: THREE.DoubleSide,
         })
     );
-    sign.position.set(0, 3.35, bd / 2 + 0.16);
+    sign.position.set(0, floorY + 3.35, southZ + 0.16);
     sign.userData.labSign = true;
     building.add(sign);
 
     const doorGroup = new THREE.Group();
     doorGroup.name = 'starter_tesla_exterior_door';
     const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(1.55, 2.25, 0.14), brickMat.clone());
-    doorFrame.position.set(0, 1.2, bd / 2 + 0.08);
+    doorFrame.position.set(0, floorY + 1.2, southZ + 0.08);
     const doorL = new THREE.Mesh(new THREE.BoxGeometry(0.62, 2.05, 0.06), doorMat.clone());
-    doorL.position.set(-0.34, 1.1, bd / 2 + 0.18);
+    doorL.position.set(-0.34, floorY + 1.1, southZ + 0.18);
     doorL.userData.doorSide = 'left';
     const doorR = doorL.clone();
-    doorR.position.set(0.34, 1.1, bd / 2 + 0.18);
+    doorR.position.set(0.34, floorY + 1.1, southZ + 0.18);
     doorR.userData.doorSide = 'right';
     doorGroup.add(doorFrame, doorL, doorR);
     building.add(doorGroup);
@@ -208,7 +241,7 @@ export function buildStarterTeslaExterior18() {
         locked: true,
         interactAction: 'rp',
         interactLabel: 'Lab Entrance',
-        interactHint: 'Enter Threshold Research Lab',
+        interactHint: 'Enter Threshold Research Lab — walk inside',
         interactRadius: 2.8,
         soundMode: 'clip',
         soundClipId: 'starter_interior_door_creak',
@@ -297,8 +330,12 @@ export function buildStarterTeslaExterior18() {
     Engine.scene.add(root);
     State.objects.push(root);
     State.objects.push(building);
+    State.objects.push(shellGroup);
+    State.objects.push(linerGroup);
     State.objects.push(tower);
     State.objects.push(doorGroup);
+
+    window.StarterTeslaWeather184?.registerSouthLabWindows?.();
 
     return { root, building, tower, door: doorGroup };
 }
@@ -365,17 +402,16 @@ export const StarterTeslaExterior18 = {
         if (!door?.userData) return;
         door.userData.doorOpen = 1;
         const PC = window.PlayerController;
-        const labDoor = { x: -4.2, y: 0, z: 2.5 };
+        const entry = SITE.interiorEntry;
         if (PC?.spawned && PC.group) {
-            PC.body?.position?.set?.(labDoor.x, PC.body.position.y, labDoor.z);
-            PC.group.position.set(labDoor.x, PC.group.position.y, labDoor.z);
-            PC._camYaw = -Math.PI / 2;
-            PC._camPitch = 0.22;
+            const py = Math.max(1.2, BUILDING.floorY + 1.06);
+            PC.body?.position?.set?.(entry.x, py, entry.z);
+            PC.group.position.set(entry.x, py, entry.z);
+            PC._camYaw = Math.PI;
+            PC._camPitch = 0.18;
         }
-        window.UI?.status?.('Inside annex — coil hum ahead · plaza east');
+        window.UI?.status?.('Inside the lab — coil hum ahead · courtyard south');
     },
 };
-
-window.EXTERIOR_SPAWN = EXTERIOR_SPAWN;
 window.StarterTeslaExterior18 = StarterTeslaExterior18;
 window.buildStarterTeslaExterior18 = buildStarterTeslaExterior18;

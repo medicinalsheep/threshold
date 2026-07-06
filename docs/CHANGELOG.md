@@ -1,5 +1,131 @@
 # Changelog
 
+## 9.0.0 — Guided session + showcase world overhaul
+
+- **Intro removed** — no flythrough on Wardenclyffe; camera spawns at visitor gateway facing the lab
+- **`guidedSession.js`** — upfront **PLAY** vs **BUILD** choice (lobby + in-engine modal); persists in `ViewPrefs`
+- **Lobby** — **START IN** toggle · primary **ENTER →** button · updated quick tips
+- **`showcaseGateway.js`** — stone/copper visitor arch replaces blocky courtyard toys (platform, beacon, cubes, windmill)
+- **`starterScene.js`** — gutted minecraft-style demo props; curated terminals + Alex guide on polished site path
+- **Walkthrough** — 6-step guided tour aligned to mode choice, survival, PromptGen, export (no tutorial cube)
+- Default sim starts **paused** until PLAY/BUILD is applied
+
+## 8.9.0 — Sprint J: Survival vitals system
+
+- **`survivalNeeds.js`** — six coupled stats (health, food, water, rest, stamina, stress): drain/regen, sprint gating, collapse recovery, weather + zone modifiers
+- **`survivalZones.js`** — passive recovery near creek, coffee nook, Tesla lab, interior shelter
+- **`survivalWorldHooks.js`** — tags starter coffee, creek, shop, benches as `[F]` survival interactables
+- **`survivalInteract.js`** — consume/rest actions with per-prop cooldowns; channeled bench rest
+- **`survivalNeedsHud.js`** — six-bar vitals overlay + status effects; **V** toggles visibility
+- **Player** — walk/sprint speed scaled by vitals; movement context feeds survival tick
+- **MP** — compact `v` vitals array on player avatars (VoIP position reporter + live sync)
+
+## 8.8.0 — Sprint I: Rebuild telemetry + per-author undo + host handoff
+
+- **`guestRebuildTelemetry.js`** — logs guest starter rebuilds; status toast + sync chip `rebuild +N` + SYNC STORY detail
+- **Per-author undo** — Compiler **Undo my edits only** toggles `UNDO MINE` (skips other authors' checkpoints in MP)
+- **`hostMigration.js`** — **SAVE & HANDOFF** (PLAYERS): snapshot world + designate successor; guests get `HANDOFF_SNAPSHOT`
+- **Migration modal** — after reconnect grace fails: play link, successor steps, lobby return
+- **Reconnect** — 5 failed retries open migration modal instead of silent dead-end
+
+## 8.7.0 — Sprint H: Collab guardrails + texture manifest
+
+- **`collaborateGuard.js`** — **scene lock** (host-only edits) + **AI run ack** queue; host approves/denies guest compiler/Grok runs in modal
+- **`textureManifestSync.js`** — host pushes custom `tex_*` GIMP blobs on join (mirrors audio manifest); sync chip `tex N/M`
+- **`textureLibrary.saveWithId`** — receive network texture blobs into IndexedDB
+- **Scene history** — checkpoints tagged with `authorKey`; undo status shows who ran the script
+- **PLAYERS panel** — scene lock + AI ack toggles; guest collab status note
+- **Permissions** — scene lock blocks all guests (including admins)
+
+## 8.6.0 — Sprint G: Phase 2 multiplayer foundation
+
+- **`guestRebuild.js`** — registry-driven guest starter rebuilds (replaces sync.js if-chain); marker + upgrade chains for Wardenclyffe 19.x modules
+- **`audioManifestSync.js`** — host pushes custom recorded clip manifest on join; guests pull missing `sfx_*` blobs (≤480KB); sync chip shows `audio N/M`
+- **`syncStory.js`** — **SYNC STORY** modal + **SYNC** toolbar button + clickable sync chip — documents live sync vs local-only vs host-only
+- **Reconnect grace** — guest/spectate auto-retry host connection (5× / 3s) before giving up
+- **Spectate HUD** — shows pending audio sync count when watching
+
+## 8.5.0 — Sprint F: First-run delight
+
+- **`introSkip.js`** — skippable Wardenclyffe flythrough (ESC, click canvas, SKIP pill); intro shortened to ~4.5s
+- **`actionHints.js`** — progressive teaching toasts (walk, PromptGen EXAMPLES, EXPORT & PLAY)
+- **Tutorial** — compressed default walkthrough to **5 steps**; **MORE → TUTORIAL (FULL)** keeps 9-step deep dive
+- **TC quest card** — optional dismissible side-quest hint (lobby TC → lap challenge), not a gate
+- **Lobby tips** — updated quick steps for EXPORT & PLAY + optional TC
+
+## 8.4.0 — Sprint E: Export & Play + export preflight
+
+- **`quickExportPlay.js`** — one-click **EXPORT & PLAY**: pause snapshot, `SAVE WORLD`, manifest download, open `?world=CODE&autoplay=1` in new tab; **PLAY LAST EXPORT** in lobby + engine MORE menu
+- **`exportPreflight.js`** — pre-export scan: empty scene / guest blockers, missing sound clips, texture hints, GLTF paths, `clearWorld` in running code; modal with **EXPORT ANYWAY** on warnings
+- **Lobby autoplay** — `?world=CODE&autoplay=1` skips lobby, starts SOLO, loads saved world in engine
+
+## 8.3.0 — Sprint D: Nikola R8.2.7 + Phase 19.5 lighting
+
+- **`labCoatProp.js`** — procedural `prop_lab_coat` on Nikola (`tesla_guide` role + manifest hair)
+- **Nikola patrol** — bench ↔ coil ↔ tube rack ↔ rotary (unified lab layout waypoints)
+- **Intro caption** — Nikola hint during flythrough
+- **`starterLighting195.js`** — dusk default (18.75h), warm lab/coil/façade/courtyard lights, window glow; guest sync
+
+## 8.2.0 — Sprint C: Starter templates + PromptGen cookbook
+
+- **`starterTemplates.js`** — lobby picker: **Wardenclyffe** (default), **Blank Yard**, **TC Circuit**, **Surreal Seed**; `?template=` URL param
+- **TC →** shortcut loads TC Circuit template (vehicles + checkpoint + auto lap timer)
+- **`promptCookbook.js`** — 10 tested LEGO FIT examples in PromptGen **EXAMPLES** sidebar
+- Engine boot uses `bootstrapSelectedTemplate()` instead of hard-coded Wardenclyffe-only path
+
+## 8.1.0 — Sprint B: Performance HUD + sync status chip
+
+- **`creatorHud.js`** — live **FPS · bodies · objs · mesh · draw · tier** overlay (bottom-left)
+- **PERF** toolbar toggle + **\`** backtick shortcut; preference stored in `ViewPrefs`
+- **Sync chip** — role (host/guest/spectate), weather %, appearance count, **audio local only ⓘ** tooltip in MP
+- **EDIT/PLAY** pill updates with pause state
+
+## 8.0.0 — Sprint A: Scene undo + compile sandbox + Grok extend
+
+- **`sceneHistory.js`** — ring buffer of `Sync.capture()` checkpoints before world-mutating runs and `clearWorld`; **UNDO SCENE** button + **Ctrl+Z** (outside text fields)
+- **`runtime.js`** — failed eval auto-reverts last checkpoint; error line highlight on compiler output
+- **Compiler** — removed inner try/catch that swallowed script errors; transpile rethrows to sandbox
+- **Grok client** — LEGO FIT: extend scene, no `clearWorld` unless user explicitly requests reset
+- **Readiness** — new `no_clear` check flags accidental `World.clearWorld()` in generated scripts
+
+## 7.9.4 — Phase 19.4: Wet south windows + courtyard prop density
+
+- **South façade glass** — `labWindow` panes use physical transmission; `wetGlass` registered with `WeatherSystem` for rain-driven roughness/opacity
+- **`starterCourtyard194.js`** — period yard clutter: barrels, cable spools, crates, gas lamps, visitor sign, rope stanchions, work bench, tool cart
+- **Lamp animation** — courtyard gas lamps flicker with rain dampening; guest sync rebuilds `starter_courtyard_props`
+- **Weather** — `registerSouthLabWindows()`; wet glass driven by `WeatherSystem` (skylight duplicate anim removed)
+
+## 7.9.3 — Phase 19.3: Building PBR + HILOD
+
+- **`starterBuildingTex193.js`** — tags GLB mesh names → brick/wood/roof/copper maps; per-mesh PBR + HILOD after GLB upgrade
+- **Textures** — enhanced `starter_tesla_brick` / `starter_tesla_wood` palettes; new `starter_tesla_roof` slate
+- **UV finish** — façade tiling tuned in `starter-textures.json` for brick, liner, roof
+- **Auto-wire** — runs after `upgradeTeslaBuildingGlb192` and `upgradeTeslaLabGlb185`; guest sync rebuild
+
+## 7.9.2 — Phase 19.2: Architectural GLB pass
+
+- **`building:gen`** — `wardenclyffe_building` LOD0/1/2, `lab_wood_liner`, `wardenclyffe_door` + manifest entries
+- **`teslaBuildingGlb192.js`** — runtime shell/liner/door upgrade with `MeshLod` on brick façade
+- **Building groups** — `starter_tesla_building_shell` + `_liner` for GLB swap; unified physics box
+- **`lab:gen`** — south-facing `lab_door.glb` aligned with Phase 19.1 interior
+- **Blender scaffold** — `build_starter_building.py`
+
+## 7.9.1 — Phase 19.1: Terrain + building shell
+
+- **`starterSiteTerrain191.js`** — unified grass field, gravel courtyard, approach path, lab apron (replaces overlapping slabs)
+- **Building shell** — south wall door cutout, wood liner + interior ceiling, windows flank entrance
+- **Lab interior** — expanded to 10.8×4 m inside brick volume; floor on building slab (`y=0.14`)
+- **Interactables / NPC / skylight** — repositioned for human-scale room layout
+- **Guest sync** — rebuilds `starter_site_terrain` on join
+
+## 7.9.0 — Phase 19: Wardenclyffe unified site (Option A)
+
+- **Site layout** — `starterSiteLayout.js` single anchor map: building `(0,0,0)`, courtyard south, tower north, highway east perimeter
+- **Lab interior** — coil room inside brick shell; south doors exit to visitor courtyard (no east annex)
+- **Doors** — walk-in entry/exit nudges replace cross-map teleport
+- **Relocated zones** — plaza pads/NPCs → courtyard; creek west; highway/urban east; env props on site plan
+- **Ambient zones** — wildlife, urban, interior audio follows new coordinates
+
 ## 7.8.3 — R8.2.6: Custom GLB path + appearance export + character kit
 
 - **Custom body** — `import/` path (`customBodyImport`), local GLB picker, URL load, clear reset

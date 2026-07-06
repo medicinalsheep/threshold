@@ -1,7 +1,9 @@
 /** Phase 18.1 — Tesla lab ambience: coil hum loop + random spark crackles */
 
-const COIL_ZONE = { x: -9, y: 1.2, z: 2, radius: 6.0, volume: 0.38 };
-const LAB_RADIO_ZONE = { x: -9, y: 1.0, z: 2, radius: 5.5, volume: 0.24 };
+import { LAB_ORIGIN } from './starterSiteLayout.js';
+
+const COIL_ZONE = { x: LAB_ORIGIN.x, y: LAB_ORIGIN.y + 1.2, z: LAB_ORIGIN.z, radius: 7.0, volume: 0.38 };
+const LAB_RADIO_ZONE = { x: LAB_ORIGIN.x, y: LAB_ORIGIN.y + 1.0, z: LAB_ORIGIN.z, radius: 6.5, volume: 0.24 };
 
 function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));

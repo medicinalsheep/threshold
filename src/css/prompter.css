@@ -132,3 +132,68 @@
     color: #666;
     line-height: 1.4;
 }
+
+.prompt-cookbook {
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 220px;
+    overflow: hidden;
+}
+
+.prompt-cookbook-head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    color: var(--accent-color);
+    text-transform: uppercase;
+}
+
+.prompt-cookbook-sub {
+    color: #777;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    font-size: 0.58rem;
+}
+
+.prompt-cookbook-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.prompt-cookbook-item {
+    text-align: left;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 8px 10px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    line-height: 1.35;
+    transition: border-color 0.15s;
+}
+
+.prompt-cookbook-item:hover {
+    border-color: var(--accent-color);
+}
+
+.prompt-cookbook-item strong {
+    display: block;
+    color: #d8e8dc;
+    margin-bottom: 2px;
+    font-size: 0.68rem;
+}
+
+.prompt-cookbook-item span {
+    color: #888;
+    font-size: 0.58rem;
+}

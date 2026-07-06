@@ -88,20 +88,20 @@ function benchGrp() {
 function doorGrp() {
     const g = new THREE.Group();
     g.name = 'Lab Door';
-    part(g, new THREE.BoxGeometry(0.14, 2.15, 1.35), WALL(), { x: -0.52, y: 1.08 }, null, 'door_frame');
+    part(g, new THREE.BoxGeometry(1.35, 2.15, 0.14), WALL(), { y: 1.08 }, null, 'door_frame');
 
     const leftPivot = new THREE.Group();
     leftPivot.name = 'door_left';
-    leftPivot.position.set(-0.12, 1.0, -0.3);
-    const leftLeaf = new THREE.Mesh(new THREE.BoxGeometry(0.05, 2.0, 0.58), WOOD());
+    leftPivot.position.set(-0.3, 1.0, 0.12);
+    const leftLeaf = new THREE.Mesh(new THREE.BoxGeometry(0.58, 2.0, 0.05), WOOD());
     leftLeaf.name = 'door_leaf_left';
     leftLeaf.position.set(0, 0, -0.29);
     leftPivot.add(leftLeaf);
 
     const rightPivot = new THREE.Group();
     rightPivot.name = 'door_right';
-    rightPivot.position.set(-0.12, 1.0, 0.3);
-    const rightLeaf = new THREE.Mesh(new THREE.BoxGeometry(0.05, 2.0, 0.58), WOOD());
+    rightPivot.position.set(0.3, 1.0, 0.12);
+    const rightLeaf = new THREE.Mesh(new THREE.BoxGeometry(0.58, 2.0, 0.05), WOOD());
     rightLeaf.name = 'door_leaf_right';
     rightLeaf.position.set(0, 0, 0.29);
     rightPivot.add(rightLeaf);
@@ -126,8 +126,8 @@ function doorOpenClip(leftPivot, rightPivot) {
     const t = [0, d * 0.35, d * 0.7, d];
     const swing = 0.72;
     return new THREE.AnimationClip('door_open', d, [
-        quatYTrack(leftPivot.name, t, [0, swing, swing, 0]),
-        quatYTrack(rightPivot.name, t, [0, -swing, -swing, 0]),
+        quatYTrack(leftPivot.name, t, [0, -swing, -swing, 0]),
+        quatYTrack(rightPivot.name, t, [0, swing, swing, 0]),
     ]);
 }
 

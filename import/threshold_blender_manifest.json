@@ -152,6 +152,89 @@
       "realism": "r5"
     },
     {
+      "id": "wardenclyffe_building",
+      "objectName": "Wardenclyffe Building",
+      "file": "wardenclyffe_building.glb",
+      "path": "import/wardenclyffe_building.glb",
+      "lods": [
+        {
+          "level": 0,
+          "file": "wardenclyffe_building.glb",
+          "path": "import/wardenclyffe_building.glb",
+          "distance": 0
+        },
+        {
+          "level": 1,
+          "file": "wardenclyffe_building_l1.glb",
+          "path": "import/wardenclyffe_building_l1.glb",
+          "distance": 12
+        },
+        {
+          "level": 2,
+          "file": "wardenclyffe_building_l2.glb",
+          "path": "import/wardenclyffe_building_l2.glb",
+          "distance": 28
+        }
+      ],
+      "lodDistances": [
+        0,
+        12,
+        28
+      ],
+      "hasPhysics": false,
+      "mass": 0,
+      "tcEd": "starter-building",
+      "license": "Original — Threshold",
+      "realism": "r5"
+    },
+    {
+      "id": "lab_wood_liner",
+      "objectName": "Lab Wood Liner",
+      "file": "lab_wood_liner.glb",
+      "path": "import/lab_wood_liner.glb",
+      "lods": [
+        {
+          "level": 0,
+          "file": "lab_wood_liner.glb",
+          "path": "import/lab_wood_liner.glb",
+          "distance": 0
+        }
+      ],
+      "lodDistances": [
+        0
+      ],
+      "hasPhysics": false,
+      "mass": 0,
+      "tcEd": "starter-building",
+      "license": "Original — Threshold",
+      "realism": "r5"
+    },
+    {
+      "id": "wardenclyffe_door",
+      "objectName": "Wardenclyffe Door",
+      "file": "wardenclyffe_door.glb",
+      "path": "import/wardenclyffe_door.glb",
+      "lods": [
+        {
+          "level": 0,
+          "file": "wardenclyffe_door.glb",
+          "path": "import/wardenclyffe_door.glb",
+          "distance": 0
+        }
+      ],
+      "lodDistances": [
+        0
+      ],
+      "hasPhysics": false,
+      "mass": 0,
+      "tcEd": "starter-building",
+      "license": "Original — Threshold",
+      "realism": "r5",
+      "animations": [
+        "door_open"
+      ]
+    },
+    {
       "id": "tesla_coil",
       "objectName": "Tesla Coil",
       "file": "tesla_coil.glb",
@@ -236,7 +319,7 @@
     }
   ],
   "exportDir": "import",
-  "exportedAt": "2026-07-06T01:08:47.164Z",
+  "exportedAt": "2026-07-06T01:49:42.437Z",
   "tcEd": "starter-lab",
   "realism": "r5"
 }

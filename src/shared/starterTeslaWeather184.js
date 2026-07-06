@@ -1,6 +1,27 @@
-/** Phase 18.4 — annex weather: skylight rain, thunder flash, exterior marquee */
+/** Phase 18.4 / 19.4 — annex weather: skylight + south façade wet glass, thunder, marquee */
 
-const LAB_ORIGIN = { x: -9, y: 0, z: 2 };
+import { LAB_ORIGIN, BUILDING, BUILDING_CENTER } from './starterSiteLayout.js';
+
+function storeDryGlass(material) {
+    if (!material) return;
+    material.userData = material.userData || {};
+    if (material.userData._dryRoughness == null) material.userData._dryRoughness = material.roughness ?? 0.06;
+    if (material.userData._dryOpacity == null) material.userData._dryOpacity = material.opacity ?? 1;
+    if (material.userData._dryTransmission == null) material.userData._dryTransmission = material.transmission ?? 0.78;
+}
+
+function registerSouthLabWindows() {
+    const ext = window.State?.objects?.find((o) => o.userData?.id === 'starter_tesla_exterior');
+    const windows = ext?.userData?.windows || [];
+    windows.forEach((mesh) => {
+        if (!mesh?.userData?.labWindow) return;
+        mesh.userData.wetGlass = true;
+        mesh.userData.surfaceType = 'glass';
+        storeDryGlass(mesh.material);
+        window.WeatherSystem?.registerWetGlass?.(mesh);
+    });
+    return windows.length;
+}
 
 function skylightGlassMat(THREE) {
     return new THREE.MeshPhysicalMaterial({
@@ -33,8 +54,8 @@ export function buildStarterTeslaWeather184() {
     const paneMat = skylightGlassMat(THREE);
     const frameMat = new THREE.MeshStandardMaterial({ color: 0x4a4038, roughness: 0.72, metalness: 0.12 });
 
-    const skylight = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.04, 1.5), paneMat.clone());
-    skylight.position.set(0, 2.92, 0);
+    const skylight = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.04, 2.4), paneMat.clone());
+    skylight.position.set(0, BUILDING.h - 0.12, 0);
     skylight.userData = {
         wetGlass: true,
         isSkylight: true,
@@ -48,16 +69,17 @@ export function buildStarterTeslaWeather184() {
     }
 
     const frameN = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.08, 0.08), frameMat);
-    frameN.position.set(0, 2.95, 0.78);
+    const skyY = BUILDING.h - 0.09;
+    frameN.position.set(0, skyY, 1.22);
     const frameS = frameN.clone();
-    frameS.position.z = -0.78;
-    const frameE = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 1.58), frameMat);
-    frameE.position.set(1.22, 2.95, 0);
+    frameS.position.z = -1.22;
+    const frameE = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 2.48), frameMat);
+    frameE.position.set(2.12, skyY, 0);
     const frameW = frameE.clone();
-    frameW.position.x = -1.22;
+    frameW.position.x = -2.12;
 
     group.add(skylight, frameN, frameS, frameE, frameW);
-    group.position.set(LAB_ORIGIN.x, 0, LAB_ORIGIN.z);
+    group.position.set(LAB_ORIGIN.x, LAB_ORIGIN.y, LAB_ORIGIN.z);
     group.userData = {
         id: 'starter_tesla_skylight',
         name: 'Lab Skylight',
@@ -92,7 +114,7 @@ export function buildStarterTeslaWeather184() {
             side: THREE.DoubleSide,
         })
     );
-    marquee.position.set(-32, 4.2, 2.85);
+    marquee.position.set(BUILDING_CENTER.x, BUILDING.floorY + 4.2, BUILDING.southZ + 0.25);
     marquee.rotation.y = Math.PI;
     if (marquee.material) {
         marquee.material.userData = marquee.material.userData || {};
@@ -109,13 +131,16 @@ export function buildStarterTeslaWeather184() {
     Engine.scene.add(marquee);
     State.objects.push(marquee);
 
+    storeDryGlass(skylight.material);
     window.WeatherSystem?.registerWetGlass?.(skylight);
+    registerSouthLabWindows();
     return { skylight: group, marquee };
 }
 
 export const StarterTeslaWeather184 = {
     _flashT: 0,
     _flashPower: 0,
+    registerSouthLabWindows,
 
     wireAnims() {
         const annex = window.State?.objects?.find((o) => o.userData?.id === 'starter_tesla_skylight');
@@ -128,17 +153,6 @@ export const StarterTeslaWeather184 = {
         const marquee = window.State?.objects?.find((o) => o.userData?.id === 'starter_tesla_marquee');
 
         window.StarterAnim?.registerStarterAnim?.((t, dt) => {
-            const rain = window.WeatherSystem?.getIntensity?.() ?? 0;
-            if (skylight?.material) {
-                const m = skylight.material;
-                const dryR = m.userData?._dryRoughness ?? 0.06;
-                const dryO = m.userData?._dryOpacity ?? 0.42;
-                const dryT = m.userData?._dryTransmission ?? 0.78;
-                m.roughness = dryR + rain * 0.38;
-                m.opacity = Math.max(0.28, dryO - rain * 0.08);
-                m.transmission = Math.max(0.45, dryT - rain * 0.22);
-            }
-
             if (this._flashT > 0) {
                 this._flashT = Math.max(0, this._flashT - dt);
             }
