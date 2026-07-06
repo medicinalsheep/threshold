@@ -1,39 +1,41 @@
-# Creative Workflow — GIMP, Blender, Engine (v6.4+)
+# Creative Workflow — GIMP, Blender, Engine (v9.0+)
 
-**One loop:** design on device → import into Engine → playtest → export manifest → ship to any platform.
+**One loop:** choose PLAY or BUILD → design on device → import into Engine → playtest → export manifest → ship.
 
 ---
 
 ## How creative phases change your workflow
 
-| Before (primitives only) | After (A–D shipped) |
-|--------------------------|---------------------|
+| Before (primitives only) | After (showcase + pipeline) |
+|--------------------------|-----------------------------|
 | Color sliders in Texture tab | PNG/JPG PBR maps from GIMP |
-| Basic cubes/spheres | Blender GLB meshes at cursor |
+| Colored cubes in courtyard | Wardenclyffe GLBs + gateway + PromptGen extend |
 | Manual re-import after every save | `textures:watch` hot-reload in dev |
-| Export = world JSON only | Manifest lists textures, GLTF paths, GIMP/Blender metadata |
+| Export = world JSON only | Manifest lists textures, GLTF, survival hooks, MP sync |
 
 ### Recommended solo loop
 
 ```
-1. LOBBY → SOLO (EDIT)
-2. Build layout — Compiler LEGO fit OR Insert primitives
-3. ART (pick your path):
+1. LOBBY → choose PLAY or BUILD → ENTER
+2. Guided tour (first visit) — confirm mode, PromptGen EXAMPLES, export path
+3. BUILD — layout via Compiler LEGO fit OR Insert / GLTF
+4. ART (pick your path):
    A. GIMP → textures/*.png → Texture tab → GIMP SYNC
    B. Blender → import/*.glb → INSERT → GLTF
    C. Dev: textures:watch + npm run dev (live reload)
-4. Optional: SCENE → AI agents on NPCs
-5. PLAY — test physics + Hyper render mode
-6. SAVE WORLD + MORE → EXPORT (manifest captures all asset refs)
-7. package:android / package:win (iOS pipeline — see NEXT_PHASES.md)
+5. Optional: SCENE → Agents on NPCs · survival props (survivalKind)
+6. PLAY — test walk, vitals, weather, physics
+7. SAVE WORLD + MORE → EXPORT & PLAY (quick) or EXPORT wizard (full)
+8. package:android / package:win / package:steam
 ```
 
 ### Multiplayer note
 
-- **Host** exports GIMP/Blender assets locally; guests receive mesh transforms + `userData` via sync.
-- **Texture blobs** and **GLB files** are device-local; run `npm run bundle:assets` before `package:win` / `package:android` to ship `textures/` + `import/` in the app.
-- Use **hosted GLB URLs** or bundled paths (`bundle/textures/`, `bundle/import/`) for guests.
-- PromptGen should set `textureHint` / `gltfPath` so every client knows which files to load.
+- **Host** exports GIMP/Blender assets locally; guests receive transforms + `userData` via sync.
+- **Texture/audio manifests** — host pushes custom blobs on join (Sprints G–H).
+- **Scene lock** + **AI ack** — host can gate guest edits and compiler runs.
+- Use bundled paths (`bundle/textures/`, `bundle/import/`) or hosted GLB URLs for guests.
+- PromptGen should set `textureHint` / `gltfPath` and `// ASSETS:` blocks for export credits.
 
 ---
 
@@ -56,6 +58,8 @@ m.userData.textureHint = 'textures/stone_block_albedo.png';
 // After Blender: INSERT → GLTF or userData.gltfPath = 'import/stone_block.glb'
 ```
 
+**Extend pattern (preferred):** PromptGen → **EXAMPLES** — tested prompts that add to the live scene without `World.clearWorld()`.
+
 ---
 
 ## Tool quick reference
@@ -71,21 +75,30 @@ m.userData.textureHint = 'textures/stone_block_albedo.png';
 | `npm run blender:export -- --blend scene.blend --object "Name"` | Headless GLB |
 | Engine → Texture → **GIMP SYNC** | Load `threshold_manifest.json` |
 | Engine → INSERT → **GLTF** | File, URL, or Blender manifest |
+| Engine → **MORE → EXPORT & PLAY** | One-click save + playable tab |
 
 ---
 
 ## PromptGen & Compiler expectations
 
-When generating worlds, AI output should include an **ASSET MANIFEST** comment block:
+When generating worlds, AI output should include an **ASSETS** comment block:
 
 ```javascript
 // ASSETS (user imports after RUN):
 // - Stone Block: textures/stone_block_albedo.png (+ roughness/metalness optional)
 // - Stone Block: import/stone_block.glb (optional — replaces primitive)
-// INSPECTOR: Texture / Collision / Audio after pause
+// INSPECTOR: Texture / Collision / Audio after BUILD pause
 ```
 
-See `getAssetContext()` in live scene prompts for objects already in the world.
+See `getAssetContext()` in live scene prompts. Cookbook: **PromptGen → EXAMPLES** (10 tested extend prompts).
+
+Survival props:
+
+```javascript
+// userData on interact root:
+// interactAction: 'survival', survivalKind: 'food'|'water'|'rest'|'snack'
+// then applySurvivalWorldHooks() or tag in bootstrap
+```
 
 ---
 
@@ -94,25 +107,26 @@ See `getAssetContext()` in live scene prompts for objects already in the world.
 `.threshold-game.json` includes:
 
 - `textures[]` — per-object slot IDs and paths
-- `gimp` — plugin install path + manifest name
-- `blender` — addon path + headless export command
-- `creativeCli` — watch URL + npm scripts
+- `gimp` / `blender` / `creativeCli` — tool metadata
+- `graphics.profiles` — per-platform asset slices
+- Optional embedded sound blobs (export wizard)
 
-Sounds: IndexedDB locally; export wizard can embed base64 clips in manifest. Textures ship via `bundle:assets`.
+Sounds: IndexedDB locally; textures ship via `bundle:assets`. **EXPORT preflight** scans missing clips, GLTF paths, and `clearWorld` risks before ship.
 
 ---
 
 ## Render mode tip
 
-Use **Hyper (4)** when showcasing PBR textures and GLTF materials. Retro modes (0–3) remain compatible — stagger objects in Z for depth readability.
+Use **Hyper (4)** when showcasing PBR textures and GLB materials. Retro modes (0–3) remain compatible — stagger objects in Z for depth readability. Graphics tier suggested after guided tour — **SCENE → ENV**.
 
 ---
 
 ## Further reading
 
-- [README.md](README.md) — documentation index + scope map
+- [GETTING_STARTED.md](GETTING_STARTED.md) — lobby → ship linear path
+- [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) — controls, survival, showcase site
 - [GIMP_TEXTURES.md](GIMP_TEXTURES.md) — install, batch, live SYNC
 - [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) — HILOD, codecs, presets
-- [CREATIVE_PLUGINS.md](CREATIVE_PLUGINS.md) — phase A–D implementation detail
-- [NEXT_PHASES.md](NEXT_PHASES.md) — phase history + open work
-- [NATIVE_SHELLS.md](NATIVE_SHELLS.md) — APK / Windows / iOS
+- [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) — 9-step wizard
+- [POLISH_ROADMAP.md](POLISH_ROADMAP.md) — Sprints L–Q forward plan
+- [NEXT_PHASES.md](NEXT_PHASES.md) — phase history

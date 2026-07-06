@@ -8,20 +8,19 @@ export const REFERENCE_LIBRARY = {
             id: 'quick_start',
             title: 'Quick Start — Solo Game in 10 Steps',
             summary: 'Lobby → in-engine tutorial → build (EDIT) → AI → PLAY → export. Full loop for first playable scene.',
-            checklist: ['Start SOLO or HOST', 'First visit: engine TUTORIAL (MORE → TUTORIAL to replay)', 'Stay in EDIT while building', 'MORE → EXPORT when ready to ship'],
+            checklist: ['Lobby PLAY or BUILD → ENTER', 'Guided tour (MORE → TUTORIAL to replay)', 'BUILD while editing · PLAY to test', 'MORE → EXPORT & PLAY or full EXPORT'],
             code: `// WORKFLOW (not runnable — follow in UI):
-// 1. Lobby → SOLO PLAY (or CREATE SESSION + copy link)
-// 2. ENGINE → tutorial (9 steps) — MORE → TUTORIAL to replay
-// 3. EDIT (paused) — fly WASD, + insert, right-click INSERT
-// 4. INSERT → SPAWN AS PLAYER for walkable avatar
-// 5. Optional art: GIMP → textures/ → Texture GIMP SYNC — OR Blender → INSERT GLTF
-// 6. PromptGen → Compiler OR SCENE → AI agents (optional)
-// 7. SAVE WORLD (MORE) — ?world=CODE link
-// 8. CHECK CODE READY → RUN IN ENGINE
-// 9. PLAY — test walk + physics + Hyper for PBR
-// 10. MORE → EXPORT — 9 steps (INFO→SHIP) → store:prep → package:*
-// Optional: Lobby TC → (original showcase) — docs/THRESHOLD_CHILD_ASSETS.md
-// See docs/GETTING_STARTED.md · docs/EXPORT_WALKTHROUGH.md`
+// 1. Lobby → choose PLAY or BUILD → ENTER (or CREATE SESSION + copy link)
+// 2. First visit: mode modal + 6-step guided tour — MORE → TUTORIAL (FULL) for deep dive
+// 3. BUILD (paused) — insert, Compiler, textures, agents
+// 4. PLAY — walk gateway → lab · F interact · survival vitals HUD
+// 5. PromptGen → EXAMPLES (extend without clearWorld) → Compiler RUN
+// 6. Optional art: GIMP SYNC · INSERT GLTF · textures:watch + dev
+// 7. SAVE WORLD — ?world=CODE link
+// 8. MORE → EXPORT & PLAY (quick) or EXPORT wizard (9 steps)
+// 9. store:prep → package:android / package:win / package:steam
+// Optional: Lobby TC → — docs/THRESHOLD_CHILD_ASSETS.md
+// See docs/GETTING_STARTED.md · docs/CREATIVE_WORKFLOW.md`
         },
         {
             id: 'render_modes_3d',
@@ -185,18 +184,43 @@ World.enterTcRace();
         },
         {
             id: 'first_session_walkthrough',
-            title: 'First Session Walkthrough (in-engine)',
-            summary: '9-step tutorial: panels, EDIT/PLAY, build, textures, optional AI, export.',
-            checklist: ['Auto-starts once per browser', 'MORE → TUTORIAL to replay', 'Textures step: GIMP SYNC / GLTF', 'EXPORT lists all asset refs'],
-            code: `// Tutorial steps (engine overlay):
-// 1. Welcome + starter scene (Guide NPC, platform)
-// 2. Drag TOOLS / SCENE panels · LOCK headers
-// 3. EDIT vs PLAY badge
-// 4. Optional: "Add tutorial block" action
-// 5. "Guide + AI tab" OR "Open PromptGen"
-// 6. PLAY to playtest · WASD / FLY toggle
-// 7. MORE → SAVE WORLD · MORE → EXPORT (.threshold-game.json)
-// 8. Done — Compiler WORKFLOWS for deeper patterns`
+            title: 'First Session — Guided Tour (v9)',
+            summary: 'PLAY/BUILD choice + 6-step tour: mode, Wardenclyffe showcase, PromptGen EXAMPLES, playtest, export.',
+            checklist: ['Lobby START IN toggle or in-engine modal', 'MORE → TUTORIAL to replay', 'No tutorial cube — use EXAMPLES', 'EXPORT & PLAY for quick ship'],
+            code: `// Guided tour steps (engine overlay):
+// 1. Your session mode — PLAY vs BUILD badge
+// 2. Wardenclyffe showcase — gateway, lab GLBs, Nikola, survival
+// 3. PromptGen EXAMPLES + Compiler kiosk
+// 4. PLAY — vitals HUD · F interact · weather
+// 5. EXPORT & PLAY · SAVE WORLD · ?world=CODE
+// 6. Done — MORE → TUTORIAL (FULL) for 9-step deep dive
+// Replay: ViewPrefs walkthroughDone — or MORE → TUTORIAL`
+        },
+        {
+            id: 'survival_vitals_v9',
+            title: 'Survival Vitals — Food, Water, Rest, Stamina, Stress',
+            summary: 'Six coupled stats in PLAY mode. Tag props for F interact; zones passively recover near creek/coffee/lab.',
+            checklist: ['PLAY mode only', 'F at coffee/creek/bench on showcase site', 'applySurvivalWorldHooks() after bootstrap', 'MP: avatar.v array in live sync'],
+            code: `// Tag interact prop (Compiler or bootstrap):
+const root = State.objects.find(o => o.userData?.id === 'my_food_station');
+root.userData.interactAction = 'survival';
+root.userData.survivalKind = 'food'; // food | water | rest | snack
+root.userData.interactHint = 'Grab rations';
+applySurvivalWorldHooks?.();
+
+// Read local vitals:
+const v = SurvivalNeeds.pack(); // [health, food, water, rest, stamina, stress]
+// Sprint gate: SurvivalNeeds.canSprint() · walk mult: getWalkSpeedMultiplier()`
+        },
+        {
+            id: 'export_play_quick',
+            title: 'EXPORT & PLAY — One-Click Ship',
+            summary: 'Pause snapshot, SAVE WORLD, manifest download, open ?world=CODE&autoplay=1 in new tab.',
+            checklist: ['MORE → EXPORT & PLAY', 'Preflight warns on missing clips / clearWorld', 'PLAY LAST EXPORT in lobby', 'Full wizard: MORE → EXPORT'],
+            code: `// UI: QuickExportPlay.start()
+// Lobby: PLAY LAST EXPORT button
+// URL: ?world=CODE&autoplay=1 skips lobby
+// Preflight: ExportPreflight.scan() before export`
         },
         {
             id: 'save_and_resume',

@@ -1,8 +1,19 @@
-# Realistic Gameplay — Default Starter Guide
+# Realistic Gameplay — Wardenclyffe Showcase Guide
 
-Threshold ships a **walk/drive action control** template in the SOLO lobby. Use it as the baseline for shooters, RPGs, and vehicle scenes.
+Threshold ships a **walk/drive action control** template with a polished starter site (lab GLBs, courtyard props, weather, survival). Use it as the baseline for shooters, RPGs, and exploration games.
 
-**Current default version:** v7.1.0 — FiveM controls, interior RP ambience, weather sync (Phase 17)
+**Current default:** v9.0 — guided PLAY/BUILD session, visitor gateway, survival vitals (Sprint J)
+
+---
+
+## Session modes
+
+| Mode | Badge | Simulation | Best for |
+|------|-------|------------|----------|
+| **PLAY** | `PLAY` | Physics, weather, survival, walk | Playtesting, exploring, MP guests |
+| **BUILD** | `BUILD` | Paused — world editable | Insert, Compiler, textures, agents |
+
+Choose **PLAY** or **BUILD** in the lobby before **ENTER**, or in the in-engine modal on first visit. Toggle anytime via **PAUSE** or the toolbar badge.
 
 ---
 
@@ -15,8 +26,8 @@ Threshold ships a **walk/drive action control** template in the SOLO lobby. Use 
 | Crouch | Ctrl (hold) | LT (hold) |
 | Stealth walk | Alt (hold) | — |
 | Jump | Space | A |
-| Interact | E | X / Square |
-| Enter vehicle | F | Y |
+| **Interact** | **F** | X / Square |
+| Enter vehicle | E | Y |
 | Fire | **LMB** · G | RT |
 | Aim (ADS) | **RMB** (hold) | LT (hold) |
 | Reload | R | LB |
@@ -26,16 +37,34 @@ Threshold ships a **walk/drive action control** template in the SOLO lobby. Use 
 | Horn | H | D-pad Left |
 | Voice PTT | N (hold) | LB |
 | Toggle FPS / TPS | V | D-pad Down |
-| Third Eye | M | D-pad Up |
+| Toggle vitals HUD | V (when HUD focused) | — |
+| Third Eye | M / F (no target) | D-pad Up |
 | Walk / fly | Y | Y |
 | Look behind | O | D-pad Left |
 
 Full reference: [CONTROLS_FIVEM.md](CONTROLS_FIVEM.md)
 
-- **TPS** is the default after intro spawn.
-- **Mouse look** — in PLAY mode, **click the canvas** to capture the cursor (pointer lock); move mouse to orbit/aim like standard FPS/TPS. **Esc** releases. In EDIT (paused), orbit controls work around your character.
-- **FPS** hides the body mesh and shows arms viewmodel + crosshair; **ADS** (`R` / LT) zooms FOV and tightens aim.
-- **Third Eye** shows a green circle HUD and highlights interactables / NPCs within ~18m.
+- **TPS** is the default after spawn at the visitor gateway.
+- **Mouse look** — in PLAY, **click the canvas** for pointer lock; **Esc** releases. In BUILD, orbit controls work around your character.
+- **FPS** hides the body mesh and shows arms viewmodel + crosshair; **ADS** zooms FOV.
+- **Third Eye** highlights interactables / NPCs within ~18m.
+
+---
+
+## Survival vitals (PLAY mode)
+
+Six coupled stats (0–100): **health**, **food**, **water**, **rest**, **stamina**, **stress**.
+
+| System | Behavior |
+|--------|----------|
+| Drain | Food/water/rest tick down in PLAY; sprint and rain increase exertion |
+| Sprint gate | Low food/water/stamina blocks sprint; speed scales with debuffs |
+| Zones | Creek, coffee nook, lab interior — passive recovery + shelter |
+| Interact | **F** at coffee (food), creek (water), benches (channeled rest) |
+| HUD | Top-right vitals bars; press **V** to toggle visibility |
+| MP | Compact `v` array on player avatars in live sync |
+
+Wire your own props: `interactAction: 'survival'`, `survivalKind: 'food'|'water'|'rest'|'snack'`, then `applySurvivalWorldHooks()`.
 
 ---
 
@@ -43,41 +72,38 @@ Full reference: [CONTROLS_FIVEM.md](CONTROLS_FIVEM.md)
 
 Default player tuning (`src/engine/player.js`):
 
-- Walk **3.2 m/s**, sprint **6.0 m/s** (1.875×)
-- Camera-relative accel/decel (not velocity snap)
+- Walk **3.2 m/s**, sprint up to **~6.0 m/s** (modified by survival)
+- Camera-relative accel/decel
 - Capsule collider + ground raycast for jump
-- OrbitControls **disabled** in walk mode — mouse / R-stick look
+- OrbitControls **disabled** in walk PLAY mode
 
-To tune for your game, adjust `WALK_SPEED`, `SPRINT_MULT`, `ACCEL`, `DECEL` in `player.js`.
+Tune `WALK_SPEED`, `SPRINT_MULT`, `ACCEL`, `DECEL` in `player.js` for your game.
 
 ---
 
 ## NPC recipe
 
-1. Build with `HumanMesh.build({ bodyColor, pantsColor, skinColor })`
-2. Set `userData`: `isCharacter: true`, `thirdEyeTarget: true`, `interactAction`, `interactRadius`
+1. `spawnHumanWithAvatar` or `HumanMesh.build`
+2. `userData`: `isCharacter: true`, `thirdEyeTarget: true`, `interactAction`, `interactRadius`
 3. Optional patrol: `NpcPatrol.register(npc, waypoints, speed)`
-4. Wire sounds: `userData.soundClipId` + `soundTrigger` via `wireStarterSounds()` pattern
 
-Starter roster: **Alex** (guide), **Jordan** (range), **Sam** (mechanic).
+**Showcase roster:** **Alex** (PromptGen guide, visitor path), **Nikola** (lab, Tesla interact), courtyard/wildlife ambient NPCs from site modules.
 
 ---
 
 ## Texture recipe
 
 ```bash
-npm run tex:gen        # procedural PBR PNG (512px r8) + HILOD tiers
-npm run tex:compress   # PNG → WebP sidecars (ffmpeg)
-npm run tex:ktx2       # PNG → KTX2 (optional; toktx/basisu on PATH)
-npm run basis:copy     # Basis transcoder for KTX2Loader
+npm run tex:gen        # procedural PBR PNG + HILOD tiers
+npm run tex:compress   # PNG → WebP sidecars
 npm run bundle:assets  # copy to dist-pages/bundle/
 ```
 
-Full capability map: [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md)
+Full map: [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md)
 
-- Manifest: `textures/threshold_manifest.json` — `objectName` must match `userData.name` on scene objects.
-- Runtime prefers **WebP** when a `.webp` sibling exists; PNG is the fallback.
-- Override in GIMP: export slots (albedo / roughness / metalness / normal) and SYNC via TextureBridge.
+- Manifest: `textures/threshold_manifest.json` — `objectName` matches `userData.name`.
+- Site meshes wire via `wireStarterTextures()` after bootstrap.
+- GIMP SYNC via Texture tab on selected meshes.
 
 ---
 
@@ -85,176 +111,61 @@ Full capability map: [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md)
 
 ```bash
 npm run sounds:gen       # procedural starter clips
-npm run sounds:compress  # drop WAV in sounds/import/
+npm run sounds:fetch:ambient   # rain/thunder/wind
 ```
 
-Wire on objects: `soundClipId`, `soundMode: 'clip'`, `soundTrigger: collision|interact|ambient`.
+Zone audio: creek, coffee murmur, lab hum, highway Doppler — see [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md).
 
 ---
 
 ## Physics checklist
 
-- Static colliders for floors/platforms (`Physics.addStaticBox`)
+- Static colliders: `Physics.addStaticBox` on terrain/apron/gateway posts
 - Player material: higher friction, low restitution
-- Props: realistic mass (crate ~8 kg, glass ~0.5 kg)
+- Courtyard props: realistic mass on interactables
 - Default contact: friction **0.48**, restitution **0.12**
-
----
-
-## Default asset budget (target)
-
-| Type | Count | Budget |
-|------|-------|--------|
-| Textures (WebP preferred) | ~30 base maps | < 4 MB WebP in bundle |
-| Sounds (OGG) | 11 starter | < 200 KB |
-| GLB (optional) | 0–3 hero | < 1.5 MB each |
-
-```bash
-npm run assets:pack    # tex + sounds + webp + build + bundle
-npm run assets:verify  # smoke test
-```
 
 ---
 
 ## Export / playtest loop
 
-1. `npm run preview` — lobby smoke test
-2. Spawn → sprint → **V** FPS → **T** Third Eye → **E** terminal → **G** shoot glass
-3. PAUSE → edit collisions / textures / audio
-4. Export via wizard when ready
+1. `npm run preview` — lobby → **ENTER**
+2. **PLAY** — walk gateway path → lab · **F** terminals · survival props
+3. **BUILD** — edit collisions / textures / Compiler scripts
+4. **MORE → EXPORT & PLAY** or full EXPORT wizard
 
 ---
 
-## Scene objects in default lobby
+## Showcase site objects (Wardenclyffe default)
 
-| Object | Purpose |
-|--------|---------|
-| Welcome Platform | Spawn + physics collider |
-| Starter Ground / Wall | PBR dressing (UV-tiled) |
-| Surface pads | grass / wood / gravel / asphalt footstep demo |
-| Bench + fabric banner | wood + fabric presets |
-| Parking stripes + barrier | Lane dressing |
-| Glass pane + target | Gun range |
-| AI Build Station / Model Kiosk | Interact terminals |
-| Alex / Jordan / Sam | NPC examples (GLB + procedural fallback) |
+| Object / zone | Purpose |
+|---------------|---------|
+| **Visitor gateway** | Spawn approach — stone arch, lamps, gravel inlay |
+| **Site terrain** | Grass field, concrete courtyard, gravel path to lab |
+| **Terminals** | AI Build, Avatar Kiosk, Compiler Kiosk on approach |
+| **Alex** | Creative guide — **F** → PromptGen |
+| **Tesla lab GLBs** | Building shell, interior bench, coil, Nikola |
+| **Courtyard194** | Barrels, lamps, work bench, period clutter |
+| **Env14** | Creek (water survival), power lines, fence |
+| **Interior17** | Coffee nook, door RP, shop counter |
+| **Urban16** | Highway traffic, billboard, construction |
+| **Weather** | Rain layers, wet glass, dusk lighting (195) |
 
-Build your game by replacing props, keeping the control + physics + asset pipeline.
+Replace or extend via PromptGen **EXAMPLES** — avoid `World.clearWorld()` unless resetting intentionally.
 
-**First clone?** Run `npm run quickstart -- --pack` then `assets:verify` before `preview`.
+**First clone?** `npm run quickstart -- --pack` then `assets:verify` before `preview`.
 
 ---
 
-## Phase 17 additions (v7.1)
+## Phase history (site + systems)
 
-| Feature | Notes |
+| Version | Focus |
 |---------|-------|
-| Radio chatter | Near AI Build terminal (east plaza) |
-| Coffee murmur | West coffee nook alcove |
-| Door creak | `[E]` on creaky door west of platform |
-| Elevator ding | North wall kiosk — floor lights flash |
-| Cash register | Corner shop on wood deck — `[E]` ring up |
+| **9.0** | Guided PLAY/BUILD, gateway, gut intro, 6-step tour |
+| **8.9** | Survival vitals (6 stats, zones, HUD, MP) |
+| **8.0–8.8** | Undo, perf HUD, templates, export/play, MP sync, collab guardrails |
+| **7.9** | Wardenclyffe unified site, building GLBs, courtyard PBR |
+| **7.1** | Interior RP audio (coffee, door, elevator) |
+| **6.5–6.8** | FiveM controls, weather, creek, wildlife, highway |
 
-Walk to the **AI terminal** for radio static, or the **coffee nook** west for crowd murmur.
-
-## Phase 16 additions (v7.0)
-
-| Feature | Notes |
-|---------|-------|
-| Truck / motorcycle | Doppler passes on the highway strip (east) |
-| Distant siren | Rare ambient — audible across the scene |
-| Construction beep | Walk east near orange cones |
-| Traffic lights | Junction cycle anim near highway |
-| Billboard | Scrolling emissive face |
-
-Stand on the **highway strip** (east) to hear truck and motorcycle passes.
-
-## Phase 15 additions (v6.9)
-
-| Feature | Notes |
-|---------|-------|
-| Dog bark | Near Sam (mechanic) when you walk close |
-| Alley cat | West alley — meow + tail sway |
-| Cicadas / crickets | Grass patch — swaps with ENV time slider |
-| Owl | Evening/night hoots |
-| Fish splash | Random splashes at the creek |
-
-Try **ENV panel → Time** to dusk (19:00) or night (22:00) for crickets and owl.
-
-## Phase 14 additions (v6.8)
-
-| Feature | Notes |
-|---------|-------|
-| Creek | West edge water plane, babble loop when near |
-| Power lines | Backdrop cables sway; distant 60 Hz hum |
-| Chain fence | Gust-triggered metal rattle near gravel path |
-| Dirt mound | PBR dirt texture, dust puffs in wind/rain |
-
-## Phase 13 additions (v6.7)
-
-| Feature | Notes |
-|---------|-------|
-| Audio cache | Manifest fingerprint skips re-import when clips unchanged |
-| Staggered loops | Wind → highway → birds → rain layers spread over ~3 s |
-| Weather sync | Host authority; guests hear same rain intensity + thunder |
-| Pointer hardening | Lock releases on tab-out, EDIT, spectate |
-| Detail doc | [PHASE_13_STABILITY.md](PHASE_13_STABILITY.md) |
-
-## Phase 12 additions (v6.6)
-
-| Feature | Notes |
-|---------|-------|
-| Real weather | Mixkit rain/thunder, particles, wet asphalt, `World.setWeather()` |
-| Recorded foley | User-tagged clips, bird loop, proximity props |
-| Combat SFX | Real gun/glass/metal/footsteps (Mixkit + recordings) |
-
-## Phase 11 additions (v6.5)
-
-| Feature | Notes |
-|---------|-------|
-| FiveM controls | LMB/RMB combat, F vehicle, grouped KEYS menu |
-| Crouch / stealth | Ctrl / Alt movement modifiers |
-| Flashlight | L — spot light on camera |
-| Ambient audio | Wind, highway, birds, cicadas, dust zones |
-| Scene anim | Lamps, birds, wind turbine, banner wave |
-| Highway strip | PBR asphalt + lane dashes + street lamp |
-| Asset roadmap | [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) |
-
-## Phase 10 additions (v6.4)
-
-| Feature | Notes |
-|---------|-------|
-| GIMP live SYNC | `textures:watch` + `dev` — export → instant reload |
-| Starter kit | `npm run kit:export` — ~1.4 MB WebP fork pack |
-| Doc index | `docs/README.md` — full scope map |
-| Quickstart | `npm run quickstart` — onboarding + optional `--pack` |
-
-## Phase 9 additions (v6.3)
-
-| Feature | Notes |
-|---------|-------|
-| GIMP R8 parity | All surface styles + HILOD — `docs/GIMP_TEXTURES.md` |
-| Blender avatar CLI | `npm run blender:avatar` |
-| Starter UV tiling | `config/starter-textures.json` — immersive defaults, lightweight files |
-| Fabric banner | Starter scene decor with fabric preset |
-
-## Phase 8 additions (v6.2)
-
-| Feature | Notes |
-|---------|-------|
-| Texture styles | grass, wood, gravel, asphalt, fabric, metal_grate |
-| HILOD `_4k` | Ultra tier up to 1024px variants |
-| KTX2 | Native/web when transcoder bundled |
-| ADS | Hold R / LT in FPS |
-| Footsteps | 6 surfaces; demo pads in starter scene |
-| Blender avatars | [BLENDER_AVATARS.md](BLENDER_AVATARS.md) |
-
-## Phase 7 additions (v6.1)
-
-| Feature | Command / file |
-|---------|----------------|
-| Avatar GLBs | `npm run avatar:gen` → `import/starter_avatar.glb` |
-| Footsteps | Auto while walking; concrete vs metal surfaces |
-| FPS arms | Visible in FPS mode (`V`); body hidden, viewmodel on camera |
-| Remote players | Full avatar mesh in multiplayer (not capsule) |
-| Normal maps | `starter_ground` / `starter_wall` in `tex:gen` |
-| Full HILOD WebP | `npm run tex:compress` (all `_512`/`_1k`/`_2k` tiers) |
+Detail: [CHANGELOG.md](CHANGELOG.md) · [POLISH_ROADMAP.md](POLISH_ROADMAP.md)

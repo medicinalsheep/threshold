@@ -1,8 +1,10 @@
 # Threshold documentation index
 
-**Version:** 7.1.0 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 9.0.0 · **Live:** https://medicinalsheep.github.io/threshold/
 
-This page is the **full scope map** — what ships today, what is TC vs starter vs yours, and where to read more.
+This page is the **full scope map** — what ships today, what is TC vs showcase vs yours, and where to read more.
+
+**Polish forward:** [POLISH_ROADMAP.md](POLISH_ROADMAP.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
 ---
 
@@ -10,38 +12,43 @@ This page is the **full scope map** — what ships today, what is TC vs starter 
 
 | Layer | What | Policy |
 |-------|------|--------|
-| **Starter scene** | Lobby → **SOLO PLAY** — walk/FPS action template, PBR pads, NPCs, SFX | Original Threshold defaults; regenerate with `assets:pack` |
-| **TC editions** | Lobby → **TC →** — vehicles, characters, circuit, export demo | Original bundled reference — [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) |
+| **Showcase site** | Lobby → **PLAY/BUILD** → **ENTER** — Wardenclyffe lab GLBs, survival, weather | Original Threshold defaults; `assets:pack` |
+| **TC editions** | Lobby → **TC →** — vehicles, circuit, export demo | Original bundled reference — [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) |
 | **Your game** | Worlds you build, GIMP/Blender art, export manifest | You source and credit your assets |
 
 Legacy edition manifests (`threshold-child-*`) live in `old/reference-editions/` — active ids are `tc-*`.
 
 ---
 
-## Capability map (v6.4)
+## Capability map (v9.0)
 
 ```mermaid
 flowchart TB
-    subgraph play [Play — SOLO default]
-        TPS[TPS / FPS / ADS]
-        TE[Third Eye interact]
-        FB[Footsteps — 6 surfaces]
-        AV[GLB avatars + remote meshes]
+    subgraph session [Session]
+        MODE[PLAY / BUILD gate]
+        TOUR[6-step guided tour]
     end
-    subgraph art [Art pipeline]
-        GEN[tex:gen / sounds:gen / avatar:gen]
-        GIMP[GIMP export + live SYNC]
-        BL[Blender GLB + avatar CLI]
-        KIT[kit:export fork pack]
+    subgraph play [Play]
+        TPS[TPS / FPS / ADS]
+        SURV[Survival vitals]
+        WX[Weather + ambient zones]
+        TE[Third Eye + F interact]
+    end
+    subgraph create [Create]
+        PG[PromptGen EXAMPLES]
+        COMP[Compiler + scene undo]
+        ART[GIMP / Blender pipeline]
     end
     subgraph ship [Ship]
+        QEP[EXPORT and PLAY]
         EXP[9-step EXPORT wizard]
         NAT[APK / Windows / iOS / Steam]
     end
-    GEN --> GIMP
-    GEN --> BL
-    GIMP --> play
-    BL --> play
+    MODE --> TOUR --> play
+    MODE --> create
+    PG --> COMP --> play
+    ART --> play
+    play --> QEP --> NAT
     play --> EXP --> NAT
 ```
 
@@ -51,56 +58,50 @@ flowchart TB
 
 | I want to… | Read | Run |
 |------------|------|-----|
-| Play immediately | [README.md](../README.md) Quick start | Open live URL → **SOLO PLAY** |
-| Clone & develop locally | [GETTING_STARTED.md](GETTING_STARTED.md) | `npm install` → `npm run quickstart` |
-| Realistic action defaults | [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | Lobby → SOLO → walk pads, FPS, ADS |
-| FiveM-style controls | [CONTROLS_FIVEM.md](CONTROLS_FIVEM.md) | LMB/RMB · F vehicle · KEYS menu |
-| Ambient + weather | [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) | Real rain/thunder, recorded foley, roadmap |
-| Session stability | [PHASE_13_STABILITY.md](PHASE_13_STABILITY.md) | Audio cache, weather sync, pointer lock |
-| Full asset pipeline | [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | `npm run assets:pack` → `assets:verify` |
-| GIMP textures | [GIMP_TEXTURES.md](GIMP_TEXTURES.md) | `gimp:install` + `textures:watch` + `dev` |
-| Blender avatars | [BLENDER_AVATARS.md](BLENDER_AVATARS.md) | `blender:avatar` |
-| TC export practice | [REFERENCE_EDITIONS.md](REFERENCE_EDITIONS.md) | Lobby → **TC →** → EXPORT |
+| Play immediately | [README.md](../README.md) Quick start | Live URL → **ENTER** |
+| Clone & develop | [GETTING_STARTED.md](GETTING_STARTED.md) | `npm install` → `npm run quickstart` |
+| Showcase + controls | [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | PLAY mode · gateway · survival |
+| Creative loop | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | BUILD → PromptGen EXAMPLES |
+| FiveM-style controls | [CONTROLS_FIVEM.md](CONTROLS_FIVEM.md) | F interact · E vehicle |
+| Ambient + weather | [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) | Rain, creek, interior zones |
+| Full asset pipeline | [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | `npm run assets:pack` |
+| TC export practice | [REFERENCE_EDITIONS.md](REFERENCE_EDITIONS.md) | Lobby → **TC →** |
 | Ship to stores | [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) | MORE → EXPORT → `store:prep` |
 
 ---
 
-## Phase history (realism + assets)
+## Sprint history (v8–9)
 
-| Phase | Version | Shipped |
-|-------|---------|---------|
-| **7** | 6.1.0 | GLB avatars, footsteps, FPS viewmodel, remote meshes, WebP HILOD |
-| **8** | 6.2.0 | 6 texture presets, `_4k` HILOD, KTX2 scaffold, ADS, surface pads |
-| **9** | 6.3.0 | GIMP r8 parity, `starter-textures.json` UV tiling, `blender:avatar` |
-| **10** | 6.4.0 | GIMP live SYNC, `kit:export` starter texture pack (~1.4 MB) |
-| **10.1** | 6.4.1 | Doc truth pass, `old/` archive, `quickstart` onboarding |
-| **11** | 6.5.0 | FiveM controls, procedural ambient iteration 1, starter scene props |
-| **12** | 6.6.0 | Real weather + combat SFX, user recording tags, `WeatherSystem` |
-| **13** | 6.7.0 | Manifest audio cache, weather multiplayer sync, pointer/pause hardening |
-| **14** | 6.8.0 | Creek, power lines, fence rattle, dirt mound + dust |
-| **15** | 6.9.0 | Dog/cat wildlife, cicadas/crickets, owl, fish splash |
-| **16** | 7.0.0 | Highway Doppler passes, siren, construction beep, traffic lights, billboard |
-| **17** | 7.1.0 | Radio chatter, coffee murmur, door creak, elevator ding, cash register |
+| Sprint | Version | Shipped |
+|--------|---------|---------|
+| **A** | 8.0 | Scene undo, compile sandbox, Grok no-clearWorld |
+| **B** | 8.1 | Performance HUD, sync chip |
+| **C** | 8.2 | Starter templates, PromptGen cookbook |
+| **D** | 8.3 | Nikola NPC, dusk lighting |
+| **E** | 8.4 | EXPORT & PLAY, export preflight |
+| **F** | 8.5 | Action hints, skippable intro (removed in K) |
+| **G** | 8.6 | Guest rebuild, audio manifest, sync story |
+| **H** | 8.7 | Scene lock, AI ack, texture manifest |
+| **I** | 8.8 | Rebuild telemetry, per-author undo, host handoff |
+| **J** | 8.9 | Survival vitals (6 stats, zones, HUD, MP) |
+| **K** | 9.0 | Guided PLAY/BUILD, showcase gateway, gut intro |
+| **Q** | 9.1 | Documentation truth pass |
 
-Earlier phases (export, TC, circuit, Steam): [NEXT_PHASES.md](NEXT_PHASES.md) · [CHANGELOG.md](CHANGELOG.md)
+Earlier phases (export, TC, circuit, Steam, realism v6–7): [NEXT_PHASES.md](NEXT_PHASES.md)
 
 ---
 
 ## Command cheat sheet
 
 ```bash
-npm run quickstart              # onboarding steps (+ --verify / --pack)
+npm run quickstart              # onboarding (+ --verify / --pack)
 npm run dev                     # Vite dev server
 npm run assets:pack             # full starter pipeline
 npm run assets:verify           # smoke test
 npm run preview                 # production preview :4173
 npm run textures:watch          # GIMP live SYNC (with dev)
-npm run kit:export              # fork-friendly WebP pack
 npm run tc:build                # TC GLBs + textures
 npm run tc:verify               # TC smoke test
-npm run sounds:fetch:sfx        # real guns/impacts/footsteps (Mixkit)
-npm run sounds:fetch:ambient    # real rain/thunder
-npm run sounds:tag:recording    # clip user field recording
 ```
 
 ---
@@ -110,20 +111,14 @@ npm run sounds:tag:recording    # clip user field recording
 | Doc | Topic |
 |-----|-------|
 | [GETTING_STARTED.md](GETTING_STARTED.md) | Lobby → ship linear path |
-| [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | Controls, NPCs, textures, audio, physics |
-| [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | Full dev head-start (HILOD, codecs, presets) |
+| [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | Controls, survival, showcase site |
+| [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | PLAY/BUILD, GIMP/Blender loop |
+| [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | HILOD, codecs, v9 systems table |
+| [POLISH_ROADMAP.md](POLISH_ROADMAP.md) | Sprints L–P forward plan |
 | [GIMP_TEXTURES.md](GIMP_TEXTURES.md) | GIMP install, batch, live SYNC |
 | [BLENDER_AVATARS.md](BLENDER_AVATARS.md) | Rigged GLB export |
-| [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | GIMP/Blender/Engine loop |
-| [CREATIVE_PLUGINS.md](CREATIVE_PLUGINS.md) | Plugin implementation detail |
-| [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) | TC original-asset policy |
-| [REFERENCE_EDITIONS.md](REFERENCE_EDITIONS.md) | TC edition registry |
 | [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) | 9-step export wizard |
-| [STORE_RELEASE.md](STORE_RELEASE.md) | Play / App Store / Windows |
-| [STEAM_RELEASE.md](STEAM_RELEASE.md) | Steam depot |
-| [STORE_ASSETS.md](STORE_ASSETS.md) | IAP / registry maps |
-| [NATIVE_SHELLS.md](NATIVE_SHELLS.md) | Capacitor + Electron |
-| [PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md) | North star + open work |
+| [PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md) | North star |
 | [NEXT_PHASES.md](NEXT_PHASES.md) | Detailed phase checklist |
 | [CHANGELOG.md](CHANGELOG.md) | Version history |
 

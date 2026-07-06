@@ -97,17 +97,17 @@
 
 ---
 
-## Sprint Q — Documentation & site truth
+## Sprint Q — Documentation & site truth ✅ (v9.1.0)
 
 **Goal:** Every entry doc matches v9 UX.
 
-| Item | Deliverable |
-|------|-------------|
-| Q1 | `PRODUCT_ROADMAP.md`, `NEXT_PHASES.md` header → v9.0 + Sprint table |
-| Q2 | `REALISTIC_GAMEPLAY.md` — survival, gateway, no cube pads |
-| Q3 | `CREATIVE_WORKFLOW.md` — PLAY/BUILD first, PromptGen EXAMPLES |
-| Q4 | `referenceLibrary.js` first-session checklist |
-| Q5 | GitHub Pages changelog strip on lobby (optional) |
+| Item | Status | Deliverable |
+|------|--------|-------------|
+| Q1 | ✅ | `PRODUCT_ROADMAP.md`, `NEXT_PHASES.md`, `docs/README.md` → v9 + Sprint table |
+| Q2 | ✅ | `REALISTIC_GAMEPLAY.md` — survival, gateway, F interact, showcase objects |
+| Q3 | ✅ | `CREATIVE_WORKFLOW.md` — PLAY/BUILD first, PromptGen EXAMPLES, EXPORT & PLAY |
+| Q4 | ✅ | `referenceLibrary.js` — guided tour, survival, export/play workflows |
+| Q5 | ✅ | Lobby release strip + changelog link · `AGENTS.md` path truth |
 
 ---
 

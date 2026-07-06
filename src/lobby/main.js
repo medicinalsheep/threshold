@@ -1,3 +1,4 @@
+import { VERSION } from '../config.js';
 import { Session } from '../shared/session.js';
 import { Network } from '../shared/network.js';
 import { enterWindowedFullscreen } from '../shared/fullscreen.js';
@@ -9,6 +10,13 @@ import {
     readLobbyVoipConfig,
     summarizeVoipConfig,
 } from '../shared/voipConfig.js';
+
+function initLobbyReleaseStrip() {
+    const el = document.getElementById('lobby-release-strip');
+    if (!el) return;
+    const logUrl = 'https://github.com/medicinalsheep/threshold/blob/main/docs/CHANGELOG.md';
+    el.innerHTML = `v${VERSION} · guided PLAY/BUILD · survival vitals · <a href="${logUrl}" target="_blank" rel="noopener noreferrer">changelog</a>`;
+}
 
 function initLobbyModePicker() {
     const saved = ViewPrefs.get('sessionMode', 'play');
@@ -55,6 +63,7 @@ export function initLobby(onReady) {
     initLobbyTemplatePicker();
     QuickExportPlay.bindOnce();
     initLobbyModePicker();
+    initLobbyReleaseStrip();
 
     const enterApp = () => {
         overlay?.classList.add('hidden');

@@ -2,7 +2,7 @@
 
 Threshold ships a **full starter pipeline** for realistic action games: procedural PBR textures with HILOD, WebP/KTX2 codecs, Blender import, rigged avatars, surface footstep SFX, and FPS combat (ADS).
 
-**Current version:** v6.4.0 (Phase 10)
+**Current version:** v9.0.0 — showcase site, survival vitals, export preflight, MP manifest sync (Sprints A–K)
 
 ---
 
@@ -184,5 +184,21 @@ npm run preview
 | `config/avatar-manifest.json` | Avatar / Blender contract |
 | `config/lod-distances.json` | Shared mesh + texture LOD distances |
 | `textures/threshold_manifest.json` | Runtime texture binding |
-| `docs/REALISTIC_GAMEPLAY.md` | Controls & tuning |
+| `docs/REALISTIC_GAMEPLAY.md` | Controls, survival, showcase site |
 | `docs/BLENDER_AVATARS.md` | Rig export checklist |
+| `docs/POLISH_ROADMAP.md` | Forward polish sprints L–Q |
+
+---
+
+## v9 showcase & gameplay systems
+
+| System | Module | Notes |
+|--------|--------|-------|
+| Guided session | `guidedSession.js` | PLAY/BUILD upfront; `ViewPrefs.sessionMode` |
+| Showcase gateway | `showcaseGateway.js` | Visitor arch on approach path |
+| Survival vitals | `survivalNeeds.js` | 6 stats; sprint gate; MP `v` array |
+| Survival zones | `survivalZones.js` | Passive creek/coffee/lab modifiers |
+| World hooks | `survivalWorldHooks.js` | Tag starter props for **F** interact |
+| Export preflight | `exportPreflight.js` | Scan before EXPORT & PLAY |
+| Scene undo | `sceneHistory.js` | Ctrl+Z checkpoints before mutating runs |
+| MP manifests | `audioManifestSync.js`, `textureManifestSync.js` | Host pushes blobs on join |

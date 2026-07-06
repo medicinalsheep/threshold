@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **6.4.1**)
+**Version:** `src/config.js` → `VERSION` (currently **9.1.0**)
 
 **Doc index:** [docs/README.md](docs/README.md) — full scope map
 
@@ -14,7 +14,9 @@ Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blen
 |------|------|
 | Lobby | `src/lobby/` |
 | Engine | `src/engine/main.js` |
-| Starter scene | `src/engine/starterScene.js`, `starterTex.js`, `starterSfx.js` |
+| Starter scene | `src/shared/starterScene.js`, `starterTemplates.js`, `showcaseGateway.js` |
+| Guided session | `src/shared/guidedSession.js`, `walkthrough.js` |
+| Survival | `src/shared/survivalNeeds.js`, `survivalZones.js`, `survivalWorldHooks.js` |
 | Realism | `player.js`, `fpsViewmodel.js`, `footsteps.js`, `npcPatrol.js` |
 | Compiler | `src/compiler/main.js` |
 | PromptGen | `src/prompter/main.js` |

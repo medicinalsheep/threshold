@@ -452,6 +452,24 @@ body.light-mode .lobby-logo-light {
     color: var(--accent-color);
 }
 
+.lobby-release-strip {
+    margin: 10px 0 0;
+    font-size: 0.58rem;
+    line-height: 1.45;
+    color: #7a8a94;
+    letter-spacing: 0.02em;
+}
+
+.lobby-release-strip a {
+    color: var(--accent-color);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(57, 255, 20, 0.25);
+}
+
+.lobby-release-strip a:hover {
+    border-bottom-color: var(--accent-color);
+}
+
 .lobby-mode-hint {
     font-size: 0.58rem;
     color: #7a868e;

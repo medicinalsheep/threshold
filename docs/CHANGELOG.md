@@ -1,5 +1,15 @@
 # Changelog
 
+## 9.1.0 — Sprint Q: Documentation truth pass
+
+- **`REALISTIC_GAMEPLAY.md`** — v9 showcase guide: PLAY/BUILD, survival vitals, gateway site map, F interact
+- **`CREATIVE_WORKFLOW.md`** — guided loop, PromptGen EXAMPLES, EXPORT & PLAY, survival prop hooks
+- **`docs/README.md`** — v9 capability map, sprint history A–Q, polish roadmap link
+- **`ASSET_CAPABILITIES.md`** — v9 systems table (survival, guided session, export preflight, MP manifests)
+- **`referenceLibrary.js`** — guided tour v9, survival vitals, EXPORT & PLAY compiler workflows
+- **`AGENTS.md`** — version + module paths (starterScene, guidedSession, survival)
+- **Lobby** — release strip with version + GitHub changelog link
+
 ## 9.0.0 — Guided session + showcase world overhaul
 
 - **Intro removed** — no flythrough on Wardenclyffe; camera spawns at visitor gateway facing the lab
