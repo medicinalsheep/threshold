@@ -1706,7 +1706,8 @@ const UI = {
         });
         ['insp-name', 'insp-color', 'insp-rough', 'insp-metal', 'insp-emissive', 'insp-emissive-int',
             'insp-physics', 'insp-mass', 'insp-friction', 'insp-restitution', 'insp-sound-freq', 'insp-sound-type',
-            'insp-sound-mode', 'insp-sound-clip', 'insp-sound-trigger'
+            'insp-sound-mode', 'insp-sound-clip', 'insp-sound-trigger',
+            'insp-survival-kind', 'insp-ambient-zone', 'insp-zone-radius', 'insp-interact-hint'
         ].forEach((id) => {
             document.getElementById(id)?.addEventListener('input', () => UI.applyInspectorFromUi());
             document.getElementById(id)?.addEventListener('change', () => {
@@ -1912,6 +1913,10 @@ const UI = {
     loadInspectorFromObject: function (obj) {
         if (!obj) return;
         document.getElementById('insp-name').value = obj.userData.name || '';
+        document.getElementById('insp-survival-kind').value = obj.userData.survivalKind || '';
+        document.getElementById('insp-ambient-zone').value = obj.userData.ambientZone || '';
+        document.getElementById('insp-zone-radius').value = obj.userData.zoneRadius ?? 5;
+        document.getElementById('insp-interact-hint').value = obj.userData.interactHint || '';
         const mat = obj.material;
         if (mat?.color) document.getElementById('insp-color').value = '#' + mat.color.getHexString();
         if (mat) {
@@ -2008,6 +2013,26 @@ const UI = {
         const obj = State.selectedObject;
         if (!obj || !SimMode.canEditObject(obj)) return;
         obj.userData.name = document.getElementById('insp-name').value;
+        const survivalKind = document.getElementById('insp-survival-kind').value;
+        if (survivalKind) {
+            obj.userData.survivalKind = survivalKind;
+            obj.userData.interactAction = 'survival';
+        } else {
+            delete obj.userData.survivalKind;
+            if (obj.userData.interactAction === 'survival') delete obj.userData.interactAction;
+        }
+        const ambientZone = document.getElementById('insp-ambient-zone').value;
+        if (ambientZone) {
+            obj.userData.ambientZone = ambientZone;
+            const zoneRadius = parseFloat(document.getElementById('insp-zone-radius').value);
+            if (Number.isFinite(zoneRadius)) obj.userData.zoneRadius = zoneRadius;
+        } else {
+            delete obj.userData.ambientZone;
+            delete obj.userData.zoneRadius;
+        }
+        const interactHint = document.getElementById('insp-interact-hint').value.trim();
+        if (interactHint) obj.userData.interactHint = interactHint;
+        else delete obj.userData.interactHint;
         const mat = obj.material;
         if (mat) {
             mat.color.set(document.getElementById('insp-color').value);

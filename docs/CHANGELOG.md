@@ -1,5 +1,15 @@
 # Changelog
 
+## 9.4.0 — Sprint N: Survival & gameplay depth
+
+- **`remotePlayers.js`** — compact HP/F/W vitals pill sprite above remote avatars (MP `avatar.v` sync)
+- **Inspector** — `survivalKind`, `ambientZone`, `zoneRadius`, `interactHint` in SCENE → EDIT
+- **`survivalZones.js`** — custom ambient zone discovery from scene markers
+- **`survivalNeeds.js`** — collapse vignette FX; TC drive handoff snapshot/restore API
+- **`tcDrive.js`** — vitals frozen during drive; restored on vehicle exit
+- **`exportPreflight.js`** — warns when custom worlds lack survival hooks
+- **`promptCookbook.js`** + **`referenceLibrary.js`** — survival prop + ambient zone recipes
+
 ## 9.3.0 — Sprint M: Guided onboarding polish
 
 - **`guidedSession.js`** — single modal stack (no double-flash); guest/spectate skip mode gate; inherit host pause

@@ -318,6 +318,7 @@
 
             <div id="creator-perf-hud" class="creator-perf-hud visible" aria-label="Performance HUD"></div>
             <div id="survival-needs-hud" class="survival-needs-hud visible" aria-label="Survival vitals"></div>
+            <div id="survival-collapse-vignette" class="survival-collapse-vignette" aria-hidden="true"></div>
             <div id="controls-hint">WASD fly · QE up/down · right-click menu</div>
             <div id="action-hint-bar" class="action-hint-bar" aria-live="polite"></div>
             <div id="action-hint-toast" class="action-hint-toast" aria-live="polite"></div>
@@ -427,6 +428,30 @@
                 </div>
                 <div class="insp-panel active" data-insp-panel="general">
                     <div class="prop-row"><label>Name</label> <input type="text" id="insp-name"></div>
+                    <div class="prop-row">
+                        <label>Survival</label>
+                        <select id="insp-survival-kind">
+                            <option value="">— none —</option>
+                            <option value="food">food</option>
+                            <option value="water">water</option>
+                            <option value="rest">rest</option>
+                            <option value="snack">snack</option>
+                        </select>
+                    </div>
+                    <div class="prop-row">
+                        <label>Ambient zone</label>
+                        <select id="insp-ambient-zone">
+                            <option value="">— none —</option>
+                            <option value="creek">creek</option>
+                            <option value="coffee">coffee</option>
+                            <option value="tesla">tesla</option>
+                            <option value="interior">interior</option>
+                            <option value="construction">construction</option>
+                            <option value="power_hum">power_hum</option>
+                        </select>
+                    </div>
+                    <div class="prop-row"><label>Zone radius</label><input type="number" id="insp-zone-radius" min="1" max="30" step="0.5" value="5"></div>
+                    <div class="prop-row"><label>Interact hint</label><input type="text" id="insp-interact-hint" placeholder="F interact label"></div>
                     <div class="prop-row">
                         <label>Gizmo</label>
                         <label><input type="radio" name="gizmo" value="translate" checked> Move</label>

@@ -71,6 +71,20 @@ export const PROMPT_COOKBOOK = [
         idea: 'List which objects in the current scene are editable in EDIT mode vs locked in PLAY, and which panels (Texture, Collision, Audio) apply.',
         hint: 'Non-destructive — great for teaching modes.',
     },
+    {
+        id: 'survival_food_prop',
+        title: 'Survival food prop',
+        task: 'extend',
+        idea: 'Add a small crate or counter mesh near the visitor path with userData.interactAction survival, survivalKind food, interactHint Grab rations, and interactRadius 2.2. Call applySurvivalWorldHooks() after spawn.',
+        hint: 'Clone showcase coffee/snack pattern — PLAY + F interact.',
+    },
+    {
+        id: 'ambient_rest_zone',
+        title: 'Ambient rest zone',
+        task: 'extend',
+        idea: 'Place an invisible or low-profile marker mesh with userData.ambientZone interior, zoneRadius 6, zoneRest 0.4, zoneCalm 0.35, zoneSheltered true. SurvivalZones reads it for passive recovery in PLAY.',
+        hint: 'Shelter + calm without wiping the world.',
+    },
 ];
 
 export function getCookbookEntry(id) {

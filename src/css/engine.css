@@ -528,6 +528,28 @@ body.console-hidden .console-restore-tab {
     box-shadow: 0 0 12px rgba(80, 180, 120, 0.2);
 }
 
+.survival-collapse-vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 91;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(ellipse at center, transparent 32%, rgba(72, 8, 12, 0.55) 68%, rgba(28, 4, 8, 0.88) 100%);
+    transition: opacity 0.2s ease-out;
+}
+
+.survival-collapse-vignette.active {
+    opacity: 1;
+    animation: collapseVignettePulse 3.2s ease-out forwards;
+}
+
+@keyframes collapseVignettePulse {
+    0% { opacity: 0; }
+    12% { opacity: 1; }
+    55% { opacity: 0.92; }
+    100% { opacity: 0; }
+}
+
 .survival-needs-hud.tour-pulse {
     border-color: rgba(120, 220, 160, 0.85);
     box-shadow: 0 0 16px rgba(80, 200, 140, 0.45);

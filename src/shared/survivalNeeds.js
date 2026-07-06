@@ -42,8 +42,18 @@ export const SurvivalNeeds = {
         if (!this._active) return false;
         if (Session?.isSpectator || window.Network?.mode === 'spectate') return false;
         if (!window.PlayerController?.spawned) return false;
-        if (window.TcDrive?.active) return false;
+        if (window.TcDrive?.active || State?.controlMode === 'vehicle') return false;
         return State?.controlMode === 'walk';
+    },
+
+    snapshotForHandoff() {
+        return { ...this._stats };
+    },
+
+    restoreHandoff(snapshot) {
+        if (!snapshot) return;
+        this.setAll(snapshot);
+        window.SurvivalNeedsHud?.flash?.('rest');
     },
 
     get(key) {
@@ -263,7 +273,19 @@ export const SurvivalNeeds = {
         this._stats.stamina = 18;
         this._stats.stress = Math.min(100, this._stats.stress + 28);
         window.UI?.status?.('Collapsed from exhaustion — vitals stabilized at low reserve');
-        window.StarterSfx?.playStarterSfx?.('starter_thunder_distant', 0.28);
+        this._playCollapseFx();
+    },
+
+    _playCollapseFx() {
+        const vignette = document.getElementById('survival-collapse-vignette');
+        vignette?.classList.remove('active');
+        void vignette?.offsetWidth;
+        vignette?.classList.add('active');
+        clearTimeout(this._collapseFxTimer);
+        this._collapseFxTimer = setTimeout(() => vignette?.classList.remove('active'), 3400);
+        window.SurvivalNeedsHud?.flash?.('critical');
+        window.StarterSfx?.playStarterSfx?.('starter_thunder_distant', 0.42);
+        window.StarterSfx?.playStarterSfx?.('starter_gun_reload', 0.22);
     },
 
     getStatusEffects() {

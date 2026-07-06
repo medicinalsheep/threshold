@@ -213,6 +213,40 @@ const v = SurvivalNeeds.pack(); // [health, food, water, rest, stamina, stress]
 // Sprint gate: SurvivalNeeds.canSprint() · walk mult: getWalkSpeedMultiplier()`
         },
         {
+            id: 'survival_prop_cookbook',
+            title: 'Survival Prop — Inspector + Compiler',
+            summary: 'BUILD: SCENE → EDIT sets survivalKind + interactHint. Compiler can batch-tag props after PromptGen extend.',
+            checklist: ['survivalKind: food | water | rest | snack', 'Sets interactAction survival automatically', 'interactRadius optional on userData', 'Export preflight warns if hooks missing'],
+            code: `// Inspector (BUILD): survivalKind + interactHint on selected mesh
+// Or Compiler after extend:
+const crate = State.objects.find(o => o.userData?.name === 'Rations Crate');
+Object.assign(crate.userData, {
+  interactAction: 'survival',
+  survivalKind: 'snack',
+  interactHint: 'Quick snack',
+  interactRadius: 2.2,
+});
+applySurvivalWorldHooks?.();`
+        },
+        {
+            id: 'ambient_zone_script',
+            title: 'Ambient Zone — Passive Recovery Marker',
+            summary: 'Place a marker with ambientZone + zoneRadius. Optional zoneRest/zoneCalm/zoneSheltered on userData for custom zones.',
+            checklist: ['Known zones: creek, coffee, tesla, interior', 'Custom zone name + zoneRadius in inspector', 'Shelter reduces rain stress', 'MP guests see remote vitals pill above avatar'],
+            code: `// Marker mesh (can be invisible box):
+const shelter = World.createObject('cube', 'Rest Shelter', 0x223344, false);
+shelter.position.set(4, 0.5, -6);
+shelter.scale.set(0.2, 0.2, 0.2);
+Object.assign(shelter.userData, {
+  ambientZone: 'interior',
+  zoneRadius: 6,
+  zoneRest: 0.45,
+  zoneCalm: 0.3,
+  zoneSheltered: true,
+});
+// SurvivalZones.getModifiers(playerPos) applies passive tick`
+        },
+        {
             id: 'export_play_quick',
             title: 'EXPORT & PLAY — One-Click Ship',
             summary: 'Pause snapshot, SAVE WORLD, manifest download, open ?world=CODE&autoplay=1 in new tab.',

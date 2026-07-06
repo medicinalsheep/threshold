@@ -255,6 +255,9 @@ export const TcDrive = {
         }
 
         if (!silent) await this._playEnterAnim(mesh);
+        if (!silent && !this._vitalsSnapshot) {
+            this._vitalsSnapshot = window.SurvivalNeeds?.snapshotForHandoff?.() || null;
+        }
         window.PlayerController?.despawn?.();
         this.mesh = mesh;
         this.body = entry.body;
@@ -293,6 +296,10 @@ export const TcDrive = {
 
         window.State.controlMode = wasActive && mesh ? 'walk' : 'fly';
         window.UI?.updateControlMode?.();
+        if (this._vitalsSnapshot) {
+            window.SurvivalNeeds?.restoreHandoff?.(this._vitalsSnapshot);
+            this._vitalsSnapshot = null;
+        }
         window.Network?.updateLocalAvatar?.(this._fallbackAvatar());
     },
 
@@ -444,9 +451,9 @@ export const TcDrive = {
             }
         });
 
-        const roster = Object.entries(avatars).map(([key, av]) => ({
+        const roster = window.Network?.getPlayerList?.() || Object.entries(avatars).map(([key]) => ({
             key: normKey(key),
-            name: this.claims[av?.vehicleId] === normKey(key) ? key : key,
+            name: key,
         }));
         RemotePlayers.syncAvatars(avatars, roster);
     },

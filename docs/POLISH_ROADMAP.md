@@ -54,18 +54,18 @@
 
 ---
 
-## Sprint N — Survival & gameplay depth
+## Sprint N — Survival & gameplay depth ✅ (v9.4.0)
 
 **Goal:** Vitals feel like a game system creators can clone, not a demo meter.
 
-| Item | Deliverable |
-|------|-------------|
-| N1 | Remote player vitals pill above avatar (MP awareness) |
-| N2 | Survival zone editor hook — `ambientZone` + `survivalKind` in inspector |
-| N3 | PromptGen cookbook entries for survival props + zone scripts |
-| N4 | Vehicle / TC drive pauses survival tick; handoff on exit |
-| N5 | Collapse recovery UX — screen vignette + audio stinger |
-| N6 | Export preflight warns if survival hooks missing in custom worlds |
+| Item | Status | Deliverable |
+|------|--------|-------------|
+| N1 | ✅ | Remote player vitals pill (HP/F/W sprite) synced via `avatar.v` |
+| N2 | ✅ | Inspector survivalKind + ambientZone + zoneRadius + interactHint |
+| N3 | ✅ | PromptGen cookbook + referenceLibrary survival/zone entries |
+| N4 | ✅ | TC drive snapshots vitals on enter; restores on exit |
+| N5 | ✅ | Collapse vignette overlay + thunder/reload stinger |
+| N6 | ✅ | Export preflight warns on missing survival hooks in custom worlds |
 
 ---
 

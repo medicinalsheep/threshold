@@ -5,6 +5,87 @@ import { profileFromLegacyAppearance, normalizeProfile } from './appearanceProfi
 
 const COLORS = [0x39ff14, 0x4488ff, 0xff6644, 0xffcc00, 0xcc66ff, 0x66ffcc];
 
+function barColor(value, invert = false) {
+    const v = invert ? 100 - value : value;
+    if (v < 18) return '#e85a5a';
+    if (v < 35) return '#d4a84a';
+    return '#6ecf96';
+}
+
+function createVitalsPill() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 108;
+    canvas.height = 28;
+    const ctx = canvas.getContext('2d');
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.minFilter = THREE.LinearFilter;
+    const mat = new THREE.SpriteMaterial({
+        map: tex,
+        transparent: true,
+        depthTest: false,
+        depthWrite: false,
+    });
+    const sprite = new THREE.Sprite(mat);
+    sprite.scale.set(1.05, 0.28, 1);
+    sprite.renderOrder = 12;
+
+    const draw = (vitals = []) => {
+        const [hp = 0, food = 0, water = 0] = vitals;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(6, 10, 14, 0.82)';
+        ctx.strokeStyle = 'rgba(120, 180, 200, 0.55)';
+        ctx.lineWidth = 1.5;
+        roundRect(ctx, 2, 2, canvas.width - 4, canvas.height - 4, 6);
+        ctx.fill();
+        ctx.stroke();
+
+        const segments = [
+            { label: 'HP', value: hp, color: barColor(hp) },
+            { label: 'F', value: food, color: barColor(food) },
+            { label: 'W', value: water, color: barColor(water) },
+        ];
+        const pad = 8;
+        const gap = 4;
+        const segW = (canvas.width - pad * 2 - gap * 2) / 3;
+        segments.forEach((seg, i) => {
+            const x = pad + i * (segW + gap);
+            const y = 8;
+            const h = 12;
+            ctx.fillStyle = 'rgba(255,255,255,0.08)';
+            roundRect(ctx, x, y, segW, h, 3);
+            ctx.fill();
+            const fillW = Math.max(2, (segW - 2) * clamp01(seg.value / 100));
+            ctx.fillStyle = seg.color;
+            roundRect(ctx, x + 1, y + 1, fillW, h - 2, 2);
+            ctx.fill();
+            ctx.fillStyle = '#b8c8d0';
+            ctx.font = 'bold 8px monospace';
+            ctx.fillText(seg.label, x + 2, y - 1);
+        });
+        tex.needsUpdate = true;
+    };
+
+    return { sprite, draw };
+}
+
+function clamp01(v) {
+    return Math.max(0, Math.min(1, v));
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+}
+
 export const RemotePlayers = {
     markers: new Map(),
 
@@ -20,6 +101,7 @@ export const RemotePlayers = {
                     vehicleId: av.vehicleId,
                     rotY: av.rotY,
                     appearance: av.appearance,
+                    vitals: av.v,
                 };
             }
         });
@@ -56,6 +138,7 @@ export const RemotePlayers = {
                 0.35
             );
             if (Number.isFinite(pos.rotY)) entry.group.rotation.y = pos.rotY;
+            this._updateVitalsPill(entry, pos.vitals, pos.mode);
         });
 
         this.markers.forEach((entry, key) => {
@@ -63,11 +146,29 @@ export const RemotePlayers = {
         });
     },
 
+    _updateVitalsPill(entry, vitals, mode = 'walk') {
+        if (!Array.isArray(vitals) || vitals.length < 3) {
+            if (entry.vitalsSprite) entry.vitalsSprite.visible = false;
+            return;
+        }
+        if (!entry.vitalsPill) {
+            const pill = createVitalsPill();
+            pill.sprite.position.y = mode === 'fly' ? 0.82 : 1.92;
+            entry.group.add(pill.sprite);
+            entry.vitalsPill = pill;
+            entry.vitalsSprite = pill.sprite;
+        }
+        entry.vitalsSprite.visible = true;
+        entry.vitalsPill.draw(vitals);
+    },
+
     _removeMarker(key) {
         const Engine = window.Engine;
         const entry = this.markers.get(key);
         if (entry) {
             Engine?.scene?.remove(entry.group);
+            entry.vitalsPill?.sprite?.material?.map?.dispose?.();
+            entry.vitalsPill?.sprite?.material?.dispose?.();
             this.markers.delete(key);
         }
     },
@@ -119,7 +220,11 @@ export const RemotePlayers = {
 
     clear() {
         const Engine = window.Engine;
-        this.markers.forEach((entry) => Engine?.scene?.remove(entry.group));
+        this.markers.forEach((entry) => {
+            entry.vitalsPill?.sprite?.material?.map?.dispose?.();
+            entry.vitalsPill?.sprite?.material?.dispose?.();
+            Engine?.scene?.remove(entry.group);
+        });
         this.markers.clear();
     },
 };
