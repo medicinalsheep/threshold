@@ -103,6 +103,7 @@ import '../shared/survivalZones.js';
 import '../shared/survivalWorldHooks.js';
 import '../shared/survivalInteract.js';
 import '../shared/survivalNeedsHud.js';
+import '../shared/survivalGameplay.js';
 import { getRenderMode } from '../shared/renderModes.js';
 import { GraphicsProfile } from '../shared/graphicsProfile.js';
 import { GraphicsPrompt } from '../shared/graphicsPrompt.js';
@@ -171,6 +172,7 @@ export function initEngine() {
     window.initCreatorHud?.();
     window.initSurvivalNeeds?.();
     window.initSurvivalNeedsHud?.();
+    window.initSurvivalGameplay?.();
     window.GuidedSession?.init?.();
     window.IntroSkip?.init?.();
     window.ActionHints?.init?.();

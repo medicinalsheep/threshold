@@ -1098,6 +1098,80 @@ body.ui-immersive .creator-perf-hud {
     font-size: 0.62rem;
 }
 
+.survival-run-card {
+    position: absolute;
+    left: 16px;
+    bottom: calc(72px + 118px + env(safe-area-inset-bottom, 0px));
+    width: min(280px, calc(100% - 32px));
+    padding: 10px 12px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    z-index: 17;
+    border-color: rgba(120, 200, 140, 0.32);
+}
+
+.survival-run-card.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.survival-run-title {
+    margin: 0 0 4px;
+    font-size: 0.62rem;
+    letter-spacing: 0.5px;
+    color: #88d8b0;
+    text-transform: uppercase;
+}
+
+.survival-run-body {
+    margin: 0 0 8px;
+    font-size: 0.68rem;
+    line-height: 1.45;
+    color: #bbb;
+}
+
+.survival-run-nav {
+    display: flex;
+    gap: 6px;
+}
+
+.survival-run-nav button {
+    flex: 1;
+    min-height: 32px;
+    font-size: 0.62rem;
+}
+
+.surv-rest-bar {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.surv-rest-label {
+    font-size: 0.48rem;
+    color: #8898d8;
+    letter-spacing: 0.04em;
+}
+
+.surv-rest-track {
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+.surv-rest-fill {
+    display: block;
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #5a68a8, #8898d8);
+    transition: width 0.12s linear;
+}
+
 body.third-eye-active #proximity-panel,
 body.third-eye-active #ui-layer .panel,
 body.third-eye-active #ui-layer button,

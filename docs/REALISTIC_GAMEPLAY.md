@@ -2,7 +2,7 @@
 
 Threshold ships a **walk/drive action control** template with a polished starter site (lab GLBs, courtyard props, weather, survival). Use it as the baseline for shooters, RPGs, and exploration games.
 
-**Current default:** v9.6 — guided PLAY/BUILD, golden-hour showcase, survival depth, MP vitals sync
+**Current default:** v9.7 — guided PLAY/BUILD, golden-hour showcase, survival gameplay loop, MP vitals sync
 
 ---
 
@@ -57,11 +57,14 @@ Six coupled stats (0–100): **health**, **food**, **water**, **rest**, **stamin
 
 | System | Behavior |
 |--------|----------|
-| Drain | Food/water/rest tick down in PLAY; sprint and rain increase exertion |
+| Drain | Food/water/rest tick down in PLAY; sprint and rain increase exertion; **night** (20:00–06:00) drains rest faster |
 | Sprint gate | Low food/water/stamina blocks sprint; speed scales with debuffs |
-| Zones | Creek, coffee nook, lab interior — passive recovery + shelter |
-| Interact | **F** at coffee (food), creek (water), benches (channeled rest) |
-| HUD | Top-right vitals bars; press **V** to toggle visibility |
+| Zones | Creek, coffee nook, lab interior — passive recovery + shelter; zone labels appear as HUD chips |
+| Interact | **F** at coffee (food), creek (water), benches (channeled rest); hints show `+food` / `+water` / `+rest` |
+| HUD | Top-right vitals bars + rest progress; press **V** to toggle visibility |
+| Warnings | Low food/water/health trigger status + ambient SFX (45s cooldown) |
+| Side quest | **Survival Run** card after tour — hold all vitals above 35% for 3 minutes |
+| Nikola | Near Nikola with critical vitals — contextual bark + chirp |
 | MP | `avatar.v` in `LIVE_STATE`; remote **HP/F/W pill** above other players |
 | Guest HUD | **PLAYERS** panel → optional **Show my vitals HUD** |
 | TC drive | Vitals frozen during vehicle; restored on exit |

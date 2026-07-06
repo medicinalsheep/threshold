@@ -76,6 +76,7 @@ export const ActionHints = {
     onSessionReady() {
         this._showHint(HINTS[0]);
         this._maybeTcQuest();
+        this._maybeSurvivalRun();
     },
 
     tick(time) {
@@ -101,6 +102,10 @@ export const ActionHints = {
     dismissTcQuest() {
         ViewPrefs.set('tcQuestDismissed', true);
         this._tcCard?.classList.remove('visible');
+    },
+
+    _maybeSurvivalRun() {
+        window.SurvivalRun?.maybeShow?.();
     },
 
     onFirstInteract() {

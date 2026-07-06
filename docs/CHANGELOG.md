@@ -1,5 +1,14 @@
 # Changelog
 
+## 9.7.0 — Sprint S: Gameplay loop depth
+
+- **`survivalGameplay.js`** — Survival Run side quest (3 min, vitals > 35%); Nikola proximity bark when critical
+- **`survivalNeeds.js`** — rest channel progress; night rest-drain modifier; low-stat audio warnings (45s cooldown); zone label chips in HUD effects
+- **`survivalNeedsHud.js`** — rest progress bar; Survival Run chip when active
+- **`worldInteract.js`** — interact hints show survival preview (`+food`, `+water`, `+rest`)
+- **`actionHints.js`** — Survival Run card after guided tour (wardenclyffe solo)
+- **`index.html`** + **`engine.css`** — `#survival-run-card` UI + `.surv-rest-bar` styles
+
 ## 9.6.1 — Sprint R: Documentation truth pass (v9.6)
 
 - **`docs/README.md`** — v9.6 capability map, full sprint table A–P + Q + R

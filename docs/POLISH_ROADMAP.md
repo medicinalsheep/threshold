@@ -125,13 +125,29 @@
 
 ---
 
+## Sprint S — Gameplay loop depth ✅ (v9.7.0)
+
+**Goal:** Survival feels like a playable loop, not just passive bars.
+
+| Item | Status | Deliverable |
+|------|--------|-------------|
+| S1 | ✅ | Rest channel progress bar in vitals HUD |
+| S2 | ✅ | Zone label chips in HUD status effects |
+| S3 | ✅ | Low-stat audio warnings (food/water/health, 45s cooldown) |
+| S4 | ✅ | Night rest-drain modifier (`timeOfDay` 20–6) |
+| S5 | ✅ | Optional Survival Run side quest (3 min, vitals > 35%) |
+| S6 | ✅ | Nikola proximity bark when player vitals critical |
+| S7 | ✅ | Interact hints show survival effect preview (`+food`, etc.) |
+
+---
+
 ## Recommended order (completed)
 
 ```
-L → M → Q → N → O → P → R ✅
+L → M → Q → N → O → P → R → S ✅
 ```
 
-**Next (outside polish):** store/native packaging, gameplay depth beyond vitals, performance (JS chunk split). See [NEXT_PHASES.md](NEXT_PHASES.md).
+**Next (outside polish):** store/native packaging, performance (JS chunk split). See [NEXT_PHASES.md](NEXT_PHASES.md).
 
 ---
 

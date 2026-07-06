@@ -147,6 +147,18 @@ export const SurvivalNeeds = {
         return true;
     },
 
+    getRestProgress() {
+        const ch = this._restChannel;
+        if (!ch) return null;
+        const now = performance.now();
+        const total = ch.durationMs || (ch.until - ch.startAt) || 1;
+        const left = Math.max(0, ch.until - now);
+        return {
+            pct: Math.min(1, 1 - left / total),
+            secLeft: Math.ceil(left / 1000),
+        };
+    },
+
     startRestChannel(sourceId, durationMs = 6000) {
         if (!this.isActive()) return false;
         const now = performance.now();
@@ -158,6 +170,8 @@ export const SurvivalNeeds = {
         }
         this._restChannel = {
             sourceId,
+            startAt: now,
+            durationMs,
             until: now + durationMs,
             cdKey,
             cooldownMs: 52000,
@@ -206,7 +220,9 @@ export const SurvivalNeeds = {
         // Base drains
         this._stats.food -= (0.26 + (sprinting ? 0.38 : 0)) * dt * exertion;
         this._stats.water -= (0.34 + (sprinting ? 0.48 : 0) + rain * 0.22) * dt * exertion;
-        this._stats.rest -= (0.18 + (sprinting ? 0.22 : 0)) * dt;
+        const hour = window.State?.env?.timeOfDay ?? 14;
+        const nightRest = (hour >= 20 || hour < 6) ? 1.22 : 1;
+        this._stats.rest -= (0.18 + (sprinting ? 0.22 : 0)) * dt * nightRest;
 
         // Stamina
         const maxSta = this.getMaxStamina();
@@ -262,7 +278,31 @@ export const SurvivalNeeds = {
             this._onCritical();
         }
 
+        this._checkLowStatWarnings();
+        window.SurvivalRun?.tick?.();
+        window.SurvivalNikolaBark?.tick?.();
         window.SurvivalNeedsHud?.tick?.(dt);
+    },
+
+    _checkLowStatWarnings() {
+        if (!this._warnCooldowns) this._warnCooldowns = new Map();
+        const now = performance.now();
+        const checks = [
+            { key: 'food', threshold: 20, msg: 'Hungry — find coffee or a snack', sfx: 'starter_interior_coffee_murmur', vol: 0.18 },
+            { key: 'water', threshold: 20, msg: 'Thirsty — creek south or coffee nook', sfx: 'starter_amb_creek', vol: 0.2 },
+            { key: 'health', threshold: 28, msg: 'Health low — rest or eat before exploring', sfx: 'starter_gun_reload', vol: 0.15 },
+        ];
+        checks.forEach(({ key, threshold, msg, sfx, vol }) => {
+            const val = this._stats[key];
+            const wasLow = this._warnCooldowns.get(`${key}_low`) === true;
+            const isLow = val < threshold;
+            if (isLow && !wasLow && now > (this._warnCooldowns.get(`${key}_until`) || 0)) {
+                window.UI?.status?.(msg);
+                window.StarterSfx?.playStarterSfx?.(sfx, vol);
+                this._warnCooldowns.set(`${key}_until`, now + 45000);
+            }
+            this._warnCooldowns.set(`${key}_low`, isLow);
+        });
     },
 
     _onCritical() {
@@ -300,6 +340,9 @@ export const SurvivalNeeds = {
         if (s.health < 25) out.push({ id: 'critical', label: 'Critical', severity: 'bad' });
         if (this._restChannel) out.push({ id: 'resting', label: 'Resting', severity: 'good' });
         if (z.sheltered) out.push({ id: 'sheltered', label: 'Sheltered', severity: 'good' });
+        (z.labels || []).forEach((label) => {
+            out.push({ id: `zone_${label}`, label, severity: 'good' });
+        });
         if ((this._ctxCache?.rain ?? 0) > 0.35 && !z.sheltered) {
             out.push({ id: 'rain', label: 'Rain exposure', severity: 'mid' });
         }

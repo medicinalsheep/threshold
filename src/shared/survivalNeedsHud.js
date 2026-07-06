@@ -1,4 +1,4 @@
-/** Sprint J — vitals HUD (health, food, water, rest, stamina, stress) */
+/** Sprint J/S — vitals HUD (health, food, water, rest, stamina, stress) */
 
 import { ViewPrefs } from './viewPrefs.js';
 
@@ -104,6 +104,7 @@ export const SurvivalNeedsHud = {
 
         const stats = SN.getAll();
         const effects = SN.getStatusEffects?.() || [];
+        const rest = SN.getRestProgress?.();
 
         const barsHtml = BARS.map((b) => {
             const raw = stats[b.key] ?? 0;
@@ -117,13 +118,23 @@ export const SurvivalNeedsHud = {
             </div>`;
         }).join('');
 
-        const fxHtml = effects.length
-            ? `<div class="surv-effects">${effects.map((e) =>
+        const restHtml = rest
+            ? `<div class="surv-rest-bar" title="Rest channel"><span class="surv-rest-label">Resting ${rest.secLeft}s</span>
+                <span class="surv-rest-track"><span class="surv-rest-fill" style="width:${Math.round(rest.pct * 100)}%"></span></span></div>`
+            : '';
+
+        const runActive = window.SurvivalRun?.isActive?.();
+        const runHtml = runActive
+            ? '<span class="surv-fx surv-fx-mid">Survival Run</span>'
+            : '';
+
+        const fxHtml = (effects.length || runHtml)
+            ? `<div class="surv-effects">${runHtml}${effects.map((e) =>
                 `<span class="surv-fx surv-fx-${e.severity}">${e.label}</span>`).join('')}</div>`
             : '';
 
         this._root.innerHTML = `<div class="surv-head"><span class="surv-title">VITALS</span><span class="surv-hint">V toggle</span></div>
-            <div class="surv-bars">${barsHtml}</div>${fxHtml}`;
+            <div class="surv-bars">${barsHtml}</div>${restHtml}${fxHtml}`;
     },
 };
 

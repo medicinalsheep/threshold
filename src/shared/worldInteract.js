@@ -136,7 +136,12 @@ export const WorldInteract = {
 
         if (near && window.State?.controlMode === 'walk') {
             const label = near.userData.interactHint || near.userData.interactLabel || near.userData.name || 'Terminal';
-            el.textContent = `[F] ${label}`;
+            let suffix = '';
+            const sk = near.userData.survivalKind;
+            if (sk || near.userData.interactAction === 'survival') {
+                suffix = window.SurvivalInteract?.getPreview?.(sk) || '';
+            }
+            el.textContent = `[F] ${label}${suffix}`;
             el.classList.add('visible');
             document.getElementById('proximity-panel')?.classList.add('has-hint');
             this._near = near;

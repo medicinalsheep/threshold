@@ -1,6 +1,17 @@
-/** Sprint J — [F] survival interactions */
+/** Sprint J/S — [F] survival interactions */
+
+const PREVIEW_TAGS = {
+    food: '+food',
+    water: '+water',
+    snack: '+food',
+    rest: '+rest',
+};
 
 export const SurvivalInteract = {
+    getPreview(kind) {
+        const tag = PREVIEW_TAGS[kind];
+        return tag ? ` (${tag})` : '';
+    },
     activate(root) {
         const kind = root?.userData?.survivalKind;
         if (!kind) return false;
