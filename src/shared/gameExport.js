@@ -231,7 +231,7 @@ export const GameExport = {
                 peerHost: import.meta.env.VITE_PEER_HOST || null,
             },
             buildProfiles: BUILD_PROFILES,
-            targets: options.targets || { web: true, android: true, windows: true, ios: false },
+            targets: options.targets || { web: true, android: false, windows: false, ios: false, steam: false },
             packaging: {
                 webRoot: 'dist-pages/',
                 entry: 'index.html',

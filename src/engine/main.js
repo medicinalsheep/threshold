@@ -83,6 +83,9 @@ import { GameExport } from '../shared/gameExport.js';
 import { AgentHub } from '../shared/agentHub.js';
 import { NpcAgent } from '../grok/npcAgent.js';
 import { DevAgent } from '../grok/devAgent.js';
+import { OllamaDevAgent } from '../ollama/devAgent.js';
+import { AgentStatus } from '../shared/agentStatus.js';
+import { Auth } from '../auth/main.js';
 import { Walkthrough } from '../shared/walkthrough.js';
 import '../shared/guidedSession.js';
 import '../shared/showcaseGateway.js';
@@ -1874,10 +1877,16 @@ const UI = {
         document.getElementById('agent-npc-talk')?.addEventListener('click', () => UI.talkToNpcAgent());
         document.getElementById('agent-dev-suggest')?.addEventListener('click', () => UI.devAgentSuggest());
         document.getElementById('agent-dev-apply')?.addEventListener('click', () => UI.devAgentApply());
+        document.getElementById('agent-ollama-suggest')?.addEventListener('click', () => UI.ollamaDevSuggest());
+        document.getElementById('agent-ollama-apply')?.addEventListener('click', () => UI.ollamaDevApply());
         document.getElementById('agent-local-save')?.addEventListener('click', () => UI.saveLocalAgent());
+        document.getElementById('agent-status-refresh')?.addEventListener('click', () => UI.refreshAgentStatus());
+        document.getElementById('agent-xai-save')?.addEventListener('click', () => UI.saveAgentXaiKey());
+        document.getElementById('agent-xai-clear')?.addEventListener('click', () => UI.clearAgentXaiKey());
         window.addEventListener('agent-config-change', () => UI.syncAgentPanel());
 
         UI.syncAgentPanel();
+        UI.refreshAgentStatus();
 
         UI.updateControlMode();
         UI.updateSimMode();
@@ -2238,9 +2247,43 @@ const UI = {
         const persona = document.getElementById('agent-npc-persona');
         const interval = document.getElementById('agent-local-interval');
         const script = document.getElementById('agent-local-script');
+        const xaiKey = document.getElementById('agent-xai-key');
         if (persona) persona.value = npcCfg.persona || '';
         if (interval) interval.value = localCfg.intervalMs || 0;
         if (script) script.value = localCfg.script || '';
+        if (xaiKey && !xaiKey.value && Auth.isLoggedIn()) {
+            xaiKey.placeholder = '•••••••• (saved)';
+        }
+    },
+    refreshAgentStatus: async function () {
+        try {
+            await AgentStatus.refresh();
+        } catch (e) {
+            this.status(e.message || 'Agent status refresh failed');
+        }
+    },
+    saveAgentXaiKey: function () {
+        const input = document.getElementById('agent-xai-key');
+        if (!input?.value?.trim()) {
+            this.status('Paste an xAI API key first');
+            return;
+        }
+        if (Auth.login(input.value)) {
+            input.value = '';
+            input.placeholder = '•••••••• (saved)';
+            this.status('xAI key saved for this tab only');
+            this.refreshAgentStatus();
+        }
+    },
+    clearAgentXaiKey: function () {
+        Auth.logout();
+        const input = document.getElementById('agent-xai-key');
+        if (input) {
+            input.value = '';
+            input.placeholder = 'xai-…';
+        }
+        this.status('xAI key cleared');
+        this.refreshAgentStatus();
     },
     attachNpcAgent: function () {
         const persona = document.getElementById('agent-npc-persona')?.value?.trim();
@@ -2289,11 +2332,34 @@ const UI = {
             this.status(e.message || 'Dev agent apply failed');
         }
     },
+    ollamaDevSuggest: async function () {
+        try {
+            const code = await OllamaDevAgent.suggestFromCompiler();
+            const out = document.getElementById('comp-output');
+            if (out) out.value = code;
+            document.querySelector('[data-target="view-compiler"]')?.click();
+            this.status(`Ollama Dev suggestion (${AgentStatus.snapshot?.ollamaModel || 'local'})`);
+            this.refreshAgentStatus();
+        } catch (e) {
+            this.status(e.message || 'Ollama Dev failed');
+        }
+    },
+    ollamaDevApply: async function () {
+        try {
+            await OllamaDevAgent.applySuggestion();
+            document.querySelector('[data-target="view-compiler"]')?.click();
+            this.status('Ollama Dev applied to Compiler');
+            this.refreshAgentStatus();
+        } catch (e) {
+            this.status(e.message || 'Ollama Dev apply failed');
+        }
+    },
     saveLocalAgent: function () {
         const script = document.getElementById('agent-local-script')?.value || '';
         const intervalMs = parseInt(document.getElementById('agent-local-interval')?.value, 10) || 0;
         AgentHub.setConfig('local', { enabled: intervalMs > 0 && script.trim(), script, intervalMs });
         this.status(intervalMs > 0 ? 'Local agent saved — running on interval' : 'Local agent disabled');
+        this.refreshAgentStatus();
     },
 
     setConsoleBarVisible: function (visible, persist = true) {

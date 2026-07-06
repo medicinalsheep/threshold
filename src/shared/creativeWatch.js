@@ -77,6 +77,7 @@ export const CreativeWatch = {
             enabled = true;
             console.log('[creative-watch] connected — hot-reload active');
             window.UI?.status?.('Creative watch connected — texture/GLTF/video hot-reload on');
+            window.AgentStatus?.refresh?.();
         };
         source.onmessage = (msg) => {
             try {

@@ -48,7 +48,7 @@ export function defaultExportDraft(base = {}) {
         author: base.author || '',
         description: base.description || '',
         includeSoundBlobs: false,
-        targets: { web: true, android: true, windows: true, ios: false, steam: false },
+        targets: { web: true, android: false, windows: false, ios: false, steam: false },
         branding: { ...DEFAULT_BRANDING, ...(base.branding || {}) },
         credits: {
             global: base.credits?.global || '',
@@ -359,6 +359,83 @@ export function suggestBundleId(gameName) {
     return bundleIdFromName(gameName);
 }
 
+const PACKAGE_SCRIPTS = {
+    android: 'package:android:release',
+    ios: 'package:ios',
+    windows: 'package:win',
+    steam: 'package:steam',
+};
+
+export function buildShipCliLines(draft, filename, options = {}) {
+    const manifest = filename || '<game>.threshold-game.json';
+    const contact = draft.store?.contactEmail?.trim()
+        ? ` --contact ${draft.store.contactEmail.trim()}`
+        : '';
+    const privacy = draft.store?.privacyPolicyUrl?.trim()
+        ? ` --privacy-url ${draft.store.privacyPolicyUrl.trim()}`
+        : '';
+    const targets = draft.targets || {};
+    const lines = [`npm run store:prep -- --manifest ${manifest}${contact}${privacy}`];
+
+    const registryOn = !!draft.assetOpportunity?.registryEnabled;
+    const mapped = Object.values(draft.credits?.entries || {}).filter(
+        (e) => e.storeSku?.trim() || e.registryUri?.trim(),
+    ).length;
+    if (registryOn && mapped > 0) {
+        lines.push(`npm run store:assets -- --manifest ${manifest}`);
+    }
+
+    const anyNative = targets.android || targets.ios || targets.windows || targets.steam;
+    if (anyNative) {
+        lines.push('npm run bundle:assets');
+    }
+
+    if (targets.web && !anyNative) {
+        lines.push('npm run build   # GitHub Pages / dist-pages');
+    }
+
+    if (targets.android) lines.push(`npm run ${PACKAGE_SCRIPTS.android}`);
+    if (targets.ios) lines.push(`npm run ${PACKAGE_SCRIPTS.ios}`);
+    if (targets.windows) lines.push(`npm run ${PACKAGE_SCRIPTS.windows}`);
+    if (targets.steam) {
+        lines.push(`npm run ${PACKAGE_SCRIPTS.steam} -- --manifest ${manifest}`);
+        lines.push(`npm run steam:depot -- --manifest ${manifest}`);
+    } else if (targets.windows && draft.assetOpportunity?.steam?.appId?.trim()) {
+        lines.push('npm run export:graphics -- --profile steam --install');
+    }
+
+    if (options.secretsNote) {
+        lines.push('');
+        lines.push('# Signing keys are LOCAL env vars at package time — never in the manifest');
+        lines.push('# Windows/macOS: CSC_LINK + CSC_KEY_PASSWORD');
+        lines.push('# Android: keystore in Android Studio signed-bundle wizard');
+        lines.push('# Apple: Xcode team + provisioning profile');
+    }
+
+    return lines;
+}
+
+export function buildSecretsChecklist(draft) {
+    const targets = draft.targets || {};
+    const items = [
+        { id: 'manifest', label: 'Manifest (.threshold-game.json)', secret: false, note: 'Public metadata — safe to share' },
+        { id: 'store', label: 'Store contact / privacy URLs', secret: false, note: 'Public listing info' },
+    ];
+    if (targets.android) {
+        items.push({ id: 'android-keystore', label: 'Android signing keystore', secret: true, note: 'Local only — Android Studio or gradle.properties' });
+    }
+    if (targets.ios) {
+        items.push({ id: 'apple', label: 'Apple Developer + provisioning', secret: true, note: 'Xcode Signing & Capabilities' });
+    }
+    if (targets.windows || targets.steam) {
+        items.push({ id: 'csc', label: 'CSC_LINK + CSC_KEY_PASSWORD', secret: true, note: 'Optional Windows code signing (.p12)' });
+    }
+    if (targets.steam) {
+        items.push({ id: 'steam', label: 'Steam App ID + depot + steamcmd', secret: true, note: 'config/steam-app.json — gitignored' });
+    }
+    return items;
+}
+
 export function suggestAllStoreLinks(draft) {
     const bundleId = draft.branding?.bundleId || suggestBundleId(draft.name);
     const entries = { ...(draft.credits?.entries || {}) };
@@ -384,4 +461,6 @@ window.ExportWalkthrough = {
     suggestStoreSku,
     suggestRegistryUri,
     suggestAllStoreLinks,
+    buildShipCliLines,
+    buildSecretsChecklist,
 };

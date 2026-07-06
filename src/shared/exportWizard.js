@@ -11,6 +11,8 @@ import {
     suggestBundleId,
     suggestAllStoreLinks,
     buildKindPacks,
+    buildShipCliLines,
+    buildSecretsChecklist,
 } from './exportWalkthrough.js';
 import profilesConfig from '../../config/store-assets.json';
 
@@ -280,7 +282,7 @@ export const ExportWizard = {
         if (stepId === 'targets') {
             const profiles = GameExport.getBuildProfiles();
             body.innerHTML = `
-                <p class="insert-hint">Packaging targets — same <code>dist-pages</code> SPA for all.</p>
+                <p class="insert-hint">Select only platforms you will package — SHIP step lists commands for checked targets only.</p>
                 <label class="export-wizard-check"><input type="checkbox" id="export-target-web" ${this.draft.targets.web ? 'checked' : ''}> ${profiles.web.label}</label>
                 <label class="export-wizard-check"><input type="checkbox" id="export-target-android" ${this.draft.targets.android ? 'checked' : ''}> ${profiles.android.label}</label>
                 <label class="export-wizard-check"><input type="checkbox" id="export-target-windows" ${this.draft.targets.windows ? 'checked' : ''}> ${profiles.windows.label}</label>
@@ -390,23 +392,24 @@ export const ExportWizard = {
         if (this.draft.targets.windows) targets.push('windows');
         if (this.draft.targets.ios) targets.push('ios');
         if (this.draft.targets.steam) targets.push('steam');
-        const contact = this.draft.store.contactEmail ? ` --contact ${this.draft.store.contactEmail}` : '';
-        const privacy = this.draft.store.privacyPolicyUrl ? ` --privacy-url ${this.draft.store.privacyPolicyUrl}` : '';
+        const cliLines = buildShipCliLines(this.draft, filename, { secretsNote: true });
+        const secrets = buildSecretsChecklist(this.draft);
+        const secretsHtml = secrets.map((s) => `
+            <li>${s.secret ? '🔐' : '✓'} <strong>${escapeText(s.label)}</strong> — ${escapeText(s.note)}</li>
+        `).join('');
 
         body.innerHTML = `
-            <p class="insert-hint">Download manifest, then run store prep and package CLIs on your dev machine.</p>
+            <p class="insert-hint">Download manifest, then run the commands below on your dev machine. Only selected targets are included.</p>
             <ul class="export-wizard-summary">
                 <li>File: <code>${escapeText(filename)}</code></li>
                 <li>Targets: ${targets.join(', ') || 'manifest only'}</li>
                 <li>Bundle ID: <code>${escapeText(m.branding?.bundleId || '')}</code></li>
             </ul>
+            <p class="insert-hint"><strong>What you need</strong> (never commit signing keys):</p>
+            <ul class="export-wizard-summary">${secretsHtml}</ul>
             <p class="insert-hint">Post-download commands:</p>
-            <pre class="export-wizard-cli">npm run store:prep -- --manifest ${escapeText(filename)}${escapeText(contact)}${escapeText(privacy)}
-npm run store:assets -- --manifest ${escapeText(filename)}
-npm run bundle:assets
-npm run package:android:release  # or package:win / package:steam
-npm run steam:depot -- --manifest ${escapeText(filename)}  # Steam depot upload</pre>
-            <p class="insert-hint">Store assets: <code>docs/STORE_ASSETS.md</code> · Walkthrough: <code>docs/EXPORT_WALKTHROUGH.md</code></p>
+            <pre class="export-wizard-cli">${escapeText(cliLines.join('\n'))}</pre>
+            <p class="insert-hint">Details: <code>docs/STORE_RELEASE.md</code> · <code>docs/EXPORT_WALKTHROUGH.md</code></p>
         `;
         this._pendingFilename = filename;
         this._pendingJson = JSON.stringify(m, null, 2);

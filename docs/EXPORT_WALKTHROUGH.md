@@ -13,10 +13,10 @@ Guided **MORE → EXPORT** flow — from game identity through icons, scene cont
 | **SCENE** | Review world objects, GLTF, textures, sounds, videos in the live scene |
 | **CREDITS** | Attribute every asset — license, author, source (required for store compliance) |
 | **REVIEW** | Full manifest preview + optional sound base64 embed |
-| **TARGETS** | Web / Android / Windows / iOS checkboxes |
+| **TARGETS** | Web / Android / Windows / iOS / Steam — default **Web only**; SHIP lists only checked targets |
 | **STORE** | Contact email, support URL, privacy policy URL for `store:prep` |
 | **PACKS** | Store SKU + registry URI per asset; Steam App/Depot ID; Play + itch mapping |
-| **SHIP** | Download `.threshold-game.json` + CLI command summary |
+| **SHIP** | Download manifest + **target-filtered** CLI + secrets checklist (signing keys are local env, not in manifest) |
 
 ---
 
@@ -60,15 +60,26 @@ Config: `config/store-assets.json`
 
 ## After download
 
+The SHIP step prints commands for **your selected targets only**. Web-only example:
+
 ```bash
 npm run store:prep -- --manifest my-game.threshold-game.json \
   --contact you@example.com \
   --privacy-url https://yoursite.com/privacy
-
-npm run store:assets -- --manifest my-game.threshold-game.json
-npm run bundle:assets
-npm run package:android:release   # or package:win / package:ios
+npm run build   # dist-pages for GitHub Pages
 ```
+
+Android + Windows example (when those targets are checked):
+
+```bash
+npm run store:prep -- --manifest my-game.threshold-game.json --contact you@example.com
+npm run store:assets -- --manifest my-game.threshold-game.json   # if PACKS registry enabled
+npm run bundle:assets
+npm run package:android:release
+npm run package:win
+```
+
+Signing keys: set `CSC_LINK` before `package:win` — see [STORE_RELEASE.md](STORE_RELEASE.md) secrets table.
 
 **Generated in `dist-store/<slug>/`:**
 
@@ -128,6 +139,7 @@ Detail: [GETTING_STARTED.md](GETTING_STARTED.md#tc-walkthrough-qa-r4)
 
 ## Related
 
+- [STREAMLINED_DEV.md](STREAMLINED_DEV.md) — lobby → agents → GIMP → export
 - [GETTING_STARTED.md](GETTING_STARTED.md) — lobby → ship linear path
 - [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) — bundled original assets + CREDITS examples
 - [STORE_ASSETS.md](STORE_ASSETS.md) — Play / Steam / itch / registry maps

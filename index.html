@@ -122,7 +122,7 @@
     <div id="auth-overlay">
         <div id="auth-card" class="panel">
             <h2>THRESHOLD GROK EDITION</h2>
-            <p>Sign in with your xAI API key to generate scripts directly with Grok. Keys are stored in session only and never sent anywhere except api.x.ai.</p>
+            <p>Sign in with your xAI API key to generate scripts directly with Grok. Keys stay in <strong>this tab</strong> only (not shared from other Grok/x.ai tabs) and are sent only to api.x.ai.</p>
             <form id="auth-form">
                 <input type="password" id="auth-api-key" placeholder="xai-..." autocomplete="off" required>
                 <button type="submit">LOGIN</button>
@@ -536,8 +536,19 @@
             </div>
 
             <div id="agents-panel" class="panel dock-panel" data-dock-panel="agents" style="display:none;">
-                <div class="prop-row"><h3 style="margin:0;">AGENTS</h3></div>
-                <p class="insert-hint" style="margin:0 0 8px;">Local scripts or Grok-powered dev/NPC helpers. Grok needs API key (Grok edition / auth).</p>
+                <div class="prop-row"><h3 style="margin:0;">AGENTS</h3>
+                    <button id="agent-status-refresh" type="button" style="margin-left:auto;font-size:0.65rem;">REFRESH</button>
+                </div>
+                <div id="agent-status-chips" class="agent-status-row"></div>
+                <p class="insert-hint" style="margin:4px 0 8px;">Status: Grok (xAI key in <em>this tab</em>), Ollama (local), creative watch (GIMP textures). Ollama suggests code only — textures use GIMP + <code>textures:watch</code>.</p>
+                <label class="insert-hint">xAI API key (session — not shared from other browser tabs)</label>
+                <div class="prop-row" style="margin-bottom:6px;">
+                    <input type="password" id="agent-xai-key" class="insert-input" placeholder="xai-…" autocomplete="off" style="flex:1;">
+                    <button id="agent-xai-save" type="button">SAVE</button>
+                    <button id="agent-xai-clear" type="button">CLEAR</button>
+                </div>
+                <label class="insert-hint">Ollama model</label>
+                <select id="agent-ollama-model" class="insert-input" style="margin-bottom:6px;"><option value="">— probe on refresh —</option></select>
                 <label class="insert-hint">Grok NPC persona</label>
                 <input type="text" id="agent-npc-persona" class="insert-input" placeholder="Friendly merchant, quest giver..." style="margin-bottom:6px;">
                 <div class="prop-row">
@@ -549,6 +560,8 @@
                 <hr style="border-color:var(--border-color);margin:8px 0;">
                 <button id="agent-dev-suggest" type="button" style="width:100%;margin-bottom:6px;">GROK DEV: SUGGEST CODE</button>
                 <button id="agent-dev-apply" type="button" style="width:100%;margin-bottom:6px;">GROK DEV: APPLY TO COMPILER</button>
+                <button id="agent-ollama-suggest" type="button" style="width:100%;margin-bottom:6px;">OLLAMA DEV: SUGGEST CODE</button>
+                <button id="agent-ollama-apply" type="button" style="width:100%;margin-bottom:6px;">OLLAMA DEV: APPLY TO COMPILER</button>
                 <label class="insert-hint">Local script agent (interval ms, 0=off)</label>
                 <input type="number" id="agent-local-interval" class="insert-input" value="0" min="0" step="1000" style="margin-bottom:6px;">
                 <textarea id="agent-local-script" class="insert-input" rows="3" placeholder="// e.g. console.log('tick')" style="margin-bottom:6px;font-family:var(--font-mono);font-size:0.65rem;"></textarea>

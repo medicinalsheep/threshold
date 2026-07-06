@@ -1,5 +1,14 @@
 # Changelog
 
+## 9.12.0 — Streamlined dev + agent status + export targets
+
+- **EXPORT TARGETS** — default Web only; SHIP step shows `buildShipCliLines()` filtered by checked platforms + secrets checklist
+- **`docs/STREAMLINED_DEV.md`** — lobby → agents → GIMP watch → export path
+- **`docs/STORE_RELEASE.md`** — secrets & credentials table (Grok per-tab, signing keys local)
+- **AGENTS panel** — status chips (Grok, Ollama, creative watch, textures, local agent); xAI key field for web edition
+- **`ollamaClient.js`**, **`ollama/devAgent.js`** — Ollama Dev suggest/apply (code only, not textures)
+- **`npm run ollama:verify`** — optional local LLM smoke
+
 ## 9.11.1 — Store verify Windows exit fix
 
 - **`vite.config.js`** — suppress Rollup `EVAL` warning (cleaner Windows CI exit)

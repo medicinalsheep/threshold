@@ -21,6 +21,12 @@ const AGENT_TYPES = {
         description: 'Dialogue + actions for selected NPC using Grok + live scene.',
         needsKey: true,
     },
+    ollama_dev: {
+        id: 'ollama_dev',
+        label: 'Ollama Dev Agent',
+        description: 'Local LLM code suggestions via Ollama (no API key). Does not edit image files.',
+        needsKey: false,
+    },
 };
 
 function loadConfigs() {
