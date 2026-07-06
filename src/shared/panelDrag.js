@@ -84,6 +84,9 @@ function defaultRect(panel, options = {}) {
     } else if (anchor === 'bottom-right') {
         x = window.innerWidth - w - pad;
         y = window.innerHeight - h - 72;
+    } else if (anchor === 'bottom-center') {
+        x = (window.innerWidth - w) / 2;
+        y = window.innerHeight - h - 72;
     } else {
         x = (window.innerWidth - w) / 2;
         y = nav + pad + Math.max(0, usableH / 2);
@@ -330,6 +333,17 @@ const CHROME_PANELS = [
 ];
 
 const PANEL_CONFIG = [
+    {
+        selector: '#proximity-panel',
+        id: 'proximity-panel',
+        handleSelector: '.panel-chrome-header',
+        defaultSize: { w: 300, h: 88, anchor: 'bottom-center' },
+        minW: 220,
+        minH: 72,
+        maxW: 480,
+        maxH: 160,
+        anchor: 'bottom-center',
+    },
     { selector: '#insert-sheet', defaultSize: { w: 420, h: 440 } },
     { selector: '#bindings-sheet', defaultSize: { w: 440, h: 520 } },
     { selector: '#host-panel-sheet', defaultSize: { w: 400, h: 480 } },
@@ -343,15 +357,16 @@ export function initPanelDrag() {
         if (el) setupFloatPanel(el, cfg);
     });
 
-    PANEL_CONFIG.forEach(({ selector, defaultSize }) => {
-        const el = document.querySelector(selector);
-        if (el) setupFloatPanel(el, { defaultSize });
+    PANEL_CONFIG.forEach((cfg) => {
+        const el = document.querySelector(cfg.selector);
+        if (el) setupFloatPanel(el, cfg);
     });
 
     const allSelectors = [
         ...CHROME_PANELS.map((c) => c.selector),
         ...PANEL_CONFIG.map((c) => c.selector),
     ];
+
 
     const clampAll = () => {
         allSelectors.forEach((selector) => {

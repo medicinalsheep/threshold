@@ -1,5 +1,13 @@
 # Changelog
 
+## 7.2.1 — UX: proximity panel, camera, F interact, third eye clicks
+
+- **Proximity panel** — draggable + lockable float panel (`#proximity-panel`) like SCENE dock
+- **Mouse look** — fixed inverted vertical pitch in walk/TPS/FPS
+- **EDIT dock** — inspector sub-tabs no longer overlap panel content (flex layout)
+- **F key** — interact + third eye (near target → interact, else toggle awareness); E = vehicle
+- **Third eye** — releases pointer lock; mouse clicks work on UI and interact targets
+
 ## 7.2.0 — Starter asset polish: low-poly, high-detail, compression pass
 
 - **Geometry** — reduced segment counts (platform 16, torus 24, shared geos); `InstancedMesh` for highway dashes + construction cones

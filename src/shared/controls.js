@@ -30,7 +30,7 @@ export const CONTROL_ACTIONS = {
     emote: { label: 'Emote / Hands Up', group: 'social' },
     voipPtt: { label: 'Voice Push-to-Talk (hold)', group: 'social' },
     toggleView: { label: 'Toggle FPS / TPS', group: 'camera' },
-    thirdEye: { label: 'Third Eye (awareness)', group: 'camera' },
+    thirdEye: { label: 'Third Eye / Interact', group: 'camera' },
     flashlight: { label: 'Flashlight', group: 'camera' },
     lookBehind: { label: 'Look Behind (tap)', group: 'camera' },
     horn: { label: 'Horn', group: 'vehicle' },
@@ -81,7 +81,7 @@ const DEFAULT_GAMEPAD_BINDINGS = {
     sessionPanel: 8,
 };
 
-/** FiveM-inspired keyboard — LMB fire · RMB aim · F vehicle · Y walk/fly */
+/** FiveM-inspired keyboard — LMB fire · RMB aim · F interact/third eye · E vehicle · Y walk/fly */
 const DEFAULT_HOST_KEYBOARD = {
     forward: ['KeyW', 'ArrowUp'],
     back: ['KeyS', 'ArrowDown'],
@@ -93,9 +93,9 @@ const DEFAULT_HOST_KEYBOARD = {
     sprint: ['ShiftLeft', 'ShiftRight'],
     crouch: ['ControlLeft', 'ControlRight'],
     stealthWalk: ['AltLeft'],
-    interact: ['KeyE'],
+    interact: ['KeyF'],
     toggleMode: ['KeyY'],
-    enterVehicle: ['KeyF'],
+    enterVehicle: ['KeyE'],
     pause: ['KeyP'],
     bindingsMenu: ['Backquote'],
     sessionPanel: ['Tab'],
@@ -108,7 +108,7 @@ const DEFAULT_HOST_KEYBOARD = {
     emote: ['KeyX'],
     voipPtt: ['KeyN'],
     toggleView: ['KeyV'],
-    thirdEye: ['KeyM'],
+    thirdEye: ['KeyF'],
     flashlight: ['KeyL'],
     lookBehind: ['KeyO'],
     horn: ['KeyH'],
@@ -497,8 +497,8 @@ export const Controls = {
         const THREE = window.THREE;
         if (!THREE) return;
         const spherical = new THREE.Spherical().setFromVector3(offset);
-        spherical.theta -= x * 0.045;
-        spherical.phi = Math.max(0.12, Math.min(Math.PI - 0.12, spherical.phi + y * 0.035));
+        spherical.theta += x * 0.045;
+        spherical.phi = Math.max(0.12, Math.min(Math.PI - 0.12, spherical.phi - y * 0.035));
         offset.setFromSpherical(spherical);
         Engine.camera.position.copy(Engine.controls.target).add(offset);
         Engine.camera.lookAt(Engine.controls.target);
@@ -522,7 +522,7 @@ export const Controls = {
         if (mode === 'walk') {
             const view = window.State?.viewMode === 'fps' ? 'FPS' : 'TPS';
             const lock = window.Engine?._lookPointerLocked ? ' · aim' : ' · click to aim';
-            return `${profile}${admin}: ${view} · LMB shoot · RMB aim · F vehicle · E interact${lock}${pad}${touch}`;
+            return `${profile}${admin}: ${view} · LMB shoot · RMB aim · F interact/third eye · E vehicle${lock}${pad}${touch}`;
         }
         return `${profile}${admin}: fly · Y walk · R-stick cam${pad}${touch}`;
     },
@@ -606,7 +606,7 @@ export const Controls = {
         if (note) {
             if (profile === 'host') {
                 note.textContent = canEditHost
-                    ? 'FiveM-style defaults — LMB fire · RMB aim · F vehicle · host syncs to guests.'
+                    ? 'FiveM-style defaults — LMB fire · RMB aim · F interact/third eye · E vehicle · host syncs to guests.'
                     : 'Host controls are read-only for guests — customize Guest profile locally.';
             } else {
                 note.textContent = 'Guest profile saved on this device — overrides host per key/button.';

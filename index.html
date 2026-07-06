@@ -280,7 +280,14 @@
             <div id="controls-hint">WASD fly · QE up/down · right-click menu</div>
             <div id="fps-crosshair" class="fps-crosshair" aria-hidden="true"></div>
             <div id="third-eye-indicator" class="third-eye-indicator" aria-hidden="true" title="Third Eye active"></div>
-            <p id="interact-hint" class="interact-hint" aria-live="polite"></p>
+            <div id="proximity-panel" class="proximity-panel panel">
+                <div class="panel-chrome-header panel-drag-handle">
+                    <span class="panel-chrome-grip" aria-hidden="true">⠿</span>
+                    <span class="panel-chrome-title">NEARBY</span>
+                    <button type="button" class="panel-lock-btn btn-sm" title="Lock position">LOCK</button>
+                </div>
+                <p id="interact-hint" class="interact-hint" aria-live="polite">Walk close to terminals and props</p>
+            </div>
 
             <!-- Right dock: ENV / EDIT / SKIN -->
             <div id="scene-dock" class="scene-dock collapsed panel">
@@ -352,11 +359,11 @@
             </div>
 
             <div id="inspector" class="panel dock-panel" data-dock-panel="inspect" style="display:none;">
-                <div class="prop-row">
-                    <h3 style="margin:0;">EDIT OBJECT</h3>
-                    <button id="btn-lock" style="font-size:0.6rem;">UNLOCK</button>
+                <div class="dock-panel-head">
+                    <h3 class="dock-panel-title">EDIT OBJECT</h3>
+                    <button id="btn-lock" class="btn-sm" type="button">UNLOCK</button>
                 </div>
-                <div class="insp-tabs">
+                <div class="insp-tabs dock-subtabs">
                     <button type="button" class="insp-tab active" data-insp-tab="general">General</button>
                     <button type="button" class="insp-tab" data-insp-tab="texture">Texture</button>
                     <button type="button" class="insp-tab" data-insp-tab="collision">Collision</button>

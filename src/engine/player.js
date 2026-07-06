@@ -90,7 +90,7 @@ export const PlayerController = {
         window.FpsViewmodel?.mount?.(Engine.camera);
 
         if (window.UI?.status) {
-            window.UI.status('FiveM controls — LMB shoot · RMB aim · F vehicle · Ctrl crouch · click canvas to look');
+            window.UI.status('FiveM controls — LMB shoot · RMB aim · F interact/third eye · E vehicle · click canvas to look');
         }
         window.ThirdEye?.updateHud?.();
         return this.group;
@@ -176,7 +176,7 @@ export const PlayerController = {
     applyLookInput(dx, dy, sens = 1) {
         if (!this.spawned || window.State?.controlMode !== 'walk' || window.State?.isPaused) return;
         this._camYaw += dx * 0.003 * sens;
-        this._camPitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, this._camPitch - dy * 0.0025 * sens));
+        this._camPitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, this._camPitch + dy * 0.0025 * sens));
     },
 
     resetCameraBehind() {

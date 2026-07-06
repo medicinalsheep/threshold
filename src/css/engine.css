@@ -186,10 +186,54 @@ button {
 
 .dock-panel {
     flex: 1;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
     border: none !important;
     margin: 0 !important;
     max-height: none;
+}
+
+.dock-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px 6px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dock-panel-title {
+    margin: 0;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+}
+
+.dock-subtabs {
+    flex-shrink: 0;
+    margin: 0;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+#inspector .insp-panel {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 8px 10px 10px;
+}
+
+#inspector .insp-panel.active {
+    display: block;
+}
+
+#inspector.dock-active {
+    display: flex !important;
+    flex-direction: column;
 }
 
 #scene-dock.float-panel .float-panel-scroll {
@@ -447,28 +491,55 @@ body.console-hidden .console-restore-tab {
     z-index: 5;
 }
 
-.interact-hint {
-    position: absolute;
-    bottom: 78px;
-    left: 50%;
-    transform: translateX(-50%) translateY(6px);
-    max-width: min(calc(100% - 32px), 420px);
+#proximity-panel {
+    z-index: 22;
+    padding: 0 !important;
+    pointer-events: auto;
+    opacity: 0.55;
+    transition: opacity 0.2s ease;
+}
+
+#proximity-panel.has-hint {
+    opacity: 1;
+}
+
+#proximity-panel.float-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+#proximity-panel .interact-hint {
+    margin: 0;
+    padding: 8px 10px;
     font-size: 0.68rem;
     color: var(--accent-color);
-    opacity: 0;
-    pointer-events: none;
     text-align: center;
-    padding: 6px 12px;
-    background: rgba(5, 8, 5, 0.82);
-    border: 1px solid rgba(57, 255, 20, 0.35);
-    border-radius: 4px;
-    z-index: 6;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    line-height: 1.35;
+    pointer-events: none;
+}
+
+#proximity-panel:not(.has-hint) .interact-hint {
+    color: #888;
+    font-size: 0.62rem;
 }
 
 .interact-hint.visible {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    color: var(--accent-color);
+}
+
+body.third-eye-active #proximity-panel,
+body.third-eye-active #ui-layer .panel,
+body.third-eye-active #ui-layer button,
+body.third-eye-active #ui-layer input,
+body.third-eye-active #ui-layer select,
+body.third-eye-active #ui-layer textarea,
+body.third-eye-active #ui-layer a {
+    pointer-events: auto;
+}
+
+body.third-eye-active #canvas-container canvas {
+    cursor: crosshair;
 }
 
 .fps-crosshair {
@@ -1408,6 +1479,11 @@ body.shell-steam.shell-electron::after {
 
 #inspector {
     overflow: hidden;
+}
+
+#inspector .dock-panel-head .btn-sm {
+    font-size: 0.58rem !important;
+    padding: 4px 8px !important;
 }
 
 .insert-hint {

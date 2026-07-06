@@ -36,13 +36,15 @@ export const ThirdEye = {
     toggle() {
         this.active = !this.active;
         if (this.active) {
+            window.Engine?._releaseLookLock?.();
             window.StarterSfx?.playStarterSfx?.('starter_terminal_chirp', 0.28);
             this._scan();
         } else {
             this._clearHighlights();
         }
         this.updateHud();
-        window.UI?.status?.(this.active ? 'Third Eye — awareness on' : 'Third Eye — off');
+        document.body.classList.toggle('third-eye-active', this.active);
+        window.UI?.status?.(this.active ? 'Third Eye — click UI & props · F to interact' : 'Third Eye — off');
         return this.active;
     },
 

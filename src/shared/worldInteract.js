@@ -122,11 +122,13 @@ export const WorldInteract = {
 
         if (near && window.State?.controlMode === 'walk') {
             const label = near.userData.interactHint || near.userData.interactLabel || near.userData.name || 'Terminal';
-            el.textContent = `[E] ${label}`;
+            el.textContent = `[F] ${label}`;
             el.classList.add('visible');
+            document.getElementById('proximity-panel')?.classList.add('has-hint');
             this._near = near;
         } else {
             el.classList.remove('visible');
+            document.getElementById('proximity-panel')?.classList.remove('has-hint');
             this._near = null;
         }
     },

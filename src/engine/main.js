@@ -1060,7 +1060,10 @@ const Engine = {
 
         if (e.pointerType === 'mouse' || e.pointerType === 'pen') {
             Controls.setMouseButton(e.button, true);
-            if (this._isWalkPlayLook()) {
+            if (ThirdEye.active && this._isWalkPlayLook()) {
+                if (window.WorldInteract?.tryInteract?.()) return;
+            }
+            if (this._isWalkPlayLook() && !ThirdEye.active) {
                 this._requestLookLock();
                 return;
             }
@@ -1160,8 +1163,10 @@ const Engine = {
         if (Controls.consumeJustPressed('pause') && Controls.canUse('pause')) UI.togglePause();
         if (Controls.consumeJustPressed('bindingsMenu')) UI.openBindingsModal?.();
         if (Controls.consumeJustPressed('sessionPanel')) UI.openHostPanel?.();
-        if (Controls.consumeJustPressed('interact')) {
-            if (!window.WorldInteract?.tryInteract?.()) UI.openInsert();
+        if (Controls.consumeJustPressed('interact') || Controls.consumeJustPressed('thirdEye')) {
+            if (!window.WorldInteract?.tryInteract?.()) {
+                ThirdEye.toggle();
+            }
         }
         if (Controls.consumeJustPressed('enterVehicle')) this.tryEnterVehicle();
         if (Controls.consumeJustPressed('fire') && !Controls.isHolstered()) {
@@ -1175,7 +1180,6 @@ const Engine = {
             UI.status(Controls._holstered ? 'Weapon holstered' : 'Weapon ready');
         }
         if (Controls.consumeJustPressed('toggleView')) PlayerController.toggleViewMode?.();
-        if (Controls.consumeJustPressed('thirdEye')) ThirdEye.toggle();
         if (Controls.consumeJustPressed('flashlight')) PlayerController.toggleFlashlight?.();
         if (Controls.consumeJustPressed('lookBehind')) PlayerController.lookBehind?.();
         if (Controls.consumeJustPressed('horn')) {
@@ -2517,7 +2521,7 @@ const UI = {
                 State.controlMode = 'walk';
                 PlayerController._inheritLookFromCamera?.();
                 PlayerController._syncWalkOrbit?.();
-                this.status('Walk — LMB shoot · RMB aim · F vehicle · click canvas to look');
+                this.status('Walk — LMB shoot · RMB aim · F interact/third eye · click canvas to look');
             }
         } else {
             const pos = World.getCursorPos();
