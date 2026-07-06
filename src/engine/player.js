@@ -1,7 +1,9 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { HumanMesh } from './humanMesh.js';
-import { tryLoadAvatarGroup } from '../shared/avatarLoader.js';
+import { applyPlayerAppearance } from '../shared/avatarLoader.js';
+import { AppearanceStore } from '../shared/appearanceStore.js';
+import { profileToMeshOpts } from '../shared/appearanceProfile.js';
 
 const WALK_SPEED = 3.2;
 const SPRINT_MULT = 1.875;
@@ -45,7 +47,8 @@ export const PlayerController = {
 
         State.viewMode = State.viewMode || 'tps';
 
-        this.group = HumanMesh.build();
+        const profile = AppearanceStore.getPlayerProfile();
+        this.group = HumanMesh.build(profileToMeshOpts(profile));
         this.group.name = 'player_human';
         this.group.position.set(x, y, z);
         this.group.userData = {
@@ -78,7 +81,7 @@ export const PlayerController = {
 
         this._velX = 0;
         this._velZ = 0;
-        await tryLoadAvatarGroup(this.group, 'starter_avatar.glb');
+        await applyPlayerAppearance(this.group, profile);
 
         this._inheritLookFromCamera();
         if (State.viewMode !== 'fps') {
@@ -402,15 +405,30 @@ export const PlayerController = {
         };
     },
 
-    applySkin({ bodyColor = 0x3366cc, headColor = 0xffcc99, roughness = 0.7 } = {}) {
-        if (!this.group || this.group.userData.isGltf) return;
-        HumanMesh.applySkin(this.group, { bodyColor, headColor, roughness });
+    applySkin({ bodyColor = 0x3366cc, headColor = 0xffcc99, pantsColor = 0x232830, hairColor = 0x2a1810, roughness = 0.7 } = {}) {
+        if (!this.group) return;
+        const profile = AppearanceStore.getPlayerProfile();
+        profile.colors.shirt = `#${bodyColor.toString(16).padStart(6, '0')}`;
+        profile.colors.skin = `#${headColor.toString(16).padStart(6, '0')}`;
+        profile.colors.pants = `#${pantsColor.toString(16).padStart(6, '0')}`;
+        profile.colors.hair = `#${hairColor.toString(16).padStart(6, '0')}`;
+        profile.roughness = roughness;
+        AppearanceStore.setPlayerProfile(profile);
+        window.AvatarComposer?.applyColors?.(this.group, profile);
+    },
+
+    async applyAppearance(profile) {
+        if (!this.group) return;
+        const p = AppearanceStore.setPlayerProfile(profile);
+        await applyPlayerAppearance(this.group, p);
+        this._applyViewMode();
     },
 
     async applyModelUrl(url) {
         if (!this.group) return;
-        await HumanMesh.loadGltf(this.group, url);
-        this._applyViewMode();
+        const profile = AppearanceStore.getPlayerProfile();
+        profile.customBodyGlb = url;
+        await this.applyAppearance(profile);
     },
 
     applyState(data) {

@@ -42,6 +42,11 @@ import '../shared/starterTex.js';
 import '../shared/npcPatrol.js';
 import '../shared/footsteps.js';
 import '../shared/fpsViewmodel.js';
+import '../shared/appearanceProfile.js';
+import '../shared/avatarManifest.js';
+import '../shared/appearanceStore.js';
+import '../shared/hairSlot.js';
+import '../shared/avatarComposer.js';
 import '../shared/avatarLoader.js';
 import '../shared/ambientAudio.js';
 import '../shared/weatherSystem.js';
@@ -2038,17 +2043,19 @@ const UI = {
         menu.style.top = `${r.bottom + 4}px`;
         menu.style.left = `${Math.max(8, Math.min(r.left, window.innerWidth - menu.offsetWidth - 8))}px`;
     },
-    reloadPlayerSkin: function () {
+    reloadPlayerSkin: async function () {
         if (!PlayerController.spawned) { this.status('Spawn a player first'); return; }
-        if (PlayerController.group?.userData?.isGltf) {
-            this.status('GLTF model active — colors apply to procedural mesh only');
-            return;
+        const profile = window.AppearanceStore.getPlayerProfile();
+        profile.bodyId = document.getElementById('skin-body-preset')?.value || profile.bodyId;
+        profile.hairId = document.getElementById('skin-hair-preset')?.value || profile.hairId;
+        profile.colors = window.AppearanceProfile.colorsFromUi();
+        profile.roughness = parseFloat(document.getElementById('skin-rough')?.value || '0.72');
+        try {
+            await PlayerController.applyAppearance(profile);
+            this.status(`Appearance applied — ${profile.bodyId} · ${profile.hairId}`);
+        } catch (e) {
+            this.status('Appearance failed: ' + (e.message || e));
         }
-        const bodyHex = parseInt(document.getElementById('skin-body-color').value.replace('#', ''), 16);
-        const headHex = parseInt(document.getElementById('skin-head-color').value.replace('#', ''), 16);
-        const rough = parseFloat(document.getElementById('skin-rough').value);
-        PlayerController.applySkin({ bodyColor: bodyHex, headColor: headHex, roughness: rough });
-        this.status('Skin reloaded');
     },
     openPlayerCodeRef: function () {
         document.querySelector('[data-target="view-compiler"]')?.click();
@@ -2070,7 +2077,10 @@ const UI = {
         if (!edit) {
             Engine.transformControl.detach();
             SceneDock.closeTab();
-            if (SimMode.canEditPlayerSkin()) SceneDock.openTab('skin');
+            if (SimMode.canEditPlayerSkin()) {
+                window.AppearanceProfile?.syncUiFromProfile?.(window.AppearanceStore.getPlayerProfile());
+                SceneDock.openTab('skin');
+            }
         } else {
             SceneDock.closeTab();
         }

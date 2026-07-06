@@ -1,5 +1,14 @@
 # Changelog
 
+## 7.8.0 — R8.2: Character kit (female + hair + composition)
+
+- **Manifest v2** — `avatar-manifest.json` bodies, hair, attach points, roles
+- **AppearanceProfile** — serializable body + hair + colors + custom GLB overrides
+- **AvatarComposer** — manifest-driven body GLB + `HairSlot` attach + color apply
+- **Assets** — `starter_avatar_female.glb`, `hair_short_m`, `hair_long_f`, `hair_bun_f`
+- **Skin panel** — build preset, hair style, pants/hair colors · full recompose on reload
+- **Multiplayer** — `appearance` in `LIVE_STATE` · remote players compose from profile
+
 ## 7.7.0 — Phase 18.5: Tesla lab GLB + mesh LOD
 
 - **Tesla coil** — `tesla_coil.glb` LOD0/1/2 via `MeshLod`; arc pulse + spark hooks preserved

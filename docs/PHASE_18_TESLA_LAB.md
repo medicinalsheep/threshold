@@ -132,7 +132,7 @@ Guest sync: upgrade when `starter_tesla_coil` exists but `userData.glb185` is fa
 3. **18.3** Lab NPC ✅
 4. **18.4** Weather annex ✅
 5. **18.5** Blender LOD pass ✅
-6. **R8.2** Female avatar ← **current**
+6. **R8.2** Character kit (female + hair) ← **current** — [R8_2_CHARACTER_KIT.md](R8_2_CHARACTER_KIT.md)
 7. **R8.3** Creatures / animals
 
 ```bash

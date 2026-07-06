@@ -11,17 +11,17 @@
       "phases": ["R8.1", "7.1"]
     },
     "human_female": {
-      "status": "planned",
+      "status": "shipped",
       "default": "starter_avatar_female.glb",
       "lod": true,
       "hilod": ["starter_skin", "starter_fabric"],
-      "phases": ["R8.2", "7.4"]
+      "phases": ["R8.2", "7.8"]
     },
     "hair": {
-      "status": "planned",
+      "status": "shipped",
       "slots": ["hair_short_m", "hair_long_f", "hair_bun_f"],
       "hilod": ["hair_alpha"],
-      "phases": ["R8.2"]
+      "phases": ["R8.2", "7.8"]
     },
     "creature": {
       "status": "planned",

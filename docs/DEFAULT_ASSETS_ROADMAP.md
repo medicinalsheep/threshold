@@ -35,14 +35,20 @@ Registry: `config/default-assets-registry.json`
 | `gen-starter-avatar.cjs` | Male + female GLB outputs |
 | Docs | This file + BLENDER_AVATARS hair section |
 
-### R8.2 — Female avatar + hair (v7.4)
+### R8.2 — Character kit: female + hair + composition (v7.8)
+
+**Full outline:** [R8_2_CHARACTER_KIT.md](R8_2_CHARACTER_KIT.md) — manifest v2, `AppearanceProfile`, slot composition, user override path.
 
 | Deliverable | Notes |
 |-------------|-------|
+| `avatar-manifest.json` v2 | `bodies`, `hair`, `textures`, `attachPoints` |
+| `AppearanceProfile` | Serializable body + hair + colors + textures + props |
 | `starter_avatar_female.glb` | Walk clip, 1.65 m normalize |
-| `hair_short_m`, `hair_long_f` | Optional mesh children or separate GLB |
-| Skin panel | Body preset dropdown (male / female) |
-| HILOD | `starter_skin_*` albedo variants `_512`/`_1k` |
+| `hair_short_m`, `hair_long_f`, `hair_bun_f` | Separate GLB per style · `HairSlot` attach |
+| `AvatarComposer` | Manifest-driven assembly · fallback to procedural |
+| Skin panel | Body + hair presets · texture variants · custom GLB |
+| HILOD | `starter_skin`, `starter_fabric`, `hair_alpha` |
+| Multiplayer | `appearance` in `LIVE_STATE` · remote compose |
 
 ### R8.3 — Creature + animals (v7.5–7.6)
 
@@ -125,9 +131,9 @@ Props use marker `userData.id` (e.g. `starter_tesla_coil`). Guests rebuild missi
 | Version | Focus |
 |---------|--------|
 | **7.3** | Tesla lab intro shell + registry scaffold |
-| **7.4** | Female avatar + hair |
-| **7.5** | Creature + dog GLB |
-| **7.6** | Cat + animal female variants |
-| **7.7** | Blender LOD batch + doc truth |
+| **7.8** | R8.2 character kit — female + hair + composition |
+| **7.9** | R8.3 creature + dog GLB |
+| **8.0** | R8.3 cat + animal female variants |
+| **8.1** | R8.4 Blender LOD batch for bodies + hair |
 
 See [PHASE_18_TESLA_LAB.md](PHASE_18_TESLA_LAB.md) for intro scene makeover.

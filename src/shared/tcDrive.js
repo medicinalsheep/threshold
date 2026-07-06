@@ -320,7 +320,12 @@ export const TcDrive = {
         const PC = window.PlayerController;
         if (PC?.spawned && PC.group) {
             const p = PC.group.position;
-            return { x: p.x, y: p.y, z: p.z, rotY: PC.group.rotation.y, mode: 'walk' };
+            const appearance = PC.group.userData?.appearanceProfile
+                || window.AppearanceStore?.getNetworkProfile?.();
+            return {
+                x: p.x, y: p.y, z: p.z, rotY: PC.group.rotation.y, mode: 'walk',
+                appearance,
+            };
         }
         const cam = window.Engine?.camera;
         if (cam) return { x: cam.position.x, y: cam.position.y, z: cam.position.z, rotY: 0, mode: 'fly' };

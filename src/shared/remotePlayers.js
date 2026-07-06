@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { HumanMesh } from '../engine/humanMesh.js';
-import { tryLoadAvatarGroup } from './avatarLoader.js';
+import { AvatarComposer } from './avatarComposer.js';
+import { profileFromLegacyAppearance, normalizeProfile } from './appearanceProfile.js';
 
 const COLORS = [0x39ff14, 0x4488ff, 0xff6644, 0xffcc00, 0xcc66ff, 0x66ffcc];
 
@@ -18,6 +19,7 @@ export const RemotePlayers = {
                     mode: av.mode,
                     vehicleId: av.vehicleId,
                     rotY: av.rotY,
+                    appearance: av.appearance,
                 };
             }
         });
@@ -47,7 +49,7 @@ export const RemotePlayers = {
             }
             active.add(k);
             let entry = this.markers.get(k);
-            if (!entry) entry = this._createMarker(k, names.get(k) || k, pos.mode);
+            if (!entry) entry = this._createMarker(k, names.get(k) || k, pos.mode, pos.appearance);
             const yOff = pos.mode === 'fly' ? 1.2 : 0;
             entry.group.position.lerp(
                 new THREE.Vector3(pos.x, pos.y + yOff, pos.z),
@@ -70,7 +72,7 @@ export const RemotePlayers = {
         }
     },
 
-    _createMarker(key, label, mode = 'walk') {
+    _createMarker(key, label, mode = 'walk', appearance = null) {
         const Engine = window.Engine;
         const hue = COLORS[key.charCodeAt(0) % COLORS.length];
         const group = new THREE.Group();
@@ -84,12 +86,20 @@ export const RemotePlayers = {
             body.position.y = 0.28;
             group.add(body);
         } else {
-            const shirt = (hue & 0xfefefe) >> 1;
-            const skin = 0xe8b896;
-            const pants = 0x232830;
-            const avatar = HumanMesh.build({ bodyColor: shirt, skinColor: skin, pantsColor: pants });
+            const profile = appearance
+                ? normalizeProfile(appearance)
+                : profileFromLegacyAppearance({
+                    bodyColor: (hue & 0xfefefe) >> 1,
+                    skinColor: 0xe8b896,
+                    pantsColor: 0x232830,
+                });
+            const avatar = HumanMesh.build(window.AppearanceProfile?.profileToMeshOpts?.(profile) || {
+                bodyColor: (hue & 0xfefefe) >> 1,
+                skinColor: 0xe8b896,
+                pantsColor: 0x232830,
+            });
             group.add(avatar);
-            tryLoadAvatarGroup(avatar, 'starter_avatar.glb');
+            void AvatarComposer.apply(avatar, profile);
         }
 
         const ring = new THREE.Mesh(

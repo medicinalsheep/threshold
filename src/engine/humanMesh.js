@@ -56,11 +56,14 @@ export const HumanMesh = {
 
         const hips = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.22, 0.3), matPants);
         hips.position.y = 0.88;
+        hips.scale.set(hs[0], hs[1], hs[2]);
         hips.castShadow = true;
 
+        const ts = options.torsoScale || [1.04, 1, 0.95];
+        const hs = options.hipScale || [1, 1, 1];
         const torso = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.56, 0.24), matShirt);
         torso.position.y = 1.3;
-        torso.scale.set(1.04, 1, 0.95);
+        torso.scale.set(ts[0], ts[1], ts[2]);
         torso.castShadow = true;
 
         const shoulders = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.12, 0.27), matShirt);
@@ -169,10 +172,9 @@ export const HumanMesh = {
         const parts = group.userData?.humanParts;
         if (parts) {
             if (parts.head) parts.head.visible = show;
-            if (parts.hairCap) parts.hairCap.visible = show;
+            if (parts.hairCap) parts.hairCap.visible = show && !group.userData?._hairNode;
             if (parts.neck) parts.neck.visible = show;
             if (parts.collar) parts.collar.visible = show;
-            return;
         }
         if (group.userData?.isGltf) {
             group.traverse((c) => {
@@ -181,6 +183,7 @@ export const HumanMesh = {
                 }
             });
         }
+        window.HairSlot?.setFirstPersonVisible?.(group, show);
     },
 
     updateWalk(group, horizontalSpeed, dt = 0.016, sprinting = false) {
@@ -238,7 +241,8 @@ export const HumanMesh = {
         if (parts.hips) parts.hips.position.y = 0.88 + bob * 0.45;
     },
 
-    async loadGltf(group, url) {
+    async loadGltf(group, url, options = {}) {
+        const heightM = options.heightM ?? 1.75;
         const loader = new GLTFLoader();
         const gltf = await loader.loadAsync(url);
 
@@ -265,7 +269,7 @@ export const HumanMesh = {
         const size = new THREE.Vector3();
         box.getSize(size);
         if (size.y > 0) {
-            const scale = 1.75 / size.y;
+            const scale = heightM / size.y;
             model.scale.setScalar(scale);
         }
         box.setFromObject(model);

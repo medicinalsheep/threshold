@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Starter avatar GLBs — improved limbs + walk animation clip */
+/** Starter avatar GLBs — male/female bodies + hair styles + walk clip (R8.2) */
 const fs = require('fs');
 const path = require('path');
 const THREE = require('three');
@@ -34,24 +34,38 @@ function limb(name, mesh, pivotY, offsetX = 0) {
     return g;
 }
 
-function buildAvatar(cols) {
+function buildAvatar(cols, proportions = {}) {
+    const ts = proportions.torsoScale || [1.04, 1, 0.95];
+    const hs = proportions.hipScale || [1, 1, 1];
     const root = new THREE.Group();
-    root.name = 'StarterAvatar';
+    root.name = proportions.rootName || 'StarterAvatar';
 
     const hips = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.22, 0.3), mat(cols.pants, { r: 0.88 }));
     hips.position.y = 0.88;
+    hips.scale.set(hs[0], hs[1], hs[2]);
     hips.name = 'hips';
     root.add(hips);
 
     const torso = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.56, 0.24), mat(cols.shirt));
     torso.position.y = 1.3;
+    torso.scale.set(ts[0], ts[1], ts[2]);
     torso.name = 'torso';
     root.add(torso);
+
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.095, 0.11, 10), mat(cols.skin, { r: 0.68 }));
+    neck.position.y = 1.66;
+    neck.name = 'neck';
+    root.add(neck);
 
     const head = new THREE.Mesh(new THREE.SphereGeometry(0.18, 20, 18), mat(cols.skin, { r: 0.68 }));
     head.position.y = 1.8;
     head.name = 'head';
     root.add(head);
+
+    const hairAnchor = new THREE.Group();
+    hairAnchor.name = 'hair_anchor';
+    hairAnchor.position.y = 1.92;
+    root.add(hairAnchor);
 
     const legLMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.08, 0.78, 10), mat(cols.pants, { r: 0.88 }));
     legLMesh.position.y = -0.39;
@@ -71,6 +85,46 @@ function buildAvatar(cols) {
 
     root.add(legL, legR, armL, armR);
     return { root, legL, legR, armL, armR };
+}
+
+function buildHairShort(cols) {
+    const g = new THREE.Group();
+    g.name = 'hair_short_m';
+    const cap = new THREE.Mesh(
+        new THREE.SphereGeometry(0.19, 14, 10, 0, Math.PI * 2, 0, Math.PI * 0.55),
+        mat(cols.hair || cols.hairColor || 0x2a1810, { r: 0.96 })
+    );
+    cap.name = 'hair_mesh';
+    g.add(cap);
+    return g;
+}
+
+function buildHairLong(cols) {
+    const g = new THREE.Group();
+    g.name = 'hair_long_f';
+    const cap = new THREE.Mesh(
+        new THREE.SphereGeometry(0.19, 14, 10, 0, Math.PI * 2, 0, Math.PI * 0.5),
+        mat(cols.hair || 0x2a1810, { r: 0.96 })
+    );
+    const drape = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.42, 0.12), mat(cols.hair || 0x2a1810, { r: 0.94 }));
+    drape.position.set(0, -0.18, -0.08);
+    drape.name = 'hair_drape';
+    g.add(cap, drape);
+    return g;
+}
+
+function buildHairBun(cols) {
+    const g = new THREE.Group();
+    g.name = 'hair_bun_f';
+    const cap = new THREE.Mesh(
+        new THREE.SphereGeometry(0.18, 12, 10, 0, Math.PI * 2, 0, Math.PI * 0.45),
+        mat(cols.hair || 0x2a1810, { r: 0.96 })
+    );
+    const bun = new THREE.Mesh(new THREE.SphereGeometry(0.11, 10, 8), mat(cols.hair || 0x2a1810, { r: 0.92 }));
+    bun.position.set(0, 0.12, -0.14);
+    bun.name = 'hair_bun';
+    g.add(cap, bun);
+    return g;
 }
 
 function quatXTrack(nodeName, times, angles) {
@@ -112,6 +166,12 @@ const AVATARS = [
     {
         file: 'starter_avatar.glb',
         cols: { shirt: 0x3d5a80, pants: 0x232830, skin: 0xe8b896 },
+        proportions: { torsoScale: [1.04, 1, 0.95] },
+    },
+    {
+        file: 'starter_avatar_female.glb',
+        cols: { shirt: 0x6a4a6a, pants: 0x2a2838, skin: 0xe8b896 },
+        proportions: { rootName: 'StarterAvatarFemale', torsoScale: [0.92, 1, 0.88], hipScale: [0.95, 1, 0.95] },
     },
     {
         file: 'starter_npc_guard.glb',
@@ -123,14 +183,27 @@ const AVATARS = [
     },
 ];
 
+const HAIR = [
+    { file: 'hair_short_m.glb', build: buildHairShort, cols: { hair: 0x2a1810 } },
+    { file: 'hair_long_f.glb', build: buildHairLong, cols: { hair: 0x3a2818 } },
+    { file: 'hair_bun_f.glb', build: buildHairBun, cols: { hair: 0x4a3828 } },
+];
+
 async function main() {
     for (const spec of AVATARS) {
-        const { root, legL, legR, armL, armR } = buildAvatar(spec.cols);
+        const { root, legL, legR, armL, armR } = buildAvatar(spec.cols, spec.proportions || {});
         const clip = walkClip(legL, legR, armL, armR);
         const out = path.join(IMPORT, spec.file);
         await exportGlb(root, clip, out);
         const kb = (fs.statSync(out).size / 1024).toFixed(1);
         console.log(`[gen-starter-avatar] ${spec.file} (${kb} KB) + walk clip`);
+    }
+    for (const spec of HAIR) {
+        const root = spec.build(spec.cols);
+        const out = path.join(IMPORT, spec.file);
+        await exportGlb(root, null, out);
+        const kb = (fs.statSync(out).size / 1024).toFixed(1);
+        console.log(`[gen-starter-avatar] ${spec.file} (${kb} KB)`);
     }
 }
 

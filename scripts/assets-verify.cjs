@@ -77,10 +77,11 @@ const scene = fs.readFileSync(path.join(ROOT, 'src/shared/starterScene.js'), 'ut
 if (fs.existsSync(path.join(ROOT, 'docs', 'REALISTIC_GAMEPLAY.md'))) ok('REALISTIC_GAMEPLAY.md');
 else bad('missing docs/REALISTIC_GAMEPLAY.md');
 
-['starter_avatar.glb', 'starter_npc_guard.glb', 'starter_npc_mech.glb'].forEach((f) => {
+['starter_avatar.glb', 'starter_avatar_female.glb', 'starter_npc_guard.glb', 'starter_npc_mech.glb',
+    'hair_short_m.glb', 'hair_long_f.glb', 'hair_bun_f.glb'].forEach((f) => {
     const p = path.join(ROOT, 'import', f);
     if (fs.existsSync(p)) ok(`avatar ${f}`);
-    else bad(`missing import/${f}`);
+    else bad(`missing import/${f} — run npm run avatar:gen`);
 });
 
 ['tesla_coil.glb', 'tesla_coil_l1.glb', 'tesla_coil_l2.glb', 'lab_bench.glb', 'lab_door.glb'].forEach((f) => {

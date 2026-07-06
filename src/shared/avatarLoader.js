@@ -1,5 +1,8 @@
 import { HumanMesh } from '../engine/humanMesh.js';
-import { AssetBundle } from './assetBundle.js';
+import { AvatarComposer } from './avatarComposer.js';
+import { AppearanceStore } from './appearanceStore.js';
+import { AvatarManifest } from './avatarManifest.js';
+import { profileToMeshOpts } from './appearanceProfile.js';
 
 const GLB_MAP = {
     player: 'starter_avatar.glb',
@@ -9,15 +12,22 @@ const GLB_MAP = {
 };
 
 export function avatarGlbForId(id) {
-    return GLB_MAP[id] || GLB_MAP.player;
+    const role = AvatarManifest.role(id);
+    if (role?.glb) return role.glb;
+    const body = AvatarManifest.body(role?.bodyId || 'male_default');
+    return body?.glb || GLB_MAP[id] || GLB_MAP.player;
 }
 
-export async function tryLoadAvatarGroup(group, glbFile) {
-    if (!group || !glbFile) return false;
-    const url = AssetBundle.getUrl(`import/${glbFile}`);
+export async function tryLoadAvatarGroup(group, glbFile, options = {}) {
+    if (!group) return false;
+    const profile = options.profile || AvatarComposer.resolveProfile({
+        id: options.id,
+        appearance: options.appearance,
+        glb: glbFile,
+        customBodyGlb: glbFile,
+    });
     try {
-        await HumanMesh.loadGltf(group, url);
-        group.userData.avatarGlb = glbFile;
+        await AvatarComposer.apply(group, profile, options.id || null);
         return true;
     } catch (e) {
         console.warn('[avatar-loader]', glbFile, e.message || e);
@@ -26,10 +36,23 @@ export async function tryLoadAvatarGroup(group, glbFile) {
 }
 
 export async function spawnHumanWithAvatar(options = {}) {
-    const group = HumanMesh.build(options.appearance || {});
-    const glb = options.glb || avatarGlbForId(options.id);
-    await tryLoadAvatarGroup(group, glb);
+    const profile = AvatarComposer.resolveProfile(options);
+    const meshOpts = profileToMeshOpts(profile);
+    const group = HumanMesh.build(meshOpts);
+    await AvatarComposer.apply(group, profile, options.id || null);
     return group;
 }
 
-window.AvatarLoader = { tryLoadAvatarGroup, spawnHumanWithAvatar, avatarGlbForId };
+export async function applyPlayerAppearance(group, profile) {
+    const p = profile || AppearanceStore.getPlayerProfile();
+    await AvatarComposer.apply(group, p, 'player');
+    group.userData.appearanceProfile = p;
+    return group;
+}
+
+window.AvatarLoader = {
+    tryLoadAvatarGroup,
+    spawnHumanWithAvatar,
+    avatarGlbForId,
+    applyPlayerAppearance,
+};

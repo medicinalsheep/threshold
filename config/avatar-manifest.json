@@ -1,21 +1,50 @@
 {
   "format": "threshold-avatar-manifest",
-  "version": 1,
+  "version": 2,
   "defaultHeightM": 1.75,
   "preferredRoot": "StarterAvatar",
   "animationClips": ["walk", "Walk", "locomotion", "idle", "Idle"],
-  "namedParts": ["legL", "legR", "armL", "armR", "torso", "head", "hips"],
+  "namedParts": ["legL", "legR", "armL", "armR", "torso", "head", "hips", "neck", "hair_anchor"],
   "fpsHideParts": ["head", "hairCap", "neck"],
+  "attachPoints": {
+    "hair": ["hair_anchor", "head"],
+    "torso_prop": ["prop_torso", "torso"],
+    "head_prop": ["prop_head", "head"]
+  },
+  "bodies": {
+    "male_default": {
+      "glb": "starter_avatar.glb",
+      "heightM": 1.75,
+      "fallback": { "torsoScale": [1.04, 1, 0.95] }
+    },
+    "female_default": {
+      "glb": "starter_avatar_female.glb",
+      "heightM": 1.65,
+      "fallback": { "torsoScale": [0.92, 1, 0.88], "hipScale": [0.95, 1, 0.95] }
+    }
+  },
+  "hair": {
+    "none": { "procedural": "hairCap" },
+    "hair_short_m": { "glb": "hair_short_m.glb", "attach": "hair_anchor", "fpsHide": true },
+    "hair_long_f": { "glb": "hair_long_f.glb", "attach": "hair_anchor", "fpsHide": true },
+    "hair_bun_f": { "glb": "hair_bun_f.glb", "attach": "hair_anchor", "fpsHide": true }
+  },
+  "textures": {
+    "skin": { "slug": "starter_skin", "slots": ["albedo", "roughness"], "hilod": true },
+    "shirt": { "slug": "starter_fabric", "slots": ["albedo", "roughness"], "hilod": true },
+    "hair": { "slug": "hair_alpha", "slots": ["albedo", "alpha"], "hilod": true, "transparent": true }
+  },
   "roles": {
-    "player": { "glb": "starter_avatar.glb", "blenderNote": "Export Y-up GLB; first walk clip or named limb nodes" },
-    "guide_npc": { "glb": "starter_avatar.glb" },
-    "guard_npc": { "glb": "starter_npc_guard.glb" },
-    "mechanic_npc": { "glb": "starter_npc_mech.glb" }
+    "player": { "bodyId": "male_default", "hairId": "hair_short_m" },
+    "guide_npc": { "bodyId": "male_default", "hairId": "hair_short_m" },
+    "guard_npc": { "glb": "starter_npc_guard.glb", "heightM": 1.75 },
+    "mechanic_npc": { "glb": "starter_npc_mech.glb", "heightM": 1.75 },
+    "tesla_guide": { "bodyId": "male_default", "hairId": "hair_short_m" }
   },
   "blenderExport": {
     "format": "glb",
     "applyTransforms": true,
     "includeAnimations": true,
-    "script": "npm run blender:export -- --blend your_scene.blend --object Avatar --output import"
+    "script": "npm run blender:avatar -- --blend your_scene.blend --object Avatar --output import"
   }
 }

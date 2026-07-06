@@ -469,8 +469,24 @@
             <div id="player-skin-panel" class="panel dock-panel" data-dock-panel="skin" style="display:none;">
                 <div class="prop-row"><h3 style="margin:0;">PLAYER SKIN</h3></div>
                 <p class="insert-hint" style="margin:0 0 8px;">PLAY mode: edit your avatar only. World stays locked.</p>
-                <div class="prop-row"><label>Body</label><input type="color" id="skin-body-color" value="#3366cc"></div>
-                <div class="prop-row"><label>Skin</label><input type="color" id="skin-head-color" value="#ffcc99"></div>
+                <div class="prop-row"><label>Build</label>
+                    <select id="skin-body-preset" class="insert-input" style="flex:1;">
+                        <option value="male_default">Male default</option>
+                        <option value="female_default">Female default</option>
+                    </select>
+                </div>
+                <div class="prop-row"><label>Hair style</label>
+                    <select id="skin-hair-preset" class="insert-input" style="flex:1;">
+                        <option value="hair_short_m">Short (M)</option>
+                        <option value="hair_long_f">Long (F)</option>
+                        <option value="hair_bun_f">Bun (F)</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+                <div class="prop-row"><label>Shirt</label><input type="color" id="skin-body-color" value="#3d5a80"></div>
+                <div class="prop-row"><label>Skin</label><input type="color" id="skin-head-color" value="#e8b896"></div>
+                <div class="prop-row"><label>Pants</label><input type="color" id="skin-pants-color" value="#232830"></div>
+                <div class="prop-row"><label>Hair</label><input type="color" id="skin-hair-color" value="#2a1810"></div>
                 <div class="prop-row"><label>Shine</label><input type="range" id="skin-rough" min="0" max="1" step="0.05" value="0.7"></div>
                 <label class="insert-hint">GLTF model URL (optional)</label>
                 <input type="url" id="skin-model-url" class="insert-input" placeholder="https://.../avatar.glb" style="margin-bottom:6px;">
