@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.11.0 — Sprint U: Store/native verify pass
+
+- **`scripts/store-verify.cjs`** — `npm run store:verify` orchestrates controls, tc:ship, store:assets, export:graphics
+- **`build:electron`** + **`.env.electron`** — relative chunk paths for Electron/Capacitor (`VITE_BASE_PATH=./`)
+- **`package-win.cjs`** — auto-rebuilds electron dist when pages base detected
+- **`tc-verify.cjs`** — accepts `tcRealism` r6–r8; root `tcEd=tc-show` after `tc:build`
+- Verified: `tc:ship`, `store:assets` (31 assets), `export:graphics windows` (173 textures)
+
 ## 9.10.0 — Sprint W: Code hygiene + capabilities outline
 
 - **`docs/CAPABILITIES.md`** — single progress + capability snapshot (v9.10)

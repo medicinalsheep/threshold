@@ -1,6 +1,6 @@
-# Threshold — Progress & Capabilities (v9.10)
+# Threshold — Progress & Capabilities (v9.11)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 9.10.0
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 9.11.0
 
 This page is the **single progress snapshot** — what ships today, how the pieces connect, and what is next.
 
@@ -98,8 +98,10 @@ Scope doc: [syncStory.js](../src/shared/syncStory.js) (in-engine SYNC STORY pane
 | iOS scaffold | `npm run package:ios` (archive needs macOS) |
 | Steam depot | `npm run package:steam`, `npm run steam:depot` |
 | TC full ship path | `npm run tc:ship` |
+| Store verify smoke | `npm run store:verify` |
+| Native web build | `npm run build:electron` (relative chunks) |
 
-**Next:** Sprint U store/native verify pass — [STORE_VERIFY.md](STORE_VERIFY.md)
+**Sprint U verified** — see [STORE_VERIFY.md](STORE_VERIFY.md) ✅
 
 ---
 
@@ -117,7 +119,7 @@ Chunks: `vendor-three`, `vendor-physics`, `vendor-peer`, `app-engine`, `app-comp
 ## Polish sprint progress (v9.0–9.10)
 
 ```
-K → L → M → Q → N → O → P → R → S → V → T → W ✅
+K → L → M → Q → N → O → P → R → S → V → T → W → U ✅
 ```
 
 | Sprint | Version | Focus |
@@ -133,6 +135,7 @@ K → L → M → Q → N → O → P → R → S → V → T → W ✅
 | V | 9.8 | Action controls + doc cleanup |
 | T | 9.9 | JS chunk split |
 | W | 9.10 | Hygiene + capabilities outline |
+| U | 9.11 | Store/native verify pass |
 
 Detail: [POLISH_ROADMAP.md](POLISH_ROADMAP.md) · History: [CHANGELOG.md](CHANGELOG.md)
 
@@ -145,7 +148,9 @@ npm run assets:verify      # starter pipeline smoke
 npm run tc:verify          # TC GLBs + textures
 npm run tc:ship:verify     # export bundle smoke
 npm run controls:verify    # binding defaults + doc truth
-npm run build              # chunk split output
+npm run store:verify       # Sprint U packaging smoke
+npm run build              # GitHub Pages chunk split
+npm run build:electron     # native-relative chunks
 ```
 
 ---

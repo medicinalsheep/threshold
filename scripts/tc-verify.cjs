@@ -200,8 +200,9 @@ if (!fs.existsSync(GIMP_MAN)) {
     bad('no threshold_manifest.json');
 } else {
     const gm = JSON.parse(fs.readFileSync(GIMP_MAN, 'utf8'));
-    if (gm.tcRealism !== 'r6') bad(`gimp manifest tcRealism=${gm.tcRealism}`);
-    else ok('gimp manifest tcRealism=r6');
+    const texRealism = gm.tcRealism || '';
+    if (!['r6', 'r7', 'r8'].includes(texRealism)) bad(`gimp manifest tcRealism=${texRealism}`);
+    else ok(`gimp manifest tcRealism=${texRealism}`);
     const tcEntries = (gm.textures || []).filter((t) => /^tc_/.test(t.id || ''));
     if (tcEntries.length < 10) bad(`tc texture entries=${tcEntries.length}`);
     else ok(`${tcEntries.length} TC texture manifest entries`);

@@ -1,6 +1,6 @@
 # Sprint U — Store / Native Packaging Verify Pass
 
-**Status:** Planned (post Sprint W) · **Current engine:** v9.10.0
+**Status:** ✅ Complete (v9.11.0) · **Command:** `npm run store:verify`
 
 Sprint U is **not greenfield** — store tooling shipped in Phases L–M (v5.0–v5.3). Sprint U is a **verification and truth pass**: run every ship path, fix drift, document blockers.
 
@@ -103,11 +103,22 @@ If chunk 404s appear in Electron, fix `base` in `vite.config.js` / `capacitor.co
 
 Sprint U is **done** when:
 
-1. `tc:ship:verify` passes on a clean clone after `npm run build`
-2. `store:prep` + `store:assets` produce valid JSON from TC show manifest
-3. At least one graphics profile (`windows` or `web`) exports without error
-4. `STORE_RELEASE.md` lists v9.10 paths and chunk-split note
-5. Blocker doc section updated with honest per-platform requirements
+1. `npm run store:verify` passes (91s smoke, Jul 2026)
+2. `tc:ship` + `store:prep` + `store:assets` produce valid outputs from TC manifest
+3. `export:graphics --profile windows` completes
+4. `npm run build:electron` emits relative `./assets/` chunk paths for Electron
+5. Manual blockers documented below (iOS, Play upload, signing)
+
+### Verified (v9.11.0)
+
+| Check | Result |
+|-------|--------|
+| `controls:verify` | PASS |
+| `tc:verify` | PASS (tcRealism r6–r8) |
+| `tc:ship` | PASS — bundle + manifest + store:prep |
+| `store:assets` | PASS — 31 mapped assets |
+| `build:electron` | PASS — relative chunk paths |
+| `export:graphics windows` | PASS — 173 textures, 32 models |
 
 ---
 

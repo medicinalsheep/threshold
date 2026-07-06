@@ -15,7 +15,13 @@ function run(cmd) {
 }
 
 if (!fs.existsSync(distIndex)) {
-    run('npm run build');
+    run('npm run build:electron');
+} else {
+    const html = fs.readFileSync(distIndex, 'utf8');
+    if (html.includes('src="/threshold/')) {
+        console.log('[package-win] dist-pages has GitHub Pages base — rebuilding for Electron (./)');
+        run('npm run build:electron');
+    }
 }
 
 run('npm run bundle:assets');

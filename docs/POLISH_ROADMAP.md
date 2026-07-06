@@ -1,6 +1,6 @@
 # Polish Roadmap — Sprints K onward (v9.0+)
 
-**Current:** v9.10.0 — polish L–W complete: showcase, onboarding, survival loop, action controls, chunk split, hygiene pass.
+**Current:** v9.11.0 — polish L–U complete: showcase through store verify pass.
 
 **North star:** First impression reads as a **curated game-creation studio**, not a block sandbox — every default surface teaches a shippable feature.
 
@@ -169,7 +169,7 @@
 ## Recommended order (completed)
 
 ```
-L → M → Q → N → O → P → R → S → V → T → W ✅
+L → M → Q → N → O → P → R → S → V → T → W → U ✅
 ```
 
 ## Sprint W — Code hygiene + capabilities outline ✅ (v9.10.0)
@@ -186,7 +186,22 @@ L → M → Q → N → O → P → R → S → V → T → W ✅
 
 ---
 
-**Next (outside polish):** Sprint U store/native verify pass — [STORE_VERIFY.md](STORE_VERIFY.md). See [NEXT_PHASES.md](NEXT_PHASES.md).
+## Sprint U — Store/native verify ✅ (v9.11.0)
+
+**Goal:** Confirm ship paths still work after chunk split.
+
+| Item | Status | Deliverable |
+|------|--------|-------------|
+| U1 | ✅ | `npm run store:verify` orchestrator |
+| U2 | ✅ | `tc:ship` + `store:assets` E2E from TC manifest |
+| U3 | ✅ | `export:graphics --profile windows` |
+| U4 | ✅ | `build:electron` — relative chunk paths for native |
+| U5 | ✅ | `tc:verify` accepts tcRealism r6–r8 |
+| U6 | ✅ | `package-win` auto-rebuilds electron dist when needed |
+
+---
+
+**Next (outside polish):** optional `package:win` full smoke, iOS archive, Play upload. See [STORE_RELEASE.md](STORE_RELEASE.md).
 
 ---
 

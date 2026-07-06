@@ -6,6 +6,10 @@ Ship Threshold games to **Google Play**, **App Store**, and **Windows** from one
 
 **Walkthrough:** [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) — icons, scene inventory, per-asset credits, store metadata.
 
+**Verify pass (v9.11):** `npm run store:verify` — see [STORE_VERIFY.md](STORE_VERIFY.md).
+
+**Native builds (v9.11+):** use `npm run build:electron` (relative `./assets/` chunks) before `package:win`. GitHub Pages uses `npm run build` (`/threshold/` base).
+
 ---
 
 ## Quick start

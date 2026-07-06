@@ -1,10 +1,10 @@
 # Threshold documentation index
 
-**Version:** 9.10.0 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 9.11.0 · **Live:** https://medicinalsheep.github.io/threshold/
 
 This page is the **full scope map** — what ships today, what is TC vs showcase vs yours, and where to read more.
 
-**Polish:** L–W ✅ · **Snapshot:** [CAPABILITIES.md](CAPABILITIES.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+**Polish:** L–U ✅ · **Snapshot:** [CAPABILITIES.md](CAPABILITIES.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
 ---
 
@@ -100,6 +100,7 @@ flowchart TB
 | **V** | 9.8 | Action controls + doc cleanup |
 | **T** | 9.9 | JS chunk split |
 | **W** | 9.10 | Hygiene + capabilities outline |
+| **U** | 9.11 | Store/native verify pass |
 
 Full snapshot: [CAPABILITIES.md](CAPABILITIES.md) · Earlier phases: [NEXT_PHASES.md](NEXT_PHASES.md)
 
@@ -117,6 +118,8 @@ npm run textures:watch          # GIMP live SYNC (with dev)
 npm run tc:build                # TC GLBs + textures
 npm run tc:verify               # TC smoke test
 npm run controls:verify         # binding defaults + doc truth
+npm run store:verify            # packaging E2E smoke
+npm run build:electron          # native-relative chunks
 ```
 
 ---

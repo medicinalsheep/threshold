@@ -1,10 +1,10 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v9.10.0 — Polish L–W complete (showcase, survival loop, action controls, chunk split, hygiene pass).
+**Current:** v9.11.0 — Polish L–U complete (showcase through store/native verify pass).
 
-**Polish status:** [POLISH_ROADMAP.md](POLISH_ROADMAP.md) — Sprints L–T ✅
+**Polish status:** [POLISH_ROADMAP.md](POLISH_ROADMAP.md) — Sprints L–U ✅
 
-**Next outside polish:** Sprint U store/native verify pass — [STORE_VERIFY.md](STORE_VERIFY.md).
+**Next outside polish:** optional full `package:win` smoke, iOS archive, Play upload — [STORE_RELEASE.md](STORE_RELEASE.md).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 

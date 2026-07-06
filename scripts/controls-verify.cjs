@@ -19,7 +19,8 @@ function read(rel) {
     return fs.readFileSync(path.join(ROOT, rel), 'utf8');
 }
 
-console.log('controls:verify — binding defaults + doc truth\n');
+const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+console.log(`controls:verify — v${pkg.version} binding defaults + doc truth\n`);
 
 const controlsSrc = read('src/shared/controls.js');
 

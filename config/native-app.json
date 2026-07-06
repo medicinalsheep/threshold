@@ -1,9 +1,9 @@
 {
   "format": "threshold-native-app",
-  "appliedAt": "2026-07-05T09:31:47.250Z",
+  "appliedAt": "2026-07-06T05:26:27.092Z",
   "sourceManifest": "exports/tc-show.threshold-game.json",
   "appId": "com.threshold.tc",
   "appName": "TC Show",
-  "version": "5.12.0",
+  "version": "9.10.0",
   "author": "Threshold"
 }

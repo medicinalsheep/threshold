@@ -1,8 +1,8 @@
 {
   "format": "threshold-game",
   "formatVersion": 1,
-  "engineVersion": "5.12.0",
-  "exportedAt": "2026-07-05T09:31:46.631Z",
+  "engineVersion": "9.10.0",
+  "exportedAt": "2026-07-06T05:26:26.352Z",
   "source": "tc-export-manifest",
   "tcEdition": "tc-show",
   "game": {
@@ -1418,7 +1418,7 @@
       "path": "textures/tc_run_albedo.png",
       "tcEd": "tc-veh",
       "license": "Original — TC",
-      "realism": "r6",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -1437,6 +1437,12 @@
           "file": "tc_run_albedo_2k.png",
           "path": "textures/tc_run_albedo_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_run_albedo_4k.png",
+          "path": "textures/tc_run_albedo_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -1448,7 +1454,7 @@
       "path": "textures/tc_run_roughness.png",
       "tcEd": "tc-veh",
       "license": "Original — TC",
-      "realism": "r6",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -1467,6 +1473,12 @@
           "file": "tc_run_roughness_2k.png",
           "path": "textures/tc_run_roughness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_run_roughness_4k.png",
+          "path": "textures/tc_run_roughness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -1478,7 +1490,7 @@
       "path": "textures/tc_run_metalness.png",
       "tcEd": "tc-veh",
       "license": "Original — TC",
-      "realism": "r6",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -1497,6 +1509,12 @@
           "file": "tc_run_metalness_2k.png",
           "path": "textures/tc_run_metalness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_run_metalness_4k.png",
+          "path": "textures/tc_run_metalness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -1508,7 +1526,7 @@
       "path": "textures/tc_haul_albedo.png",
       "tcEd": "tc-veh",
       "license": "Original — TC",
-      "realism": "r6",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -1527,6 +1545,12 @@
           "file": "tc_haul_albedo_2k.png",
           "path": "textures/tc_haul_albedo_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_haul_albedo_4k.png",
+          "path": "textures/tc_haul_albedo_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -1538,7 +1562,7 @@
       "path": "textures/tc_haul_roughness.png",
       "tcEd": "tc-veh",
       "license": "Original — TC",
-      "realism": "r6",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -1557,6 +1581,12 @@
           "file": "tc_haul_roughness_2k.png",
           "path": "textures/tc_haul_roughness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_haul_roughness_4k.png",
+          "path": "textures/tc_haul_roughness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -1568,7 +1598,7 @@
       "path": "textures/tc_haul_metalness.png",
       "tcEd": "tc-veh",
       "license": "Original — TC",
-      "realism": "r6",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -1587,6 +1617,12 @@
           "file": "tc_haul_metalness_2k.png",
           "path": "textures/tc_haul_metalness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_haul_metalness_4k.png",
+          "path": "textures/tc_haul_metalness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -1598,7 +1634,7 @@
       "path": "textures/tc_msh_albedo.png",
       "tcEd": "tc-chr",
       "license": "Original — TC",
-      "realism": "r6",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -1617,6 +1653,12 @@
           "file": "tc_msh_albedo_2k.png",
           "path": "textures/tc_msh_albedo_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_msh_albedo_4k.png",
+          "path": "textures/tc_msh_albedo_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -1628,7 +1670,7 @@
       "path": "textures/tc_msh_roughness.png",
       "tcEd": "tc-chr",
       "license": "Original — TC",
-      "realism": "r6",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -1647,6 +1689,12 @@
           "file": "tc_msh_roughness_2k.png",
           "path": "textures/tc_msh_roughness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_msh_roughness_4k.png",
+          "path": "textures/tc_msh_roughness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -1658,7 +1706,7 @@
       "path": "textures/tc_mec_albedo.png",
       "tcEd": "tc-chr",
       "license": "Original — TC",
-      "realism": "r6",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -1677,6 +1725,12 @@
           "file": "tc_mec_albedo_2k.png",
           "path": "textures/tc_mec_albedo_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_mec_albedo_4k.png",
+          "path": "textures/tc_mec_albedo_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -1688,7 +1742,7 @@
       "path": "textures/tc_mec_roughness.png",
       "tcEd": "tc-chr",
       "license": "Original — TC",
-      "realism": "r6",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -1707,6 +1761,12 @@
           "file": "tc_mec_roughness_2k.png",
           "path": "textures/tc_mec_roughness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_mec_roughness_4k.png",
+          "path": "textures/tc_mec_roughness_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -1718,7 +1778,7 @@
       "path": "textures/tc_span_albedo.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r6",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -1737,6 +1797,12 @@
           "file": "tc_span_albedo_2k.png",
           "path": "textures/tc_span_albedo_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_span_albedo_4k.png",
+          "path": "textures/tc_span_albedo_4k.png",
+          "maxPx": 1024
         }
       ]
     },
@@ -1748,7 +1814,7 @@
       "path": "textures/tc_span_roughness.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
-      "realism": "r6",
+      "realism": "r8",
       "variants": [
         {
           "suffix": "_512",
@@ -1767,6 +1833,12 @@
           "file": "tc_span_roughness_2k.png",
           "path": "textures/tc_span_roughness_2k.png",
           "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "tc_span_roughness_4k.png",
+          "path": "textures/tc_span_roughness_4k.png",
+          "maxPx": 1024
         }
       ]
     }

@@ -20,16 +20,18 @@ export default defineConfig(({ mode }) => {
     const base = env.VITE_BASE_PATH || '/';
 
     const isPages = mode === 'pages';
+    const isElectron = mode === 'electron';
+    const isDistPages = isPages || isElectron;
 
     return {
         base,
         build: {
-            outDir: isPages ? 'dist-pages' : mode === 'grok' ? 'dist-grok' : 'dist',
+            outDir: isDistPages ? 'dist-pages' : mode === 'grok' ? 'dist-grok' : 'dist',
             sourcemap: false,
             chunkSizeWarningLimit: 900,
             rollupOptions: {
                 output: {
-                    entryFileNames: isPages ? 'assets/threshold.js' : 'assets/[name].js',
+                    entryFileNames: isDistPages ? 'assets/threshold.js' : 'assets/[name].js',
                     chunkFileNames: 'assets/[name]-[hash].js',
                     assetFileNames: (info) => {
                         if (info.name?.endsWith('.css')) return 'assets/threshold.css';
