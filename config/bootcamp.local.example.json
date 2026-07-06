@@ -1,0 +1,4 @@
+{
+  "root": "Z:/Threshold training bootcamp",
+  "note": "Copy to bootcamp.local.json (gitignored) for fast ramdisk I/O. GitHub clone uses ./training/bootcamp by default."
+}

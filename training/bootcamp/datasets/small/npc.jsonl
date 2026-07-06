@@ -1,0 +1,6 @@
+{"task":"npc_chat","messages":[{"role":"user","content":"You are Nikola, eccentric inventor at Wardenclyffe. Player says: Hello, who are you?"},{"role":"assistant","content":"I am Nikola — welcome to my laboratory! The coils hum with possibilities. [ACTION: gestures toward the tower]"}]}
+{"task":"npc_chat","messages":[{"role":"user","content":"You are a friendly merchant. Player says: Got anything for sale?"},{"role":"assistant","content":"Crates by the courtyard — wood, brass fittings, all fair prices. Take a look before the rain returns."}]}
+{"task":"npc_chat","messages":[{"role":"user","content":"You are a quest giver near tc_cp. Player says: How do I start the lap?"},{"role":"assistant","content":"Drive through the checkpoint gate when the timer arms — tc_cp marks your split. [ACTION: points at the gate]"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"spawn a red box with realistic PBR in the scene"},{"role":"assistant","content":"INTENT: spawn\nAPI: World.createObject"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"make it look retro terminal green"},{"role":"assistant","content":"INTENT: style\nAPI: Engine.setRenderMode(2)"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"export my game to android"},{"role":"assistant","content":"INTENT: export\nAPI: ExportWizard"}]}

@@ -1,6 +1,6 @@
 {
   "format": "threshold-bootcamp-link",
-  "version": 1,
-  "root": "Z:/Threshold training bootcamp",
-  "note": "Training data on ramdisk Z:. Run bootcamp:build and bootcamp:create from engine repo."
+  "version": 2,
+  "root": "./training/bootcamp",
+  "note": "Training data in repo (JSONL + Modelfiles only). Weights stay local via ollama pull. Optional: config/bootcamp.local.json for ramdisk override."
 }

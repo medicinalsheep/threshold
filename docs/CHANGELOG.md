@@ -1,5 +1,15 @@
 # Changelog
 
+## 9.16.0 — Mini models on GitHub, weights stay local
+
+- **`training/bootcamp/`** — JSONL + Modelfiles in repo (portable, no Z: path required)
+- **`config/models-registry.json`** — mini vs large catalog; large models `downloadRequired`
+- **`npm run models:mini`** / **`models:large -- --yes`** — install from GitHub recipes + ollama pull
+- **`docs/MODEL_DISTRIBUTION.md`** — explicit GitHub vs local policy
+- **`config/bootcamp.local.json`** gitignored — optional ramdisk override
+- Scrubbed user-local paths from `recorded-sound-sources.json`; generic bootcamp docs
+- Mini agents: `threshold-mini-npc`, `threshold-mini-dev` (realism-first training data)
+
 ## 9.15.0 — Realism-first graphics overhaul
 
 - **All graphics tiers use PBR (render mode 4)** — Lite/Mobile scale textures & effects, not retro shaders

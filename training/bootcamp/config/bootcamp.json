@@ -1,0 +1,37 @@
+{
+  "format": "threshold-bootcamp",
+  "version": 2,
+  "root": "./training/bootcamp",
+  "note": "Portable path in repo. Override with config/bootcamp.local.json or BOOTCAMP_ROOT env (gitignored).",
+  "ollamaHost": "http://127.0.0.1:11434",
+  "models": {
+    "small": {
+      "name": "threshold-mini-npc",
+      "base": "llama3.2:3b",
+      "datasets": ["datasets/small/npc.jsonl", "datasets/small/classify.jsonl"],
+      "modelfile": "modelfiles/threshold-mini-npc.Modelfile"
+    },
+    "medium": {
+      "name": "threshold-mini-dev",
+      "base": "qwen2.5-coder:1.5b-base",
+      "datasets": ["datasets/medium/compiler.jsonl"],
+      "modelfile": "modelfiles/threshold-mini-dev.Modelfile"
+    },
+    "large_dev": {
+      "name": "threshold-dev",
+      "base": "qwen2.5-coder:7b",
+      "datasets": ["datasets/large/scenes.jsonl"],
+      "modelfile": "modelfiles/threshold-dev.Modelfile",
+      "downloadRequired": true,
+      "sizeGb": 4.7
+    },
+    "large_scenes": {
+      "name": "threshold-large-scenes",
+      "base": "llama3.1:8b",
+      "datasets": ["datasets/large/scenes.jsonl"],
+      "modelfile": "modelfiles/threshold-large.Modelfile",
+      "downloadRequired": true,
+      "sizeGb": 4.9
+    }
+  }
+}

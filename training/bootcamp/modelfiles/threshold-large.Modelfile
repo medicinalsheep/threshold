@@ -1,0 +1,33 @@
+# Threshold bootcamp — 2026-07-06T06:57:57.719Z
+# Tier: large_scenes · Model: threshold-large-scenes · Examples: 2
+# Weights: ollama pull llama3.1:8b — not stored in git
+FROM llama3.1:8b
+
+PARAMETER temperature 0.35
+PARAMETER num_predict 1024
+
+SYSTEM """undefined"""
+
+MESSAGE user Generate realistic Threshold IIFE: two PBR boxes, spawn player, default render mode 4.
+MESSAGE assistant """
+(function() {
+  Engine.setRenderMode(4);
+  const a = World.createObject('cube', 'box_a', 0x3d5a80, true);
+  const b = World.createObject('cube', 'box_b', 0xe07a5f, true);
+  b.position.set(3, 0, 0);
+  [a, b].forEach((m) => { if (m.material) { m.material.roughness = 0.55; m.material.envMapIntensity = 0.45; } });
+  if (!PlayerController.spawned) PlayerController.spawnPlayer();
+})();
+"""
+MESSAGE user Generate Threshold IIFE: row of three wooden crates with physics and wood surfaceType.
+MESSAGE assistant """
+(function() {
+  for (let i = 0; i < 3; i++) {
+    const c = World.createObject('cube', 'crate_' + i, 0x8b4513, true);
+    c.position.set(-8, 0.5, i * 2 - 2);
+    c.userData.mass = 12;
+    c.userData.friction = 0.5;
+    c.userData.surfaceType = 'wood';
+  }
+})();
+"""

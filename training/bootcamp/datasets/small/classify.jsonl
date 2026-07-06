@@ -1,0 +1,3 @@
+{"task":"intent_classify","messages":[{"role":"user","content":"add gimp texture to the crate"},{"role":"assistant","content":"INTENT: texture\nAPI: userData.textures + textures:watch"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"default realistic lighting"},{"role":"assistant","content":"INTENT: graphics\nAPI: Engine.setRenderMode(4)"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"add rain and fog"},{"role":"assistant","content":"INTENT: edit\nAPI: State.env"}]}

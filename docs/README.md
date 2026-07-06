@@ -66,7 +66,7 @@ flowchart TB
 | Clone & develop | [GETTING_STARTED.md](GETTING_STARTED.md) | `npm install` → `npm run quickstart` |
 | Streamlined dev path | [STREAMLINED_DEV.md](STREAMLINED_DEV.md) | Lobby → AGENTS → EXPORT (target-filtered) |
 | Agent tiers & benchmarks | [AGENT_ROUTING.md](AGENT_ROUTING.md) | `ollama:benchmark` · SMART DEV |
-| Train custom models | [BOOTCAMP.md](BOOTCAMP.md) | `Z:\Threshold training bootcamp` |
+| Train custom models | [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) | `npm run models:mini` |
 | Showcase + controls | [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | PLAY mode · gateway · survival |
 | Creative loop | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | BUILD → INSERT SHOWCASE · PromptGen |
 | Action controls | [CONTROLS.md](CONTROLS.md) | LMB aim · RMB shoot · F interact |

@@ -1,0 +1,57 @@
+{
+  "format": "threshold-models-registry",
+  "version": 1,
+  "policy": {
+    "onGitHub": "JSONL datasets, Modelfiles, registry metadata — no GGUF weights, no API keys, no local paths",
+    "localOnly": "Ollama weights in ~/.ollama/models, .env.local, bootcamp.local.json, dist-store benchmarks",
+    "largeModels": "User runs ollama pull for base weights; npm run models:mini creates thin custom layers"
+  },
+  "roadmap": {
+    "vision": "On-device mini agents now; large scene/video models later (Trellis-class 3D + Veo-class video) with tiered download",
+    "crossDevice": "Mini models on phone/desktop via Ollama; cloud optional for large only"
+  },
+  "mini": [
+    {
+      "id": "threshold-mini-npc",
+      "tier": "small",
+      "label": "NPC chat + intent",
+      "basePull": "llama3.2:3b",
+      "baseSizeGb": 2.0,
+      "modelfile": "training/bootcamp/modelfiles/threshold-mini-npc.Modelfile",
+      "datasets": ["training/bootcamp/datasets/small/npc.jsonl", "training/bootcamp/datasets/small/classify.jsonl"],
+      "onGitHub": true
+    },
+    {
+      "id": "threshold-mini-dev",
+      "tier": "medium",
+      "label": "Compiler patches (mini)",
+      "basePull": "qwen2.5-coder:1.5b-base",
+      "baseSizeGb": 0.99,
+      "modelfile": "training/bootcamp/modelfiles/threshold-mini-dev.Modelfile",
+      "datasets": ["training/bootcamp/datasets/medium/compiler.jsonl"],
+      "onGitHub": true
+    }
+  ],
+  "large": [
+    {
+      "id": "threshold-dev",
+      "tier": "large",
+      "label": "Full scene scripts",
+      "basePull": "qwen2.5-coder:7b",
+      "baseSizeGb": 4.7,
+      "modelfile": "training/bootcamp/modelfiles/threshold-dev.Modelfile",
+      "downloadRequired": true,
+      "onGitHub": "modelfile-only"
+    },
+    {
+      "id": "threshold-large-scenes",
+      "tier": "large",
+      "label": "Scene architect (8B)",
+      "basePull": "llama3.1:8b",
+      "baseSizeGb": 4.9,
+      "modelfile": "training/bootcamp/modelfiles/threshold-large.Modelfile",
+      "downloadRequired": true,
+      "onGitHub": "modelfile-only"
+    }
+  ]
+}

@@ -6,14 +6,14 @@
       "label": "Small — chat, classify, status",
       "maxTokens": 128,
       "temperature": 0.5,
-      "ollamaModels": ["threshold-small", "llama3.2:3b", "gemma3:4b", "qwen2.5-coder:1.5b-base"],
+      "ollamaModels": ["threshold-mini-npc", "threshold-small", "llama3.2:3b", "gemma3:4b", "qwen2.5-coder:1.5b-base"],
       "grok": false
     },
     "medium": {
       "label": "Medium — patches, compiler fixes",
       "maxTokens": 1024,
       "temperature": 0.35,
-      "ollamaModels": ["threshold-medium", "qwen2.5-coder:7b", "llama3.2:3b"],
+      "ollamaModels": ["threshold-mini-dev", "threshold-medium", "qwen2.5-coder:1.5b-base", "qwen2.5-coder:7b"],
       "grok": "fallback"
     },
     "large": {
@@ -34,9 +34,10 @@
     "prompter_generate": { "tier": "large", "label": "PromptGen run" }
   },
   "training": {
-    "bootcamp": "Z:/Threshold training bootcamp",
+    "bootcamp": "./training/bootcamp",
+    "registry": "config/models-registry.json",
     "modelfile": "config/threshold-dev.Modelfile",
-    "docs": "docs/BOOTCAMP.md",
-    "note": "npm run bootcamp:build && bootcamp:create on Z: ramdisk"
+    "docs": "docs/MODEL_DISTRIBUTION.md",
+    "note": "npm run bootcamp:build && models:mini — weights local via ollama pull"
   }
 }
