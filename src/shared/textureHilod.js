@@ -206,9 +206,21 @@ export const TextureHilod = {
         if (!camera || !State?.objects || !TextureBridge) return;
         if (!shouldRunUpdate(camera)) return;
 
-        const tasks = State.objects
-            .filter((o) => o?.userData?.textureHilod?.slots && Object.keys(o.userData.textureHilod.slots).length)
-            .map((o) => this.updateObject(o, camera, TextureBridge));
+        const tasks = [];
+        for (const o of State.objects) {
+            const avatarMeshes = o?.userData?.avatarTexMeshes;
+            if (avatarMeshes?.length) {
+                avatarMeshes.forEach((m) => {
+                    if (m?.userData?.textureHilod?.slots && Object.keys(m.userData.textureHilod.slots).length) {
+                        tasks.push(this.updateObject(m, camera, TextureBridge));
+                    }
+                });
+                continue;
+            }
+            if (o?.userData?.textureHilod?.slots && Object.keys(o.userData.textureHilod.slots).length) {
+                tasks.push(this.updateObject(o, camera, TextureBridge));
+            }
+        }
         return Promise.all(tasks);
     },
 

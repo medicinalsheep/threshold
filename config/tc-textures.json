@@ -224,6 +224,54 @@
       "style": "fabric"
     },
     {
+      "slug": "starter_skin_light",
+      "objectName": "Avatar Skin Light",
+      "tcEd": "starter-chr",
+      "slots": ["albedo", "roughness"],
+      "palette": {
+        "base": [255, 228, 210],
+        "warm": [248, 218, 198],
+        "shadow": [220, 188, 168]
+      },
+      "style": "skin"
+    },
+    {
+      "slug": "starter_skin_medium",
+      "objectName": "Avatar Skin Medium",
+      "tcEd": "starter-chr",
+      "slots": ["albedo", "roughness"],
+      "palette": {
+        "base": [232, 184, 150],
+        "warm": [218, 168, 132],
+        "shadow": [188, 142, 108]
+      },
+      "style": "skin"
+    },
+    {
+      "slug": "starter_skin_deep",
+      "objectName": "Avatar Skin Deep",
+      "tcEd": "starter-chr",
+      "slots": ["albedo", "roughness"],
+      "palette": {
+        "base": [168, 112, 78],
+        "warm": [148, 98, 68],
+        "shadow": [118, 78, 52]
+      },
+      "style": "skin"
+    },
+    {
+      "slug": "hair_alpha",
+      "objectName": "Avatar Hair Alpha",
+      "tcEd": "starter-chr",
+      "slots": ["albedo"],
+      "palette": {
+        "strand": [42, 28, 18],
+        "root": [28, 18, 12],
+        "highlight": [68, 48, 32]
+      },
+      "style": "hair_alpha"
+    },
+    {
       "slug": "starter_bench",
       "objectName": "Starter Bench",
       "tcEd": "tc-lite",

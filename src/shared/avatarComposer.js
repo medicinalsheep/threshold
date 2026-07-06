@@ -9,6 +9,7 @@ import {
     profileFromLegacyAppearance,
     profileToMeshOpts,
 } from './appearanceProfile.js';
+import { AvatarTex } from './avatarTex.js';
 
 function hexToNum(hex) {
     if (typeof hex === 'number') return hex;
@@ -112,6 +113,13 @@ export const AvatarComposer = {
             } catch (e) {
                 console.warn('[avatar-composer] hair attach', profile.hairId, e.message || e);
             }
+        }
+
+        try {
+            const tex = await AvatarTex.apply(group, profile);
+            if (tex?.maps) group.userData.avatarTexMaps = tex.maps;
+        } catch (e) {
+            console.warn('[avatar-composer] textures', e.message || e);
         }
 
         group.userData.appearanceProfile = profile;

@@ -1624,6 +1624,258 @@
       ]
     },
     {
+      "id": "starter_skin_light_albedo",
+      "objectName": "Avatar Skin Light",
+      "slot": "albedo",
+      "file": "starter_skin_light_albedo.png",
+      "path": "textures/starter_skin_light_albedo.png",
+      "tcEd": "starter-chr",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_skin_light_albedo_512.png",
+          "path": "textures/starter_skin_light_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_light_albedo_1k.png",
+          "path": "textures/starter_skin_light_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_light_albedo_2k.png",
+          "path": "textures/starter_skin_light_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_skin_light_albedo_4k.png",
+          "path": "textures/starter_skin_light_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_light_roughness",
+      "objectName": "Avatar Skin Light",
+      "slot": "roughness",
+      "file": "starter_skin_light_roughness.png",
+      "path": "textures/starter_skin_light_roughness.png",
+      "tcEd": "starter-chr",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_skin_light_roughness_512.png",
+          "path": "textures/starter_skin_light_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_light_roughness_1k.png",
+          "path": "textures/starter_skin_light_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_light_roughness_2k.png",
+          "path": "textures/starter_skin_light_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_skin_light_roughness_4k.png",
+          "path": "textures/starter_skin_light_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_medium_albedo",
+      "objectName": "Avatar Skin Medium",
+      "slot": "albedo",
+      "file": "starter_skin_medium_albedo.png",
+      "path": "textures/starter_skin_medium_albedo.png",
+      "tcEd": "starter-chr",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_skin_medium_albedo_512.png",
+          "path": "textures/starter_skin_medium_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_medium_albedo_1k.png",
+          "path": "textures/starter_skin_medium_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_medium_albedo_2k.png",
+          "path": "textures/starter_skin_medium_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_skin_medium_albedo_4k.png",
+          "path": "textures/starter_skin_medium_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_medium_roughness",
+      "objectName": "Avatar Skin Medium",
+      "slot": "roughness",
+      "file": "starter_skin_medium_roughness.png",
+      "path": "textures/starter_skin_medium_roughness.png",
+      "tcEd": "starter-chr",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_skin_medium_roughness_512.png",
+          "path": "textures/starter_skin_medium_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_medium_roughness_1k.png",
+          "path": "textures/starter_skin_medium_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_medium_roughness_2k.png",
+          "path": "textures/starter_skin_medium_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_skin_medium_roughness_4k.png",
+          "path": "textures/starter_skin_medium_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_deep_albedo",
+      "objectName": "Avatar Skin Deep",
+      "slot": "albedo",
+      "file": "starter_skin_deep_albedo.png",
+      "path": "textures/starter_skin_deep_albedo.png",
+      "tcEd": "starter-chr",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_skin_deep_albedo_512.png",
+          "path": "textures/starter_skin_deep_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_deep_albedo_1k.png",
+          "path": "textures/starter_skin_deep_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_deep_albedo_2k.png",
+          "path": "textures/starter_skin_deep_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_skin_deep_albedo_4k.png",
+          "path": "textures/starter_skin_deep_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_deep_roughness",
+      "objectName": "Avatar Skin Deep",
+      "slot": "roughness",
+      "file": "starter_skin_deep_roughness.png",
+      "path": "textures/starter_skin_deep_roughness.png",
+      "tcEd": "starter-chr",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_skin_deep_roughness_512.png",
+          "path": "textures/starter_skin_deep_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_deep_roughness_1k.png",
+          "path": "textures/starter_skin_deep_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_deep_roughness_2k.png",
+          "path": "textures/starter_skin_deep_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_skin_deep_roughness_4k.png",
+          "path": "textures/starter_skin_deep_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "hair_alpha_albedo",
+      "objectName": "Avatar Hair Alpha",
+      "slot": "albedo",
+      "file": "hair_alpha_albedo.png",
+      "path": "textures/hair_alpha_albedo.png",
+      "tcEd": "starter-chr",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "hair_alpha_albedo_512.png",
+          "path": "textures/hair_alpha_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "hair_alpha_albedo_1k.png",
+          "path": "textures/hair_alpha_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "hair_alpha_albedo_2k.png",
+          "path": "textures/hair_alpha_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "hair_alpha_albedo_4k.png",
+          "path": "textures/hair_alpha_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
       "id": "starter_bench_albedo",
       "objectName": "Starter Bench",
       "slot": "albedo",
@@ -3246,5 +3498,5 @@
   ],
   "exportDir": "textures",
   "tcRealism": "r8",
-  "exportedAt": "2026-07-06T00:39:10.563Z"
+  "exportedAt": "2026-07-06T01:20:25.366Z"
 }

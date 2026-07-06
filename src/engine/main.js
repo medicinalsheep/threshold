@@ -47,6 +47,7 @@ import '../shared/avatarManifest.js';
 import '../shared/appearanceStore.js';
 import '../shared/hairSlot.js';
 import '../shared/avatarComposer.js';
+import '../shared/avatarTex.js';
 import '../shared/avatarLoader.js';
 import '../shared/ambientAudio.js';
 import '../shared/weatherSystem.js';
@@ -2049,6 +2050,7 @@ const UI = {
         profile.bodyId = document.getElementById('skin-body-preset')?.value || profile.bodyId;
         profile.hairId = document.getElementById('skin-hair-preset')?.value || profile.hairId;
         profile.colors = window.AppearanceProfile.colorsFromUi();
+        profile.textures = window.AppearanceProfile.texturesFromUi();
         profile.roughness = parseFloat(document.getElementById('skin-rough')?.value || '0.72');
         try {
             await PlayerController.applyAppearance(profile);

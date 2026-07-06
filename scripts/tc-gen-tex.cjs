@@ -271,6 +271,38 @@ function fabricRough(x, y, w, h) {
     return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
 }
 
+function skinAlbedo(x, y, w, h, pal) {
+    const u = x / w;
+    const v = y / h;
+    const pore = noise(x, y, 171) * 14;
+    const vein = Math.sin(v * 42 + noise(x, y, 173) * 2) * 6;
+    const fold = Math.sin(u * 18) * Math.sin(v * 14) * 8;
+    let base = pal.base;
+    if (fold < -4) base = pal.shadow;
+    else if (fold > 4) base = pal.warm;
+    const n = pore + vein + noise(x, y, 175) * 6;
+    return [Math.min(255, base[0] + n), Math.min(255, base[1] + n), Math.min(255, base[2] + n), 255];
+}
+
+function skinRough(x, y, w, h) {
+    const pore = noise(x, y, 177) > 0.92 ? 145 : 178;
+    const n = noise(x, y, 179) * 22;
+    return [Math.min(255, pore + n), Math.min(255, pore + n), Math.min(255, pore + n), 255];
+}
+
+function hairAlphaAlbedo(x, y, w, h, pal) {
+    const u = x / w;
+    const v = y / h;
+    const strand = Math.sin(u * 48 + noise(x, y, 181) * 3) * 0.5 + 0.5;
+    const root = 1 - Math.pow(v, 0.65);
+    const edge = Math.min(u, 1 - u, v, 1 - v);
+    const alpha = Math.min(255, Math.floor(root * strand * Math.min(1, edge * 12) * 255));
+    const hi = strand > 0.72 ? pal.highlight : pal.strand;
+    const n = noise(x, y, 183) * 10;
+    if (alpha < 18) return [0, 0, 0, 0];
+    return [Math.min(255, hi[0] + n), Math.min(255, hi[1] + n), Math.min(255, hi[2] + n), alpha];
+}
+
 function metalGrateAlbedo(x, y, w, h, pal) {
     const u = x / w;
     const v = y / h;
@@ -401,6 +433,13 @@ function slotFn(asset, slot) {
     if (asset.style === 'fabric') {
         if (slot === 'albedo') return (x, y, w, h) => fabricAlbedo(x, y, w, h, asset.palette);
         if (slot === 'roughness') return (x, y, w, h) => fabricRough(x, y, w, h);
+    }
+    if (asset.style === 'skin') {
+        if (slot === 'albedo') return (x, y, w, h) => skinAlbedo(x, y, w, h, asset.palette);
+        if (slot === 'roughness') return (x, y, w, h) => skinRough(x, y, w, h);
+    }
+    if (asset.style === 'hair_alpha') {
+        if (slot === 'albedo') return (x, y, w, h) => hairAlphaAlbedo(x, y, w, h, asset.palette);
     }
     if (asset.style === 'metal_grate') {
         if (slot === 'albedo') return (x, y, w, h) => metalGrateAlbedo(x, y, w, h, asset.palette);

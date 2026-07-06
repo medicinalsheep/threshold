@@ -26,6 +26,9 @@ textures/*.jpg
 textures/*.jpeg
 textures/*.webp
 !textures/tc_*.png
+!textures/starter_skin_*.png
+!textures/starter_fabric_*.png
+!textures/hair_alpha*.png
 !textures/threshold_manifest.json
 !textures/.gitkeep
 import/*.glb
@@ -62,6 +65,9 @@ public/bundle/import/*
 !public/bundle/import/threshold_blender_manifest.json
 public/bundle/textures/*
 !public/bundle/textures/tc_*.png
+!public/bundle/textures/starter_skin_*.png
+!public/bundle/textures/starter_fabric_*.png
+!public/bundle/textures/hair_alpha*.png
 !public/bundle/textures/threshold_manifest.json
 !public/bundle/video/
 public/bundle/video/*

@@ -84,6 +84,12 @@ else bad('missing docs/REALISTIC_GAMEPLAY.md');
     else bad(`missing import/${f} — run npm run avatar:gen`);
 });
 
+['starter_skin_medium_albedo.png', 'starter_fabric_albedo.png', 'hair_alpha_albedo.png'].forEach((f) => {
+    const p = path.join(ROOT, 'textures', f);
+    if (fs.existsSync(p)) ok(`chr-tex ${f}`);
+    else bad(`missing textures/${f} — run npm run tex:gen`);
+});
+
 ['tesla_coil.glb', 'tesla_coil_l1.glb', 'tesla_coil_l2.glb', 'lab_bench.glb', 'lab_door.glb'].forEach((f) => {
     const p = path.join(ROOT, 'import', f);
     if (fs.existsSync(p)) ok(`lab ${f}`);

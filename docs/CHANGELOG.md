@@ -1,5 +1,13 @@
 # Changelog
 
+## 7.8.2 — R8.2.4: Avatar skin / fabric / hair PBR + HILOD
+
+- **Textures** — `starter_skin_light|medium|deep`, `starter_fabric`, `hair_alpha` via `tex:gen`
+- **AvatarTex** — region-based PBR apply (skin, shirt, pants, hair) on composed avatars
+- **HILOD** — `TextureHilod` tracks `avatarTexMeshes` on player/NPC groups
+- **Skin panel** — skin tone preset dropdown (light / medium / deep)
+- **Multiplayer** — `appearance.textures` synced for remote compose
+
 ## 7.8.0 — R8.2: Character kit (female + hair + composition)
 
 - **Manifest v2** — `avatar-manifest.json` bodies, hair, attach points, roles

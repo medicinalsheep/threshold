@@ -10,6 +10,12 @@ export const DEFAULT_COLORS = {
     hair: '#2a1810',
 };
 
+export const SKIN_TEXTURE_VARIANTS = [
+    { id: 'starter_skin_light', label: 'Light' },
+    { id: 'starter_skin_medium', label: 'Medium' },
+    { id: 'starter_skin_deep', label: 'Deep' },
+];
+
 export const DEFAULT_PROFILE = {
     format: APPEARANCE_FORMAT,
     version: APPEARANCE_VERSION,
@@ -17,7 +23,7 @@ export const DEFAULT_PROFILE = {
     hairId: 'hair_short_m',
     colors: { ...DEFAULT_COLORS },
     textures: {
-        skin: 'starter_skin',
+        skin: 'starter_skin_medium',
         shirt: 'starter_fabric',
         hair: 'hair_alpha',
     },
@@ -77,12 +83,34 @@ export function profileToMeshOpts(profile) {
     };
 }
 
+export function resolveSkinSlug(profile) {
+    const t = normalizeProfile(profile).textures?.skin || 'starter_skin_medium';
+    if (t === 'starter_skin') return 'starter_skin_medium';
+    if (['starter_skin_light', 'starter_skin_medium', 'starter_skin_deep'].includes(t)) return t;
+    if (String(t).startsWith('starter_skin_')) return t;
+    return 'starter_skin_medium';
+}
+
+export function texturesFromUi() {
+    const pick = (id, fallback) => document.getElementById(id)?.value || fallback;
+    return {
+        skin: pick('skin-tone-preset', 'starter_skin_medium'),
+        shirt: 'starter_fabric',
+        hair: 'hair_alpha',
+    };
+}
+
 export function profileForNetwork(profile) {
     const p = normalizeProfile(profile);
     return {
         bodyId: p.bodyId,
         hairId: p.hairId,
         colors: { ...p.colors },
+        textures: {
+            skin: resolveSkinSlug(p),
+            shirt: p.textures?.shirt || 'starter_fabric',
+            hair: p.textures?.hair || 'hair_alpha',
+        },
         customBodyGlb: p.customBodyGlb || null,
         customHairGlb: p.customHairGlb || null,
     };
@@ -112,14 +140,19 @@ export function syncUiFromProfile(profile) {
     const hairSel = document.getElementById('skin-hair-preset');
     if (bodySel) bodySel.value = p.bodyId;
     if (hairSel) hairSel.value = p.hairId;
+    const toneSel = document.getElementById('skin-tone-preset');
+    if (toneSel) toneSel.value = resolveSkinSlug(p);
 }
 
 window.AppearanceProfile = {
     DEFAULT_PROFILE,
+    SKIN_TEXTURE_VARIANTS,
     normalizeProfile,
     profileFromLegacyAppearance,
     profileToMeshOpts,
     profileForNetwork,
+    resolveSkinSlug,
     colorsFromUi,
+    texturesFromUi,
     syncUiFromProfile,
 };

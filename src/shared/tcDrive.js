@@ -320,8 +320,9 @@ export const TcDrive = {
         const PC = window.PlayerController;
         if (PC?.spawned && PC.group) {
             const p = PC.group.position;
-            const appearance = PC.group.userData?.appearanceProfile
-                || window.AppearanceStore?.getNetworkProfile?.();
+            const appearance = window.AppearanceProfile?.profileForNetwork?.(
+                PC.group.userData?.appearanceProfile || window.AppearanceStore?.getPlayerProfile?.()
+            );
             return {
                 x: p.x, y: p.y, z: p.z, rotY: PC.group.rotation.y, mode: 'walk',
                 appearance,
