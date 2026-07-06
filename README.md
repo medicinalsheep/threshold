@@ -2,7 +2,7 @@
 
 A collaborative 3D creative playground — design worlds, generate code with AI, record sounds, spawn characters, play together, and **ship games** to stores (Play, Windows, Steam) via a guided export walkthrough.
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 9.6.1
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 9.10.0
 
 ---
 
@@ -27,7 +27,7 @@ Lobby → Engine (3D world) ↔ Compiler (code) ↔ PromptGen (AI prompts)
 
 1. **Lobby** — pick **PLAY** or **BUILD**, then **ENTER** (Wardenclyffe showcase).
 2. **Guided tour** — 6-step overlay; mode-aware PLAY/BUILD; **MORE → TUTORIAL** to replay.
-3. **Move** — WASD walk, Shift sprint, **F** interact, survival vitals HUD (**V** toggles HUD).
+3. **Move** — WASD walk, Shift sprint, **LMB** aim · **RMB** shoot, **F** interact, vitals HUD (**V** toggles).
 4. **Explore** — lab GLBs north, visitor gateway, Nikola, weather, creek/coffee survival props.
 5. **EDIT** — pause, drag panels, **+** insert, Texture tab or **INSERT → GLTF** for GIMP/Blender art.
 6. **Hyper** render mode — PBR textures + normal maps on starter meshes.

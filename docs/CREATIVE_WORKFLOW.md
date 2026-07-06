@@ -1,4 +1,4 @@
-# Creative Workflow — GIMP, Blender, Engine (v9.6+)
+# Creative Workflow — GIMP, Blender, Engine (v9.10+)
 
 **One loop:** choose PLAY or BUILD → design on device → import into Engine → playtest → export manifest → ship.
 

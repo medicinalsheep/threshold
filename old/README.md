@@ -2,6 +2,8 @@
 
 Content here is **not used by the active runtime** (v6.4+). Kept for history and migration reference only.
 
+**Import safety:** `src/` has zero imports from `old/`. Active loaders live in `src/shared/tc*.js` and `config/reference-editions.json`.
+
 ## What moved here
 
 | Path | Why archived |

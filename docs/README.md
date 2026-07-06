@@ -1,10 +1,10 @@
 # Threshold documentation index
 
-**Version:** 9.6.1 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 9.10.0 · **Live:** https://medicinalsheep.github.io/threshold/
 
 This page is the **full scope map** — what ships today, what is TC vs showcase vs yours, and where to read more.
 
-**Polish:** L–P ✅ · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+**Polish:** L–W ✅ · **Snapshot:** [CAPABILITIES.md](CAPABILITIES.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
 ---
 
@@ -20,7 +20,7 @@ Legacy edition manifests (`threshold-child-*`) live in `old/reference-editions/`
 
 ---
 
-## Capability map (v9.6)
+## Capability map (v9.10)
 
 ```mermaid
 flowchart TB
@@ -96,8 +96,12 @@ flowchart TB
 | **O** | 9.5 | SHOWCASE insert, v9 creator WORKFLOWS |
 | **P** | 9.6 | LIVE_STATE vitals, reconnect, spectate banner |
 | **R** | 9.6.1 | Documentation truth (v9.6) |
+| **S** | 9.7 | Survival gameplay loop |
+| **V** | 9.8 | Action controls + doc cleanup |
+| **T** | 9.9 | JS chunk split |
+| **W** | 9.10 | Hygiene + capabilities outline |
 
-Earlier phases (export, TC, circuit, Steam, realism v6–7): [NEXT_PHASES.md](NEXT_PHASES.md)
+Full snapshot: [CAPABILITIES.md](CAPABILITIES.md) · Earlier phases: [NEXT_PHASES.md](NEXT_PHASES.md)
 
 ---
 
@@ -112,6 +116,7 @@ npm run preview                 # production preview :4173
 npm run textures:watch          # GIMP live SYNC (with dev)
 npm run tc:build                # TC GLBs + textures
 npm run tc:verify               # TC smoke test
+npm run controls:verify         # binding defaults + doc truth
 ```
 
 ---
@@ -124,7 +129,9 @@ npm run tc:verify               # TC smoke test
 | [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | Controls, survival, MP, showcase site |
 | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | PLAY/BUILD, GIMP/Blender loop |
 | [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | HILOD, codecs, v9.6 systems table |
-| [POLISH_ROADMAP.md](POLISH_ROADMAP.md) | Sprints K–R (L–P shipped) |
+| [CAPABILITIES.md](CAPABILITIES.md) | Progress + capability snapshot |
+| [STORE_VERIFY.md](STORE_VERIFY.md) | Sprint U store/native verify plan |
+| [POLISH_ROADMAP.md](POLISH_ROADMAP.md) | Sprints K–W |
 | [GIMP_TEXTURES.md](GIMP_TEXTURES.md) | GIMP install, batch, live SYNC |
 | [BLENDER_AVATARS.md](BLENDER_AVATARS.md) | Rigged GLB export |
 | [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) | 9-step export wizard |

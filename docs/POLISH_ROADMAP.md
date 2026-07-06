@@ -1,6 +1,6 @@
 # Polish Roadmap — Sprints K onward (v9.0+)
 
-**Current:** v9.6.1 — polish L–P complete: showcase visuals, guided onboarding, survival depth, creator tooling, MP session polish.
+**Current:** v9.10.0 — polish L–W complete: showcase, onboarding, survival loop, action controls, chunk split, hygiene pass.
 
 **North star:** First impression reads as a **curated game-creation studio**, not a block sandbox — every default surface teaches a shippable feature.
 
@@ -169,10 +169,24 @@
 ## Recommended order (completed)
 
 ```
-L → M → Q → N → O → P → R → S → V → T ✅
+L → M → Q → N → O → P → R → S → V → T → W ✅
 ```
 
-**Next (outside polish):** store/native packaging verify pass. See [NEXT_PHASES.md](NEXT_PHASES.md).
+## Sprint W — Code hygiene + capabilities outline ✅ (v9.10.0)
+
+**Goal:** Version truth, verify scripts, progress snapshot, U plan documented.
+
+| Item | Status | Deliverable |
+|------|--------|-------------|
+| W1 | ✅ | Version drift pass — README, AGENTS, docs index → v9.10 |
+| W2 | ✅ | `docs/CAPABILITIES.md` — progress + capability snapshot |
+| W3 | ✅ | `docs/STORE_VERIFY.md` — Sprint U verify plan |
+| W4 | ✅ | `npm run controls:verify` — binding + doc truth smoke |
+| W5 | ✅ | `old/README.md` — import safety note |
+
+---
+
+**Next (outside polish):** Sprint U store/native verify pass — [STORE_VERIFY.md](STORE_VERIFY.md). See [NEXT_PHASES.md](NEXT_PHASES.md).
 
 ---
 

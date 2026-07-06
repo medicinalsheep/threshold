@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.10.0 — Sprint W: Code hygiene + capabilities outline
+
+- **`docs/CAPABILITIES.md`** — single progress + capability snapshot (v9.10)
+- **`docs/STORE_VERIFY.md`** — Sprint U store/native verify plan and checklist
+- **`scripts/controls-verify.cjs`** — `npm run controls:verify` binding + doc truth smoke
+- Version drift pass — README, AGENTS, docs index, ASSET_CAPABILITIES, GETTING_STARTED → v9.10
+- **`old/README.md`** — import safety note (zero `src/` imports from `old/`)
+
 ## 9.9.0 — Sprint T: JS chunk split
 
 - **`vite.config.js`** — `manualChunks` for three, cannon-es, peerjs, supabase; app-engine/compiler/prompter lazy chunks

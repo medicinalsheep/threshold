@@ -1,10 +1,10 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v9.9.0 — Polish L–T complete (showcase, onboarding, survival gameplay loop, action controls, JS chunk split).
+**Current:** v9.10.0 — Polish L–W complete (showcase, survival loop, action controls, chunk split, hygiene pass).
 
 **Polish status:** [POLISH_ROADMAP.md](POLISH_ROADMAP.md) — Sprints L–T ✅
 
-**Next outside polish:** store/native packaging verify pass — see Open work below.
+**Next outside polish:** Sprint U store/native verify pass — [STORE_VERIFY.md](STORE_VERIFY.md).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -435,7 +435,7 @@ await World.playCutscene('video/intro.mp4', {
 | 11.3 Ambient SFX — wind, highway, birds, cicadas, dust | ✅ |
 | 11.4 Starter anim — lamps, birds, wind turbine, banner | ✅ |
 | 11.5 Highway strip + texture palette pass | ✅ |
-| 11.6 [CONTROLS_FIVEM.md](CONTROLS_FIVEM.md) + [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) | ✅ |
+| 11.6 Controls doc + [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) (now [CONTROLS.md](CONTROLS.md)) | ✅ |
 
 ### Phase 10.1 — Docs + archive (v6.4.1) ✅
 

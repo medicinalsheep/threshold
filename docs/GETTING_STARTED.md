@@ -1,4 +1,4 @@
-# Getting started with Threshold (v9.6)
+# Getting started with Threshold (v9.10)
 
 One linear path from lobby to shipping — plus the **realism starter** and **TC** export practice.
 
