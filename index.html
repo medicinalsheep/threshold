@@ -495,9 +495,17 @@
                 <div class="prop-row"><label>Pants</label><input type="color" id="skin-pants-color" value="#232830"></div>
                 <div class="prop-row"><label>Hair</label><input type="color" id="skin-hair-color" value="#2a1810"></div>
                 <div class="prop-row"><label>Shine</label><input type="range" id="skin-rough" min="0" max="1" step="0.05" value="0.7"></div>
-                <label class="insert-hint">GLTF model URL (optional)</label>
+                <p id="skin-custom-status" class="insert-hint" style="margin:8px 0 4px;">Custom body: default manifest</p>
+                <label class="insert-hint">import/ body GLB (persistent)</label>
+                <input type="text" id="skin-body-import" class="insert-input" placeholder="my_avatar.glb" style="margin-bottom:6px;">
+                <label class="insert-hint">Remote GLB URL (optional)</label>
                 <input type="url" id="skin-model-url" class="insert-input" placeholder="https://.../avatar.glb" style="margin-bottom:6px;">
-                <button id="btn-load-model" type="button" style="width:100%;margin-bottom:6px;">LOAD GLTF MODEL</button>
+                <input type="file" id="skin-model-file" accept=".glb,.gltf" style="display:none;">
+                <button id="btn-pick-model-file" type="button" style="width:100%;margin-bottom:6px;">PICK LOCAL GLB</button>
+                <button id="btn-load-model" type="button" style="width:100%;margin-bottom:6px;">LOAD URL GLB</button>
+                <button id="btn-clear-custom-body" type="button" style="width:100%;margin-bottom:6px;">CLEAR CUSTOM BODY</button>
+                <button id="btn-export-appearance" type="button" style="width:100%;margin-bottom:6px;">EXPORT APPEARANCE JSON</button>
+                <button id="btn-import-appearance" type="button" style="width:100%;margin-bottom:6px;">IMPORT APPEARANCE JSON</button>
                 <button id="btn-reload-skin" type="button" style="width:100%;margin-top:6px;">RELOAD SKIN</button>
                 <button id="btn-player-code" type="button" class="edit-only" style="width:100%;margin-top:6px;">EDIT PLAYER CODE</button>
             </div>

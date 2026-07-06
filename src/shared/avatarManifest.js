@@ -27,6 +27,11 @@ export const AvatarManifest = {
 
     resolveBodyGlb(profile, roleId = null) {
         const p = profile || {};
+        if (p.customBodyImport) {
+            const file = String(p.customBodyImport).replace(/^import\//, '');
+            const body = this.body(p.bodyId || 'male_default');
+            return { file, heightM: body?.heightM ?? manifest.defaultHeightM };
+        }
         if (p.customBodyGlb) return { file: p.customBodyGlb, heightM: manifest.defaultHeightM };
         const role = roleId ? this.role(roleId) : null;
         if (role?.glb) return { file: role.glb, heightM: role.heightM ?? manifest.defaultHeightM };

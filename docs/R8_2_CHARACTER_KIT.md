@@ -1,6 +1,6 @@
 # R8.2 — Character Kit (Female Avatar + Hair + Future-Proof Composition)
 
-**Status:** R8.2.0–R8.2.4 shipped · v7.8.2 · **Target:** v7.8.x for kit export + props  
+**Status:** R8.2.0–R8.2.6 shipped · v7.8.3 · **Target:** R8.2.7 props attach  
 **Prerequisite:** R8.1 registry scaffold ✅ · Phase 18.5 GLB+LOD pattern ✅  
 **North star:** Basic defaults ship immediately; every slot is manifest-driven so user-generated GLBs, GIMP textures, Blender exports, and PromptGen outputs plug in without code changes.
 

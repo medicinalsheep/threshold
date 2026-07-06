@@ -32,5 +32,25 @@ if (fs.existsSync(man)) {
 
 if (fs.existsSync(path.join(KIT, 'config', 'starter-textures.json'))) ok('starter-textures.json');
 
+const CHR = path.join(ROOT, 'exports', 'starter-character-kit');
+const CHR_META = path.join(CHR, 'kit-manifest.json');
+const CHR_CFG = JSON.parse(fs.readFileSync(path.join(ROOT, 'config', 'character-kit.json'), 'utf8'));
+
+console.log('[kit-verify] character kit');
+if (!fs.existsSync(CHR_META)) bad('missing exports/starter-character-kit — run npm run kit:export:chr');
+else {
+    ok('character kit-manifest.json');
+    const cmeta = JSON.parse(fs.readFileSync(CHR_META, 'utf8'));
+    if ((cmeta.glbFiles || []).length >= 5) ok(`${cmeta.glbFiles.length} character GLBs`);
+    else bad(`only ${cmeta.glbFiles?.length || 0} character GLBs`);
+    if (fs.existsSync(path.join(CHR, 'config', 'avatar-manifest.json'))) ok('avatar-manifest.json');
+    else bad('missing character kit avatar-manifest.json');
+    if (fs.existsSync(path.join(CHR, 'appearance-presets.json'))) ok('appearance-presets.json');
+    (CHR_CFG.bodyGlbs || []).slice(0, 2).forEach((f) => {
+        if (fs.existsSync(path.join(CHR, 'bodies', f))) ok(`body ${f}`);
+        else bad(`missing bodies/${f}`);
+    });
+}
+
 console.log(fail ? `\n[kit-verify] FAILED (${fail})` : '\n[kit-verify] PASS');
 process.exit(fail ? 1 : 0);

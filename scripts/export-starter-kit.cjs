@@ -119,6 +119,13 @@ function main() {
     const mb = (bytes / (1024 * 1024)).toFixed(2);
     console.log(`[kit:export] ${fileCount} files → exports/starter-texture-kit/ (~${mb} MB)`);
     console.log(`[kit:export] ${entries.length} object preset(s) · tiers: ${tiers.join(', ')}`);
+
+    try {
+        const { main: exportChr } = require('./export-character-kit.cjs');
+        exportChr();
+    } catch (e) {
+        console.warn('[kit:export] character kit skipped:', e.message || e);
+    }
 }
 
 main();

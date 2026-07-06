@@ -48,6 +48,7 @@ import '../shared/appearanceStore.js';
 import '../shared/hairSlot.js';
 import '../shared/avatarComposer.js';
 import '../shared/avatarTex.js';
+import '../shared/appearanceExport.js';
 import '../shared/avatarLoader.js';
 import '../shared/ambientAudio.js';
 import '../shared/weatherSystem.js';
@@ -1647,6 +1648,17 @@ const UI = {
         window.addEventListener('resize', () => this.positionMoreMenu());
         window.addEventListener('orientationchange', () => setTimeout(() => this.positionMoreMenu(), 200));
         document.getElementById('btn-load-model')?.addEventListener('click', () => UI.loadPlayerModel());
+        document.getElementById('btn-pick-model-file')?.addEventListener('click', () => {
+            document.getElementById('skin-model-file')?.click();
+        });
+        document.getElementById('skin-model-file')?.addEventListener('change', (e) => {
+            const file = e.target.files?.[0];
+            if (file) void UI.loadPlayerModelFile(file);
+            e.target.value = '';
+        });
+        document.getElementById('btn-clear-custom-body')?.addEventListener('click', () => UI.clearCustomBody());
+        document.getElementById('btn-export-appearance')?.addEventListener('click', () => UI.exportAppearanceJson());
+        document.getElementById('btn-import-appearance')?.addEventListener('click', () => UI.importAppearanceJson());
 
         document.querySelectorAll('.insp-tab').forEach((tab) => {
             tab.addEventListener('click', () => UI.switchInspTab(tab.dataset.inspTab));
@@ -2046,17 +2058,54 @@ const UI = {
     },
     reloadPlayerSkin: async function () {
         if (!PlayerController.spawned) { this.status('Spawn a player first'); return; }
-        const profile = window.AppearanceStore.getPlayerProfile();
-        profile.bodyId = document.getElementById('skin-body-preset')?.value || profile.bodyId;
-        profile.hairId = document.getElementById('skin-hair-preset')?.value || profile.hairId;
-        profile.colors = window.AppearanceProfile.colorsFromUi();
-        profile.textures = window.AppearanceProfile.texturesFromUi();
-        profile.roughness = parseFloat(document.getElementById('skin-rough')?.value || '0.72');
+        const profile = window.AppearanceProfile.profileFromUi(window.AppearanceStore.getPlayerProfile());
         try {
+            window.AppearanceStore.setPlayerProfile(profile);
             await PlayerController.applyAppearance(profile);
+            window.AppearanceProfile.syncUiFromProfile(profile);
             this.status(`Appearance applied — ${profile.bodyId} · ${profile.hairId}`);
         } catch (e) {
             this.status('Appearance failed: ' + (e.message || e));
+        }
+    },
+    clearCustomBody: async function () {
+        const profile = window.AppearanceStore.getPlayerProfile();
+        profile.customBodyGlb = null;
+        profile.customBodyImport = null;
+        const imp = document.getElementById('skin-body-import');
+        const url = document.getElementById('skin-model-url');
+        if (imp) imp.value = '';
+        if (url) url.value = '';
+        window.AppearanceStore.setPlayerProfile(profile);
+        window.AppearanceProfile.syncUiFromProfile(profile);
+        if (PlayerController.spawned) {
+            await PlayerController.applyAppearance(profile);
+        }
+        this.status('Custom body cleared — using manifest default');
+    },
+    exportAppearanceJson: async function () {
+        const profile = window.AppearanceProfile.profileFromUi(window.AppearanceStore.getPlayerProfile());
+        try {
+            await window.AppearanceExport.copyAppearanceToClipboard(profile);
+            this.status('Appearance JSON copied to clipboard');
+        } catch (e) {
+            window.AppearanceExport.downloadAppearanceJson(profile);
+            this.status('Clipboard blocked — downloaded threshold-appearance.json');
+        }
+    },
+    importAppearanceJson: async function () {
+        const raw = window.prompt('Paste threshold-appearance JSON:');
+        if (!raw?.trim()) return;
+        try {
+            const profile = window.AppearanceExport.parseAppearanceJson(raw.trim());
+            window.AppearanceStore.setPlayerProfile(profile);
+            window.AppearanceProfile.syncUiFromProfile(profile);
+            if (PlayerController.spawned) {
+                await PlayerController.applyAppearance(profile);
+            }
+            this.status(`Appearance imported — ${profile.bodyId} · ${profile.hairId}`);
+        } catch (e) {
+            this.status('Import failed: ' + (e.message || e));
         }
     },
     openPlayerCodeRef: function () {
@@ -2203,13 +2252,36 @@ const UI = {
             return;
         }
         try {
-            await PlayerController.applyModelUrl(url);
-            this.status('GLTF model loaded');
+            const profile = window.AppearanceStore.getPlayerProfile();
+            profile.customBodyGlb = url;
+            profile.customBodyImport = null;
+            await PlayerController.applyAppearance(profile);
+            window.AppearanceProfile.syncUiFromProfile(profile);
+            this.status('URL GLB loaded — copy to import/ for persistence');
             if (PlayerController.group) {
                 setTimeout(() => SoundPrompt.offerForObject(PlayerController.group, 'Avatar / emote', 'emote'), 500);
             }
         } catch (e) {
             this.status('Model load failed: ' + e.message);
+        }
+    },
+    loadPlayerModelFile: async function (file) {
+        if (!file) return;
+        if (!PlayerController.spawned) {
+            this.status('Spawn as player first');
+            return;
+        }
+        try {
+            const profile = window.AppearanceStore.getPlayerProfile();
+            profile.customBodyGlb = URL.createObjectURL(file);
+            profile.customBodyImport = null;
+            const imp = document.getElementById('skin-body-import');
+            if (imp && !imp.value) imp.placeholder = `copy to import/${file.name}`;
+            await PlayerController.applyAppearance(profile);
+            window.AppearanceProfile.syncUiFromProfile(profile);
+            this.status(`Local GLB: ${file.name} — add to import/ for save across sessions`);
+        } catch (e) {
+            this.status('Local GLB failed: ' + (e.message || e));
         }
     },
     toggleLock: function () {

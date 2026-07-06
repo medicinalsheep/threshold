@@ -1,0 +1,59 @@
+{
+  "format": "threshold-character-kit",
+  "version": 1,
+  "description": "Default character GLBs, hair, skin/fabric PBR — fork-friendly pack",
+  "bodyGlbs": [
+    "starter_avatar.glb",
+    "starter_avatar_female.glb",
+    "starter_npc_guard.glb",
+    "starter_npc_mech.glb"
+  ],
+  "hairGlbs": [
+    "hair_short_m.glb",
+    "hair_long_f.glb",
+    "hair_bun_f.glb"
+  ],
+  "textureSlugs": [
+    "starter_skin_light",
+    "starter_skin_medium",
+    "starter_skin_deep",
+    "starter_fabric",
+    "hair_alpha"
+  ],
+  "textureSlots": ["albedo", "roughness"],
+  "includeTiers": ["", "_512"],
+  "preferWebp": true,
+  "includeConfigs": [
+    "config/avatar-manifest.json",
+    "config/default-assets-registry.json",
+    "config/lod-distances.json"
+  ],
+  "appearancePresets": [
+    {
+      "id": "male_default",
+      "label": "Male starter",
+      "profile": {
+        "bodyId": "male_default",
+        "hairId": "hair_short_m",
+        "textures": { "skin": "starter_skin_medium" }
+      }
+    },
+    {
+      "id": "female_default",
+      "label": "Female starter",
+      "profile": {
+        "bodyId": "female_default",
+        "hairId": "hair_long_f",
+        "textures": { "skin": "starter_skin_medium" }
+      }
+    },
+    {
+      "id": "guard_npc",
+      "label": "Guard NPC",
+      "profile": {
+        "customBodyImport": "starter_npc_guard.glb",
+        "hairId": "hair_short_m"
+      }
+    }
+  ]
+}

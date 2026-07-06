@@ -75,8 +75,9 @@ export const AvatarComposer = {
 
         const role = roleId || profileOrOptions?.id || null;
         const body = AvatarManifest.resolveBodyGlb(profile, role);
-        const url = profile.customBodyGlb?.startsWith?.('http')
-            ? profile.customBodyGlb
+        const custom = profile.customBodyGlb;
+        const url = custom && (custom.startsWith('http') || custom.startsWith('blob:'))
+            ? custom
             : AssetBundle.getUrl(`import/${body.file.replace(/^import\//, '')}`);
 
         try {

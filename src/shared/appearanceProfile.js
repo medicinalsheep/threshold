@@ -29,6 +29,7 @@ export const DEFAULT_PROFILE = {
     },
     props: { torso: null, head: null },
     customBodyGlb: null,
+    customBodyImport: null,
     customHairGlb: null,
 };
 
@@ -111,9 +112,27 @@ export function profileForNetwork(profile) {
             shirt: p.textures?.shirt || 'starter_fabric',
             hair: p.textures?.hair || 'hair_alpha',
         },
-        customBodyGlb: p.customBodyGlb || null,
+        customBodyGlb: p.customBodyGlb && !String(p.customBodyGlb).startsWith('blob:')
+            ? p.customBodyGlb
+            : null,
+        customBodyImport: p.customBodyImport || null,
         customHairGlb: p.customHairGlb || null,
     };
+}
+
+export function profileFromUi(base = {}) {
+    const p = normalizeProfile(base);
+    const pick = (id, fallback) => document.getElementById(id)?.value ?? fallback;
+    p.bodyId = pick('skin-body-preset', p.bodyId);
+    p.hairId = pick('skin-hair-preset', p.hairId);
+    p.colors = colorsFromUi();
+    p.textures = texturesFromUi();
+    p.roughness = parseFloat(pick('skin-rough', String(p.roughness ?? 0.72)));
+    const impEl = document.getElementById('skin-body-import');
+    if (impEl) p.customBodyImport = impEl.value.trim() || null;
+    const urlEl = document.getElementById('skin-model-url');
+    if (urlEl?.value?.trim()) p.customBodyGlb = urlEl.value.trim();
+    return p;
 }
 
 export function colorsFromUi() {
@@ -142,6 +161,18 @@ export function syncUiFromProfile(profile) {
     if (hairSel) hairSel.value = p.hairId;
     const toneSel = document.getElementById('skin-tone-preset');
     if (toneSel) toneSel.value = resolveSkinSlug(p);
+    const imp = document.getElementById('skin-body-import');
+    if (imp) imp.value = p.customBodyImport || '';
+    const url = document.getElementById('skin-model-url');
+    if (url && p.customBodyGlb && !String(p.customBodyGlb).startsWith('blob:')) {
+        url.value = p.customBodyGlb;
+    }
+    const status = document.getElementById('skin-custom-status');
+    if (status) {
+        const hint = p.customBodyImport
+            || (p.customBodyGlb?.startsWith?.('blob:') ? 'local GLB (session)' : p.customBodyGlb);
+        status.textContent = hint ? `Custom body: ${hint}` : 'Custom body: default manifest';
+    }
 }
 
 window.AppearanceProfile = {
@@ -154,5 +185,6 @@ window.AppearanceProfile = {
     resolveSkinSlug,
     colorsFromUi,
     texturesFromUi,
+    profileFromUi,
     syncUiFromProfile,
 };

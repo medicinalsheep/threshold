@@ -1,5 +1,12 @@
 # Changelog
 
+## 7.8.3 — R8.2.6: Custom GLB path + appearance export + character kit
+
+- **Custom body** — `import/` path (`customBodyImport`), local GLB picker, URL load, clear reset
+- **Appearance JSON** — export to clipboard / download · import from paste
+- **Character kit** — `npm run kit:export:chr` → `exports/starter-character-kit/` (GLBs + skin PBR + presets)
+- **`kit:export`** — also runs character kit export
+
 ## 7.8.2 — R8.2.4: Avatar skin / fabric / hair PBR + HILOD
 
 - **Textures** — `starter_skin_light|medium|deep`, `starter_fabric`, `hair_alpha` via `tex:gen`
