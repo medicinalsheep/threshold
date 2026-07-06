@@ -1,5 +1,14 @@
 # Changelog
 
+## 9.14.0 — Threshold Training Bootcamp (Z: ramdisk)
+
+- **`Z:\Threshold training bootcamp`** — datasets (JSONL), modelfiles, builds, logs
+- **`npm run bootcamp:init|build|create|import`** — Modelfile training pipeline
+- **Starter datasets** — NPC, classify, compiler patches, scene IIFEs (18 examples)
+- **`docs/BOOTCAMP.md`** — ramdisk vs network repo, LoRA path, AGENTS tier wiring
+- **`config/bootcamp.json`** — engine ↔ Z: link
+- **`agent-tasks.json`** — `threshold-small|medium|large` in tier model lists
+
 ## 9.13.1 — Ollama local host config (JWCOM-4 / network repo)
 
 - **`.env.local.example`** — `VITE_OLLAMA_URL` + tier model defaults (copy to `.env.local`)

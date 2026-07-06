@@ -6,21 +6,21 @@
       "label": "Small — chat, classify, status",
       "maxTokens": 128,
       "temperature": 0.5,
-      "ollamaModels": ["llama3.2:3b", "gemma3:4b", "qwen2.5-coder:1.5b-base"],
+      "ollamaModels": ["threshold-small", "llama3.2:3b", "gemma3:4b", "qwen2.5-coder:1.5b-base"],
       "grok": false
     },
     "medium": {
       "label": "Medium — patches, compiler fixes",
       "maxTokens": 1024,
       "temperature": 0.35,
-      "ollamaModels": ["qwen2.5-coder:7b", "llama3.2:3b", "codellama:7b"],
+      "ollamaModels": ["threshold-medium", "qwen2.5-coder:7b", "llama3.2:3b"],
       "grok": "fallback"
     },
     "large": {
       "label": "Large — full scene scripts",
       "maxTokens": 2048,
       "temperature": 0.4,
-      "ollamaModels": ["llama3.1:8b", "MFDoom/deepseek-r1-tool-calling:8b", "deepseek-r1:8b", "qwen2.5-coder:7b"],
+      "ollamaModels": ["threshold-large", "llama3.1:8b", "MFDoom/deepseek-r1-tool-calling:8b", "deepseek-r1:8b", "qwen2.5-coder:7b"],
       "grokPreferred": true
     }
   },
@@ -34,8 +34,9 @@
     "prompter_generate": { "tier": "large", "label": "PromptGen run" }
   },
   "training": {
+    "bootcamp": "Z:/Threshold training bootcamp",
     "modelfile": "config/threshold-dev.Modelfile",
-    "docs": "docs/AGENT_ROUTING.md",
-    "note": "Fine-tune on Threshold API examples + your scene exports; use ollama create"
+    "docs": "docs/BOOTCAMP.md",
+    "note": "npm run bootcamp:build && bootcamp:create on Z: ramdisk"
   }
 }

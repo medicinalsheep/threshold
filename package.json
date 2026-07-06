@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "9.13.1",
+  "version": "9.14.0",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
@@ -64,6 +64,10 @@
     "store:verify": "node scripts/store-verify.cjs",
     "ollama:verify": "node scripts/ollama-verify.cjs",
     "ollama:benchmark": "node scripts/ollama-benchmark.cjs",
+    "bootcamp:init": "node scripts/bootcamp-init.cjs",
+    "bootcamp:build": "node scripts/bootcamp-build.cjs",
+    "bootcamp:create": "node scripts/bootcamp-create.cjs",
+    "bootcamp:import": "node scripts/bootcamp-import.cjs",
     "tc:export:manifest": "node scripts/tc-export-manifest.cjs",
     "tc:ship": "node scripts/tc-ship-e2e.cjs",
     "tc:ship:verify": "node scripts/tc-ship-verify.cjs",

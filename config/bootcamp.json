@@ -1,0 +1,6 @@
+{
+  "format": "threshold-bootcamp-link",
+  "version": 1,
+  "root": "Z:/Threshold training bootcamp",
+  "note": "Training data on ramdisk Z:. Run bootcamp:build and bootcamp:create from engine repo."
+}

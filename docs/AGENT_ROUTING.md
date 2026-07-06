@@ -74,13 +74,21 @@ npm run ollama:verify
 
 ## Custom / trained models
 
-### Modelfile (system prompt + base model)
+### Training Bootcamp (recommended)
+
+```bash
+npm run bootcamp:init && npm run bootcamp:build && npm run bootcamp:create
+```
+
+Ramdisk: `Z:\Threshold training bootcamp` — see [BOOTCAMP.md](BOOTCAMP.md).
+
+Creates `threshold-small`, `threshold-medium`, `threshold-large`. Set AGENTS tiers → **SAVE TIERS**.
+
+### Modelfile (single model)
 
 ```bash
 ollama create threshold-dev -f config/threshold-dev.Modelfile
 ```
-
-Then set **Medium** tier to `threshold-dev` in AGENTS panel.
 
 ### Fine-tuning path (your data)
 
