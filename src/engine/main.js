@@ -112,6 +112,7 @@ import { Cinematic } from '../shared/cinematic.js';
 import '../shared/tcCircuit.js';
 import '../shared/tcDrive.js';
 import '../shared/tcGateFx.js';
+import '../shared/showcaseSnippets.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 
@@ -1652,6 +1653,18 @@ const UI = {
         });
         document.getElementById('insert-spawn-player')?.addEventListener('click', () => {
             Actions.dispatch('SPAWN_PLAYER', { pos: World.getCursorPos() });
+            UI.closeInsert();
+        });
+        document.getElementById('insert-snippet-gateway')?.addEventListener('click', () => {
+            window.ShowcaseSnippets?.insertGatewayArch?.();
+            UI.closeInsert();
+        });
+        document.getElementById('insert-snippet-terminals')?.addEventListener('click', () => {
+            window.ShowcaseSnippets?.insertTerminalCluster?.();
+            UI.closeInsert();
+        });
+        document.getElementById('insert-snippet-survival')?.addEventListener('click', () => {
+            window.ShowcaseSnippets?.insertSurvivalProp?.('food');
             UI.closeInsert();
         });
         document.getElementById('insert-player-btn')?.addEventListener('click', () => {

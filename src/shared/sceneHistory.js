@@ -5,6 +5,16 @@ import { ViewPrefs } from './viewPrefs.js';
 
 const MAX_ENTRIES = 24;
 
+function sessionModeTag() {
+    return window.State?.isPaused ? 'BUILD' : 'PLAY';
+}
+
+function formatCheckpointLabel(label, meta = {}) {
+    const mode = meta.sessionMode || sessionModeTag();
+    const author = meta.authorKey || window.Session?.playerKey || 'local';
+    return `${label} · ${mode} · ${author}`;
+}
+
 function compilerMeta(extra = {}) {
     return {
         scriptInput: document.getElementById('comp-input')?.value || '',
@@ -31,11 +41,14 @@ export const SceneHistory = {
         const state = Sync.capture();
         if (!state) return false;
         const authorKey = meta.authorKey || window.Session?.playerKey || 'local';
+        const sessionMode = meta.sessionMode || sessionModeTag();
+        const formattedLabel = formatCheckpointLabel(label, { authorKey, sessionMode });
         this._stack.push({
-            label,
+            label: formattedLabel,
+            rawLabel: label,
             at: Date.now(),
             state,
-            meta: compilerMeta({ ...meta, authorKey }),
+            meta: compilerMeta({ ...meta, authorKey, sessionMode }),
         });
         if (this._stack.length > MAX_ENTRIES) this._stack.shift();
         this._notify();
@@ -90,8 +103,7 @@ export const SceneHistory = {
             if (entry.meta.runningCode != null) {
                 window.Runtime?.setRunningCode?.(entry.meta.runningCode, 'undo');
             }
-            const who = entry.meta?.authorKey ? ` · ${entry.meta.authorKey}` : '';
-            if (!opts.silent) window.UI?.status?.(`Undid — ${entry.label}${who}`);
+            if (!opts.silent) window.UI?.status?.(`Undid — ${entry.label}`);
             this._notify();
             if (window.Network?.mode === 'host') window.Network?.scheduleBroadcast?.();
             return true;

@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.5.0 — Sprint O: Creator tooling polish
+
+- **`sceneHistory.js`** — checkpoint labels include BUILD/PLAY mode + author key
+- **`showcaseSnippets.js`** — INSERT → SHOWCASE: gateway arch, terminal cluster, survival prop
+- **`referenceLibrary.js`** — v9 creator flow card + SurvivalNeeds / applySurvivalWorldHooks WORKFLOWS
+- **`syncStory.js`** — survival vitals (`avatar.v`) and interact prop sync scope documented
+
 ## 9.4.0 — Sprint N: Survival & gameplay depth
 
 - **`remotePlayers.js`** — compact HP/F/W vitals pill sprite above remote avatars (MP `avatar.v` sync)

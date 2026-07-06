@@ -5,6 +5,56 @@ export const REFERENCE_SECTIONS = ['workflows', 'players', 'worlds', 'techniques
 export const REFERENCE_LIBRARY = {
     workflows: [
         {
+            id: 'v9_creator_flow',
+            title: 'v9 Creator Flow — PLAY/BUILD, Survival, Export',
+            summary: 'End-to-end studio loop: lobby mode → guided tour → BUILD extend → PLAY test vitals → EXPORT & PLAY ship.',
+            checklist: ['Lobby PLAY/BUILD + template persists', 'INSERT → SHOWCASE snippets for gateway/terminals/survival', 'SCENE → EDIT survivalKind + ambientZone', 'MORE → EXPORT & PLAY · SYNC STORY for MP scope'],
+            code: `// v9 creator loop (UI order):
+// 1. Lobby — PLAY or BUILD → ENTER (Wardenclyffe default)
+// 2. Guided tour — mode, showcase, PromptGen, vitals, export
+// 3. BUILD — INSERT → SHOWCASE · Compiler EXAMPLES · SCENE dock
+// 4. PLAY — walk · F survival props · vitals HUD (V)
+// 5. SAVE WORLD → ?world=CODE · MORE → EXPORT & PLAY
+// 6. MP — CREATE SESSION · SYNC STORY · remote vitals pill
+// Replay tour: MORE → TUTORIAL (preserves sessionMode)`
+        },
+        {
+            id: 'survival_needs_api',
+            title: 'SurvivalNeeds API — Read, Gate, Tick',
+            summary: 'Six vitals in PLAY/walk only. TC drive snapshots on enter; collapse triggers vignette recovery.',
+            checklist: ['SurvivalNeeds.isActive() — walk mode, not vehicle', 'pack() / unpack() for MP avatar.v', 'canSprint() · getWalkSpeedMultiplier()', 'SurvivalZones.getModifiers(pos) for passive zones'],
+            code: `// Read / gate local vitals:
+const stats = SurvivalNeeds.getAll();
+const packed = SurvivalNeeds.pack(); // [hp, food, water, rest, sta, stress]
+if (!SurvivalNeeds.canSprint()) UI.status('Too hungry/thirsty to sprint');
+
+// Passive zone at player position:
+const zone = SurvivalZones.getModifiers(PlayerController.group.position);
+if (zone.sheltered) UI.status('Sheltered from rain');
+
+// TC drive handoff (automatic):
+// TcDrive snapshots on mount · SurvivalNeeds.restoreHandoff on exit`
+        },
+        {
+            id: 'survival_world_hooks_workflow',
+            title: 'applySurvivalWorldHooks — Tag Showcase Props',
+            summary: 'Batch-tag starter coffee/creek/bench props. Inspector or INSERT → SHOWCASE survival snippet for custom props.',
+            checklist: ['Call after bootstrap or PromptGen extend', 'survivalKind: food | water | rest | snack', 'ambientZone markers for passive recovery', 'Export preflight warns if hooks missing'],
+            code: `// After extending scene:
+const r = applySurvivalWorldHooks();
+UI.status('Survival hooks patched: ' + (r?.patched || 0));
+
+// Custom prop (Compiler):
+const crate = State.objects.find(o => o.userData?.name === 'Survival Prop');
+Object.assign(crate.userData, {
+  interactAction: 'survival',
+  survivalKind: 'snack',
+  interactHint: 'Quick snack',
+  interactRadius: 2.2,
+});
+applySurvivalWorldHooks();`
+        },
+        {
             id: 'quick_start',
             title: 'Quick Start — Solo Game in 10 Steps',
             summary: 'Lobby → in-engine tutorial → build (EDIT) → AI → PLAY → export. Full loop for first playable scene.',

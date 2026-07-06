@@ -629,6 +629,7 @@
                 </div>
                 <div class="insert-tabs">
                     <button class="insert-tab active" data-tab="character">CHARACTER</button>
+                    <button class="insert-tab" data-tab="showcase">SHOWCASE</button>
                     <button class="insert-tab" data-tab="gltf">GLTF</button>
                     <button class="insert-tab" data-tab="player">PLAYER KEY</button>
                     <button class="insert-tab" data-tab="saved">SAVED</button>
@@ -638,6 +639,12 @@
                     <p class="insert-hint">Static NPC for scene dressing, or spawn yourself as a walkable human (reference for AI character design).</p>
                     <button id="insert-character" class="insert-action">INSERT NPC</button>
                     <button id="insert-spawn-player" class="insert-action secondary">SPAWN AS PLAYER</button>
+                </div>
+                <div class="insert-panel" data-panel="showcase">
+                    <p class="insert-hint">Curated Wardenclyffe snippets — BUILD mode only. Inserts at cursor / screen center.</p>
+                    <button id="insert-snippet-gateway" class="insert-action" type="button">GATEWAY ARCH</button>
+                    <button id="insert-snippet-terminals" class="insert-action secondary" type="button">TERMINAL CLUSTER</button>
+                    <button id="insert-snippet-survival" class="insert-action secondary" type="button">SURVIVAL PROP</button>
                 </div>
                 <div class="insert-panel" data-panel="gltf">
                     <p class="insert-hint">Blender export (.glb) or hosted URL. Object name should match Blender export for manifest sync.</p>

@@ -9,6 +9,7 @@ const SECTIONS = [
         className: 'sync-story-live',
         items: [
             'Player transforms, walk/TPS poses, vehicle claims',
+            'Survival vitals compact array on avatars (<code>avatar.v</code> — HP/food/water pill above remote players)',
             'Weather intensity, wind gusts, thunder events',
             'Graphics tier + render mode (on FULL_STATE)',
             'TC Circuit lap state, checkpoints, timers',
@@ -20,6 +21,7 @@ const SECTIONS = [
         className: 'sync-story-world',
         items: [
             'Scene objects, transforms, GLTF paths, scripts',
+            'Survival interact props (<code>survivalKind</code>, <code>ambientZone</code>) — synced on join; F interact is local PLAY',
             'Environment: time of day, fog, water, atmosphere',
             'Host bindings pushed to guests',
             'Admin list and session metadata',

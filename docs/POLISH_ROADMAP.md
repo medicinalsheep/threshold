@@ -69,17 +69,17 @@
 
 ---
 
-## Sprint O — Creator tooling polish
+## Sprint O — Creator tooling polish ✅ (v9.5.0)
 
 **Goal:** BUILD mode feels as intentional as PLAY.
 
-| Item | Deliverable |
-|------|-------------|
-| O1 | Scene history checkpoint labels include mode + author |
-| O2 | Insert menu “Showcase snippets” — gateway arch, terminal cluster, survival prop |
-| O3 | Reference library card for v9 flow (PLAY/BUILD, survival, export) |
-| O4 | Compiler WORKFLOWS: `SurvivalNeeds`, `applySurvivalWorldHooks` examples |
-| O5 | Sync story modal section for vitals + survival interact sync scope |
+| Item | Status | Deliverable |
+|------|--------|-------------|
+| O1 | ✅ | Checkpoint labels: `label · BUILD/PLAY · authorKey` |
+| O2 | ✅ | INSERT → SHOWCASE tab: gateway arch, terminal cluster, survival prop |
+| O3 | ✅ | Reference library `v9_creator_flow` card |
+| O4 | ✅ | WORKFLOWS: `SurvivalNeeds` API + `applySurvivalWorldHooks` |
+| O5 | ✅ | SYNC STORY: avatar.v vitals + survival prop sync scope |
 
 ---
 
