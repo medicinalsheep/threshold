@@ -83,6 +83,12 @@ else bad('missing docs/REALISTIC_GAMEPLAY.md');
     else bad(`missing import/${f}`);
 });
 
+['tesla_coil.glb', 'tesla_coil_l1.glb', 'tesla_coil_l2.glb', 'lab_bench.glb', 'lab_door.glb'].forEach((f) => {
+    const p = path.join(ROOT, 'import', f);
+    if (fs.existsSync(p)) ok(`lab ${f}`);
+    else bad(`missing import/${f} — run npm run lab:gen`);
+});
+
 if (fs.existsSync(path.join(ROOT, 'src/shared/footsteps.js'))) ok('footsteps.js');
 if (fs.existsSync(path.join(ROOT, 'src/shared/fpsViewmodel.js'))) ok('fpsViewmodel.js');
 if (fs.existsSync(path.join(ROOT, 'docs/ASSET_CAPABILITIES.md'))) ok('ASSET_CAPABILITIES.md');

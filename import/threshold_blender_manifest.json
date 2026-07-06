@@ -150,10 +150,93 @@
       "tcEd": "tc-chr",
       "license": "Original — TC",
       "realism": "r5"
+    },
+    {
+      "id": "tesla_coil",
+      "objectName": "Tesla Coil",
+      "file": "tesla_coil.glb",
+      "path": "import/tesla_coil.glb",
+      "lods": [
+        {
+          "level": 0,
+          "file": "tesla_coil.glb",
+          "path": "import/tesla_coil.glb",
+          "distance": 0
+        },
+        {
+          "level": 1,
+          "file": "tesla_coil_l1.glb",
+          "path": "import/tesla_coil_l1.glb",
+          "distance": 12
+        },
+        {
+          "level": 2,
+          "file": "tesla_coil_l2.glb",
+          "path": "import/tesla_coil_l2.glb",
+          "distance": 28
+        }
+      ],
+      "lodDistances": [
+        0,
+        12,
+        28
+      ],
+      "hasPhysics": false,
+      "mass": 0,
+      "tcEd": "starter-lab",
+      "license": "Original — Threshold",
+      "realism": "r5"
+    },
+    {
+      "id": "lab_bench",
+      "objectName": "Lab Bench",
+      "file": "lab_bench.glb",
+      "path": "import/lab_bench.glb",
+      "lods": [
+        {
+          "level": 0,
+          "file": "lab_bench.glb",
+          "path": "import/lab_bench.glb",
+          "distance": 0
+        }
+      ],
+      "lodDistances": [
+        0
+      ],
+      "hasPhysics": false,
+      "mass": 0,
+      "tcEd": "starter-lab",
+      "license": "Original — Threshold",
+      "realism": "r5"
+    },
+    {
+      "id": "lab_door",
+      "objectName": "Lab Door",
+      "file": "lab_door.glb",
+      "path": "import/lab_door.glb",
+      "lods": [
+        {
+          "level": 0,
+          "file": "lab_door.glb",
+          "path": "import/lab_door.glb",
+          "distance": 0
+        }
+      ],
+      "lodDistances": [
+        0
+      ],
+      "hasPhysics": false,
+      "mass": 0,
+      "tcEd": "starter-lab",
+      "license": "Original — Threshold",
+      "realism": "r5",
+      "animations": [
+        "door_open"
+      ]
     }
   ],
   "exportDir": "import",
-  "exportedAt": "2026-07-05T09:18:24.971Z",
-  "tcEd": "tc-show",
+  "exportedAt": "2026-07-06T01:08:47.164Z",
+  "tcEd": "starter-lab",
   "realism": "r5"
 }

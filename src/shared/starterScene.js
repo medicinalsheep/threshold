@@ -524,6 +524,7 @@ export function bootstrapStarterScene() {
     window.buildStarterInterior17?.();
     window.buildStarterTeslaExterior18?.();
     window.buildStarterTeslaLab18?.();
+    void window.upgradeTeslaLabGlb185?.();
     window.buildStarterTeslaInteract182?.();
     void window.spawnTeslaGuideNpc?.();
     window.buildStarterTeslaWeather184?.();

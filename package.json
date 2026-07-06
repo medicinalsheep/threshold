@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "7.6.0",
+  "version": "7.7.0",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
@@ -42,6 +42,7 @@
     "tex:ktx2": "node scripts/compress-ktx2.cjs",
     "basis:copy": "node scripts/copy-basis-transcoder.cjs",
     "avatar:gen": "node scripts/gen-starter-avatar.cjs",
+    "lab:gen": "node scripts/gen-starter-lab.cjs",
     "assets:pack": "node scripts/assets-pack.cjs",
     "assets:verify": "node scripts/assets-verify.cjs",
     "kit:export": "node scripts/export-starter-kit.cjs",

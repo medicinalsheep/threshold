@@ -1,5 +1,13 @@
 # Changelog
 
+## 7.7.0 — Phase 18.5: Tesla lab GLB + mesh LOD
+
+- **Tesla coil** — `tesla_coil.glb` LOD0/1/2 via `MeshLod`; arc pulse + spark hooks preserved
+- **Lab bench** — `lab_bench.glb` with gauge, Leyden jar, switch baked
+- **Lab door** — `lab_door.glb` hinged `door_open` clip + runtime swing on interact
+- **Generator** — `npm run lab:gen` (Node fallback) · Blender scaffold `build_starter_lab.py`
+- **Module** — `teslaLabGlb185.js` upgrades procedural props after lab build · guest sync `glb185` flag
+
 ## 7.6.0 — Phase 18.4: Annex weather + exterior marquee
 
 - **Skylight** — glass pane in lab ceiling; wet roughness/opacity/transmission scales with rain

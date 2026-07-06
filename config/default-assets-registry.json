@@ -47,8 +47,10 @@
         "starter_tesla_rotary", "starter_tesla_tubes", "starter_tesla_leyden", "starter_tesla_journal",
         "tesla_guide_npc", "starter_tesla_skylight", "starter_tesla_marquee"
       ],
+      "glb": ["tesla_coil.glb", "lab_bench.glb", "lab_door.glb"],
+      "lod": ["tesla_coil"],
       "textures": ["starter_tesla_wood", "starter_tesla_brick", "starter_tesla_copper"],
-      "phases": ["18.1", "18.2", "18.3", "18.4", "7.3", "7.4", "7.5", "7.6"]
+      "phases": ["18.1", "18.2", "18.3", "18.4", "18.5", "7.3", "7.4", "7.5", "7.6", "7.7"]
     }
   },
   "lod": {

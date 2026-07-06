@@ -85,7 +85,7 @@
 
 ---
 
-## Phase 18.5 — Blender GLB + LOD (v7.7)
+## Phase 18.5 — Blender GLB + LOD (v7.7) ✅
 
 | Asset | Export |
 |-------|--------|
@@ -94,8 +94,12 @@
 | `lab_door.glb` | Hinged animation |
 
 ```bash
-npm run blender:export -- --blend lab.blend --object TeslaCoil --slug tesla_coil --lod
+npm run lab:gen
+npm run blender:export -- --blend plugins/threshold-blender/starter_lab.blend --object "Tesla Coil" --slug tesla_coil --lod
 ```
+
+Runtime: `upgradeTeslaLabGlb185()` swaps procedural coil/bench/door after `buildStarterTeslaLab18()`.
+Guest sync: upgrade when `starter_tesla_coil` exists but `userData.glb185` is false.
 
 ---
 
@@ -127,9 +131,9 @@ npm run blender:export -- --blend lab.blend --object TeslaCoil --slug tesla_coil
 2. **18.2** Interactables ✅
 3. **18.3** Lab NPC ✅
 4. **18.4** Weather annex ✅
-5. **R8.2** Female avatar ← **current**
-6. **R8.3** Creatures / animals
-7. **18.5** Blender LOD pass
+5. **18.5** Blender LOD pass ✅
+6. **R8.2** Female avatar ← **current**
+7. **R8.3** Creatures / animals
 
 ```bash
 npm run tex:gen && npm run sounds:gen && npm run assets:pack

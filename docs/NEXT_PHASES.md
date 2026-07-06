@@ -509,7 +509,7 @@ See [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iteration 5 shipped.
 | 18.2 Interactables (rotary switch, tubes, jars) | ✅ | v7.4.0 |
 | 18.3 Lab coat NPC + intro captions | ✅ | v7.5.0 |
 | 18.4 Annex weather + skylight rain | ✅ | v7.6.0 |
-| 18.5 Blender GLB + mesh LOD | ⏳ | v7.7 |
+| 18.5 Blender GLB + mesh LOD | ✅ | v7.7.0 |
 
 See [PHASE_18_TESLA_LAB.md](PHASE_18_TESLA_LAB.md) · [DEFAULT_ASSETS_ROADMAP.md](DEFAULT_ASSETS_ROADMAP.md).
 
