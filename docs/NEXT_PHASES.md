@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v7.3.0 — Phase 18.1 Tesla lab intro shell (coil, doors, PBR, ambient, flythrough).
+**Current:** v7.4.0 — Phase 18.2 lab interactables (rotary switch, tubes, Leyden jars, journal).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -506,7 +506,7 @@ See [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iteration 5 shipped.
 | Step | Status | Version |
 |------|--------|---------|
 | 18.1 Lab shell + coil + doors + intro flythrough | ✅ | v7.3.0 |
-| 18.2 Interactables (rotary switch, tubes, jars) | ⏳ | v7.4 |
+| 18.2 Interactables (rotary switch, tubes, jars) | ✅ | v7.4.0 |
 | 18.3 Lab coat NPC + intro captions | ⏳ | v7.5 |
 | 18.4 Annex weather + skylight rain | ⏳ | v7.6 |
 | 18.5 Blender GLB + mesh LOD | ⏳ | v7.7 |

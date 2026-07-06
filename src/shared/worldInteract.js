@@ -83,6 +83,9 @@ export const WorldInteract = {
             return true;
         }
         if (action === 'prompter') {
+            if (root.userData?.id === 'starter_tesla_journal') {
+                window.StarterTeslaInteract182?.onJournalInteract?.(root);
+            }
             document.querySelector('[data-target="view-prompter"]')?.click();
             window.UI?.status?.(`${label} — PromptGen open`);
             return true;
@@ -103,7 +106,11 @@ export const WorldInteract = {
             if (id === 'starter_tesla_exterior_door') window.StarterTeslaExterior18?.onDoorInteract?.(root);
             if (id === 'starter_elevator_kiosk') window.StarterInterior17?.onElevatorInteract?.(root);
             if (id === 'starter_shop_counter') window.StarterInterior17?.onShopInteract?.(root);
-            window.UI?.status?.(root.userData.interactHint || `${label} — RP interact`);
+            if (id === 'starter_tesla_rotary') window.StarterTeslaInteract182?.onRotaryInteract?.(root);
+            if (id === 'starter_tesla_journal') window.StarterTeslaInteract182?.onJournalInteract?.(root);
+            if (id !== 'starter_tesla_journal' && id !== 'starter_tesla_rotary') {
+                window.UI?.status?.(root.userData.interactHint || `${label} — RP interact`);
+            }
             return true;
         }
 

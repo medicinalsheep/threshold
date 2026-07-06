@@ -42,9 +42,12 @@
     },
     "lab_props": {
       "status": "shipped",
-      "entries": ["starter_tesla_coil", "starter_tesla_bench", "starter_tesla_door"],
+      "entries": [
+        "starter_tesla_coil", "starter_tesla_bench", "starter_tesla_door",
+        "starter_tesla_rotary", "starter_tesla_tubes", "starter_tesla_leyden", "starter_tesla_journal"
+      ],
       "textures": ["starter_tesla_wood", "starter_tesla_brick", "starter_tesla_copper"],
-      "phases": ["18.1", "7.3"]
+      "phases": ["18.1", "18.2", "7.3", "7.4"]
     }
   },
   "lod": {

@@ -524,6 +524,7 @@ export function bootstrapStarterScene() {
     window.buildStarterInterior17?.();
     window.buildStarterTeslaExterior18?.();
     window.buildStarterTeslaLab18?.();
+    window.buildStarterTeslaInteract182?.();
     window.StarterAnim?.wireScene?.();
     window.StarterEnv14?.wireAnims?.();
     window.StarterWildlife15?.wireAnims?.();
@@ -531,9 +532,10 @@ export function bootstrapStarterScene() {
     window.StarterInterior17?.wireAnims?.();
     window.StarterTeslaExterior18?.wireAnims?.();
     window.StarterTeslaLab18?.wireAnims?.();
+    window.StarterTeslaInteract182?.wireAnims?.();
 
     if (terminal && modelKiosk) {
-        window.UI?.status?.('Wardenclyffe site — project building · enter lab · explore annex');
+        window.UI?.status?.('Lab interactables — crank switch · tube rack · journal opens PromptGen');
     }
 
     State.ctxTargetPos.set(0, 0, 0);

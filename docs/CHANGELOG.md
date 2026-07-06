@@ -1,5 +1,13 @@
 # Changelog
 
+## 7.4.0 — Phase 18.2: Lab interactables
+
+- **Rotary switch** — `[F]` crank anim, spark SFX, boosts coil arc + tube warmth + jar charge
+- **Vacuum tube rack** — 4 tubes with filament emissive warm-up sequence (ramps on switch use)
+- **Leyden jars** — `MeshPhysicalMaterial` glass transmission + copper foil charge pulse
+- **Lab journal** — `[F]` opens PromptGen with page flash anim
+- **Module** — `starterTeslaInteract182.js` + guest sync marker `starter_tesla_rotary`
+
 ## 7.3.1 — Controls fix + Wardenclyffe exterior intro
 
 - **Mouse look** — fixed inverted horizontal (yaw) look; spawn inherits intro camera facing

@@ -236,6 +236,7 @@ const SOUND_MAP = {
     starter_shop_counter: { clipId: 'starter_interior_cash_register', trigger: 'interact' },
     starter_tesla_door: { clipId: 'starter_interior_door_creak', trigger: 'interact' },
     starter_tesla_exterior_door: { clipId: 'starter_interior_door_creak', trigger: 'interact' },
+    starter_tesla_rotary: { clipId: 'starter_tesla_spark', trigger: 'interact' },
 };
 
 export function wireStarterSounds() {
