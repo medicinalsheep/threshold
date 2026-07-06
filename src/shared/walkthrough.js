@@ -6,6 +6,11 @@ function modeLabel(mode) {
     return mode === 'build' ? 'BUILD (EDIT)' : 'PLAY';
 }
 
+function resolveHighlight(step, sessionMode) {
+    if (!step.highlight) return null;
+    return typeof step.highlight === 'function' ? step.highlight(sessionMode) : step.highlight;
+}
+
 const STEPS = [
     {
         title: 'Your session mode',
@@ -23,8 +28,15 @@ const STEPS = [
     },
     {
         title: 'Extend without wiping',
-        body: 'Fastest path: <strong>PromptGen → EXAMPLES</strong> — tested prompts that extend the scene safely. '
-            + 'Compiler kiosk and AI terminal are on the visitor path south of the lab.',
+        body: (mode) => (mode === 'build'
+            ? 'You are in <strong>BUILD</strong> — the <strong>SCENE</strong> dock is open for inspect, textures, and agents. '
+                + 'Fastest extend path: <strong>PromptGen → EXAMPLES</strong> — tested prompts that add to the site safely.'
+            : 'Fastest path: <strong>PromptGen → EXAMPLES</strong> — tested prompts that extend the scene safely. '
+                + 'Switch to <strong>BUILD</strong> to open the SCENE dock for inspect and textures.'),
+        highlight: (mode) => (mode === 'build' ? '#scene-dock' : null),
+        onEnter(sessionMode) {
+            if (sessionMode === 'build') SceneDock.openTab('inspect');
+        },
         actions: [
             {
                 label: 'PromptGen EXAMPLES',
@@ -43,9 +55,17 @@ const STEPS = [
     },
     {
         title: 'Playtest your game',
-        body: 'Switch to <strong>PLAY</strong> to test walk, survival vitals (top-right HUD), interact props, and weather. '
-            + 'Graphics tier is suggested after this tour — tune in <strong>SCENE → ENV</strong>.',
-        highlight: '#btn-host-pause',
+        body: (mode) => (mode === 'build'
+            ? 'Tap <strong>RESUME</strong> or the badge to switch to <strong>PLAY</strong> — then test walk, survival vitals (top-right HUD), interact props, and weather.'
+            : 'You are in <strong>PLAY</strong> — survival vitals HUD (top-right, <strong>V</strong> toggle), interact props, and weather are live. '
+                + 'Graphics tier is suggested after this tour — tune in <strong>SCENE → ENV</strong>.'),
+        highlight: (mode) => (mode === 'play' ? '#survival-needs-hud' : '#btn-host-pause'),
+        onEnter(sessionMode) {
+            if (sessionMode !== 'play') return;
+            window.SurvivalNeedsHud?.setVisible?.(true);
+            const hud = document.getElementById('survival-needs-hud');
+            hud?.classList.add('tour-pulse', 'active', 'visible');
+        },
     },
     {
         title: 'Ship when ready',
@@ -158,11 +178,12 @@ export const Walkthrough = {
             return;
         }
         const mode = sessionMode || window.GuidedSession?.getSavedMode?.() || 'play';
-        setTimeout(() => this.start(0, 'quick', mode), 200);
+        this.start(0, 'quick', mode);
     },
 
     restart() {
         ViewPrefs.set('walkthroughDone', false);
+        ViewPrefs.set('welcomeSeen', false);
         const mode = window.GuidedSession?.getSavedMode?.() || 'play';
         this.start(0, 'quick', mode);
     },
@@ -175,6 +196,8 @@ export const Walkthrough = {
     start(fromStep = 0, mode = 'quick', sessionMode = 'play') {
         this.root = document.getElementById('engine-walkthrough');
         if (!this.root) return;
+
+        window.GuidedSession?.hide?.();
 
         this._mode = mode;
         this._sessionMode = sessionMode === 'build' ? 'build' : 'play';
@@ -203,10 +226,17 @@ export const Walkthrough = {
         });
     },
 
+    _clearStepEffects() {
+        document.querySelectorAll('.walkthrough-highlight').forEach((el) => el.classList.remove('walkthrough-highlight'));
+        document.getElementById('survival-needs-hud')?.classList.remove('tour-pulse');
+    },
+
     render() {
         const steps = this._steps();
         const step = steps[this.step];
         const total = steps.length;
+
+        this._clearStepEffects();
 
         document.getElementById('walkthrough-step-label').textContent =
             `${this.step + 1} / ${total}${this._mode === 'full' ? ' · FULL' : ''}`;
@@ -241,10 +271,12 @@ export const Walkthrough = {
             ).join('');
         }
 
-        document.querySelectorAll('.walkthrough-highlight').forEach((el) => el.classList.remove('walkthrough-highlight'));
-        if (step.highlight) {
-            document.querySelector(step.highlight)?.classList.add('walkthrough-highlight');
+        const highlight = resolveHighlight(step, this._sessionMode);
+        if (highlight) {
+            document.querySelector(highlight)?.classList.add('walkthrough-highlight');
         }
+
+        step.onEnter?.(this._sessionMode);
     },
 
     next() {
@@ -275,8 +307,8 @@ export const Walkthrough = {
 
     hide() {
         this.active = false;
+        this._clearStepEffects();
         this.root?.classList.add('hidden');
-        document.querySelectorAll('.walkthrough-highlight').forEach((el) => el.classList.remove('walkthrough-highlight'));
     },
 };
 

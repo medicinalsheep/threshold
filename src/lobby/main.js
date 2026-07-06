@@ -15,11 +15,17 @@ function initLobbyReleaseStrip() {
     const el = document.getElementById('lobby-release-strip');
     if (!el) return;
     const logUrl = 'https://github.com/medicinalsheep/threshold/blob/main/docs/CHANGELOG.md';
-    el.innerHTML = `v${VERSION} · showcase gateway · golden hour · <a href="${logUrl}" target="_blank" rel="noopener noreferrer">changelog</a>`;
+    el.innerHTML = `v${VERSION} · guided onboarding · <a href="${logUrl}" target="_blank" rel="noopener noreferrer">changelog</a>`;
 }
 
 function initLobbyModePicker() {
-    const saved = ViewPrefs.get('sessionMode', 'play');
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlMode = urlParams.get('mode');
+    let saved = ViewPrefs.get('sessionMode', 'play');
+    if (urlMode === 'build' || urlMode === 'play') {
+        saved = urlMode;
+        ViewPrefs.set('sessionMode', saved);
+    }
     const setActive = (mode) => {
         document.querySelectorAll('.lobby-mode-btn').forEach((btn) => {
             btn.classList.toggle('active', btn.dataset.mode === mode);

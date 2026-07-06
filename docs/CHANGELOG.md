@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.3.0 — Sprint M: Guided onboarding polish
+
+- **`guidedSession.js`** — single modal stack (no double-flash); guest/spectate skip mode gate; inherit host pause
+- **`walkthrough.js`** — mode-aware step 3/4 highlights; BUILD opens SCENE dock; PLAY pulses vitals HUD; replay preserves `sessionMode`
+- **`lobby/main.js`** — URL `?mode=play` / `?mode=build` deep link; remembers last template + mode
+- **`actionHints.js`** — showcase copy; TC quest card deferred until guided tour complete
+- **`engine.css`** — `.survival-needs-hud.tour-pulse` animation for PLAY tour step
+
 ## 9.2.0 — Sprint L: Showcase visual polish
 
 - **`makeWardenclyffeSignTex`** — procedural gateway plaque with emissive map

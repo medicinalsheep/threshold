@@ -528,6 +528,17 @@ body.console-hidden .console-restore-tab {
     box-shadow: 0 0 12px rgba(80, 180, 120, 0.2);
 }
 
+.survival-needs-hud.tour-pulse {
+    border-color: rgba(120, 220, 160, 0.85);
+    box-shadow: 0 0 16px rgba(80, 200, 140, 0.45);
+    animation: tourPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes tourPulse {
+    0%, 100% { transform: translateY(0); box-shadow: 0 0 12px rgba(80, 200, 140, 0.35); }
+    50% { transform: translateY(-2px); box-shadow: 0 0 20px rgba(80, 220, 150, 0.55); }
+}
+
 .surv-head {
     display: flex;
     justify-content: space-between;

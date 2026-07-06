@@ -5,12 +5,12 @@ import { ViewPrefs } from './viewPrefs.js';
 const HINTS = [
     {
         id: 'walk',
-        text: 'WASD walk · Space jump · F interact · right-click insert menu',
+        text: 'WASD walk · Space jump · F on terminals & survival props · vitals HUD top-right (V)',
         afterMs: 0,
     },
     {
         id: 'promptgen',
-        text: 'Try PromptGen → EXAMPLES — one-click extend your scene safely',
+        text: 'Try PromptGen → EXAMPLES — one-click extend the Wardenclyffe showcase safely',
         afterMs: 42000,
     },
     {
@@ -74,11 +74,8 @@ export const ActionHints = {
     },
 
     onSessionReady() {
-        const tpl = window.State?.templateId || 'wardenclyffe';
-        if (tpl === 'wardenclyffe') {
-            this._maybeTcQuest();
-        }
         this._showHint(HINTS[0]);
+        this._maybeTcQuest();
     },
 
     tick(time) {
@@ -95,6 +92,7 @@ export const ActionHints = {
 
     _maybeTcQuest() {
         if (ViewPrefs.get('tcQuestDismissed', false)) return;
+        if (!ViewPrefs.get('walkthroughDone', false)) return;
         if (window.State?.templateId !== 'wardenclyffe') return;
         if (window.Network?.mode !== 'solo') return;
         this._tcCard?.classList.add('visible');

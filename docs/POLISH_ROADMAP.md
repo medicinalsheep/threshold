@@ -39,18 +39,18 @@
 
 ---
 
-## Sprint M — Guided onboarding polish
+## Sprint M — Guided onboarding polish ✅ (v9.3.0)
 
 **Goal:** Zero overlap confusion on first launch.
 
-| Item | Deliverable |
-|------|-------------|
-| M1 | Single modal stack — mode choice → tour step 1 (no double modal flash) |
-| M2 | Tour highlights follow chosen mode (BUILD opens SCENE dock; PLAY pulses vitals HUD) |
-| M3 | “Replay tour” resets only tour prefs, not `sessionMode` |
-| M4 | Lobby remembers last template + mode; URL `?mode=play` deep link |
-| M5 | Guest/spectate skip mode modal; inherit host pause state |
-| M6 | Action hints aligned to showcase (remove TC quest on first run unless dismissed) |
+| Item | Status | Deliverable |
+|------|--------|-------------|
+| M1 | ✅ | Single modal stack — `requestAnimationFrame` handoff; no stacked delays |
+| M2 | ✅ | BUILD opens SCENE dock on step 3; PLAY pulses vitals HUD on step 4 |
+| M3 | ✅ | Replay tour resets `walkthroughDone` + `welcomeSeen` only |
+| M4 | ✅ | Lobby restores template + mode; URL `?mode=play` / `?mode=build` |
+| M5 | ✅ | Guest/spectate skip mode gate; inherit host pause state |
+| M6 | ✅ | Showcase-aligned hints; TC quest after tour complete |
 
 ---
 

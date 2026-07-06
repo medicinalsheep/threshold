@@ -6,7 +6,6 @@ import { GraphicsPrompt } from './graphicsPrompt.js';
 
 export const GuidedSession = {
     _root: null,
-    _pendingMode: null,
 
     init() {
         this._root = document.getElementById('guided-session-modal');
@@ -26,13 +25,23 @@ export const GuidedSession = {
         return mode === 'build' || mode === 'play' ? mode : null;
     },
 
-    applyMode(mode, reason = '') {
+    shouldSkipModeGate() {
+        const Session = window.Session;
+        const Network = window.Network;
+        return !!(
+            Session?.isSpectator
+            || Network?.mode === 'spectate'
+            || Network?.mode === 'guest'
+        );
+    },
+
+    applyMode(mode, reason = '', persist = true) {
         const build = mode === 'build';
         const State = window.State;
         const Session = window.Session;
         if (!State || !Session) return;
 
-        ViewPrefs.set('sessionMode', mode);
+        if (persist) ViewPrefs.set('sessionMode', mode);
         const pauseReason = build ? (reason || 'BUILD mode') : '';
         if (Session.canControlPause?.()) {
             Session.setPaused(build, pauseReason);
@@ -55,35 +64,66 @@ export const GuidedSession = {
         if (mode) this.applyMode(mode);
     },
 
+    applyHostPauseState() {
+        const Session = window.Session;
+        const State = window.State;
+        if (!Session || !State) return 'play';
+
+        Session.syncFromHostState?.();
+        const build = !!Session.isPaused;
+        State.isPaused = build;
+        Session.isPaused = build;
+        window.UI?.updateSimMode?.();
+        window.PlayerController?._syncWalkOrbit?.();
+        return build ? 'build' : 'play';
+    },
+
     chooseMode(mode) {
-        this._pendingMode = mode;
         this.applyMode(mode, mode === 'build' ? 'You chose BUILD' : 'You chose PLAY');
         this.hide();
-        Walkthrough.startIfNeeded(mode);
+        requestAnimationFrame(() => Walkthrough.start(0, 'quick', mode));
+    },
+
+    beginTour(mode) {
+        requestAnimationFrame(() => Walkthrough.start(0, 'quick', mode));
+    },
+
+    finishPostTour() {
+        GraphicsPrompt.startIfNeeded();
+        window.ActionHints?.onSessionReady?.();
     },
 
     startIfNeeded() {
+        if (this.shouldSkipModeGate()) {
+            const mode = this.applyHostPauseState();
+            if (ViewPrefs.get('walkthroughDone', false)) {
+                this.finishPostTour();
+                return;
+            }
+            this.beginTour(mode);
+            return;
+        }
+
         this.applySavedMode();
 
         if (ViewPrefs.get('walkthroughDone', false)) {
             if (!this.getSavedMode()) this.applyMode('play');
-            GraphicsPrompt.startIfNeeded();
-            window.ActionHints?.onSessionReady?.();
+            this.finishPostTour();
             return;
         }
 
         const lobbyMode = this.getSavedMode();
         if (lobbyMode) {
-            setTimeout(() => Walkthrough.startIfNeeded(lobbyMode), 320);
+            this.beginTour(lobbyMode);
             return;
         }
 
-        setTimeout(() => this.show(), 280);
+        requestAnimationFrame(() => this.show());
     },
 
     show() {
         if (!this._root) {
-            Walkthrough.startIfNeeded('play');
+            this.beginTour('play');
             return;
         }
         this._root.classList.add('open');
