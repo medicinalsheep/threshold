@@ -30,6 +30,10 @@ export default defineConfig(({ mode }) => {
             sourcemap: false,
             chunkSizeWarningLimit: 900,
             rollupOptions: {
+                onwarn(warning, warn) {
+                    if (warning.code === 'EVAL') return;
+                    warn(warning);
+                },
                 output: {
                     entryFileNames: isDistPages ? 'assets/threshold.js' : 'assets/[name].js',
                     chunkFileNames: 'assets/[name]-[hash].js',

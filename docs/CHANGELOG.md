@@ -1,5 +1,10 @@
 # Changelog
 
+## 9.11.1 — Store verify Windows exit fix
+
+- **`vite.config.js`** — suppress Rollup `EVAL` warning (cleaner Windows CI exit)
+- **`store-verify.cjs`** — use `cmd.exe` on Windows for reliable exit codes
+
 ## 9.11.0 — Sprint U: Store/native verify pass
 
 - **`scripts/store-verify.cjs`** — `npm run store:verify` orchestrates controls, tc:ship, store:assets, export:graphics

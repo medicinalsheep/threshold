@@ -36,7 +36,15 @@ function parseArgs(argv) {
 function run(cmd, label) {
     console.log(`\n[store-verify] ${label}`);
     console.log(`> ${cmd}`);
-    execSync(cmd, { cwd: ROOT, stdio: 'inherit', shell: true });
+    try {
+        execSync(cmd, {
+            cwd: ROOT,
+            stdio: 'inherit',
+            shell: process.platform === 'win32' ? 'cmd.exe' : true,
+        });
+    } catch (e) {
+        throw new Error(`${label} failed (exit ${e.status ?? 1})`);
+    }
 }
 
 function checkFile(rel, label) {
