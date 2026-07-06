@@ -1,6 +1,6 @@
 # Polish Roadmap — Sprints K onward (v9.0+)
 
-**Current:** v9.0.0 — guided PLAY/BUILD session, showcase gateway, survival vitals (Sprint J), collab guardrails (H–I), export & MP foundation (E–G).
+**Current:** v9.6.1 — polish L–P complete: showcase visuals, guided onboarding, survival depth, creator tooling, MP session polish.
 
 **North star:** First impression reads as a **curated game-creation studio**, not a block sandbox — every default surface teaches a shippable feature.
 
@@ -111,13 +111,27 @@
 
 ---
 
-## Recommended order
+## Sprint R — Documentation truth ✅ (v9.6.1)
+
+**Goal:** Every entry doc matches v9.6 shipped UX.
+
+| Item | Status | Deliverable |
+|------|--------|-------------|
+| R1 | ✅ | `README.md`, `docs/README.md`, `PRODUCT_ROADMAP.md` → v9.6 + sprint L–P table |
+| R2 | ✅ | `REALISTIC_GAMEPLAY.md` — MP vitals, guest HUD, spectate banner, Third Eye lock |
+| R3 | ✅ | `CREATIVE_WORKFLOW.md` — SHOWCASE insert, inspector hooks, scene undo labels |
+| R4 | ✅ | `ASSET_CAPABILITIES.md` — v9.6 systems table |
+| R5 | ✅ | `NEXT_PHASES.md`, `AGENTS.md`, root README version truth |
+
+---
+
+## Recommended order (completed)
 
 ```
-L (visual) → M (onboarding) → Q (docs) → N (survival depth) → O (creator) → P (MP)
+L → M → Q → N → O → P → R ✅
 ```
 
-**Fastest user-visible wins:** L1–L3 gateway/path polish, M1–M2 onboarding stack, Q1 doc headers.
+**Next (outside polish):** store/native packaging, gameplay depth beyond vitals, performance (JS chunk split). See [NEXT_PHASES.md](NEXT_PHASES.md).
 
 ---
 

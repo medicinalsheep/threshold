@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → scale with your own relay or AWS → local GIMP/Blender art → AI agents on NPCs.
 
-**Current version:** **9.0.0** — Guided session, showcase world, survival vitals, collab + export stack (Sprints A–K)
+**Current version:** **9.6.1** — Showcase polish, guided onboarding, survival depth, creator tooling, MP session polish (Sprints A–P + R)
 
 **Scope map:** [README.md](README.md) · **Phases:** [NEXT_PHASES.md](NEXT_PHASES.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 

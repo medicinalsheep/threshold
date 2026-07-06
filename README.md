@@ -2,7 +2,7 @@
 
 A collaborative 3D creative playground — design worlds, generate code with AI, record sounds, spawn characters, play together, and **ship games** to stores (Play, Windows, Steam) via a guided export walkthrough.
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 9.1.0
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 9.6.1
 
 ---
 

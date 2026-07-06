@@ -1,4 +1,4 @@
-# Getting started with Threshold (v9.0)
+# Getting started with Threshold (v9.6)
 
 One linear path from lobby to shipping — plus the **realism starter** and **TC** export practice.
 
@@ -14,10 +14,10 @@ Lobby → PLAY or BUILD → Guided tour → Build (EDIT) or Playtest (PLAY) → 
 
 | Step | Where | What you learn |
 |------|--------|----------------|
-| 1 | **Lobby → ENTER** | Choose **PLAY** or **BUILD** before entering |
+| 1 | **Lobby → ENTER** | Choose **PLAY** or **BUILD** (`?mode=play` deep link) |
 | 2 | **Guided tour** (auto or MORE → TUTORIAL) | Showcase site, PromptGen, export pipeline |
 | 3 | **PLAY** | Walk, survival vitals, **F** interact, weather, Nikola |
-| 4 | **EDIT** | Insert objects, textures, GLTF, SFX |
+| 4 | **EDIT** | **INSERT → SHOWCASE** snippets, textures, GLTF, SFX |
 | 5 | **SAVE WORLD** | Share links `?world=CODE` |
 | 6 | **MORE → EXPORT** | 9-step walkthrough → manifest |
 | 7 | **CLI** | `store:prep`, `package:*` or `package:steam` |

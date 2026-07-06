@@ -2,7 +2,7 @@
 
 Threshold ships a **full starter pipeline** for realistic action games: procedural PBR textures with HILOD, WebP/KTX2 codecs, Blender import, rigged avatars, surface footstep SFX, and FPS combat (ADS).
 
-**Current version:** v9.0.0 — showcase site, survival vitals, export preflight, MP manifest sync (Sprints A–K)
+**Current version:** v9.6.1 — showcase polish, survival depth, creator snippets, MP vitals sync (Sprints A–P)
 
 ---
 
@@ -186,7 +186,7 @@ npm run preview
 | `textures/threshold_manifest.json` | Runtime texture binding |
 | `docs/REALISTIC_GAMEPLAY.md` | Controls, survival, showcase site |
 | `docs/BLENDER_AVATARS.md` | Rig export checklist |
-| `docs/POLISH_ROADMAP.md` | Forward polish sprints L–Q |
+| `docs/POLISH_ROADMAP.md` | Polish sprints L–R (complete) |
 
 ---
 
@@ -194,11 +194,16 @@ npm run preview
 
 | System | Module | Notes |
 |--------|--------|-------|
-| Guided session | `guidedSession.js` | PLAY/BUILD upfront; `ViewPrefs.sessionMode` |
-| Showcase gateway | `showcaseGateway.js` | Visitor arch on approach path |
-| Survival vitals | `survivalNeeds.js` | 6 stats; sprint gate; MP `v` array |
-| Survival zones | `survivalZones.js` | Passive creek/coffee/lab modifiers |
-| World hooks | `survivalWorldHooks.js` | Tag starter props for **F** interact |
-| Export preflight | `exportPreflight.js` | Scan before EXPORT & PLAY |
-| Scene undo | `sceneHistory.js` | Ctrl+Z checkpoints before mutating runs |
+| Guided session | `guidedSession.js` | PLAY/BUILD; `?mode=` deep link; guest skip |
+| Showcase gateway | `showcaseGateway.js` | Sign, curbs, golden hour, rain lamps |
+| Showcase snippets | `showcaseSnippets.js` | INSERT → gateway / terminals / survival prop |
+| Survival vitals | `survivalNeeds.js` | 6 stats; TC handoff; collapse vignette |
+| Survival zones | `survivalZones.js` | Passive + custom `ambientZone` markers |
+| World hooks | `survivalWorldHooks.js` | Tag props; inspector `survivalKind` |
+| Remote vitals pill | `remotePlayers.js` | HP/F/W above MP avatars (`avatar.v`) |
+| Export preflight | `exportPreflight.js` | Warns missing survival hooks |
+| Scene undo | `sceneHistory.js` | Labels: `action · BUILD/PLAY · author` |
+| MP live sync | `sync.js` | `LIVE_STATE` + `sessionMode` + vitals |
 | MP manifests | `audioManifestSync.js`, `textureManifestSync.js` | Host pushes blobs on join |
+| Host handoff | `hostMigration.js` | Vitals + sessionMode in snapshot |
+| Third Eye | `thirdEye.js` | Interactables + amber lock highlight |

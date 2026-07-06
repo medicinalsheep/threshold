@@ -1,5 +1,14 @@
 # Changelog
 
+## 9.6.1 — Sprint R: Documentation truth pass (v9.6)
+
+- **`docs/README.md`** — v9.6 capability map, full sprint table A–P + Q + R
+- **`PRODUCT_ROADMAP.md`**, **`NEXT_PHASES.md`** — current version + polish L–P ✅
+- **`REALISTIC_GAMEPLAY.md`** — MP vitals pill, guest HUD toggle, Third Eye lock, reconnect
+- **`CREATIVE_WORKFLOW.md`** — INSERT SHOWCASE snippets, inspector survival/zone hooks
+- **`ASSET_CAPABILITIES.md`** — v9.6 systems table (snippets, sync, handoff)
+- **`AGENTS.md`**, root **`README.md`** — version + module paths
+
 ## 9.6.0 — Sprint P: Multiplayer & session polish
 
 - **`sync.js`** — `LIVE_STATE` carries `sessionMode` + vitals; guest reconnect restores prefs from `lastLiveState`

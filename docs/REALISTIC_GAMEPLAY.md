@@ -2,7 +2,7 @@
 
 Threshold ships a **walk/drive action control** template with a polished starter site (lab GLBs, courtyard props, weather, survival). Use it as the baseline for shooters, RPGs, and exploration games.
 
-**Current default:** v9.0 — guided PLAY/BUILD session, visitor gateway, survival vitals (Sprint J)
+**Current default:** v9.6 — guided PLAY/BUILD, golden-hour showcase, survival depth, MP vitals sync
 
 ---
 
@@ -13,7 +13,7 @@ Threshold ships a **walk/drive action control** template with a polished starter
 | **PLAY** | `PLAY` | Physics, weather, survival, walk | Playtesting, exploring, MP guests |
 | **BUILD** | `BUILD` | Paused — world editable | Insert, Compiler, textures, agents |
 
-Choose **PLAY** or **BUILD** in the lobby before **ENTER**, or in the in-engine modal on first visit. Toggle anytime via **PAUSE** or the toolbar badge.
+Choose **PLAY** or **BUILD** in the lobby before **ENTER** (persists; deep link `?mode=play` / `?mode=build`), or in the in-engine modal on first visit. Guests/spectators skip the modal and inherit host pause. Toggle anytime via **PAUSE** or the toolbar badge.
 
 ---
 
@@ -47,7 +47,7 @@ Full reference: [CONTROLS_FIVEM.md](CONTROLS_FIVEM.md)
 - **TPS** is the default after spawn at the visitor gateway.
 - **Mouse look** — in PLAY, **click the canvas** for pointer lock; **Esc** releases. In BUILD, orbit controls work around your character.
 - **FPS** hides the body mesh and shows arms viewmodel + crosshair; **ADS** zooms FOV.
-- **Third Eye** highlights interactables / NPCs within ~18m.
+- **Third Eye** highlights interactables / NPCs within ~18m; **locked** objects glow amber when in range.
 
 ---
 
@@ -62,9 +62,12 @@ Six coupled stats (0–100): **health**, **food**, **water**, **rest**, **stamin
 | Zones | Creek, coffee nook, lab interior — passive recovery + shelter |
 | Interact | **F** at coffee (food), creek (water), benches (channeled rest) |
 | HUD | Top-right vitals bars; press **V** to toggle visibility |
-| MP | Compact `v` array on player avatars in live sync |
+| MP | `avatar.v` in `LIVE_STATE`; remote **HP/F/W pill** above other players |
+| Guest HUD | **PLAYERS** panel → optional **Show my vitals HUD** |
+| TC drive | Vitals frozen during vehicle; restored on exit |
+| Collapse | Red vignette + audio stinger at critical health |
 
-Wire your own props: `interactAction: 'survival'`, `survivalKind: 'food'|'water'|'rest'|'snack'`, then `applySurvivalWorldHooks()`.
+Wire your own props: set `survivalKind` in **SCENE → EDIT**, or `interactAction: 'survival'` + `applySurvivalWorldHooks()` in Compiler.
 
 ---
 
@@ -157,11 +160,28 @@ Replace or extend via PromptGen **EXAMPLES** — avoid `World.clearWorld()` unle
 
 ---
 
+## Multiplayer (guest / spectate)
+
+| Feature | Where |
+|---------|--------|
+| Remote vitals pill | HP/F/W sprite above other players (`avatar.v`) |
+| Guest vitals HUD | **PLAYERS** → **Show my vitals HUD** (optional) |
+| Reconnect | Restores `sessionMode` + vitals from last `LIVE_STATE` |
+| Handoff | **SAVE & HANDOFF** includes host vitals + mode in snapshot |
+| Spectate | Banner shows host HP/F/W when sync available |
+| Sync scope | **MORE → SYNC STORY** — vitals, survival props, manifests |
+
+---
+
 ## Phase history (site + systems)
 
 | Version | Focus |
 |---------|-------|
-| **9.0** | Guided PLAY/BUILD, gateway, gut intro, 6-step tour |
+| **9.6** | MP vitals sync, reconnect, spectate banner, Third Eye lock |
+| **9.4** | Survival depth, inspector hooks, collapse UX |
+| **9.3** | Guided onboarding stack, `?mode=` deep link |
+| **9.2** | Gateway sign, golden hour, PBR path |
+| **9.0** | Guided PLAY/BUILD, gateway, 6-step tour |
 | **8.9** | Survival vitals (6 stats, zones, HUD, MP) |
 | **8.0–8.8** | Undo, perf HUD, templates, export/play, MP sync, collab guardrails |
 | **7.9** | Wardenclyffe unified site, building GLBs, courtyard PBR |

@@ -1,10 +1,10 @@
 # Threshold documentation index
 
-**Version:** 9.0.0 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 9.6.1 · **Live:** https://medicinalsheep.github.io/threshold/
 
 This page is the **full scope map** — what ships today, what is TC vs showcase vs yours, and where to read more.
 
-**Polish forward:** [POLISH_ROADMAP.md](POLISH_ROADMAP.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+**Polish:** L–P ✅ · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
 ---
 
@@ -20,21 +20,23 @@ Legacy edition manifests (`threshold-child-*`) live in `old/reference-editions/`
 
 ---
 
-## Capability map (v9.0)
+## Capability map (v9.6)
 
 ```mermaid
 flowchart TB
     subgraph session [Session]
         MODE[PLAY / BUILD gate]
         TOUR[6-step guided tour]
+        MP[MP vitals + handoff]
     end
     subgraph play [Play]
         TPS[TPS / FPS / ADS]
-        SURV[Survival vitals]
+        SURV[Survival vitals + zones]
         WX[Weather + ambient zones]
         TE[Third Eye + F interact]
     end
     subgraph create [Create]
+        SNIP[INSERT SHOWCASE snippets]
         PG[PromptGen EXAMPLES]
         COMP[Compiler + scene undo]
         ART[GIMP / Blender pipeline]
@@ -46,10 +48,12 @@ flowchart TB
     end
     MODE --> TOUR --> play
     MODE --> create
+    SNIP --> create
     PG --> COMP --> play
     ART --> play
     play --> QEP --> NAT
     play --> EXP --> NAT
+    MP --> play
 ```
 
 ---
@@ -61,7 +65,7 @@ flowchart TB
 | Play immediately | [README.md](../README.md) Quick start | Live URL → **ENTER** |
 | Clone & develop | [GETTING_STARTED.md](GETTING_STARTED.md) | `npm install` → `npm run quickstart` |
 | Showcase + controls | [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | PLAY mode · gateway · survival |
-| Creative loop | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | BUILD → PromptGen EXAMPLES |
+| Creative loop | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | BUILD → INSERT SHOWCASE · PromptGen |
 | FiveM-style controls | [CONTROLS_FIVEM.md](CONTROLS_FIVEM.md) | F interact · E vehicle |
 | Ambient + weather | [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) | Rain, creek, interior zones |
 | Full asset pipeline | [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | `npm run assets:pack` |
@@ -84,8 +88,14 @@ flowchart TB
 | **H** | 8.7 | Scene lock, AI ack, texture manifest |
 | **I** | 8.8 | Rebuild telemetry, per-author undo, host handoff |
 | **J** | 8.9 | Survival vitals (6 stats, zones, HUD, MP) |
-| **K** | 9.0 | Guided PLAY/BUILD, showcase gateway, gut intro |
-| **Q** | 9.1 | Documentation truth pass |
+| **K** | 9.0 | Guided PLAY/BUILD, showcase gateway |
+| **Q** | 9.1 | Documentation truth (v9.0) |
+| **L** | 9.2 | Gateway sign, PBR path, golden hour |
+| **M** | 9.3 | Onboarding stack, URL `?mode=`, guest skip |
+| **N** | 9.4 | Survival depth, MP vitals pill, inspector hooks |
+| **O** | 9.5 | SHOWCASE insert, v9 creator WORKFLOWS |
+| **P** | 9.6 | LIVE_STATE vitals, reconnect, spectate banner |
+| **R** | 9.6.1 | Documentation truth (v9.6) |
 
 Earlier phases (export, TC, circuit, Steam, realism v6–7): [NEXT_PHASES.md](NEXT_PHASES.md)
 
@@ -111,10 +121,10 @@ npm run tc:verify               # TC smoke test
 | Doc | Topic |
 |-----|-------|
 | [GETTING_STARTED.md](GETTING_STARTED.md) | Lobby → ship linear path |
-| [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | Controls, survival, showcase site |
+| [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | Controls, survival, MP, showcase site |
 | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | PLAY/BUILD, GIMP/Blender loop |
-| [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | HILOD, codecs, v9 systems table |
-| [POLISH_ROADMAP.md](POLISH_ROADMAP.md) | Sprints L–P forward plan |
+| [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | HILOD, codecs, v9.6 systems table |
+| [POLISH_ROADMAP.md](POLISH_ROADMAP.md) | Sprints K–R (L–P shipped) |
 | [GIMP_TEXTURES.md](GIMP_TEXTURES.md) | GIMP install, batch, live SYNC |
 | [BLENDER_AVATARS.md](BLENDER_AVATARS.md) | Rigged GLB export |
 | [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) | 9-step export wizard |

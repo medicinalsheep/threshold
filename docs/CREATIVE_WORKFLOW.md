@@ -1,4 +1,4 @@
-# Creative Workflow — GIMP, Blender, Engine (v9.0+)
+# Creative Workflow — GIMP, Blender, Engine (v9.6+)
 
 **One loop:** choose PLAY or BUILD → design on device → import into Engine → playtest → export manifest → ship.
 
@@ -18,12 +18,12 @@
 ```
 1. LOBBY → choose PLAY or BUILD → ENTER
 2. Guided tour (first visit) — confirm mode, PromptGen EXAMPLES, export path
-3. BUILD — layout via Compiler LEGO fit OR Insert / GLTF
+3. BUILD — **INSERT → SHOWCASE** snippets OR Compiler LEGO fit OR Insert / GLTF
 4. ART (pick your path):
    A. GIMP → textures/*.png → Texture tab → GIMP SYNC
    B. Blender → import/*.glb → INSERT → GLTF
    C. Dev: textures:watch + npm run dev (live reload)
-5. Optional: SCENE → Agents on NPCs · survival props (survivalKind)
+5. Optional: SCENE → EDIT (`survivalKind`, `ambientZone`) · Agents on NPCs
 6. PLAY — test walk, vitals, weather, physics
 7. SAVE WORLD + MORE → EXPORT & PLAY (quick) or EXPORT wizard (full)
 8. package:android / package:win / package:steam
@@ -128,5 +128,5 @@ Use **Hyper (4)** when showcasing PBR textures and GLB materials. Retro modes (0
 - [GIMP_TEXTURES.md](GIMP_TEXTURES.md) — install, batch, live SYNC
 - [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) — HILOD, codecs, presets
 - [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) — 9-step wizard
-- [POLISH_ROADMAP.md](POLISH_ROADMAP.md) — Sprints L–Q forward plan
+- [POLISH_ROADMAP.md](POLISH_ROADMAP.md) — Sprints L–R (polish complete)
 - [NEXT_PHASES.md](NEXT_PHASES.md) — phase history
