@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.13.1 — Ollama local host config (JWCOM-4 / network repo)
+
+- **`.env.local.example`** — `VITE_OLLAMA_URL` + tier model defaults (copy to `.env.local`)
+- **`agentRouter`** — seeds tier prefs from `VITE_OLLAMA_TIER_*` env
+- **`ollama:verify` / `ollama:benchmark`** — read host from `.env.local`
+- **`docs/AGENT_ROUTING.md`** — local Ollama vs network repo path table
+- **`config/agent-tasks.json`** — models matching this machine (deepseek tool-calling, gemma3, qwen coder)
+
 ## 9.13.0 — Tiered agent router + workflow benchmarks
 
 - **`AgentRouter`** — small/medium/large task routing (Ollama first, Grok fallback/large)

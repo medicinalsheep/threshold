@@ -40,6 +40,19 @@ The router (`AgentRouter.runTask`) picks provider + model, logs last 20 routes t
 
 ---
 
+## Ollama location (network repo vs local LLM)
+
+| What | Where |
+|------|--------|
+| Threshold repo | May be on a network drive (e.g. `E:` → `\\192.168.1.11\D`) — **npm/build can be slow** |
+| Ollama API | **Always local:** `http://127.0.0.1:11434` on the PC running `ollama serve` |
+| Ollama install | `%LOCALAPPDATA%\Programs\Ollama\ollama.exe` |
+| Model files | `%USERPROFILE%\.ollama\models` |
+
+Copy `.env.local.example` → `.env.local` (gitignored) and set `VITE_OLLAMA_URL` if Ollama listens elsewhere.
+
+---
+
 ## Benchmark installed models
 
 ```bash

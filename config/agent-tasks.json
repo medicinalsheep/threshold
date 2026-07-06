@@ -6,7 +6,7 @@
       "label": "Small — chat, classify, status",
       "maxTokens": 128,
       "temperature": 0.5,
-      "ollamaModels": ["llama3.2:3b", "gemma3:4b", "phi3:mini"],
+      "ollamaModels": ["llama3.2:3b", "gemma3:4b", "qwen2.5-coder:1.5b-base"],
       "grok": false
     },
     "medium": {
@@ -20,7 +20,7 @@
       "label": "Large — full scene scripts",
       "maxTokens": 2048,
       "temperature": 0.4,
-      "ollamaModels": ["llama3.1:8b", "qwen2.5-coder:7b", "llama3.2:3b"],
+      "ollamaModels": ["llama3.1:8b", "MFDoom/deepseek-r1-tool-calling:8b", "deepseek-r1:8b", "qwen2.5-coder:7b"],
       "grokPreferred": true
     }
   },

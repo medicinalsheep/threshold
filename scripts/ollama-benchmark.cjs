@@ -8,7 +8,16 @@ const path = require('path');
 const http = require('http');
 
 const ROOT = path.join(__dirname, '..');
-const BASE = process.env.OLLAMA_HOST || 'http://127.0.0.1:11434';
+function loadLocalHost() {
+    const envLocal = path.join(ROOT, '.env.local');
+    if (fs.existsSync(envLocal)) {
+        const m = fs.readFileSync(envLocal, 'utf8').match(/VITE_OLLAMA_URL=(.+)/);
+        if (m) return m[1].trim();
+    }
+    return process.env.OLLAMA_HOST || 'http://127.0.0.1:11434';
+}
+
+const BASE = loadLocalHost();
 const OUT = path.join(ROOT, 'dist-store', 'ollama-benchmark.json');
 
 const tasks = JSON.parse(fs.readFileSync(path.join(ROOT, 'config/agent-tasks.json'), 'utf8'));

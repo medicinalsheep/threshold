@@ -5,7 +5,16 @@ const path = require('path');
 const http = require('http');
 
 const ROOT = path.join(__dirname, '..');
-const BASE = process.env.OLLAMA_HOST || 'http://127.0.0.1:11434';
+function loadLocalHost() {
+    const envLocal = path.join(ROOT, '.env.local');
+    if (fs.existsSync(envLocal)) {
+        const m = fs.readFileSync(envLocal, 'utf8').match(/VITE_OLLAMA_URL=(.+)/);
+        if (m) return m[1].trim();
+    }
+    return process.env.OLLAMA_HOST || 'http://127.0.0.1:11434';
+}
+
+const BASE = loadLocalHost();
 const MODEL = process.env.OLLAMA_MODEL || 'llama3.2:3b';
 let failed = 0;
 

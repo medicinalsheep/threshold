@@ -8,8 +8,17 @@ import { buildTaskPrompt, stripCodeFences } from './agentPrompts.js';
 const PREFS_KEY = 'agentTierModels';
 const ROUTE_LOG_KEY = 'agentRouteLog';
 
+function envTierDefaults() {
+    return {
+        small: import.meta.env.VITE_OLLAMA_TIER_SMALL || 'auto',
+        medium: import.meta.env.VITE_OLLAMA_TIER_MEDIUM || 'auto',
+        large: import.meta.env.VITE_OLLAMA_TIER_LARGE || 'auto',
+        preferGrokLarge: true,
+    };
+}
+
 function loadTierPrefs() {
-    return ViewPrefs.get(PREFS_KEY, { small: 'auto', medium: 'auto', large: 'auto', preferGrokLarge: true }) || {};
+    return ViewPrefs.get(PREFS_KEY, envTierDefaults()) || envTierDefaults();
 }
 
 function saveTierPrefs(prefs) {
