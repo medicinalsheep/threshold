@@ -9,7 +9,7 @@
 | Shipped in Threshold | User's own game |
 |----------------------|-----------------|
 | **Threshold Child** only — altered, unique, ours | **Any legal source** the user licenses and credits |
-| No raw drops from other games, mods, or unmodified packs | Fallout mods, BF assets, FiveM packs, etc. are **user responsibility** |
+| No raw drops from other games, mods, or unmodified packs | Unlicensed third-party art and ripped packs are **user responsibility** |
 | No suggestion to rip or redistribute copyrighted work | Export walkthrough **CREDITS** step documents **their** rights |
 
 ### Child enough = honest realism review
@@ -188,7 +188,7 @@ When **users** build **their** games:
 
 - They may import legally obtained GLTF, textures, audio
 - They must complete EXPORT **CREDITS** and **PACKS** with real licenses
-- Threshold docs show **workflows** inspired by mod communities (folder layout, vehicle lists) — **not** asset sources
+- Threshold docs show **workflows** for folder layout, credits, and vehicle lists — **not** asset sources
 
 We do not document or encourage ripping commercial game files.
 

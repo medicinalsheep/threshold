@@ -2709,7 +2709,7 @@ const UI = {
                 State.controlMode = 'walk';
                 PlayerController._inheritLookFromCamera?.();
                 PlayerController._syncWalkOrbit?.();
-                this.status('Walk — LMB shoot · RMB aim · F interact/third eye · click canvas to look');
+                this.status('Walk — LMB aim · RMB shoot · F interact/third eye · click canvas to look');
             }
         } else {
             const pos = World.getCursorPos();

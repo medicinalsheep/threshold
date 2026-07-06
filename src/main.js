@@ -10,9 +10,6 @@ import { VERSION } from './config.js';
 import { initAuth } from './auth/main.js';
 import './shared/runtime.js';
 import { initLobby } from './lobby/main.js';
-import { initEngine } from './engine/main.js';
-import { initCompiler } from './compiler/main.js';
-import { initPrompter } from './prompter/main.js';
 import { initSpectate } from './spectate/main.js';
 import { ViewPrefs } from './shared/viewPrefs.js';
 import { initFullscreen } from './shared/fullscreen.js';
@@ -131,8 +128,13 @@ initSteamBridge();
 
 initSpectate();
 
-initLobby(() => {
-    initEngine();
-    initCompiler();
-    initPrompter();
+initLobby(async () => {
+    const [engineMod, compilerMod, prompterMod] = await Promise.all([
+        import('./engine/main.js'),
+        import('./compiler/main.js'),
+        import('./prompter/main.js'),
+    ]);
+    engineMod.initEngine();
+    compilerMod.initCompiler();
+    prompterMod.initPrompter();
 });

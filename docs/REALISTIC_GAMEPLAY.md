@@ -2,7 +2,7 @@
 
 Threshold ships a **walk/drive action control** template with a polished starter site (lab GLBs, courtyard props, weather, survival). Use it as the baseline for shooters, RPGs, and exploration games.
 
-**Current default:** v9.7 — guided PLAY/BUILD, golden-hour showcase, survival gameplay loop, MP vitals sync
+**Current default:** v9.9 — guided PLAY/BUILD, golden-hour showcase, survival gameplay loop, action controls (LMB aim)
 
 ---
 
@@ -28,8 +28,8 @@ Choose **PLAY** or **BUILD** in the lobby before **ENTER** (persists; deep link 
 | Jump | Space | A |
 | **Interact** | **F** | X / Square |
 | Enter vehicle | E | Y |
-| Fire | **LMB** · G | RT |
-| Aim (ADS) | **RMB** (hold) | LT (hold) |
+| Aim (ADS) | **LMB** (hold) | LT (hold) |
+| Fire | **RMB** · G | RT |
 | Reload | R | LB |
 | Melee | B | B |
 | Holster | Z | B |
@@ -42,7 +42,7 @@ Choose **PLAY** or **BUILD** in the lobby before **ENTER** (persists; deep link 
 | Walk / fly | Y | Y |
 | Look behind | O | D-pad Left |
 
-Full reference: [CONTROLS_FIVEM.md](CONTROLS_FIVEM.md)
+Full reference: [CONTROLS.md](CONTROLS.md)
 
 - **TPS** is the default after spawn at the visitor gateway.
 - **Mouse look** — in PLAY, **click the canvas** for pointer lock; **Esc** releases. In BUILD, orbit controls work around your character.
@@ -189,6 +189,6 @@ Replace or extend via PromptGen **EXAMPLES** — avoid `World.clearWorld()` unle
 | **8.0–8.8** | Undo, perf HUD, templates, export/play, MP sync, collab guardrails |
 | **7.9** | Wardenclyffe unified site, building GLBs, courtyard PBR |
 | **7.1** | Interior RP audio (coffee, door, elevator) |
-| **6.5–6.8** | FiveM controls, weather, creek, wildlife, highway |
+| **6.5–6.8** | Action controls, weather, creek, wildlife, highway |
 
 Detail: [CHANGELOG.md](CHANGELOG.md) · [POLISH_ROADMAP.md](POLISH_ROADMAP.md)

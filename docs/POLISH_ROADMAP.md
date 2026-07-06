@@ -141,13 +141,38 @@
 
 ---
 
+## Sprint V — Action controls + doc cleanup ✅ (v9.8.0)
+
+**Goal:** PLAY combat feels natural; docs never name other games.
+
+| Item | Status | Deliverable |
+|------|--------|-------------|
+| V1 | ✅ | LMB hold = ADS · RMB = fire · R = reload only |
+| V2 | ✅ | Binding schema v2 migration for saved keymaps |
+| V3 | ✅ | `CONTROLS.md` replaces `CONTROLS_FIVEM.md` |
+| V4 | ✅ | Child assets + SOURCES policy — generic language |
+
+---
+
+## Sprint T — JS chunk split ✅ (v9.9.0)
+
+**Goal:** Smaller initial load; vendor chunks cached separately.
+
+| Item | Status | Deliverable |
+|------|--------|-------------|
+| T1 | ✅ | `manualChunks` — three, physics, peer, supabase |
+| T2 | ✅ | Lazy engine / compiler / prompter after lobby enter |
+| T3 | ✅ | Hashed chunk filenames for pages build |
+
+---
+
 ## Recommended order (completed)
 
 ```
-L → M → Q → N → O → P → R → S ✅
+L → M → Q → N → O → P → R → S → V → T ✅
 ```
 
-**Next (outside polish):** store/native packaging, performance (JS chunk split). See [NEXT_PHASES.md](NEXT_PHASES.md).
+**Next (outside polish):** store/native packaging verify pass. See [NEXT_PHASES.md](NEXT_PHASES.md).
 
 ---
 

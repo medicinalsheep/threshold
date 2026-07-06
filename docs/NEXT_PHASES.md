@@ -1,10 +1,10 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v9.6.1 — Polish L–P complete (showcase visuals, onboarding, survival depth, creator tooling, MP session).
+**Current:** v9.9.0 — Polish L–T complete (showcase, onboarding, survival gameplay loop, action controls, JS chunk split).
 
-**Polish status:** [POLISH_ROADMAP.md](POLISH_ROADMAP.md) — Sprints L–P ✅ · Sprint R doc truth ✅
+**Polish status:** [POLISH_ROADMAP.md](POLISH_ROADMAP.md) — Sprints L–T ✅
 
-**Next outside polish:** store/native packaging, gameplay beyond vitals, JS bundle split — see Open work below.
+**Next outside polish:** store/native packaging verify pass — see Open work below.
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 

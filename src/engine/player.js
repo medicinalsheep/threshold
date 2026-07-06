@@ -92,7 +92,7 @@ export const PlayerController = {
         window.FpsViewmodel?.mount?.(Engine.camera);
 
         if (window.UI?.status) {
-            window.UI.status('FiveM controls — LMB shoot · RMB aim · F interact/third eye · E vehicle · click canvas to look');
+            window.UI.status('Action controls — LMB aim · RMB shoot · F interact/third eye · E vehicle · click canvas to look');
         }
         window.ThirdEye?.updateHud?.();
         return this.group;

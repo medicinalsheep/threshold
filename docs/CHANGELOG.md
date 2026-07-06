@@ -1,5 +1,19 @@
 # Changelog
 
+## 9.9.0 — Sprint T: JS chunk split
+
+- **`vite.config.js`** — `manualChunks` for three, cannon-es, peerjs, supabase; app-engine/compiler/prompter lazy chunks
+- **`main.js`** — dynamic `import()` for engine, compiler, prompter after lobby enter (smaller initial payload)
+- Build outputs separate vendor + app chunks for browser caching
+
+## 9.8.0 — Sprint V: Action controls + doc cleanup
+
+- **`controls.js`** — LMB hold = ADS, RMB = fire; binding schema v2 migration (KeyR aim + old LMB/RMB swap)
+- **`player.js`**, **`main.js`** — neutral action-control status strings (no game-name references)
+- **`CONTROLS.md`** — replaces `CONTROLS_FIVEM.md`; corrected F interact / E vehicle
+- **`THRESHOLD_CHILD_ASSETS.md`**, **`reference/SOURCES.md`** — generic policy language (no franchise names)
+- **`REALISTIC_GAMEPLAY.md`**, **`docs/README.md`** — updated control table + links
+
 ## 9.7.0 — Sprint S: Gameplay loop depth
 
 - **`survivalGameplay.js`** — Survival Run side quest (3 min, vitals > 35%); Nikola proximity bark when critical

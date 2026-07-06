@@ -2,8 +2,10 @@ const STORAGE_KB_HOST = 'threshold_bindings_host';
 const STORAGE_KB_USER = 'threshold_bindings_user';
 const STORAGE_GP_HOST = 'threshold_gamepad_host';
 const STORAGE_GP_USER = 'threshold_gamepad_user';
+const STORAGE_BINDINGS_SCHEMA = 'threshold_bindings_schema';
+const BINDINGS_SCHEMA = 2;
 
-/** FiveM / GTA-inspired action map — groups match KEYS menu sections */
+/** Action control map — groups match KEYS menu sections */
 export const CONTROL_ACTIONS = {
     forward: { label: 'Move Forward', group: 'movement', hint: 'WASD' },
     back: { label: 'Move Back', group: 'movement' },
@@ -22,8 +24,8 @@ export const CONTROL_ACTIONS = {
     bindingsMenu: { label: 'Open Keys Menu', group: 'general' },
     sessionPanel: { label: 'Session / Players Panel', group: 'general' },
     cameraReset: { label: 'Reset Camera Behind Player', group: 'camera' },
-    fire: { label: 'Fire / Shoot', group: 'combat', mouse: 0 },
-    aim: { label: 'Aim Down Sights (hold)', group: 'combat', mouse: 2 },
+    fire: { label: 'Fire / Shoot', group: 'combat', mouse: 2 },
+    aim: { label: 'Aim Down Sights (hold)', group: 'combat', mouse: 0 },
     reload: { label: 'Reload', group: 'combat' },
     melee: { label: 'Melee / Punch', group: 'combat' },
     holster: { label: 'Holster Weapon', group: 'combat' },
@@ -53,7 +55,7 @@ export const GAMEPAD_BUTTON_LABELS = {
     12: 'D-Up', 13: 'D-Down', 14: 'D-Left', 15: 'D-Right'
 };
 
-/** FiveM-style gamepad defaults — L-stick move · R-stick camera */
+/** Gamepad defaults — L-stick move · R-stick camera */
 const DEFAULT_GAMEPAD_BINDINGS = {
     jump: 0,
     melee: 1,
@@ -81,7 +83,7 @@ const DEFAULT_GAMEPAD_BINDINGS = {
     sessionPanel: 8,
 };
 
-/** FiveM-inspired keyboard — LMB fire · RMB aim · F interact/third eye · E vehicle · Y walk/fly */
+/** Keyboard defaults — LMB aim · RMB fire · F interact/third eye · E vehicle · Y walk/fly */
 const DEFAULT_HOST_KEYBOARD = {
     forward: ['KeyW', 'ArrowUp'],
     back: ['KeyS', 'ArrowDown'],
@@ -100,8 +102,8 @@ const DEFAULT_HOST_KEYBOARD = {
     bindingsMenu: ['Backquote'],
     sessionPanel: ['Tab'],
     cameraReset: ['Home'],
-    fire: ['Mouse0', 'KeyG'],
-    aim: ['Mouse2'],
+    fire: ['Mouse2', 'KeyG'],
+    aim: ['Mouse0'],
     reload: ['KeyR'],
     melee: ['KeyB'],
     holster: ['KeyZ'],
@@ -151,7 +153,29 @@ function cloneGpDefaults() {
     return JSON.parse(JSON.stringify(DEFAULT_GAMEPAD_BINDINGS));
 }
 
-function loadKeyboard(profile) {
+function migrateKeyboardBindings(bindings) {
+    const fire = bindings.fire || [];
+    const aim = bindings.aim || [];
+
+    if (aim.includes('KeyR')) {
+        bindings.aim = aim.filter((c) => c !== 'KeyR');
+        if (!bindings.aim.includes('Mouse0')) bindings.aim.unshift('Mouse0');
+    }
+
+    const oldLmbFireRmbAim =
+        fire.includes('Mouse0')
+        && aim.includes('Mouse2')
+        && !aim.includes('Mouse0')
+        && !fire.includes('Mouse2');
+    if (oldLmbFireRmbAim) {
+        const fireKeys = fire.filter((c) => !c.startsWith('Mouse'));
+        const aimKeys = aim.filter((c) => !c.startsWith('Mouse'));
+        bindings.fire = ['Mouse2', ...fireKeys];
+        bindings.aim = ['Mouse0', ...aimKeys];
+    }
+}
+
+function loadKeyboardFromStorage(profile) {
     const key = profile === 'host' ? STORAGE_KB_HOST : STORAGE_KB_USER;
     try {
         const raw = localStorage.getItem(key);
@@ -165,6 +189,20 @@ function loadKeyboard(profile) {
     } catch {
         return cloneKbDefaults(profile);
     }
+}
+
+function bootstrapKeyboardBindings() {
+    const schema = parseInt(localStorage.getItem(STORAGE_BINDINGS_SCHEMA) || '0', 10);
+    const host = loadKeyboardFromStorage('host');
+    const user = loadKeyboardFromStorage('user');
+    if (schema < BINDINGS_SCHEMA) {
+        migrateKeyboardBindings(host);
+        migrateKeyboardBindings(user);
+        saveKeyboard('host', host);
+        saveKeyboard('user', user);
+        localStorage.setItem(STORAGE_BINDINGS_SCHEMA, String(BINDINGS_SCHEMA));
+    }
+    return { host, user };
 }
 
 function loadGamepad(profile) {
@@ -194,7 +232,7 @@ function saveGamepad(profile, bindings) {
 }
 
 export const Controls = {
-    bindings: { host: loadKeyboard('host'), user: loadKeyboard('user') },
+    bindings: bootstrapKeyboardBindings(),
     gamepadBindings: { host: loadGamepad('host'), user: loadGamepad('user') },
     sessionHostBindings: null,
     sessionHostGamepad: null,
@@ -522,7 +560,7 @@ export const Controls = {
         if (mode === 'walk') {
             const view = window.State?.viewMode === 'fps' ? 'FPS' : 'TPS';
             const lock = window.Engine?._lookPointerLocked ? ' · aim' : ' · click to aim';
-            return `${profile}${admin}: ${view} · LMB shoot · RMB aim · F interact/third eye · E vehicle${lock}${pad}${touch}`;
+            return `${profile}${admin}: ${view} · LMB aim · RMB shoot · F interact/third eye · E vehicle${lock}${pad}${touch}`;
         }
         return `${profile}${admin}: fly · Y walk · R-stick cam${pad}${touch}`;
     },
@@ -606,7 +644,7 @@ export const Controls = {
         if (note) {
             if (profile === 'host') {
                 note.textContent = canEditHost
-                    ? 'FiveM-style defaults — LMB fire · RMB aim · F interact/third eye · E vehicle · host syncs to guests.'
+                    ? 'Action defaults — LMB aim · RMB fire · F interact/third eye · E vehicle · host syncs to guests.'
                     : 'Host controls are read-only for guests — customize Guest profile locally.';
             } else {
                 note.textContent = 'Guest profile saved on this device — overrides host per key/button.';
@@ -641,7 +679,7 @@ export const Controls = {
         `).join('');
 
         gpList.innerHTML = `
-            <p class="insert-hint" style="font-size:0.65rem;margin-top:0;">L-stick move · R-stick camera (GTA / FiveM style)</p>
+            <p class="insert-hint" style="font-size:0.65rem;margin-top:0;">L-stick move · R-stick camera</p>
             ${CONTROL_GROUPS
         .filter((g) => actions.some(([a, m]) => m.group === g.id && DEFAULT_GAMEPAD_BINDINGS[a] !== undefined))
         .map((g) => `

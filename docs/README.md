@@ -66,7 +66,7 @@ flowchart TB
 | Clone & develop | [GETTING_STARTED.md](GETTING_STARTED.md) | `npm install` → `npm run quickstart` |
 | Showcase + controls | [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | PLAY mode · gateway · survival |
 | Creative loop | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | BUILD → INSERT SHOWCASE · PromptGen |
-| FiveM-style controls | [CONTROLS_FIVEM.md](CONTROLS_FIVEM.md) | F interact · E vehicle |
+| Action controls | [CONTROLS.md](CONTROLS.md) | LMB aim · RMB shoot · F interact |
 | Ambient + weather | [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) | Rain, creek, interior zones |
 | Full asset pipeline | [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | `npm run assets:pack` |
 | TC export practice | [REFERENCE_EDITIONS.md](REFERENCE_EDITIONS.md) | Lobby → **TC →** |

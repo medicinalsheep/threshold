@@ -34,17 +34,16 @@ See [docs/THRESHOLD_CHILD_ASSETS.md](../docs/THRESHOLD_CHILD_ASSETS.md) for proc
 
 Users may reference external assets in **their** projects when they have rights. Complete EXPORT **CREDITS** honestly. Threshold does not provide or endorse:
 
-- Ripped files from Fallout, Battlefield, Call of Duty, or other commercial games
-- Unlicensed FiveM / mod packs
+- Ripped or unlicensed files from commercial games or mod packs
 - Any asset without clear redistribution rights
 
 ## Workflow inspiration (not asset sources)
 
-| Community | Learn |
-|-----------|-------|
-| Battlefield mods | Vehicle roles, kit structure |
-| Fallout mods | Loose-file folder conventions |
-| COD mod tools | Surface-based sound categories |
+| Pattern | Learn |
+|---------|-------|
+| Vehicle kit structure | Role tags, mass, friction in inspector |
+| Loose-file folder layout | Manifest-driven bundle paths |
+| Surface-based sound categories | Footstep / impact clip mapping |
 | Open asset sites (Kenney, Poly Haven, etc.) | **Users** may use for **their** games — not our shipped Child drops |
 
 ## Refresh dev seeds (optional)
