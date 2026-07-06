@@ -1,0 +1,60 @@
+{
+  "format": "threshold-default-assets-registry",
+  "version": 1,
+  "note": "Planned default kit — male/female, creatures, animals, hair, lab props. Status: planned | scaffold | shipped",
+  "categories": {
+    "human_male": {
+      "status": "shipped",
+      "default": "starter_avatar.glb",
+      "lod": true,
+      "hilod": ["starter_skin", "starter_fabric"],
+      "phases": ["R8.1", "7.1"]
+    },
+    "human_female": {
+      "status": "planned",
+      "default": "starter_avatar_female.glb",
+      "lod": true,
+      "hilod": ["starter_skin", "starter_fabric"],
+      "phases": ["R8.2", "7.4"]
+    },
+    "hair": {
+      "status": "planned",
+      "slots": ["hair_short_m", "hair_long_f", "hair_bun_f"],
+      "hilod": ["hair_alpha"],
+      "phases": ["R8.2"]
+    },
+    "creature": {
+      "status": "planned",
+      "default": "creature_stalker.glb",
+      "lod": true,
+      "phases": ["R8.3", "7.5"]
+    },
+    "animal_male": {
+      "status": "scaffold",
+      "entries": ["animal_dog_m", "animal_cat_m"],
+      "note": "Phase 15 uses procedural cat/bowl — GLB upgrade in R8.3",
+      "phases": ["R8.3", "7.5"]
+    },
+    "animal_female": {
+      "status": "planned",
+      "entries": ["animal_dog_f", "animal_cat_f"],
+      "phases": ["R8.3", "7.6"]
+    },
+    "lab_props": {
+      "status": "shipped",
+      "entries": ["starter_tesla_coil", "starter_tesla_bench", "starter_tesla_door"],
+      "textures": ["starter_tesla_wood", "starter_tesla_brick", "starter_tesla_copper"],
+      "phases": ["18.1", "7.3"]
+    }
+  },
+  "lod": {
+    "distancesM": [0, 12, 28],
+    "config": "config/lod-distances.json",
+    "runtime": "MeshLod.update()"
+  },
+  "hilod": {
+    "suffixes": ["_512", "_1k", "_2k", "_4k"],
+    "config": "config/tc-textures.json",
+    "runtime": "TextureHilod.update()"
+  }
+}

@@ -50,6 +50,7 @@ export const AmbientAudio = {
         await window.WildlifeAmbient?.startStaggered?.();
         await window.UrbanAmbient?.startStaggered?.();
         await window.InteriorAmbient?.startStaggered?.();
+        await window.TeslaLabAmbient?.startStaggered?.();
     },
 
     stop() {
@@ -63,6 +64,7 @@ export const AmbientAudio = {
         window.WildlifeAmbient?.stop?.();
         window.UrbanAmbient?.stop?.();
         window.InteriorAmbient?.stop?.();
+        window.TeslaLabAmbient?.stop?.();
     },
 
     async _playLoop(clipId, vol, key) {
@@ -116,6 +118,7 @@ export const AmbientAudio = {
         window.WildlifeAmbient?.tick?.(dt);
         window.UrbanAmbient?.tick?.(dt);
         window.InteriorAmbient?.tick?.(dt);
+        window.TeslaLabAmbient?.tick?.(dt);
     },
 };
 

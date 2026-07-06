@@ -2558,9 +2558,585 @@
           "maxPx": 1024
         }
       ]
+    },
+    {
+      "id": "starter_tesla_wood_albedo",
+      "objectName": "Tesla Lab Floor",
+      "slot": "albedo",
+      "file": "starter_tesla_wood_albedo.png",
+      "path": "textures/starter_tesla_wood_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_wood_albedo_512.png",
+          "path": "textures/starter_tesla_wood_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_wood_albedo_1k.png",
+          "path": "textures/starter_tesla_wood_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_wood_albedo_2k.png",
+          "path": "textures/starter_tesla_wood_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_wood_albedo_4k.png",
+          "path": "textures/starter_tesla_wood_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_tesla_wood_roughness",
+      "objectName": "Tesla Lab Floor",
+      "slot": "roughness",
+      "file": "starter_tesla_wood_roughness.png",
+      "path": "textures/starter_tesla_wood_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_wood_roughness_512.png",
+          "path": "textures/starter_tesla_wood_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_wood_roughness_1k.png",
+          "path": "textures/starter_tesla_wood_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_wood_roughness_2k.png",
+          "path": "textures/starter_tesla_wood_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_wood_roughness_4k.png",
+          "path": "textures/starter_tesla_wood_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_tesla_wood_normal",
+      "objectName": "Tesla Lab Floor",
+      "slot": "normal",
+      "file": "starter_tesla_wood_normal.png",
+      "path": "textures/starter_tesla_wood_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_wood_normal_512.png",
+          "path": "textures/starter_tesla_wood_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_wood_normal_1k.png",
+          "path": "textures/starter_tesla_wood_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_wood_normal_2k.png",
+          "path": "textures/starter_tesla_wood_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_wood_normal_4k.png",
+          "path": "textures/starter_tesla_wood_normal_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_tesla_bench_albedo",
+      "objectName": "Tesla Bench",
+      "slot": "albedo",
+      "file": "starter_tesla_bench_albedo.png",
+      "path": "textures/starter_tesla_bench_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_bench_albedo_512.png",
+          "path": "textures/starter_tesla_bench_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_bench_albedo_1k.png",
+          "path": "textures/starter_tesla_bench_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_bench_albedo_2k.png",
+          "path": "textures/starter_tesla_bench_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_bench_albedo_4k.png",
+          "path": "textures/starter_tesla_bench_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_tesla_bench_roughness",
+      "objectName": "Tesla Bench",
+      "slot": "roughness",
+      "file": "starter_tesla_bench_roughness.png",
+      "path": "textures/starter_tesla_bench_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_bench_roughness_512.png",
+          "path": "textures/starter_tesla_bench_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_bench_roughness_1k.png",
+          "path": "textures/starter_tesla_bench_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_bench_roughness_2k.png",
+          "path": "textures/starter_tesla_bench_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_bench_roughness_4k.png",
+          "path": "textures/starter_tesla_bench_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_tesla_bench_normal",
+      "objectName": "Tesla Bench",
+      "slot": "normal",
+      "file": "starter_tesla_bench_normal.png",
+      "path": "textures/starter_tesla_bench_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_bench_normal_512.png",
+          "path": "textures/starter_tesla_bench_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_bench_normal_1k.png",
+          "path": "textures/starter_tesla_bench_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_bench_normal_2k.png",
+          "path": "textures/starter_tesla_bench_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_bench_normal_4k.png",
+          "path": "textures/starter_tesla_bench_normal_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_tesla_brick_albedo",
+      "objectName": "Tesla Brick Wall",
+      "slot": "albedo",
+      "file": "starter_tesla_brick_albedo.png",
+      "path": "textures/starter_tesla_brick_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_brick_albedo_512.png",
+          "path": "textures/starter_tesla_brick_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_brick_albedo_1k.png",
+          "path": "textures/starter_tesla_brick_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_brick_albedo_2k.png",
+          "path": "textures/starter_tesla_brick_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_brick_albedo_4k.png",
+          "path": "textures/starter_tesla_brick_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_tesla_brick_roughness",
+      "objectName": "Tesla Brick Wall",
+      "slot": "roughness",
+      "file": "starter_tesla_brick_roughness.png",
+      "path": "textures/starter_tesla_brick_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_brick_roughness_512.png",
+          "path": "textures/starter_tesla_brick_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_brick_roughness_1k.png",
+          "path": "textures/starter_tesla_brick_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_brick_roughness_2k.png",
+          "path": "textures/starter_tesla_brick_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_brick_roughness_4k.png",
+          "path": "textures/starter_tesla_brick_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_tesla_brick_normal",
+      "objectName": "Tesla Brick Wall",
+      "slot": "normal",
+      "file": "starter_tesla_brick_normal.png",
+      "path": "textures/starter_tesla_brick_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_brick_normal_512.png",
+          "path": "textures/starter_tesla_brick_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_brick_normal_1k.png",
+          "path": "textures/starter_tesla_brick_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_brick_normal_2k.png",
+          "path": "textures/starter_tesla_brick_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_brick_normal_4k.png",
+          "path": "textures/starter_tesla_brick_normal_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_tesla_copper_albedo",
+      "objectName": "Tesla Coil",
+      "slot": "albedo",
+      "file": "starter_tesla_copper_albedo.png",
+      "path": "textures/starter_tesla_copper_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_copper_albedo_512.png",
+          "path": "textures/starter_tesla_copper_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_copper_albedo_1k.png",
+          "path": "textures/starter_tesla_copper_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_copper_albedo_2k.png",
+          "path": "textures/starter_tesla_copper_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_copper_albedo_4k.png",
+          "path": "textures/starter_tesla_copper_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_tesla_copper_roughness",
+      "objectName": "Tesla Coil",
+      "slot": "roughness",
+      "file": "starter_tesla_copper_roughness.png",
+      "path": "textures/starter_tesla_copper_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_copper_roughness_512.png",
+          "path": "textures/starter_tesla_copper_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_copper_roughness_1k.png",
+          "path": "textures/starter_tesla_copper_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_copper_roughness_2k.png",
+          "path": "textures/starter_tesla_copper_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_copper_roughness_4k.png",
+          "path": "textures/starter_tesla_copper_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_tesla_copper_metalness",
+      "objectName": "Tesla Coil",
+      "slot": "metalness",
+      "file": "starter_tesla_copper_metalness.png",
+      "path": "textures/starter_tesla_copper_metalness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_copper_metalness_512.png",
+          "path": "textures/starter_tesla_copper_metalness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_copper_metalness_1k.png",
+          "path": "textures/starter_tesla_copper_metalness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_copper_metalness_2k.png",
+          "path": "textures/starter_tesla_copper_metalness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_copper_metalness_4k.png",
+          "path": "textures/starter_tesla_copper_metalness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_tesla_copper_normal",
+      "objectName": "Tesla Coil",
+      "slot": "normal",
+      "file": "starter_tesla_copper_normal.png",
+      "path": "textures/starter_tesla_copper_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_copper_normal_512.png",
+          "path": "textures/starter_tesla_copper_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_copper_normal_1k.png",
+          "path": "textures/starter_tesla_copper_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_copper_normal_2k.png",
+          "path": "textures/starter_tesla_copper_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_copper_normal_4k.png",
+          "path": "textures/starter_tesla_copper_normal_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_tesla_door_tex_albedo",
+      "objectName": "Tesla Lab Door",
+      "slot": "albedo",
+      "file": "starter_tesla_door_tex_albedo.png",
+      "path": "textures/starter_tesla_door_tex_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_door_tex_albedo_512.png",
+          "path": "textures/starter_tesla_door_tex_albedo_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_door_tex_albedo_1k.png",
+          "path": "textures/starter_tesla_door_tex_albedo_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_door_tex_albedo_2k.png",
+          "path": "textures/starter_tesla_door_tex_albedo_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_door_tex_albedo_4k.png",
+          "path": "textures/starter_tesla_door_tex_albedo_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_tesla_door_tex_roughness",
+      "objectName": "Tesla Lab Door",
+      "slot": "roughness",
+      "file": "starter_tesla_door_tex_roughness.png",
+      "path": "textures/starter_tesla_door_tex_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_door_tex_roughness_512.png",
+          "path": "textures/starter_tesla_door_tex_roughness_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_door_tex_roughness_1k.png",
+          "path": "textures/starter_tesla_door_tex_roughness_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_door_tex_roughness_2k.png",
+          "path": "textures/starter_tesla_door_tex_roughness_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_door_tex_roughness_4k.png",
+          "path": "textures/starter_tesla_door_tex_roughness_4k.png",
+          "maxPx": 1024
+        }
+      ]
+    },
+    {
+      "id": "starter_tesla_door_tex_normal",
+      "objectName": "Tesla Lab Door",
+      "slot": "normal",
+      "file": "starter_tesla_door_tex_normal.png",
+      "path": "textures/starter_tesla_door_tex_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_512",
+          "file": "starter_tesla_door_tex_normal_512.png",
+          "path": "textures/starter_tesla_door_tex_normal_512.png",
+          "maxPx": 128
+        },
+        {
+          "suffix": "_1k",
+          "file": "starter_tesla_door_tex_normal_1k.png",
+          "path": "textures/starter_tesla_door_tex_normal_1k.png",
+          "maxPx": 256
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_tesla_door_tex_normal_2k.png",
+          "path": "textures/starter_tesla_door_tex_normal_2k.png",
+          "maxPx": 512
+        },
+        {
+          "suffix": "_4k",
+          "file": "starter_tesla_door_tex_normal_4k.png",
+          "path": "textures/starter_tesla_door_tex_normal_4k.png",
+          "maxPx": 1024
+        }
+      ]
     }
   ],
   "exportDir": "textures",
   "tcRealism": "r8",
-  "exportedAt": "2026-07-05T23:35:00.887Z"
+  "exportedAt": "2026-07-06T00:22:30.838Z"
 }

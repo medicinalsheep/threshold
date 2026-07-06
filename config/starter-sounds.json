@@ -913,6 +913,30 @@
       "oggBytes": null,
       "preferred": "wav",
       "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_tesla_coil_hum",
+      "name": "Tesla Coil Hum",
+      "wav": "sounds/starter/tesla_coil_hum.wav",
+      "ogg": null,
+      "category": "tesla",
+      "vehicle": null,
+      "bytes": 176444,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
+    },
+    {
+      "id": "starter_tesla_spark",
+      "name": "Tesla Spark",
+      "wav": "sounds/starter/tesla_spark.wav",
+      "ogg": null,
+      "category": "tesla",
+      "vehicle": null,
+      "bytes": 18566,
+      "oggBytes": null,
+      "preferred": "wav",
+      "license": "Original — Threshold procedural"
     }
   ],
   "realAmbient": true,

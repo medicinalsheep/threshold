@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v7.1.0 — Phase 17 Interior / RP (radio chatter, coffee murmur, door, elevator, cash register).
+**Current:** v7.3.0 — Phase 18.1 Tesla lab intro shell (coil, doors, PBR, ambient, flythrough).
 
 **North star:** One world, every device, every render tier — retro modes for reach, Hyper for realism, smart LOD so low-end hardware still feels intentional.
 
@@ -500,6 +500,18 @@ await World.playCutscene('video/intro.mp4', {
 | 17.4 Elevator ding + cash register | ✅ |
 
 See [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) iteration 5 shipped.
+
+### Phase 18 — Tesla lab intro makeover
+
+| Step | Status | Version |
+|------|--------|---------|
+| 18.1 Lab shell + coil + doors + intro flythrough | ✅ | v7.3.0 |
+| 18.2 Interactables (rotary switch, tubes, jars) | ⏳ | v7.4 |
+| 18.3 Lab coat NPC + intro captions | ⏳ | v7.5 |
+| 18.4 Annex weather + skylight rain | ⏳ | v7.6 |
+| 18.5 Blender GLB + mesh LOD | ⏳ | v7.7 |
+
+See [PHASE_18_TESLA_LAB.md](PHASE_18_TESLA_LAB.md) · [DEFAULT_ASSETS_ROADMAP.md](DEFAULT_ASSETS_ROADMAP.md).
 
 ```bash
 npm run quickstart

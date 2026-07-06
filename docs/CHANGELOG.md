@@ -1,5 +1,16 @@
 # Changelog
 
+## 7.3.0 — Phase 18.1: Tesla lab intro shell
+
+- **Tesla lab annex** — west of plaza: wood floor, brick north wall, instrument bench, hanging bulbs
+- **Tesla coil** — copper tower with emissive arc pulse, cable runs, random spark SFX
+- **Double doors** — interact + creak SFX, swing anim, colliders on shell + threshold pad
+- **PBR textures** — `starter_tesla_wood`, `starter_tesla_brick`, `starter_tesla_copper` (brick + copper gen styles)
+- **Ambient** — `teslaLabAmbient.js` coil hum zone (6 m) + spark one-shots
+- **Intro flythrough** — 4.8s camera: coil → doors → plaza spawn `(0, 1.2, 2.5)`
+- **Guest sync** — `starter_tesla_coil` marker rebuild in `sync.js`
+- Docs: [PHASE_18_TESLA_LAB.md](PHASE_18_TESLA_LAB.md) · [DEFAULT_ASSETS_ROADMAP.md](DEFAULT_ASSETS_ROADMAP.md)
+
 ## 7.2.1 — UX: proximity panel, camera, F interact, third eye clicks
 
 - **Proximity panel** — draggable + lockable float panel (`#proximity-panel`) like SCENE dock

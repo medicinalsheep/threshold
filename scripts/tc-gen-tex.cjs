@@ -297,6 +297,49 @@ function metalGrateMetal(x, y, w, h) {
     return [Math.min(255, val + n), Math.min(255, val + n), Math.min(255, val + n), 255];
 }
 
+function brickAlbedo(x, y, w, h, pal) {
+    const u = x / w;
+    const v = y / h;
+    const row = Math.floor(v * 10);
+    const col = Math.floor(u * 14);
+    const stagger = row % 2 === 0 ? 0 : 0.5 / 14;
+    const bu = (u + stagger) % (1 / 14);
+    const bv = v % (1 / 10);
+    const mortarX = bu < 0.06 || bu > 0.94;
+    const mortarY = bv < 0.08 || bv > 0.92;
+    const base = mortarX || mortarY ? pal.mortar : (noise(col, row, 145) > 0.55 ? pal.dark : pal.brick);
+    const n = noise(x, y, 147) * 12;
+    return [Math.min(255, base[0] + n), Math.min(255, base[1] + n), Math.min(255, base[2] + n), 255];
+}
+
+function brickRough(x, y, w, h) {
+    const base = 215;
+    const n = noise(x, y, 149) * 22;
+    return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
+}
+
+function copperAlbedo(x, y, w, h, pal) {
+    const u = x / w;
+    const v = y / h;
+    const scratch = noise(x * 2, y * 2, 151) > 0.88;
+    const base = scratch ? pal.edge : noise(x, y, 153) > 0.62 ? pal.shine : pal.patina;
+    const n = noise(x, y, 155) * 14;
+    return [Math.min(255, base[0] + n), Math.min(255, base[1] + n), Math.min(255, base[2] + n), 255];
+}
+
+function copperRough(x, y, w, h) {
+    const base = 128;
+    const n = noise(x, y, 157) * 28;
+    return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
+}
+
+function copperMetal(x, y, w, h) {
+    const base = 210;
+    const n = noise(x, y, 159) * 18;
+    const scratch = noise(x, y, 161) > 0.94 ? -80 : 0;
+    return [Math.min(255, base + n + scratch), Math.min(255, base + n + scratch), Math.min(255, base + n + scratch), 255];
+}
+
 function slotFn(asset, slot) {
     if (asset.style === 'vehicle') {
         if (slot === 'albedo') return (x, y, w, h) => vehAlbedo(x, y, w, h, asset.palette);
@@ -364,6 +407,17 @@ function slotFn(asset, slot) {
         if (slot === 'roughness') return (x, y, w, h) => metalGrateRough(x, y, w, h);
         if (slot === 'metalness') return (x, y, w, h) => metalGrateMetal(x, y, w, h);
         if (slot === 'normal') return (x, y) => surfaceNormal(x, y, 133, 0.7);
+    }
+    if (asset.style === 'brick') {
+        if (slot === 'albedo') return (x, y, w, h) => brickAlbedo(x, y, w, h, asset.palette);
+        if (slot === 'roughness') return (x, y, w, h) => brickRough(x, y, w, h);
+        if (slot === 'normal') return (x, y) => surfaceNormal(x, y, 163, 0.82);
+    }
+    if (asset.style === 'copper') {
+        if (slot === 'albedo') return (x, y, w, h) => copperAlbedo(x, y, w, h, asset.palette);
+        if (slot === 'roughness') return (x, y, w, h) => copperRough(x, y, w, h);
+        if (slot === 'metalness') return (x, y, w, h) => copperMetal(x, y, w, h);
+        if (slot === 'normal') return (x, y) => surfaceNormal(x, y, 165, 0.65);
     }
     return () => [128, 128, 128, 255];
 }

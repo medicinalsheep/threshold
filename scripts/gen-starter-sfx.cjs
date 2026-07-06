@@ -589,6 +589,36 @@ function synthElevatorDing(sec = 0.65) {
     return out;
 }
 
+function synthTeslaCoilHum(sec = 4.0) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const hum = Math.sin(2 * Math.PI * 52 * t) * 0.28
+            + Math.sin(2 * Math.PI * 104 * t) * 0.14
+            + Math.sin(2 * Math.PI * 208 * t) * 0.06;
+        const arc = Math.sin(2 * Math.PI * 2400 * t) * Math.max(0, Math.sin(2 * Math.PI * 7.5 * t)) * 0.04;
+        const buzz = (Math.random() * 2 - 1) * 0.06;
+        const wobble = 0.78 + 0.22 * Math.sin(2 * Math.PI * 1.4 * t);
+        const fade = Math.min(1, i / (SR * 0.15), (n - i) / (SR * 0.15));
+        out[i] = (hum + arc + buzz) * wobble * 0.42 * fade;
+    }
+    return out;
+}
+
+function synthTeslaSpark(sec = 0.42) {
+    const n = Math.floor(SR * sec);
+    const out = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) {
+        const t = i / SR;
+        const crack = (Math.random() * 2 - 1) * 0.65 * Math.exp(-t * 18);
+        const zap = Math.sin(2 * Math.PI * (800 + t * 2200) * t) * Math.exp(-t * 12) * 0.45;
+        const tail = Math.sin(2 * Math.PI * 180 * t) * Math.exp(-t * 6) * 0.18;
+        out[i] = (crack + zap + tail) * 0.62;
+    }
+    return out;
+}
+
 function synthCashRegister(sec = 0.75) {
     const n = Math.floor(SR * sec);
     const out = new Float32Array(n);
@@ -626,6 +656,8 @@ const CLIPS = [
     { id: 'starter_interior_door_creak', name: 'Door Creak', file: 'interior_door_creak', synth: synthDoorCreak, category: 'interior' },
     { id: 'starter_interior_elevator_ding', name: 'Elevator Ding', file: 'interior_elevator_ding', synth: synthElevatorDing, category: 'interior' },
     { id: 'starter_interior_cash_register', name: 'Cash Register', file: 'interior_cash_register', synth: synthCashRegister, category: 'interior' },
+    { id: 'starter_tesla_coil_hum', name: 'Tesla Coil Hum', file: 'tesla_coil_hum', synth: synthTeslaCoilHum, category: 'tesla' },
+    { id: 'starter_tesla_spark', name: 'Tesla Spark', file: 'tesla_spark', synth: synthTeslaSpark, category: 'tesla' },
 ];
 
 function tryCompress(wavPath, oggPath) {

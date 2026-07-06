@@ -326,6 +326,71 @@
         "ring": [52, 54, 58]
       },
       "style": "concrete"
+    },
+    {
+      "slug": "starter_tesla_wood",
+      "objectName": "Tesla Lab Floor",
+      "tcEd": "tc-lite",
+      "surfaceType": "wood",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "grain": [102, 78, 52],
+        "dark": [72, 52, 34],
+        "ring": [122, 94, 64]
+      },
+      "style": "wood"
+    },
+    {
+      "slug": "starter_tesla_bench",
+      "objectName": "Tesla Bench",
+      "tcEd": "tc-lite",
+      "surfaceType": "wood",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "grain": [88, 66, 44],
+        "dark": [58, 40, 26],
+        "ring": [108, 82, 56]
+      },
+      "style": "wood"
+    },
+    {
+      "slug": "starter_tesla_brick",
+      "objectName": "Tesla Brick Wall",
+      "tcEd": "tc-lite",
+      "surfaceType": "concrete",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "brick": [138, 72, 52],
+        "mortar": [98, 92, 86],
+        "dark": [108, 58, 42]
+      },
+      "style": "brick"
+    },
+    {
+      "slug": "starter_tesla_copper",
+      "objectName": "Tesla Coil",
+      "tcEd": "tc-lite",
+      "surfaceType": "metal",
+      "slots": ["albedo", "roughness", "metalness", "normal"],
+      "palette": {
+        "shine": [196, 128, 72],
+        "patina": [118, 82, 48],
+        "edge": [228, 168, 98]
+      },
+      "style": "copper"
+    },
+    {
+      "slug": "starter_tesla_door_tex",
+      "objectName": "Tesla Lab Door",
+      "tcEd": "tc-lite",
+      "surfaceType": "wood",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "grain": [96, 72, 48],
+        "dark": [66, 46, 30],
+        "ring": [112, 86, 58]
+      },
+      "style": "wood"
     }
   ]
 }

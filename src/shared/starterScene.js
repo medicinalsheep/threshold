@@ -522,22 +522,24 @@ export function bootstrapStarterScene() {
     window.buildStarterWildlife15?.();
     window.buildStarterUrban16?.();
     window.buildStarterInterior17?.();
+    window.buildStarterTeslaLab18?.();
     window.StarterAnim?.wireScene?.();
     window.StarterEnv14?.wireAnims?.();
     window.StarterWildlife15?.wireAnims?.();
     window.StarterUrban16?.wireAnims?.();
     window.StarterInterior17?.wireAnims?.();
+    window.StarterTeslaLab18?.wireAnims?.();
 
     if (terminal && modelKiosk) {
-        window.UI?.status?.('FiveM controls — AI terminal radio · coffee nook west · shop & elevator RP props');
+        window.UI?.status?.('Tesla lab west — coil hum · double doors to plaza · F interact');
     }
 
     State.ctxTargetPos.set(0, 0, 0);
-    State.introFrom = { x: 0, y: 18, z: 22 };
-    State.introTo = { x: 8, y: 7, z: 10 };
-    State.introTarget = { x: 0, y: 1.2, z: 0 };
+    State.introFrom = { x: -8.4, y: 2.6, z: 0.4 };
+    State.introTo = { x: -0.8, y: 1.55, z: 3.0 };
+    State.introTarget = { x: 0, y: 1.2, z: 2.5 };
     State.introStart = performance.now();
-    State.introDuration = 2800;
+    State.introDuration = 4800;
     State.introPlaying = true;
 
     if (Engine.camera && Engine.controls) {
@@ -559,8 +561,8 @@ function scheduleStarterPlayerSpawn() {
     const delay = (State.introDuration || 2800) + 350;
     setTimeout(() => {
         if (PlayerController.spawned) return;
-        const pos = State.introTarget || { x: 0, y: 1.2, z: 0 };
-        PlayerController.spawn(pos.x, Math.max(pos.y, 1.2), pos.z + 1.8).catch(() => {});
+        const pos = State.introTarget || { x: 0, y: 1.2, z: 2.5 };
+        PlayerController.spawn(pos.x, Math.max(pos.y, 1.2), pos.z + 0.6).catch(() => {});
         State.controlMode = 'walk';
         State.viewMode = 'tps';
         window.UI?.updateControlMode?.();

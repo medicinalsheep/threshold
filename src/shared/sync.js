@@ -205,6 +205,10 @@ export const Sync = {
                     window.buildStarterInterior17?.();
                     window.StarterInterior17?.wireAnims?.();
                 }
+                if (isStarterWorld && !window.State?.objects?.some((o) => o.userData?.id === 'starter_tesla_coil')) {
+                    window.buildStarterTeslaLab18?.();
+                    window.StarterTeslaLab18?.wireAnims?.();
+                }
             }
             if (state.weather) {
                 window.WeatherSystem?.applyNetworkState?.(state.weather, { smooth: false });

@@ -51,6 +51,8 @@ import '../shared/starterEnv14.js';
 import '../shared/starterWildlife15.js';
 import '../shared/starterUrban16.js';
 import '../shared/starterInterior17.js';
+import '../shared/starterTeslaLab18.js';
+import '../shared/teslaLabAmbient.js';
 import '../shared/wildlifeAmbient.js';
 import '../shared/urbanAmbient.js';
 import '../shared/interiorAmbient.js';
