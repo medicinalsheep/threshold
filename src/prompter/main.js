@@ -45,7 +45,6 @@ export function initPrompter() {
 
     const grokBtn = document.getElementById('btn-prompt-grok');
     if (grokBtn) {
-        grokBtn.style.display = IS_GROK_EDITION ? 'inline-block' : 'none';
         grokBtn.addEventListener('click', () => Prompter.generateWithGrok());
     }
 
@@ -167,19 +166,16 @@ OUTPUT REQUIREMENTS:
     },
 
     generateWithGrok: async function () {
-        if (!Auth.isLoggedIn()) {
-            document.getElementById('auth-overlay')?.style.setProperty('display', 'flex');
-            return;
-        }
-
         const { idea, prompt } = this.buildPrompt();
         const outputBox = document.getElementById('prompt-output');
         const grokBtn = document.getElementById('btn-prompt-grok');
         const flash = document.getElementById('prompt-flash');
 
         outputBox.value = prompt;
-        grokBtn.disabled = true;
-        grokBtn.textContent = 'GENERATING...';
+        if (grokBtn) {
+            grokBtn.disabled = true;
+            grokBtn.textContent = 'GENERATING...';
+        }
 
         try {
             const script = await generateScript(prompt, idea || 'extend current scene');
@@ -188,13 +184,18 @@ OUTPUT REQUIREMENTS:
             flash.style.opacity = 1;
             setTimeout(() => { flash.style.opacity = 0; }, 2000);
         } catch (err) {
-            outputBox.value = `${prompt}\n\n/* GROK ERROR: ${err.message} */`;
+            if (!Auth.isLoggedIn() && IS_GROK_EDITION) {
+                document.getElementById('auth-overlay')?.style.setProperty('display', 'flex');
+            }
+            outputBox.value = `${prompt}\n\n/* AGENT ERROR: ${err.message} */`;
             flash.textContent = 'ERROR';
             flash.style.opacity = 1;
             setTimeout(() => { flash.style.opacity = 0; }, 3000);
         } finally {
-            grokBtn.disabled = false;
-            grokBtn.textContent = 'RUN WITH GROK';
+            if (grokBtn) {
+                grokBtn.disabled = false;
+                grokBtn.textContent = 'RUN AGENT (tiered)';
+            }
         }
     },
 

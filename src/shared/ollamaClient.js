@@ -50,6 +50,33 @@ export const OllamaClient = {
         const data = await res.json();
         return (data.response || '').trim();
     },
+
+    async chat(system, user, options = {}) {
+        const model = options.model || this.defaultModel;
+        const res = await fetch(`${this.baseUrl}/api/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model,
+                messages: [
+                    { role: 'system', content: system },
+                    { role: 'user', content: user },
+                ],
+                stream: false,
+                options: {
+                    temperature: options.temperature ?? 0.35,
+                    num_predict: options.maxTokens ?? 1024,
+                },
+            }),
+            signal: AbortSignal.timeout(options.timeoutMs ?? 120000),
+        });
+        if (!res.ok) {
+            const t = await res.text();
+            throw new Error(`Ollama chat (${res.status}): ${t.slice(0, 120)}`);
+        }
+        const data = await res.json();
+        return (data.message?.content || '').trim();
+    },
 };
 
 window.OllamaClient = OllamaClient;

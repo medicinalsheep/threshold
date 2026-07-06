@@ -85,6 +85,8 @@ import { NpcAgent } from '../grok/npcAgent.js';
 import { DevAgent } from '../grok/devAgent.js';
 import { OllamaDevAgent } from '../ollama/devAgent.js';
 import { AgentStatus } from '../shared/agentStatus.js';
+import { AgentRouter } from '../shared/agentRouter.js';
+import { AgentBenchmark } from '../shared/agentBenchmark.js';
 import { Auth } from '../auth/main.js';
 import { Walkthrough } from '../shared/walkthrough.js';
 import '../shared/guidedSession.js';
@@ -1875,10 +1877,13 @@ const UI = {
         });
         document.getElementById('agent-attach-npc')?.addEventListener('click', () => UI.attachNpcAgent());
         document.getElementById('agent-npc-talk')?.addEventListener('click', () => UI.talkToNpcAgent());
+        document.getElementById('agent-smart-suggest')?.addEventListener('click', () => UI.smartDevSuggest());
+        document.getElementById('agent-smart-apply')?.addEventListener('click', () => UI.smartDevApply());
         document.getElementById('agent-dev-suggest')?.addEventListener('click', () => UI.devAgentSuggest());
         document.getElementById('agent-dev-apply')?.addEventListener('click', () => UI.devAgentApply());
         document.getElementById('agent-ollama-suggest')?.addEventListener('click', () => UI.ollamaDevSuggest());
         document.getElementById('agent-ollama-apply')?.addEventListener('click', () => UI.ollamaDevApply());
+        document.getElementById('agent-benchmark-run')?.addEventListener('click', () => UI.runAgentBenchmark());
         document.getElementById('agent-local-save')?.addEventListener('click', () => UI.saveLocalAgent());
         document.getElementById('agent-status-refresh')?.addEventListener('click', () => UI.refreshAgentStatus());
         document.getElementById('agent-xai-save')?.addEventListener('click', () => UI.saveAgentXaiKey());
@@ -2310,6 +2315,55 @@ const UI = {
         } catch (e) {
             if (replyEl) replyEl.textContent = '';
             this.status(e.message || 'NPC talk failed');
+        }
+    },
+    smartDevSuggest: async function () {
+        try {
+            const input = document.getElementById('comp-input')?.value?.trim();
+            if (!input) throw new Error('Compiler input is empty');
+            const result = await AgentRouter.runTask('dev_suggest', { code: input });
+            const out = document.getElementById('comp-output');
+            if (out) out.value = result.code;
+            document.querySelector('[data-target="view-compiler"]')?.click();
+            this.status(`Smart dev (${result.tier}/${result.provider}/${result.model}, ${result.ms}ms)`);
+            this.refreshAgentStatus();
+        } catch (e) {
+            this.status(e.message || 'Smart dev failed');
+        }
+    },
+    smartDevApply: async function () {
+        try {
+            const input = document.getElementById('comp-input')?.value?.trim();
+            if (!input) throw new Error('Compiler input is empty');
+            const result = await AgentRouter.runTask('dev_suggest', { code: input });
+            const out = document.getElementById('comp-output');
+            const inp = document.getElementById('comp-input');
+            if (inp) inp.value = result.code;
+            if (out) out.value = result.code;
+            window.Compiler?.transpile?.();
+            document.querySelector('[data-target="view-compiler"]')?.click();
+            this.status(`Smart dev applied (${result.model})`);
+            this.refreshAgentStatus();
+        } catch (e) {
+            this.status(e.message || 'Smart dev apply failed');
+        }
+    },
+    runAgentBenchmark: async function () {
+        const el = document.getElementById('agent-benchmark-results');
+        if (el) el.innerHTML = '<p class="insert-hint">Running workflow benchmark…</p>';
+        try {
+            const summary = await AgentBenchmark.runWorkflow({
+                onProgress: (msg) => {
+                    if (el) el.innerHTML = `<p class="insert-hint">${msg}</p>`;
+                    this.status(msg);
+                },
+            });
+            if (el) el.innerHTML = AgentBenchmark.formatSummaryHtml(summary);
+            this.status(`Benchmark ${summary.pct}% (${summary.totalScore}/${summary.totalMax})`);
+            this.refreshAgentStatus();
+        } catch (e) {
+            if (el) el.innerHTML = `<p class="insert-hint">Benchmark failed: ${e.message}</p>`;
+            this.status(e.message || 'Benchmark failed');
         }
     },
     devAgentSuggest: async function () {

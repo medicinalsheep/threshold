@@ -1,0 +1,41 @@
+{
+  "format": "threshold-agent-tasks",
+  "version": 1,
+  "tiers": {
+    "small": {
+      "label": "Small — chat, classify, status",
+      "maxTokens": 128,
+      "temperature": 0.5,
+      "ollamaModels": ["llama3.2:3b", "gemma3:4b", "phi3:mini"],
+      "grok": false
+    },
+    "medium": {
+      "label": "Medium — patches, compiler fixes",
+      "maxTokens": 1024,
+      "temperature": 0.35,
+      "ollamaModels": ["qwen2.5-coder:7b", "llama3.2:3b", "codellama:7b"],
+      "grok": "fallback"
+    },
+    "large": {
+      "label": "Large — full scene scripts",
+      "maxTokens": 2048,
+      "temperature": 0.4,
+      "ollamaModels": ["llama3.1:8b", "qwen2.5-coder:7b", "llama3.2:3b"],
+      "grokPreferred": true
+    }
+  },
+  "tasks": {
+    "npc_chat": { "tier": "small", "label": "NPC dialogue" },
+    "intent_classify": { "tier": "small", "label": "Route user intent" },
+    "dev_patch": { "tier": "medium", "label": "Fix compiler snippet" },
+    "dev_suggest": { "tier": "medium", "label": "Dev agent suggest" },
+    "prompt_snippet": { "tier": "medium", "label": "PromptGen partial" },
+    "scene_script": { "tier": "large", "label": "Full scene generation" },
+    "prompter_generate": { "tier": "large", "label": "PromptGen run" }
+  },
+  "training": {
+    "modelfile": "config/threshold-dev.Modelfile",
+    "docs": "docs/AGENT_ROUTING.md",
+    "note": "Fine-tune on Threshold API examples + your scene exports; use ollama create"
+  }
+}

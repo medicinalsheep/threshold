@@ -1,4 +1,4 @@
-# Streamlined dev path (v9.12)
+# Streamlined dev path (v9.13)
 
 One linear path from lobby to shipped build — host/join, agents, creative tools, export.
 
@@ -36,15 +36,25 @@ Open **SCENE dock → AGENTS** tab. Status chips show what is ready:
 - Keys are **per-tab** — logging into Grok in another tab does **not** auto-auth Threshold.
 - Keys go only to `api.x.ai`; never commit them to git.
 
-### Ollama (local, no key)
+### Tiered models (small / medium / large)
+
+| Tier | Use for | Example model |
+|------|---------|---------------|
+| Small | NPC chat | `llama3.2:3b` |
+| Medium | Compiler patches | `qwen2.5-coder:7b` |
+| Large | Full scene scripts | Grok or `llama3.1:8b` |
+
+Set tiers in AGENTS panel → **SAVE TIERS**. Use **SMART DEV** or **RUN AGENT (tiered)** for automatic routing.
 
 ```bash
-ollama serve          # if not already running
-ollama pull llama3.2:3b
-npm run ollama:verify # optional smoke test
+ollama serve
+npm run ollama:benchmark   # rank models for your workflows
+npm run ollama:verify      # quick smoke
 ```
 
-Use **OLLAMA DEV: SUGGEST CODE** for Compiler suggestions. Ollama does **not** edit PNG/KTX textures — use GIMP workflow below.
+Custom model: `ollama create threshold-dev -f config/threshold-dev.Modelfile` — see [AGENT_ROUTING.md](AGENT_ROUTING.md).
+
+Ollama does **not** edit textures — use GIMP workflow below.
 
 ### Local script agent
 

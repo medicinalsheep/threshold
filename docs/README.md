@@ -1,6 +1,6 @@
 # Threshold documentation index
 
-**Version:** 9.12.0 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 9.13.0 · **Live:** https://medicinalsheep.github.io/threshold/
 
 This page is the **full scope map** — what ships today, what is TC vs showcase vs yours, and where to read more.
 
@@ -65,6 +65,7 @@ flowchart TB
 | Play immediately | [README.md](../README.md) Quick start | Live URL → **ENTER** |
 | Clone & develop | [GETTING_STARTED.md](GETTING_STARTED.md) | `npm install` → `npm run quickstart` |
 | Streamlined dev path | [STREAMLINED_DEV.md](STREAMLINED_DEV.md) | Lobby → AGENTS → EXPORT (target-filtered) |
+| Agent tiers & benchmarks | [AGENT_ROUTING.md](AGENT_ROUTING.md) | `ollama:benchmark` · SMART DEV |
 | Showcase + controls | [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | PLAY mode · gateway · survival |
 | Creative loop | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | BUILD → INSERT SHOWCASE · PromptGen |
 | Action controls | [CONTROLS.md](CONTROLS.md) | LMB aim · RMB shoot · F interact |

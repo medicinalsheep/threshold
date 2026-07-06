@@ -1,0 +1,47 @@
+{
+  "format": "threshold-agent-benchmark",
+  "version": 1,
+  "probes": [
+    {
+      "id": "npc_greeting",
+      "task": "npc_chat",
+      "tier": "small",
+      "payload": { "npcName": "Nikola", "persona": "eccentric inventor", "message": "Hello, who are you?" },
+      "expectPatterns": ["nikola", "inventor", "hello", "hi", "welcome"],
+      "minLength": 8
+    },
+    {
+      "id": "api_recall",
+      "task": "intent_classify",
+      "tier": "small",
+      "payload": { "message": "spawn a red box in the scene" },
+      "expectPatterns": ["world.createobject", "createobject", "box", "spawn"],
+      "minLength": 4
+    },
+    {
+      "id": "compiler_fix",
+      "task": "dev_patch",
+      "tier": "medium",
+      "payload": { "code": "World.createObject({ nam: 'crate', type: 'box', color: 0xff0000 });" },
+      "expectPatterns": ["name", "createobject"],
+      "requireJs": true
+    },
+    {
+      "id": "scene_snippet",
+      "task": "dev_suggest",
+      "tier": "medium",
+      "payload": { "code": "// add a spinning green sphere at y=2\n" },
+      "expectPatterns": ["sphere", "createobject", "rotate", "rotation"],
+      "requireJs": true
+    },
+    {
+      "id": "full_scene",
+      "task": "scene_script",
+      "tier": "large",
+      "payload": { "idea": "Add two colored boxes and log when player spawns" },
+      "expectPatterns": ["createobject", "playercontroller", "spawn"],
+      "requireJs": true,
+      "minLength": 40
+    }
+  ]
+}

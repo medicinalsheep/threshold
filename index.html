@@ -547,7 +547,17 @@
                     <button id="agent-xai-save" type="button">SAVE</button>
                     <button id="agent-xai-clear" type="button">CLEAR</button>
                 </div>
-                <label class="insert-hint">Ollama model</label>
+                <p class="insert-hint" style="margin:0 0 4px;"><strong>Model tiers</strong> — small tasks → fast model, large → Grok or 8B+</p>
+                <div class="prop-row" style="margin-bottom:4px;"><label style="min-width:52px;">Small</label><select id="agent-tier-small" class="insert-input" style="flex:1;"><option value="auto">auto</option></select></div>
+                <div class="prop-row" style="margin-bottom:4px;"><label style="min-width:52px;">Medium</label><select id="agent-tier-medium" class="insert-input" style="flex:1;"><option value="auto">auto</option></select></div>
+                <div class="prop-row" style="margin-bottom:6px;"><label style="min-width:52px;">Large</label><select id="agent-tier-large" class="insert-input" style="flex:1;"><option value="auto">auto</option></select></div>
+                <label class="export-wizard-check" style="margin-bottom:6px;"><input type="checkbox" id="agent-prefer-grok-large" checked> Prefer Grok for large tasks when key set</label>
+                <div class="prop-row" style="margin-bottom:6px;">
+                    <button id="agent-tier-save" type="button" style="flex:1;">SAVE TIERS</button>
+                    <button id="agent-benchmark-run" type="button" style="flex:1;">RUN BENCHMARK</button>
+                </div>
+                <div id="agent-benchmark-results" class="agent-benchmark-results"></div>
+                <label class="insert-hint">Legacy default Ollama model</label>
                 <select id="agent-ollama-model" class="insert-input" style="margin-bottom:6px;"><option value="">— probe on refresh —</option></select>
                 <label class="insert-hint">Grok NPC persona</label>
                 <input type="text" id="agent-npc-persona" class="insert-input" placeholder="Friendly merchant, quest giver..." style="margin-bottom:6px;">
@@ -558,6 +568,8 @@
                 <input type="text" id="agent-npc-input" class="insert-input" placeholder="Say something to NPC..." style="margin:6px 0;">
                 <p id="agent-npc-reply" class="insert-hint" style="min-height:2.5em;margin:0 0 8px;"></p>
                 <hr style="border-color:var(--border-color);margin:8px 0;">
+                <button id="agent-smart-suggest" type="button" style="width:100%;margin-bottom:6px;">SMART DEV: SUGGEST (tiered)</button>
+                <button id="agent-smart-apply" type="button" style="width:100%;margin-bottom:6px;">SMART DEV: APPLY TO COMPILER</button>
                 <button id="agent-dev-suggest" type="button" style="width:100%;margin-bottom:6px;">GROK DEV: SUGGEST CODE</button>
                 <button id="agent-dev-apply" type="button" style="width:100%;margin-bottom:6px;">GROK DEV: APPLY TO COMPILER</button>
                 <button id="agent-ollama-suggest" type="button" style="width:100%;margin-bottom:6px;">OLLAMA DEV: SUGGEST CODE</button>
@@ -996,7 +1008,7 @@
                 <textarea id="prompt-output" class="prompt-textarea" readonly></textarea>
                 <div class="prompt-footer">
                     <span id="prompt-flash" style="color:var(--accent-color); opacity:0; transition:opacity 0.5s; font-weight:bold;">COPIED</span>
-                    <button id="btn-prompt-grok" style="display:none;">RUN WITH GROK</button>
+                    <button id="btn-prompt-grok">RUN AGENT (tiered)</button>
                     <button id="btn-prompt-copy">COPY PROMPT</button>
                 </div>
             </main>

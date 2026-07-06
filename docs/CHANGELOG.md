@@ -1,5 +1,16 @@
 # Changelog
 
+## 9.13.0 — Tiered agent router + workflow benchmarks
+
+- **`AgentRouter`** — small/medium/large task routing (Ollama first, Grok fallback/large)
+- **`agentPrompts.js`** — per-task prompt engineering (brief vs full scene context)
+- **`config/agent-tasks.json`**, **`config/agent-benchmark.json`** — task + probe definitions
+- **`npm run ollama:benchmark`** — rank local models against Threshold workflows
+- **AGENTS panel** — tier dropdowns, RUN BENCHMARK, SMART DEV, route chip
+- **PromptGen** — `RUN AGENT (tiered)` uses router (Ollama or Grok)
+- **`config/threshold-dev.Modelfile`** — custom Ollama model template
+- **`docs/AGENT_ROUTING.md`** — tiers, training path, provider rules
+
 ## 9.12.0 — Streamlined dev + agent status + export targets
 
 - **EXPORT TARGETS** — default Web only; SHIP step shows `buildShipCliLines()` filtered by checked platforms + secrets checklist
