@@ -60,6 +60,63 @@ function enterSoloBuild() {
     if (sel) sel.value = 'grid';
 }
 
+async function copyLobbyText(text, okMsg, failMsg) {
+    if (!text) return false;
+    try {
+        await navigator.clipboard.writeText(text);
+        return okMsg;
+    } catch {
+        return failMsg || text;
+    }
+}
+
+function showLobbySharePanel(roomId, passcode = '') {
+    const form = document.getElementById('lobby-session-form');
+    const panel = document.getElementById('lobby-share-panel');
+    const codeEl = document.getElementById('lobby-share-code');
+    const linkEl = document.getElementById('lobby-share-link');
+    const passHint = document.getElementById('lobby-share-pass-hint');
+    const statusEl = document.getElementById('lobby-share-status');
+
+    form?.classList.add('hidden');
+    panel?.classList.remove('hidden');
+
+    const code = normalizeRoomCode(roomId);
+    const link = Network.getShareUrl();
+    if (codeEl) codeEl.value = code;
+    if (linkEl) linkEl.value = link;
+    if (statusEl) {
+        statusEl.textContent = passcode
+            ? 'Session live — share code + passcode with friends'
+            : 'Session live — copy code or link below';
+    }
+    if (passHint) passHint.classList.toggle('hidden', !passcode);
+}
+
+function hideLobbySharePanel() {
+    document.getElementById('lobby-session-form')?.classList.remove('hidden');
+    document.getElementById('lobby-share-panel')?.classList.add('hidden');
+}
+
+function bindLobbySharePanel(setStatus, enterApp) {
+    document.getElementById('lobby-copy-code')?.addEventListener('click', async () => {
+        const code = document.getElementById('lobby-share-code')?.value || '';
+        const msg = await copyLobbyText(code, 'Room code copied', code);
+        setStatus(msg);
+    });
+
+    document.getElementById('lobby-copy-link')?.addEventListener('click', async () => {
+        const link = document.getElementById('lobby-share-link')?.value || Network.getShareUrl();
+        const msg = await copyLobbyText(link, 'Invite link copied — send to friends', link);
+        setStatus(msg);
+    });
+
+    document.getElementById('lobby-enter-session')?.addEventListener('click', () => {
+        hideLobbySharePanel();
+        enterApp();
+    });
+}
+
 export function initLobby(onReady) {
     const overlay = document.getElementById('lobby-overlay');
     const joinInput = document.getElementById('lobby-join-code');
@@ -96,6 +153,8 @@ export function initLobby(onReady) {
         onReady?.();
     };
 
+    bindLobbySharePanel(setStatus, enterApp);
+
     document.getElementById('lobby-create')?.addEventListener('click', async () => {
         setStatus('Creating session...');
         try {
@@ -121,11 +180,10 @@ export function initLobby(onReady) {
             }
             window.Voip?.init?.(voipConfig);
             await window.Voip?.startIfNeeded?.();
-            const passNote = passcode ? ' · passcode required to join' : '';
-            setStatus(`Session live — ${summarizeVoipConfig(voipConfig)}${passNote}`);
             setSelectedTemplateId('grid');
             persistLobbyMode();
-            enterApp();
+            showLobbySharePanel(Network.roomId, passcode);
+            setStatus(`Session live — ${summarizeVoipConfig(voipConfig)} · share invite below`);
         } catch (e) {
             console.error('[lobby] create session', e);
             setStatus(e?.message || String(e) || 'Failed to create session', true);
@@ -202,7 +260,7 @@ export function initLobby(onReady) {
     });
 
     if (urlRoom) {
-        setStatus(`Room code detected: ${normalizeRoomCode(urlRoom)} — tap Join`);
+        setStatus(`Invite link detected — room code filled · tap JOIN (add passcode if host set one)`);
     }
 
     const urlParams = new URLSearchParams(window.location.search);

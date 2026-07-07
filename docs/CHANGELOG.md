@@ -1,5 +1,11 @@
 # Changelog
 
+## 10.9.1 — Touch picker + lobby invite UX
+
+- **Touch + BTN** — in-app action picker replaces `window.prompt` when adding custom touch buttons (UNLOCK layout)
+- **Lobby invite panel** — after CREATE SESSION, hosts see room code + invite link with COPY before entering
+- **Join hints** — clearer copy for invite links, room code format, and passcode on join
+
 ## 10.9.0 — Lighter first-run + optional host passcode
 
 - **Explore-first** — Agent Portal no longer auto-opens; AI button pulses + status nudge instead

@@ -245,17 +245,9 @@ export const TouchControls = {
 
     _wireAddButton() {
         document.getElementById('touch-add-btn')?.addEventListener('click', () => {
-            const action = window.prompt(
-                `Action id (${Object.keys(CONTROL_ACTIONS).slice(0, 8).join(', ')}…)`,
-                'interact',
-            );
-            if (!action) return;
-            if (!CONTROL_ACTIONS[action]) {
-                window.UI?.status?.(`Unknown action "${action}" — pick from Keys menu list`);
-                return;
-            }
-            const label = window.prompt('Button label (1–4 chars)', action.slice(0, 3).toUpperCase()) || 'BTN';
-            this.addCustomButton(action, label);
+            window.TouchActionPicker?.open?.(({ action, label }) => {
+                this.addCustomButton(action, label);
+            }, 'interact');
         });
     },
 

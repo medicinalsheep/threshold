@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.9.0 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.9.1 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -48,12 +48,11 @@ UI reference: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Controls: [CONTROLS.md](CO
 - Action hint copy aligned to corner hubs
 - Optional host passcode at CREATE; changeable in PLAYERS panel
 
-## 10.9.1 — Touch polish (remaining)
+## 10.9.1 — Touch picker + lobby invite ✅
 
-| Item | Deliverable |
-|------|-------------|
-| Touch custom buttons | In-app action picker (replace `window.prompt`) |
-| Lobby copy | Clearer room-code share UX |
+- In-app touch action picker (replaces `window.prompt` on **+ BTN**)
+- Post-CREATE invite panel — room code, link, copy buttons before enter
+- Join hints for invite links and room code format
 
 ---
 

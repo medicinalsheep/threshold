@@ -55,6 +55,7 @@
                     </div>
                 </aside>
                 <main class="lobby-actions-panel">
+                    <div id="lobby-session-form" class="lobby-session-form">
                     <div class="lobby-actions-head">
                         <span class="lobby-actions-label">SESSION</span>
                         <span class="lobby-actions-sub">Host or join · solo · spectate</span>
@@ -66,6 +67,7 @@
                         <button id="lobby-join" class="lobby-btn lobby-btn-join">JOIN</button>
                     </div>
                     <input type="password" id="lobby-join-passcode" class="lobby-input" placeholder="Passcode (if host set one)" maxlength="32" autocomplete="off" spellcheck="false">
+                    <p class="lobby-join-hint">Friends can open your invite link or enter the room code (e.g. <strong>BOB3-KEY12-X7K2</strong>).</p>
                     <details class="lobby-passcode-wrap">
                         <summary>Host passcode (optional)</summary>
                         <label class="lobby-passcode-row">Require passcode to join
@@ -118,6 +120,26 @@
                         <button id="lobby-spectate" class="lobby-btn lobby-btn-spectate">SPECTATE</button>
                     </div>
                     <button id="lobby-play-last-export" class="lobby-btn lobby-btn-ghost lobby-export-play" type="button" title="Open last EXPORT &amp; PLAY tab">▶ PLAY LAST EXPORT</button>
+                    </div>
+                    <div id="lobby-share-panel" class="lobby-share-panel hidden" aria-live="polite">
+                        <div class="lobby-actions-head">
+                            <span class="lobby-actions-label">INVITE</span>
+                            <span class="lobby-actions-sub">Share before friends join</span>
+                        </div>
+                        <p id="lobby-share-status" class="lobby-share-status">Session live — copy code or link below</p>
+                        <label class="lobby-share-label" for="lobby-share-code">Room code</label>
+                        <div class="lobby-share-code-row">
+                            <input type="text" id="lobby-share-code" class="lobby-input lobby-share-code" readonly spellcheck="false">
+                            <button type="button" id="lobby-copy-code" class="lobby-btn lobby-btn-ghost">COPY CODE</button>
+                        </div>
+                        <label class="lobby-share-label" for="lobby-share-link">Invite link</label>
+                        <input type="text" id="lobby-share-link" class="lobby-input" readonly spellcheck="false">
+                        <div class="lobby-share-actions">
+                            <button type="button" id="lobby-copy-link" class="lobby-btn lobby-btn-ghost">COPY LINK</button>
+                            <button type="button" id="lobby-enter-session" class="lobby-btn lobby-btn-primary">ENTER SESSION →</button>
+                        </div>
+                        <p id="lobby-share-pass-hint" class="lobby-voip-hint hidden">Passcode required — tell guests the code you set at CREATE.</p>
+                    </div>
                     <details class="lobby-steps-wrap">
                         <summary>Quick tips</summary>
                         <div class="lobby-steps">
@@ -833,6 +855,26 @@
                     <button type="button" id="help-menu-close" class="btn-sm">✕</button>
                 </div>
                 <div id="help-menu-body" class="help-menu-body"></div>
+            </div>
+        </div>
+
+        <!-- Touch custom button picker -->
+        <div id="touch-action-picker-modal" class="modal-backdrop">
+            <div id="touch-action-picker-sheet" class="panel insert-sheet touch-action-picker-sheet">
+                <div class="insert-header">
+                    <h3 style="margin:0;">Add touch button</h3>
+                    <button id="touch-action-picker-close" type="button">✕</button>
+                </div>
+                <p class="insert-hint" style="margin:0 0 10px;">Pick an action from the Keys menu list — then drag the button on screen (UNLOCK layout).</p>
+                <input type="search" id="touch-action-picker-search" class="insert-input" placeholder="Search actions…" autocomplete="off">
+                <div id="touch-action-picker-grid" class="touch-action-picker-grid"></div>
+                <label class="insert-hint" for="touch-action-picker-label">Button label (1–4 chars)</label>
+                <input type="text" id="touch-action-picker-label" class="insert-input" maxlength="4" placeholder="F">
+                <p id="touch-action-picker-meta" class="insert-hint touch-action-picker-meta"></p>
+                <div class="prop-row" style="margin-top:10px;">
+                    <button id="touch-action-picker-cancel" type="button" class="insert-action secondary">CANCEL</button>
+                    <button id="touch-action-picker-add" type="button" class="insert-action">ADD BUTTON</button>
+                </div>
             </div>
         </div>
 

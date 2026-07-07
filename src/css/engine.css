@@ -835,6 +835,70 @@ body.design-intake-open .design-intake-modal.open {
     overflow-y: auto;
 }
 
+#touch-action-picker-modal.open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 235;
+}
+
+.touch-action-picker-sheet {
+    width: min(480px, calc(100vw - 24px));
+    max-height: 85dvh;
+    overflow-y: auto;
+}
+
+.touch-action-picker-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: min(42vh, 320px);
+    overflow-y: auto;
+    margin: 10px 0;
+    padding-right: 4px;
+}
+
+.touch-action-picker-group-label {
+    display: block;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    color: #9aa4ae;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.touch-action-picker-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.touch-action-chip {
+    font-size: 0.68rem;
+    padding: 6px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.touch-action-chip:hover {
+    border-color: rgba(57, 255, 20, 0.45);
+}
+
+.touch-action-chip.active {
+    border-color: var(--accent-color);
+    background: rgba(57, 255, 20, 0.12);
+    color: var(--accent-color);
+}
+
+.touch-action-picker-meta {
+    margin: 6px 0 0;
+    min-height: 1.2em;
+}
+
 .sfx-library-list {
     display: flex;
     flex-direction: column;

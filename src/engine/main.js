@@ -27,6 +27,7 @@ import { ViewPrefs } from '../shared/viewPrefs.js';
 import { SceneDock } from '../shared/sceneDock.js';
 import { SoundLibrary } from '../shared/soundLibrary.js';
 import { SoundPrompt } from '../shared/soundPrompt.js';
+import { TouchActionPicker } from '../shared/touchActionPicker.js';
 import { TextureLibrary } from '../shared/textureLibrary.js';
 import { TextureBridge } from '../shared/textureBridge.js';
 import { GltfImport } from '../shared/gltfImport.js';
@@ -1802,6 +1803,7 @@ const UI = {
         });
 
         SoundPrompt.init();
+        TouchActionPicker.init();
         SoundLibrary.init().then(async () => {
             await window.StarterSfx?.seedStarterSounds?.();
             UI.renderSoundLibrary();
