@@ -74,6 +74,7 @@ export function initLobby(onReady) {
     const enterApp = () => {
         overlay?.classList.add('hidden');
         void enterWindowedFullscreen();
+        window.dispatchEvent(new CustomEvent('threshold:enter-engine'));
         onReady?.();
     };
 

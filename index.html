@@ -314,6 +314,7 @@
                     <div class="corner-hub-arm corner-hub-arm-v">
                         <button type="button" id="hub-agent" title="Agent portal">AI</button>
                         <button type="button" id="hub-link" title="Copy session link">LINK</button>
+                        <button type="button" id="hub-layout-lock" class="hub-layout-btn" title="Lock corner button layout">LOCK</button>
                     </div>
                 </div>
                 <div class="corner-hub corner-hub-tr hub-edit-only" data-hub="tools">
@@ -329,7 +330,8 @@
                         <button type="button" data-hub-action="exportplay">Export &amp; play</button>
                         <button type="button" data-hub-action="export">Export wizard</button>
                         <button type="button" data-hub-action="keys">Key bindings</button>
-                        <button type="button" data-hub-action="console">Console</button>
+                        <button type="button" data-hub-action="help">Help &amp; commands</button>
+                        <button type="button" data-hub-action="chat">Chat (T)</button>
                         <button type="button" data-hub-action="tutorial">Tutorial (3-step)</button>
                         <button type="button" data-hub-action="tutorialfull">Tutorial (full)</button>
                     </div>
@@ -343,6 +345,8 @@
                     </div>
                     <div class="corner-hub-menu hub-play-only" id="hub-play-menu">
                         <button type="button" data-hub-action="skin">Player skin</button>
+                        <button type="button" data-hub-action="chat">Chat (T)</button>
+                        <button type="button" data-hub-action="help">Help &amp; commands</button>
                         <button type="button" data-hub-action="tutorial">Tutorial</button>
                         <button type="button" data-hub-action="pause">Switch to EDIT</button>
                     </div>
@@ -355,6 +359,8 @@
                         <button type="button" data-hub-action="env" class="hub-edit-only">Environment</button>
                         <button type="button" data-hub-action="sfx" class="hub-edit-only">Sound library</button>
                         <button type="button" data-hub-action="setup">Agents / SETUP</button>
+                        <button type="button" data-hub-action="help">Help &amp; commands</button>
+                        <button type="button" data-hub-action="chat">Chat (T)</button>
                     </div>
                 </div>
             </nav>
@@ -774,10 +780,31 @@
                 </div>
             </div>
 
-            <!-- Console & Status -->
+            <!-- Status toast + in-game chat (T — /commands) -->
             <div id="status-msg"></div>
-            <div id="command-bar"><input type="text" id="cmd-input" placeholder="> Enter JS command or 'allow pasting'..." autocomplete="off"></div>
-            <button id="btn-console-restore" class="console-restore-tab" type="button" title="Show command console">▲ CONSOLE</button>
+            <div id="game-chat" class="game-chat hidden" role="dialog" aria-label="Chat">
+                <div class="game-chat-header">
+                    <span class="game-chat-title">CHAT</span>
+                    <span class="game-chat-hint-inline">T · <code>/help</code></span>
+                    <button type="button" id="game-chat-close" class="btn-sm" title="Close (Esc)">✕</button>
+                </div>
+                <div id="game-chat-log" class="game-chat-log"></div>
+                <div class="game-chat-input-row">
+                    <span id="game-chat-prefix" class="game-chat-prefix">›</span>
+                    <input type="text" id="game-chat-input" class="game-chat-input" autocomplete="off" maxlength="500" placeholder="Message agent… ( / for commands )">
+                </div>
+            </div>
+            <div id="command-bar" class="legacy-console" hidden aria-hidden="true"><input type="text" id="cmd-input" tabindex="-1" autocomplete="off"></div>
+        </div>
+
+        <div id="help-menu-modal" class="help-menu-modal" role="dialog" aria-labelledby="help-menu-title">
+            <div class="help-menu-card panel">
+                <div class="help-menu-header">
+                    <h2 id="help-menu-title">Help &amp; commands</h2>
+                    <button type="button" id="help-menu-close" class="btn-sm">✕</button>
+                </div>
+                <div id="help-menu-body" class="help-menu-body"></div>
+            </div>
         </div>
 
         <!-- Sound prompt (after AI / insert) -->

@@ -69,7 +69,7 @@
 }
 
 .corner-hub-tl {
-    top: max(8px, env(safe-area-inset-top, 0px));
+    top: max(36px, calc(env(safe-area-inset-top, 0px) + 28px));
     left: max(8px, env(safe-area-inset-left, 0px));
     flex-direction: column;
     align-items: flex-start;
@@ -83,10 +83,40 @@
 }
 
 .corner-hub-tr {
-    top: max(8px, env(safe-area-inset-top, 0px));
+    top: max(36px, calc(env(safe-area-inset-top, 0px) + 28px));
     right: max(8px, env(safe-area-inset-right, 0px));
     flex-direction: row-reverse;
     align-items: flex-start;
+    flex-wrap: wrap;
+    max-width: min(52vw, 220px);
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+#hub-layout-lock.hub-layout-unlocked {
+    border-color: #e8b84a;
+    color: #e8b84a;
+    animation: hubPulse 1s ease infinite;
+}
+
+body.hub-layout-edit .corner-hub {
+    outline: 1px dashed rgba(232, 184, 74, 0.45);
+    outline-offset: 2px;
+}
+
+body.hub-layout-edit .corner-hub > button,
+body.hub-layout-edit .corner-hub .corner-hub-arm button {
+    cursor: grab;
+}
+
+body.hub-layout-edit .corner-hub-menu {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+body.nav-collapsed .corner-hub-tl,
+body.nav-collapsed .corner-hub-tr {
+    top: max(8px, env(safe-area-inset-top, 0px));
 }
 
 .corner-hub-bl {
@@ -220,4 +250,187 @@ body.play-mode.corner-edit-mode #btn-mobile-insert {
 body.ui-immersive.engine-chrome .corner-hub > button,
 body.ui-immersive.engine-chrome .corner-hub .corner-hub-menu {
     background: rgba(6, 8, 12, 0.88);
+}
+
+/* --- In-game chat (T · /commands) --- */
+.game-chat {
+    display: none;
+    position: fixed;
+    left: 50%;
+    bottom: max(12px, env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    width: min(520px, calc(100vw - 120px));
+    z-index: 55;
+    pointer-events: auto;
+    background: rgba(6, 8, 12, 0.88);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+    font-size: 0.62rem;
+}
+
+.game-chat.open {
+    display: flex;
+    flex-direction: column;
+}
+
+.game-chat-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.game-chat-title {
+    font-weight: 700;
+    color: var(--accent-color);
+    letter-spacing: 0.08em;
+}
+
+.game-chat-hint-inline {
+    flex: 1;
+    opacity: 0.65;
+    font-size: 0.55rem;
+}
+
+.game-chat-log {
+    max-height: min(28dvh, 180px);
+    overflow-y: auto;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.game-chat-line {
+    line-height: 1.35;
+    word-break: break-word;
+}
+
+.game-chat-user { color: #a8d4ff; }
+.game-chat-agent { color: #3ecf8e; }
+.game-chat-system { color: #888; font-style: italic; }
+.game-chat-cmd { color: #e8b84a; font-family: var(--font-mono); }
+
+.game-chat-meta {
+    display: block;
+    font-size: 0.5rem;
+    opacity: 0.55;
+}
+
+.game-chat-hint {
+    margin: 0;
+    opacity: 0.7;
+    font-size: 0.58rem;
+}
+
+.game-chat-input-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border-top: 1px solid var(--border-color);
+}
+
+.game-chat-prefix {
+    color: var(--accent-color);
+    font-weight: 700;
+    min-width: 14px;
+}
+
+.game-chat-prefix-cmd {
+    color: #e8b84a;
+}
+
+.game-chat-input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 8px 10px;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    border-radius: 4px;
+}
+
+.game-chat-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.game-chat-cmd-mode {
+    color: #e8b84a;
+}
+
+body.game-chat-open .creator-perf-hud.visible {
+    bottom: max(200px, calc(env(safe-area-inset-bottom, 0px) + 180px));
+}
+
+/* --- Help menu --- */
+.help-menu-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 130;
+    background: rgba(0, 0, 0, 0.75);
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    pointer-events: auto;
+}
+
+.help-menu-modal.open {
+    display: flex;
+}
+
+.help-menu-card {
+    width: min(560px, 96vw);
+    max-height: min(85dvh, 640px);
+    overflow: auto;
+    padding: 14px;
+}
+
+.help-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.help-menu-header h2 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.help-menu-section {
+    margin-bottom: 14px;
+}
+
+.help-menu-section h3 {
+    margin: 0 0 6px;
+    font-size: 0.72rem;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.help-menu-cat {
+    margin: 8px 0 4px;
+    font-size: 0.58rem;
+    opacity: 0.75;
+    text-transform: uppercase;
+}
+
+.help-menu-cmd-list {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: 0.6rem;
+    line-height: 1.5;
+}
+
+.help-alias {
+    opacity: 0.6;
+    font-size: 0.55rem;
 }

@@ -59,7 +59,8 @@ function setNavCollapsed(collapsed) {
     window.dispatchEvent(new Event('resize'));
 }
 
-if (ViewPrefs.get('navCollapsed', false)) {
+const defaultNavCollapsed = ViewPrefs.get('navCollapsedEngine', true);
+if (ViewPrefs.get('navCollapsed', defaultNavCollapsed)) {
     document.body.classList.add('nav-collapsed');
 }
 
@@ -71,6 +72,10 @@ initFullscreen();
 
 document.getElementById('nav-collapse-btn')?.addEventListener('click', () => setNavCollapsed(true));
 document.getElementById('nav-restore-btn')?.addEventListener('click', () => setNavCollapsed(false));
+
+window.addEventListener('threshold:enter-engine', () => {
+    if (ViewPrefs.get('navCollapsedEngine', true) !== false) setNavCollapsed(true);
+});
 
 initAuth();
 
@@ -102,13 +107,16 @@ tabs.forEach((tab) => {
         document.body.classList.toggle('engine-chrome', showEngine);
 
         if (showEngine) {
+            if (ViewPrefs.get('navCollapsedEngine', true)) setNavCollapsed(true);
             setTimeout(() => {
                 updateChromeMetrics();
                 window.dispatchEvent(new Event('resize'));
             }, 10);
             window.UI?.setCodingPause?.(false);
             window.CornerHub?.syncModeBadge?.();
+            window.HubLayout?.applyPositions?.();
         } else {
+            setNavCollapsed(false);
             setTimeout(updateChromeMetrics, 0);
         }
         if (targetId === 'view-compiler' || targetId === 'view-prompter') {

@@ -113,7 +113,8 @@ export const CornerHub = {
             export: () => clickExisting('btn-export-game'),
             tutorial: () => clickExisting('btn-restart-walkthrough'),
             tutorialfull: () => clickExisting('btn-restart-walkthrough-full'),
-            console: () => clickExisting('btn-console-toggle'),
+            help: () => window.HelpMenu?.open?.(),
+            chat: () => window.GameChat?.open?.(),
             keys: () => clickExisting('btn-bindings'),
             pause: () => window.UI?.togglePause?.(),
         };

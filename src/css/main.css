@@ -167,3 +167,11 @@ body.nav-collapsed #app-nav {
     right: 0;
     overflow: hidden;
 }
+
+body.engine-chrome.nav-collapsed .view-section {
+    top: 0;
+}
+
+body.engine-chrome #ui-layer {
+    top: 0;
+}

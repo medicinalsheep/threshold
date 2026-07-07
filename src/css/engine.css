@@ -902,38 +902,19 @@ body.design-intake-open .design-intake-modal.open {
             width: 120px;
         }
 
-/* Command Bar */
-#command-bar {
-    margin: 20px;
-    pointer-events: auto;
-}
-
-body.console-hidden #command-bar {
+/* Legacy dev console — hidden in game chrome (use T chat + /commands) */
+#command-bar,
+.legacy-console,
+.console-restore-tab {
     display: none !important;
 }
 
-.console-restore-tab {
-    display: none;
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    pointer-events: auto;
-    z-index: 25;
-    background: var(--panel-bg);
-    border: 1px solid var(--border-color);
-    border-bottom: none;
-    border-radius: 6px 6px 0 0;
-    padding: 4px 14px;
-    font-size: 0.6rem;
-    font-family: var(--font-mono);
-    color: #888;
-    cursor: pointer;
+body.engine-chrome #command-bar,
+body.engine-chrome .console-restore-tab {
+    display: none !important;
 }
 
-body.console-hidden .console-restore-tab {
-    display: block;
-}
+
 
 #btn-console-toggle.active,
 #btn-touch-toggle.active {
@@ -969,9 +950,13 @@ body.console-hidden .console-restore-tab {
 
 /* Status Notifications */
 #status-msg {
-    position: absolute;
-    bottom: 85px;
-    left: 20px;
+    position: fixed;
+    bottom: max(72px, calc(env(safe-area-inset-bottom, 0px) + 56px));
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: min(90vw, 420px);
+    text-align: center;
+    z-index: 52;
     color: var(--accent-color);
     font-weight: bold;
     opacity: 0;

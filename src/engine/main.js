@@ -203,6 +203,9 @@ export function initEngine() {
             window.AgentPortal?.init?.();
             window.AgentReconnectChip?.init?.();
             window.CornerHub?.init?.();
+            import('../shared/gameChat.js').then((m) => m.GameChat.init());
+            import('../shared/helpMenu.js').then((m) => m.HelpMenu.init());
+            import('../shared/hubLayout.js').then((m) => m.HubLayout.init());
         }, 120);
     }
 
@@ -1788,7 +1791,7 @@ const UI = {
         document.getElementById('btn-json-apply').onclick = () => this.applyJson();
 
         const cmd = document.getElementById('cmd-input');
-        cmd.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); this.runCmd(); } });
+        cmd?.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); this.runCmd(); } });
 
         document.getElementById('btn-grid').onclick = () => {
             const vis = Engine.toggleGrid();
@@ -2231,9 +2234,7 @@ const UI = {
         }
     },
     initViewToggles: function () {
-        const mobile = window.innerWidth < 900;
-        const consoleVisible = ViewPrefs.get('consoleVisible', !mobile);
-        this.setConsoleBarVisible(consoleVisible, false);
+        this.setConsoleBarVisible(false, false);
         this.updateTouchToggle();
     },
     exportGamePackage: function () {
