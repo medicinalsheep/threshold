@@ -444,10 +444,10 @@ Shippable defaults are intentionally low-poly procedural boxes/spheres — same 
 
 | Doc | Relevance |
 |-----|-----------|
-| [DEFAULT_ASSETS_ROADMAP.md](DEFAULT_ASSETS_ROADMAP.md) | R8.x version map |
+| [old/docs/DEFAULT_ASSETS_ROADMAP.md](../old/docs/DEFAULT_ASSETS_ROADMAP.md) | R8.x version map (archived) |
 | [BLENDER_AVATARS.md](BLENDER_AVATARS.md) | Export contract · extend with hair + attach points |
 | [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | HILOD + MeshLod overview |
-| [PHASE_18_TESLA_LAB.md](PHASE_18_TESLA_LAB.md) | Prop GLB + LOD pattern template |
+| [old/docs/PHASE_18_TESLA_LAB.md](../old/docs/PHASE_18_TESLA_LAB.md) | Prop GLB + LOD pattern (archived) |
 | `config/avatar-manifest.json` | Implement v2 here |
 | `config/default-assets-registry.json` | Status bumps per category |
 

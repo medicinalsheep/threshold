@@ -1,6 +1,10 @@
-# Agent routing & model tiers (v9.16)
+# Agent routing & model tiers (v10.8)
 
 Threshold routes **tasks** to **small / medium / large** models — fast local LLMs for chat and patches, Grok or 7B/8B Ollama for full scene scripts.
+
+**UI:** Agent Portal on ENTER + **SETUP** tab in scene dock (not a separate AI tab).
+
+See [UI_AND_AGENTS.md](UI_AND_AGENTS.md) for freeze, working folder, and sequential queue.
 
 ---
 
@@ -14,7 +18,7 @@ Threshold routes **tasks** to **small / medium / large** models — fast local L
 
 Config: `config/agent-tasks.json` · Registry: `config/models-registry.json` · Probes: `config/agent-benchmark.json`
 
-Copy `.env.local.example` → `.env.local` for `VITE_OLLAMA_URL` and optional `VITE_OLLAMA_TIER_SMALL|MEDIUM|LARGE`.
+Copy `.env.local.example` → `.env.local` for `VITE_OLLAMA_URL` and optional tier overrides.
 
 ---
 
@@ -23,7 +27,7 @@ Copy `.env.local.example` → `.env.local` for `VITE_OLLAMA_URL` and optional `V
 Each task uses a **tight system prompt** in `src/shared/agentPrompts.js`:
 
 - **Small** — brief scene slice (`getSceneContextBrief`), 1–3 sentence replies
-- **Medium** — scene + sound context, “minimal diff” for patches; realistic PBR default
+- **Medium** — scene + sound context, minimal diff for patches; realistic PBR default
 - **Large** — full scene context, IIFE-only output, no `World.clearWorld()`; retro shaders only when user asks
 
 The router (`AgentRouter.runTask`) picks provider + model, logs last 20 routes to `localStorage`.
@@ -32,14 +36,18 @@ The router (`AgentRouter.runTask`) picks provider + model, logs last 20 routes t
 
 ## UI
 
-**SCENE dock → AI tab** (panel header: **AGENTS**)
+**Agent Portal** (on ENTER) + **SETUP** tab (scene dock bottom-right → SCENE menu)
 
 - Tier dropdowns: Small / Medium / Large (`auto` = first installed model from config list)
 - **SAVE TIERS** — persists to `ViewPrefs`
-- **RUN BENCHMARK** — in-browser workflow probes (5 tasks)
+- **RUN BENCHMARK** — in-browser workflow probes
 - **SMART DEV** — `dev_suggest` via router (medium tier)
-- **RUN AGENT (tiered)** — PromptGen large tier
-- **GROK DEV** / **OLLAMA DEV** — force provider (skip tier auto-pick)
+- **Sequential local runs** — default one Ollama model at a time (`ollamaRunQueue.js`)
+- **Working folder** — scope what stays loaded during local inference
+- **AI memory freeze** — automatic screen snapshot + asset park during local runs
+- Status chips: Grok, Ollama, watch, textures, GPU renderer
+
+For GitHub Pages: run `npm run ollama:serve` (CORS proxy) — not plain `ollama serve`.
 
 ---
 
@@ -49,55 +57,43 @@ The router (`AgentRouter.runTask`) picks provider + model, logs last 20 routes t
 |------|------------|--------|
 | JSONL + Modelfiles | Yes | `training/bootcamp/` |
 | GGUF weights | **No** | `~/.ollama/models` after `ollama pull` |
-| API keys | **No** | `.env.local` (gitignored) |
+| API keys | **No** | `sessionStorage` per tab (gitignored `.env.local` for dev) |
 | Ollama API | — | `http://127.0.0.1:11434` on your machine |
+
+Guests on Pages **cannot** use the host's Ollama — each browser talks to its own localhost.
 
 See [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md).
 
 ---
 
-## Install mini models (canonical)
+## Install mini models
 
 ```bash
 npm run bootcamp:build
 npm run models:mini
 ```
 
-Creates:
-
 | Model | Base (download) | Tier |
 |-------|-----------------|------|
 | `threshold-mini-npc` | `llama3.2:3b` (~2 GB) | Small |
 | `threshold-mini-dev` | `qwen2.5-coder:1.5b-base` (~1 GB) | Medium |
 
-Optional large models (multi-GB):
+Optional large models:
 
 ```bash
 npm run models:large -- --yes
 ```
-
-→ `threshold-dev` (7B) · `threshold-large-scenes` (8B)
-
-`bootcamp:create` is a **deprecated alias** for `models:mini` (add `--large` for `models:large`).
 
 ---
 
 ## Benchmark installed models
 
 ```bash
-ollama serve
+npm run ollama:serve    # if using Pages-style origin
 npm run ollama:benchmark
 ```
 
-- Tests each tier’s preferred models against workflow probes
-- Writes `dist-store/ollama-benchmark.json` with suggested tier defaults
-- In-browser **RUN BENCHMARK** stores results in `ViewPrefs`; auto-applies tiers when all are `auto`, or use **APPLY SUGGESTED TIERS**
-
-Quick smoke:
-
-```bash
-npm run ollama:verify
-```
+Quick smoke: `npm run ollama:verify`
 
 ---
 
@@ -107,16 +103,13 @@ npm run ollama:verify
 2. `npm run bootcamp:build`
 3. `npm run models:mini`
 
-Import a Compiler pair (UI: **EXPORT TRAINING PAIR** in AI tab, or CLI):
+Import a Compiler pair (SETUP **EXPORT TRAINING PAIR** or CLI):
 
 ```bash
 npm run bootcamp:import -- --file training/bootcamp/datasets/raw/pair.json
-npm run bootcamp:import -- --input "// draft" --output "(function(){ ... })();"
 ```
 
-Optional ramdisk (local only, gitignored): `config/bootcamp.local.json` — see [BOOTCAMP.md](BOOTCAMP.md).
-
-Threshold APIs to include in training examples: `World.createObject`, `PlayerController.spawnPlayer`, `Runtime.execute`, GIMP watch workflow (textures are **not** LLM-edited).
+See [BOOTCAMP.md](BOOTCAMP.md).
 
 ---
 
@@ -128,7 +121,7 @@ Threshold APIs to include in training examples: `World.createObject`, `PlayerCon
 | Ollama offline + medium | Grok fallback (if key) |
 | Large + xAI key + prefer Grok | Grok |
 | Large, no key | Best installed 7B/8B Ollama |
-| Explicit **GROK DEV** button | Forces Grok medium |
+| Explicit **GROK DEV** | Forces Grok medium |
 | Explicit **OLLAMA DEV** | Forces selected Ollama model |
 
 Grok keys are **per browser tab** — not shared from x.ai login elsewhere.

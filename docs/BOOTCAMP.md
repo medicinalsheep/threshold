@@ -15,7 +15,7 @@ npm run models:mini         # threshold-mini-npc + threshold-mini-dev (canonical
 npm run models:large -- --yes   # optional 7B/8B (multi-GB download)
 ```
 
-Then in Engine: **SCENE → AI tab** → set Small to `threshold-mini-npc`, Medium to `threshold-mini-dev` → **SAVE TIERS**.
+Then in Engine: **SETUP** tab → set Small to `threshold-mini-npc`, Medium to `threshold-mini-dev` → **SAVE TIERS**.
 
 | Model | Tier | Base pull |
 |-------|------|-----------|
@@ -48,7 +48,7 @@ Or `BOOTCAMP_ROOT` env var. Your ramdisk copy is never pushed to GitHub. Default
 ### Grow from Compiler sessions (UI)
 
 1. **SMART DEV: SUGGEST** — review output in Compiler
-2. **SCENE → AI tab → EXPORT TRAINING PAIR** — downloads `.json` + `.jsonl`
+2. **SETUP → EXPORT TRAINING PAIR** — downloads `.json` + `.jsonl`
 3. Move `.json` to `training/bootcamp/datasets/raw/`
 4. Import + rebuild:
 

@@ -2,7 +2,7 @@
 
 **Vision:** Lightweight realistic gaming + dev — AI generates textures on **your device** via Blender and GIMP, then Threshold imports them into the live scene.
 
-**Workflow guide:** [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) · **Next phases (LOD, iOS):** [NEXT_PHASES.md](NEXT_PHASES.md)
+**Workflow guide:** [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) · **Roadmap:** [ROADMAP.md](ROADMAP.md)
 
 ---
 
@@ -101,4 +101,4 @@ PromptGen with **Include live scene** appends `getAssetContext()` — lists clip
 
 **Breakthrough:** Retro render modes (Threshold/Terminal) for compatibility + **Hyper** for realism — same world, same physics, same locally authored textures. No cloud required for art pipeline.
 
-**Next:** [NEXT_PHASES.md](NEXT_PHASES.md) — reference editions, store ship, open Phase R2+.
+**Next:** [ROADMAP.md](ROADMAP.md) — v10.8+ plan.

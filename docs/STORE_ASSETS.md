@@ -137,4 +137,4 @@ Root namespace: `threshold://<bundleId>/asset/<slug>`
 
 - [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) — full export wizard
 - [STORE_RELEASE.md](STORE_RELEASE.md) — signing, AAB, TestFlight
-- [NEXT_PHASES.md](NEXT_PHASES.md) — Phase M (Steamworks SDK)
+- [ROADMAP.md](ROADMAP.md) — forward plan

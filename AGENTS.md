@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), tiered local/cloud agents, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **10.7.4**)
+**Version:** `src/config.js` → `VERSION` (currently **10.8.0**)
 
 **Doc index:** [docs/README.md](docs/README.md) — full scope map
 
@@ -83,7 +83,7 @@ npm run bootcamp:build          # JSONL → Modelfiles in training/bootcamp/
 npm run models:mini             # threshold-mini-npc + threshold-mini-dev (canonical)
 npm run models:large -- --yes   # optional threshold-dev + threshold-large-scenes
 npm run bootcamp:import -- --file training/bootcamp/datasets/raw/pair.json
-# or: --input "..." --output "..." · UI: SCENE → AI → EXPORT TRAINING PAIR
+# or: --input "..." --output "..." · UI: SETUP → EXPORT TRAINING PAIR
 ```
 
 `bootcamp:create` is a deprecated alias for `models:mini` (+ `--large` → `models:large`).
@@ -94,7 +94,7 @@ Weights stay in `~/.ollama/models` — never commit GGUF or API keys. See [docs/
 
 ## Export walkthrough (9 steps)
 
-`MORE → EXPORT`: **INFO → ICONS → SCENE → CREDITS → REVIEW → TARGETS → STORE → PACKS → SHIP**
+`TOOLS → EXPORT`: **INFO → ICONS → SCENE → CREDITS → REVIEW → TARGETS → STORE → PACKS → SHIP**
 
 TARGETS defaults to **Web only**. SHIP shows target-filtered `package:*` commands and a secrets checklist.
 
@@ -104,16 +104,15 @@ Manifest includes `branding`, `credits`, `assetRegistry`, `assetOpportunity`, `s
 
 ## Agent UI
 
-**SCENE dock → AI tab** (panel header: AGENTS)
+**Agent Portal** (on ENTER) + **SETUP** tab (scene dock)
 
-- Status chips: Grok, Ollama, creative watch, textures, local script agent
+- Status chips: Grok, Ollama, creative watch, textures, GPU, freeze state
 - Tier dropdowns: Small / Medium / Large → **SAVE TIERS**
+- Sequential Ollama queue, working folder scope, AI memory freeze
 - **RUN BENCHMARK** — in-browser workflow probes
 - **SMART DEV** — tiered `dev_suggest` via `AgentRouter`
-- **GROK DEV** / **OLLAMA DEV** — force provider (bypass tier auto-pick)
-- PromptGen **RUN AGENT (tiered)** — large tier scene scripts
 
-Config: `config/agent-tasks.json` · Prompts: `src/shared/agentPrompts.js`
+Config: `config/agent-tasks.json` · UI reference: [docs/UI_AND_AGENTS.md](docs/UI_AND_AGENTS.md)
 
 ---
 
@@ -158,8 +157,10 @@ Live manifest: `textures/threshold_manifest.json` (not `old/plugins/...` sample)
 | [docs/EXPORT_WALKTHROUGH.md](docs/EXPORT_WALKTHROUGH.md) | 9-step export wizard |
 | [docs/THRESHOLD_CHILD_ASSETS.md](docs/THRESHOLD_CHILD_ASSETS.md) | TC original-asset policy |
 | [docs/REFERENCE_EDITIONS.md](docs/REFERENCE_EDITIONS.md) | TC edition registry |
+| [docs/UI_AND_AGENTS.md](docs/UI_AND_AGENTS.md) | Corner hubs, freeze, touch |
+| [docs/ROADMAP.md](docs/ROADMAP.md) | v10.8+ forward plan |
 | [docs/CHANGELOG.md](docs/CHANGELOG.md) | Version history |
-| [old/README.md](old/README.md) | Archived legacy files |
+| [old/README.md](old/README.md) | Archived legacy files + `old/docs/` |
 
 ---
 

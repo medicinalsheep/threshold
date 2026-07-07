@@ -1,32 +1,36 @@
-# Threshold — Progress & Capabilities (v9.16)
+# Threshold — Progress & Capabilities (v10.8)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 9.16.0
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.8.0
 
-This page is the **single progress snapshot** — what ships today, how the pieces connect, and what is next.
+Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
----
-
-## Three content layers
-
-| Layer | Entry | What you get |
-|-------|-------|--------------|
-| **Showcase site** | Lobby → **PLAY/BUILD** → **ENTER** | Wardenclyffe lab GLBs, survival loop, weather, gateway, Nikola |
-| **TC editions** | Lobby → **TC →** | Vehicles, NPCs, circuit, export demo — original bundled reference |
-| **Your game** | BUILD + EXPORT | GIMP/Blender art, agents, manifest → store packages |
-
-Policy: shipped TC content is **original Threshold art** only — [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md).
+**Forward plan:** [ROADMAP.md](ROADMAP.md) · **UI reference:** [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
 
 ---
 
-## Session & onboarding
+## Default experience (10.0+)
 
 | Capability | Module / doc |
 |------------|--------------|
-| PLAY / BUILD gate | `guidedSession.js`, lobby mode picker, `?mode=play\|build` |
-| 6-step guided tour | `walkthrough.js` — mode-aware highlights |
-| Action hints + side quests | `actionHints.js`, TC quest card, Survival Run card |
-| Guest / spectate inherit host | `guidedSession.js`, `spectate/main.js` |
-| Session prefs persist | `viewPrefs.js` — mode, tour, HUD toggles |
+| Blank grid spawn | `starterScene.js`, `starterTemplates.js` |
+| Host-first lobby | `lobby/main.js` — CREATE SESSION primary |
+| Progressive UI unlock | Scene dock, Compiler, PromptGen opt-in |
+| Agent Portal on ENTER | `agentPortal.js` — Grok/Ollama auto-detect |
+| Corner hub UI | `hubLayout.js` — PLAY/EDIT, TOOLS, SCENE menus |
+| Room codes | `roomCode.js` — `NAME4-KEY6-RAND4` format |
+| Short hub tour | `walkthrough.js` — 3 steps (not showcase walkthrough) |
+
+---
+
+## Three content layers (optional)
+
+| Layer | Entry | What you get |
+|-------|-------|--------------|
+| **Your game** | BUILD + Portal | Blank grid, agents, GIMP/Blender, export |
+| **TC editions** | Lobby → **TC →** | Vehicles, NPCs, circuit — bundled reference |
+| **Showcase props** | INSERT → SHOWCASE | Wardenclyffe snippets — not loaded by default |
+
+Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md)
 
 ---
 
@@ -34,19 +38,17 @@ Policy: shipped TC content is **original Threshold art** only — [THRESHOLD_CHI
 
 | Capability | Module / doc |
 |------------|--------------|
-| TPS / FPS + ADS | `player.js`, `fpsViewmodel.js` — **LMB aim · RMB shoot** |
-| Walk / sprint / crouch / stealth | `player.js`, `controls.js` |
-| Survival vitals (6 stats) | `survivalNeeds.js`, `survivalZones.js`, `survivalInteract.js` |
-| Survival gameplay loop | `survivalGameplay.js` — run quest, Nikola bark, night drain |
-| Vitals HUD + guest toggle | `survivalNeedsHud.js`, PLAYERS panel |
-| MP vitals sync | `sync.js` `avatar.v`, `remotePlayers.js` pill |
-| Weather + ambient zones | `weatherSystem.js`, starter site modules |
-| Third Eye + F interact | `thirdEye.js`, `worldInteract.js` |
-| TC circuit + drive | `tcCircuit.js`, `tcDrive.js`, `tcGateFx.js` |
-| Footsteps + surface SFX | `footsteps.js`, `starterSfx.js` |
-| Graphics tiers | `graphicsProfile.js` — Lite/Mobile/Realistic/Ultra (all PBR; retro opt-in) |
+| TPS / FPS + ADS | `player.js`, `fpsViewmodel.js` — LMB aim · RMB shoot |
+| Alt peek / Third Eye | `thirdEye.js` — Alt hold peek in immersive |
+| Walk / sprint / crouch / stealth | `controls.js` — stealth on **U** hold |
+| Touch controls | `touchControls.js` — full pad, UNLOCK drag layout |
+| Survival vitals (optional) | `survivalNeeds.js`, `survivalGameplay.js` |
+| Weather + ambient zones | `weatherSystem.js` |
+| F interact | `worldInteract.js` |
+| TC circuit + drive | `tcCircuit.js`, `tcDrive.js` |
+| Graphics tiers | `graphicsProfile.js` — PBR default; retro opt-in |
 
-Full guide: [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) · Controls: [CONTROLS.md](CONTROLS.md)
+[REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) · [CONTROLS.md](CONTROLS.md)
 
 ---
 
@@ -54,18 +56,17 @@ Full guide: [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) · Controls: [CONTROL
 
 | Capability | Module / doc |
 |------------|--------------|
-| SCENE dock (ENV / EDIT / SKIN) | `sceneDock.js`, inspector hooks |
-| INSERT SHOWCASE snippets | `showcaseSnippets.js` — gateway, terminals, survival props |
-| PromptGen + EXAMPLES | `prompter/main.js`, `promptCookbook.js` |
+| Agent Portal + SETUP | `agentPortal.js`, scene dock SETUP tab |
+| Tiered agents + freeze | `agentRouter.js`, `aiMemoryFreeze.js`, `ollamaRunQueue.js` |
+| Working folder scope | `workFolderScope.js` — memory prefs during Ollama |
 | Compiler + scene undo | `compiler/main.js`, `sceneHistory.js` |
+| PromptGen + EXAMPLES | `prompter/main.js`, `promptCookbook.js` |
 | GIMP live SYNC | `creativeWatch.js`, `textureBridge.js` |
 | Blender GLB + LOD | `blender-export.cjs`, `meshLod.js` |
-| Texture HILOD + WebP/KTX2 | `textureHilod.js`, `tc-gen-tex.cjs` |
-| AI tab (tiered agents) | `agentRouter.js`, `agentStatus.js` — SCENE → **AI** tab |
-| NPC chat + SMART DEV | `npcAgent.js`, `ollama/devAgent.js` — Ollama or Grok via router |
-| PromptGen tiered run | `prompter/main.js` → `prompter_generate` large tier |
+| UI layout edit | `hubLayout.js` — UNLOCK/LOCK corner hubs |
+| Scene dock strip | `panelDrag.js` — ◀ collapses to tab column |
 
-Workflow: [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) · Agents: [AGENT_ROUTING.md](AGENT_ROUTING.md) · Assets: [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md)
+[CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) · [AGENT_ROUTING.md](AGENT_ROUTING.md)
 
 ---
 
@@ -75,13 +76,10 @@ Workflow: [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) · Agents: [AGENT_ROUTING
 |------------|--------------|
 | PeerJS rooms | `network.js` |
 | Host-authoritative sync | `sync.js`, `actions.js` |
-| Live avatar + vehicle claims | `LIVE_STATE`, `tcDrive.js` |
-| Host migration handoff | `hostMigration.js` — vitals + sessionMode |
-| Guest rebuild telemetry | `guestRebuildTelemetry.js` |
-| VOIP proximity | `voip.js`, lobby VOIP config |
-| Spectate mode | `spectate/main.js` — host vitals banner |
-
-Scope doc: [syncStory.js](../src/shared/syncStory.js) (in-engine SYNC STORY panel)
+| Host migration handoff | `hostMigration.js` |
+| VOIP proximity | `voip.js` |
+| Spectate mode | `spectate/main.js` |
+| xAI keys per tab | `sessionStorage` — not synced to guests |
 
 ---
 
@@ -89,92 +87,45 @@ Scope doc: [syncStory.js](../src/shared/syncStory.js) (in-engine SYNC STORY pane
 
 | Capability | Command / doc |
 |------------|---------------|
-| 9-step EXPORT wizard | MORE → EXPORT — target-filtered SHIP CLI — [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) |
+| 9-step EXPORT wizard | TOOLS → EXPORT — [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) |
 | Quick EXPORT & PLAY | `quickExportPlay.js` |
-| Asset bundle | `npm run bundle:assets` |
-| Graphics profiles | `npm run export:graphics -- --profile android\|ios\|windows\|steam` |
 | Store metadata | `npm run store:prep` |
-| Store asset packs | `npm run store:assets` |
-| Android AAB | `npm run package:android:release` |
-| Windows portable + NSIS | `npm run package:win` |
-| iOS scaffold | `npm run package:ios` (archive needs macOS) |
-| Steam depot | `npm run package:steam`, `npm run steam:depot` |
-| TC full ship path | `npm run tc:ship` |
+| Android / Windows / iOS / Steam | `package:*` scripts |
 | Store verify smoke | `npm run store:verify` |
-| Native web build | `npm run build:electron` (relative chunks) |
-
-**Store verify re-passed (v9.16)** — [STORE_VERIFY.md](STORE_VERIFY.md) ✅
 
 ---
 
-## Agents & training (v9.12–9.16)
+## Agents & training
 
 | Capability | Module / command |
 |------------|------------------|
-| Agent status chips | `agentStatus.js` — Grok, Ollama, watch, textures |
-| Tiered task router | `agentRouter.js`, `config/agent-tasks.json` |
-| Workflow benchmarks | `agentBenchmark.js`, `npm run ollama:benchmark` |
-| Mini models (GitHub) | `training/bootcamp/`, `npm run models:mini` |
-| Large models (local pull) | `npm run models:large -- --yes` |
-| Realism-first prompts | `agentPrompts.js` — PBR default; retro opt-in |
-| Streamlined dev doc | [STREAMLINED_DEV.md](STREAMLINED_DEV.md) |
-| Model distribution policy | [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) |
+| Agent status + GPU chip | `agentStatus.js` |
+| Sequential Ollama queue | `ollamaRunQueue.js` |
+| Capability matrix | Red/yellow/green per model × tier |
+| Mini models (GitHub) | `npm run models:mini` |
+| Benchmarks | `npm run ollama:benchmark` |
+| Ollama CORS proxy | `npm run ollama:serve` (Pages + localhost) |
+
+[MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) · [BOOTCAMP.md](BOOTCAMP.md)
 
 ---
 
 ## Performance (v9.9+)
 
-| Before | After Sprint T |
-|--------|----------------|
-| ~1.9 MB monolithic `threshold.js` | ~24 kB entry + cached vendor chunks |
-| Eager engine load | Lazy engine/compiler/prompter after lobby **ENTER** |
-
-Chunks: `vendor-three`, `vendor-physics`, `vendor-peer`, `app-engine`, `app-compiler`, `app-prompter`
-
----
-
-## Polish sprint progress (v9.0–9.10)
-
-```
-K → L → M → Q → N → O → P → R → S → V → T → W → U ✅
-```
-
-| Sprint | Version | Focus |
-|--------|---------|-------|
-| K | 9.0 | Guided PLAY/BUILD |
-| L | 9.2 | Showcase visuals |
-| M | 9.3 | Onboarding polish |
-| N | 9.4 | Survival depth |
-| O | 9.5 | Creator tooling |
-| P | 9.6 | MP session polish |
-| R | 9.6.1 | Doc truth (v9.6) |
-| S | 9.7 | Survival gameplay loop |
-| V | 9.8 | Action controls + doc cleanup |
-| T | 9.9 | JS chunk split |
-| W | 9.10 | Hygiene + capabilities outline |
-| U | 9.11 | Store/native verify pass |
-| — | 9.12 | Streamlined export + agent status panel |
-| — | 9.13 | Tiered agent router + Ollama benchmarks |
-| — | 9.14–9.16 | Training bootcamp + mini models on GitHub |
-| — | 9.15 | Realism-first graphics (all tiers PBR) |
-
-Detail: [POLISH_ROADMAP.md](POLISH_ROADMAP.md) · History: [CHANGELOG.md](CHANGELOG.md)
+Lazy-loaded chunks after lobby ENTER: `app-engine`, `app-compiler`, `app-prompter`, vendor splits.
 
 ---
 
 ## Verify commands
 
 ```bash
-npm run assets:verify      # starter pipeline smoke
-npm run tc:verify          # TC GLBs + textures
-npm run tc:ship:verify     # export bundle smoke
-npm run controls:verify    # binding defaults + doc truth
-npm run store:verify       # Sprint U packaging smoke
-npm run ollama:verify      # local LLM smoke
-npm run ollama:benchmark   # rank models for workflows
-npm run models:mini        # install mini agents from GitHub recipes
-npm run build              # GitHub Pages chunk split
-npm run build:electron     # native-relative chunks
+npm run assets:verify
+npm run tc:verify
+npm run controls:verify
+npm run store:verify
+npm run ollama:verify
+node scripts/portal-ui-verify.cjs
+npm run build
 ```
 
 ---
@@ -182,6 +133,7 @@ npm run build:electron     # native-relative chunks
 ## Related
 
 - [docs/README.md](README.md) — doc index
-- [NEXT_PHASES.md](NEXT_PHASES.md) — long-form phase history
-- [PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md) — north star
+- [ROADMAP.md](ROADMAP.md) — v10.8+ forward plan
+- [CHANGELOG.md](CHANGELOG.md) — version history
 - [AGENTS.md](../AGENTS.md) — contributor map
+- [old/docs/](../old/docs/) — archived phase history

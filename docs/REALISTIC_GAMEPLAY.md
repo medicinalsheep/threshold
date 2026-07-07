@@ -191,4 +191,4 @@ Replace or extend via PromptGen **EXAMPLES** — avoid `World.clearWorld()` unle
 | **7.1** | Interior RP audio (coffee, door, elevator) |
 | **6.5–6.8** | Action controls, weather, creek, wildlife, highway |
 
-Detail: [CHANGELOG.md](CHANGELOG.md) · [POLISH_ROADMAP.md](POLISH_ROADMAP.md)
+Detail: [CHANGELOG.md](CHANGELOG.md) · [ROADMAP.md](ROADMAP.md)

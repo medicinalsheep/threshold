@@ -2,7 +2,7 @@
 
 Threshold ships a **full starter pipeline** for realistic action games: procedural PBR textures with HILOD, WebP/KTX2 codecs, Blender import, rigged avatars, surface footstep SFX, and FPS combat (ADS).
 
-**Current version:** v9.16.0 — realism-first PBR, survival loop, tiered agents, bootcamp mini models (see [CAPABILITIES.md](CAPABILITIES.md))
+**Current version:** v10.8.0 — blank grid default, tiered agents, bootcamp mini models (see [CAPABILITIES.md](CAPABILITIES.md))
 
 ---
 
@@ -186,7 +186,7 @@ npm run preview
 | `textures/threshold_manifest.json` | Runtime texture binding |
 | `docs/REALISTIC_GAMEPLAY.md` | Controls, survival, showcase site |
 | `docs/BLENDER_AVATARS.md` | Rig export checklist |
-| `docs/POLISH_ROADMAP.md` | Polish sprints L–R (complete) |
+| `docs/ROADMAP.md` | v10.8+ forward plan |
 
 ---
 

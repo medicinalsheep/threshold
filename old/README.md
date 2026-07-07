@@ -26,3 +26,15 @@ Content here is **not used by the active runtime** (v6.4+). Kept for history and
 | `threshold-ref-lite` | Removed v5.5 (external CC0 drop) |
 
 Registry: `config/reference-editions.json` · Policy: `docs/THRESHOLD_CHILD_ASSETS.md`
+
+## Archived documentation (`old/docs/`)
+
+Superseded phase and sprint docs — not maintained for v10+. **Current roadmap:** `docs/ROADMAP.md`
+
+| Path | Why archived |
+|------|----------------|
+| `docs/NEXT_PHASES.md` | v3–9 phase checklist (~586 lines) |
+| `docs/POLISH_ROADMAP.md` | Sprints K–U (complete) |
+| `docs/PHASE_13_STABILITY.md` | Historical stability sprint |
+| `docs/PHASE_18_TESLA_LAB.md` | Pre-10.0 showcase lab plan |
+| `docs/DEFAULT_ASSETS_ROADMAP.md` | Showcase-default asset plan (removed in 10.0) |
