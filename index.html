@@ -35,9 +35,9 @@
                         <p id="lobby-release-strip" class="lobby-release-strip" aria-label="Release notes"></p>
                     </div>
                     <div class="lobby-pills">
-                        <span class="lobby-pill" style="--pill-i:0">HOST</span>
-                        <span class="lobby-pill" style="--pill-i:1">BUILD</span>
-                        <span class="lobby-pill" style="--pill-i:2">PLAY</span>
+                        <span class="lobby-pill" style="--pill-i:0">3D ENGINE</span>
+                        <span class="lobby-pill" style="--pill-i:1">MULTIPLAYER</span>
+                        <span class="lobby-pill" style="--pill-i:2">AI AGENTS</span>
                     </div>
                     <div class="lobby-hero-rail" aria-hidden="true">
                         <span class="lobby-rail-dot"></span>
@@ -47,16 +47,16 @@
                 </aside>
                 <main class="lobby-actions-panel">
                     <div class="lobby-actions-head">
-                        <span class="lobby-actions-label">HOST A SESSION</span>
-                        <span class="lobby-actions-sub">Blank grid · tools unlock as you build</span>
+                        <span class="lobby-actions-label">SESSION</span>
+                        <span class="lobby-actions-sub">Host or join · solo · spectate</span>
                     </div>
                     <input type="text" id="lobby-name" class="lobby-input" placeholder="Your name" maxlength="20" autocomplete="nickname">
-                    <button id="lobby-create" class="lobby-btn lobby-btn-primary">CREATE SESSION →</button>
+                    <button id="lobby-create" class="lobby-btn lobby-btn-primary">CREATE SESSION</button>
                     <div class="lobby-join-row">
                         <input type="text" id="lobby-join-code" class="lobby-input" placeholder="Room code" maxlength="8" autocomplete="off" spellcheck="false">
                         <button id="lobby-join" class="lobby-btn lobby-btn-join">JOIN</button>
                     </div>
-                    <details class="lobby-voip-wrap">
+                    <details class="lobby-voip-wrap" open>
                         <summary>Voice — host sets before CREATE</summary>
                         <div class="lobby-voip-grid">
                             <label class="lobby-voip-row"><input type="checkbox" id="lobby-voip-enabled" checked> Enable voice</label>
@@ -87,22 +87,27 @@
                         <button type="button" id="lobby-mode-play" class="lobby-mode-btn active" data-mode="play">PLAY</button>
                         <button type="button" id="lobby-mode-build" class="lobby-mode-btn" data-mode="build">BUILD</button>
                     </div>
-                    <p class="lobby-mode-hint">PLAY runs physics · BUILD pauses to edit · share your room link after CREATE</p>
-                    <details class="lobby-advanced-wrap">
-                        <summary>Offline &amp; options</summary>
-                        <label class="lobby-template-row">
-                            <span class="lobby-template-label">STARTER</span>
-                            <select id="lobby-template" class="lobby-input lobby-template-select" title="Template for offline play">
-                                <option value="grid">Blank Grid</option>
-                            </select>
-                        </label>
-                        <p id="lobby-template-desc" class="lobby-template-desc">Empty workspace — UI unlocks as you build</p>
-                        <div class="lobby-quick-row">
-                            <button id="lobby-solo" class="lobby-btn lobby-btn-ghost">OFFLINE →</button>
-                            <button id="lobby-tc" class="lobby-btn lobby-btn-ghost" title="TC Circuit demo">TC DEMO</button>
-                            <button id="lobby-spectate" class="lobby-btn lobby-btn-spectate">SPECTATE</button>
+                    <p class="lobby-mode-hint">PLAY runs physics · BUILD pauses to edit your world</p>
+                    <label class="lobby-template-row">
+                        <span class="lobby-template-label">STARTER WORLD</span>
+                        <select id="lobby-template" class="lobby-input lobby-template-select" title="Template loaded on solo / host">
+                            <option value="grid">Blank Grid</option>
+                        </select>
+                    </label>
+                    <p id="lobby-template-desc" class="lobby-template-desc">Empty grid — add your own assets when ready</p>
+                    <div class="lobby-quick-row">
+                        <button id="lobby-solo" class="lobby-btn lobby-btn-primary">ENTER →</button>
+                        <button id="lobby-tc" class="lobby-btn lobby-btn-ghost" title="TC Circuit demo">TC →</button>
+                        <button id="lobby-spectate" class="lobby-btn lobby-btn-spectate">SPECTATE</button>
+                    </div>
+                    <button id="lobby-play-last-export" class="lobby-btn lobby-btn-ghost lobby-export-play" type="button" title="Open last EXPORT &amp; PLAY tab">▶ PLAY LAST EXPORT</button>
+                    <details class="lobby-steps-wrap">
+                        <summary>Quick tips</summary>
+                        <div class="lobby-steps">
+                            <div class="lobby-step"><span class="lobby-step-num">1</span> Set voice (host) · choose <strong>PLAY</strong> or <strong>BUILD</strong></div>
+                            <div class="lobby-step"><span class="lobby-step-num">2</span> <strong>CREATE SESSION</strong> or <strong>ENTER</strong> for solo on blank grid</div>
+                            <div class="lobby-step"><span class="lobby-step-num">3</span> In-engine <strong>SETUP</strong> — Grok, Ollama, design brief (optional)</div>
                         </div>
-                        <button id="lobby-play-last-export" class="lobby-btn lobby-btn-ghost lobby-export-play" type="button" title="Open last export tab">▶ LAST EXPORT</button>
                     </details>
                     <div id="lobby-status"></div>
                 </main>
@@ -130,8 +135,8 @@
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
             <button class="tab-btn" data-target="view-spectate">SPECTATE</button>
-            <button class="tab-btn ui-locked" data-target="view-compiler" style="display:none">COMPILER</button>
-            <button class="tab-btn ui-locked" data-target="view-prompter" style="display:none">PROMPTGEN</button>
+            <button class="tab-btn" data-target="view-compiler">COMPILER</button>
+            <button class="tab-btn" data-target="view-prompter">PROMPTGEN</button>
         </div>
         <div class="nav-actions">
             <button id="btn-fullscreen" class="nav-fullscreen-btn" type="button" aria-label="Enter fullscreen" aria-pressed="false" title="Fullscreen">FULL</button>
@@ -378,7 +383,7 @@
 
             <!-- Right dock: ENV / EDIT / SKIN -->
             <button type="button" id="dock-restore-btn" class="dock-restore-btn" title="Open scene panel">SCENE</button>
-            <div id="scene-dock" class="scene-dock collapsed dock-full-hidden panel">
+            <div id="scene-dock" class="scene-dock collapsed panel">
                 <div class="panel-chrome-header panel-drag-handle">
                     <span class="panel-chrome-grip" aria-hidden="true">⠿</span>
                     <span class="panel-chrome-title">SCENE</span>
@@ -567,7 +572,7 @@
                 <p class="insert-hint" style="margin:4px 0 8px;">Connect Grok + Ollama, GIMP/Blender watch, then start a <strong>design brief</strong> — agents ask follow-up questions before generating.</p>
                 <button id="setup-start-brief" type="button" style="width:100%;margin-bottom:6px;">+ NEW DESIGN BRIEF</button>
                 <button id="setup-resume-brief" type="button" class="btn-sm" style="width:100%;margin-bottom:8px;">RESUME DRAFT BRIEF</button>
-                <label class="export-wizard-check" style="margin-bottom:10px;"><input type="checkbox" id="setup-show-all-tools"> Show all tools (Compiler, PromptGen, full scene dock)</label>
+                <label class="export-wizard-check" style="margin-bottom:10px;"><input type="checkbox" id="setup-show-all-tools"> Compact UI (hide extra hints — full tabs stay in nav)</label>
                 <details class="setup-advanced-wrap" open>
                     <summary>Providers — Grok &amp; Ollama</summary>
                 <label class="insert-hint">xAI API key (session — not shared from other browser tabs)</label>

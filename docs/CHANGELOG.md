@@ -1,5 +1,12 @@
 # Changelog
 
+## 10.1.1 — Lobby + panel stability
+
+- **Lobby restored** — VOIP open by default, SESSION flow, ENTER + CREATE, starter template visible (no samples yet)
+- **Panels fixed** — Compiler/PromptGen always in nav; dock not hidden on load; collapse toggle works both ways
+- **Removed auto-popup** — SETUP no longer forces open on session start
+- **Deploy fix** — `package-lock.json` synced to package version (CI `npm ci` was failing)
+
 ## 10.1.0 — SETUP tab + design brief intake
 
 - **Minimal session UI** — join with sparse chrome; **SETUP** always available (not unlock-on-object)

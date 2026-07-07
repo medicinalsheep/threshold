@@ -58,7 +58,7 @@ export const SceneDock = {
         if (!dock) return;
 
         const lastTab = ViewPrefs.get('dockTab', null);
-        const hidden = ViewPrefs.get('dockHidden', true);
+        const hidden = ViewPrefs.get('dockHidden', false);
         const expanded = !hidden && ViewPrefs.get('dockExpanded', false) && !!lastTab;
         setFullyHidden(hidden, false);
         setExpanded(expanded, false);
@@ -72,7 +72,23 @@ export const SceneDock = {
         });
 
         document.getElementById('dock-collapse')?.addEventListener('click', () => {
-            setFullyHidden(true, true);
+            const dock = document.getElementById('scene-dock');
+            if (dock?.classList.contains('dock-full-hidden')) {
+                setFullyHidden(false, true);
+                setExpanded(true, true);
+                const tab = activeTab || ViewPrefs.get('dockTab', 'setup');
+                this.openTab(tab);
+                return;
+            }
+            if (dock?.classList.contains('expanded')) {
+                setExpanded(false, true);
+                this.closeTab();
+                setFullyHidden(true, true);
+            } else {
+                setFullyHidden(false, true);
+                setExpanded(true, true);
+                this.openTab(activeTab || ViewPrefs.get('dockTab', 'setup'));
+            }
         });
 
         document.getElementById('dock-restore-btn')?.addEventListener('click', () => {

@@ -162,22 +162,8 @@ button {
     display: block;
 }
 
-body.ui-minimal #proximity-panel.ui-locked,
 body.ui-minimal .action-hint-bar,
 body.ui-minimal #tc-quest-card {
-    display: none !important;
-}
-
-body.ui-minimal .toolbar-more-menu .edit-only,
-body.ui-minimal #btn-toolbar-more {
-    display: none;
-}
-
-.tab-btn.ui-locked {
-    display: none !important;
-}
-
-.dock-tab.ui-locked {
     display: none !important;
 }
 
