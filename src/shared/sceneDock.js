@@ -76,18 +76,17 @@ export const SceneDock = {
             if (dock?.classList.contains('dock-full-hidden')) {
                 setFullyHidden(false, true);
                 setExpanded(true, true);
-                const tab = activeTab || ViewPrefs.get('dockTab', 'setup');
+                const tab = activeTab || ViewPrefs.get('dockTab', 'inspect');
                 this.openTab(tab);
                 return;
             }
             if (dock?.classList.contains('expanded')) {
                 setExpanded(false, true);
                 this.closeTab();
-                setFullyHidden(true, true);
             } else {
                 setFullyHidden(false, true);
                 setExpanded(true, true);
-                this.openTab(activeTab || ViewPrefs.get('dockTab', 'setup'));
+                this.openTab(activeTab || ViewPrefs.get('dockTab', 'inspect'));
             }
         });
 
@@ -117,7 +116,7 @@ export const SceneDock = {
         panels().forEach((panel) => {
             const match = panel.dataset.dockPanel === tabId;
             panel.classList.toggle('dock-active', match);
-            panel.style.display = match ? 'block' : 'none';
+            panel.style.display = match ? '' : 'none';
             if (match) panel.classList.remove('hidden');
         });
 

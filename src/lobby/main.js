@@ -15,7 +15,7 @@ function initLobbyReleaseStrip() {
     const el = document.getElementById('lobby-release-strip');
     if (!el) return;
     const logUrl = 'https://github.com/medicinalsheep/threshold/blob/main/docs/CHANGELOG.md';
-    el.innerHTML = `v${VERSION} · blank grid rebuild · <a href="${logUrl}" target="_blank" rel="noopener noreferrer">changelog</a>`;
+    el.innerHTML = `v${VERSION} · VOIP lobby + stable panels · <a href="${logUrl}" target="_blank" rel="noopener noreferrer">changelog</a>`;
 }
 
 function initLobbyModePicker() {
