@@ -72,6 +72,12 @@ export const WorldInteract = {
         const action = root.userData.interactAction || 'agents';
         const label = root.userData.interactLabel || root.userData.name || 'Terminal';
 
+        if (action === 'studio') {
+            window.ProgressiveUi?.onStudioInteract?.();
+            window.SceneDock?.openTab?.('agents');
+            window.UI?.status?.(`${label} — Agents open · Compiler & PromptGen in toolbar`);
+            return true;
+        }
         if (action === 'agents') {
             window.SceneDock?.openTab?.('agents');
             window.UI?.status?.(`${label} — AI agents · attach Grok or local scripts`);

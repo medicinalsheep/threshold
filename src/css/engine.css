@@ -133,6 +133,54 @@ button {
     display: none;
 }
 
+.scene-dock.dock-full-hidden {
+    display: none !important;
+    pointer-events: none;
+}
+
+.dock-restore-btn {
+    display: none;
+    position: fixed;
+    right: 0;
+    top: calc(var(--chrome-top, 50px) + 50%);
+    transform: translateY(-50%);
+    z-index: 25;
+    padding: 12px 8px;
+    font-size: 0.55rem;
+    letter-spacing: 1px;
+    writing-mode: vertical-rl;
+    border: 1px solid var(--border-color);
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+    background: var(--panel-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.dock-restore-btn.visible {
+    display: block;
+}
+
+body.ui-minimal #proximity-panel.ui-locked,
+body.ui-minimal .action-hint-bar,
+body.ui-minimal #tc-quest-card {
+    display: none !important;
+}
+
+body.ui-minimal .toolbar-more-menu .edit-only,
+body.ui-minimal #btn-toolbar-more {
+    display: none;
+}
+
+.tab-btn.ui-locked {
+    display: none !important;
+}
+
+.dock-tab.ui-locked {
+    display: none !important;
+}
+
 .scene-dock.expanded .dock-panels {
     display: flex;
     flex-direction: column;

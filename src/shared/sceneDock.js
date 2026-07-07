@@ -18,7 +18,7 @@ function setExpanded(expanded, persist = true) {
     const btn = document.getElementById('dock-collapse');
     if (btn) {
         btn.textContent = expanded ? '▶' : '◀';
-        btn.title = expanded ? 'Collapse panel dock' : 'Expand panel dock';
+        btn.title = expanded ? 'Hide scene panel' : 'Show scene panel';
     }
     if (persist) ViewPrefs.set('dockExpanded', expanded);
 
@@ -32,23 +32,54 @@ function setExpanded(expanded, persist = true) {
     window.dispatchEvent(new Event('resize'));
 }
 
+function setFullyHidden(hidden, persist = true) {
+    const dock = document.getElementById('scene-dock');
+    const restore = document.getElementById('dock-restore-btn');
+    if (!dock) return;
+    dock.classList.toggle('dock-full-hidden', hidden);
+    restore?.classList.toggle('visible', hidden);
+    if (hidden) {
+        setExpanded(false, persist);
+        panels().forEach((panel) => {
+            panel.style.display = 'none';
+            panel.classList.remove('dock-active');
+        });
+        tabs().forEach((tab) => tab.classList.remove('active'));
+        dock.classList.remove('has-panel');
+        activeTab = null;
+    }
+    if (persist) ViewPrefs.set('dockHidden', hidden);
+    window.dispatchEvent(new Event('resize'));
+}
+
 export const SceneDock = {
     init() {
         const dock = document.getElementById('scene-dock');
         if (!dock) return;
 
         const lastTab = ViewPrefs.get('dockTab', null);
-        const expanded = ViewPrefs.get('dockExpanded', false) && !!lastTab;
+        const hidden = ViewPrefs.get('dockHidden', true);
+        const expanded = !hidden && ViewPrefs.get('dockExpanded', false) && !!lastTab;
+        setFullyHidden(hidden, false);
         setExpanded(expanded, false);
-        if (lastTab) this.openTab(lastTab);
+        if (lastTab && expanded) this.openTab(lastTab);
 
         tabs().forEach((tab) => {
-            tab.addEventListener('click', () => this.openTab(tab.dataset.dockTab));
+            tab.addEventListener('click', () => {
+                setFullyHidden(false, true);
+                this.openTab(tab.dataset.dockTab);
+            });
         });
 
         document.getElementById('dock-collapse')?.addEventListener('click', () => {
-            const isExpanded = dock.classList.contains('expanded');
-            setExpanded(!isExpanded);
+            setFullyHidden(true, true);
+        });
+
+        document.getElementById('dock-restore-btn')?.addEventListener('click', () => {
+            setFullyHidden(false, true);
+            setExpanded(true, true);
+            const tab = activeTab || ViewPrefs.get('dockTab', 'inspect');
+            this.openTab(tab);
         });
 
         document.addEventListener('click', (e) => {
@@ -62,6 +93,8 @@ export const SceneDock = {
         const dock = document.getElementById('scene-dock');
         if (!dock || !tabId) return;
 
+        window.ProgressiveUi?.unlock?.('dock', { silent: true });
+        setFullyHidden(false, true);
         activeTab = tabId;
         setExpanded(true);
 
@@ -107,6 +140,10 @@ export const SceneDock = {
 
     refreshSoundLibrary() {
         window.UI?.renderSoundLibrary?.();
+    },
+
+    setFullyHidden(hidden, persist = true) {
+        setFullyHidden(hidden, persist);
     },
 };
 

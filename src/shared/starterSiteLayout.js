@@ -20,19 +20,19 @@ export const LAB = {
 
 export const SITE = {
     building: { x: 0, y: 0, z: 0 },
-    spawn: { x: 0, y: 0, z: 11.5 },
-    courtyard: { x: 0, y: 0, z: 10 },
+    spawn: { x: 0, y: 0, z: 2 },
+    courtyard: { x: 0, y: 0, z: 0 },
     lab: { x: 0, y: BUILDING.floorY, z: 0 },
     labDoor: { x: 0, y: BUILDING.floorY, z: LAB.halfD - 0.05 },
     interiorEntry: { x: 0, y: BUILDING.floorY, z: 0.55 },
-    courtyardEntry: { x: 0, y: 0, z: 5.6 },
+    courtyardEntry: { x: 0, y: 0, z: 2 },
     tower: { x: 0, y: 0, z: -14 },
-    field: { x: 0, y: 0, z: 2, w: 64, d: 52 },
+    field: { x: 0, y: 0, z: 0, w: 32, d: 32 },
     highway: { x: 24, y: 0, z: 8 },
     creek: { x: -16, y: 0, z: 10 },
     treeLineZ: -22,
-    cameraSpawn: { x: 0.35, y: 1.78, z: 13.4 },
-    cameraTarget: { x: 0, y: 1.62, z: 5.8 },
+    cameraSpawn: { x: 6, y: 2.2, z: 6 },
+    cameraTarget: { x: 0, y: 0, z: 0 },
 };
 
 export const EXTERIOR_SPAWN = { ...SITE.spawn };

@@ -21,10 +21,10 @@ const STEPS = [
         highlight: '#sim-mode-badge',
     },
     {
-        title: 'Wardenclyffe showcase',
-        body: 'This is a production-style starter site — textured lab GLBs, courtyard props, weather, survival loops, and MP sync. '
-            + 'Walk north to the lab · <strong>F</strong> on terminals · Nikola patrols inside. '
-            + 'Use this as a reference world when building your own game.',
+        title: 'Blank grid',
+        body: 'You start on an empty grid. Right-click <strong>INSERT</strong> to add objects. '
+            + 'Tools unlock as you build — Compiler and PromptGen appear after your first edits. '
+            + '<strong>CREATE SESSION</strong> in the lobby to host friends.',
     },
     {
         title: 'Extend without wiping',

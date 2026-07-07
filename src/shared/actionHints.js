@@ -5,12 +5,12 @@ import { ViewPrefs } from './viewPrefs.js';
 const HINTS = [
     {
         id: 'walk',
-        text: 'WASD walk · Space jump · F on terminals & survival props · vitals HUD top-right (V)',
+        text: 'WASD move · right-click INSERT · BUILD mode to place objects · tools unlock as you build',
         afterMs: 0,
     },
     {
         id: 'promptgen',
-        text: 'Try PromptGen → EXAMPLES — one-click extend the Wardenclyffe showcase safely',
+        text: 'Workstation → Agents, or toolbar Compiler / PromptGen to extend your scene',
         afterMs: 42000,
     },
     {
@@ -94,7 +94,7 @@ export const ActionHints = {
     _maybeTcQuest() {
         if (ViewPrefs.get('tcQuestDismissed', false)) return;
         if (!ViewPrefs.get('walkthroughDone', false)) return;
-        if (window.State?.templateId !== 'wardenclyffe') return;
+        if (window.State?.templateId !== 'tc-circuit') return;
         if (window.Network?.mode !== 'solo') return;
         this._tcCard?.classList.add('visible');
     },

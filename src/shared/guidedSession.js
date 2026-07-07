@@ -81,7 +81,8 @@ export const GuidedSession = {
     chooseMode(mode) {
         this.applyMode(mode, mode === 'build' ? 'You chose BUILD' : 'You chose PLAY');
         this.hide();
-        requestAnimationFrame(() => Walkthrough.start(0, 'quick', mode));
+        ViewPrefs.set('walkthroughDone', true);
+        requestAnimationFrame(() => this.finishPostTour());
     },
 
     beginTour(mode) {
@@ -95,12 +96,8 @@ export const GuidedSession = {
 
     startIfNeeded() {
         if (this.shouldSkipModeGate()) {
-            const mode = this.applyHostPauseState();
-            if (ViewPrefs.get('walkthroughDone', false)) {
-                this.finishPostTour();
-                return;
-            }
-            this.beginTour(mode);
+            this.applyHostPauseState();
+            this.finishPostTour();
             return;
         }
 
@@ -114,7 +111,7 @@ export const GuidedSession = {
 
         const lobbyMode = this.getSavedMode();
         if (lobbyMode) {
-            this.beginTour(lobbyMode);
+            this.finishPostTour();
             return;
         }
 
@@ -123,7 +120,8 @@ export const GuidedSession = {
 
     show() {
         if (!this._root) {
-            this.beginTour('play');
+            this.applyMode('play');
+            this.finishPostTour();
             return;
         }
         this._root.classList.add('open');

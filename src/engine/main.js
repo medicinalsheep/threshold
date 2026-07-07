@@ -33,14 +33,11 @@ import { GltfImport } from '../shared/gltfImport.js';
 import { ThresholdShell } from '../shared/thresholdShell.js';
 import { CreativeWatch } from '../shared/creativeWatch.js';
 import '../shared/starterSiteLayout.js';
-import '../shared/starterSiteTerrain191.js';
 import { bootstrapSelectedTemplate } from '../shared/starterTemplates.js';
 import '../shared/worldInteract.js';
-import '../shared/aiTerminal.js';
-import '../shared/starterSfx.js';
+import '../shared/progressiveUi.js';
 import { ThirdEye } from '../shared/thirdEye.js';
 import '../shared/engineAudio.js';
-import '../shared/starterTex.js';
 import '../shared/npcPatrol.js';
 import '../shared/footsteps.js';
 import '../shared/fpsViewmodel.js';
@@ -55,27 +52,7 @@ import '../shared/avatarLoader.js';
 import '../shared/ambientAudio.js';
 import '../shared/weatherSystem.js';
 import '../shared/recordedAmbient.js';
-import '../shared/starterAudio.js';
-import '../shared/starterEnv14.js';
-import '../shared/starterWildlife15.js';
-import '../shared/starterUrban16.js';
-import '../shared/starterInterior17.js';
-import '../shared/starterTeslaExterior18.js';
-import '../shared/starterTeslaLab18.js';
-import '../shared/starterTeslaInteract182.js';
-import '../shared/starterTeslaNpc183.js';
-import '../shared/starterTeslaWeather184.js';
-import '../shared/starterCourtyard194.js';
-import '../shared/starterLighting195.js';
-import '../shared/labCoatProp.js';
 import '../shared/creatorHud.js';
-import '../shared/teslaLabGlb185.js';
-import '../shared/teslaBuildingGlb192.js';
-import '../shared/starterBuildingTex193.js';
-import '../shared/teslaLabAmbient.js';
-import '../shared/wildlifeAmbient.js';
-import '../shared/urbanAmbient.js';
-import '../shared/interiorAmbient.js';
 import '../shared/starterMaterials.js';
 import '../shared/starterAnim.js';
 
@@ -87,10 +64,11 @@ import { OllamaDevAgent } from '../ollama/devAgent.js';
 import { AgentStatus } from '../shared/agentStatus.js';
 import { AgentRouter } from '../shared/agentRouter.js';
 import { AgentBenchmark } from '../shared/agentBenchmark.js';
+import { TrainingImport } from '../shared/trainingImport.js';
 import { Auth } from '../auth/main.js';
 import { Walkthrough } from '../shared/walkthrough.js';
 import '../shared/guidedSession.js';
-import '../shared/showcaseGateway.js';
+
 import { ExportWizard } from '../shared/exportWizard.js';
 import '../shared/exportPreflight.js';
 import { QuickExportPlay } from '../shared/quickExportPlay.js';
@@ -213,9 +191,11 @@ export function initEngine() {
     } else {
         setTimeout(async () => {
             const tpl = await bootstrapSelectedTemplate();
-            if (tpl && tpl !== 'wardenclyffe') {
+            if (tpl && tpl !== 'grid') {
                 window.UI?.status?.(`Template: ${window.StarterTemplates?.STARTER_TEMPLATES?.[tpl]?.name || tpl}`);
             }
+            window.ProgressiveUi?.init?.();
+            if (Network.mode === 'host') window.ProgressiveUi?.onHostSession?.();
         }, 120);
     }
 
@@ -1370,6 +1350,7 @@ const World = {
         mesh.userData = { id: Date.now().toString(36), name: name || type, type: type, locked: false, isRotating: false, hasPhysics: usePhysics };
         Engine.scene.add(mesh);
         State.objects.push(mesh);
+        window.dispatchEvent(new CustomEvent('threshold:object-added', { detail: { mesh } }));
         if (usePhysics) {
             const body = Physics.addBody(mesh, type);
             State.physicsObjects.push({ mesh, body });
@@ -1394,6 +1375,7 @@ const World = {
         mesh.userData = { id: Date.now().toString(36), name: name || 'custom', type: 'custom', locked: false, isRotating: false, hasPhysics: usePhysics };
         Engine.scene.add(mesh);
         State.objects.push(mesh);
+        window.dispatchEvent(new CustomEvent('threshold:object-added', { detail: { mesh } }));
         if (usePhysics) {
             // Auto-detect best physics shape
             let shapeType = 'box';
@@ -1886,6 +1868,8 @@ const UI = {
         document.getElementById('agent-ollama-suggest')?.addEventListener('click', () => UI.ollamaDevSuggest());
         document.getElementById('agent-ollama-apply')?.addEventListener('click', () => UI.ollamaDevApply());
         document.getElementById('agent-benchmark-run')?.addEventListener('click', () => UI.runAgentBenchmark());
+        document.getElementById('agent-training-export')?.addEventListener('click', () => UI.exportTrainingPair());
+        document.getElementById('agent-training-export-queue')?.addEventListener('click', () => UI.exportTrainingQueue());
         document.getElementById('agent-local-save')?.addEventListener('click', () => UI.saveLocalAgent());
         document.getElementById('agent-status-refresh')?.addEventListener('click', () => UI.refreshAgentStatus());
         document.getElementById('agent-xai-save')?.addEventListener('click', () => UI.saveAgentXaiKey());
@@ -2338,6 +2322,15 @@ const UI = {
             const input = document.getElementById('comp-input')?.value?.trim();
             if (!input) throw new Error('Compiler input is empty');
             const result = await AgentRouter.runTask('dev_suggest', { code: input });
+            if (document.getElementById('agent-training-queue')?.checked) {
+                const row = TrainingImport.buildRow(input, result.code, {
+                    meta: { provider: result.provider, model: result.model, source: 'smart_apply' },
+                });
+                if (row) {
+                    TrainingImport.enqueue(row);
+                    TrainingImport.syncQueueUi();
+                }
+            }
             const out = document.getElementById('comp-output');
             const inp = document.getElementById('comp-input');
             if (inp) inp.value = result.code;
@@ -2348,6 +2341,29 @@ const UI = {
             this.refreshAgentStatus();
         } catch (e) {
             this.status(e.message || 'Smart dev apply failed');
+        }
+    },
+    exportTrainingPair: function () {
+        try {
+            const route = AgentRouter.getRouteLog()[0];
+            const { base } = TrainingImport.captureFromCompiler({
+                meta: {
+                    provider: route?.provider,
+                    model: route?.model,
+                    source: 'manual_export',
+                },
+            });
+            this.status(`Exported ${base}.json — move to datasets/raw/ then: ${TrainingImport.cliImportHint(base)}`);
+        } catch (e) {
+            this.status(e.message || 'Training export failed');
+        }
+    },
+    exportTrainingQueue: function () {
+        try {
+            const n = TrainingImport.exportQueue();
+            this.status(`Exported queue (${n} pairs) — import each line or split into raw JSON files`);
+        } catch (e) {
+            this.status(e.message || 'Queue export failed');
         }
     },
     runAgentBenchmark: async function () {
@@ -2361,7 +2377,8 @@ const UI = {
                 },
             });
             if (el) el.innerHTML = AgentBenchmark.formatSummaryHtml(summary);
-            this.status(`Benchmark ${summary.pct}% (${summary.totalScore}/${summary.totalMax})`);
+            const appliedMsg = summary.applied?.changed ? ' · tiers auto-applied' : '';
+            this.status(`Benchmark ${summary.pct}% (${summary.totalScore}/${summary.totalMax})${appliedMsg}`);
             this.refreshAgentStatus();
         } catch (e) {
             if (el) el.innerHTML = `<p class="insert-hint">Benchmark failed: ${e.message}</p>`;

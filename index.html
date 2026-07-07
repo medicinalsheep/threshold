@@ -35,11 +35,9 @@
                         <p id="lobby-release-strip" class="lobby-release-strip" aria-label="Release notes"></p>
                     </div>
                     <div class="lobby-pills">
-                        <span class="lobby-pill" style="--pill-i:0">3D ENGINE</span>
-                        <span class="lobby-pill" style="--pill-i:1">AI PROMPTS</span>
-                        <span class="lobby-pill" style="--pill-i:2">SOUND LIBRARY</span>
-                        <span class="lobby-pill" style="--pill-i:3">MULTIPLAYER</span>
-                        <span class="lobby-pill" style="--pill-i:4">TC RACE</span>
+                        <span class="lobby-pill" style="--pill-i:0">HOST</span>
+                        <span class="lobby-pill" style="--pill-i:1">BUILD</span>
+                        <span class="lobby-pill" style="--pill-i:2">PLAY</span>
                     </div>
                     <div class="lobby-hero-rail" aria-hidden="true">
                         <span class="lobby-rail-dot"></span>
@@ -49,16 +47,16 @@
                 </aside>
                 <main class="lobby-actions-panel">
                     <div class="lobby-actions-head">
-                        <span class="lobby-actions-label">SESSION</span>
-                        <span class="lobby-actions-sub">Host or join · solo · spectate</span>
+                        <span class="lobby-actions-label">HOST A SESSION</span>
+                        <span class="lobby-actions-sub">Blank grid · tools unlock as you build</span>
                     </div>
                     <input type="text" id="lobby-name" class="lobby-input" placeholder="Your name" maxlength="20" autocomplete="nickname">
-                    <button id="lobby-create" class="lobby-btn lobby-btn-primary">CREATE SESSION</button>
+                    <button id="lobby-create" class="lobby-btn lobby-btn-primary">CREATE SESSION →</button>
                     <div class="lobby-join-row">
                         <input type="text" id="lobby-join-code" class="lobby-input" placeholder="Room code" maxlength="8" autocomplete="off" spellcheck="false">
                         <button id="lobby-join" class="lobby-btn lobby-btn-join">JOIN</button>
                     </div>
-                    <details class="lobby-voip-wrap" open>
+                    <details class="lobby-voip-wrap">
                         <summary>Voice — host sets before CREATE</summary>
                         <div class="lobby-voip-grid">
                             <label class="lobby-voip-row"><input type="checkbox" id="lobby-voip-enabled" checked> Enable voice</label>
@@ -89,28 +87,22 @@
                         <button type="button" id="lobby-mode-play" class="lobby-mode-btn active" data-mode="play">PLAY</button>
                         <button type="button" id="lobby-mode-build" class="lobby-mode-btn" data-mode="build">BUILD</button>
                     </div>
-                    <p class="lobby-mode-hint">PLAY runs physics &amp; vitals · BUILD pauses to edit your world</p>
-                    <label class="lobby-template-row">
-                        <span class="lobby-template-label">STARTER WORLD</span>
-                        <select id="lobby-template" class="lobby-input lobby-template-select" title="Template loaded on SOLO">
-                            <option value="wardenclyffe">Wardenclyffe</option>
-                        </select>
-                    </label>
-                    <p id="lobby-template-desc" class="lobby-template-desc">Polished showcase site — lab GLBs, survival, weather, export-ready</p>
-                    <div class="lobby-quick-row">
-                        <button id="lobby-solo" class="lobby-btn lobby-btn-primary">ENTER →</button>
-                        <button id="lobby-tc" class="lobby-btn lobby-btn-ghost" title="Shortcut — TC Circuit template">TC →</button>
-                        <button id="lobby-spectate" class="lobby-btn lobby-btn-spectate">SPECTATE</button>
-                    </div>
-                    <button id="lobby-play-last-export" class="lobby-btn lobby-btn-ghost lobby-export-play" type="button" title="Open last EXPORT &amp; PLAY tab">▶ PLAY LAST EXPORT</button>
-                    <details class="lobby-steps-wrap">
-                        <summary>Quick tips</summary>
-                        <div class="lobby-steps">
-                            <div class="lobby-step"><span class="lobby-step-num">1</span> Choose <strong>PLAY</strong> or <strong>BUILD</strong>, then <strong>ENTER</strong></div>
-                            <div class="lobby-step"><span class="lobby-step-num">2</span> Guided tour — showcase site, PromptGen, export pipeline</div>
-                            <div class="lobby-step"><span class="lobby-step-num">3</span> Extend with EXAMPLES · ship via <strong>EXPORT &amp; PLAY</strong></div>
-                            <div class="lobby-step"><span class="lobby-step-num">4</span> Optional: <strong>TC →</strong> for vehicles &amp; lap challenge</div>
+                    <p class="lobby-mode-hint">PLAY runs physics · BUILD pauses to edit · share your room link after CREATE</p>
+                    <details class="lobby-advanced-wrap">
+                        <summary>Offline &amp; options</summary>
+                        <label class="lobby-template-row">
+                            <span class="lobby-template-label">STARTER</span>
+                            <select id="lobby-template" class="lobby-input lobby-template-select" title="Template for offline play">
+                                <option value="grid">Blank Grid</option>
+                            </select>
+                        </label>
+                        <p id="lobby-template-desc" class="lobby-template-desc">Empty workspace — UI unlocks as you build</p>
+                        <div class="lobby-quick-row">
+                            <button id="lobby-solo" class="lobby-btn lobby-btn-ghost">OFFLINE →</button>
+                            <button id="lobby-tc" class="lobby-btn lobby-btn-ghost" title="TC Circuit demo">TC DEMO</button>
+                            <button id="lobby-spectate" class="lobby-btn lobby-btn-spectate">SPECTATE</button>
                         </div>
+                        <button id="lobby-play-last-export" class="lobby-btn lobby-btn-ghost lobby-export-play" type="button" title="Open last export tab">▶ LAST EXPORT</button>
                     </details>
                     <div id="lobby-status"></div>
                 </main>
@@ -138,8 +130,8 @@
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
             <button class="tab-btn" data-target="view-spectate">SPECTATE</button>
-            <button class="tab-btn" data-target="view-compiler">COMPILER</button>
-            <button class="tab-btn" data-target="view-prompter">PROMPTGEN</button>
+            <button class="tab-btn ui-locked" data-target="view-compiler" style="display:none">COMPILER</button>
+            <button class="tab-btn ui-locked" data-target="view-prompter" style="display:none">PROMPTGEN</button>
         </div>
         <div class="nav-actions">
             <button id="btn-fullscreen" class="nav-fullscreen-btn" type="button" aria-label="Enter fullscreen" aria-pressed="false" title="Fullscreen">FULL</button>
@@ -356,7 +348,8 @@
             </div>
 
             <!-- Right dock: ENV / EDIT / SKIN -->
-            <div id="scene-dock" class="scene-dock collapsed panel">
+            <button type="button" id="dock-restore-btn" class="dock-restore-btn" title="Open scene panel">SCENE</button>
+            <div id="scene-dock" class="scene-dock collapsed dock-full-hidden panel">
                 <div class="panel-chrome-header panel-drag-handle">
                     <span class="panel-chrome-grip" aria-hidden="true">⠿</span>
                     <span class="panel-chrome-title">SCENE</span>
@@ -554,10 +547,11 @@
                 <div class="prop-row" style="margin-bottom:4px;"><label style="min-width:52px;">Medium</label><select id="agent-tier-medium" class="insert-input" style="flex:1;"><option value="auto">auto</option></select></div>
                 <div class="prop-row" style="margin-bottom:6px;"><label style="min-width:52px;">Large</label><select id="agent-tier-large" class="insert-input" style="flex:1;"><option value="auto">auto</option></select></div>
                 <label class="export-wizard-check" style="margin-bottom:6px;"><input type="checkbox" id="agent-prefer-grok-large" checked> Prefer Grok for large tasks when key set</label>
-                <div class="prop-row" style="margin-bottom:6px;">
+                <div class="prop-row" style="margin-bottom:4px;">
                     <button id="agent-tier-save" type="button" style="flex:1;">SAVE TIERS</button>
                     <button id="agent-benchmark-run" type="button" style="flex:1;">RUN BENCHMARK</button>
                 </div>
+                <button id="agent-benchmark-apply" type="button" style="width:100%;margin-bottom:6px;display:none;">APPLY SUGGESTED TIERS</button>
                 <div id="agent-benchmark-results" class="agent-benchmark-results"></div>
                 <label class="insert-hint">Legacy default Ollama model</label>
                 <select id="agent-ollama-model" class="insert-input" style="margin-bottom:6px;"><option value="">— probe on refresh —</option></select>
@@ -576,6 +570,11 @@
                 <button id="agent-dev-apply" type="button" style="width:100%;margin-bottom:6px;">GROK DEV: APPLY TO COMPILER</button>
                 <button id="agent-ollama-suggest" type="button" style="width:100%;margin-bottom:6px;">OLLAMA DEV: SUGGEST CODE</button>
                 <button id="agent-ollama-apply" type="button" style="width:100%;margin-bottom:6px;">OLLAMA DEV: APPLY TO COMPILER</button>
+                <hr style="border-color:var(--border-color);margin:8px 0;">
+                <p class="insert-hint" style="margin:0 0 6px;">Training bootcamp — export Compiler input/output to grow JSONL datasets.</p>
+                <label class="export-wizard-check" style="margin-bottom:6px;"><input type="checkbox" id="agent-training-queue"> Queue pair on SMART APPLY</label>
+                <button id="agent-training-export" type="button" style="width:100%;margin-bottom:4px;">EXPORT TRAINING PAIR</button>
+                <button id="agent-training-export-queue" type="button" style="width:100%;margin-bottom:6px;display:none;">EXPORT QUEUE (0)</button>
                 <label class="insert-hint">Local script agent (interval ms, 0=off)</label>
                 <input type="number" id="agent-local-interval" class="insert-input" value="0" min="0" step="1000" style="margin-bottom:6px;">
                 <textarea id="agent-local-script" class="insert-input" rows="3" placeholder="// e.g. console.log('tick')" style="margin-bottom:6px;font-family:var(--font-mono);font-size:0.65rem;"></textarea>

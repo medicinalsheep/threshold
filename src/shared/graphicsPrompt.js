@@ -8,6 +8,7 @@ export const GraphicsPrompt = {
 
     startIfNeeded() {
         if (ViewPrefs.get('graphicsTierPrompted', false)) return false;
+        if (document.body.classList.contains('ui-minimal')) return false;
         setTimeout(() => this.show(), 400);
         return true;
     },

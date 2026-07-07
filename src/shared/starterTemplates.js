@@ -1,4 +1,4 @@
-/** Sprint C — starter world templates + lobby picker */
+/** Starter templates — grid default; optional modes in lobby advanced */
 
 import { ViewPrefs } from './viewPrefs.js';
 import { bootstrapStarterScene } from './starterScene.js';
@@ -6,25 +6,15 @@ import { bootstrapStarterScene } from './starterScene.js';
 import { spawnTcShow } from './tcShow.js';
 
 export const STARTER_TEMPLATES = {
-    wardenclyffe: {
-        id: 'wardenclyffe',
-        name: 'Wardenclyffe',
-        tagline: 'Polished showcase site — lab GLBs, survival, weather, MP sync, export-ready',
-    },
-    minimal: {
-        id: 'minimal',
-        name: 'Blank Yard',
-        tagline: 'Grass pad + beacon — learn walk/jump, extend with PromptGen',
+    grid: {
+        id: 'grid',
+        name: 'Blank Grid',
+        tagline: 'Empty workspace — UI unlocks as you build',
     },
     'tc-circuit': {
         id: 'tc-circuit',
         name: 'TC Circuit',
-        tagline: 'Vehicles, checkpoint gate, lap timer HUD',
-    },
-    surreal: {
-        id: 'surreal',
-        name: 'Surreal Seed',
-        tagline: 'Floating platforms + portal — AI surrealism starter',
+        tagline: 'Vehicles + lap timer (optional demo)',
     },
 };
 
@@ -76,139 +66,6 @@ export function scheduleTemplateSpawn(pos, opts = {}) {
     }, delay);
 }
 
-function bootstrapMinimalTemplate() {
-    const Engine = window.Engine;
-    const State = window.State;
-    const Physics = window.Physics;
-    const THREE = window.THREE;
-    const C = window.CANNON;
-    if (!Engine?.scene || !THREE || !State || !sceneEmpty()) return;
-
-    window.buildStarterSiteTerrain191?.();
-
-    const platform = new THREE.Mesh(
-        new THREE.CylinderGeometry(3.2, 3.5, 0.32, 14),
-        new THREE.MeshStandardMaterial({ color: 0x3a3e44, roughness: 0.82, metalness: 0.06 })
-    );
-    platform.position.set(0, 0.16, 0);
-    platform.receiveShadow = true;
-    platform.castShadow = true;
-    platform.userData = { id: 'template_minimal_platform', name: 'Training Pad', type: 'platform', locked: true };
-    Engine.scene.add(platform);
-    State.objects.push(platform);
-    if (C) Physics?.addStaticBox?.(new C.Vec3(3.4, 0.16, 3.4), { x: 0, y: 0.16, z: 0 }, 'ground', 'concrete');
-
-    const beacon = window.World?.createObject?.('sphere', 'Starter Beacon', 0x00ffaa, false);
-    if (beacon) {
-        beacon.position.set(-1.8, 1.1, 1.4);
-        beacon.scale.setScalar(0.5);
-        beacon.material.emissive.setHex(0x00ffaa);
-        beacon.material.emissiveIntensity = 0.22;
-        beacon.userData.id = 'template_minimal_beacon';
-    }
-
-    const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(2.8, 0.05, 8, 24),
-        new THREE.MeshStandardMaterial({ color: 0x3a8848, emissive: 0x1a4428, emissiveIntensity: 0.12 })
-    );
-    ring.rotation.x = Math.PI / 2;
-    ring.position.set(0, 0.34, 0);
-    ring.userData = { id: 'template_minimal_ring', name: 'Guide Ring', type: 'decor', locked: true, isRotating: true };
-    Engine.scene.add(ring);
-    State.objects.push(ring);
-
-    window.StarterAnim?.wireScene?.();
-    State.ctxTargetPos.set(0, 0, 0);
-    State.templateId = 'minimal';
-    scheduleTemplateSpawn({ x: 0, y: 0, z: 2.5 }, {
-        skipIntro: true,
-        status: 'Blank yard — WASD move · Space jump · PromptGen → Examples to extend',
-    });
-}
-
-function bootstrapSurrealTemplate() {
-    const Engine = window.Engine;
-    const State = window.State;
-    const THREE = window.THREE;
-    if (!Engine?.scene || !THREE || !State || !sceneEmpty()) return;
-
-    const grass = new THREE.Mesh(
-        new THREE.BoxGeometry(48, 0.08, 40),
-        new THREE.MeshStandardMaterial({ color: 0x2a4848, roughness: 0.94, metalness: 0.02 })
-    );
-    grass.position.set(0, 0.04, 0);
-    grass.receiveShadow = true;
-    grass.userData = { id: 'template_surreal_ground', name: 'Surreal Ground', type: 'platform', locked: true, surfaceType: 'grass' };
-    Engine.scene.add(grass);
-    State.objects.push(grass);
-
-    const platMat = new THREE.MeshStandardMaterial({ color: 0x5a4088, roughness: 0.55, metalness: 0.12 });
-    [
-        { x: 0, y: 1.2, z: 0, sx: 4, sy: 0.35, sz: 4 },
-        { x: -5, y: 2.4, z: -2, sx: 2.8, sy: 0.3, sz: 2.8 },
-        { x: 5.5, y: 3.6, z: 1.5, sx: 2.2, sy: 0.28, sz: 2.2 },
-    ].forEach((p, i) => {
-        const slab = new THREE.Mesh(new THREE.BoxGeometry(p.sx, p.sy, p.sz), platMat.clone());
-        slab.position.set(p.x, p.y, p.z);
-        slab.castShadow = true;
-        slab.receiveShadow = true;
-        slab.userData = { id: `template_surreal_plat_${i}`, name: 'Float Slab', type: 'platform', locked: true };
-        Engine.scene.add(slab);
-        State.objects.push(slab);
-    });
-
-    const portal = new THREE.Mesh(
-        new THREE.TorusGeometry(1.1, 0.14, 10, 28),
-        new THREE.MeshStandardMaterial({
-            color: 0x88a0ff, emissive: 0x4466cc, emissiveIntensity: 0.55, roughness: 0.2, metalness: 0.35,
-        })
-    );
-    portal.position.set(0, 2.5, 0);
-    portal.rotation.x = Math.PI / 2;
-    portal.userData = { id: 'template_surreal_portal', name: 'Portal Ring', type: 'decor', locked: true, isRotating: true };
-    Engine.scene.add(portal);
-    State.objects.push(portal);
-
-    for (let i = 0; i < 5; i += 1) {
-        const orb = new THREE.Mesh(
-            new THREE.SphereGeometry(0.35 + (i % 2) * 0.12, 12, 12),
-            new THREE.MeshPhysicalMaterial({
-                color: 0xc8a0ff,
-                emissive: 0x6040a0,
-                emissiveIntensity: 0.4,
-                transmission: 0.55,
-                transparent: true,
-                opacity: 0.75,
-                roughness: 0.08,
-            })
-        );
-        const ang = (i / 5) * Math.PI * 2;
-        orb.position.set(Math.cos(ang) * 4, 1.2 + i * 0.45, Math.sin(ang) * 4);
-        orb.userData = { id: `template_surreal_orb_${i}`, name: 'Glass Orb', type: 'decor', locked: true };
-        Engine.scene.add(orb);
-        State.objects.push(orb);
-    }
-
-    if (State.env) {
-        State.env.fogDensity = 0.035;
-        State.env.timeOfDay = 20;
-        window.Environment?.setFog?.(0.035);
-        window.Environment?.setTimeOfDay?.(20);
-    }
-
-    window.StarterAnim?.wireScene?.();
-    State.ctxTargetPos.set(0, 0, 0);
-    State.templateId = 'surreal';
-    if (Engine.camera && Engine.controls) {
-        Engine.camera.position.set(0, 1.75, 7);
-        Engine.controls.target.set(0, 2, 0);
-    }
-    scheduleTemplateSpawn({ x: 0, y: 0, z: 3 }, {
-        skipIntro: true,
-        status: 'Surreal seed — try PromptGen → Examples → Surreal float island',
-    });
-}
-
 async function bootstrapTcCircuitTemplate() {
     const State = window.State;
     if (!State || !sceneEmpty()) return;
@@ -232,10 +89,13 @@ async function bootstrapTcCircuitTemplate() {
     window.StarterAnim?.wireScene?.();
     State.ctxTargetPos.set(0, 0, -2);
     State.templateId = 'tc-circuit';
+    window.ProgressiveUi?.unlock?.('toolbar', { silent: true });
+    window.ProgressiveUi?.unlock?.('dock', { silent: true });
+    window.ProgressiveUi?.unlock?.('compiler', { silent: true });
 
     scheduleTemplateSpawn({ x: 0, y: 0, z: 4 }, {
         skipIntro: true,
-        status: 'TC Circuit — F claim vehicle · drive through green gate (tc_cp) for laps',
+        status: 'TC Circuit — F claim vehicle · drive through green gate for laps',
         onSpawn: () => {
             setTimeout(() => {
                 window.TcCircuit?.start?.({}, true);
@@ -246,13 +106,13 @@ async function bootstrapTcCircuitTemplate() {
 }
 
 export function resolveTemplateId(id) {
-    return STARTER_TEMPLATES[id] ? id : 'wardenclyffe';
+    return STARTER_TEMPLATES[id] ? id : 'grid';
 }
 
 export function getSelectedTemplateId() {
     const urlTpl = new URLSearchParams(window.location.search).get('template');
     if (urlTpl && STARTER_TEMPLATES[urlTpl]) return urlTpl;
-    return resolveTemplateId(ViewPrefs.get('starterTemplate', 'wardenclyffe'));
+    return resolveTemplateId(ViewPrefs.get('starterTemplate', 'grid'));
 }
 
 export function setSelectedTemplateId(id) {
@@ -270,12 +130,6 @@ export async function bootstrapSelectedTemplate() {
     window.State.templateId = id;
 
     switch (id) {
-        case 'minimal':
-            bootstrapMinimalTemplate();
-            break;
-        case 'surreal':
-            bootstrapSurrealTemplate();
-            break;
         case 'tc-circuit':
             await bootstrapTcCircuitTemplate();
             break;
