@@ -1,6 +1,6 @@
 # Threshold documentation index
 
-**Version:** 9.16.0 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.7.4 · **Live:** https://medicinalsheep.github.io/threshold/
 
 This page is the **full scope map** — what ships today, what is TC vs showcase vs yours, and where to read more.
 
@@ -69,6 +69,7 @@ flowchart TB
 | Clone & develop | [GETTING_STARTED.md](GETTING_STARTED.md) | `npm install` → `npm run quickstart` |
 | Streamlined dev path | [STREAMLINED_DEV.md](STREAMLINED_DEV.md) | Lobby → AI tab → EXPORT (target-filtered) |
 | Agent tiers & benchmarks | [AGENT_ROUTING.md](AGENT_ROUTING.md) | `ollama:benchmark` · SMART DEV |
+| UI layout + agents (10.7+) | [UI_AND_AGENTS.md](UI_AND_AGENTS.md) | Portal · freeze · touch · UNLOCK layout |
 | Train custom models | [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) | `npm run models:mini` |
 | Showcase + controls | [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | PLAY mode · gateway · survival |
 | Creative loop | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | BUILD → INSERT SHOWCASE · PromptGen |

@@ -1,5 +1,56 @@
 # Changelog
 
+## 10.7.4 — Docs sweep + Alt/stealth fix
+
+- **Stealth walk** moved off **Alt** (was conflicting with Alt-hold Third Eye peek) → default **U** hold; bindings schema v3 migrates saved profiles
+- **Lobby join field** accepts longer room codes (`NAME4-KEY6-RAND4` format, maxlength 24)
+- **Documentation** — this changelog through 10.7.x; [CONTROLS.md](CONTROLS.md) updated for play/chat/UI layout
+
+## 10.7.3 — Touch layout + ADS + Alt peek
+
+- **Touch controls** — full controller button set (ADS, fire, reload, melee, holster, interact, third eye, vehicle, etc.); drag to arrange in UI **UNLOCK** mode; **+ BTN** adds custom actions
+- **PLAY ADS** — LMB aims in FPS play unless Third Eye / Alt peek frees the mouse for UI clicks
+- **Alt hold** — temporary Third Eye peek in walk PLAY (best in fullscreen/immersive); release Alt returns to aim
+
+## 10.7.2 — Scene dock strip + UI layout edit
+
+- **Scene dock ◀** collapses entire panel background to tab column (not just contents)
+- **UNLOCK / LOCK** hub control — drag corner hubs, FPS HUD, model status bar, chat header, nav brand, touch controls
+- Fixed **LOCK** button not working (click capture blocked toggle)
+
+## 10.7.1 — Host codes + GPU compat
+
+- **Room codes** embed name + player key + entropy (`BOB3-K7M2NP-XR8W`); retry on PeerJS ID collision
+- **GPU** — `powerPreference: high-performance`; SETUP chip shows WebGL renderer; xAI keys stay per-tab (not synced to guests)
+
+## 10.7.0 — Working folder + AI memory freeze
+
+- **Working folder** scope (SETUP + Agent Portal) — choose what stays loaded during local Ollama runs
+- **Freeze screen** during local inference — canvas snapshot, pause loads, park assets, restore after job
+- Hooks `OllamaRunQueue` (sequential and parallel local paths)
+
+## 10.6.0 — Model capability matrix + sequential local runs
+
+- Red/yellow/green tier matrix per model × task size
+- **Sequential Ollama** queue (one local model at a time); opt-in parallel for strong PCs
+- Live **model status HUD** during builds
+
+## 10.5.0 — Game chat + corner hub polish
+
+- **T** opens in-game chat; **/** slash commands; help menu
+- L-shaped corner hubs; nav auto-collapse in engine; hub **LOCK** layout (early)
+- Dev console removed from default chrome
+
+## 10.4.0 — Agent build quality
+
+- Model tier routing in portal; multi-step builds; code sanitizer + world API prompts
+- Build job time limits; Grok fallback on red-tier local models
+
+## 10.3.x — Agent portal + GitHub Pages visitor flow
+
+- Agent Portal auto-detect Grok/Ollama; conversational build intake
+- `npm run ollama:serve` CORS proxy for Pages + localhost
+
 ## 10.1.1 — Lobby + panel stability
 
 - **Lobby restored** — VOIP open by default, SESSION flow, ENTER + CREATE, starter template visible (no samples yet)

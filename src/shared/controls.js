@@ -3,7 +3,7 @@ const STORAGE_KB_USER = 'threshold_bindings_user';
 const STORAGE_GP_HOST = 'threshold_gamepad_host';
 const STORAGE_GP_USER = 'threshold_gamepad_user';
 const STORAGE_BINDINGS_SCHEMA = 'threshold_bindings_schema';
-const BINDINGS_SCHEMA = 2;
+const BINDINGS_SCHEMA = 3;
 
 /** Action control map — groups match KEYS menu sections */
 export const CONTROL_ACTIONS = {
@@ -94,7 +94,7 @@ const DEFAULT_HOST_KEYBOARD = {
     jump: ['Space'],
     sprint: ['ShiftLeft', 'ShiftRight'],
     crouch: ['ControlLeft', 'ControlRight'],
-    stealthWalk: ['AltLeft'],
+    stealthWalk: ['KeyU'],
     interact: ['KeyF'],
     toggleMode: ['KeyY'],
     enterVehicle: ['KeyE'],
@@ -172,6 +172,13 @@ function migrateKeyboardBindings(bindings) {
         const aimKeys = aim.filter((c) => !c.startsWith('Mouse'));
         bindings.fire = ['Mouse2', ...fireKeys];
         bindings.aim = ['Mouse0', ...aimKeys];
+    }
+
+    const stealth = bindings.stealthWalk || [];
+    if (stealth.includes('AltLeft') || stealth.includes('AltRight')) {
+        bindings.stealthWalk = stealth
+            .filter((c) => c !== 'AltLeft' && c !== 'AltRight');
+        if (!bindings.stealthWalk.includes('KeyU')) bindings.stealthWalk.unshift('KeyU');
     }
 }
 

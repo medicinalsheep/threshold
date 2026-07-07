@@ -1,8 +1,10 @@
 # Action controls reference
 
-**Version:** 9.8.0 · Rebind in toolbar → **KEYS**
+**Version:** 10.7+ · Rebind in toolbar → **KEYS** (or corner hub → TOOLS in EDIT)
 
-Default layout: **LMB aim (hold)** · **RMB shoot** · **F interact** · **E vehicle** · grouped bindings menu.
+Default layout: **LMB aim (hold)** · **RMB shoot** · **F interact / Third Eye** · **E vehicle** · **T chat** · **Alt peek** (Third Eye hold in fullscreen).
+
+See [UI_AND_AGENTS.md](UI_AND_AGENTS.md) for touch layout, UNLOCK UI edit, and agent freeze workflow.
 
 ---
 
@@ -14,7 +16,7 @@ Default layout: **LMB aim (hold)** · **RMB shoot** · **F interact** · **E veh
 | Sprint | Shift (hold) | L3 (hold) |
 | Jump | Space | A / Cross |
 | Crouch | Ctrl (hold) | LT / L2 (hold) |
-| Stealth walk | Alt (hold) | — |
+| Stealth walk | **U** (hold) | — |
 | Interact | F | X / Square |
 | Enter vehicle | E | Y / Triangle |
 | Aim (ADS) | **LMB** (hold) | LT / L2 (hold) |
@@ -26,13 +28,15 @@ Default layout: **LMB aim (hold)** · **RMB shoot** · **F interact** · **E veh
 | Flashlight | L | — |
 | Look behind | O | — |
 | FPS / TPS | V | D-pad Down |
-| Third Eye | M / F (no target) | D-pad Up |
+| Third Eye | F toggle · **Alt hold** peek (PLAY) | D-pad Up |
 | Voice PTT | N (hold) | — |
 | Walk / fly toggle | Y | Y / Triangle |
 | Session panel | Tab | — |
 | Keys menu | ` | — |
 
-**Mouse:** click canvas in PLAY to capture pointer (look). **Esc** releases.
+**Mouse:** click canvas in PLAY to capture pointer (look). **Esc** releases. With **Third Eye** or **Alt peek** active, mouse stays free for clicking UI/props — no ADS until peek ends.
+
+**Touch:** corner hub **TOUCH** · full controller buttons · arrange via hub **UNLOCK** · **+ BTN** for custom actions.
 
 ---
 
