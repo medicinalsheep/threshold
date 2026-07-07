@@ -178,7 +178,9 @@ export function initEngine() {
         State.isPaused = !!e.detail?.paused;
         UI.updateSimMode();
         const reason = e.detail?.reason;
-        UI.status(State.isPaused ? (reason ? `EDIT: ${reason}` : 'EDIT mode — world editable') : 'PLAY mode — simulation running');
+        UI.status(State.isPaused
+            ? (reason ? `EDIT: ${reason}` : 'EDIT mode — insert, delete, and export unlocked')
+            : 'PLAY mode — tap EDIT (top-left) to build');
         Engine._releaseLookLock?.();
         PlayerController._syncWalkOrbit?.();
         if (!State.isPaused && PlayerController.spawned && State.controlMode === 'walk') {
@@ -1380,8 +1382,17 @@ const Engine = {
 
 // --- WORLD MANAGER ---
 const World = {
+    _requireEditWorld(action = 'modify the world') {
+        if (SimMode.canEditWorld()) return true;
+        UI.status(SimMode.isPlay()
+            ? `PLAY mode — tap EDIT (top-left) to ${action}`
+            : `Cannot ${action} — no edit permission`);
+        return false;
+    },
+
     // Modified to allow Physics flag
     createObject: function (type, name, color = 0xffffff, usePhysics = false) {
+        if (!this._requireEditWorld('add objects')) return null;
         let geo, mat = new THREE.MeshStandardMaterial({
             color: color,
             roughness: 0.52,
@@ -1409,6 +1420,7 @@ const World = {
         return mesh;
     },
     addCustom: function (geometry, material, name, usePhysics = false) {
+        if (!this._requireEditWorld('add objects')) return null;
         // Ensure material reacts to Bloom in Hyper mode
         if (material) {
             material.emissiveIntensity = 0.12;
@@ -2276,6 +2288,8 @@ const UI = {
         }
         if (layer) layer.classList.toggle('play-mode', !edit);
         document.body.classList.toggle('play-mode', !edit);
+        const playHint = document.getElementById('play-mode-hint');
+        if (playHint) playHint.hidden = edit;
         window.CornerHub?.onModeChange?.(edit);
         if (!edit) {
             Engine.transformControl.detach();

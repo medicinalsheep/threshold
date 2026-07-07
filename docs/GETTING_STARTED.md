@@ -1,4 +1,4 @@
-# Getting started with Threshold (v10.8)
+# Getting started with Threshold (v10.8.2)
 
 One linear path from lobby to shipping — blank grid default, Agent Portal, tiered agents, and optional **TC** export practice.
 
@@ -14,7 +14,7 @@ Lobby → CREATE SESSION → ENTER → Agent Portal → EDIT or PLAY → Export 
 
 | Step | Where | What you learn |
 |------|--------|----------------|
-| 1 | **Lobby → CREATE** | Name · room code auto-generated on host |
+| 1 | **Lobby → ENTER →** or **CREATE** | Solo **ENTER →** starts in BUILD (EDIT); host gets room code |
 | 2 | **ENTER** | Blank grid · short corner-hub tour |
 | 3 | **Agent Portal** | Describe what to build · Grok/Ollama auto-detect |
 | 4 | **EDIT** | TOOLS menu → insert, Compiler, PromptGen, textures |

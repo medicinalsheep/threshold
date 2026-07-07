@@ -1,8 +1,8 @@
-# Realistic Gameplay — Wardenclyffe Showcase Guide
+# Realistic Gameplay — controls, survival & optional showcase
 
-Threshold ships a **walk/drive action control** template with a polished starter site (lab GLBs, courtyard props, weather, survival). Use it as the baseline for shooters, RPGs, and exploration games.
+**Default spawn (10.0+):** blank grid. This guide covers **action controls**, optional **survival**, and the **Wardenclyffe showcase** layer (INSERT → SHOWCASE or TC →).
 
-**Current default:** v9.15 — realistic PBR on all devices (Lite/Mobile/Realistic/Ultra tiers). Retro shaders are opt-in via SCENE → ENV → Style.
+**Graphics:** realistic PBR on all tiers (Lite/Mobile/Realistic/Ultra). Retro shaders opt-in via SCENE → ENV → Style.
 
 ---
 
@@ -11,9 +11,9 @@ Threshold ships a **walk/drive action control** template with a polished starter
 | Mode | Badge | Simulation | Best for |
 |------|-------|------------|----------|
 | **PLAY** | `PLAY` | Physics, weather, survival, walk | Playtesting, exploring, MP guests |
-| **BUILD** | `BUILD` | Paused — world editable | Insert, Compiler, textures, agents |
+| **EDIT** | `EDIT` | Paused — world editable | Insert, delete, Compiler, textures, agents |
 
-Choose **PLAY** or **BUILD** in the lobby before **ENTER** (persists; deep link `?mode=play` / `?mode=build`), or in the in-engine modal on first visit. Guests/spectators skip the modal and inherit host pause. Toggle anytime via **PAUSE** or the toolbar badge.
+**ENTER →** solo defaults **BUILD** (EDIT). **CREATE SESSION** uses lobby PLAY/BUILD picker. Deep link `?mode=play` / `?mode=build`. Toggle anytime via top-left **EDIT** / **PLAY** badge.
 
 ---
 

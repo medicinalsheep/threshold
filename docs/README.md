@@ -1,6 +1,6 @@
 # Threshold documentation index
 
-**Version:** 10.8.0 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.8.2 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Full scope map — what ships today, optional TC/showcase layers, and where to read more.
 

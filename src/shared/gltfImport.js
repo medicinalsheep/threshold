@@ -220,6 +220,12 @@ export const GltfImport = {
     },
 
     async insertAtCursor(payload = {}) {
+        if (!window.SimMode?.canEditWorld?.()) {
+            window.UI?.status?.(window.SimMode?.isPlay?.()
+                ? 'PLAY mode — tap EDIT (top-left) to insert GLTF'
+                : 'Cannot insert — no edit permission');
+            return null;
+        }
         const {
             url,
             path,

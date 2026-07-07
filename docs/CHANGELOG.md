@@ -1,5 +1,11 @@
 # Changelog
 
+## 10.8.2 — Solo BUILD default + PLAY hint
+
+- **ENTER →** solo path now defaults **BUILD** (EDIT) — insert/delete work without mode hunting; blank **grid** template
+- **PLAY mode banner** — top hint: tap EDIT to insert, delete, export
+- **World edit guards** — `createObject`, `addCustom`, and GLTF insert blocked in PLAY (matches delete)
+
 ## 10.8.1 — Delete inserted objects fix
 
 - **DELETE** now resolves Group/GLTF child hits to the registry root in `State.objects` (recursive raycast)

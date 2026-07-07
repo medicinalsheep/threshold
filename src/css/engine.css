@@ -2855,6 +2855,30 @@ body.third-eye-alt-peek #canvas-container canvas {
     border: 1px solid #ffaa00;
 }
 
+.play-mode-hint {
+    position: fixed;
+    top: calc(52px + env(safe-area-inset-top, 0px));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1200;
+    margin: 0;
+    padding: 6px 14px;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: #ffcc66;
+    background: rgba(0, 0, 0, 0.72);
+    border: 1px solid rgba(255, 170, 0, 0.45);
+    border-radius: 4px;
+    pointer-events: none;
+    text-align: center;
+    max-width: min(92vw, 420px);
+}
+
+.play-mode-hint strong {
+    color: var(--accent-color);
+    font-weight: 700;
+}
+
 #ui-layer.play-mode .edit-only {
     display: none !important;
 }

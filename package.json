@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "10.8.1",
+  "version": "10.8.2",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {

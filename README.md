@@ -2,7 +2,7 @@
 
 **Collaborative 3D game lab** — host a session, connect an AI agent, build in the browser, play with friends, export real packages.
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.8.0
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.8.2
 
 ---
 
@@ -25,8 +25,8 @@ Threshold is for people who want to **go from idea → playable 3D scene → shi
 ## First run (walked through)
 
 ```
-1. LOBBY     → name · PLAY or BUILD · CREATE SESSION
-2. ENTER     → fullscreen · corner hub tour (3 steps)
+1. LOBBY     → name · PLAY or BUILD · CREATE SESSION (or **ENTER →** solo — starts in BUILD)
+2. ENTER     → blank grid · corner hub tour (3 steps)
 3. PORTAL    → AI scans Grok/Ollama · describe what to build
 4. EDIT      → TOOLS menu → Compiler / PromptGen / insert
 5. PLAY      → tap PLAY (top-left) · touch toggle (bottom-left) · test walk physics

@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.8.0 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.8.2 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -23,12 +23,21 @@ UI reference: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Controls: [CONTROLS.md](CO
 
 ---
 
-## 10.8 — Doc hygiene + brand preview (this release)
+## 10.8 — Doc hygiene + brand preview ✅
 
 - Archive superseded phase docs → `old/docs/`
 - Truth-pass active guides for blank grid + Agent Portal + corner hubs
 - Favicon ladder + `og:*` meta from `icons/appicon512.png`
 - New lean `ROADMAP.md` replaces `NEXT_PHASES.md` role
+
+## 10.8.1 — Delete fix ✅
+
+- Recursive pick + root resolve for GLTF/groups; proper dispose on delete
+
+## 10.8.2 — Solo BUILD default + PLAY hint ✅
+
+- **ENTER →** forces BUILD; PLAY mode shows edit hint banner
+- `createObject` / GLTF insert guarded in PLAY (parity with delete)
 
 ---
 

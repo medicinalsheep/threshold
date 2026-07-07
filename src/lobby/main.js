@@ -38,9 +38,25 @@ function initLobbyModePicker() {
     document.getElementById('lobby-mode-build')?.addEventListener('click', () => setActive('build'));
 }
 
+function setLobbyMode(mode) {
+    const m = mode === 'build' ? 'build' : 'play';
+    document.querySelectorAll('.lobby-mode-btn').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.mode === m);
+    });
+    ViewPrefs.set('sessionMode', m);
+}
+
 function persistLobbyMode() {
     const active = document.querySelector('.lobby-mode-btn.active')?.dataset?.mode;
     if (active) ViewPrefs.set('sessionMode', active);
+}
+
+/** Solo ENTER → defaults BUILD so insert/delete work without hunting the mode toggle. */
+function enterSoloBuild() {
+    setLobbyMode('build');
+    setSelectedTemplateId('grid');
+    const sel = document.getElementById('lobby-template');
+    if (sel) sel.value = 'grid';
 }
 
 export function initLobby(onReady) {
@@ -139,9 +155,7 @@ export function initLobby(onReady) {
             Session.playerName = name;
             localStorage.setItem('threshold_player_name', name);
         }
-        const tpl = document.getElementById('lobby-template')?.value || 'wardenclyffe';
-        setSelectedTemplateId(tpl);
-        persistLobbyMode();
+        enterSoloBuild();
         Network.startSolo();
         enterApp();
     });
@@ -196,6 +210,7 @@ export function initLobby(onReady) {
             Session.playerName = name;
             localStorage.setItem('threshold_player_name', name);
         }
+        enterSoloBuild();
         Network.startSolo();
         setStatus(`Loading world ${worldCode.toUpperCase()}…`);
         enterApp();
