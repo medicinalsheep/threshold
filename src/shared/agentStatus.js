@@ -7,6 +7,8 @@ import { AgentBenchmark } from './agentBenchmark.js';
 import { TrainingImport } from './trainingImport.js';
 import { TextureLibrary } from './textureLibrary.js';
 import { CREATIVE_WATCH_URL } from '../config.js';
+import { assessTierPrefs, countDistinctLocalModels, getDeviceProfile } from './modelCapability.js';
+import { OllamaRunQueue } from './ollamaRunQueue.js';
 
 let lastSnapshot = null;
 let panelDelegated = false;
@@ -44,7 +46,11 @@ function initPanelDelegation() {
                 preferGrokLarge: document.getElementById('agent-prefer-grok-large')?.checked !== false,
             };
             AgentRouter.setTierPrefs(patch);
-            window.UI?.status?.('Agent tier models saved');
+            window.ModelStatusHud?.refreshMatrix?.();
+            const n = countDistinctLocalModels(patch);
+            window.UI?.status?.(n > 1 && !OllamaRunQueue.getPrefs().allowParallelLocal
+                ? `Saved — ${n} local models run sequentially`
+                : 'Agent tier models saved');
         }
         if (e.target.id === 'agent-benchmark-apply') {
             const last = AgentBenchmark.getLastResults();
@@ -158,6 +164,18 @@ export const AgentStatus = {
         }
 
         if (ollama.ok) syncTierUi(ollama.models);
+        window.ModelStatusHud?.setInstalled?.(ollama.models || []);
+        window.ModelStatusHud?.refreshMatrix?.(ollama.models || []);
+        const warnEl = document.getElementById('agent-tier-warnings');
+        if (warnEl && ollama.ok) {
+            const tierAssess = assessTierPrefs(tierPrefs, ollama.models, getDeviceProfile());
+            warnEl.innerHTML = ['small', 'medium', 'large'].map((t) => {
+                const a = tierAssess[t];
+                if (!a || a.state === 'ok') return '';
+                const cls = a.state === 'fail' ? 'model-cap-fail' : 'model-cap-warn';
+                return `<p class="model-cap-pick-warn ${cls}"><strong>${t}</strong>: ${a.reason}</p>`;
+            }).join('');
+        }
         TrainingImport.syncQueueUi();
 
         const modelSel = document.getElementById('agent-ollama-model');

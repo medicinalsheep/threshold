@@ -4,6 +4,8 @@ import { API_URL, MODEL as GROK_MODEL } from '../grok/client.js';
 import { OllamaClient } from './ollamaClient.js';
 import { ViewPrefs } from './viewPrefs.js';
 import { buildTaskPrompt, stripCodeFences } from './agentPrompts.js';
+import { assessModel } from './modelCapability.js';
+import { OllamaRunQueue } from './ollamaRunQueue.js';
 
 const PREFS_KEY = 'agentTierModels';
 const ROUTE_LOG_KEY = 'agentRouteLog';
@@ -150,27 +152,43 @@ export const AgentRouter = {
 
         let text;
         let usedProvider = route.provider;
+        let assessment = null;
+        const callOpts = {
+            model: route.model,
+            temperature: tier?.temperature,
+            maxTokens: overrides.maxTokens ?? tier?.maxTokens,
+            timeoutMs: overrides.timeoutMs ?? tier?.timeoutMs ?? 120000,
+            signal: overrides.signal,
+        };
+
+        if (route.provider === 'ollama') {
+            assessment = assessModel(route.model, task.tier, { installed });
+            if (assessment.state === 'fail') {
+                if (Auth.isLoggedIn()) {
+                    usedProvider = 'grok';
+                    route.model = GROK_MODEL;
+                    assessment = { ...assessment, fallback: 'grok', reason: `${assessment.reason} — using Grok` };
+                } else {
+                    throw new Error(`${assessment.reason} (or add Grok key)`);
+                }
+            }
+        }
+
         try {
-            const callOpts = {
-                model: route.model,
-                temperature: tier?.temperature,
-                maxTokens: overrides.maxTokens ?? tier?.maxTokens,
-                timeoutMs: overrides.timeoutMs ?? tier?.timeoutMs ?? 120000,
-                signal: overrides.signal,
-            };
-            if (route.provider === 'grok') {
+            if (usedProvider === 'grok') {
                 text = await callGrok(system, user, callOpts);
             } else {
-                text = await callOllama(system, user, callOpts);
+                text = await OllamaRunQueue.run(
+                    { model: route.model, taskId, tier: task.tier },
+                    () => callOllama(system, user, callOpts),
+                );
             }
         } catch (primaryErr) {
-            if (route.provider === 'ollama' && tier?.grok === 'fallback' && Auth.isLoggedIn()) {
-                text = await callGrok(system, user, {
-                    temperature: tier?.temperature,
-                    maxTokens: tier?.maxTokens,
-                });
+            if (usedProvider === 'ollama' && tier?.grok === 'fallback' && Auth.isLoggedIn()) {
+                text = await callGrok(system, user, { temperature: tier?.temperature, maxTokens: tier?.maxTokens, timeoutMs: callOpts.timeoutMs });
                 usedProvider = 'grok';
                 route.model = GROK_MODEL;
+                assessment = { state: 'warn', reason: 'Ollama failed — fell back to Grok' };
             } else {
                 throw primaryErr;
             }
@@ -186,8 +204,11 @@ export const AgentRouter = {
             provider: usedProvider,
             model: route.model,
             ms,
+            assessment,
         };
         logRoute(result);
+        window.dispatchEvent(new CustomEvent('agent-route-complete', { detail: result }));
+        window.ModelStatusHud?.renderHud?.();
         return result;
     },
 

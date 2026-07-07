@@ -61,7 +61,7 @@ if (!fs.existsSync(path.join(root, 'src/shared/agentPortal.js'))) {
     process.exit(1);
 }
 
-const portalModules = ['codeSanitizer.js', 'buildJob.js', 'agentModelGuide.js', 'sceneApiPrompt.js', 'gameChat.js', 'gameCommands.js', 'helpMenu.js', 'hubLayout.js'];
+const portalModules = ['codeSanitizer.js', 'buildJob.js', 'agentModelGuide.js', 'sceneApiPrompt.js', 'gameChat.js', 'gameCommands.js', 'helpMenu.js', 'hubLayout.js', 'modelCapability.js', 'ollamaRunQueue.js', 'modelStatusHud.js'];
 const missingMods = portalModules.filter((f) => !fs.existsSync(path.join(root, 'src/shared', f)));
 if (missingMods.length) {
     console.error('FAIL missing portal modules:', missingMods.join(', '));

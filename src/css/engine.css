@@ -2432,6 +2432,31 @@ body.ui-immersive.touch-off #status-msg {
     background: rgba(30, 30, 30, 0.5);
 }
 
+.model-cap-matrix { width: 100%; border-collapse: collapse; font-size: 0.58rem; margin: 6px 0 8px; }
+.model-cap-matrix th, .model-cap-matrix td { border: 1px solid var(--border-color); padding: 4px 6px; text-align: center; }
+.model-cap-matrix th:first-child, .model-cap-matrix td:first-child { text-align: left; }
+.model-cap-size { display: block; font-size: 0.5rem; opacity: 0.55; }
+.model-cap-cell.model-cap-ok { color: #3ecf8e; }
+.model-cap-cell.model-cap-warn { color: #e8b84a; }
+.model-cap-cell.model-cap-fail { color: #ff6b6b; font-weight: 700; }
+.model-cap-pick-warn { margin: 4px 0; padding: 6px 8px; border-radius: 4px; font-size: 0.58rem; }
+.model-cap-pick-warn.model-cap-fail { border: 1px solid #ff555566; background: rgba(255,80,80,0.12); color: #ff8a8a; }
+.model-cap-pick-warn.model-cap-warn { border: 1px solid #e8b84a66; background: rgba(232,184,74,0.1); color: #e8c86a; }
+.model-status-hud { font-size: 0.55rem; padding: 6px 8px; border: 1px solid var(--border-color); border-radius: 6px; background: rgba(8,10,14,0.75); margin-bottom: 6px; }
+.model-status-hud-float { position: fixed; top: max(36px, calc(env(safe-area-inset-top, 0px) + 28px)); left: 50%; transform: translateX(-50%); z-index: 47; pointer-events: none; max-width: min(92vw, 480px); text-align: center; }
+body.nav-collapsed .model-status-hud-float { top: max(8px, env(safe-area-inset-top, 0px)); }
+.model-status-hud.model-hud-busy { border-color: var(--accent-color); box-shadow: 0 0 12px rgba(0,255,170,0.15); }
+.model-hud-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; }
+.model-hud-active { color: #3ecf8e; font-weight: 700; }
+.model-hud-idle { opacity: 0.55; }
+.model-hud-queue { color: #e8b84a; }
+.model-hud-ok { color: #8fd4b0; }
+.model-hud-warn { color: #e8b84a; }
+.model-hud-tiers { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 4px; }
+.model-hud-tier.model-cap-ok { color: #8fd4b0; }
+.model-hud-tier.model-cap-warn { color: #e8b84a; }
+.model-hud-tier.model-cap-fail { color: #ff6b6b; }
+
 .agent-benchmark-results {
     max-height: 140px;
     overflow-y: auto;

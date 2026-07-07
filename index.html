@@ -308,6 +308,7 @@
         </div>
 
         <div id="ui-layer">
+            <div id="model-status-hud-float" class="model-status-hud model-status-hud-float" aria-live="polite"></div>
             <nav id="corner-hubs" class="corner-hubs" aria-label="Corner controls">
                 <div class="corner-hub corner-hub-tl" data-hub="session">
                     <button type="button" id="hub-mode-toggle" class="corner-hub-toggle hub-mode-play" title="Tap to switch PLAY / EDIT">PLAY</button>
@@ -669,6 +670,8 @@
                     <button id="agent-status-refresh" type="button" style="margin-left:auto;font-size:0.65rem;">REFRESH</button>
                 </div>
                 <div id="agent-status-chips" class="agent-status-row"></div>
+                <div id="model-status-hud" class="model-status-hud" aria-live="polite"></div>
+                <div id="agent-tier-warnings"></div>
                 <p class="insert-hint" style="margin:4px 0 8px;">Walk to the <strong>AI Build Station</strong> and press <strong>F</strong>, or open the portal below. Agents detect Grok Build + Ollama automatically.</p>
                 <button id="setup-open-portal" type="button" style="width:100%;margin-bottom:6px;">OPEN AGENT PORTAL</button>
                 <button id="setup-start-brief" type="button" class="btn-sm" style="width:100%;margin-bottom:6px;">ADVANCED: DESIGN BRIEF</button>
@@ -688,6 +691,9 @@
                 <div class="prop-row" style="margin-bottom:4px;"><label style="min-width:52px;">Medium</label><select id="agent-tier-medium" class="insert-input" style="flex:1;"><option value="auto">auto</option></select></div>
                 <div class="prop-row" style="margin-bottom:6px;"><label style="min-width:52px;">Large</label><select id="agent-tier-large" class="insert-input" style="flex:1;"><option value="auto">auto</option></select></div>
                 <label class="export-wizard-check" style="margin-bottom:6px;"><input type="checkbox" id="agent-prefer-grok-large" checked> Prefer Grok for large tasks when key set</label>
+                <label class="export-wizard-check" style="margin-bottom:6px;"><input type="checkbox" id="agent-allow-parallel"> Allow parallel local models (advanced — strong PC only)</label>
+                <p class="insert-hint" style="margin:0 0 6px;">Red ✗ = cannot perform · Yellow ⚠ = PC may struggle · Default: one local model at a time.</p>
+                <div id="agent-model-matrix" class="agent-model-matrix"></div>
                 <div class="prop-row" style="margin-bottom:4px;">
                     <button id="agent-tier-save" type="button" style="flex:1;">SAVE TIERS</button>
                     <button id="agent-benchmark-run" type="button" style="flex:1;">RUN BENCHMARK</button>

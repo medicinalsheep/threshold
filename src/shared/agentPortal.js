@@ -14,6 +14,8 @@ import { sanitizeSceneCode, codeReadinessSummary } from './codeSanitizer.js';
 import { TIER_GUIDE, tierOptionsHtml, renderTierGuideHtml } from './agentModelGuide.js';
 import { BuildJob } from './buildJob.js';
 import { getSceneApiPrompt } from './sceneApiPrompt.js';
+import { assessTierPrefs, renderMatrixHtml, buildModelMatrix, countDistinctLocalModels, getDeviceProfile } from './modelCapability.js';
+import { OllamaRunQueue } from './ollamaRunQueue.js';
 
 const PREFS_KEY = 'agentPortalSession';
 
@@ -321,9 +323,28 @@ export const AgentPortal = {
                 <input type="checkbox" id="portal-prefer-grok-large" ${prefs.preferGrokLarge !== false ? 'checked' : ''}>
                 Prefer Grok for large tasks (world scripts)
             </label>` : ''}
-            ${models.length ? `<p class="insert-hint">Installed: ${models.slice(0, 6).map((m) => `<code>${esc(m)}</code>`).join(' ')}${models.length > 6 ? '…' : ''}</p>` : ''}
-            <p class="insert-hint"><strong>Small</strong> = chat · <strong>Medium</strong> = patches · <strong>Large</strong> = full scene. Saved on connect.</p>
+            <label class="export-wizard-check" style="margin:6px 0;">
+                <input type="checkbox" id="portal-allow-parallel" ${OllamaRunQueue.getPrefs().allowParallelLocal ? 'checked' : ''}>
+                Allow parallel local models (advanced — strong PC)
+            </label>
+            <p class="insert-hint">Default: <strong>one Ollama model at a time</strong>. Red ✗ = cannot perform tier.</p>
+            <div id="portal-model-matrix" class="portal-model-matrix"></div>
+            <div id="portal-tier-warnings"></div>
         `;
+        if (models.length) {
+            const matrixEl = document.getElementById('portal-model-matrix');
+            if (matrixEl) matrixEl.innerHTML = renderMatrixHtml(buildModelMatrix(models), { compact: true });
+            const tierAssess = assessTierPrefs(prefs, models, getDeviceProfile());
+            const warnEl = document.getElementById('portal-tier-warnings');
+            if (warnEl) {
+                warnEl.innerHTML = ['small', 'medium', 'large'].map((t) => {
+                    const a = tierAssess[t];
+                    if (!a || a.state === 'ok') return '';
+                    const cls = a.state === 'fail' ? 'model-cap-fail' : 'model-cap-warn';
+                    return `<p class="model-cap-pick-warn ${cls}"><strong>${t}</strong>: ${a.reason}</p>`;
+                }).join('');
+            }
+        }
     },
 
     renderBuildControls() {
@@ -346,7 +367,7 @@ export const AgentPortal = {
                         <option value="15" ${prefs.timeLimitMin === 15 ? 'selected' : ''}>15 minutes</option>
                     </select>
                 </div>
-                <p class="insert-hint">Routing: small→<code>${esc(route.small || 'auto')}</code> · medium→<code>${esc(route.medium || 'auto')}</code> · large→<code>${esc(route.large || 'auto')}</code></p>
+                <p class="insert-hint">Routing: small→<code>${esc(route.small || 'auto')}</code> · medium→<code>${esc(route.medium || 'auto')}</code> · large→<code>${esc(route.large || 'auto')}</code> · ${OllamaRunQueue.getPrefs().allowParallelLocal ? 'parallel' : 'sequential'}</p>
             </details>
             <div id="agent-portal-job-log" class="agent-portal-job-log"></div>
         `;
@@ -478,6 +499,11 @@ export const AgentPortal = {
         }
 
         AgentRouter.setTierPrefs(patch);
+        OllamaRunQueue.setPrefs({ allowParallelLocal: document.getElementById('portal-allow-parallel')?.checked === true });
+        const distinct = countDistinctLocalModels(patch);
+        if (distinct > 1 && !OllamaRunQueue.getPrefs().allowParallelLocal) {
+            window.UI?.status?.(`Connected — ${distinct} local models run sequentially`);
+        }
 
         this._session = saveSession({
             connected: true,
