@@ -838,7 +838,12 @@ const Engine = {
         window.addEventListener('keydown', (e) => {
             if (Controls._rebind) return;
             State.keys[e.code] = true;
-            if (e.code === 'Delete') World.deleteObject(State.selectedObject);
+            if (e.code === 'Delete' || e.code === 'Backspace') {
+                const tag = (e.target?.tagName || '').toLowerCase();
+                if (tag !== 'input' && tag !== 'textarea' && !e.target?.isContentEditable) {
+                    World.deleteObject(State.selectedObject);
+                }
+            }
             if (!e.repeat) {
                 const action = Controls.getActionForCode(e.code);
                 if (action) Controls.markJustPressed(action);
@@ -1065,14 +1070,33 @@ const Engine = {
         window.Spectate?.updateHud?.();
         GraphicsProfile.syncUi();
     },
+    resolveRegistryObject(obj) {
+        if (!obj) return null;
+        let cur = obj;
+        while (cur) {
+            if (State.objects.includes(cur)) return cur;
+            cur = cur.parent;
+        }
+        return null;
+    },
+
+    pickObjectAtMouse() {
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        const hits = this.raycaster.intersectObjects(State.objects, true);
+        for (const hit of hits) {
+            const root = this.resolveRegistryObject(hit.object);
+            if (root) return root;
+        }
+        return null;
+    },
+
     openContextAtScreen: function (clientX, clientY) {
         const rect = this.renderer.domElement.getBoundingClientRect();
         this.mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
         this.mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
-        this.raycaster.setFromCamera(this.mouse, this.camera);
-        const objIntersects = this.raycaster.intersectObjects(State.objects);
-        if (objIntersects.length > 0) {
-            UI.openCtx(clientX, clientY, 'object', objIntersects[0].object);
+        const picked = this.pickObjectAtMouse();
+        if (picked) {
+            UI.openCtx(clientX, clientY, 'object', picked);
             return;
         }
         const intersects = this.raycaster.intersectObject(this.groundPlane);
@@ -1160,9 +1184,8 @@ const Engine = {
         const rect = this.renderer.domElement.getBoundingClientRect();
         this.mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         this.mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-        this.raycaster.setFromCamera(this.mouse, this.camera);
-        const intersects = this.raycaster.intersectObjects(State.objects);
-        if (intersects.length > 0) UI.selectObject(intersects[0].object);
+        const picked = this.pickObjectAtMouse();
+        if (picked) UI.selectObject(picked);
         else if (!this.transformControl.dragging) UI.deselectObject();
     },
     onContextMenu: function (e) {
@@ -1170,10 +1193,9 @@ const Engine = {
         const rect = this.renderer.domElement.getBoundingClientRect();
         this.mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         this.mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-        this.raycaster.setFromCamera(this.mouse, this.camera);
-        const objIntersects = this.raycaster.intersectObjects(State.objects);
-        if (objIntersects.length > 0) {
-            UI.openCtx(e.clientX, e.clientY, 'object', objIntersects[0].object);
+        const picked = this.pickObjectAtMouse();
+        if (picked) {
+            UI.openCtx(e.clientX, e.clientY, 'object', picked);
             return;
         }
         const intersects = this.raycaster.intersectObject(this.groundPlane);
@@ -1526,21 +1548,35 @@ const World = {
         return { x: State.ctxTargetPos.x, y: State.ctxTargetPos.y, z: State.ctxTargetPos.z };
     },
     deleteObject: function (obj) {
-        if (!obj) return;
-        if (SimMode.isPlay() && !obj.userData?.isPlayer) {
-            UI.status('PLAY mode — cannot delete world objects');
+        const root = Engine.resolveRegistryObject(obj) || obj;
+        if (!root || root.userData?.isPlayer) return;
+        if (!SimMode.canEditObject(root)) {
+            UI.status(SimMode.isPlay()
+                ? 'PLAY mode — switch to EDIT to delete objects'
+                : 'Cannot delete — no edit permission');
+            return;
+        }
+        window.SceneHistory?.push?.('before:deleteObject', {
+            id: root.userData?.id,
+            name: root.userData?.name || 'Object',
+        });
+        if (root.userData?.type === 'gltf') {
+            GltfImport.removeFromWorld(root);
+            UI.status(`Deleted: ${root.userData?.name || 'GLTF'}`);
             return;
         }
         Engine.transformControl.detach();
-        Engine.scene.remove(obj);
-        State.objects = State.objects.filter(o => o !== obj);
-        // Remove from physics
-        const physIdx = State.physicsObjects.findIndex(p => p.mesh === obj);
+        const physIdx = State.physicsObjects.findIndex((p) => p.mesh === root);
         if (physIdx > -1) {
             Physics.world.removeBody(State.physicsObjects[physIdx].body);
             State.physicsObjects.splice(physIdx, 1);
         }
+        window.MeshLod?.dispose?.(root);
+        Engine.scene.remove(root);
+        State.objects = State.objects.filter((o) => o !== root);
+        GltfImport.disposeObjectTree(root);
         UI.deselectObject();
+        UI.status(`Deleted: ${root.userData?.name || 'Object'}`);
     },
     clearWorld: function (silent = false) {
         window.SceneHistory?.push?.('before:clearWorld');
@@ -2550,8 +2586,9 @@ const UI = {
         const editGroup = document.getElementById('ctx-group-edit');
         menu.style.display = 'flex'; menu.style.left = x + 'px'; menu.style.top = y + 'px';
         if (contextType === 'object' && targetObj) {
-            State.selectedObject = targetObj;
-            if (header) header.innerText = 'OBJECT: ' + (targetObj.userData.name || 'Object');
+            const root = Engine.resolveRegistryObject(targetObj) || targetObj;
+            UI.selectObject(root);
+            if (header) header.innerText = 'OBJECT: ' + (root.userData.name || 'Object');
             groundGroup.style.display = 'none';
             editGroup.style.display = 'flex';
             editGroup.style.flexDirection = 'column';

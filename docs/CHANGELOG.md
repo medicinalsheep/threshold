@@ -1,5 +1,11 @@
 # Changelog
 
+## 10.8.1 — Delete inserted objects fix
+
+- **DELETE** now resolves Group/GLTF child hits to the registry root in `State.objects` (recursive raycast)
+- **deleteObject** properly removes GLTF models (dispose + physics + LOD), showcase groups, and primitives
+- Context menu + inspector selection use the same root resolution; clearer status when blocked in PLAY mode
+
 ## 10.8.0 — Doc sweep + favicon preview
 
 - **Documentation** — archived superseded phase docs to `old/docs/`; new lean [ROADMAP.md](ROADMAP.md); truth-pass for blank grid + Agent Portal + corner hubs

@@ -27,13 +27,7 @@ function slugify(name = '') {
 }
 
 function disposeObject3D(root) {
-    root.traverse((c) => {
-        if (c.geometry) c.geometry.dispose?.();
-        if (c.material) {
-            if (Array.isArray(c.material)) c.material.forEach((m) => m.dispose?.());
-            else c.material.dispose?.();
-        }
-    });
+    disposeObjectTree(root);
 }
 
 function findGltfTargets(event = {}) {
@@ -55,7 +49,8 @@ function removeGltfFromWorld(root) {
     const Physics = window.Physics;
     if (!root || !State || !Engine) return;
 
-    if (State.selectedObject === root) window.UI?.deselectObject?.();
+    const selectedRoot = window.Engine?.resolveRegistryObject?.(State.selectedObject) || State.selectedObject;
+    if (selectedRoot === root) window.UI?.deselectObject?.();
     const physIdx = State.physicsObjects.findIndex((p) => p.mesh === root);
     if (physIdx >= 0) {
         Physics?.world?.removeBody(State.physicsObjects[physIdx].body);
@@ -84,6 +79,20 @@ function groundAndScale(root, targetHeight = null) {
     }
     root.position.y -= box.min.y;
     return root;
+}
+
+function disposeObjectTree(root) {
+    if (!root) return;
+    root.traverse((c) => {
+        if (c.geometry) c.geometry.dispose?.();
+        if (c.material) {
+            if (Array.isArray(c.material)) c.material.forEach((m) => m.dispose?.());
+            else c.material.dispose?.();
+        }
+    });
+    if (root.userData?._blobUrl) {
+        try { URL.revokeObjectURL(root.userData._blobUrl); } catch { /* ignore */ }
+    }
 }
 
 export const GltfImport = {
@@ -411,6 +420,12 @@ export const GltfImport = {
         window.UI?.status?.(msg.trim());
         return { applied, message: msg };
     },
+
+    removeFromWorld(root) {
+        removeGltfFromWorld(root);
+    },
+
+    disposeObjectTree,
 
     async hotReloadManifestFromWatch(event = {}) {
         if (!event.watchUrl) return null;
