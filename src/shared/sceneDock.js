@@ -78,7 +78,8 @@ export const SceneDock = {
         document.getElementById('dock-restore-btn')?.addEventListener('click', () => {
             setFullyHidden(false, true);
             setExpanded(true, true);
-            const tab = activeTab || ViewPrefs.get('dockTab', 'inspect');
+            const minimal = document.body.classList.contains('ui-minimal');
+            const tab = activeTab || ViewPrefs.get('dockTab', minimal ? 'setup' : 'inspect');
             this.openTab(tab);
         });
 
@@ -93,7 +94,6 @@ export const SceneDock = {
         const dock = document.getElementById('scene-dock');
         if (!dock || !tabId) return;
 
-        window.ProgressiveUi?.unlock?.('dock', { silent: true });
         setFullyHidden(false, true);
         activeTab = tabId;
         setExpanded(true);

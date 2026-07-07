@@ -1,5 +1,13 @@
 # Changelog
 
+## 10.1.0 — SETUP tab + design brief intake
+
+- **Minimal session UI** — join with sparse chrome; **SETUP** always available (not unlock-on-object)
+- **Design brief wizard** — world / character / prop / animation / texture / sound; export targets, poly budget, GIMP/Blender workflow, reference sounds (record/upload)
+- **Agent follow-up forms** — agents can return `intake_questions` JSON; user answers in a GrokDevPrompt-style popup before code generates
+- **SETUP panel** — Grok key, Ollama tiers, creative watch; advanced dev/training tools collapsed in `<details>`
+- **Show all tools** checkbox — opt-in to Compiler, PromptGen, full scene dock
+
 ## 10.0.0 — Blank grid rebuild
 
 Focused, smaller default experience. Capabilities (multiplayer, agents, compiler, export, plugins) remain — the **default path** is simpler.

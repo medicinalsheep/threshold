@@ -35,7 +35,8 @@ import { CreativeWatch } from '../shared/creativeWatch.js';
 import '../shared/starterSiteLayout.js';
 import { bootstrapSelectedTemplate } from '../shared/starterTemplates.js';
 import '../shared/worldInteract.js';
-import '../shared/progressiveUi.js';
+import '../shared/sessionUi.js';
+import '../shared/designIntake.js';
 import { ThirdEye } from '../shared/thirdEye.js';
 import '../shared/engineAudio.js';
 import '../shared/npcPatrol.js';
@@ -194,8 +195,8 @@ export function initEngine() {
             if (tpl && tpl !== 'grid') {
                 window.UI?.status?.(`Template: ${window.StarterTemplates?.STARTER_TEMPLATES?.[tpl]?.name || tpl}`);
             }
-            window.ProgressiveUi?.init?.();
-            if (Network.mode === 'host') window.ProgressiveUi?.onHostSession?.();
+            window.SessionUi?.onSessionStart?.();
+            window.DesignIntake?.init?.();
         }, 120);
     }
 
@@ -2282,7 +2283,7 @@ const UI = {
             this.status('Select an NPC (not player) in EDIT → inspect first');
             return;
         }
-        SceneDock.openTab('agents');
+        SceneDock.openTab('setup');
         this.status('Grok NPC agent attached — use NPC TALK');
     },
     talkToNpcAgent: async function () {

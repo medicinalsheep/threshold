@@ -2,7 +2,7 @@
 
 Collaborative 3D playground — host a session, build on a blank grid, invite friends, use AI and Compiler tools as you need them.
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.0.0
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.1.0
 
 ---
 
@@ -14,9 +14,11 @@ Collaborative 3D playground — host a session, build on a blank grid, invite fr
 | **Join** | Open host link or enter room code → **JOIN** |
 | **Offline** | Lobby → **Offline & options** → **OFFLINE →** |
 
-You land on a **blank grid**. Right-click **INSERT** to add objects. The scene panel, Compiler, and PromptGen unlock as you build — nothing busy on first load.
+You land on a **blank grid** with **minimal UI**. Open **SETUP** to connect Grok/Ollama, GIMP/Blender watch, and start a **design brief** (export targets, poly budget, sounds, textures) — agents may ask follow-up questions before generating Compiler code.
 
-**PLAY** runs physics · **BUILD** pauses to edit · collapse **SCENE** hides the whole dock (edge **SCENE** button restores it).
+Check **Show all tools** in SETUP when you need Compiler, PromptGen, and the full scene dock.
+
+**PLAY** runs physics · **BUILD** pauses to edit · **SETUP** edge tab restores the panel when collapsed.
 
 ---
 

@@ -89,9 +89,7 @@ async function bootstrapTcCircuitTemplate() {
     window.StarterAnim?.wireScene?.();
     State.ctxTargetPos.set(0, 0, -2);
     State.templateId = 'tc-circuit';
-    window.ProgressiveUi?.unlock?.('toolbar', { silent: true });
-    window.ProgressiveUi?.unlock?.('dock', { silent: true });
-    window.ProgressiveUi?.unlock?.('compiler', { silent: true });
+    window.SessionUi?.setShowAllTools?.(true, { silent: true });
 
     scheduleTemplateSpawn({ x: 0, y: 0, z: 4 }, {
         skipIntro: true,

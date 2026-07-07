@@ -139,7 +139,7 @@ const FULL_STEPS = [
             {
                 label: 'Agents tab',
                 run() {
-                    SceneDock.openTab('agents');
+                    SceneDock.openTab('setup');
                 },
             },
         ],

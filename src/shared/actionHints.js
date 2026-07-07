@@ -5,7 +5,7 @@ import { ViewPrefs } from './viewPrefs.js';
 const HINTS = [
     {
         id: 'walk',
-        text: 'WASD move · right-click INSERT · BUILD mode to place objects · tools unlock as you build',
+        text: 'SETUP tab — connect Grok/Ollama · start a design brief · then BUILD to place objects',
         afterMs: 0,
     },
     {

@@ -205,12 +205,40 @@
                 <div class="guided-session-actions">
                     <button type="button" id="guided-mode-play" class="guided-mode-btn guided-mode-play">
                         <span class="guided-mode-title">PLAY</span>
-                        <span class="guided-mode-desc">Walk, test survival, weather, physics</span>
+                        <span class="guided-mode-desc">Walk, test physics, play your build</span>
                     </button>
                     <button type="button" id="guided-mode-build" class="guided-mode-btn guided-mode-build">
                         <span class="guided-mode-title">BUILD</span>
-                        <span class="guided-mode-desc">Pause sim · insert · Compiler · textures</span>
+                        <span class="guided-mode-desc">Pause sim · SETUP brief · insert objects</span>
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="design-intake-modal" class="design-intake-modal" role="dialog" aria-labelledby="design-intake-title">
+            <div class="design-intake-card panel">
+                <div class="design-intake-header">
+                    <h2 id="design-intake-title">Design brief</h2>
+                    <button type="button" id="design-intake-close" class="btn-sm">✕</button>
+                </div>
+                <div data-intake-step="type">
+                    <p class="insert-hint">What are you creating? Pick a type — then set poly budget, sounds, textures, and export targets up front (like <a href="https://medicinalsheep.github.io/grokdevprompt/" target="_blank" rel="noopener noreferrer">GrokDevPrompt</a>).</p>
+                    <div id="design-type-grid" class="design-type-grid"></div>
+                </div>
+                <div data-intake-step="details" class="hidden">
+                    <div id="design-intake-form"></div>
+                </div>
+                <div data-intake-step="review" class="hidden">
+                    <div id="design-intake-review"></div>
+                </div>
+                <div data-intake-step="questions" class="hidden">
+                    <div id="design-intake-questions"></div>
+                </div>
+                <p id="design-intake-status" class="insert-hint" style="min-height:1.2em;margin:8px 0 0;"></p>
+                <div class="design-intake-footer">
+                    <button type="button" id="design-intake-back" class="btn-sm" style="display:none;">BACK</button>
+                    <button type="button" id="design-intake-submit" class="btn-sm" style="display:none;">REVIEW BRIEF</button>
+                    <button type="button" id="design-intake-run" class="btn-sm" style="display:none;">RUN AGENT → GENERATE</button>
                 </div>
             </div>
         </div>
@@ -260,6 +288,7 @@
                     <button id="btn-fullscreen-toolbar" class="btn-sm toolbar-keep mobile-only" type="button" aria-label="Enter fullscreen" title="Fullscreen">FULL</button>
                     <button id="btn-control-mode" class="btn-sm toolbar-keep" title="Walk / Fly">FLY</button>
                     <button id="btn-bindings" class="btn-sm toolbar-keep" title="Key bindings">KEYS</button>
+                    <button id="btn-open-setup" class="btn-sm toolbar-keep" type="button" title="Agents, Grok, Ollama, design brief">SETUP</button>
                     <button id="btn-toolbar-more" class="btn-sm toolbar-more-trigger" type="button" title="More tools">MORE ▾</button>
                     <div id="toolbar-more-menu" class="toolbar-more-menu">
                         <button id="btn-env-toggle" class="btn-sm" title="Environment panel">ENV</button>
@@ -361,7 +390,7 @@
                     <button type="button" class="dock-tab" data-dock-tab="inspect" title="Edit object">EDIT</button>
                     <button type="button" class="dock-tab" data-dock-tab="skin" title="Player skin">SKIN</button>
                     <button type="button" class="dock-tab" data-dock-tab="sfx" title="Sound library">SFX</button>
-                    <button type="button" class="dock-tab" data-dock-tab="agents" title="AI agents">AI</button>
+                    <button type="button" class="dock-tab" data-dock-tab="setup" title="Setup agents & design brief">SETUP</button>
                     <button type="button" id="dock-collapse" class="dock-collapse" title="Collapse dock">◀</button>
                 </div>
                 <div class="dock-panels">
@@ -530,12 +559,17 @@
                 <div id="sfx-library-list" class="sfx-library-list"></div>
             </div>
 
-            <div id="agents-panel" class="panel dock-panel" data-dock-panel="agents" style="display:none;">
-                <div class="prop-row"><h3 style="margin:0;">AGENTS</h3>
+            <div id="agents-panel" class="panel dock-panel" data-dock-panel="setup" style="display:none;">
+                <div class="prop-row"><h3 style="margin:0;">SETUP</h3>
                     <button id="agent-status-refresh" type="button" style="margin-left:auto;font-size:0.65rem;">REFRESH</button>
                 </div>
                 <div id="agent-status-chips" class="agent-status-row"></div>
-                <p class="insert-hint" style="margin:4px 0 8px;">Status: Grok (xAI key in <em>this tab</em>), Ollama (local), creative watch (GIMP textures). Ollama suggests code only — textures use GIMP + <code>textures:watch</code>.</p>
+                <p class="insert-hint" style="margin:4px 0 8px;">Connect Grok + Ollama, GIMP/Blender watch, then start a <strong>design brief</strong> — agents ask follow-up questions before generating.</p>
+                <button id="setup-start-brief" type="button" style="width:100%;margin-bottom:6px;">+ NEW DESIGN BRIEF</button>
+                <button id="setup-resume-brief" type="button" class="btn-sm" style="width:100%;margin-bottom:8px;">RESUME DRAFT BRIEF</button>
+                <label class="export-wizard-check" style="margin-bottom:10px;"><input type="checkbox" id="setup-show-all-tools"> Show all tools (Compiler, PromptGen, full scene dock)</label>
+                <details class="setup-advanced-wrap" open>
+                    <summary>Providers — Grok &amp; Ollama</summary>
                 <label class="insert-hint">xAI API key (session — not shared from other browser tabs)</label>
                 <div class="prop-row" style="margin-bottom:6px;">
                     <input type="password" id="agent-xai-key" class="insert-input" placeholder="xai-…" autocomplete="off" style="flex:1;">
@@ -555,6 +589,14 @@
                 <div id="agent-benchmark-results" class="agent-benchmark-results"></div>
                 <label class="insert-hint">Legacy default Ollama model</label>
                 <select id="agent-ollama-model" class="insert-input" style="margin-bottom:6px;"><option value="">— probe on refresh —</option></select>
+                </details>
+                <details class="setup-advanced-wrap">
+                    <summary>Creative pipeline — GIMP, Blender, export</summary>
+                <p class="insert-hint" style="margin:0 0 6px;">Textures: GIMP → <code>textures/</code> + <code>npm run textures:watch</code>. Models: Blender → <code>import/</code>. Export wizard ships web, mobile, Windows, Steam.</p>
+                <button id="setup-open-export" type="button" class="btn-sm" style="width:100%;margin-bottom:8px;">OPEN EXPORT WIZARD</button>
+                </details>
+                <details class="setup-advanced-wrap">
+                    <summary>NPC &amp; dev agents</summary>
                 <label class="insert-hint">Grok NPC persona</label>
                 <input type="text" id="agent-npc-persona" class="insert-input" placeholder="Friendly merchant, quest giver..." style="margin-bottom:6px;">
                 <div class="prop-row">
@@ -570,8 +612,10 @@
                 <button id="agent-dev-apply" type="button" style="width:100%;margin-bottom:6px;">GROK DEV: APPLY TO COMPILER</button>
                 <button id="agent-ollama-suggest" type="button" style="width:100%;margin-bottom:6px;">OLLAMA DEV: SUGGEST CODE</button>
                 <button id="agent-ollama-apply" type="button" style="width:100%;margin-bottom:6px;">OLLAMA DEV: APPLY TO COMPILER</button>
-                <hr style="border-color:var(--border-color);margin:8px 0;">
-                <p class="insert-hint" style="margin:0 0 6px;">Training bootcamp — export Compiler input/output to grow JSONL datasets.</p>
+                </details>
+                <details class="setup-advanced-wrap">
+                    <summary>Training export (local)</summary>
+                <p class="insert-hint" style="margin:0 0 6px;">Export Compiler pairs to grow local training datasets (not required for play).</p>
                 <label class="export-wizard-check" style="margin-bottom:6px;"><input type="checkbox" id="agent-training-queue"> Queue pair on SMART APPLY</label>
                 <button id="agent-training-export" type="button" style="width:100%;margin-bottom:4px;">EXPORT TRAINING PAIR</button>
                 <button id="agent-training-export-queue" type="button" style="width:100%;margin-bottom:6px;display:none;">EXPORT QUEUE (0)</button>
@@ -579,6 +623,7 @@
                 <input type="number" id="agent-local-interval" class="insert-input" value="0" min="0" step="1000" style="margin-bottom:6px;">
                 <textarea id="agent-local-script" class="insert-input" rows="3" placeholder="// e.g. console.log('tick')" style="margin-bottom:6px;font-family:var(--font-mono);font-size:0.65rem;"></textarea>
                 <button id="agent-local-save" type="button" style="width:100%;">SAVE LOCAL AGENT</button>
+                </details>
             </div>
 
             <div id="player-skin-panel" class="panel dock-panel" data-dock-panel="skin" style="display:none;">
