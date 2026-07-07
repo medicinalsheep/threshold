@@ -1,4 +1,4 @@
-# Threshold bootcamp — 2026-07-06T06:57:57.631Z
+# Threshold bootcamp — 2026-07-06T08:16:28.268Z
 # Tier: small · Model: threshold-mini-npc · Examples: 9
 # Weights: ollama pull llama3.2:3b — not stored in git
 FROM llama3.2:3b

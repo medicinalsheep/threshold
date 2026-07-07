@@ -4,6 +4,7 @@ import { OllamaClient } from './ollamaClient.js';
 import { AgentHub } from './agentHub.js';
 import { AgentRouter } from './agentRouter.js';
 import { AgentBenchmark } from './agentBenchmark.js';
+import { TrainingImport } from './trainingImport.js';
 import { TextureLibrary } from './textureLibrary.js';
 import { CREATIVE_WATCH_URL } from '../config.js';
 
@@ -45,6 +46,21 @@ function initPanelDelegation() {
             AgentRouter.setTierPrefs(patch);
             window.UI?.status?.('Agent tier models saved');
         }
+        if (e.target.id === 'agent-benchmark-apply') {
+            const last = AgentBenchmark.getLastResults();
+            const suggested = last?.suggested;
+            if (!suggested || !Object.keys(suggested).length) {
+                window.UI?.status?.('Run benchmark first');
+                return;
+            }
+            const applied = AgentBenchmark.applySuggestedTiers(suggested, { force: true });
+            if (applied.changed) {
+                window.UI?.status?.('Suggested tier models applied');
+                AgentStatus.refresh();
+            } else {
+                window.UI?.status?.('No tier changes to apply');
+            }
+        }
     });
     panel.addEventListener('change', (e) => {
         if (e.target.id === 'agent-prefer-grok-large') {
@@ -66,6 +82,13 @@ function syncTierUi(models) {
     const benchEl = document.getElementById('agent-benchmark-results');
     const last = AgentBenchmark.getLastResults();
     if (benchEl && last) benchEl.innerHTML = AgentBenchmark.formatSummaryHtml(last);
+
+    const applyBtn = document.getElementById('agent-benchmark-apply');
+    if (applyBtn) {
+        const hasSuggestions = last?.suggested && Object.keys(last.suggested).length > 0;
+        const needsApply = hasSuggestions && !last?.applied?.changed;
+        applyBtn.style.display = needsApply ? 'block' : 'none';
+    }
 }
 
 export const AgentStatus = {
@@ -135,6 +158,7 @@ export const AgentStatus = {
         }
 
         if (ollama.ok) syncTierUi(ollama.models);
+        TrainingImport.syncQueueUi();
 
         const modelSel = document.getElementById('agent-ollama-model');
         if (modelSel && ollama.ok) {
@@ -151,6 +175,7 @@ export const AgentStatus = {
             }
         }
 
+        window.AgentReconnectChip?.refresh?.();
         return lastSnapshot;
     },
 };

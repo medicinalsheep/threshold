@@ -79,8 +79,7 @@ export const WorldInteract = {
             return true;
         }
         if (action === 'agents') {
-            window.SceneDock?.openTab?.('setup');
-            window.UI?.status?.(`${label} — AI agents · attach Grok or local scripts`);
+            window.AgentPortal?.openFromTerminal?.();
             return true;
         }
         if (action === 'skin') {

@@ -1,6 +1,6 @@
 # Next Phases — Universal Compatibility Roadmap
 
-**Current:** v9.11.0 — Polish L–U complete (showcase through store/native verify pass).
+**Current:** v9.16.0 — Polish L–U complete; agents, bootcamp mini models, realism-first graphics shipped (9.12–9.16).
 
 **Polish status:** [POLISH_ROADMAP.md](POLISH_ROADMAP.md) — Sprints L–U ✅
 
@@ -50,7 +50,7 @@
 | Tier | Target | Render mode | Features |
 |------|--------|-------------|----------|
 | **Lite** | Old phones | Realistic PBR (4) | No water, 512px textures, lighter physics |
-| **Balanced** | Mid devices | SMPTE (3) | Atmosphere + fog, no water |
+| **Mobile** | Mid devices | Realistic PBR (4) | Atmosphere + fog, no water |
 | **Realistic** | Desktop / flagship | Hyper (4) | PBR, water, bloom, atmosphere |
 | **Ultra** | High-end desktop | Hyper (4) | Higher DPR cap, bloom, shadow res |
 

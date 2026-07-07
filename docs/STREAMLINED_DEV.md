@@ -1,4 +1,4 @@
-# Streamlined dev path (v9.13)
+# Streamlined dev path (v9.16)
 
 One linear path from lobby to shipped build — host/join, agents, creative tools, export.
 
@@ -16,9 +16,9 @@ Multiplayer is optional PeerJS — no API key required for local solo dev.
 
 ---
 
-## 2. Agents panel (SCENE → AGENTS)
+## 2. AI tab (SCENE dock → **AI**)
 
-Open **SCENE dock → AGENTS** tab. Status chips show what is ready:
+Open **SCENE dock → AI** tab (panel header: **AGENTS**). Status chips show what is ready:
 
 | Chip | Meaning |
 |------|---------|
@@ -32,29 +32,32 @@ Open **SCENE dock → AGENTS** tab. Status chips show what is ready:
 
 - Get a key at [console.x.ai](https://console.x.ai).
 - **Grok edition:** login overlay on first load.
-- **Web edition:** paste key in AGENTS panel → SAVE.
+- **Web edition:** paste key in AI tab → SAVE.
 - Keys are **per-tab** — logging into Grok in another tab does **not** auto-auth Threshold.
 - Keys go only to `api.x.ai`; never commit them to git.
 
 ### Tiered models (small / medium / large)
 
-| Tier | Use for | Example model |
-|------|---------|---------------|
-| Small | NPC chat | `llama3.2:3b` |
-| Medium | Compiler patches | `qwen2.5-coder:7b` |
-| Large | Full scene scripts | Grok or `llama3.1:8b` |
+| Tier | Use for | Trained mini model |
+|------|---------|-------------------|
+| Small | NPC chat | `threshold-mini-npc` |
+| Medium | Compiler patches | `threshold-mini-dev` |
+| Large | Full scene scripts | Grok or `threshold-dev` / `threshold-large-scenes` |
 
-Set tiers in AGENTS panel → **SAVE TIERS**. Use **SMART DEV** or **RUN AGENT (tiered)** for automatic routing.
+Set tiers in AI tab → **SAVE TIERS**. Use **SMART DEV** or **RUN AGENT (tiered)** for automatic routing.
 
 ```bash
 ollama serve
+npm run bootcamp:build && npm run models:mini   # install mini agents from GitHub recipes
 npm run ollama:benchmark   # rank models for your workflows
 npm run ollama:verify      # quick smoke
 ```
 
-Custom model: `ollama create threshold-dev -f config/threshold-dev.Modelfile` — see [AGENT_ROUTING.md](AGENT_ROUTING.md).
+Copy `.env.local.example` → `.env.local` for Ollama host and tier defaults. See [AGENT_ROUTING.md](AGENT_ROUTING.md) and [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md).
 
 Ollama does **not** edit textures — use GIMP workflow below.
+
+**Grow training data:** SMART DEV → review Compiler output → **EXPORT TRAINING PAIR** → `bootcamp:import` → `bootcamp:build` → `models:mini`.
 
 ### Local script agent
 
@@ -72,7 +75,7 @@ Set interval (ms) + JavaScript → **SAVE LOCAL AGENT**. Runs on timer in PLAY m
 
 **Textures:** edit in GIMP → save → watch relay updates Engine meshes. See [GIMP_TEXTURES.md](GIMP_TEXTURES.md) and [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md).
 
-**Reference inputs:** Compiler and PromptGen include `referenceLibrary` blocks; local GLBs go in `import/`, textures in `textures/`.
+**Reference inputs:** Compiler and PromptGen include `referenceLibrary` blocks; local GLBs go in `import/`, textures in `textures/`. Default prompts assume **realistic PBR** (render mode 4); retro shaders are opt-in via ENV → Style.
 
 ---
 
@@ -111,7 +114,7 @@ npm run ollama:verify   # optional local LLM
 ## Quick reference
 
 ```
-Lobby HOST/JOIN → AGENTS (Grok key / Ollama / watch) → GIMP+watch / Blender
+Lobby HOST/JOIN → AI tab (Grok key / Ollama / watch) → GIMP+watch / Blender
 → BUILD scene → MORE → EXPORT (pick targets) → store:prep → package:*
 ```
 

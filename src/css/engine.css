@@ -167,6 +167,331 @@ body.ui-minimal #tc-quest-card {
     display: none !important;
 }
 
+.agent-portal-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 125;
+    background: rgba(0, 0, 0, 0.78);
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.agent-portal-modal.open,
+body.agent-portal-open .agent-portal-modal.open {
+    display: flex;
+}
+
+.agent-portal-card {
+    width: min(540px, 96vw);
+    max-height: min(90dvh, 760px);
+    overflow: auto;
+    padding: 16px;
+}
+
+.agent-portal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    gap: 12px;
+}
+
+.agent-portal-header h2 {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.agent-portal-edition-kicker {
+    margin: 0 0 2px;
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    opacity: 0.85;
+}
+
+.agent-portal-kicker {
+    font-size: 0.68rem;
+    color: var(--accent-color);
+    margin: 0 0 8px;
+}
+
+.agent-portal-detect-list {
+    list-style: none;
+    margin: 0 0 12px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.agent-portal-detect-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.65rem;
+}
+
+.agent-portal-detect-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 4px;
+    flex-shrink: 0;
+}
+
+.agent-portal-ok .agent-portal-detect-dot { background: #3ecf8e; box-shadow: 0 0 6px #3ecf8e88; }
+.agent-portal-warn .agent-portal-detect-dot { background: #e8b84a; }
+.agent-portal-off .agent-portal-detect-dot { background: #666; }
+
+.agent-portal-detect-detail {
+    opacity: 0.75;
+    font-size: 0.6rem;
+}
+
+.agent-portal-provider-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.agent-portal-provider-opt {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.65rem;
+    cursor: pointer;
+}
+
+.agent-portal-provider-opt:has(input:checked) {
+    border-color: var(--accent-color);
+    background: rgba(90, 160, 220, 0.08);
+}
+
+.agent-portal-model-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.agent-tier-guide {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+    font-size: 0.58rem;
+}
+
+.agent-tier-guide-row {
+    padding: 6px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.agent-tier-guide-row strong {
+    color: var(--accent-color);
+    font-size: 0.62rem;
+}
+
+.agent-tier-guide-when {
+    opacity: 0.9;
+}
+
+.agent-tier-guide-why {
+    opacity: 0.65;
+    font-size: 0.55rem;
+}
+
+.agent-portal-tier-row {
+    margin-bottom: 4px;
+}
+
+.agent-portal-build-controls {
+    margin-bottom: 8px;
+}
+
+.agent-portal-build-details summary {
+    cursor: pointer;
+    font-size: 0.65rem;
+    color: var(--accent-color);
+    margin-bottom: 6px;
+}
+
+.agent-portal-job-log {
+    margin-top: 6px;
+    font-size: 0.58rem;
+    max-height: 80px;
+    overflow-y: auto;
+}
+
+.agent-portal-job-step {
+    padding: 3px 0;
+    opacity: 0.85;
+}
+
+.agent-portal-job-step.done {
+    color: #3ecf8e;
+}
+
+.agent-portal-job-step.warn {
+    color: #e8b84a;
+}
+
+.agent-portal-model-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.58rem;
+}
+
+.agent-portal-model-chip.active {
+    border-color: var(--accent-color);
+}
+
+.agent-portal-tier-badge {
+    font-size: 0.52rem;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--border-color);
+    text-transform: uppercase;
+}
+
+.agent-portal-key-note {
+    opacity: 0.65;
+    font-size: 0.58rem;
+}
+
+.agent-portal-chat-log {
+    max-height: 280px;
+    overflow: auto;
+    margin-bottom: 8px;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.agent-portal-msg {
+    margin-bottom: 10px;
+    font-size: 0.65rem;
+    line-height: 1.45;
+}
+
+.agent-portal-msg-user p {
+    margin: 0;
+    padding: 8px 10px;
+    border-radius: 8px 8px 2px 8px;
+    background: rgba(90, 160, 220, 0.15);
+    border: 1px solid rgba(90, 160, 220, 0.25);
+}
+
+.agent-portal-msg-assistant p,
+.agent-portal-msg-assistant p {
+    margin: 0 0 6px;
+}
+
+.agent-portal-msg-meta {
+    display: block;
+    font-size: 0.52rem;
+    opacity: 0.55;
+    margin-top: 2px;
+}
+
+.agent-portal-chat-input {
+    width: 100%;
+    margin-bottom: 8px;
+    font-size: 0.65rem;
+    resize: vertical;
+}
+
+.agent-portal-build-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.agent-portal-footer {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color);
+}
+
+.agent-portal-status {
+    min-height: 1.2em;
+    margin: 8px 0 0;
+}
+
+body.agent-portal-open {
+    overflow: hidden;
+    touch-action: none;
+}
+
+body.agent-portal-open .agent-portal-modal {
+    overscroll-behavior: contain;
+}
+
+.agent-reconnect-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    margin: 0 4px 0 0;
+    font-size: 0.58rem;
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.25);
+    color: #9aa4ae;
+    cursor: pointer;
+    min-height: 22px;
+    flex-shrink: 0;
+}
+
+.agent-reconnect-chip .chip-label-short {
+    display: none;
+}
+
+.agent-reconnect-chip.agent-reconnect-ok {
+    border-color: #3ecf8e66;
+    color: #3ecf8e;
+}
+
+.agent-reconnect-chip.agent-reconnect-warn {
+    border-color: #e8b84a66;
+    color: #e8b84a;
+}
+
+.agent-reconnect-chip.agent-reconnect-off {
+    border-color: var(--border-color);
+    color: #888;
+}
+
+.agent-reconnect-chip:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
 .design-intake-modal {
     display: none;
     position: fixed;

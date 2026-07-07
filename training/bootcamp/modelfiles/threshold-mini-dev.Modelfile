@@ -1,5 +1,5 @@
-# Threshold bootcamp — 2026-07-06T06:57:57.662Z
-# Tier: medium · Model: threshold-mini-dev · Examples: 4
+# Threshold bootcamp — 2026-07-06T08:16:28.293Z
+# Tier: medium · Model: threshold-mini-dev · Examples: 14
 # Weights: ollama pull qwen2.5-coder:1.5b-base — not stored in git
 FROM qwen2.5-coder:1.5b-base
 
@@ -60,5 +60,148 @@ MESSAGE assistant """
   const prop = World.createObject('cube', 'Survival Prop', 0xaa6644, false);
   Object.assign(prop.userData, { interactAction: 'survival', survivalKind: 'food', interactHint: 'Grab rations', interactRadius: 2.2 });
   applySurvivalWorldHooks();
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// wooden bench with PBR roughness for courtyard
+```
+"""
+MESSAGE assistant """
+(function() {
+  const bench = World.createObject('box', 'wood_bench', 0x6b4f3a, false);
+  bench.scale.set(2.2, 0.35, 0.8);
+  bench.position.set(2, 0.2, -4);
+  if (bench.material) {
+    bench.material.roughness = 0.78;
+    bench.material.metalness = 0.04;
+    bench.material.envMapIntensity = 0.42;
+  }
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// water refill zone near creek — survival water
+```
+"""
+MESSAGE assistant """
+(function() {
+  const well = World.createObject('cylinder', 'creek_well', 0x3a5a6b, false);
+  well.position.set(-6, 0.5, 8);
+  Object.assign(well.userData, { interactAction: 'survival', survivalKind: 'water', interactHint: 'Fill canteen', interactRadius: 2.5 });
+  applySurvivalWorldHooks();
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// spinning metal fan prop, realistic PBR
+```
+"""
+MESSAGE assistant """
+(function() {
+  const fan = World.createObject('cylinder', 'lab_fan', 0x888899, false);
+  fan.position.set(0, 2, -3);
+  if (fan.material) {
+    fan.material.roughness = 0.35;
+    fan.material.metalness = 0.72;
+    fan.material.envMapIntensity = 0.55;
+  }
+  fan.userData.spin = true;
+  Runtime.onTick((dt) => { fan.rotation.y += dt * 2.5; });
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// apply GIMP stone_block textures to existing crate mesh
+```
+"""
+MESSAGE assistant """
+(function() {
+  const crate = World.createObject('box', 'stone_block', 0xffffff, false);
+  crate.position.set(1, 0.5, 0);
+  crate.userData.textures = { albedo: 'textures/stone_block_albedo.png', roughness: 'textures/stone_block_roughness.png', metalness: 'textures/stone_block_metalness.png' };
+  if (window.TextureBridge) TextureBridge.apply(crate);
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+World.createObject({ name: 'barrel', type: 'cylinder', color: 0x553311, hasPhysic: true });
+```
+"""
+MESSAGE assistant World.createObject({ name: 'barrel', type: 'cylinder', color: 0x553311, hasPhysics: true });
+MESSAGE user """
+Improve or complete:
+```js
+// rest bench — survival rest on interact
+```
+"""
+MESSAGE assistant """
+(function() {
+  const bench = World.createObject('box', 'rest_bench', 0x4a4035, false);
+  bench.scale.set(1.8, 0.4, 0.7);
+  bench.position.set(-2, 0.2, 5);
+  Object.assign(bench.userData, { interactAction: 'survival', survivalKind: 'rest', interactHint: 'Sit and rest', interactRadius: 2 });
+  applySurvivalWorldHooks();
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// user explicitly asked for 1-bit retro gallery block — NOT default PBR
+```
+"""
+MESSAGE assistant """
+(function() {
+  Engine.setRenderMode(1);
+  const block = World.createObject('cube', 'retro_gallery', 0xffffff, false);
+  block.position.set(0, 1, -6);
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// collision sound on metal door
+```
+"""
+MESSAGE assistant """
+(function() {
+  const door = World.createObject('box', 'metal_door', 0x444455, true);
+  door.scale.set(0.2, 2.2, 1.2);
+  door.position.set(4, 1.1, 0);
+  if (door.material) { door.material.metalness = 0.85; door.material.roughness = 0.28; }
+  Object.assign(door.userData, { soundMode: 'clip', soundClipId: 'sfx_metal_clang', soundTrigger: 'collision' });
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// spawn player at lab entrance if none exists
+```
+"""
+MESSAGE assistant """
+(function() {
+  if (!PlayerController.getLocalPlayer()) {
+    PlayerController.spawnPlayer({ x: 0, y: 1, z: 8 });
+  }
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// foggy atmosphere tweak — keep render mode 4 realistic
+```
+"""
+MESSAGE assistant """
+(function() {
+  if (State.env) {
+    State.env.fogDensity = 0.022;
+    State.env.atmosphereEnabled = true;
+  }
+  if (window.Engine?.applyEnv) Engine.applyEnv();
 })();
 """

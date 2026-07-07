@@ -1,4 +1,4 @@
-# Threshold bootcamp — 2026-07-06T06:57:57.719Z
+# Threshold bootcamp — 2026-07-06T08:16:28.348Z
 # Tier: large_scenes · Model: threshold-large-scenes · Examples: 2
 # Weights: ollama pull llama3.1:8b — not stored in git
 FROM llama3.1:8b

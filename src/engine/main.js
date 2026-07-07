@@ -37,6 +37,9 @@ import { bootstrapSelectedTemplate } from '../shared/starterTemplates.js';
 import '../shared/worldInteract.js';
 import '../shared/sessionUi.js';
 import '../shared/designIntake.js';
+import '../shared/agentPortal.js';
+import '../shared/agentReconnectChip.js';
+import '../shared/cornerHub.js';
 import { ThirdEye } from '../shared/thirdEye.js';
 import '../shared/engineAudio.js';
 import '../shared/npcPatrol.js';
@@ -197,10 +200,14 @@ export function initEngine() {
             }
             window.SessionUi?.onSessionStart?.();
             window.DesignIntake?.init?.();
+            window.AgentPortal?.init?.();
+            window.AgentReconnectChip?.init?.();
+            window.CornerHub?.init?.();
         }, 120);
     }
 
     window.GuidedSession?.startIfNeeded?.();
+    document.body.classList.add('engine-chrome');
 }
 
 // --- GLOBAL STATE ---
@@ -2213,15 +2220,14 @@ const UI = {
         }
         if (layer) layer.classList.toggle('play-mode', !edit);
         document.body.classList.toggle('play-mode', !edit);
+        window.CornerHub?.onModeChange?.(edit);
         if (!edit) {
             Engine.transformControl.detach();
             SceneDock.closeTab();
-            if (SimMode.canEditPlayerSkin()) {
-                window.AppearanceProfile?.syncUiFromProfile?.(window.AppearanceStore.getPlayerProfile());
-                SceneDock.openTab('skin');
-            }
+            SceneDock.setFullyHidden?.(true, false);
         } else {
             SceneDock.closeTab();
+            window.CornerHub?.pulseHub?.('tools');
         }
     },
     initViewToggles: function () {
@@ -2454,11 +2460,13 @@ const UI = {
     },
     updateTouchToggle: function () {
         const btn = document.getElementById('btn-touch-toggle');
-        if (!btn) return;
-        const on = TouchControls.enabled;
-        btn.textContent = on ? 'TOUCH' : 'TOUCH';
-        btn.classList.toggle('active', on);
-        btn.title = on ? 'Hide on-screen touch controls' : 'Show on-screen touch controls';
+        if (btn) {
+            const on = TouchControls.enabled;
+            btn.textContent = 'TOUCH';
+            btn.classList.toggle('active', on);
+            btn.title = on ? 'Hide on-screen touch controls' : 'Show on-screen touch controls';
+        }
+        window.CornerHub?.syncTouchButton?.();
     },
     toggleEnvPanel: function () {
         SceneDock.toggleTab('env');

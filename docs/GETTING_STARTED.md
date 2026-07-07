@@ -1,8 +1,8 @@
-# Getting started with Threshold (v9.10)
+# Getting started with Threshold (v9.16)
 
-One linear path from lobby to shipping — plus the **realism starter** and **TC** export practice.
+One linear path from lobby to shipping — realism starter, tiered agents, and **TC** export practice.
 
-**Full scope:** [README.md](README.md) (doc index)
+**Full scope:** [README.md](README.md) (doc index) · **Linear dev path:** [STREAMLINED_DEV.md](STREAMLINED_DEV.md)
 
 ---
 
@@ -19,8 +19,9 @@ Lobby → PLAY or BUILD → Guided tour → Build (EDIT) or Playtest (PLAY) → 
 | 3 | **PLAY** | Walk, survival vitals, **F** interact, weather, Nikola |
 | 4 | **EDIT** | **INSERT → SHOWCASE** snippets, textures, GLTF, SFX |
 | 5 | **SAVE WORLD** | Share links `?world=CODE` |
-| 6 | **MORE → EXPORT** | 9-step walkthrough → manifest |
-| 7 | **CLI** | `store:prep`, `package:*` or `package:steam` |
+| 6 | **SCENE → AI** (optional) | Ollama tiers, SMART DEV, NPC chat — see [AGENT_ROUTING.md](AGENT_ROUTING.md) |
+| 7 | **MORE → EXPORT** | 9-step walkthrough → manifest (TARGETS default Web only) |
+| 8 | **CLI** | `store:prep`, `package:*` or `package:steam` |
 
 Optional: **Lobby → TC →** — vehicles, NPCs, circuit, full export **SCENE** / **CREDITS** / **PACKS** practice.
 
@@ -43,7 +44,16 @@ Verify:
 
 ```bash
 npm run assets:verify
+npm run controls:verify
 npm run preview                 # http://localhost:4173
+```
+
+Optional local agents:
+
+```bash
+ollama serve
+npm run bootcamp:build && npm run models:mini
+npm run ollama:verify
 ```
 
 ---
@@ -115,10 +125,10 @@ Automated: `npm run tc:verify`
 | 3 | SCENE | Live inventory review |
 | 4 | CREDITS | Licenses and attribution |
 | 5 | REVIEW | Manifest preview |
-| 6 | TARGETS | Web / Android / Windows / iOS / Steam |
+| 6 | TARGETS | Web / Android / Windows / iOS / Steam (default: Web only) |
 | 7 | STORE | Contact, privacy URLs |
 | 8 | PACKS | Store SKUs, registry URIs |
-| 9 | SHIP | Download + CLI commands |
+| 9 | SHIP | Download + target-filtered CLI + secrets checklist |
 
 Detail: [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md)
 
@@ -140,6 +150,7 @@ npm run store:prep -- --manifest my-game.threshold-game.json --contact you@examp
 npm run store:assets -- --manifest my-game.threshold-game.json
 npm run bundle:assets
 npm run package:android:release   # or package:win / package:steam
+npm run store:verify              # full packaging smoke (optional)
 ```
 
 | Guide | When |
@@ -174,6 +185,8 @@ npm run tc:g3:verify
 ## Related
 
 - [README.md](README.md) — documentation index + scope map
+- [STREAMLINED_DEV.md](STREAMLINED_DEV.md) — lobby → AI tab → export
+- [AGENT_ROUTING.md](AGENT_ROUTING.md) — tiered Ollama + Grok
 - [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) — controls + asset recipes
 - [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) — TC policy
 - [REFERENCE_EDITIONS.md](REFERENCE_EDITIONS.md) — edition registry

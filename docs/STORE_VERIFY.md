@@ -1,6 +1,6 @@
 # Sprint U — Store / Native Packaging Verify Pass
 
-**Status:** ✅ Complete (v9.11.0) · **Command:** `npm run store:verify`
+**Status:** ✅ Complete (re-verified v9.16.0) · **Command:** `npm run store:verify`
 
 Sprint U is **not greenfield** — store tooling shipped in Phases L–M (v5.0–v5.3). Sprint U is a **verification and truth pass**: run every ship path, fix drift, document blockers.
 
@@ -11,7 +11,7 @@ Sprint U is **not greenfield** — store tooling shipped in Phases L–M (v5.0�
 | Done (v5–v9) | Gap |
 |--------------|-----|
 | `store:prep`, `store:assets`, `package:*` scripts | No recent E2E audit after v9 chunk split |
-| 9-step EXPORT wizard + TC ship (`tc:ship`) | Docs still reference v9.6 in places |
+| 9-step EXPORT wizard + TC ship (`tc:ship`) | Re-verified v9.16 — see table below |
 | Capacitor + Electron one-SPA model | iOS archive still manual (needs macOS + Apple account) |
 | Graphics export profiles (android/ios/windows/steam) | Heavy builds not CI-smoked on every release |
 
@@ -103,7 +103,7 @@ If chunk 404s appear in Electron, fix `base` in `vite.config.js` / `capacitor.co
 
 Sprint U is **done** when:
 
-1. `npm run store:verify` passes (91s smoke, Jul 2026)
+1. `npm run store:verify` passes (~118s smoke, Jul 2026)
 2. `tc:ship` + `store:prep` + `store:assets` produce valid outputs from TC manifest
 3. `export:graphics --profile windows` completes
 4. `npm run build:electron` emits relative `./assets/` chunk paths for Electron
@@ -119,6 +119,18 @@ Sprint U is **done** when:
 | `store:assets` | PASS — 31 mapped assets |
 | `build:electron` | PASS — relative chunk paths |
 | `export:graphics windows` | PASS — 173 textures, 32 models |
+
+### Re-verified (v9.16.0 — post agents/bootcamp/realism)
+
+| Check | Result |
+|-------|--------|
+| `controls:verify` | PASS |
+| `build` (pages) | PASS |
+| `tc:ship` | PASS |
+| `store:prep` + `store:assets` | PASS — 31 mapped assets |
+| `build:electron` | PASS — relative chunk paths |
+| `export:graphics windows` | PASS — 173 textures, 32 models, 2 videos |
+| **Total** | **PASS (117.5s)** |
 
 ---
 

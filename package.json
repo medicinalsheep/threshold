@@ -1,12 +1,14 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "10.1.2",
+  "version": "10.3.2",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
     "quickstart": "node scripts/quickstart.cjs",
     "dev": "vite",
+    "dev:preview": "npm run build && vite preview --outDir dist-pages",
+    "preview:pages": "vite preview --outDir dist-pages --host",
     "dev:grok": "vite --mode grok",
     "build": "vite build --mode pages",
     "build:electron": "vite build --mode electron",
@@ -62,6 +64,7 @@
     "tc:verify": "node scripts/tc-verify.cjs",
     "controls:verify": "node scripts/controls-verify.cjs",
     "store:verify": "node scripts/store-verify.cjs",
+    "ollama:serve": "node scripts/ollama-serve-threshold.cjs",
     "ollama:verify": "node scripts/ollama-verify.cjs",
     "ollama:benchmark": "node scripts/ollama-benchmark.cjs",
     "bootcamp:init": "node scripts/bootcamp-init.cjs",

@@ -5,7 +5,7 @@ import { ViewPrefs } from './viewPrefs.js';
 const PREFS_KEY = 'sessionUiPrefs';
 
 function loadPrefs() {
-    return ViewPrefs.get(PREFS_KEY, { compactMode: false });
+    return ViewPrefs.get(PREFS_KEY, { compactMode: true });
 }
 
 function savePrefs(prefs) {
@@ -64,11 +64,16 @@ export const SessionUi = {
             document.getElementById('toolbar-more-menu')?.classList.remove('open');
             window.QuickExportPlay?.start?.() || window.ExportWizard?.open?.();
         });
+
+        document.getElementById('setup-open-portal')?.addEventListener('click', () => {
+            window.AgentPortal?.show?.();
+        });
     },
 
     onSessionStart() {
         this.init();
         window.AgentStatus?.refresh?.();
+        window.AgentReconnectChip?.refresh?.();
     },
 };
 

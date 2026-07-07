@@ -1,0 +1,223 @@
+/* L-shaped corner hubs — play/edit fullscreen chrome */
+
+#corner-hubs {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 48;
+}
+
+.corner-hub {
+    position: fixed;
+    pointer-events: none;
+    display: flex;
+    gap: 4px;
+}
+
+.corner-hub > button,
+.corner-hub .corner-hub-arm button,
+.corner-hub .corner-hub-menu button {
+    pointer-events: auto;
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 8px 10px;
+    min-width: 44px;
+    min-height: 44px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: rgba(8, 10, 14, 0.82);
+    color: var(--text-color);
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.corner-hub > button:hover,
+.corner-hub .corner-hub-arm button:hover,
+.corner-hub .corner-hub-menu button:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.corner-hub-toggle.hub-active,
+#hub-touch-quick.hub-active {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    background: rgba(0, 255, 170, 0.12);
+}
+
+#hub-mode-toggle.hub-mode-play {
+    border-color: #3ecf8e66;
+    color: #3ecf8e;
+}
+
+#hub-mode-toggle.hub-mode-edit {
+    border-color: #e8b84a66;
+    color: #e8b84a;
+}
+
+#hub-agent.hub-agent-ok {
+    border-color: #3ecf8e66;
+    color: #3ecf8e;
+}
+
+#hub-agent.hub-agent-warn {
+    border-color: #e8b84a66;
+    color: #e8b84a;
+}
+
+.corner-hub-tl {
+    top: max(8px, env(safe-area-inset-top, 0px));
+    left: max(8px, env(safe-area-inset-left, 0px));
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.corner-hub-tl .corner-hub-arm-v {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-left: 0;
+}
+
+.corner-hub-tr {
+    top: max(8px, env(safe-area-inset-top, 0px));
+    right: max(8px, env(safe-area-inset-right, 0px));
+    flex-direction: row-reverse;
+    align-items: flex-start;
+}
+
+.corner-hub-bl {
+    bottom: max(8px, env(safe-area-inset-bottom, 0px));
+    left: max(8px, env(safe-area-inset-left, 0px));
+    flex-direction: column-reverse;
+    align-items: flex-start;
+}
+
+.corner-hub-bl .corner-hub-arm-h {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+}
+
+.corner-hub-br {
+    bottom: max(8px, env(safe-area-inset-bottom, 0px));
+    right: max(8px, env(safe-area-inset-right, 0px));
+    flex-direction: column-reverse;
+    align-items: flex-end;
+}
+
+.corner-hub-menu {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 132px;
+    max-height: min(50dvh, 320px);
+    overflow-y: auto;
+    padding: 4px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: rgba(8, 10, 14, 0.92);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+}
+
+.corner-hub-tr .corner-hub-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+}
+
+.corner-hub-br .corner-hub-menu {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    right: 0;
+}
+
+.corner-hub-bl .corner-hub-menu {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 0;
+}
+
+.corner-hub.open .corner-hub-menu {
+    display: flex;
+}
+
+.corner-hub.hub-pulse > .corner-hub-toggle {
+    animation: hubPulse 0.6s ease 2;
+}
+
+@keyframes hubPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0, 255, 170, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(0, 255, 170, 0); }
+}
+
+/* Engine view: corner hubs primary; legacy toolbar secondary */
+body.engine-chrome #engine-toolbar {
+    display: none !important;
+}
+
+body.engine-chrome #dock-restore-btn {
+    display: none !important;
+}
+
+body.engine-chrome .corner-hub {
+    pointer-events: auto;
+}
+
+/* PLAY — minimal chrome */
+body.play-mode #controls-hint,
+body.play-mode .action-hint-bar,
+body.play-mode #tc-quest-card,
+body.play-mode #survival-run-card,
+body.play-mode #creator-sync-chip,
+body.play-mode #agent-reconnect-chip,
+body.play-mode #btn-mobile-insert {
+    display: none !important;
+}
+
+body.play-mode #proximity-panel .panel-chrome-header {
+    display: none !important;
+}
+
+body.play-mode #proximity-panel.float-panel {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    min-width: 0 !important;
+}
+
+body.play-mode #proximity-panel.has-hint .interact-hint {
+    display: block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: rgba(8, 10, 14, 0.75);
+    border: 1px solid var(--accent-color);
+    font-size: 0.62rem;
+}
+
+body.play-mode #survival-needs-hud:not(.user-expanded) {
+    opacity: 0.55;
+    transform: scale(0.92);
+    transform-origin: top right;
+}
+
+/* EDIT — show insert FAB on mobile */
+body.corner-edit-mode #btn-mobile-insert {
+    display: block;
+}
+
+body.play-mode.corner-edit-mode #btn-mobile-insert {
+    display: none;
+}
+
+/* Immersive: corner hubs stay visible */
+body.ui-immersive.engine-chrome .corner-hub > button,
+body.ui-immersive.engine-chrome .corner-hub .corner-hub-menu {
+    background: rgba(6, 8, 12, 0.88);
+}

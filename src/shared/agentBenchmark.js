@@ -35,9 +35,58 @@ function scoreProbe(probe, text) {
     return { score, max: probe.requireJs ? 5 : 3, checks, preview: raw.slice(0, 80) };
 }
 
+function suggestTierModels(rows) {
+    const agg = { small: {}, medium: {}, large: {} };
+    (rows || []).forEach((r) => {
+        if (r.error || !r.model || r.provider === 'grok') return;
+        if (!agg[r.tier]) return;
+        if (!agg[r.tier][r.model]) agg[r.tier][r.model] = { score: 0, max: 0, ms: 0, n: 0 };
+        const s = agg[r.tier][r.model];
+        s.score += r.score;
+        s.max += r.max;
+        s.ms += r.ms;
+        s.n += 1;
+    });
+
+    const suggested = {};
+    ['small', 'medium', 'large'].forEach((tier) => {
+        const ranked = Object.entries(agg[tier])
+            .map(([model, s]) => ({
+                model,
+                pct: s.max ? Math.round((100 * s.score) / s.max) : 0,
+                avgMs: s.n ? Math.round(s.ms / s.n) : 0,
+            }))
+            .sort((a, b) => b.pct - a.pct || a.avgMs - b.avgMs);
+        if (ranked[0]) suggested[tier] = ranked[0].model;
+    });
+    return suggested;
+}
+
+function tiersAllAuto(prefs) {
+    return ['small', 'medium', 'large'].every((t) => !prefs[t] || prefs[t] === 'auto');
+}
+
 export const AgentBenchmark = {
     getLastResults() {
         return ViewPrefs.get(RESULTS_KEY, null);
+    },
+
+    suggestTierModels,
+
+    applySuggestedTiers(suggested, options = {}) {
+        const prefs = AgentRouter.getTierPrefs();
+        const patch = { ...prefs };
+        let changed = false;
+        ['small', 'medium', 'large'].forEach((tier) => {
+            const model = suggested[tier];
+            if (!model) return;
+            if (options.force || !prefs[tier] || prefs[tier] === 'auto') {
+                patch[tier] = model;
+                changed = true;
+            }
+        });
+        if (changed) AgentRouter.setTierPrefs(patch);
+        return { patch, changed, suggested };
     },
 
     async runWorkflow(options = {}) {
@@ -70,12 +119,21 @@ export const AgentBenchmark = {
             rows.push(row);
         }
 
+        const suggested = suggestTierModels(rows);
+        const tierPrefs = AgentRouter.getTierPrefs();
+        let applied = null;
+        if (options.applyTiers !== false && Object.keys(suggested).length && tiersAllAuto(tierPrefs)) {
+            applied = AgentBenchmark.applySuggestedTiers(suggested, { force: true });
+        }
+
         const summary = {
             ranAt: new Date().toISOString(),
             totalScore,
             totalMax,
             pct: totalMax ? Math.round((100 * totalScore) / totalMax) : 0,
             rows,
+            suggested,
+            applied,
             tierPrefs: AgentRouter.getTierPrefs(),
         };
         ViewPrefs.set(RESULTS_KEY, summary);
@@ -89,7 +147,17 @@ export const AgentBenchmark = {
             const detail = r.error || `${r.score}/${r.max} · ${r.provider}/${r.model} · ${r.ms}ms`;
             return `<li><code>${r.id}</code> [${r.tier}] <strong>${status}</strong> — ${detail}</li>`;
         }).join('');
-        return `<p class="insert-hint">Score ${summary.totalScore}/${summary.totalMax} (${summary.pct}%) · ${summary.ranAt.slice(0, 19)}</p><ul class="export-wizard-summary" style="font-size:0.62rem;">${lines}</ul>`;
+
+        const sug = summary.suggested || {};
+        const sugLine = Object.keys(sug).length
+            ? `<p class="insert-hint">Suggested: small→<code>${sug.small || '—'}</code> · medium→<code>${sug.medium || '—'}</code> · large→<code>${sug.large || '—'}</code></p>`
+            : '';
+
+        const appliedLine = summary.applied?.changed
+            ? '<p class="insert-hint"><strong>Tiers auto-applied</strong> (all were auto) — SAVE TIERS not required.</p>'
+            : (Object.keys(sug).length ? '<p class="insert-hint">Click <strong>APPLY SUGGESTED</strong> to set tier dropdowns.</p>' : '');
+
+        return `<p class="insert-hint">Score ${summary.totalScore}/${summary.totalMax} (${summary.pct}%) · ${summary.ranAt.slice(0, 19)}</p>${sugLine}${appliedLine}<ul class="export-wizard-summary" style="font-size:0.62rem;">${lines}</ul>`;
     },
 };
 

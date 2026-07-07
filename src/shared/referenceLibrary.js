@@ -387,14 +387,15 @@ Object.assign(shelter.userData, {
 // AWS: see relay/README.md`
         },
         {
-            id: 'agents_grok_npc_dev',
-            title: 'AI Agents — Grok NPC + Dev + Local',
-            summary: 'SCENE dock → AI tab. Attach Grok to NPCs; Dev agent suggests Compiler code.',
-            checklist: ['Grok API key (auth overlay)', 'Select NPC → ATTACH TO NPC', 'NPC TALK for dialogue', 'GROK DEV for Compiler'],
-            code: `// NPC: select human NPC → SCENE → AI → ATTACH TO NPC
-// Dev: write draft in Compiler → SCENE → AI → GROK DEV: APPLY
+            id: 'agents_tiered_npc_dev',
+            title: 'AI Agents — Tiered Ollama + Grok',
+            summary: 'SCENE dock → AI tab. Router picks small/medium/large models; Grok optional for large tasks.',
+            checklist: ['ollama serve + npm run models:mini', 'Optional xAI key in AI tab', 'SAVE TIERS or RUN BENCHMARK → APPLY SUGGESTED', 'ATTACH TO NPC · NPC TALK · SMART DEV'],
+            code: `// NPC: select human NPC → SCENE → AI → ATTACH TO NPC → NPC TALK
+// Dev: Compiler draft → SCENE → AI → SMART DEV: APPLY (tiered medium)
+// Force provider: GROK DEV or OLLAMA DEV buttons
 // Local: interval script in AI tab — no API key
-// userData.agentType / agentPersona on NPCs persist in world export`
+// userData.agentPersona on NPCs persists in world export`
         },
         {
             id: 'sound_prompt_loop',

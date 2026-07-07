@@ -66,6 +66,9 @@ function resolveModelForTier(tierId, installed, overrides = {}) {
 
 async function callGrok(system, user, options = {}) {
     if (!Auth.isLoggedIn()) throw new Error('xAI key required — paste in AGENTS panel');
+    const timeoutMs = options.timeoutMs ?? 120000;
+    const signal = options.signal
+        || (typeof AbortSignal?.timeout === 'function' ? AbortSignal.timeout(timeoutMs) : undefined);
     const res = await fetch(API_URL, {
         method: 'POST',
         headers: {
@@ -81,7 +84,7 @@ async function callGrok(system, user, options = {}) {
             temperature: options.temperature ?? 0.4,
             max_tokens: options.maxTokens ?? 2048,
         }),
-        signal: options.signal,
+        signal,
     });
     if (!res.ok) {
         const t = await res.text();
@@ -148,18 +151,17 @@ export const AgentRouter = {
         let text;
         let usedProvider = route.provider;
         try {
+            const callOpts = {
+                model: route.model,
+                temperature: tier?.temperature,
+                maxTokens: overrides.maxTokens ?? tier?.maxTokens,
+                timeoutMs: overrides.timeoutMs ?? tier?.timeoutMs ?? 120000,
+                signal: overrides.signal,
+            };
             if (route.provider === 'grok') {
-                text = await callGrok(system, user, {
-                    model: route.model,
-                    temperature: tier?.temperature,
-                    maxTokens: tier?.maxTokens,
-                });
+                text = await callGrok(system, user, callOpts);
             } else {
-                text = await callOllama(system, user, {
-                    model: route.model,
-                    temperature: tier?.temperature,
-                    maxTokens: tier?.maxTokens,
-                });
+                text = await callOllama(system, user, callOpts);
             }
         } catch (primaryErr) {
             if (route.provider === 'ollama' && tier?.grok === 'fallback' && Auth.isLoggedIn()) {

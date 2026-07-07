@@ -64,6 +64,9 @@ export function initAuth() {
         if (Auth.login(input?.value || '')) {
             syncAuthUi();
             if (input) input.value = '';
+            window.AgentStatus?.refresh?.();
+            window.AgentReconnectChip?.refresh?.();
+            window.AgentPortal?.startIfNeeded?.();
         }
     });
 

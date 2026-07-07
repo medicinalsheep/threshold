@@ -1,4 +1,4 @@
-# Threshold bootcamp — 2026-07-06T06:57:57.689Z
+# Threshold bootcamp — 2026-07-06T08:16:28.328Z
 # Tier: large_dev · Model: threshold-dev · Examples: 2
 # Weights: ollama pull qwen2.5-coder:7b — not stored in git
 FROM qwen2.5-coder:7b

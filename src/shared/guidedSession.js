@@ -81,7 +81,10 @@ export const GuidedSession = {
     chooseMode(mode) {
         this.applyMode(mode, mode === 'build' ? 'You chose BUILD' : 'You chose PLAY');
         this.hide();
-        ViewPrefs.set('walkthroughDone', true);
+        if (!ViewPrefs.get('walkthroughDone', false)) {
+            requestAnimationFrame(() => Walkthrough.start(0, 'quick', mode));
+            return;
+        }
         requestAnimationFrame(() => this.finishPostTour());
     },
 
@@ -92,6 +95,7 @@ export const GuidedSession = {
     finishPostTour() {
         GraphicsPrompt.startIfNeeded();
         window.ActionHints?.onSessionReady?.();
+        window.AgentPortal?.startIfNeeded?.();
     },
 
     startIfNeeded() {
@@ -111,7 +115,11 @@ export const GuidedSession = {
 
         const lobbyMode = this.getSavedMode();
         if (lobbyMode) {
-            this.finishPostTour();
+            if (!ViewPrefs.get('walkthroughDone', false)) {
+                requestAnimationFrame(() => Walkthrough.start(0, 'quick', lobbyMode));
+            } else {
+                this.finishPostTour();
+            }
             return;
         }
 

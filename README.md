@@ -1,24 +1,54 @@
 # THRESHOLD
 
-Collaborative 3D playground — host a session, build on a blank grid, invite friends, use AI and Compiler tools as you need them.
+**Collaborative 3D game lab** — host a session, connect an AI agent, build in the browser, play with friends, export real packages.
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.1.0
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.3.1
 
 ---
 
-## Quick start
+## What it is (use case)
 
-| Goal | Steps |
-|------|--------|
-| **Host** | Lobby → name → **CREATE SESSION →** → share room link |
-| **Join** | Open host link or enter room code → **JOIN** |
-| **Offline** | Lobby → **Offline & options** → **OFFLINE →** |
+Threshold is for people who want to **go from idea → playable 3D scene → shipped build** without leaving the browser:
 
-You land on a **blank grid** with **minimal UI**. Open **SETUP** to connect Grok/Ollama, GIMP/Blender watch, and start a **design brief** (export targets, poly budget, sounds, textures) — agents may ask follow-up questions before generating Compiler code.
+| You want to… | Threshold gives you… |
+|--------------|----------------------|
+| Prototype a game world fast | Blank grid + AI Build Station + Compiler |
+| Use your own AI | Agent Portal auto-detects **Grok** + **Ollama** on your machine |
+| Collaborate | PeerJS sessions — host shares a link, friends join live |
+| Art pipeline | GIMP textures + Blender GLB import with hot-reload (local dev) |
+| Ship | Export wizard → web, Android, Windows, iOS, Steam scaffolds |
 
-Check **Show all tools** in SETUP when you need Compiler, PromptGen, and the full scene dock.
+**Not a AAA engine** — it's a focused sandbox: JavaScript scene scripts, realistic PBR defaults, tiered agents, and store packaging scripts when you're ready.
 
-**PLAY** runs physics · **BUILD** pauses to edit · **SETUP** edge tab restores the panel when collapsed.
+---
+
+## First run (walked through)
+
+```
+1. LOBBY     → name · PLAY or BUILD · CREATE SESSION
+2. ENTER     → fullscreen · corner hub tour (3 steps)
+3. PORTAL    → AI scans Grok/Ollama · describe what to build
+4. EDIT      → TOOLS menu → Compiler / PromptGen / insert
+5. PLAY      → tap PLAY (top-left) · touch toggle (bottom-left) · test walk physics
+6. SHIP      → TOOLS → Export when ready
+```
+
+---
+
+## Corner hub UI (play vs edit)
+
+Fullscreen immersive mode with **L-shaped toggles** — menus only open when you need them.
+
+| Corner | PLAY mode | EDIT mode |
+|--------|-----------|-----------|
+| **Top-left** | PLAY badge · AI agent · LINK | EDIT badge · AI · LINK |
+| **Top-right** | hidden | **TOOLS** popup (Compiler, PromptGen, insert, export…) |
+| **Bottom-left** | TOUCH · WALK/FLY · FULL | same |
+| **Bottom-right** | **SKIN** popup | **SCENE** popup (inspect, env, agents) |
+
+Tap **PLAY/EDIT** (top-left) to switch modes — physics pauses in EDIT so you can build safely.
+
+Walk to the **AI Build Station** on the grid and press **F** anytime.
 
 ---
 
@@ -28,7 +58,10 @@ Check **Show all tools** in SETUP when you need Compiler, PromptGen, and the ful
 npm install
 npm run dev          # http://localhost:5173
 npm run build        # dist-pages for GitHub Pages
+npm run preview:pages  # test the GitHub Pages build locally (no file watcher)
 ```
+
+**Dev server crash on `E:\` or network drives?** Vite’s file watcher fails on some mapped drives. The repo enables polling by default. If it still dies, use `npm run preview:pages` after `npm run build` — same as what visitors get on GitHub.
 
 Doc index: [docs/README.md](docs/README.md)
 
@@ -36,17 +69,30 @@ Doc index: [docs/README.md](docs/README.md)
 
 ## Multiplayer
 
-Host-authoritative sessions over **PeerJS (WebRTC)**. The host browser is the session authority — no dedicated game server.
+Host-authoritative **PeerJS (WebRTC)**. Host browser is session authority.
 
 | Role | World edit | Pause |
 |------|------------|-------|
-| Host | Yes (BUILD) | Yes |
+| Host | Yes (EDIT) | Yes |
 | Guest | No | Synced from host |
 
-Voice options (WebRTC / Discord hybrid) are in the lobby under Voice settings before CREATE.
+---
+
+## AI providers (bring your own)
+
+Visitors use **their** models — nothing is bundled on GitHub except small Modelfiles/recipes.
+
+| Provider | How | GitHub link on your PC | Phone |
+|----------|-----|------------------------|-------|
+| **Grok / xAI** | Paste API key in Agent Portal | ✅ | ✅ |
+| **Ollama** | `npm run ollama:serve` on **this** device (fixes CORS 403) | ✅ | ❌ on phone |
+| **Threshold mini models** | `npm run bootcamp:build && npm run models:mini` | ✅ after `ollama pull` | ❌ |
+| GIMP/Blender watch | `npm run textures:watch` | ✅ local dev only | ❌ |
+
+Keys and GGUF weights never go to GitHub — only your browser tab session.
 
 ---
 
 ## Plugins & export
 
-GIMP/Blender plugins, export wizard, and store packaging scripts are still in the repo — see `docs/GETTING_STARTED.md` and `docs/EXPORT_WALKTHROUGH.md` when you need them. They are not part of the default first-run path.
+GIMP/Blender plugins and store packaging live in the repo — see `docs/GETTING_STARTED.md` when you need them. Not required for first run.

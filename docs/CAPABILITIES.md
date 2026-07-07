@@ -1,6 +1,6 @@
-# Threshold — Progress & Capabilities (v9.11)
+# Threshold — Progress & Capabilities (v9.16)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 9.11.0
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 9.16.0
 
 This page is the **single progress snapshot** — what ships today, how the pieces connect, and what is next.
 
@@ -61,9 +61,11 @@ Full guide: [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) · Controls: [CONTROL
 | GIMP live SYNC | `creativeWatch.js`, `textureBridge.js` |
 | Blender GLB + LOD | `blender-export.cjs`, `meshLod.js` |
 | Texture HILOD + WebP/KTX2 | `textureHilod.js`, `tc-gen-tex.cjs` |
-| AI agents on NPCs | SCENE → Agents tab, Grok edition |
+| AI tab (tiered agents) | `agentRouter.js`, `agentStatus.js` — SCENE → **AI** tab |
+| NPC chat + SMART DEV | `npcAgent.js`, `ollama/devAgent.js` — Ollama or Grok via router |
+| PromptGen tiered run | `prompter/main.js` → `prompter_generate` large tier |
 
-Workflow: [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) · Assets: [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md)
+Workflow: [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) · Agents: [AGENT_ROUTING.md](AGENT_ROUTING.md) · Assets: [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md)
 
 ---
 
@@ -87,7 +89,7 @@ Scope doc: [syncStory.js](../src/shared/syncStory.js) (in-engine SYNC STORY pane
 
 | Capability | Command / doc |
 |------------|---------------|
-| 9-step EXPORT wizard | MORE → EXPORT — [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) |
+| 9-step EXPORT wizard | MORE → EXPORT — target-filtered SHIP CLI — [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) |
 | Quick EXPORT & PLAY | `quickExportPlay.js` |
 | Asset bundle | `npm run bundle:assets` |
 | Graphics profiles | `npm run export:graphics -- --profile android\|ios\|windows\|steam` |
@@ -101,7 +103,22 @@ Scope doc: [syncStory.js](../src/shared/syncStory.js) (in-engine SYNC STORY pane
 | Store verify smoke | `npm run store:verify` |
 | Native web build | `npm run build:electron` (relative chunks) |
 
-**Sprint U verified** — see [STORE_VERIFY.md](STORE_VERIFY.md) ✅
+**Store verify re-passed (v9.16)** — [STORE_VERIFY.md](STORE_VERIFY.md) ✅
+
+---
+
+## Agents & training (v9.12–9.16)
+
+| Capability | Module / command |
+|------------|------------------|
+| Agent status chips | `agentStatus.js` — Grok, Ollama, watch, textures |
+| Tiered task router | `agentRouter.js`, `config/agent-tasks.json` |
+| Workflow benchmarks | `agentBenchmark.js`, `npm run ollama:benchmark` |
+| Mini models (GitHub) | `training/bootcamp/`, `npm run models:mini` |
+| Large models (local pull) | `npm run models:large -- --yes` |
+| Realism-first prompts | `agentPrompts.js` — PBR default; retro opt-in |
+| Streamlined dev doc | [STREAMLINED_DEV.md](STREAMLINED_DEV.md) |
+| Model distribution policy | [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) |
 
 ---
 
@@ -136,6 +153,10 @@ K → L → M → Q → N → O → P → R → S → V → T → W → U ✅
 | T | 9.9 | JS chunk split |
 | W | 9.10 | Hygiene + capabilities outline |
 | U | 9.11 | Store/native verify pass |
+| — | 9.12 | Streamlined export + agent status panel |
+| — | 9.13 | Tiered agent router + Ollama benchmarks |
+| — | 9.14–9.16 | Training bootcamp + mini models on GitHub |
+| — | 9.15 | Realism-first graphics (all tiers PBR) |
 
 Detail: [POLISH_ROADMAP.md](POLISH_ROADMAP.md) · History: [CHANGELOG.md](CHANGELOG.md)
 
@@ -149,6 +170,9 @@ npm run tc:verify          # TC GLBs + textures
 npm run tc:ship:verify     # export bundle smoke
 npm run controls:verify    # binding defaults + doc truth
 npm run store:verify       # Sprint U packaging smoke
+npm run ollama:verify      # local LLM smoke
+npm run ollama:benchmark   # rank models for workflows
+npm run models:mini        # install mini agents from GitHub recipes
 npm run build              # GitHub Pages chunk split
 npm run build:electron     # native-relative chunks
 ```

@@ -1,6 +1,7 @@
-/** Blank grid — default entry. No bundled showcase assets. */
+/** Blank grid — default entry. AI Build Station for agent portal. */
 
 import { SITE } from './starterSiteLayout.js';
+import { spawnAiTerminal } from './aiTerminal.js';
 
 export async function buildStarterGrid() {
     const Engine = window.Engine;
@@ -57,6 +58,18 @@ export async function buildStarterGrid() {
         const tgt = SITE.cameraTarget || { x: 0, y: 0, z: 0 };
         Engine.camera.position.set(cam.x, cam.y, cam.z);
         Engine.controls.target.set(tgt.x, tgt.y, tgt.z);
+    }
+
+    if (!State.objects.some((o) => o.userData?.id === 'starter_ai_terminal')) {
+        spawnAiTerminal({
+            id: 'starter_ai_terminal',
+            pos: { x: -2.8, y: 0, z: 2.4 },
+            rotY: 0.35,
+            showcase: true,
+            name: 'AI Build Station',
+            interactLabel: 'AI Build Station',
+            interactHint: 'Connect agents — Grok · Ollama · build assistant',
+        });
     }
 
     return pad;

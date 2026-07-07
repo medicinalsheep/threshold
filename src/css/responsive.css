@@ -215,9 +215,187 @@
         width: calc(100vw - 32px);
         max-width: 420px;
     }
+
+    .agent-reconnect-chip {
+        min-height: 32px;
+        padding: 4px 8px;
+        font-size: 0.55rem;
+    }
+
+    .agent-reconnect-chip .chip-label-long {
+        display: none;
+    }
+
+    .agent-reconnect-chip .chip-label-short {
+        display: inline;
+    }
+
+    .agent-portal-modal {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    .agent-portal-card {
+        width: 100%;
+        max-width: 100%;
+        max-height: min(92dvh, 100dvh);
+        border-radius: 14px 14px 0 0;
+        padding: 14px 14px max(14px, env(safe-area-inset-bottom, 0px));
+        margin: 0;
+    }
+
+    .agent-portal-header h2 {
+        font-size: 0.95rem;
+    }
+
+    .agent-portal-detect-item {
+        font-size: 0.62rem;
+    }
+
+    .agent-portal-provider-row {
+        flex-direction: column;
+    }
+
+    .agent-portal-provider-opt {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    .agent-portal-model-grid {
+        max-height: 120px;
+        overflow-y: auto;
+    }
+
+    .agent-portal-chat-log {
+        max-height: min(36dvh, 240px);
+    }
+
+    .agent-portal-chat-input {
+        min-height: 44px;
+        font-size: 16px;
+    }
+
+    .agent-portal-build-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .agent-portal-build-actions button {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    .agent-portal-footer {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .agent-portal-footer button {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    .design-intake-modal {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    .design-intake-card {
+        width: 100%;
+        max-width: 100%;
+        max-height: 92dvh;
+        border-radius: 14px 14px 0 0;
+        padding-bottom: max(14px, env(safe-area-inset-bottom, 0px));
+    }
+
+    .design-type-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .engine-walkthrough {
+        padding: 12px;
+        padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+    }
+
+    .engine-walkthrough-card {
+        max-width: 100%;
+    }
+
+    .walkthrough-action-btn,
+    .engine-walkthrough-nav button {
+        min-height: 44px;
+    }
+
+    .guided-session-modal {
+        padding: 12px;
+    }
+
+    .guided-session-card {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .guided-mode-btn {
+        min-height: 56px;
+    }
+
+    .corner-hub > button,
+    .corner-hub .corner-hub-arm button {
+        min-width: 48px;
+        min-height: 48px;
+        font-size: 0.55rem;
+        padding: 10px;
+    }
+
+    .corner-hub-menu {
+        min-width: 148px;
+        max-height: 45dvh;
+    }
+
+    .corner-hub-menu button {
+        min-height: 44px;
+        width: 100%;
+        text-align: left;
+    }
+
+    .corner-hub-tl {
+        top: max(6px, env(safe-area-inset-top, 0px));
+        left: max(6px, env(safe-area-inset-left, 0px));
+    }
+
+    .corner-hub-tr {
+        top: max(6px, env(safe-area-inset-top, 0px));
+        right: max(6px, env(safe-area-inset-right, 0px));
+    }
+
+    .corner-hub-bl {
+        bottom: max(72px, calc(env(safe-area-inset-bottom, 0px) + 56px));
+        left: max(6px, env(safe-area-inset-left, 0px));
+    }
+
+    body.touch-on.play-mode .corner-hub-bl {
+        bottom: max(140px, calc(env(safe-area-inset-bottom, 0px) + 120px));
+    }
+
+    .corner-hub-br {
+        bottom: max(72px, calc(env(safe-area-inset-bottom, 0px) + 56px));
+        right: max(6px, env(safe-area-inset-right, 0px));
+    }
+
+    body.touch-on.play-mode .corner-hub-br {
+        bottom: max(100px, calc(env(safe-area-inset-bottom, 0px) + 80px));
+    }
 }
 
 @media (orientation: portrait) {
+    .agent-portal-card {
+        max-height: min(88dvh, calc(100dvh - env(safe-area-inset-top, 0px) - 8px));
+    }
+
+    .agent-portal-chat-log {
+        max-height: min(32dvh, 200px);
+    }
+
     #engine-toolbar.float-panel {
         max-height: 38dvh;
     }
@@ -233,6 +411,32 @@
 }
 
 @media (orientation: landscape) and (max-height: 500px) {
+    .agent-portal-modal {
+        align-items: center;
+        padding: 8px;
+    }
+
+    .agent-portal-card {
+        max-height: 96dvh;
+        border-radius: 10px;
+        width: min(520px, 100%);
+    }
+
+    .agent-portal-chat-log {
+        max-height: 120px;
+    }
+
+    .agent-portal-footer {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .agent-portal-footer button {
+        width: auto;
+        flex: 1 1 auto;
+        min-height: 40px;
+    }
+
     #engine-toolbar.float-panel {
         max-height: 52dvh;
     }

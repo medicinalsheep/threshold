@@ -1,7 +1,7 @@
 {
   "format": "threshold-blender-manifest",
   "formatVersion": 1,
-  "engineVersion": "9.10.0",
+  "engineVersion": "9.16.0",
   "models": [
     {
       "id": "wardenclyffe_building",
@@ -319,7 +319,7 @@
     }
   ],
   "exportDir": "import",
-  "exportedAt": "2026-07-06T05:19:34.129Z",
+  "exportedAt": "2026-07-06T07:10:35.259Z",
   "tcEd": "tc-show",
   "realism": "r5"
 }

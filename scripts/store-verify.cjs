@@ -143,6 +143,7 @@ Options:
     const elapsed = ((Date.now() - started) / 1000).toFixed(1);
     console.log(`\n[store-verify] PASSED (${elapsed}s)`);
     console.log('[store-verify] Blockers (manual): iOS archive, Play upload, Steam partner, CSC_LINK signing\n');
+    process.exit(0);
 }
 
 try {

@@ -13,82 +13,52 @@ function resolveHighlight(step, sessionMode) {
 
 const STEPS = [
     {
-        title: 'Your session mode',
-        body: (mode) => `You started in <strong>${modeLabel(mode)}</strong>. `
-            + '<strong>PLAY</strong> runs physics, survival vitals, and walk controls. '
-            + '<strong>BUILD</strong> pauses the sim so you can insert objects, run Compiler scripts, and edit textures. '
-            + 'Toggle anytime with the badge or <strong>PAUSE</strong>.',
-        highlight: '#sim-mode-badge',
-    },
-    {
-        title: 'Blank grid',
-        body: 'You start on an empty grid. Right-click <strong>INSERT</strong> to add objects. '
-            + 'Tools unlock as you build — Compiler and PromptGen appear after your first edits. '
-            + '<strong>CREATE SESSION</strong> in the lobby to host friends.',
-    },
-    {
-        title: 'Extend without wiping',
-        body: (mode) => (mode === 'build'
-            ? 'You are in <strong>BUILD</strong> — the <strong>SCENE</strong> dock is open for inspect, textures, and agents. '
-                + 'Fastest extend path: <strong>PromptGen → EXAMPLES</strong> — tested prompts that add to the site safely.'
-            : 'Fastest path: <strong>PromptGen → EXAMPLES</strong> — tested prompts that extend the scene safely. '
-                + 'Switch to <strong>BUILD</strong> to open the SCENE dock for inspect and textures.'),
-        highlight: (mode) => (mode === 'build' ? '#scene-dock' : null),
-        onEnter(sessionMode) {
-            if (sessionMode === 'build') SceneDock.openTab('inspect');
-        },
+        title: 'Corner hubs',
+        body: 'Fullscreen with <strong>L-shaped toggles</strong> in each corner. '
+            + '<strong>Top-left:</strong> PLAY/EDIT · AI agent · session link. '
+            + '<strong>Bottom-left:</strong> touch · walk/fly · fullscreen. '
+            + 'Menus pop open only when you tap a toggle.',
+        highlight: '#hub-mode-toggle',
         actions: [
             {
-                label: 'PromptGen EXAMPLES',
+                label: 'Open agent portal',
                 run() {
-                    document.querySelector('[data-target="view-prompter"]')?.click();
-                    window.UI?.status('Pick an EXAMPLES prompt → RUN WITH GROK or paste into Compiler');
-                },
-            },
-            {
-                label: 'Open Compiler',
-                run() {
-                    document.querySelector('[data-target="view-compiler"]')?.click();
+                    window.AgentPortal?.show?.();
                 },
             },
         ],
     },
     {
-        title: 'Playtest your game',
+        title: 'EDIT → build',
         body: (mode) => (mode === 'build'
-            ? 'Tap <strong>RESUME</strong> or the badge to switch to <strong>PLAY</strong> — then test walk, survival vitals (top-right HUD), interact props, and weather.'
-            : 'You are in <strong>PLAY</strong> — survival vitals HUD (top-right, <strong>V</strong> toggle), interact props, and weather are live. '
-                + 'Graphics tier is suggested after this tour — tune in <strong>SCENE → ENV</strong>.'),
-        highlight: (mode) => (mode === 'play' ? '#survival-needs-hud' : '#btn-host-pause'),
+            ? 'You are in <strong>EDIT</strong>. <strong>Top-right TOOLS</strong> opens Compiler, PromptGen, insert, and export. '
+                + '<strong>Bottom-right SCENE</strong> opens inspect, environment, and agents.'
+            : 'Tap <strong>PLAY</strong> (top-left) to switch to <strong>EDIT</strong> — physics pauses so you can build. '
+                + 'Then use <strong>TOOLS</strong> (top-right) for Compiler and PromptGen.'),
+        highlight: (m) => (m === 'build' ? '#hub-tools-toggle' : '#hub-mode-toggle'),
         onEnter(sessionMode) {
-            if (sessionMode !== 'play') return;
-            window.SurvivalNeedsHud?.setVisible?.(true);
-            const hud = document.getElementById('survival-needs-hud');
-            hud?.classList.add('tour-pulse', 'active', 'visible');
+            if (sessionMode === 'build') window.CornerHub?.pulseHub?.('tools');
         },
-    },
-    {
-        title: 'Ship when ready',
-        body: '<strong>MORE → EXPORT &amp; PLAY</strong> saves, downloads manifest, and opens a playable tab. '
-            + '<strong>SAVE WORLD</strong> shares <code>?world=CODE</code> links for collaborators.',
-        highlight: '#btn-toolbar-more',
         actions: [
             {
-                label: 'EXPORT & PLAY',
+                label: 'Open TOOLS',
                 run() {
-                    document.getElementById('toolbar-more-menu')?.classList.remove('open');
-                    window.QuickExportPlay?.start?.();
+                    document.getElementById('hub-tools-toggle')?.click();
                 },
             },
         ],
     },
     {
-        title: 'You are set',
-        body: 'Replay via <strong>MORE → TUTORIAL</strong>. Deep dive (textures, agents, store export): '
-            + '<strong>MORE → TUTORIAL (FULL)</strong> or <code>docs/CREATIVE_WORKFLOW.md</code>.',
+        title: 'PLAY → test',
+        body: (mode) => (mode === 'play'
+            ? 'You are in <strong>PLAY</strong> — minimal UI, touch toggle stays on <strong>bottom-left</strong>. '
+                + '<strong>SCENE/SKIN</strong> (bottom-right) for your avatar. Walk to the AI Build Station and press <strong>F</strong>.'
+            : 'Tap <strong>PLAY</strong> (top-left) to run physics and test. Touch controls toggle on bottom-left. '
+                + '<strong>LINK</strong> (top-left) shares your session.'),
+        highlight: (m) => (m === 'play' ? '#hub-touch-quick' : '#hub-mode-toggle'),
         actions: [
             {
-                label: 'Open full guide',
+                label: 'Full tutorial',
                 run() {
                     window.Walkthrough?.startFull?.(0);
                 },
@@ -134,12 +104,13 @@ const FULL_STEPS = [
     },
     {
         title: 'AI-assisted creation',
-        body: 'Attach Grok or local agents at terminals · NPC personas in <strong>SCENE → Agents</strong>.',
+        body: '<strong>Agent Portal</strong> at the AI Build Station (F) · tiered Grok/Ollama routing · '
+            + 'NPC personas in <strong>SETUP</strong> advanced section.',
         actions: [
             {
-                label: 'Agents tab',
+                label: 'Open portal',
                 run() {
-                    SceneDock.openTab('setup');
+                    window.AgentPortal?.show?.();
                 },
             },
         ],
@@ -303,6 +274,7 @@ export const Walkthrough = {
         window.UI?.status(`${label} — MORE → TUTORIAL to replay`);
         GraphicsPrompt.startIfNeeded();
         window.ActionHints?.onSessionReady?.();
+        window.AgentPortal?.startIfNeeded?.();
     },
 
     hide() {

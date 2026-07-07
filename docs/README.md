@@ -1,6 +1,6 @@
 # Threshold documentation index
 
-**Version:** 9.15.0 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 9.16.0 · **Live:** https://medicinalsheep.github.io/threshold/
 
 This page is the **full scope map** — what ships today, what is TC vs showcase vs yours, and where to read more.
 
@@ -20,7 +20,7 @@ Legacy edition manifests (`threshold-child-*`) live in `old/reference-editions/`
 
 ---
 
-## Capability map (v9.10)
+## Capability map (v9.16)
 
 ```mermaid
 flowchart TB
@@ -40,6 +40,7 @@ flowchart TB
         PG[PromptGen EXAMPLES]
         COMP[Compiler + scene undo]
         ART[GIMP / Blender pipeline]
+        AI[AI tab tiered agents]
     end
     subgraph ship [Ship]
         QEP[EXPORT and PLAY]
@@ -51,6 +52,8 @@ flowchart TB
     SNIP --> create
     PG --> COMP --> play
     ART --> play
+    AI --> COMP
+    AI --> PG
     play --> QEP --> NAT
     play --> EXP --> NAT
     MP --> play
@@ -64,7 +67,7 @@ flowchart TB
 |------------|------|-----|
 | Play immediately | [README.md](../README.md) Quick start | Live URL → **ENTER** |
 | Clone & develop | [GETTING_STARTED.md](GETTING_STARTED.md) | `npm install` → `npm run quickstart` |
-| Streamlined dev path | [STREAMLINED_DEV.md](STREAMLINED_DEV.md) | Lobby → AGENTS → EXPORT (target-filtered) |
+| Streamlined dev path | [STREAMLINED_DEV.md](STREAMLINED_DEV.md) | Lobby → AI tab → EXPORT (target-filtered) |
 | Agent tiers & benchmarks | [AGENT_ROUTING.md](AGENT_ROUTING.md) | `ollama:benchmark` · SMART DEV |
 | Train custom models | [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) | `npm run models:mini` |
 | Showcase + controls | [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | PLAY mode · gateway · survival |
@@ -104,6 +107,10 @@ flowchart TB
 | **T** | 9.9 | JS chunk split |
 | **W** | 9.10 | Hygiene + capabilities outline |
 | **U** | 9.11 | Store/native verify pass |
+| — | 9.12 | Streamlined export + agent status |
+| — | 9.13 | Tiered agent router + benchmarks |
+| — | 9.14–9.16 | Bootcamp + mini models on GitHub |
+| — | 9.15 | Realism-first graphics (all tiers PBR) |
 
 Full snapshot: [CAPABILITIES.md](CAPABILITIES.md) · Earlier phases: [NEXT_PHASES.md](NEXT_PHASES.md)
 
@@ -122,6 +129,9 @@ npm run tc:build                # TC GLBs + textures
 npm run tc:verify               # TC smoke test
 npm run controls:verify         # binding defaults + doc truth
 npm run store:verify            # packaging E2E smoke
+npm run ollama:verify           # local LLM smoke
+npm run models:mini             # install mini agents
+npm run bootcamp:build          # JSONL → Modelfiles
 npm run build:electron          # native-relative chunks
 ```
 
@@ -134,7 +144,10 @@ npm run build:electron          # native-relative chunks
 | [GETTING_STARTED.md](GETTING_STARTED.md) | Lobby → ship linear path |
 | [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | Controls, survival, MP, showcase site |
 | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | PLAY/BUILD, GIMP/Blender loop |
-| [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | HILOD, codecs, v9.6 systems table |
+| [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | HILOD, codecs, asset systems table |
+| [PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md) | North star + open work |
+| [AGENT_ROUTING.md](AGENT_ROUTING.md) | Tiered agents + bootcamp |
+| [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) | GitHub vs local weights |
 | [CAPABILITIES.md](CAPABILITIES.md) | Progress + capability snapshot |
 | [STORE_VERIFY.md](STORE_VERIFY.md) | Sprint U store/native verify plan |
 | [POLISH_ROADMAP.md](POLISH_ROADMAP.md) | Sprints K–W |

@@ -2,7 +2,7 @@
 
 Threshold ships a **full starter pipeline** for realistic action games: procedural PBR textures with HILOD, WebP/KTX2 codecs, Blender import, rigged avatars, surface footstep SFX, and FPS combat (ADS).
 
-**Current version:** v9.10.0 — showcase, survival loop, action controls, chunk split (see [CAPABILITIES.md](CAPABILITIES.md))
+**Current version:** v9.16.0 — realism-first PBR, survival loop, tiered agents, bootcamp mini models (see [CAPABILITIES.md](CAPABILITIES.md))
 
 ---
 

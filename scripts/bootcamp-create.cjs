@@ -1,60 +1,28 @@
 #!/usr/bin/env node
-const fs = require('fs');
+/**
+ * Deprecated alias — canonical: npm run models:mini (+ models:large -- --yes).
+ */
 const path = require('path');
 const { spawnSync } = require('child_process');
-const { loadBootcampConfig, bootcampPath } = require('./bootcamp-lib.cjs');
 
 const args = process.argv.slice(2);
-const only = args.includes('--small') ? ['small']
-    : args.includes('--medium') ? ['medium']
-        : args.includes('--large') ? ['large']
-            : ['small', 'medium', 'large'];
+const scripts = __dirname;
 
-const cfg = loadBootcampConfig();
-const models = cfg.models || {};
-const logDir = bootcampPath(cfg, 'logs');
-fs.mkdirSync(logDir, { recursive: true });
-
-function ollamaExe() {
-    const local = path.join(process.env.LOCALAPPDATA || '', 'Programs', 'Ollama', 'ollama.exe');
-    if (fs.existsSync(local)) return local;
-    return 'ollama';
+console.log('bootcamp:create — deprecated; running models:mini (canonical)\n');
+if (args.includes('--small') || args.includes('--medium')) {
+    console.log('  Note: models:mini installs both mini agents (small + medium).\n');
 }
 
-const ollama = ollamaExe();
-console.log(`bootcamp:create — ${ollama}\n`);
-
 let failed = 0;
-only.forEach((tier) => {
-    const m = models[tier];
-    if (!m) return;
-    const modelfile = bootcampPath(cfg, m.modelfile);
-    if (!fs.existsSync(modelfile)) {
-        console.error(`  ✗ ${tier}: missing ${m.modelfile} — run bootcamp:build first`);
-        failed += 1;
-        return;
-    }
-    console.log(`  Creating ${m.name} from ${m.modelfile}…`);
-    const quoted = `"${modelfile}"`;
-    const cmd = process.platform === 'win32'
-        ? `"${ollama}" create ${m.name} -f ${quoted}`
-        : `${ollama} create ${m.name} -f ${quoted}`;
-    const r = spawnSync(cmd, {
-        encoding: 'utf8',
-        stdio: 'pipe',
-        shell: true,
-    });
-    const logPath = path.join(logDir, `create-${m.name}-${Date.now()}.log`);
-    fs.writeFileSync(logPath, (r.stdout || '') + (r.stderr || ''));
-    if (r.status !== 0) {
-        console.error(`  ✗ ${m.name} failed (see ${logPath})`);
-        console.error((r.stderr || '').slice(0, 300));
-        failed += 1;
-    } else {
-        console.log(`  ✓ ${m.name} ready — set AGENTS tier "${tier}" to ${m.name}`);
-    }
-});
+const mini = spawnSync(process.execPath, [path.join(scripts, 'models-mini.cjs')], { stdio: 'inherit' });
+if (mini.status) failed += 1;
+
+if (args.includes('--large')) {
+    const large = spawnSync(process.execPath, [path.join(scripts, 'models-large.cjs'), '--yes'], { stdio: 'inherit' });
+    if (large.status) failed += 1;
+}
 
 console.log(failed ? '\nbootcamp:create — FAIL' : '\nbootcamp:create — PASS');
-console.log('  AGENTS panel → SAVE TIERS → threshold-small / threshold-medium / threshold-large');
+console.log('  SCENE → AI tab → SAVE TIERS → threshold-mini-npc (small) · threshold-mini-dev (medium)');
+console.log('  Prefer: npm run bootcamp:build && npm run models:mini');
 process.exit(failed ? 1 : 0);

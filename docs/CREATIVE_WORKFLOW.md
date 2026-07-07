@@ -1,4 +1,4 @@
-# Creative Workflow — GIMP, Blender, Engine (v9.10+)
+# Creative Workflow — GIMP, Blender, Engine (v9.16)
 
 **One loop:** choose PLAY or BUILD → design on device → import into Engine → playtest → export manifest → ship.
 
@@ -23,7 +23,7 @@
    A. GIMP → textures/*.png → Texture tab → GIMP SYNC
    B. Blender → import/*.glb → INSERT → GLTF
    C. Dev: textures:watch + npm run dev (live reload)
-5. Optional: SCENE → EDIT (`survivalKind`, `ambientZone`) · Agents on NPCs
+5. Optional: SCENE → AI tab (tiered agents, NPC chat) · EDIT (`survivalKind`, `ambientZone`)
 6. PLAY — test walk, vitals, weather, physics
 7. SAVE WORLD + MORE → EXPORT & PLAY (quick) or EXPORT wizard (full)
 8. package:android / package:win / package:steam

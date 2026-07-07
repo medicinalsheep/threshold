@@ -1,5 +1,6 @@
 import { getSceneContext } from './sceneContext.js';
 import { getSoundContext } from './soundContext.js';
+import { getSceneApiPrompt } from './sceneApiPrompt.js';
 
 /** Compact scene slice for small-tier prompts (lower token cost). */
 export function getSceneContextBrief() {
@@ -11,6 +12,12 @@ export function getSceneContextBrief() {
 export function buildTaskPrompt(taskId, payload = {}) {
     switch (taskId) {
         case 'npc_chat': {
+            if (payload.systemOverride) {
+                const user = payload.context
+                    ? `${payload.context}\n\nUser: ${payload.message || 'Hello'}`
+                    : (payload.message || 'Hello');
+                return { system: payload.systemOverride, user };
+            }
             const name = payload.npcName || 'NPC';
             const persona = payload.persona || 'Friendly guide';
             const system = `You are ${name}, an NPC in Threshold Engine (Three.js).
@@ -51,16 +58,18 @@ ${getSceneContextBrief()}`;
         case 'scene_script':
         case 'prompter_generate': {
             const system = payload.systemOverride || `You are Threshold Engine architect (large task). Generate a complete playable script.
-Return ONLY executable JavaScript wrapped in an IIFE.
+Return ONLY executable JavaScript wrapped in an IIFE with try/catch inside.
 Extend the live scene — do NOT call World.clearWorld() unless asked.
-Realistic PBR default: MeshStandardMaterial, roughness/metalness, userData.textures from GIMP.
-Use World.createObject, World.addCustom, PlayerController, Physics. Retro styles only if user asked.
+Always call Engine.setRenderMode(4) once. Guard world edits: if (!State.isPaused) { UI.status('Pause (EDIT)'); return; }
+
+${getSceneApiPrompt()}
+
 ${getSceneContext()}
 ${getSoundContext()}`;
             const idea = payload.idea || 'extend current scene';
             return {
                 system,
-                user: payload.userOverride || `Generate a Threshold Engine script for: "${idea}". Return only the IIFE.`,
+                user: payload.userOverride || `Generate a Threshold Engine script for:\n${idea}\n\nReturn ONLY the IIFE — no markdown, no explanation.`,
             };
         }
 

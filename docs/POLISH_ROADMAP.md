@@ -1,6 +1,6 @@
 # Polish Roadmap — Sprints K onward (v9.0+)
 
-**Current:** v9.11.0 — polish L–U complete: showcase through store verify pass.
+**Current:** v9.16.0 — polish L–U complete; post-U features in [CHANGELOG.md](CHANGELOG.md) (9.12–9.16 agents, bootcamp, realism-first graphics).
 
 **North star:** First impression reads as a **curated game-creation studio**, not a block sandbox — every default surface teaches a shippable feature.
 
@@ -205,11 +205,26 @@ L → M → Q → N → O → P → R → S → V → T → W → U ✅
 
 ---
 
+## Post-U features (v9.12–9.16) ✅
+
+Shipped after Sprint U — documented in [CHANGELOG.md](CHANGELOG.md) and [CAPABILITIES.md](CAPABILITIES.md).
+
+| Version | Focus |
+|---------|-------|
+| 9.12 | Streamlined dev, agent status panel, export target filtering |
+| 9.13 | Tiered AgentRouter, Ollama benchmarks |
+| 9.14–9.16 | Training bootcamp, mini models on GitHub |
+| 9.15 | Realism-first graphics (all tiers PBR) |
+| 9.16 | `models:mini`, MODEL_DISTRIBUTION policy, store verify re-pass |
+
+---
+
 ## Out of scope (revisit later)
 
 - Signed store uploads (per-developer keys)
 - macOS notarization automation
 - VLC / exotic video codecs
-- Full local LLM (Ollama) integration
+- Trellis/Veo-class downloadable models
+- `intent_classify` command router UI
 
 See [PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md) · [CHANGELOG.md](CHANGELOG.md) · [NEXT_PHASES.md](NEXT_PHASES.md).

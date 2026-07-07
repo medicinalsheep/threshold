@@ -19,4 +19,6 @@ Copy `config/bootcamp.local.example.json` → `config/bootcamp.local.json` (giti
 
 ## Add examples
 
-Edit `datasets/**/*.jsonl` → `npm run bootcamp:build` → `npm run models:mini`
+**In Engine:** SMART DEV → **EXPORT TRAINING PAIR** (AI tab) → move `.json` to `datasets/raw/` → `npm run bootcamp:import`
+
+Or edit `datasets/**/*.jsonl` directly → `npm run bootcamp:build` → `npm run models:mini`

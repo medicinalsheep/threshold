@@ -3,6 +3,7 @@ import './css/engine.css';
 import './css/compiler.css';
 import './css/prompter.css';
 import './css/responsive.css';
+import './css/corner-hub.css';
 import './css/lobby.css';
 import './css/spectate.css';
 
@@ -98,12 +99,15 @@ tabs.forEach((tab) => {
         window.Spectate?.setActive(isSpectate);
         tabsContainer?.classList.remove('open');
 
+        document.body.classList.toggle('engine-chrome', showEngine);
+
         if (showEngine) {
             setTimeout(() => {
                 updateChromeMetrics();
                 window.dispatchEvent(new Event('resize'));
             }, 10);
             window.UI?.setCodingPause?.(false);
+            window.CornerHub?.syncModeBadge?.();
         } else {
             setTimeout(updateChromeMetrics, 0);
         }

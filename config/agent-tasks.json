@@ -4,23 +4,26 @@
   "tiers": {
     "small": {
       "label": "Small — chat, classify, status",
-      "maxTokens": 128,
+      "maxTokens": 256,
+      "timeoutMs": 60000,
       "temperature": 0.5,
-      "ollamaModels": ["threshold-mini-npc", "threshold-small", "llama3.2:3b", "gemma3:4b", "qwen2.5-coder:1.5b-base"],
+      "ollamaModels": ["threshold-mini-npc", "llama3.2:3b", "gemma3:4b", "qwen2.5-coder:1.5b-base"],
       "grok": false
     },
     "medium": {
       "label": "Medium — patches, compiler fixes",
-      "maxTokens": 1024,
+      "maxTokens": 1536,
+      "timeoutMs": 180000,
       "temperature": 0.35,
-      "ollamaModels": ["threshold-mini-dev", "threshold-medium", "qwen2.5-coder:1.5b-base", "qwen2.5-coder:7b"],
+      "ollamaModels": ["threshold-mini-dev", "qwen2.5-coder:1.5b-base", "qwen2.5-coder:7b"],
       "grok": "fallback"
     },
     "large": {
       "label": "Large — full scene scripts",
-      "maxTokens": 2048,
+      "maxTokens": 4096,
+      "timeoutMs": 300000,
       "temperature": 0.4,
-      "ollamaModels": ["threshold-large", "llama3.1:8b", "MFDoom/deepseek-r1-tool-calling:8b", "deepseek-r1:8b", "qwen2.5-coder:7b"],
+      "ollamaModels": ["threshold-dev", "threshold-large-scenes", "llama3.1:8b", "MFDoom/deepseek-r1-tool-calling:8b", "deepseek-r1:8b", "qwen2.5-coder:7b"],
       "grokPreferred": true
     }
   },

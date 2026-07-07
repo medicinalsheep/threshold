@@ -2,6 +2,7 @@ import { copyFromElement } from '../utils/clipboard.js';
 import { Runtime } from '../shared/runtime.js';
 import { Session } from '../shared/session.js';
 import { REFERENCE_LIBRARY, REFERENCE_SECTIONS, checkCodeReadiness, getReferenceItem } from '../shared/referenceLibrary.js';
+import { sanitizeSceneCode } from '../shared/codeSanitizer.js';
 import { ProjectVault } from '../shared/projectVault.js';
 import { Sync } from '../shared/sync.js';
 import { initSceneHistory } from '../shared/sceneHistory.js';
@@ -239,8 +240,10 @@ ${code}`;
     },
 
     runInEngine() {
-        const code = this.output.value.trim() || this.input.value.trim();
+        let code = this.output.value.trim() || this.input.value.trim();
         if (!code) return;
+        code = sanitizeSceneCode(code);
+        if (this.output.value.trim()) this.output.value = code;
         if (!this.checkReady()) {
             if (!confirm('Code readiness checks failed. Run anyway?')) return;
         }

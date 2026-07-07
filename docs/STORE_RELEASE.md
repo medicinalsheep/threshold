@@ -6,11 +6,11 @@ Ship Threshold games to **Google Play**, **App Store**, and **Windows** from one
 
 **Walkthrough:** [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) — icons, scene inventory, per-asset credits, store metadata.
 
-**Verify pass (v9.11):** `npm run store:verify` — see [STORE_VERIFY.md](STORE_VERIFY.md).
+**Verify pass (re-verified v9.16.0):** `npm run store:verify` — see [STORE_VERIFY.md](STORE_VERIFY.md).
 
-**Native builds (v9.11+):** use `npm run build:electron` (relative `./assets/` chunks) before `package:win`. GitHub Pages uses `npm run build` (`/threshold/` base).
+**Native builds:** use `npm run build:electron` (relative `./assets/` chunks) before `package:win`. GitHub Pages uses `npm run build` (`/threshold/` base).
 
-**Streamlined path:** [STREAMLINED_DEV.md](STREAMLINED_DEV.md) — lobby → agents → export with target-filtered SHIP commands.
+**Streamlined path:** [STREAMLINED_DEV.md](STREAMLINED_DEV.md) — lobby → AI tab → export with target-filtered SHIP commands.
 
 ---
 
@@ -22,7 +22,7 @@ The EXPORT wizard collects **public** metadata only. Signing credentials stay on
 |------|---------|-------|
 | `.threshold-game.json` manifest | No | Download from SHIP step — bundle ID, credits, store URLs |
 | Contact / privacy / support URLs | No | STORE step → `store:prep` templates |
-| xAI Grok API key | **Yes** | Browser `sessionStorage` per tab — [AGENTS panel](../index.html) or Grok edition overlay |
+| xAI Grok API key | **Yes** | Browser `sessionStorage` per tab — SCENE → **AI tab** or Grok edition overlay |
 | `CSC_LINK` / `CSC_KEY_PASSWORD` | **Yes** | Shell env at `package:win` / `package:mac` time |
 | Android keystore | **Yes** | Android Studio signed-bundle wizard or `android/` signing config |
 | Apple provisioning | **Yes** | Xcode Signing & Capabilities |
@@ -31,7 +31,7 @@ The EXPORT wizard collects **public** metadata only. Signing credentials stay on
 
 **Never commit:** `dist-store/`, `dist-electron/`, keystores, `.p12` certs, API keys.
 
-**Grok login elsewhere:** Logging into Grok on x.ai in another browser tab does **not** share keys with Threshold. Paste your xAI API key in the AGENTS panel (web) or Grok edition login.
+**Grok login elsewhere:** Logging into Grok on x.ai in another browser tab does **not** share keys with Threshold. Paste your xAI API key in the AI tab (web) or Grok edition login.
 
 ---
 

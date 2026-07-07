@@ -48,10 +48,41 @@ export default defineConfig(({ mode }) => {
         server: {
             host: true,
             port: 5173,
+            // Proxy Ollama in dev — avoids CORS 403 from localhost:5173 → 127.0.0.1:11434
+            proxy: {
+                '/ollama': {
+                    target: 'http://127.0.0.1:11434',
+                    changeOrigin: true,
+                    rewrite: (path) => path.replace(/^\/ollama/, ''),
+                },
+            },
+            // Network / external drives (e.g. E:\) break native FS watchers — use polling.
+            watch: {
+                usePolling: process.env.VITE_DEV_POLLING !== '0',
+                interval: 1000,
+                ignored: [
+                    '**/node_modules/**',
+                    '**/dist-pages/**',
+                    '**/dist/**',
+                    '**/import/**',
+                    '**/textures/**',
+                    '**/video/**',
+                    '**/old/**',
+                    '**/.git/**',
+                ],
+            },
         },
         preview: {
             host: true,
             port: 4173,
+            proxy: {
+                '/ollama': {
+                    target: 'http://127.0.0.1:11434',
+                    changeOrigin: true,
+                    rewrite: (path) => path.replace(/^\/ollama/, ''),
+                },
+            },
         },
+
     };
 });
