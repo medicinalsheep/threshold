@@ -3,6 +3,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { ThresholdShell } from './thresholdShell.js';
 import { AssetBundle } from './assetBundle.js';
 import { LOD_DISTANCES, pickLodLevel } from './lodConfig.js';
+import { waitWhileLoadSuspended, isLoadSuspended } from './aiMemoryFreeze.js';
 
 const loader = new GLTFLoader();
 const DEFAULT_DISTANCES = LOD_DISTANCES;
@@ -111,6 +112,7 @@ export const MeshLod = {
             .sort((a, b) => (a.level ?? 0) - (b.level ?? 0));
 
         for (const entry of extras) {
+            await waitWhileLoadSuspended();
             try {
                 const scene = await loadGltfSource({
                     url: entry.url,
@@ -136,6 +138,7 @@ export const MeshLod = {
     },
 
     update(camera = window.Engine?.camera) {
+        if (isLoadSuspended()) return;
         const State = window.State;
         if (!camera || !State?.objects) return;
         camera.getWorldPosition(_camPos);

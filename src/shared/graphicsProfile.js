@@ -75,21 +75,33 @@ function isTouchDevice() {
     return window.matchMedia('(pointer: coarse)').matches;
 }
 
-function probeGpuTier() {
-    let tier = 2;
+function probeWebGL() {
     try {
         const canvas = document.createElement('canvas');
-        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        const gl = canvas.getContext('webgl', { powerPreference: 'high-performance' })
+            || canvas.getContext('experimental-webgl');
         const ext = gl?.getExtension('WEBGL_debug_renderer_info');
-        if (!ext || !gl) return tier;
-        const renderer = String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)).toLowerCase();
-        if (/swiftshader|llvmpipe|software|basic render/.test(renderer)) tier = 0;
-        else if (/intel|mesa|hd graphics|uhd graphics/.test(renderer)) tier = 1;
-        else if (/apple m\d|nvidia|geforce|rtx|radeon rx|rx \d|arc a\d/.test(renderer)) tier = 3;
-        else if (/apple gpu|adreno 6|adreno 7|mali-g7/.test(renderer)) tier = 2;
+        const renderer = ext && gl
+            ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) || '')
+            : '';
+        const vendor = ext && gl
+            ? String(gl.getParameter(ext.UNMASKED_VENDOR_WEBGL) || '')
+            : '';
+        return { gl: !!gl, renderer, vendor };
     } catch {
-        /* ignore */
+        return { gl: false, renderer: '', vendor: '' };
     }
+}
+
+function probeGpuTier() {
+    let tier = 2;
+    const { gl, renderer: raw } = probeWebGL();
+    if (!gl) return 0;
+    const renderer = raw.toLowerCase();
+    if (/swiftshader|llvmpipe|software|basic render/.test(renderer)) tier = 0;
+    else if (/intel|mesa|hd graphics|uhd graphics/.test(renderer)) tier = 1;
+    else if (/apple m\d|nvidia|geforce|rtx|radeon rx|rx \d|arc a\d/.test(renderer)) tier = 3;
+    else if (/apple gpu|adreno 6|adreno 7|mali-g7/.test(renderer)) tier = 2;
     return tier;
 }
 
@@ -251,6 +263,23 @@ export const GraphicsProfile = {
         ).join('\n');
     },
 
+    getCompatReport() {
+        const { gl, renderer, vendor } = probeWebGL();
+        const tier = probeGpuTier();
+        const software = /swiftshader|llvmpipe|software|basic render/i.test(renderer);
+        const discrete = /nvidia|geforce|rtx|radeon rx|arc a\d/i.test(renderer);
+        return {
+            webgl: gl,
+            renderer: renderer || 'unknown',
+            vendor: vendor || 'unknown',
+            gpuTier: tier,
+            softwareFallback: software,
+            discreteGpu: discrete,
+            usesGpu: gl && !software,
+            powerPreference: 'high-performance',
+        };
+    },
+
     exportSnapshot() {
         const State = window.State;
         const tierId = State?.graphicsTier || null;
@@ -261,6 +290,7 @@ export const GraphicsProfile = {
             renderMode: State?.renderMode ?? 4,
             textureMax: tier?.textureMax ?? null,
             env: State?.env ? { ...State.env } : null,
+            compat: this.getCompatReport(),
         };
     },
 

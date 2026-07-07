@@ -2456,6 +2456,53 @@ body.nav-collapsed .model-status-hud-float { top: max(8px, env(safe-area-inset-t
 .model-hud-tier.model-cap-ok { color: #8fd4b0; }
 .model-hud-tier.model-cap-warn { color: #e8b84a; }
 .model-hud-tier.model-cap-fail { color: #ff6b6b; }
+.model-hud-folder { color: #9ec8ff; opacity: 0.85; }
+.model-hud-freeze { color: #7ec8ff; font-weight: 700; }
+.model-status-hud.model-hud-frozen { border-color: #5eb8ff; box-shadow: 0 0 16px rgba(94,184,255,0.2); }
+
+.ai-freeze-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-end;
+    pointer-events: all;
+    background: rgba(4, 6, 10, 0.35);
+}
+.ai-freeze-overlay.visible { display: flex; }
+.ai-freeze-frame {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+    filter: saturate(0.92) brightness(0.88);
+}
+.ai-freeze-status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 18px;
+    background: linear-gradient(180deg, rgba(8,12,18,0.2), rgba(8,12,18,0.92));
+    border-top: 1px solid rgba(94,184,255,0.35);
+    font-size: 0.72rem;
+    color: #d8e8ff;
+}
+.ai-freeze-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(126,200,255,0.25);
+    border-top-color: #7ec8ff;
+    border-radius: 50%;
+    animation: ai-freeze-spin 0.9s linear infinite;
+}
+.ai-freeze-label { font-weight: 700; letter-spacing: 0.02em; }
+.ai-freeze-model, .ai-freeze-scope { opacity: 0.8; font-size: 0.65rem; }
+@keyframes ai-freeze-spin { to { transform: rotate(360deg); } }
+body.ai-inference-frozen #canvas-container canvas { visibility: hidden; }
+body.ai-inference-frozen .corner-hub { opacity: 0.35; pointer-events: none; }
 
 .agent-benchmark-results {
     max-height: 140px;

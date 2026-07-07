@@ -201,6 +201,7 @@ export const TextureHilod = {
     },
 
     update(camera = window.Engine?.camera) {
+        if (window.State?.aiFrozen) return;
         const State = window.State;
         const TextureBridge = window.TextureBridge;
         if (!camera || !State?.objects || !TextureBridge) return;

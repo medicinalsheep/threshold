@@ -1,12 +1,7 @@
+import { generatePlayerKey } from './roomCode.js';
+
 const PLAYERS_KEY = 'threshold_saved_players';
 const HOST_KEY = 'threshold_host_state';
-
-function randomKey(len = 6) {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    let out = '';
-    for (let i = 0; i < len; i++) out += chars[Math.floor(Math.random() * chars.length)];
-    return out;
-}
 
 export const Session = {
     playerKey: '',
@@ -23,7 +18,7 @@ export const Session = {
         if (this._inited) { this.updateUi(); return; }
         this._inited = true;
         const stored = sessionStorage.getItem('threshold_player_key');
-        this.playerKey = stored || randomKey();
+        this.playerKey = stored || generatePlayerKey();
         sessionStorage.setItem('threshold_player_key', this.playerKey);
         this.playerName = localStorage.getItem('threshold_player_name') || `Player-${this.playerKey}`;
         this.autoCodingPause = localStorage.getItem('threshold_auto_coding_pause') !== 'false';

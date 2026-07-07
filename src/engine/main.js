@@ -230,6 +230,7 @@ const State = {
     ctxTargetPos: new THREE.Vector3(),
     isRecording: false,
     isPaused: true,
+    aiFrozen: false,
     cutscenePlaying: false,
     cinematicCatalog: [],
     controlMode: 'fly',
@@ -790,7 +791,11 @@ const Engine = {
         const navHeight = document.getElementById('app-nav')?.offsetHeight || 50;
         this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / (window.innerHeight - navHeight), 0.1, 1000);
         this.camera.position.set(10, 8, 10);
-        this.renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+        this.renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            preserveDrawingBuffer: true,
+            powerPreference: 'high-performance',
+        });
         this.renderer.setSize(window.innerWidth, window.innerHeight - navHeight);
         this.renderer.setPixelRatio(IS_TOUCH_DEVICE ? Math.min(window.devicePixelRatio, 1.5) : window.devicePixelRatio);
         this.renderer.shadowMap.enabled = true;
@@ -1201,6 +1206,7 @@ const Engine = {
     },
     animate: function (time) {
         requestAnimationFrame((t) => this.animate(t));
+        if (State.aiFrozen) return;
         if (this.shaderPass) this.shaderPass.uniforms.time.value = time * 0.001;
 
         const dt = this._lastAnimTime

@@ -1,4 +1,5 @@
 import { ViewPrefs } from './viewPrefs.js';
+import { AiMemoryFreeze } from './aiMemoryFreeze.js';
 
 const PREFS_KEY = 'ollamaRunPrefs';
 
@@ -39,7 +40,8 @@ export const OllamaRunQueue = {
     async run(meta, fn) {
         if (loadPrefs().allowParallelLocal) {
             emitStatus({ note: 'parallel-local' });
-            return fn();
+            await AiMemoryFreeze.enter(meta);
+            try { return await fn(); } finally { await AiMemoryFreeze.exit(); }
         }
         queueDepth += 1;
         emitStatus();
@@ -47,7 +49,12 @@ export const OllamaRunQueue = {
             active = meta;
             queueDepth = Math.max(0, queueDepth - 1);
             emitStatus({ phase: 'running' });
-            try { return await fn(); } finally { active = null; emitStatus({ phase: 'idle' }); }
+            await AiMemoryFreeze.enter(meta);
+            try { return await fn(); } finally {
+                await AiMemoryFreeze.exit();
+                active = null;
+                emitStatus({ phase: 'idle' });
+            }
         });
         chain = job.catch(() => {});
         return job;

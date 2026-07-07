@@ -671,6 +671,18 @@
                 </div>
                 <div id="agent-status-chips" class="agent-status-row"></div>
                 <div id="model-status-hud" class="model-status-hud" aria-live="polite"></div>
+                <details class="setup-advanced-wrap" open>
+                    <summary>Working folder — memory during local models</summary>
+                    <p class="insert-hint" style="margin:0 0 6px;">Choose what stays loaded while Ollama runs. The screen freezes so in-flight loads pause and RAM frees up for inference.</p>
+                    <label class="insert-hint">Working folder</label>
+                    <select id="work-folder-scope" class="insert-input" style="margin-bottom:6px;">
+                        <option value="minimal">Minimal grid</option>
+                        <option value="scene" selected>Active scene</option>
+                        <option value="build">Build focus</option>
+                        <option value="full">Full world</option>
+                    </select>
+                    <label class="export-wizard-check" style="margin-bottom:8px;"><input type="checkbox" id="work-folder-freeze" checked> Freeze screen during local Ollama (recommended)</label>
+                </details>
                 <div id="agent-tier-warnings"></div>
                 <p class="insert-hint" style="margin:4px 0 8px;">Walk to the <strong>AI Build Station</strong> and press <strong>F</strong>, or open the portal below. Agents detect Grok Build + Ollama automatically.</p>
                 <button id="setup-open-portal" type="button" style="width:100%;margin-bottom:6px;">OPEN AGENT PORTAL</button>

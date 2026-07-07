@@ -6,6 +6,7 @@ import { AudioManifestSync, buildHostAudioManifest } from './audioManifestSync.j
 import { TextureManifestSync, buildHostTextureManifest } from './textureManifestSync.js';
 import { Permissions } from './permissions.js';
 import { defaultVoipHostConfig, normalizeVoipConfig, summarizeVoipConfig } from './voipConfig.js';
+import { normalizeRoomCode } from './roomCode.js';
 
 export const Network = {
     peer: null,
@@ -42,7 +43,7 @@ export const Network = {
     async startHost(roomId, options = {}) {
         this.destroy();
         this.mode = 'host';
-        this.roomId = roomId;
+        this.roomId = normalizeRoomCode(roomId);
         this.voipConfig = normalizeVoipConfig(options.voipConfig || this.voipConfig);
         this.playerPositions.clear();
         Session.isHost = true;
@@ -79,7 +80,7 @@ export const Network = {
 
     async spectateRoom(roomId) {
         this.mode = 'spectate';
-        this.roomId = roomId;
+        this.roomId = normalizeRoomCode(roomId);
         Session.isHost = false;
         Session.isSpectator = true;
         Session.hostKey = roomId;
@@ -114,7 +115,7 @@ export const Network = {
 
     async joinRoom(roomId) {
         this.mode = 'guest';
-        this.roomId = roomId;
+        this.roomId = normalizeRoomCode(roomId);
         Session.isHost = false;
         Session.isSpectator = false;
         Session.hostKey = roomId;

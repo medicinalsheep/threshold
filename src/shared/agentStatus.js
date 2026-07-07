@@ -9,6 +9,7 @@ import { TextureLibrary } from './textureLibrary.js';
 import { CREATIVE_WATCH_URL } from '../config.js';
 import { assessTierPrefs, countDistinctLocalModels, getDeviceProfile } from './modelCapability.js';
 import { OllamaRunQueue } from './ollamaRunQueue.js';
+import { WorkFolderScope } from './workFolderScope.js';
 
 let lastSnapshot = null;
 let panelDelegated = false;
@@ -73,6 +74,10 @@ function initPanelDelegation() {
             AgentRouter.setTierPrefs({ preferGrokLarge: e.target.checked });
         }
     });
+    WorkFolderScope.bindSelect('work-folder-scope');
+    WorkFolderScope.bindFreezeCheckbox('work-folder-freeze');
+    const scopeEl = document.getElementById('work-folder-scope');
+    if (scopeEl) scopeEl.value = WorkFolderScope.getPrefs().scopeId;
 }
 
 function syncTierUi(models) {
@@ -160,6 +165,16 @@ export const AgentStatus = {
                     texCount ? 'Texture library loaded' : 'GIMP → textures/'),
                 renderChip('local', localOn ? 'Local ✓' : 'Local —', localOn ? 'ok' : 'off',
                     localOn ? `Interval ${localCfg.intervalMs}ms` : 'Script agent off'),
+                renderChip('folder', `Folder: ${WorkFolderScope.scopeLabel().split(' ')[0]}`,
+                    WorkFolderScope.shouldFreezeOnLocal() ? 'ok' : 'warn',
+                    `${WorkFolderScope.getScope().hint}${WorkFolderScope.shouldFreezeOnLocal() ? ' · freeze on' : ' · freeze off'}`),
+                (() => {
+                    const c = window.GraphicsProfile?.getCompatReport?.() || {};
+                    const gpuOk = c.usesGpu ? 'ok' : (c.webgl ? 'warn' : 'off');
+                    const short = c.discreteGpu ? 'GPU ✓' : (c.softwareFallback ? 'CPU GL' : 'WebGL');
+                    return renderChip('gpu', short, gpuOk,
+                        c.renderer ? `${c.renderer.slice(0, 72)}${c.softwareFallback ? ' (software — check browser GPU settings)' : ''}` : 'WebGL probe pending');
+                })(),
             ].join('');
         }
 

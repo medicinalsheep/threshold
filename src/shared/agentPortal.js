@@ -16,6 +16,7 @@ import { BuildJob } from './buildJob.js';
 import { getSceneApiPrompt } from './sceneApiPrompt.js';
 import { assessTierPrefs, renderMatrixHtml, buildModelMatrix, countDistinctLocalModels, getDeviceProfile } from './modelCapability.js';
 import { OllamaRunQueue } from './ollamaRunQueue.js';
+import { WorkFolderScope } from './workFolderScope.js';
 
 const PREFS_KEY = 'agentPortalSession';
 
@@ -328,9 +329,18 @@ export const AgentPortal = {
                 Allow parallel local models (advanced — strong PC)
             </label>
             <p class="insert-hint">Default: <strong>one Ollama model at a time</strong>. Red ✗ = cannot perform tier.</p>
+            <p class="agent-portal-kicker" style="margin-top:8px;">Working folder</p>
+            <p class="insert-hint" style="margin:0 0 4px;">Scope memory while local models run — screen freezes, loads pause, assets restore after.</p>
+            ${WorkFolderScope.renderSelectHtml('portal-work-folder-scope')}
+            <label class="export-wizard-check" style="margin:6px 0;">
+                <input type="checkbox" id="portal-work-folder-freeze" ${WorkFolderScope.shouldFreezeOnLocal() ? 'checked' : ''}>
+                Freeze screen during local Ollama
+            </label>
             <div id="portal-model-matrix" class="portal-model-matrix"></div>
             <div id="portal-tier-warnings"></div>
         `;
+        WorkFolderScope.bindSelect('portal-work-folder-scope');
+        WorkFolderScope.bindFreezeCheckbox('portal-work-folder-freeze');
         if (models.length) {
             const matrixEl = document.getElementById('portal-model-matrix');
             if (matrixEl) matrixEl.innerHTML = renderMatrixHtml(buildModelMatrix(models), { compact: true });
@@ -367,7 +377,7 @@ export const AgentPortal = {
                         <option value="15" ${prefs.timeLimitMin === 15 ? 'selected' : ''}>15 minutes</option>
                     </select>
                 </div>
-                <p class="insert-hint">Routing: small→<code>${esc(route.small || 'auto')}</code> · medium→<code>${esc(route.medium || 'auto')}</code> · large→<code>${esc(route.large || 'auto')}</code> · ${OllamaRunQueue.getPrefs().allowParallelLocal ? 'parallel' : 'sequential'}</p>
+                <p class="insert-hint">Routing: small→<code>${esc(route.small || 'auto')}</code> · medium→<code>${esc(route.medium || 'auto')}</code> · large→<code>${esc(route.large || 'auto')}</code> · ${OllamaRunQueue.getPrefs().allowParallelLocal ? 'parallel' : 'sequential'} · folder: <code>${esc(WorkFolderScope.scopeLabel())}</code></p>
             </details>
             <div id="agent-portal-job-log" class="agent-portal-job-log"></div>
         `;
@@ -500,6 +510,10 @@ export const AgentPortal = {
 
         AgentRouter.setTierPrefs(patch);
         OllamaRunQueue.setPrefs({ allowParallelLocal: document.getElementById('portal-allow-parallel')?.checked === true });
+        WorkFolderScope.setPrefs({
+            scopeId: document.getElementById('portal-work-folder-scope')?.value || WorkFolderScope.getPrefs().scopeId,
+            freezeOnLocal: document.getElementById('portal-work-folder-freeze')?.checked !== false,
+        });
         const distinct = countDistinctLocalModels(patch);
         if (distinct > 1 && !OllamaRunQueue.getPrefs().allowParallelLocal) {
             window.UI?.status?.(`Connected — ${distinct} local models run sequentially`);

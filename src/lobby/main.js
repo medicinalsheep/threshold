@@ -10,6 +10,7 @@ import {
     readLobbyVoipConfig,
     summarizeVoipConfig,
 } from '../shared/voipConfig.js';
+import { generateHostRoomId, normalizeRoomCode } from '../shared/roomCode.js';
 
 function initLobbyReleaseStrip() {
     const el = document.getElementById('lobby-release-strip');
@@ -48,7 +49,7 @@ export function initLobby(onReady) {
     const statusEl = document.getElementById('lobby-status');
     const urlRoom = new URLSearchParams(window.location.search).get('room');
     if (urlRoom) {
-        joinInput.value = urlRoom.toUpperCase();
+        joinInput.value = normalizeRoomCode(urlRoom);
     }
 
     const savedName = localStorage.getItem('threshold_player_name');
@@ -88,8 +89,18 @@ export function initLobby(onReady) {
                 localStorage.setItem('threshold_player_name', name);
             }
             const voipConfig = readLobbyVoipConfig();
-            const roomId = Session.playerKey;
-            await Network.startHost(roomId, { voipConfig });
+            let roomId = generateHostRoomId(Session.playerName, Session.playerKey);
+            let attempts = 0;
+            while (attempts < 4) {
+                try {
+                    await Network.startHost(roomId, { voipConfig });
+                    break;
+                } catch (e) {
+                    if (!String(e?.message || '').includes('Room ID taken') || attempts >= 3) throw e;
+                    roomId = generateHostRoomId(Session.playerName, Session.playerKey);
+                    attempts += 1;
+                }
+            }
             window.Voip?.init?.(voipConfig);
             await window.Voip?.startIfNeeded?.();
             setStatus(`Session live — ${summarizeVoipConfig(voipConfig)}`);
@@ -103,7 +114,7 @@ export function initLobby(onReady) {
     });
 
     document.getElementById('lobby-join')?.addEventListener('click', async () => {
-        const code = joinInput?.value?.trim().toUpperCase();
+        const code = normalizeRoomCode(joinInput?.value);
         if (!code) { setStatus('Enter a room code', true); return; }
         setStatus('Joining...');
         try {
@@ -152,7 +163,7 @@ export function initLobby(onReady) {
     });
 
     document.getElementById('lobby-spectate')?.addEventListener('click', async () => {
-        const code = joinInput?.value?.trim().toUpperCase();
+        const code = normalizeRoomCode(joinInput?.value);
         if (!code) { setStatus('Enter a room code to spectate', true); return; }
         setStatus('Joining as spectator...');
         try {
@@ -172,7 +183,7 @@ export function initLobby(onReady) {
     });
 
     if (urlRoom) {
-        setStatus(`Room code detected: ${urlRoom.toUpperCase()} — tap Join`);
+        setStatus(`Room code detected: ${normalizeRoomCode(urlRoom)} — tap Join`);
     }
 
     const urlParams = new URLSearchParams(window.location.search);

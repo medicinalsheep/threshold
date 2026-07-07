@@ -1,6 +1,8 @@
 import { AgentRouter } from './agentRouter.js';
 import { OllamaRunQueue } from './ollamaRunQueue.js';
 import { assessTierPrefs, buildModelMatrix, renderMatrixHtml, getDeviceProfile } from './modelCapability.js';
+import { WorkFolderScope } from './workFolderScope.js';
+import { AiMemoryFreeze } from './aiMemoryFreeze.js';
 
 function esc(s) {
     return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
@@ -14,6 +16,8 @@ export const ModelStatusHud = {
         window.addEventListener('ollama-queue-change', () => this.renderHud());
         window.addEventListener('agent-config-change', () => this.refreshMatrix());
         window.addEventListener('agent-route-complete', () => this.renderHud());
+        window.addEventListener('ai-freeze-change', () => this.renderHud());
+        window.addEventListener('work-folder-change', () => this.renderHud());
 
         document.getElementById('agent-allow-parallel')?.addEventListener('change', (e) => {
             OllamaRunQueue.setPrefs({ allowParallelLocal: e.target.checked });
@@ -46,6 +50,10 @@ export const ModelStatusHud = {
         const modeLine = parallel
             ? '<span class="model-hud-warn">parallel local</span>'
             : '<span class="model-hud-ok">sequential</span>';
+        const freeze = AiMemoryFreeze.isFrozen();
+        const folderLine = freeze
+            ? '<span class="model-hud-freeze">❄ frozen</span>'
+            : `<span class="model-hud-folder" title="${esc(WorkFolderScope.getScope().hint)}">${esc(WorkFolderScope.scopeLabel())}</span>`;
         const tierLines = ['small', 'medium', 'large'].map((t) => {
             const a = tierAssess[t];
             const pref = prefs[t] || 'auto';
@@ -53,10 +61,11 @@ export const ModelStatusHud = {
             const icon = a?.state === 'fail' ? '✗' : (a?.state === 'warn' ? '⚠' : '●');
             return `<span class="model-hud-tier ${cls}" title="${esc(a?.reason || '')}">${t[0].toUpperCase()}:${esc(pref)} ${icon}</span>`;
         }).join('');
-        const html = `<div class="model-hud-row">${activeLine}${queueLine}<span class="model-hud-mode">${modeLine}</span></div><div class="model-hud-tiers">${tierLines}</div>`;
+        const html = `<div class="model-hud-row">${activeLine}${queueLine}<span class="model-hud-mode">${modeLine}</span>${folderLine}</div><div class="model-hud-tiers">${tierLines}</div>`;
         targets.forEach((el) => {
             el.innerHTML = html;
-            el.classList.toggle('model-hud-busy', !!q.active || q.queueDepth > 0);
+            el.classList.toggle('model-hud-busy', !!q.active || q.queueDepth > 0 || freeze);
+            el.classList.toggle('model-hud-frozen', freeze);
         });
     },
 

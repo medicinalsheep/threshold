@@ -4,6 +4,7 @@ import { BlenderManifest } from './blenderManifest.js';
 import { ThresholdShell } from './thresholdShell.js';
 import { MeshLod } from './meshLod.js';
 import { CREATIVE_WATCH_URL } from '../config.js';
+import { waitWhileLoadSuspended } from './aiMemoryFreeze.js';
 
 const loader = new GLTFLoader();
 const GLTF_FILTERS = [
@@ -87,6 +88,7 @@ function groundAndScale(root, targetHeight = null) {
 
 export const GltfImport = {
     async loadFromUrl(url) {
+        await waitWhileLoadSuspended();
         const gltf = await loader.loadAsync(url);
         return gltf.scene;
     },
@@ -118,6 +120,7 @@ export const GltfImport = {
     },
 
     async registerRoot(root, options = {}) {
+        await waitWhileLoadSuspended();
         const World = window.World;
         const State = window.State;
         const Engine = window.Engine;
