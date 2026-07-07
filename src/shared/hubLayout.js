@@ -1,31 +1,84 @@
 /**
- * Lock / unlock corner hub positions — drag to arrange when unlocked.
+ * Lock / unlock UI layout — drag corner hubs + floating overlays when unlocked.
  */
 
 import { ViewPrefs } from './viewPrefs.js';
 
-const PREFS_KEY = 'hubLayoutPositions';
+const HUB_PREFS_KEY = 'hubLayoutPositions';
+const OVERLAY_PREFS_KEY = 'uiOverlayPositions';
 const HUB_IDS = ['tl', 'tr', 'bl', 'br'];
 
-function loadPositions() {
-    return ViewPrefs.get(PREFS_KEY, {});
+const UI_OVERLAYS = [
+    { id: 'perf-hud', selector: '#creator-perf-hud' },
+    { id: 'model-hud', selector: '#model-status-hud-float' },
+    { id: 'game-chat', selector: '#game-chat', grip: '.game-chat-header' },
+    { id: 'app-nav', selector: '#app-nav', grip: '.brand' },
+];
+
+function loadHubPositions() {
+    return ViewPrefs.get(HUB_PREFS_KEY, {});
 }
 
-function savePositions(pos) {
-    ViewPrefs.set(PREFS_KEY, pos);
+function saveHubPositions(pos) {
+    ViewPrefs.set(HUB_PREFS_KEY, pos);
+}
+
+function loadOverlayPositions() {
+    return ViewPrefs.get(OVERLAY_PREFS_KEY, {});
+}
+
+function saveOverlayPositions(pos) {
+    ViewPrefs.set(OVERLAY_PREFS_KEY, pos);
 }
 
 function hubEl(id) {
     return document.querySelector(`.corner-hub-${id}`);
 }
 
+function overlayEl(item) {
+    return document.querySelector(item.selector);
+}
+
+function overlayGrip(item) {
+    const root = overlayEl(item);
+    if (!root) return null;
+    if (item.grip) return root.querySelector(item.grip) || root;
+    return root;
+}
+
 function readBounds() {
     const pad = 8;
-    const restoreH = document.body.classList.contains('nav-collapsed') ? 28 : 0;
+    const restoreH = document.body.classList.contains('nav-collapsed') && !document.body.classList.contains('nav-ui-custom')
+        ? 28
+        : 0;
     const vv = window.visualViewport;
     const w = vv?.width ?? window.innerWidth;
     const h = vv?.height ?? window.innerHeight;
     return { pad, restoreH, w, h, topMin: pad + restoreH };
+}
+
+function applyOverlayPosition(el, pos) {
+    if (!el || !pos) return;
+    el.style.position = 'fixed';
+    el.style.top = `${pos.y}px`;
+    el.style.left = `${pos.x}px`;
+    el.style.bottom = 'auto';
+    el.style.right = 'auto';
+    el.style.transform = 'none';
+    el.style.margin = '0';
+    el.dataset.uiPositioned = '1';
+}
+
+function clearOverlayInline(el) {
+    if (!el || el.dataset.uiPositioned !== '1') return;
+    el.style.position = '';
+    el.style.top = '';
+    el.style.left = '';
+    el.style.bottom = '';
+    el.style.right = '';
+    el.style.transform = '';
+    el.style.margin = '';
+    delete el.dataset.uiPositioned;
 }
 
 export const HubLayout = {
@@ -35,22 +88,37 @@ export const HubLayout = {
     init() {
         this._locked = ViewPrefs.get('hubLayoutLocked', true) !== false;
         this.applyPositions();
+        this.applyOverlayPositions();
         this.syncUi();
 
-        document.getElementById('hub-layout-lock')?.addEventListener('click', () => this.toggle());
+        document.getElementById('hub-layout-lock')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggle();
+        });
 
         HUB_IDS.forEach((id) => {
             const el = hubEl(id);
             if (!el) return;
-            el.addEventListener('pointerdown', (e) => this.onPointerDown(id, e));
+            el.addEventListener('pointerdown', (e) => this.onHubPointerDown(id, e));
+        });
+
+        UI_OVERLAYS.forEach((item) => {
+            const grip = overlayGrip(item);
+            if (!grip) return;
+            grip.addEventListener('pointerdown', (e) => this.onOverlayPointerDown(item, e));
         });
 
         window.addEventListener('pointermove', (e) => this.onPointerMove(e));
         window.addEventListener('pointerup', () => this.onPointerUp());
-        window.addEventListener('resize', () => this.applyPositions());
+        window.addEventListener('resize', () => {
+            this.applyPositions();
+            this.applyOverlayPositions();
+        });
 
         document.getElementById('corner-hubs')?.addEventListener('click', (e) => {
-            if (!this._locked) {
+            if (this._locked) return;
+            if (e.target.closest('#hub-layout-lock')) return;
+            if (e.target.closest('.corner-hub-toggle, .corner-hub-arm button, .corner-hub-menu button')) {
                 e.preventDefault();
                 e.stopPropagation();
             }
@@ -66,20 +134,26 @@ export const HubLayout = {
         ViewPrefs.set('hubLayoutLocked', this._locked);
         document.body.classList.toggle('hub-layout-edit', !this._locked);
         this.syncUi();
-        if (this._locked) this.applyPositions();
-        window.UI?.status?.(this._locked ? 'UI locked' : 'Drag corner buttons to arrange');
+        if (this._locked) {
+            this.applyPositions();
+            this.applyOverlayPositions();
+            window.UI?.status?.('UI layout locked');
+        } else {
+            document.getElementById('app-nav')?.classList.remove('nav-ui-hidden-for-edit');
+            window.UI?.status?.('Drag corner buttons, HUD, chat, and header — tap LOCK when done');
+        }
     },
 
     syncUi() {
         const btn = document.getElementById('hub-layout-lock');
         if (!btn) return;
-        btn.textContent = this._locked ? 'LOCK' : 'DONE';
-        btn.title = this._locked ? 'Unlock to move corner buttons' : 'Lock layout';
+        btn.textContent = this._locked ? 'UNLOCK' : 'LOCK';
+        btn.title = this._locked ? 'Unlock to move UI elements' : 'Lock layout and resume normal controls';
         btn.classList.toggle('hub-layout-unlocked', !this._locked);
     },
 
     applyPositions() {
-        const saved = loadPositions();
+        const saved = loadHubPositions();
         const { pad, w, h, topMin } = readBounds();
 
         HUB_IDS.forEach((id) => {
@@ -107,15 +181,37 @@ export const HubLayout = {
         });
     },
 
-    onPointerDown(id, e) {
+    applyOverlayPositions() {
+        const saved = loadOverlayPositions();
+        const hasCustomNav = !!saved['app-nav'];
+        document.body.classList.toggle('nav-ui-custom', hasCustomNav && this._locked);
+
+        UI_OVERLAYS.forEach((item) => {
+            const el = overlayEl(item);
+            if (!el) return;
+            const pos = saved[item.id];
+            if (!pos) {
+                if (item.id !== 'app-nav') clearOverlayInline(el);
+                return;
+            }
+            applyOverlayPosition(el, pos);
+            if (item.id === 'app-nav') {
+                el.classList.remove('nav-ui-hidden-for-edit');
+            }
+        });
+    },
+
+    onHubPointerDown(id, e) {
         if (this._locked) return;
-        if (!e.target.closest('.corner-hub-toggle, .corner-hub-arm button, #hub-layout-lock')) return;
+        if (e.target.closest('#hub-layout-lock')) return;
+        if (!e.target.closest('.corner-hub-toggle, .corner-hub-arm button')) return;
         if (e.target.closest('.corner-hub-menu')) return;
 
         const el = hubEl(id);
         if (!el) return;
         const rect = el.getBoundingClientRect();
         this._drag = {
+            kind: 'hub',
             id,
             el,
             offsetX: e.clientX - rect.left,
@@ -123,6 +219,34 @@ export const HubLayout = {
             pointerId: e.pointerId,
         };
         el.setPointerCapture?.(e.pointerId);
+        e.preventDefault();
+    },
+
+    onOverlayPointerDown(item, e) {
+        if (this._locked) return;
+        if (e.button !== 0) return;
+        if (e.target.closest('button, input, select, textarea, a')) return;
+        const el = overlayEl(item);
+        const grip = overlayGrip(item);
+        if (!el || !grip) return;
+
+        if (item.id === 'app-nav') {
+            el.classList.remove('nav-ui-hidden-for-edit');
+            document.body.classList.remove('nav-collapsed');
+            window.dispatchEvent(new Event('resize'));
+        }
+
+        const rect = el.getBoundingClientRect();
+        applyOverlayPosition(el, { x: rect.left, y: rect.top });
+        this._drag = {
+            kind: 'overlay',
+            item,
+            el,
+            offsetX: e.clientX - rect.left,
+            offsetY: e.clientY - rect.top,
+            pointerId: e.pointerId,
+        };
+        grip.setPointerCapture?.(e.pointerId);
         e.preventDefault();
     },
 
@@ -137,21 +261,39 @@ export const HubLayout = {
         let y = e.clientY - this._drag.offsetY;
         x = Math.max(pad, Math.min(x, w - bw - pad));
         y = Math.max(topMin, Math.min(y, h - bh - pad));
-        el.style.top = `${y}px`;
-        el.style.left = `${x}px`;
-        el.style.right = 'auto';
-        el.style.bottom = 'auto';
+
+        if (this._drag.kind === 'hub') {
+            el.style.top = `${y}px`;
+            el.style.left = `${x}px`;
+            el.style.right = 'auto';
+            el.style.bottom = 'auto';
+        } else {
+            applyOverlayPosition(el, { x, y });
+        }
     },
 
     onPointerUp() {
         if (!this._drag) return;
-        const { id, el } = this._drag;
-        const saved = loadPositions();
-        saved[id] = {
-            x: parseFloat(el.style.left) || el.offsetLeft,
-            y: parseFloat(el.style.top) || el.offsetTop,
-        };
-        savePositions(saved);
+        const { el } = this._drag;
+
+        if (this._drag.kind === 'hub') {
+            const saved = loadHubPositions();
+            saved[this._drag.id] = {
+                x: parseFloat(el.style.left) || el.offsetLeft,
+                y: parseFloat(el.style.top) || el.offsetTop,
+            };
+            saveHubPositions(saved);
+        } else {
+            const saved = loadOverlayPositions();
+            const rect = el.getBoundingClientRect();
+            saved[this._drag.item.id] = { x: rect.left, y: rect.top };
+            saveOverlayPositions(saved);
+            if (this._drag.item.id === 'app-nav') {
+                document.body.classList.add('nav-ui-custom');
+                window.dispatchEvent(new Event('resize'));
+            }
+        }
+
         this._drag = null;
     },
 };

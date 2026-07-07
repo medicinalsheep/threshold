@@ -24,8 +24,12 @@ function setExpanded(expanded, persist = true) {
 
     const api = dock?._floatApi;
     if (api) {
-        if (expanded) api.ensureMinWidth(300);
-        else api.ensureMinWidth(56);
+        if (expanded) {
+            api.restoreExpandedWidth?.(300);
+            api.ensureMinWidth(300);
+        } else {
+            api.setStripWidth?.(56);
+        }
         api.clamp();
     }
 

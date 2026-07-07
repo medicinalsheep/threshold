@@ -133,6 +133,23 @@ button {
     display: none;
 }
 
+.scene-dock.collapsed .panel-chrome-header,
+.scene-dock.collapsed .panel-resize-handle {
+    display: none !important;
+}
+
+.scene-dock.collapsed .scene-dock-inner {
+    border-radius: 8px 0 0 8px;
+}
+
+.scene-dock.collapsed.float-strip {
+    overflow: hidden;
+}
+
+.scene-dock.collapsed .dock-tab-bar {
+    border-radius: 8px 0 0 8px;
+}
+
 .scene-dock.dock-full-hidden {
     display: none !important;
     pointer-events: none;

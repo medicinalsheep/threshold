@@ -114,6 +114,77 @@ body.hub-layout-edit .corner-hub-menu {
     opacity: 0.5;
 }
 
+body.hub-layout-edit #creator-perf-hud,
+body.hub-layout-edit #model-status-hud-float,
+body.hub-layout-edit #game-chat,
+body.hub-layout-edit #app-nav .brand {
+    pointer-events: auto;
+}
+
+body.hub-layout-edit #creator-perf-hud,
+body.hub-layout-edit #model-status-hud-float,
+body.hub-layout-edit #game-chat,
+body.hub-layout-edit #app-nav {
+    outline: 1px dashed rgba(94, 184, 255, 0.5);
+    outline-offset: 2px;
+}
+
+body.hub-layout-edit #creator-perf-hud,
+body.hub-layout-edit #model-status-hud-float,
+body.hub-layout-edit #game-chat .game-chat-header,
+body.hub-layout-edit #app-nav .brand {
+    cursor: grab;
+}
+
+body.hub-layout-edit #game-chat:not(.open) {
+    display: flex !important;
+    flex-direction: column;
+    min-height: 44px;
+    opacity: 0.9;
+}
+
+body.hub-layout-edit #game-chat:not(.open) .game-chat-log,
+body.hub-layout-edit #game-chat:not(.open) .game-chat-input-row {
+    display: none;
+}
+
+body.hub-layout-edit.nav-collapsed #app-nav {
+    height: 50px !important;
+    min-height: 50px !important;
+    padding: 0 20px !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+body.nav-ui-custom #app-nav {
+    position: fixed !important;
+    height: 50px !important;
+    min-height: 50px !important;
+    width: min(calc(100vw - 16px), 720px);
+    max-width: calc(100vw - 16px);
+    overflow: visible !important;
+    pointer-events: auto !important;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+}
+
+body.nav-ui-custom.nav-collapsed #app-nav {
+    height: 50px !important;
+    padding: 0 20px !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+body.nav-ui-custom .view-section,
+body.nav-ui-custom.engine-chrome .view-section {
+    top: 0;
+}
+
+body.nav-ui-custom .nav-restore-btn {
+    display: none !important;
+}
+
 body.nav-collapsed .corner-hub-tl,
 body.nav-collapsed .corner-hub-tr {
     top: max(8px, env(safe-area-inset-top, 0px));

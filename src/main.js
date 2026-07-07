@@ -38,8 +38,9 @@ function updateChromeMetrics() {
     const collapsed = document.body.classList.contains('nav-collapsed');
     const nav = document.getElementById('app-nav');
 
+    const navCustom = document.body.classList.contains('nav-ui-custom');
     let navH = 0;
-    if (!immersive && !collapsed) {
+    if (!immersive && !collapsed && !navCustom) {
         navH = nav?.offsetHeight || 50;
     }
 

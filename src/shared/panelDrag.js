@@ -212,6 +212,34 @@ export function setupFloatPanel(panel, options = {}) {
                 saveOne(id, rect, locked);
             }
         },
+        setStripWidth: (stripW, remember = true) => {
+            const anchor = options.anchor || options.defaultSize?.anchor || '';
+            const rightEdge = rect.x + rect.w;
+            if (remember && rect.w > stripW + 8) {
+                panel._floatExpandedW = rect.w;
+            }
+            rect.w = Math.max(stripW, limits.minW ?? MIN_W);
+            if (anchor.includes('right')) {
+                rect.x = rightEdge - rect.w;
+            }
+            rect = clampRect(rect, limits);
+            applyRect(panel, rect);
+            panel.classList.add('float-strip');
+            saveOne(id, rect, locked);
+        },
+        restoreExpandedWidth: (fallbackW = 300) => {
+            const anchor = options.anchor || options.defaultSize?.anchor || '';
+            const rightEdge = rect.x + rect.w;
+            const target = Math.max(panel._floatExpandedW || fallbackW, fallbackW);
+            rect.w = Math.min(target, limits.maxW ?? readBounds().maxW);
+            if (anchor.includes('right')) {
+                rect.x = rightEdge - rect.w;
+            }
+            rect = clampRect(rect, limits);
+            applyRect(panel, rect);
+            panel.classList.remove('float-strip');
+            saveOne(id, rect, locked);
+        },
         reset: () => {
             rect = defaultRect(panel, { ...options.defaultSize, limits });
             locked = false;
