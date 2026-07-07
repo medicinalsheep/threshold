@@ -7,6 +7,7 @@ import { TextureManifestSync, buildHostTextureManifest } from './textureManifest
 import { Permissions } from './permissions.js';
 import { defaultVoipHostConfig, normalizeVoipConfig, summarizeVoipConfig } from './voipConfig.js';
 import { normalizeRoomCode } from './roomCode.js';
+import { normalizePasscode, passcodeMatches } from './hostPasscode.js';
 
 export const Network = {
     peer: null,
@@ -17,6 +18,9 @@ export const Network = {
     roomId: '',
     peerCount: 0,
     voipConfig: defaultVoipHostConfig(),
+    hostPasscode: '',
+    joinPasscode: '',
+    _joinPending: null,
     playerPositions: new Map(),
     playerAvatars: new Map(),
     _broadcastTimer: null,
@@ -44,6 +48,7 @@ export const Network = {
         this.destroy();
         this.mode = 'host';
         this.roomId = normalizeRoomCode(roomId);
+        this.hostPasscode = normalizePasscode(options.passcode || '');
         this.voipConfig = normalizeVoipConfig(options.voipConfig || this.voipConfig);
         this.playerPositions.clear();
         Session.isHost = true;
@@ -78,50 +83,50 @@ export const Network = {
         });
     },
 
-    async spectateRoom(roomId) {
+    async spectateRoom(roomId, options = {}) {
         this.mode = 'spectate';
         this.roomId = normalizeRoomCode(roomId);
+        this.joinPasscode = normalizePasscode(options.passcode || '');
         Session.isHost = false;
         Session.isSpectator = true;
         Session.hostKey = roomId;
         Session.updateUi();
 
-        return new Promise((resolve, reject) => {
-            this.peer = new Peer(getPeerOptions());
-            this._wirePeerVoip(this.peer);
-            this.peer.on('open', () => {
-                const conn = this.peer.connect(roomId, { reliable: true });
-                this.hostConnection = conn;
-                this._setupConn(conn);
-                conn.on('open', () => {
-                    conn.send({
-                        type: 'JOIN',
-                        playerKey: Session.playerKey,
-                        playerName: Session.playerName,
-                        peerId: this.peer.id,
-                        spectate: true,
-                    });
-                    this._reconnectAttempts = 0;
-                    this._reconnecting = false;
-                    this.updateUi();
-                    resolve(roomId);
-                });
-                conn.on('close', () => this._onHostLost());
-                conn.on('error', reject);
-            });
-            this.peer.on('error', reject);
-        });
+        return this._connectAsGuest(roomId, { spectate: true });
     },
 
-    async joinRoom(roomId) {
+    async joinRoom(roomId, options = {}) {
         this.mode = 'guest';
         this.roomId = normalizeRoomCode(roomId);
+        this.joinPasscode = normalizePasscode(options.passcode || '');
         Session.isHost = false;
         Session.isSpectator = false;
         Session.hostKey = roomId;
         Session.updateUi();
 
+        return this._connectAsGuest(roomId, { spectate: false });
+    },
+
+    _setJoinPending(resolve, reject) {
+        this._clearJoinPending();
+        this._joinPending = { resolve, reject };
+        this._joinPendingTimer = setTimeout(() => {
+            if (!this._joinPending) return;
+            const err = new Error('Join timed out — check room code and passcode');
+            this._joinPending.reject(err);
+            this._clearJoinPending();
+        }, 12000);
+    },
+
+    _clearJoinPending() {
+        clearTimeout(this._joinPendingTimer);
+        this._joinPendingTimer = null;
+        this._joinPending = null;
+    },
+
+    _connectAsGuest(roomId, { spectate = false } = {}) {
         return new Promise((resolve, reject) => {
+            this._setJoinPending(resolve, reject);
             this.peer = new Peer(getPeerOptions());
             this._wirePeerVoip(this.peer);
 
@@ -136,24 +141,47 @@ export const Network = {
                         playerKey: Session.playerKey,
                         playerName: Session.playerName,
                         peerId: this.peer.id,
+                        spectate,
+                        passcode: this.joinPasscode,
                     });
                     this._reconnectAttempts = 0;
                     this._reconnecting = false;
                     this.updateUi();
-                    resolve(roomId);
                 });
                 conn.on('close', () => this._onHostLost());
-
-                conn.on('error', reject);
+                conn.on('error', (err) => {
+                    this._clearJoinPending();
+                    reject(err);
+                });
             });
 
-            this.peer.on('error', reject);
+            this.peer.on('error', (err) => {
+                this._clearJoinPending();
+                reject(err);
+            });
         });
+    },
+
+    setHostPasscode(code) {
+        if (this.mode !== 'host') return false;
+        this.hostPasscode = normalizePasscode(code);
+        window.UI?.status?.(this.hostPasscode
+            ? 'Session passcode updated — share it with guests'
+            : 'Session passcode removed');
+        window.UI?.renderHostPanel?.();
+        return true;
+    },
+
+    hasHostPasscode() {
+        return Boolean(normalizePasscode(this.hostPasscode));
     },
 
     startSolo() {
         this.mode = 'solo';
         this.roomId = '';
+        this.hostPasscode = '';
+        this.joinPasscode = '';
+        this._clearJoinPending();
         this.playerPositions.clear();
         Session.isHost = false;
         Session.isSpectator = false;
@@ -172,16 +200,18 @@ export const Network = {
 
     _onGuestConnect(conn) {
         this._setupConn(conn);
-        conn.on('open', () => {
-            conn.send({
-                type: 'WELCOME',
-                playerKey: Session.playerKey,
-                voipConfig: this.voipConfig,
-                voipSummary: summarizeVoipConfig(this.voipConfig),
-            });
-            this._broadcastVoipRoster();
-            this._broadcastState();
+    },
+
+    _welcomeGuest(conn) {
+        if (!conn?.open) return;
+        conn.send({
+            type: 'WELCOME',
+            playerKey: Session.playerKey,
+            voipConfig: this.voipConfig,
+            voipSummary: summarizeVoipConfig(this.voipConfig),
         });
+        this._broadcastVoipRoster();
+        this._broadcastState();
     },
 
     _setupConn(conn) {
@@ -352,9 +382,18 @@ export const Network = {
 
         if (this.mode === 'host') {
             if (data.type === 'JOIN') {
+                if (!passcodeMatches(this.hostPasscode, data.passcode)) {
+                    conn.send?.({
+                        type: 'JOIN_DENIED',
+                        message: 'Wrong passcode — ask the host',
+                    });
+                    setTimeout(() => conn.close?.(), 50);
+                    if (window.UI?.status) window.UI.status('Join blocked — wrong passcode');
+                    return;
+                }
                 this._registerPlayer(conn, data);
                 if (window.UI?.status) window.UI.status(`${data.playerName || 'Player'} joined`);
-                this._broadcastState();
+                this._welcomeGuest(conn);
                 void this._pushAudioManifestToConn(conn);
                 void this._pushTextureManifestToConn(conn);
                 return;
@@ -447,9 +486,20 @@ export const Network = {
             if (data.type === 'LIVE_STATE' && data.state) {
                 Sync.applyLiveState(data.state);
             }
+            if (data.type === 'JOIN_DENIED') {
+                if (window.UI?.status) window.UI.status(data.message || 'Could not join session');
+                this._joinPending?.reject?.(new Error(data.message || 'Could not join session'));
+                this._clearJoinPending();
+                this.hostConnection?.close?.();
+                return;
+            }
             if (data.type === 'WELCOME') {
                 if (window.UI?.status) window.UI.status('Connected to host — synced bindings & scene');
-                this._applyVoipSession(data.voipConfig, data.voipSummary);
+                void this._applyVoipSession(data.voipConfig, data.voipSummary);
+                if (this._joinPending) {
+                    this._joinPending.resolve(this.roomId);
+                    this._clearJoinPending();
+                }
             }
             if (data.type === 'VOIP_ROSTER') {
                 if (data.voipConfig) this.voipConfig = normalizeVoipConfig(data.voipConfig);
@@ -558,6 +608,7 @@ export const Network = {
                         playerName: Session.playerName,
                         peerId: this.peer.id,
                         spectate,
+                        passcode: this.joinPasscode,
                     });
                     this._reconnectAttempts = 0;
                     this._reconnecting = false;
@@ -643,6 +694,7 @@ export const Network = {
     },
 
     destroy() {
+        this._clearJoinPending();
         clearTimeout(this._broadcastTimer);
         clearTimeout(this._liveTimer);
         clearTimeout(this._reconnectTimer);

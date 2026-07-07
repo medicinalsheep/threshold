@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.8.2 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.9.0 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -41,11 +41,17 @@ UI reference: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Controls: [CONTROLS.md](CO
 
 ---
 
-## 10.9 — Session security + touch polish
+## 10.9.0 — Lighter first-run + passcode ✅
+
+- Explore-first: no auto-open Agent Portal; pulse AI + status
+- Deferred graphics tier prompt (first PLAY or ENV)
+- Action hint copy aligned to corner hubs
+- Optional host passcode at CREATE; changeable in PLAYERS panel
+
+## 10.9.1 — Touch polish (remaining)
 
 | Item | Deliverable |
 |------|-------------|
-| Host passcode | Optional passcode before JOIN; host sets at CREATE |
 | Touch custom buttons | In-app action picker (replace `window.prompt`) |
 | Lobby copy | Clearer room-code share UX |
 

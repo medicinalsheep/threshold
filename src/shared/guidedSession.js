@@ -93,7 +93,6 @@ export const GuidedSession = {
     },
 
     finishPostTour() {
-        GraphicsPrompt.startIfNeeded();
         window.ActionHints?.onSessionReady?.();
         window.AgentPortal?.startIfNeeded?.();
     },

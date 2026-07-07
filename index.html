@@ -65,6 +65,14 @@
                         <input type="text" id="lobby-join-code" class="lobby-input" placeholder="Room code (e.g. BOB3-KEY12-X7K2)" maxlength="24" autocomplete="off" spellcheck="false">
                         <button id="lobby-join" class="lobby-btn lobby-btn-join">JOIN</button>
                     </div>
+                    <input type="password" id="lobby-join-passcode" class="lobby-input" placeholder="Passcode (if host set one)" maxlength="32" autocomplete="off" spellcheck="false">
+                    <details class="lobby-passcode-wrap">
+                        <summary>Host passcode (optional)</summary>
+                        <label class="lobby-passcode-row">Require passcode to join
+                            <input type="password" id="lobby-host-passcode" class="lobby-input" placeholder="Leave blank for open session" maxlength="32" autocomplete="new-password" spellcheck="false">
+                        </label>
+                        <p class="lobby-voip-hint">Set before CREATE SESSION — change anytime in PLAYERS panel.</p>
+                    </details>
                     <details class="lobby-voip-wrap" open>
                         <summary>Voice — host sets before CREATE</summary>
                         <div class="lobby-voip-grid">
@@ -947,6 +955,9 @@
                 <label class="insert-hint host-only-link">Invite link</label>
                 <input type="text" id="session-share-link" class="insert-input" readonly placeholder="Create session to get link">
                 <button id="host-copy-link" type="button" class="insert-action secondary">COPY INVITE LINK</button>
+                <label class="insert-hint host-only-link">Session passcode (optional)</label>
+                <input type="password" id="host-passcode" class="insert-input host-only-link" placeholder="Leave blank for open session" maxlength="32" autocomplete="new-password" spellcheck="false">
+                <button id="host-passcode-save" type="button" class="insert-action secondary host-only-link">UPDATE PASSCODE</button>
                 <div id="host-player-list"></div>
                 <p id="host-voip-summary" class="insert-hint"></p>
                 <label class="insert-hint guest-survival-hud-row hidden"><input type="checkbox" id="guest-survival-hud"> Show my vitals HUD (guest)</label>

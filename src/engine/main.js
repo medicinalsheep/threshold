@@ -1901,6 +1901,10 @@ const UI = {
         });
         document.getElementById('btn-host-panel')?.addEventListener('click', () => UI.openHostPanel());
         document.getElementById('host-copy-link')?.addEventListener('click', () => UI.copySessionLink());
+        document.getElementById('host-passcode-save')?.addEventListener('click', () => {
+            const code = document.getElementById('host-passcode')?.value ?? '';
+            Network.setHostPasscode(code);
+        });
         document.getElementById('host-panel-close')?.addEventListener('click', () => UI.closeHostPanel());
         document.getElementById('host-panel-modal')?.addEventListener('click', (e) => {
             if (e.target.id === 'host-panel-modal') UI.closeHostPanel();
@@ -2292,6 +2296,7 @@ const UI = {
         if (playHint) playHint.hidden = edit;
         window.CornerHub?.onModeChange?.(edit);
         if (!edit) {
+            GraphicsPrompt.maybeShowDeferred('play');
             Engine.transformControl.detach();
             SceneDock.closeTab();
             SceneDock.setFullyHidden?.(true, false);
@@ -2815,6 +2820,8 @@ const UI = {
         const isHost = Network.mode === 'host';
         panelModal?.classList.toggle('host-view', isHost);
         if (linkEl) linkEl.value = isHost ? Network.getShareUrl() : '';
+        const passEl = document.getElementById('host-passcode');
+        if (passEl && isHost) passEl.value = Network.hostPasscode || '';
         if (roleEl) {
             if (Network.mode === 'spectate') roleEl.textContent = 'You are SPECTATING — read-only orbit camera';
             else if (isHost) roleEl.textContent = 'You are HOST — manage players & permissions';

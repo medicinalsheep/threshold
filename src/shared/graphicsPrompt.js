@@ -7,9 +7,16 @@ export const GraphicsPrompt = {
     root: null,
 
     startIfNeeded() {
+        return false;
+    },
+
+    maybeShowDeferred(trigger = '') {
         if (ViewPrefs.get('graphicsTierPrompted', false)) return false;
         if (document.body.classList.contains('ui-minimal')) return false;
-        setTimeout(() => this.show(), 400);
+        if (window.Walkthrough?.active) return false;
+        if (document.body.classList.contains('guided-session-open')) return false;
+        if (document.body.classList.contains('agent-portal-open')) return false;
+        setTimeout(() => this.show(), trigger === 'env' ? 200 : 400);
         return true;
     },
 

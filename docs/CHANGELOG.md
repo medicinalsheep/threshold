@@ -1,5 +1,12 @@
 # Changelog
 
+## 10.9.0 — Lighter first-run + optional host passcode
+
+- **Explore-first** — Agent Portal no longer auto-opens; AI button pulses + status nudge instead
+- **Deferred graphics prompt** — tier picker shows on first PLAY or ENV open, not stacked at enter
+- **Action hints** — copy updated for corner hubs (TOOLS / SETUP / AI paths)
+- **Host passcode** — optional at CREATE SESSION; guests enter passcode to JOIN; host can change in PLAYERS panel
+
 ## 10.8.2 — Solo BUILD default + PLAY hint
 
 - **ENTER →** solo path now defaults **BUILD** (EDIT) — insert/delete work without mode hunting; blank **grid** template

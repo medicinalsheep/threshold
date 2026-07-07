@@ -5,17 +5,17 @@ import { ViewPrefs } from './viewPrefs.js';
 const HINTS = [
     {
         id: 'walk',
-        text: 'SETUP tab — connect Grok/Ollama · start a design brief · then BUILD to place objects',
+        text: 'Explore the grid — tap AI (top-left) or SCENE → SETUP when ready to connect agents',
         afterMs: 0,
     },
     {
         id: 'promptgen',
-        text: 'Workstation → Agents, or toolbar Compiler / PromptGen to extend your scene',
+        text: 'TOOLS → Compiler or PromptGen to extend your scene',
         afterMs: 42000,
     },
     {
         id: 'export',
-        text: 'Ready to ship? ENGINE → MORE → EXPORT & PLAY saves + opens playable tab',
+        text: 'Ready to ship? TOOLS → Export & play or Export wizard',
         afterMs: 95000,
     },
 ];

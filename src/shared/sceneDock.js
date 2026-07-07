@@ -1,4 +1,5 @@
 import { ViewPrefs } from './viewPrefs.js';
+import { GraphicsPrompt } from './graphicsPrompt.js';
 
 let activeTab = null;
 
@@ -130,6 +131,7 @@ export const SceneDock = {
 
         dock.classList.add('has-panel');
         ViewPrefs.set('dockTab', tabId);
+        if (tabId === 'env') GraphicsPrompt.maybeShowDeferred('env');
     },
 
     closeTab() {

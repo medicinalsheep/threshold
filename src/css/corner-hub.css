@@ -248,7 +248,9 @@ body.nav-collapsed .corner-hub-tr {
     display: flex;
 }
 
-.corner-hub.hub-pulse > .corner-hub-toggle {
+.corner-hub.hub-pulse > .corner-hub-toggle,
+.corner-hub.hub-pulse #hub-agent,
+#hub-agent.hub-pulse {
     animation: hubPulse 0.6s ease 2;
 }
 

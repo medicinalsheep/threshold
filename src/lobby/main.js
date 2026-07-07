@@ -11,6 +11,7 @@ import {
     summarizeVoipConfig,
 } from '../shared/voipConfig.js';
 import { generateHostRoomId, normalizeRoomCode } from '../shared/roomCode.js';
+import { normalizePasscode } from '../shared/hostPasscode.js';
 
 function initLobbyReleaseStrip() {
     const el = document.getElementById('lobby-release-strip');
@@ -105,11 +106,12 @@ export function initLobby(onReady) {
                 localStorage.setItem('threshold_player_name', name);
             }
             const voipConfig = readLobbyVoipConfig();
+            const passcode = normalizePasscode(document.getElementById('lobby-host-passcode')?.value);
             let roomId = generateHostRoomId(Session.playerName, Session.playerKey);
             let attempts = 0;
             while (attempts < 4) {
                 try {
-                    await Network.startHost(roomId, { voipConfig });
+                    await Network.startHost(roomId, { voipConfig, passcode });
                     break;
                 } catch (e) {
                     if (!String(e?.message || '').includes('Room ID taken') || attempts >= 3) throw e;
@@ -119,7 +121,8 @@ export function initLobby(onReady) {
             }
             window.Voip?.init?.(voipConfig);
             await window.Voip?.startIfNeeded?.();
-            setStatus(`Session live — ${summarizeVoipConfig(voipConfig)}`);
+            const passNote = passcode ? ' · passcode required to join' : '';
+            setStatus(`Session live — ${summarizeVoipConfig(voipConfig)}${passNote}`);
             setSelectedTemplateId('grid');
             persistLobbyMode();
             enterApp();
@@ -140,7 +143,8 @@ export function initLobby(onReady) {
                 Session.playerName = name;
                 localStorage.setItem('threshold_player_name', name);
             }
-            await Network.joinRoom(code);
+            const passcode = normalizePasscode(document.getElementById('lobby-join-passcode')?.value);
+            await Network.joinRoom(code, { passcode });
             persistLobbyMode();
             enterApp();
         } catch (e) {
@@ -187,7 +191,8 @@ export function initLobby(onReady) {
                 Session.playerName = name;
                 localStorage.setItem('threshold_player_name', name);
             }
-            await Network.spectateRoom(code);
+            const passcode = normalizePasscode(document.getElementById('lobby-join-passcode')?.value);
+            await Network.spectateRoom(code, { passcode });
             enterApp();
             window.Spectate?.setFollowHost?.(true);
             document.querySelector('[data-target="view-spectate"]')?.click();

@@ -772,7 +772,10 @@ Output ONLY executable Threshold JavaScript IIFE for Compiler. Extend the blank 
         if (this._session.dismissed) return;
         if (IS_GROK_EDITION && !Auth.isLoggedIn()) return;
 
-        setTimeout(() => this.show(), 450);
+        setTimeout(() => {
+            window.CornerHub?.pulseAgent?.();
+            window.UI?.status?.('Explore the grid — tap AI (top-left) or press F at the build station when ready');
+        }, 450);
     },
 
     resetSession() {

@@ -272,7 +272,6 @@ export const Walkthrough = {
         this.hide();
         const label = this._mode === 'full' ? 'Full tutorial complete' : 'Guided tour complete';
         window.UI?.status(`${label} — MORE → TUTORIAL to replay`);
-        GraphicsPrompt.startIfNeeded();
         window.ActionHints?.onSessionReady?.();
         window.AgentPortal?.startIfNeeded?.();
     },

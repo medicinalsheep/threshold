@@ -187,6 +187,15 @@ export const CornerHub = {
         hub?.classList.add('hub-pulse');
         setTimeout(() => hub?.classList.remove('hub-pulse'), 1200);
     },
+
+    pulseAgent() {
+        const btn = document.getElementById('hub-agent');
+        const hub = btn?.closest('.corner-hub');
+        const target = hub || btn;
+        if (!target) return;
+        target.classList.add('hub-pulse');
+        setTimeout(() => target.classList.remove('hub-pulse'), 1200);
+    },
 };
 
 window.CornerHub = CornerHub;
