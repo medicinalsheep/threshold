@@ -19,7 +19,7 @@ let _lastTier = null;
 let _lastCamKey = '';
 
 export const TEXTURE_MAX_BY_TIER = {
-    compatibility: 512,
+    compatibility: 1024,
     balanced: 1024,
     realistic: 2048,
     ultra: 4096,
@@ -112,7 +112,7 @@ export const TextureHilod = {
         const fileName = basePath.split(/[/\\]/).pop() || basePath;
         const base = textureBaseKey(fileName);
         const dir = basePath.replace(/\\/g, '/').replace(/\/[^/]+$/, '');
-        const suffixes = ['_512', '_1k', '_2k', '_4k'];
+        const suffixes = ['_1k', '_2k', '_4k'];
         const exts = ['.png', '.jpg', '.jpeg', '.webp', '.ktx2'];
         const ext = exts.find((e) => base.toLowerCase().endsWith(e)) || '.png';
         const stem = base.slice(0, -ext.length);

@@ -83,5 +83,4 @@ Saved bindings migrate automatically when defaults change (schema v2: LMB aim ·
 
 ## Related
 
-- [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) — movement tuning
-- [AMBIENT_ASSETS_ROADMAP.md](AMBIENT_ASSETS_ROADMAP.md) — ambient SFX queue
+- [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) — GIMP/Blender quality pipeline

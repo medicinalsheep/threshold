@@ -18,7 +18,7 @@
 ```
 1. LOBBY → CREATE SESSION → ENTER (blank grid)
 2. Agent Portal — describe scene or use TOOLS → Compiler / PromptGen
-3. BUILD — insert primitives, GLTF, or optional SHOWCASE snippets
+3. BUILD — insert GLTF or Compiler scripts (quality PBR via GIMP/Blender)
 4. ART (pick your path):
    A. GIMP → textures/*.png → GIMP SYNC
    B. Blender → import/*.glb → INSERT → GLTF
@@ -62,7 +62,7 @@ Object **Name** in Engine inspector must match export tools:
 | `npm run kit:export` | Fork-friendly WebP starter pack |
 | `npm run quickstart` | Onboarding (+ `--pack` for `assets:pack`) |
 | `npm run bundle:assets` | Copy textures/ + import/ → dist-pages/bundle/ |
-| TOOLS → INSERT | Primitives, GLTF, SHOWCASE snippets |
+| TOOLS → INSERT | Character, GLTF, saved players, custom code |
 | TOOLS → EXPORT | 9-step wizard |
 
 ---
@@ -78,7 +78,7 @@ Use **Hyper (4)** when showcasing PBR textures. Graphics tier in SETUP or SCENE 
 ## Further reading
 
 - [GETTING_STARTED.md](GETTING_STARTED.md) — lobby → ship linear path
-- [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) — controls, optional survival
+- [CONTROLS.md](CONTROLS.md) — action controls
 - [GIMP_TEXTURES.md](GIMP_TEXTURES.md) — install, batch, live SYNC
 - [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) — HILOD, codecs
 - [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) — 9-step wizard

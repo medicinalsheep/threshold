@@ -143,10 +143,17 @@ export const DesignIntake = {
             <label class="design-field">
                 <span>Texture workflow</span>
                 <select id="di-texture" class="insert-input">
-                    <option value="gimp" ${a.texture === 'gimp' ? 'selected' : ''}>GIMP → textures/ (watch hot-reload)</option>
-                    <option value="blender" ${a.texture === 'blender' ? 'selected' : ''}>Blender → import/ GLB</option>
-                    <option value="both" ${a.texture === 'both' ? 'selected' : ''}>GIMP + Blender</option>
-                    <option value="procedural" ${a.texture === 'procedural' ? 'selected' : ''}>Procedural / solid colors first</option>
+                    <option value="gimp" ${a.texture === 'gimp' || !a.texture ? 'selected' : ''}>GIMP → textures/ (PBR maps, watch hot-reload)</option>
+                    <option value="blender" ${a.texture === 'blender' ? 'selected' : ''}>Blender → import/ GLB (embedded PBR)</option>
+                    <option value="both" ${a.texture === 'both' ? 'selected' : ''}>GIMP + Blender (full pipeline)</option>
+                </select>
+            </label>
+            <label class="design-field">
+                <span>Texture resolution (minimum)</span>
+                <select id="di-texres" class="insert-input">
+                    <option value="1k" ${a.texRes === '1k' || !a.texRes ? 'selected' : ''}>1K — web / mobile default</option>
+                    <option value="2k" ${a.texRes === '2k' ? 'selected' : ''}>2K — desktop realistic</option>
+                    <option value="4k" ${a.texRes === '4k' ? 'selected' : ''}>4K — hero assets / ultra tier</option>
                 </select>
             </label>
             <label class="design-field">
@@ -243,6 +250,7 @@ export const DesignIntake = {
             poly: document.getElementById('di-poly')?.value || 'medium',
             polyCustom: document.getElementById('di-poly-custom')?.value || '',
             texture: document.getElementById('di-texture')?.value || 'gimp',
+            texRes: document.getElementById('di-texres')?.value || '1k',
             style: document.getElementById('di-style')?.value || 'realistic',
             soundIds,
             constraints: document.getElementById('di-constraints')?.value?.trim() || '',
@@ -268,7 +276,7 @@ export const DesignIntake = {
                 <dt>Description</dt><dd>${esc(a.description || '—')}</dd>
                 <dt>Export</dt><dd>${esc((a.exports || []).join(', '))}</dd>
                 <dt>Poly</dt><dd>${esc(a.poly)}${a.poly === 'custom' ? ` (${a.polyCustom} tris)` : ''}</dd>
-                <dt>Textures</dt><dd>${esc(a.texture)} · ${esc(a.style)}</dd>
+                <dt>Textures</dt><dd>${esc(a.texture)} · min ${esc(a.texRes || '1k')} · ${esc(a.style)}</dd>
                 <dt>Sounds</dt><dd>${(a.soundIds || []).length ? esc(a.soundIds.join(', ')) : 'none selected'}</dd>
                 <dt>Constraints</dt><dd>${esc(a.constraints || '—')}</dd>
             </dl>

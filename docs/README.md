@@ -1,20 +1,19 @@
 # Threshold documentation index
 
-**Version:** 10.8.2 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.11.1 · **Live:** https://medicinalsheep.github.io/threshold/
 
-Full scope map — what ships today, optional TC/showcase layers, and where to read more.
+Full scope map — quality-first blank grid, optional TC reference editions, and where to read more.
 
 **Snapshot:** [CAPABILITIES.md](CAPABILITIES.md) · **Forward plan:** [ROADMAP.md](ROADMAP.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
 ---
 
-## Three content layers
+## Content layers
 
 | Layer | What | Policy |
 |-------|------|--------|
-| **Your game** | Blank grid + Agent Portal + export | Default path since 10.0 |
-| **TC editions** | Lobby → **TC →** — vehicles, circuit, export demo | Original bundled reference — [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) |
-| **Showcase snippets** | INSERT → SHOWCASE | Optional Wardenclyffe props — not loaded by default |
+| **Your game** | Blank grid + quality-gated AI + PBR export | Default path since 10.0; min 1K textures since 10.11 |
+| **TC editions** | Lobby → **TC →** — vehicles, circuit, export demo | Bundled reference only — [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) |
 
 Legacy edition manifests (`threshold-child-*`) live in `old/reference-editions/` — active ids are `tc-*`.
 
@@ -32,7 +31,7 @@ flowchart TB
     subgraph play [Play]
         TPS[TPS / FPS / ADS / Alt peek]
         TOUCH[Touch + UNLOCK layout]
-        SURV[Survival optional]
+        PBR[Quality PBR 1K+]
         TE[Third Eye + F interact]
     end
     subgraph create [Create]
@@ -64,7 +63,7 @@ flowchart TB
 | Agent tiers & benchmarks | [AGENT_ROUTING.md](AGENT_ROUTING.md) | `ollama:benchmark` · SMART DEV |
 | UI layout + agents (10.7+) | [UI_AND_AGENTS.md](UI_AND_AGENTS.md) | Portal · freeze · touch · UNLOCK layout |
 | Train custom models | [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) | `npm run models:mini` |
-| Showcase + controls | [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | PLAY mode · survival · weather |
+| Action controls | [CONTROLS.md](CONTROLS.md) | PLAY mode · weather · F interact |
 | Creative loop | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | BUILD → insert · PromptGen |
 | Action controls | [CONTROLS.md](CONTROLS.md) | LMB aim · RMB shoot · F interact |
 | Full asset pipeline | [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | `npm run assets:pack` |
@@ -100,7 +99,7 @@ npm run build                   # GitHub Pages → dist-pages/
 | [GETTING_STARTED.md](GETTING_STARTED.md) | Lobby → ship linear path |
 | [ROADMAP.md](ROADMAP.md) | v10.8+ forward plan |
 | [PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md) | Vision + pillars |
-| [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) | Controls, survival, MP |
+| `old/docs/REALISTIC_GAMEPLAY.md` | Archived — survival + showcase (pre-10.11) |
 | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | GIMP/Blender loop |
 | [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | HILOD, codecs, asset systems |
 | [AGENT_ROUTING.md](AGENT_ROUTING.md) | Tiered agents + bootcamp |

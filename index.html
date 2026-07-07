@@ -478,8 +478,6 @@
             </div>
 
             <div id="creator-perf-hud" class="creator-perf-hud visible" aria-label="Performance HUD"></div>
-            <div id="survival-needs-hud" class="survival-needs-hud visible" aria-label="Survival vitals"></div>
-            <div id="survival-collapse-vignette" class="survival-collapse-vignette" aria-hidden="true"></div>
             <div id="controls-hint">WASD fly · QE up/down · right-click menu</div>
             <div id="action-hint-bar" class="action-hint-bar" aria-live="polite"></div>
             <div id="action-hint-toast" class="action-hint-toast" aria-live="polite"></div>
@@ -495,14 +493,7 @@
                     <button id="tc-quest-go" type="button" class="btn-sm">HOW TO</button>
                 </div>
             </div>
-            <div id="survival-run-card" class="survival-run-card panel" role="complementary">
-                <p class="survival-run-title">Optional side quest</p>
-                <p class="survival-run-body">Survival Run — keep all vitals above <strong>35%</strong> for <strong>3 minutes</strong> in PLAY walk mode. Coffee, creek, and benches restore stats.</p>
-                <div class="survival-run-nav">
-                    <button id="survival-run-dismiss" type="button" class="btn-sm">DISMISS</button>
-                    <button id="survival-run-start" type="button" class="btn-sm">START</button>
-                </div>
-            </div>
+
             <div id="fps-crosshair" class="fps-crosshair" aria-hidden="true"></div>
             <p id="intro-caption" class="intro-caption" aria-live="polite"></p>
             <div id="third-eye-indicator" class="third-eye-indicator" aria-hidden="true" title="Third Eye active"></div>
@@ -600,29 +591,6 @@
                 </div>
                 <div class="insp-panel active" data-insp-panel="general">
                     <div class="prop-row"><label>Name</label> <input type="text" id="insp-name"></div>
-                    <div class="prop-row">
-                        <label>Survival</label>
-                        <select id="insp-survival-kind">
-                            <option value="">— none —</option>
-                            <option value="food">food</option>
-                            <option value="water">water</option>
-                            <option value="rest">rest</option>
-                            <option value="snack">snack</option>
-                        </select>
-                    </div>
-                    <div class="prop-row">
-                        <label>Ambient zone</label>
-                        <select id="insp-ambient-zone">
-                            <option value="">— none —</option>
-                            <option value="creek">creek</option>
-                            <option value="coffee">coffee</option>
-                            <option value="tesla">tesla</option>
-                            <option value="interior">interior</option>
-                            <option value="construction">construction</option>
-                            <option value="power_hum">power_hum</option>
-                        </select>
-                    </div>
-                    <div class="prop-row"><label>Zone radius</label><input type="number" id="insp-zone-radius" min="1" max="30" step="0.5" value="5"></div>
                     <div class="prop-row"><label>Interact hint</label><input type="text" id="insp-interact-hint" placeholder="F interact label"></div>
                     <div class="prop-row">
                         <label>Gizmo</label>
@@ -908,7 +876,6 @@
                 </div>
                 <div class="insert-tabs">
                     <button class="insert-tab active" data-tab="character">CHARACTER</button>
-                    <button class="insert-tab" data-tab="showcase">SHOWCASE</button>
                     <button class="insert-tab" data-tab="gltf">GLTF</button>
                     <button class="insert-tab" data-tab="player">PLAYER KEY</button>
                     <button class="insert-tab" data-tab="saved">SAVED</button>
@@ -918,12 +885,6 @@
                     <p class="insert-hint">Static NPC for scene dressing, or spawn yourself as a walkable human (reference for AI character design).</p>
                     <button id="insert-character" class="insert-action">INSERT NPC</button>
                     <button id="insert-spawn-player" class="insert-action secondary">SPAWN AS PLAYER</button>
-                </div>
-                <div class="insert-panel" data-panel="showcase">
-                    <p class="insert-hint">Curated Wardenclyffe snippets — BUILD mode only. Inserts at cursor / screen center.</p>
-                    <button id="insert-snippet-gateway" class="insert-action" type="button">GATEWAY ARCH</button>
-                    <button id="insert-snippet-terminals" class="insert-action secondary" type="button">TERMINAL CLUSTER</button>
-                    <button id="insert-snippet-survival" class="insert-action secondary" type="button">SURVIVAL PROP</button>
                 </div>
                 <div class="insert-panel" data-panel="gltf">
                     <p class="insert-hint">Blender export (.glb) or hosted URL. Object name should match Blender export for manifest sync.</p>
@@ -1002,7 +963,6 @@
                 <button id="host-passcode-save" type="button" class="insert-action secondary host-only-link">UPDATE PASSCODE</button>
                 <div id="host-player-list"></div>
                 <p id="host-voip-summary" class="insert-hint"></p>
-                <label class="insert-hint guest-survival-hud-row hidden"><input type="checkbox" id="guest-survival-hud"> Show my vitals HUD (guest)</label>
                 <hr style="border-color:var(--border-color); margin:12px 0;">
                 <label class="insert-hint"><input type="checkbox" id="host-auto-coding-pause" checked> Auto-pause when host opens Compiler / PromptGen</label>
                 <label class="insert-hint host-only-link"><input type="checkbox" id="host-scene-lock"> Scene lock (host-only edits)</label>

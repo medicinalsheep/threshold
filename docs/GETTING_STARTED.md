@@ -149,5 +149,5 @@ npm run store:verify              # optional smoke
 - [ROADMAP.md](ROADMAP.md) — v10.8+ forward plan
 - [STREAMLINED_DEV.md](STREAMLINED_DEV.md) — Portal → SETUP → export
 - [AGENT_ROUTING.md](AGENT_ROUTING.md) — tiered Ollama + Grok
-- [REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) — controls + optional survival
+- [CONTROLS.md](CONTROLS.md) — action controls + movement tuning
 - [CHANGELOG.md](CHANGELOG.md) — version history

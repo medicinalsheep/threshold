@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), tiered local/cloud agents, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **10.8.2**)
+**Version:** `src/config.js` → `VERSION` (currently **10.11.1**)
 
 **Doc index:** [docs/README.md](docs/README.md) — full scope map
 
@@ -14,10 +14,9 @@ Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blen
 |------|------|
 | Lobby | `src/lobby/` |
 | Engine | `src/engine/main.js` |
-| Starter scene | `src/shared/starterScene.js`, `starterTemplates.js`, `showcaseGateway.js` |
+| Starter scene | `src/shared/starterScene.js`, `starterGrid.js`, `starterTemplates.js` |
 | Guided session | `src/shared/guidedSession.js`, `walkthrough.js`, `actionHints.js` |
-| Survival | `survivalNeeds.js`, `survivalZones.js`, `survivalWorldHooks.js`, `survivalNeedsHud.js`, `survivalGameplay.js` |
-| Showcase | `showcaseGateway.js`, `showcaseSnippets.js`, `starterScene.js` |
+| Quality intake | `designIntake.js`, `agentPortal.js`, `starterTex.js` |
 | MP session | `network.js`, `sync.js`, `remotePlayers.js`, `hostMigration.js`, `syncStory.js` |
 | Realism | `player.js`, `fpsViewmodel.js`, `footsteps.js`, `npcPatrol.js` |
 | Graphics | `graphicsProfile.js`, `renderModes.js` — PBR default; retro opt-in |
@@ -149,7 +148,7 @@ Live manifest: `textures/threshold_manifest.json` (not `old/plugins/...` sample)
 | [docs/AGENT_ROUTING.md](docs/AGENT_ROUTING.md) | Tiered router, benchmarks, providers |
 | [docs/MODEL_DISTRIBUTION.md](docs/MODEL_DISTRIBUTION.md) | GitHub vs local weights policy |
 | [docs/BOOTCAMP.md](docs/BOOTCAMP.md) | Training bootcamp quick start |
-| [docs/REALISTIC_GAMEPLAY.md](docs/REALISTIC_GAMEPLAY.md) | Action controls, starter scene |
+| [docs/CONTROLS.md](docs/CONTROLS.md) | Action controls, movement tuning |
 | [docs/ASSET_CAPABILITIES.md](docs/ASSET_CAPABILITIES.md) | HILOD, codecs, presets, kit |
 | [docs/GIMP_TEXTURES.md](docs/GIMP_TEXTURES.md) | GIMP install + live SYNC |
 | [docs/BLENDER_AVATARS.md](docs/BLENDER_AVATARS.md) | Rigged GLB export |

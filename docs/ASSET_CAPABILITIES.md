@@ -184,24 +184,21 @@ npm run preview
 | `config/avatar-manifest.json` | Avatar / Blender contract |
 | `config/lod-distances.json` | Shared mesh + texture LOD distances |
 | `textures/threshold_manifest.json` | Runtime texture binding |
-| `docs/REALISTIC_GAMEPLAY.md` | Controls, survival, showcase site |
+| `old/docs/REALISTIC_GAMEPLAY.md` | Archived showcase/survival guide |
 | `docs/BLENDER_AVATARS.md` | Rig export checklist |
 | `docs/ROADMAP.md` | v10.8+ forward plan |
 
 ---
 
-## v9 showcase & gameplay systems
+## Quality-first asset systems (10.11+)
 
 | System | Module | Notes |
 |--------|--------|-------|
 | Guided session | `guidedSession.js` | PLAY/BUILD; `?mode=` deep link; guest skip |
-| Showcase gateway | `showcaseGateway.js` | Sign, curbs, golden hour, rain lamps |
-| Showcase snippets | `showcaseSnippets.js` | INSERT → gateway / terminals / survival prop |
-| Survival vitals | `survivalNeeds.js` | 6 stats; TC handoff; collapse vignette |
-| Survival zones | `survivalZones.js` | Passive + custom `ambientZone` markers |
-| World hooks | `survivalWorldHooks.js` | Tag props; inspector `survivalKind` |
-| Remote vitals pill | `remotePlayers.js` | HP/F/W above MP avatars (`avatar.v`) |
-| Export preflight | `exportPreflight.js` | Warns missing survival hooks |
+| Design brief | `designIntake.js` | Poly budget, min 1K texRes, GIMP/Blender workflow |
+| Agent quality gate | `agentPortal.js` | Asks workflow questions before codegen |
+| Starter textures | `starterTex.js`, `config/starter-textures.json` | Grid pad PBR; min 1K HILOD |
+| Export preflight | `exportPreflight.js` | Warns objects missing 1K+ PBR maps |
 | Scene undo | `sceneHistory.js` | Labels: `action · BUILD/PLAY · author` |
 | MP live sync | `sync.js` | `LIVE_STATE` + `sessionMode` + vitals |
 | MP manifests | `audioManifestSync.js`, `textureManifestSync.js` | Host pushes blobs on join |

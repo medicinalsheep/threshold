@@ -57,15 +57,13 @@ export function runExportPreflight() {
         warnings.push('Running code calls World.clearWorld() — export snapshot may not match play session.');
     }
 
-    const hasSurvivalProps = sceneObjects.some((o) => (
-        o.userData?.interactAction === 'survival' || o.userData?.survivalKind
-    ));
-    const hasAmbientZones = sceneObjects.some((o) => o.userData?.ambientZone);
-    const hasSurvivalScript = /applySurvivalWorldHooks|survivalKind|interactAction\s*[:=]\s*['"]survival['"]/i.test(running);
-    const tpl = State?.templateId || window.StarterTemplates?.getSelectedTemplateId?.();
-    const isShowcase = tpl === 'wardenclyffe';
-    if (!isShowcase && !hasSurvivalProps && !hasAmbientZones && !hasSurvivalScript) {
-        warnings.push('No survival hooks detected — tag props with survivalKind / ambientZone in SCENE → EDIT, or call applySurvivalWorldHooks() in Compiler.');
+    const lowTexObjects = sceneObjects.filter((o) => {
+        if (!o.material) return false;
+        const hilod = o.userData?.textureHilod?.activeBySlot?.albedo || '';
+        return hilod === '_512' || (!o.userData?.textures?.albedo && !o.material.map);
+    });
+    if (lowTexObjects.length > 2) {
+        warnings.push(`${lowTexObjects.length} object(s) lack 1K+ PBR maps — use GIMP SYNC or Blender GLB before ship.`);
     }
 
     if (inventory.soundRefs?.length) {

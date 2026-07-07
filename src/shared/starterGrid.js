@@ -26,7 +26,7 @@ export async function buildStarterGrid() {
     pad.receiveShadow = true;
     pad.userData = {
         id: 'starter_grid_pad',
-        name: 'Grid Pad',
+        name: 'Starter Ground',
         type: 'platform',
         locked: true,
         surfaceType: 'concrete',
@@ -65,12 +65,14 @@ export async function buildStarterGrid() {
             id: 'starter_ai_terminal',
             pos: { x: -2.8, y: 0, z: 2.4 },
             rotY: 0.35,
-            showcase: true,
+            showcase: false,
             name: 'AI Build Station',
             interactLabel: 'AI Build Station',
             interactHint: 'Connect agents — Grok · Ollama · build assistant',
         });
     }
+
+    window.StarterTex?.wireStarterTextures?.().catch(() => {});
 
     return pad;
 }

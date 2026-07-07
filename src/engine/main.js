@@ -86,12 +86,7 @@ import '../shared/collaborateGuard.js';
 import '../shared/textureManifestSync.js';
 import '../shared/guestRebuildTelemetry.js';
 import '../shared/hostMigration.js';
-import '../shared/survivalNeeds.js';
-import '../shared/survivalZones.js';
-import '../shared/survivalWorldHooks.js';
-import '../shared/survivalInteract.js';
-import '../shared/survivalNeedsHud.js';
-import '../shared/survivalGameplay.js';
+
 import { getRenderMode } from '../shared/renderModes.js';
 import { GraphicsProfile } from '../shared/graphicsProfile.js';
 import { GraphicsPrompt } from '../shared/graphicsPrompt.js';
@@ -101,7 +96,7 @@ import { Cinematic } from '../shared/cinematic.js';
 import '../shared/tcCircuit.js';
 import '../shared/tcDrive.js';
 import '../shared/tcGateFx.js';
-import '../shared/showcaseSnippets.js';
+
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 
@@ -158,9 +153,6 @@ export function initEngine() {
     Environment.init();
     UI.init();
     window.initCreatorHud?.();
-    window.initSurvivalNeeds?.();
-    window.initSurvivalNeedsHud?.();
-    window.initSurvivalGameplay?.();
     window.GuidedSession?.init?.();
     window.IntroSkip?.init?.();
     window.ActionHints?.init?.();
@@ -1723,18 +1715,6 @@ const UI = {
             Actions.dispatch('SPAWN_PLAYER', { pos: World.getCursorPos() });
             UI.closeInsert();
         });
-        document.getElementById('insert-snippet-gateway')?.addEventListener('click', () => {
-            window.ShowcaseSnippets?.insertGatewayArch?.();
-            UI.closeInsert();
-        });
-        document.getElementById('insert-snippet-terminals')?.addEventListener('click', () => {
-            window.ShowcaseSnippets?.insertTerminalCluster?.();
-            UI.closeInsert();
-        });
-        document.getElementById('insert-snippet-survival')?.addEventListener('click', () => {
-            window.ShowcaseSnippets?.insertSurvivalProp?.('food');
-            UI.closeInsert();
-        });
         document.getElementById('insert-player-btn')?.addEventListener('click', () => {
             const key = document.getElementById('insert-player-key')?.value;
             Actions.dispatch('INSERT_PLAYER', { key });
@@ -1788,7 +1768,7 @@ const UI = {
         ['insp-name', 'insp-color', 'insp-rough', 'insp-metal', 'insp-emissive', 'insp-emissive-int',
             'insp-physics', 'insp-mass', 'insp-friction', 'insp-restitution', 'insp-sound-freq', 'insp-sound-type',
             'insp-sound-mode', 'insp-sound-clip', 'insp-sound-trigger',
-            'insp-survival-kind', 'insp-ambient-zone', 'insp-zone-radius', 'insp-interact-hint'
+            'insp-interact-hint'
         ].forEach((id) => {
             document.getElementById(id)?.addEventListener('input', () => UI.applyInspectorFromUi());
             document.getElementById(id)?.addEventListener('change', () => {
@@ -2010,9 +1990,6 @@ const UI = {
     loadInspectorFromObject: function (obj) {
         if (!obj) return;
         document.getElementById('insp-name').value = obj.userData.name || '';
-        document.getElementById('insp-survival-kind').value = obj.userData.survivalKind || '';
-        document.getElementById('insp-ambient-zone').value = obj.userData.ambientZone || '';
-        document.getElementById('insp-zone-radius').value = obj.userData.zoneRadius ?? 5;
         document.getElementById('insp-interact-hint').value = obj.userData.interactHint || '';
         const mat = obj.material;
         if (mat?.color) document.getElementById('insp-color').value = '#' + mat.color.getHexString();
@@ -2110,23 +2087,6 @@ const UI = {
         const obj = State.selectedObject;
         if (!obj || !SimMode.canEditObject(obj)) return;
         obj.userData.name = document.getElementById('insp-name').value;
-        const survivalKind = document.getElementById('insp-survival-kind').value;
-        if (survivalKind) {
-            obj.userData.survivalKind = survivalKind;
-            obj.userData.interactAction = 'survival';
-        } else {
-            delete obj.userData.survivalKind;
-            if (obj.userData.interactAction === 'survival') delete obj.userData.interactAction;
-        }
-        const ambientZone = document.getElementById('insp-ambient-zone').value;
-        if (ambientZone) {
-            obj.userData.ambientZone = ambientZone;
-            const zoneRadius = parseFloat(document.getElementById('insp-zone-radius').value);
-            if (Number.isFinite(zoneRadius)) obj.userData.zoneRadius = zoneRadius;
-        } else {
-            delete obj.userData.ambientZone;
-            delete obj.userData.zoneRadius;
-        }
         const interactHint = document.getElementById('insp-interact-hint').value.trim();
         if (interactHint) obj.userData.interactHint = interactHint;
         else delete obj.userData.interactHint;

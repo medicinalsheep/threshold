@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "10.9.1",
+  "version": "10.11.1",
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
@@ -34,6 +34,7 @@
     "gimp:install": "node scripts/install-gimp-plugin.cjs",
     "blender:install": "node scripts/install-blender-addon.cjs",
     "textures:watch": "node scripts/creative-watch.cjs",
+    "manifest:prune": "node scripts/prune-manifest.cjs",
     "blender:export": "node scripts/blender-export.cjs",
     "blender:avatar": "node scripts/blender-export-avatar.cjs",
     "tc:build": "node scripts/tc-build.cjs",

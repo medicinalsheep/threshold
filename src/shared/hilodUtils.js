@@ -20,8 +20,7 @@ export function hasHilodSuffix(fileName = '') {
 export function preferenceOrder(textureMax, cfg = profilesConfig) {
     const key = String(textureMax);
     if (cfg.textureMaxPreference?.[key]) return cfg.textureMaxPreference[key];
-    if (textureMax <= 512) return ['_512', ''];
-    if (textureMax <= 1024) return ['_1k', '_512', ''];
+    if (textureMax <= 1024) return ['_1k', ''];
     if (textureMax <= 2048) return ['_2k', '_1k', ''];
     return ['_4k', '_2k', '_1k', ''];
 }

@@ -5,7 +5,7 @@ export const GRAPHICS_TIERS = {
     compatibility: {
         id: 'compatibility',
         label: 'Lite',
-        description: 'PBR realistic · no water · 512px textures — old phones & max reach',
+        description: 'PBR realistic · no water · 1K textures — old phones & max reach',
         renderMode: 4,
         env: { waterEnabled: false, atmosphereEnabled: false, fogDensity: 0.02 },
         physicsIterations: 8,
@@ -13,7 +13,7 @@ export const GRAPHICS_TIERS = {
         shadowMapSize: 1024,
         bloomStrength: 0.28,
         waterTexSize: 512,
-        textureMax: 512,
+        textureMax: 1024,
     },
     balanced: {
         id: 'balanced',

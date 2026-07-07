@@ -1,6 +1,6 @@
-# Threshold — Progress & Capabilities (v10.8)
+# Threshold — Progress & Capabilities (v10.11)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.8.2
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.11.1
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -22,15 +22,14 @@ Single progress snapshot — what ships today, how the pieces connect, and what 
 
 ---
 
-## Three content layers (optional)
+## Content layers
 
 | Layer | Entry | What you get |
 |-------|-------|--------------|
-| **Your game** | BUILD + Portal | Blank grid, agents, GIMP/Blender, export |
-| **TC editions** | Lobby → **TC →** | Vehicles, NPCs, circuit — bundled reference |
-| **Showcase props** | INSERT → SHOWCASE | Wardenclyffe snippets — not loaded by default |
+| **Your game** | BUILD + Portal | Blank grid, quality-gated AI, GIMP/Blender PBR, export |
+| **TC editions** | Lobby → **TC →** | Vehicles, NPCs, circuit — bundled reference only |
 
-Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md)
+Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survival docs archived in `old/docs/`
 
 ---
 
@@ -42,13 +41,12 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md)
 | Alt peek / Third Eye | `thirdEye.js` — Alt hold peek in immersive |
 | Walk / sprint / crouch / stealth | `controls.js` — stealth on **U** hold |
 | Touch controls | `touchControls.js` — full pad, UNLOCK drag layout |
-| Survival vitals (optional) | `survivalNeeds.js`, `survivalGameplay.js` |
-| Weather + ambient zones | `weatherSystem.js` |
+| Weather | `weatherSystem.js` |
 | F interact | `worldInteract.js` |
 | TC circuit + drive | `tcCircuit.js`, `tcDrive.js` |
 | Graphics tiers | `graphicsProfile.js` — PBR default; retro opt-in |
 
-[REALISTIC_GAMEPLAY.md](REALISTIC_GAMEPLAY.md) · [CONTROLS.md](CONTROLS.md)
+[CONTROLS.md](CONTROLS.md)
 
 ---
 

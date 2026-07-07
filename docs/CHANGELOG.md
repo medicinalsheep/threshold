@@ -1,5 +1,19 @@
 # Changelog
 
+## 10.11.1 — Manifest + starter module prune
+
+- **Manifest cleanup** — `threshold_manifest.json` pruned 100 → 25 entries; dropped `_512` variants and showcase-only object names
+- **Starter modules archived** — 14 unused `starterTesla*.js`, `starterUrban16.js`, etc. moved to `old/src/shared/`
+- **Script** — `npm run manifest:prune` for repeatable manifest hygiene
+
+## 10.11.0 — Quality-first purge
+
+- **Showcase removed** — INSERT SHOWCASE tab; survival/ambient/zone-radius inspector fields; survival HUD + run card
+- **Texture quality floor** — minimum 1K HILOD; Lite graphics tier 1K; default grid pad wires `Starter Ground` PBR maps
+- **AI quality gate** — Agent Portal system prompt + SETUP design brief require poly budget, texRes, GIMP/Blender workflow
+- **Archive** — `REALISTIC_GAMEPLAY.md`, `AMBIENT_ASSETS_ROADMAP.md`, showcase modules moved to `old/`
+- **Export preflight** — warns on objects missing 1K+ PBR instead of survival hooks
+
 ## 10.9.1 — Touch picker + lobby invite UX
 
 - **Touch + BTN** — in-app action picker replaces `window.prompt` when adding custom touch buttons (UNLOCK layout)

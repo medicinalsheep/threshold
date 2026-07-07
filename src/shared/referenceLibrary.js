@@ -5,18 +5,17 @@ export const REFERENCE_SECTIONS = ['workflows', 'players', 'worlds', 'techniques
 export const REFERENCE_LIBRARY = {
     workflows: [
         {
-            id: 'v9_creator_flow',
-            title: 'v9 Creator Flow — PLAY/BUILD, Survival, Export',
-            summary: 'End-to-end studio loop: lobby mode → guided tour → BUILD extend → PLAY test vitals → EXPORT & PLAY ship.',
-            checklist: ['Lobby PLAY/BUILD + template persists', 'INSERT → SHOWCASE snippets for gateway/terminals/survival', 'SCENE → EDIT survivalKind + ambientZone', 'MORE → EXPORT & PLAY · SYNC STORY for MP scope'],
-            code: `// v9 creator loop (UI order):
-// 1. Lobby — PLAY or BUILD → ENTER (Wardenclyffe default)
-// 2. Guided tour — mode, showcase, PromptGen, vitals, export
-// 3. BUILD — INSERT → SHOWCASE · Compiler EXAMPLES · SCENE dock
-// 4. PLAY — walk · F survival props · vitals HUD (V)
-// 5. SAVE WORLD → ?world=CODE · MORE → EXPORT & PLAY
-// 6. MP — CREATE SESSION · SYNC STORY · remote vitals pill
-// Replay tour: MORE → TUTORIAL (preserves sessionMode)`
+            id: 'quality_creator_flow',
+            title: 'Quality-First Creator Flow — BUILD, PBR, Export',
+            summary: 'Blank grid → SETUP design brief → AI quality gate → GIMP/Blender assets → PLAY test → EXPORT & PLAY.',
+            checklist: ['SETUP design brief — poly budget, min 1K PBR, export targets', 'AI Build Station asks workflow questions before codegen', 'INSERT → GLTF or Compiler — no bundled showcase props', 'SCENE → EDIT texture tab · GIMP SYNC from manifest', 'MORE → EXPORT & PLAY · SYNC STORY for MP scope'],
+            code: `// Quality-first loop (10.11+):
+// 1. Lobby — BUILD → ENTER (blank grid + AI Build Station)
+// 2. SETUP — design brief: style, texRes 1k+, GIMP or Blender path
+// 3. AI — Agent Portal confirms poly budget + PBR maps before Compiler
+// 4. BUILD — INSERT GLTF · GIMP textures/ · Compiler scripts
+// 5. PLAY — walk test · graphics tier (min 1K textures)
+// 6. EXPORT — preflight warns on missing PBR · bundle:assets for ship`
         },
         {
             id: 'survival_needs_api',

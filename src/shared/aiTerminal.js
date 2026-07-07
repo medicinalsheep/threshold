@@ -1,4 +1,4 @@
-/** In-world AI / model assignment kiosk — Sprint L showcase variant */
+/** In-world AI / model assignment kiosk — quality PBR when textures are wired */
 
 export function spawnAiTerminal(options = {}) {
     const T = window.THREE;
@@ -8,7 +8,7 @@ export function spawnAiTerminal(options = {}) {
 
     const pos = options.pos || { x: 2.8, y: 0, z: 1.2 };
     const rotY = options.rotY ?? -0.55;
-    const showcase = options.showcase !== false;
+    const showcase = options.showcase === true;
 
     const SM = window.StarterMaterials;
     const mats = showcase ? SM?.createStarterMaterials?.(T) : null;

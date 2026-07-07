@@ -38,10 +38,9 @@
       "notes": "High-end desktop — ultra tier, up to 4K; npm run package:steam"
     }
   },
-  "hilodSuffixes": ["_512", "_1k", "_2k", "_4k"],
+  "hilodSuffixes": ["_1k", "_2k", "_4k"],
   "textureMaxPreference": {
-    "512": ["_512", ""],
-    "1024": ["_1k", "_512", ""],
+    "1024": ["_1k", ""],
     "2048": ["_2k", "_1k", ""],
     "4096": ["_4k", "_2k", "_1k", ""]
   }
