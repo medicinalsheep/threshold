@@ -2723,9 +2723,6 @@ body.shell-steam.shell-electron::after {
     touch-action: none;
 }
 
-#touch-stick-left { left: 16px; }
-#touch-stick-right { right: 16px; }
-
 .touch-knob {
     position: absolute;
     left: 50%;
@@ -2756,9 +2753,56 @@ body.shell-steam.shell-electron::after {
     color: #000;
 }
 
-.touch-btn[data-touch-btn="jump"] { right: 100px; bottom: 100px; }
-.touch-btn[data-touch-btn="sprint"] { right: 100px; bottom: 36px; font-size: 0.55rem; }
-.touch-btn-action { right: 36px; bottom: 68px; }
+.touch-btn[data-touch-btn="sprint"],
+.touch-btn[data-touch-btn="enterVehicle"],
+.touch-btn[data-touch-btn="pause"] {
+    font-size: 0.55rem;
+}
+
+#touch-layout-root {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+#touch-layout-root .touch-layout-item {
+    pointer-events: auto;
+}
+
+.touch-add-btn {
+    position: fixed;
+    left: 50%;
+    bottom: max(12px, env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    z-index: 46;
+    pointer-events: auto;
+    padding: 8px 14px;
+    border: 1px dashed var(--accent-color);
+    background: rgba(0, 0, 0, 0.65);
+    color: var(--accent-color);
+    font-size: 0.62rem;
+    border-radius: 6px;
+}
+
+body.hub-layout-edit #touch-controls {
+    display: block !important;
+    pointer-events: auto;
+}
+
+body.hub-layout-edit #touch-controls .touch-layout-item {
+    outline: 1px dashed rgba(94, 184, 255, 0.55);
+    outline-offset: 2px;
+    cursor: grab;
+}
+
+body.hub-layout-edit #touch-controls .touch-layout-item:active {
+    cursor: grabbing;
+}
+
+body.third-eye-active #canvas-container canvas,
+body.third-eye-alt-peek #canvas-container canvas {
+    cursor: default;
+}
 
 .host-player-row {
     display: flex;

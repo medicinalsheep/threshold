@@ -90,6 +90,8 @@ export const HubLayout = {
         this.applyPositions();
         this.applyOverlayPositions();
         this.syncUi();
+        window.dispatchEvent(new CustomEvent('hub-layout-edit-change', { detail: { editing: !this._locked } }));
+        window.TouchControls?._syncEditMode?.();
 
         document.getElementById('hub-layout-lock')?.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -106,6 +108,10 @@ export const HubLayout = {
             const grip = overlayGrip(item);
             if (!grip) return;
             grip.addEventListener('pointerdown', (e) => this.onOverlayPointerDown(item, e));
+        });
+
+        document.getElementById('touch-controls')?.addEventListener('pointerdown', (e) => {
+            this.onTouchPointerDown(e);
         });
 
         window.addEventListener('pointermove', (e) => this.onPointerMove(e));
@@ -133,6 +139,9 @@ export const HubLayout = {
         this._locked = !this._locked;
         ViewPrefs.set('hubLayoutLocked', this._locked);
         document.body.classList.toggle('hub-layout-edit', !this._locked);
+        window.dispatchEvent(new CustomEvent('hub-layout-edit-change', { detail: { editing: !this._locked } }));
+        window.TouchControls?._syncEditMode?.();
+        window.TouchControls?._applyEnabled?.();
         this.syncUi();
         if (this._locked) {
             this.applyPositions();
@@ -140,7 +149,7 @@ export const HubLayout = {
             window.UI?.status?.('UI layout locked');
         } else {
             document.getElementById('app-nav')?.classList.remove('nav-ui-hidden-for-edit');
-            window.UI?.status?.('Drag corner buttons, HUD, chat, and header — tap LOCK when done');
+            window.UI?.status?.('Drag corners, HUD, chat, header & touch controls — tap LOCK when done');
         }
     },
 
@@ -222,6 +231,26 @@ export const HubLayout = {
         e.preventDefault();
     },
 
+    onTouchPointerDown(e) {
+        if (this._locked) return;
+        if (e.target.closest('#touch-add-btn')) return;
+        const el = e.target.closest('[data-touch-layout-id]');
+        if (!el) return;
+        if (e.button !== 0) return;
+
+        const rect = el.getBoundingClientRect();
+        this._drag = {
+            kind: 'touch',
+            id: el.dataset.touchLayoutId,
+            el,
+            offsetX: e.clientX - rect.left,
+            offsetY: e.clientY - rect.top,
+            pointerId: e.pointerId,
+        };
+        el.setPointerCapture?.(e.pointerId);
+        e.preventDefault();
+    },
+
     onOverlayPointerDown(item, e) {
         if (this._locked) return;
         if (e.button !== 0) return;
@@ -267,6 +296,11 @@ export const HubLayout = {
             el.style.left = `${x}px`;
             el.style.right = 'auto';
             el.style.bottom = 'auto';
+        } else if (this._drag.kind === 'touch') {
+            el.style.top = `${y}px`;
+            el.style.left = `${x}px`;
+            el.style.right = 'auto';
+            el.style.bottom = 'auto';
         } else {
             applyOverlayPosition(el, { x, y });
         }
@@ -283,6 +317,14 @@ export const HubLayout = {
                 y: parseFloat(el.style.top) || el.offsetTop,
             };
             saveHubPositions(saved);
+        } else if (this._drag.kind === 'touch') {
+            const rect = el.getBoundingClientRect();
+            window.TouchControls?.setItemPosition?.(this._drag.id, {
+                x: rect.left,
+                y: rect.top,
+                w: rect.width,
+                h: rect.height,
+            });
         } else {
             const saved = loadOverlayPositions();
             const rect = el.getBoundingClientRect();

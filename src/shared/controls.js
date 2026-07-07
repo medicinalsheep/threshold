@@ -560,7 +560,9 @@ export const Controls = {
         if (mode === 'walk') {
             const view = window.State?.viewMode === 'fps' ? 'FPS' : 'TPS';
             const lock = window.Engine?._lookPointerLocked ? ' · aim' : ' · click to aim';
-            return `${profile}${admin}: ${view} · LMB aim · RMB shoot · F interact/third eye · E vehicle${lock}${pad}${touch}`;
+            const peek = window.ThirdEye?.isPointerFree?.() ? ' · mouse free' : '';
+            const alt = document.body.classList.contains('ui-immersive') ? ' · Alt peek' : '';
+            return `${profile}${admin}: ${view} · LMB aim · RMB shoot · F third eye · Alt peek${lock}${peek}${alt}${pad}${touch}`;
         }
         return `${profile}${admin}: fly · Y walk · R-stick cam${pad}${touch}`;
     },

@@ -1115,13 +1115,23 @@ const Engine = {
         if (TouchControls.enabled && e.pointerType === 'touch') return;
 
         if (e.pointerType === 'mouse' || e.pointerType === 'pen') {
-            Controls.setMouseButton(e.button, true);
-            if (ThirdEye.active && this._isWalkPlayLook()) {
-                if (window.WorldInteract?.tryInteract?.()) return;
-            }
-            if (this._isWalkPlayLook() && !ThirdEye.active) {
-                this._requestLookLock();
-                return;
+            const playWalk = this._isWalkPlayLook();
+            const pointerFree = ThirdEye.isPointerFree?.() || ThirdEye.active;
+
+            if (playWalk && pointerFree) {
+                if (e.button === 0) {
+                    if (window.WorldInteract?.tryInteract?.()) return;
+                } else {
+                    Controls.setMouseButton(e.button, true);
+                }
+            } else if (playWalk && !pointerFree) {
+                Controls.setMouseButton(e.button, true);
+                if (e.button === 0 && State.viewMode === 'fps' && !Controls.isHolstered?.()) {
+                    this._requestLookLock();
+                }
+                if (playWalk) return;
+            } else {
+                Controls.setMouseButton(e.button, true);
             }
         }
 

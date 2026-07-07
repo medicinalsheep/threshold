@@ -30,37 +30,117 @@ export const ThirdEye = {
     _saved: new Map(),
     _lastScan: 0,
     _lockCount: 0,
+    _altPeek: false,
+    _altTriggered: false,
+    _altWired: false,
 
     init() {
         this._indicator = document.getElementById('third-eye-indicator');
         this._crosshair = document.getElementById('fps-crosshair');
+        this._wireAltPeek();
     },
 
-    toggle() {
-        this.active = !this.active;
-        if (this.active) {
-            window.Engine?._releaseLookLock?.();
-            window.StarterSfx?.playStarterSfx?.('starter_terminal_chirp', 0.28);
+    _wireAltPeek() {
+        if (this._altWired) return;
+        this._altWired = true;
+
+        window.addEventListener('keydown', (e) => {
+            if (e.repeat) return;
+            if (e.code !== 'AltLeft' && e.code !== 'AltRight') return;
+            if (!this._canAltPeek()) return;
+            if (this._altPeek) return;
+            if (document.body.classList.contains('hub-layout-edit')) return;
+
+            const immersive = document.body.classList.contains('ui-immersive') || !!document.fullscreenElement;
+            if (immersive) e.preventDefault();
+
+            this._altPeek = true;
+            if (!this.active) {
+                this._altTriggered = true;
+                this._enablePeek({ fromAlt: true });
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.code !== 'AltLeft' && e.code !== 'AltRight') return;
+            if (!this._altPeek) return;
+            this._altPeek = false;
+            if (this._altTriggered) {
+                this._disablePeek({ fromAlt: true });
+                this._altTriggered = false;
+            }
+        });
+
+        window.addEventListener('blur', () => {
+            if (!this._altPeek) return;
+            this._altPeek = false;
+            if (this._altTriggered) {
+                this._disablePeek({ fromAlt: true });
+                this._altTriggered = false;
+            }
+        });
+    },
+
+    _canAltPeek() {
+        const walkPlay = window.Engine?._isWalkPlayLook?.();
+        if (!walkPlay) return false;
+        if (window.State?.isPaused) return false;
+        return true;
+    },
+
+    isPointerFree() {
+        return this.active || this._altPeek;
+    },
+
+    _enablePeek({ fromAlt = false } = {}) {
+        window.Engine?._releaseLookLock?.();
+        if (!this.active) {
+            this.active = true;
+            window.StarterSfx?.playStarterSfx?.('starter_terminal_chirp', fromAlt ? 0.12 : 0.28);
             this._scan();
-        } else {
-            this._clearHighlights();
         }
         this.updateHud();
         document.body.classList.toggle('third-eye-active', this.active);
-        window.UI?.status?.(this.active ? 'Third Eye — click UI & props · F to interact' : 'Third Eye — off');
+        document.body.classList.toggle('third-eye-alt-peek', fromAlt || this._altPeek);
+        if (fromAlt) {
+            window.UI?.status?.('Alt — Third Eye peek (release Alt to aim)');
+        }
+    },
+
+    _disablePeek({ fromAlt = false } = {}) {
+        if (!fromAlt || this._altTriggered) {
+            this.active = false;
+            this._clearHighlights();
+            document.body.classList.remove('third-eye-active', 'third-eye-alt-peek');
+            this.updateHud();
+            if (fromAlt) window.UI?.status?.('Third Eye peek off — LMB aim');
+        }
+    },
+
+    toggle() {
+        if (this._altPeek) return this.active;
+        if (this.active) {
+            this._disablePeek({});
+            window.UI?.status?.('Third Eye — off');
+        } else {
+            this._enablePeek({});
+            window.UI?.status?.('Third Eye — click UI & props · F to interact');
+        }
         return this.active;
     },
 
     updateHud() {
         const walk = window.State?.controlMode === 'walk' && window.PlayerController?.spawned;
         const fps = walk && window.State?.viewMode === 'fps';
-        this._crosshair?.classList.toggle('visible', fps);
+        const peek = this.isPointerFree();
+        this._crosshair?.classList.toggle('visible', fps && !peek);
         this._indicator?.classList.toggle('visible', this.active);
         if (this._indicator && this.active) {
             const lockNote = this._lockCount
                 ? ` · ${this._lockCount} locked`
                 : '';
-            this._indicator.title = `Third Eye active${lockNote}`;
+            const altNote = this._altPeek ? ' · Alt peek' : '';
+            this._indicator.title = `Third Eye active${lockNote}${altNote}`;
         }
     },
 
