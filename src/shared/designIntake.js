@@ -7,6 +7,18 @@ import { ViewPrefs } from './viewPrefs.js';
 import { SoundLibrary } from './soundLibrary.js';
 import { AgentRouter } from './agentRouter.js';
 import { stripCodeFences } from './agentPrompts.js';
+import {
+    PLACEMENT_OPTIONS,
+    WEATHER_EXPOSURE_OPTIONS,
+    WEATHER_VARIANT_OPTIONS,
+    SURFACE_TYPE_OPTIONS,
+    COLLISION_OPTIONS,
+    buildProductionPlan,
+    buildProductionReviewPrompt,
+    buildDesignAgentSystemPrompt,
+    formatPipelineChecklist,
+    defaultProductionAnswers,
+} from './assetProductionPlan.js';
 
 export const DESIGN_TYPES = [
     { id: 'world', label: 'World / Environment', hint: 'Terrain, lighting, layout, atmosphere' },
@@ -60,7 +72,12 @@ export const DesignIntake = {
         if (this._modal) this._modal.dataset.bound = '1';
 
         document.getElementById('design-intake-close')?.addEventListener('click', () => this.hide());
-        document.getElementById('design-intake-back')?.addEventListener('click', () => this.showStep('type'));
+        document.getElementById('design-intake-back')?.addEventListener('click', () => {
+            const step = document.querySelector('[data-intake-step]:not(.hidden)')?.dataset?.intakeStep;
+            if (step === 'production') this.showStep('details');
+            else if (step === 'details' || step === 'questions') this.showStep('type');
+            else if (step === 'review') this.showStep('production');
+        });
         document.getElementById('design-intake-submit')?.addEventListener('click', () => this.submitBrief());
         document.getElementById('design-intake-run')?.addEventListener('click', () => this.runAgent());
         document.getElementById('setup-start-brief')?.addEventListener('click', () => this.show());
@@ -99,11 +116,15 @@ export const DesignIntake = {
         const back = document.getElementById('design-intake-back');
         const submit = document.getElementById('design-intake-submit');
         const run = document.getElementById('design-intake-run');
-        if (back) back.style.display = step === 'details' || step === 'questions' ? 'inline-block' : 'none';
-        if (submit) submit.style.display = step === 'details' ? 'inline-block' : 'none';
+        if (back) back.style.display = ['details', 'production', 'questions'].includes(step) ? 'inline-block' : 'none';
+        if (submit) submit.style.display = step === 'details' || step === 'production' ? 'inline-block' : 'none';
         if (run) run.style.display = step === 'review' ? 'inline-block' : 'none';
+        if (submit) {
+            submit.textContent = step === 'production' ? 'REVIEW PLAN' : step === 'details' ? 'NEXT — PLACEMENT & WEATHER' : 'REVIEW BRIEF';
+        }
 
         if (step === 'details') this.renderDetailsForm();
+        if (step === 'production') this.renderProductionForm();
         if (step === 'review') this.renderReview();
         if (step === 'questions') this.renderQuestionForm(this._pendingQuestions);
     },
@@ -241,6 +262,78 @@ export const DesignIntake = {
         }
     },
 
+    renderProductionForm() {
+        const body = document.getElementById('design-intake-production');
+        if (!body) return;
+        const p = { ...defaultProductionAnswers(), ...(this._brief?.answers?.production || {}) };
+        const variants = new Set(p.weatherVariants || []);
+
+        body.innerHTML = `
+            <p class="design-intake-kicker">Step 3 — Placement, weather & collision</p>
+            <p class="insert-hint">Review before codegen — order matters: collision → textures → weather hooks → Compiler.</p>
+            <label class="design-field">
+                <span>Placement</span>
+                <select id="di-placement" class="insert-input">
+                    ${PLACEMENT_OPTIONS.map((o) => `<option value="${esc(o.id)}" ${p.placement === o.id ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}
+                </select>
+            </label>
+            <label class="design-field">
+                <span>Weather exposure</span>
+                <select id="di-weather-exp" class="insert-input">
+                    ${WEATHER_EXPOSURE_OPTIONS.map((o) => `<option value="${esc(o.id)}" ${p.weatherExposure === o.id ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}
+                </select>
+            </label>
+            <fieldset class="design-fieldset">
+                <legend>Weather surface variants (exterior)</legend>
+                ${WEATHER_VARIANT_OPTIONS.map((o) => `
+                    <label class="design-check"><input type="checkbox" class="di-weather-var" value="${esc(o.id)}" ${variants.has(o.id) ? 'checked' : ''}> ${esc(o.label)}</label>
+                `).join('')}
+            </fieldset>
+            <label class="design-field">
+                <span>Footstep / rain surfaceType</span>
+                <select id="di-surface" class="insert-input">
+                    ${SURFACE_TYPE_OPTIONS.map((s) => `<option value="${esc(s)}" ${p.surfaceType === s ? 'selected' : ''}>${esc(s)}</option>`).join('')}
+                </select>
+            </label>
+            <label class="design-field">
+                <span>Collision</span>
+                <select id="di-collision" class="insert-input">
+                    ${COLLISION_OPTIONS.map((o) => `<option value="${esc(o.id)}" ${p.collision === o.id ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}
+                </select>
+            </label>
+            <label class="design-check"><input type="checkbox" id="di-sheltered" ${p.sheltered ? 'checked' : ''}> zoneSheltered (interior / covered)</label>
+            <label class="design-check"><input type="checkbox" id="di-interact" ${p.interact ? 'checked' : ''}> F-key interact + optional sound</label>
+            <label class="design-field">
+                <span>Production notes</span>
+                <textarea id="di-prod-notes" class="insert-input" rows="2" placeholder="e.g. wet cobble only on exterior pad; glass kiosk uses wetGlass">${esc(p.notes || '')}</textarea>
+            </label>
+            <p class="insert-hint"><strong>Pipeline:</strong> ${esc(formatPipelineChecklist(buildProductionPlan(this._brief)))}</p>
+        `;
+
+        const syncWeather = () => {
+            const placement = document.getElementById('di-placement')?.value;
+            const sheltered = placement === 'interior';
+            const cb = document.getElementById('di-sheltered');
+            if (cb && sheltered) cb.checked = true;
+        };
+        document.getElementById('di-placement')?.addEventListener('change', syncWeather);
+    },
+
+    collectProductionAnswers() {
+        const weatherVariants = [...document.querySelectorAll('.di-weather-var:checked')].map((el) => el.value);
+        return {
+            placement: document.getElementById('di-placement')?.value || 'exterior',
+            weatherExposure: document.getElementById('di-weather-exp')?.value || 'full',
+            weatherVariants,
+            surfaceType: document.getElementById('di-surface')?.value || 'concrete',
+            collision: document.getElementById('di-collision')?.value || 'static',
+            sheltered: !!document.getElementById('di-sheltered')?.checked,
+            wetGlass: weatherVariants.includes('wet_glass'),
+            interact: !!document.getElementById('di-interact')?.checked,
+            notes: document.getElementById('di-prod-notes')?.value?.trim() || '',
+        };
+    },
+
     collectAnswers() {
         const exports = [...document.querySelectorAll('input[name="di-export"]:checked')].map((el) => el.value);
         const soundIds = [...document.querySelectorAll('.di-sound-pick:checked')].map((el) => el.value);
@@ -260,6 +353,22 @@ export const DesignIntake = {
 
     submitBrief() {
         if (!this._brief?.type) return;
+        const step = document.querySelector('[data-intake-step]:not(.hidden)')?.dataset?.intakeStep;
+        if (step === 'details') {
+            this._brief.answers = { ...(this._brief.answers || {}), ...this.collectAnswers() };
+            saveBrief(this._brief);
+            this.showStep('production');
+            return;
+        }
+        if (step === 'production') {
+            this._brief.answers = {
+                ...(this._brief.answers || {}),
+                production: this.collectProductionAnswers(),
+            };
+            saveBrief(this._brief);
+            this.showStep('review');
+            return;
+        }
         this._brief.answers = this.collectAnswers();
         saveBrief(this._brief);
         this.showStep('review');
@@ -269,19 +378,25 @@ export const DesignIntake = {
         const el = document.getElementById('design-intake-review');
         const type = DESIGN_TYPES.find((t) => t.id === this._brief?.type);
         const a = this._brief?.answers || {};
+        const plan = buildProductionPlan(this._brief);
         if (!el || !type) return;
         el.innerHTML = `
             <p class="design-intake-kicker">Review — ${esc(type.label)}</p>
             <dl class="design-review-dl">
                 <dt>Title</dt><dd>${esc(a.title || '—')}</dd>
                 <dt>Description</dt><dd>${esc(a.description || '—')}</dd>
+                <dt>Placement</dt><dd>${esc(plan.placementLabel)}</dd>
+                <dt>Weather</dt><dd>${esc(plan.weatherExposureLabel)}${plan.weatherVariants.length ? ` · ${esc(plan.weatherVariants.join(', '))}` : ''}</dd>
+                <dt>Surface / collision</dt><dd>${esc(plan.surfaceType)} · ${esc(plan.collisionLabel)}</dd>
                 <dt>Export</dt><dd>${esc((a.exports || []).join(', '))}</dd>
                 <dt>Poly</dt><dd>${esc(a.poly)}${a.poly === 'custom' ? ` (${a.polyCustom} tris)` : ''}</dd>
-                <dt>Textures</dt><dd>${esc(a.texture)} · min ${esc(a.texRes || '1k')} · ${esc(a.style)}</dd>
+                <dt>Textures</dt><dd>${esc(a.texture)} · ${esc(a.texRes || '2k')} master · ${esc(a.style)}</dd>
+                <dt>Pipeline</dt><dd>${esc(formatPipelineChecklist(plan))}</dd>
                 <dt>Sounds</dt><dd>${(a.soundIds || []).length ? esc(a.soundIds.join(', ')) : 'none selected'}</dd>
                 <dt>Constraints</dt><dd>${esc(a.constraints || '—')}</dd>
+                ${plan.notes ? `<dt>Prod notes</dt><dd>${esc(plan.notes)}</dd>` : ''}
             </dl>
-            <p class="insert-hint">Agent may ask follow-up questions before generating Compiler-ready code.</p>
+            <p class="insert-hint">Agent follows pipeline order — may ask one follow-up before Compiler codegen.</p>
         `;
     },
 
@@ -289,21 +404,24 @@ export const DesignIntake = {
         const type = this._brief?.type || 'prop';
         const a = this._brief?.answers || {};
         const typeLabel = DESIGN_TYPES.find((t) => t.id === type)?.label || type;
+        const planBlock = buildProductionReviewPrompt(buildProductionPlan(this._brief));
         return `DESIGN BRIEF — ${typeLabel}
 Title: ${a.title || 'Untitled'}
 Description: ${a.description || '(none)'}
 Export targets: ${(a.exports || ['web']).join(', ')}
 Poly budget: ${a.poly}${a.poly === 'custom' ? ` (${a.polyCustom} tris)` : ''}
-Texture workflow: ${a.texture} (${a.style} style)
+Texture workflow: ${a.texture} · ${a.texRes || '2k'} master (${a.style} style)
 Reference sound IDs: ${(a.soundIds || []).join(', ') || 'none'}
 Constraints: ${a.constraints || 'none'}
 ${a.followUp && Object.keys(a.followUp).length ? `Follow-up answers: ${JSON.stringify(a.followUp)}` : ''}
+
+${planBlock}
 
 If critical details are missing, respond ONLY with a JSON block (no markdown prose):
 \`\`\`json
 {"intake_questions":[{"id":"...","label":"...","type":"text|select|number|textarea|sound_pick","options":["..."],"required":true}]}
 \`\`\`
-Otherwise return executable Threshold JavaScript (IIFE) for Compiler.`;
+Otherwise return executable Threshold JavaScript (IIFE) for Compiler — wire userData per production plan BEFORE UI.status.`;
     },
 
     parseIntakeQuestions(text) {
@@ -367,7 +485,7 @@ Otherwise return executable Threshold JavaScript (IIFE) for Compiler.`;
             const prompt = this.buildPrompt();
             const result = await AgentRouter.runTask('prompter_generate', {
                 idea: prompt,
-                systemOverride: `You are Threshold design agent. Read the DESIGN BRIEF. Ask follow-up questions via intake_questions JSON if needed. Otherwise output ONLY executable JavaScript IIFE extending the blank grid scene. Honor export targets, poly budget, GIMP/Blender texture paths, and reference sound IDs.`,
+                systemOverride: buildDesignAgentSystemPrompt(),
             });
 
             const questions = this.parseIntakeQuestions(result.code || result.text || '');

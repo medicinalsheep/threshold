@@ -308,11 +308,14 @@
                     <button type="button" id="design-intake-close" class="btn-sm">✕</button>
                 </div>
                 <div data-intake-step="type">
-                    <p class="insert-hint">What are you creating? Pick a type — then set poly budget, sounds, textures, and export targets up front (like <a href="https://medicinalsheep.github.io/grokdevprompt/" target="_blank" rel="noopener noreferrer">GrokDevPrompt</a>).</p>
+                    <p class="insert-hint">What are you creating? Pick a type — then placement/weather review, textures, collision, and export targets before the agent generates (pipeline order enforced).</p>
                     <div id="design-type-grid" class="design-type-grid"></div>
                 </div>
                 <div data-intake-step="details" class="hidden">
                     <div id="design-intake-form"></div>
+                </div>
+                <div data-intake-step="production" class="hidden">
+                    <div id="design-intake-production"></div>
                 </div>
                 <div data-intake-step="review" class="hidden">
                     <div id="design-intake-review"></div>

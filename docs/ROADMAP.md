@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.11.2 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.11.3 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -74,6 +74,12 @@ UI reference: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Controls: [CONTROLS.md](CO
 - **`textures:gen:default`** — 2K masters for Starter Ground + AI Build Station
 - **`textures:hilod`** — master PNG → `_1k`/`_2k` tiers; watch auto-runs on GIMP save
 - **WebP sidecars** — compressed delivery for Lite/Mobile tiers (per-tier encode caps)
+
+## 10.11.3 — Production plan + agent prompts ✅
+
+- **Pipeline order** — scope → collision → mesh → textures → HILOD → weather → interact → codegen → verify
+- **Review gate** — SETUP brief Step 3: interior/exterior, weather variants, surfaceType, collision
+- **Agent prompts** — Portal + design agent embed engine texture/weather/collision rules
 
 ---
 

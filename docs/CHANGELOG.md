@@ -1,5 +1,13 @@
 # Changelog
 
+## 10.11.3 — Asset production plan + prompt engineering
+
+- **assetProductionPlan.js** — 9-step pipeline (scope → collision → mesh → textures → HILOD → weather → interact → codegen → verify)
+- **SETUP design brief** — Step 3 review: interior/exterior, weather exposure, wet/dust/snow/wet-glass, surfaceType, collision
+- **Agent Portal** — intake asks placement & weather before ready JSON; codegen prompt includes full production plan
+- **buildJob** — multi-step builds add collision, texture manifest, and weather hook phases
+- **sceneApiPrompt** — documents userData.surfaceType, wetGlass, zoneSheltered, manifest name parity
+
 ## 10.11.2 — 2K default textures + compression pipeline
 
 - **Default textures** — `npm run textures:gen:default` generates 2K PBR for Grid Pad + AI Build Station

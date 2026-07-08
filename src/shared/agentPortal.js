@@ -14,6 +14,7 @@ import { sanitizeSceneCode, codeReadinessSummary } from './codeSanitizer.js';
 import { TIER_GUIDE, tierOptionsHtml, renderTierGuideHtml } from './agentModelGuide.js';
 import { BuildJob } from './buildJob.js';
 import { getSceneApiPrompt } from './sceneApiPrompt.js';
+import { buildAgentPortalSystemPrompt, buildCompilerRequest } from './assetProductionPlan.js';
 import { assessTierPrefs, renderMatrixHtml, buildModelMatrix, countDistinctLocalModels, getDeviceProfile } from './modelCapability.js';
 import { OllamaRunQueue } from './ollamaRunQueue.js';
 import { WorkFolderScope } from './workFolderScope.js';
@@ -70,26 +71,7 @@ function hostingContext() {
 }
 
 function buildChatSystem() {
-    return `You are Threshold Build Assistant. The user entered a blank 3D grid with:
-- Compiler (live JavaScript scene scripts)
-- PromptGen (AI world descriptions)
-- GIMP textures/ + npm run textures:watch (local hot-reload)
-- Blender import/ GLB pipeline
-- Tiered agents: small=chat, medium=patches, large=full scene scripts
-
-QUALITY GATE — before generating assets, confirm these (one question at a time):
-1. Asset type + purpose (world, prop, character, texture, sound)
-2. Visual style + reference (realistic PBR default; mood, era, palette)
-3. Texture workflow: GIMP PBR maps (min 1K albedo+roughness+normal) OR Blender GLB with embedded PBR
-4. Poly budget (low <2k, medium 2k–12k, high 12k–40k) and export targets (web/mobile/desktop)
-5. Optimization: LOD/HILOD needed? Collision/physics? MP sync scope?
-
-Never ship procedural canvas textures, 512px-only maps, or unoptimized placeholder meshes.
-After GIMP export at 2K+, run npm run textures:watch — auto-builds _1k/_2k HILOD tiers + compressed WebP for Lite/Mobile tiers.
-Ask ONE clear question at a time. Keep replies under 3 sentences.
-When you have enough to generate Compiler-ready code, respond ONLY with JSON (no markdown):
-{"ready":true,"taskType":"world|character|prop|animation|texture|sound","title":"short name","summary":"what to build","style":"realistic PBR default","textureRes":"1k|2k|4k","polyBudget":"low|medium|high","workflow":"gimp|blender|both"}
-Otherwise respond with plain text — a single focused question.`;
+    return buildAgentPortalSystemPrompt();
 }
 
 function parseReadySignal(text) {
@@ -667,21 +649,13 @@ export const AgentPortal = {
                 meta = last ? `${last.provider}/${last.model} · ${job.log.length} steps` : 'build-job';
             } else {
                 if (status) status.textContent = 'Generating scene (large tier)…';
-                const idea = `BUILD REQUEST
-Type: ${ctx.taskType || 'world'}
-Title: ${ctx.title || 'Untitled'}
-Summary: ${ctx.summary || ''}
-Style: ${ctx.style || 'realistic PBR default'}
-Conversation:
-${(this._session.chatHistory || []).map((m) => `${m.role}: ${m.text}`).join('\n')}
+                const idea = `${buildCompilerRequest(ctx, this._session.chatHistory || [])}
 
-${getSceneApiPrompt()}
-
-Output ONLY executable Threshold JavaScript IIFE for Compiler. Extend the blank grid. No World.clearWorld().`;
+${getSceneApiPrompt()}`;
 
                 const result = await AgentRouter.runTask('prompter_generate', {
                     idea,
-                    systemOverride: `Threshold scene agent. Realistic PBR defaults. Full IIFE with try/catch.\n${getSceneApiPrompt()}`,
+                    systemOverride: `Threshold scene agent. Follow ASSET PRODUCTION PLAN order. Full IIFE with try/catch.\n${getSceneApiPrompt()}`,
                 }, { timeoutMs: 300000 });
                 code = result.code || result.text || '';
                 meta = `${result.provider}/${result.model} · ${result.ms}ms`;

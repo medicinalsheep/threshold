@@ -12,6 +12,9 @@ const PREFS_KEY = 'buildJobPrefs';
 const STEP_PLANS = {
     world: [
         { id: 'layout', label: 'Floor & layout', tier: 'large', taskId: 'prompter_generate' },
+        { id: 'collision', label: 'Collision & surfaceType', tier: 'medium', taskId: 'dev_suggest' },
+        { id: 'textures', label: 'Texture paths & GIMP names', tier: 'medium', taskId: 'prompt_snippet' },
+        { id: 'weather', label: 'Weather hooks (wet/shelter)', tier: 'medium', taskId: 'dev_suggest' },
         { id: 'props', label: 'Props & landmarks', tier: 'medium', taskId: 'dev_suggest' },
         { id: 'atmosphere', label: 'Lighting & atmosphere', tier: 'medium', taskId: 'dev_suggest' },
     ],
@@ -20,7 +23,10 @@ const STEP_PLANS = {
         { id: 'detail', label: 'Appearance & metadata', tier: 'medium', taskId: 'dev_patch' },
     ],
     prop: [
-        { id: 'prop', label: 'Prop object', tier: 'medium', taskId: 'dev_suggest' },
+        { id: 'collision', label: 'Collision & surfaceType', tier: 'medium', taskId: 'dev_suggest' },
+        { id: 'prop', label: 'Prop mesh', tier: 'medium', taskId: 'dev_suggest' },
+        { id: 'textures', label: 'PBR manifest slots', tier: 'medium', taskId: 'prompt_snippet' },
+        { id: 'weather', label: 'Weather / interact hooks', tier: 'medium', taskId: 'dev_suggest' },
     ],
     animation: [
         { id: 'motion', label: 'Motion / rotation hooks', tier: 'medium', taskId: 'dev_suggest' },
@@ -62,6 +68,15 @@ Output ONLY new JavaScript to append inside the same IIFE pattern. Use World.cre
 
     if (step.id === 'layout') {
         return `${base}\nFocus: floor/platform, spatial bounds, locked ground. 3–8 objects max.`;
+    }
+    if (step.id === 'collision') {
+        return `${base}\nFocus: userData.surfaceType, locked static floors, hasPhysics/mass. No new decorative meshes.`;
+    }
+    if (step.id === 'textures') {
+        return `${base}\nFocus: comment // TEXTURE: objectName → textures/slug_albedo.png — names must match userData.name. No mesh spam.`;
+    }
+    if (step.id === 'weather') {
+        return `${base}\nFocus: exterior surfaceType for rain wetness; interior zoneSheltered; wetGlass on glass. No clearWorld.`;
     }
     if (step.id === 'props') {
         return `${base}\nFocus: scatter interactive props, beacons, crates. Build on existing floor.`;

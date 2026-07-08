@@ -37,6 +37,7 @@ import '../shared/starterSiteLayout.js';
 import { bootstrapSelectedTemplate } from '../shared/starterTemplates.js';
 import '../shared/worldInteract.js';
 import '../shared/sessionUi.js';
+import '../shared/assetProductionPlan.js';
 import '../shared/designIntake.js';
 import '../shared/agentPortal.js';
 import '../shared/agentReconnectChip.js';
