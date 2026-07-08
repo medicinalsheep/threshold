@@ -6,6 +6,7 @@ import { AgentRouter } from './agentRouter.js';
 import { sanitizeSceneCode } from './codeSanitizer.js';
 import { getSceneApiPrompt } from './sceneApiPrompt.js';
 import { stripCodeFences } from './agentPrompts.js';
+import { buildProductionPlan, buildProductionReviewPrompt } from './assetProductionPlan.js';
 
 const PREFS_KEY = 'buildJobPrefs';
 
@@ -14,9 +15,10 @@ const STEP_PLANS = {
         { id: 'layout', label: 'Floor & layout', tier: 'large', taskId: 'prompter_generate' },
         { id: 'collision', label: 'Collision & surfaceType', tier: 'medium', taskId: 'dev_suggest' },
         { id: 'textures', label: 'Texture paths & GIMP names', tier: 'medium', taskId: 'prompt_snippet' },
-        { id: 'weather', label: 'Weather hooks (wet/shelter)', tier: 'medium', taskId: 'dev_suggest' },
-        { id: 'props', label: 'Props & landmarks', tier: 'medium', taskId: 'dev_suggest' },
+        { id: 'weather', label: 'Weather hooks (wet/dust/snow)', tier: 'medium', taskId: 'dev_suggest' },
         { id: 'atmosphere', label: 'Lighting & atmosphere', tier: 'medium', taskId: 'dev_suggest' },
+        { id: 'shaders', label: 'Material presets', tier: 'medium', taskId: 'dev_suggest' },
+        { id: 'props', label: 'Props & landmarks', tier: 'medium', taskId: 'dev_suggest' },
     ],
     character: [
         { id: 'placeholder', label: 'Character placeholder', tier: 'medium', taskId: 'dev_suggest' },
@@ -27,6 +29,7 @@ const STEP_PLANS = {
         { id: 'prop', label: 'Prop mesh', tier: 'medium', taskId: 'dev_suggest' },
         { id: 'textures', label: 'PBR manifest slots', tier: 'medium', taskId: 'prompt_snippet' },
         { id: 'weather', label: 'Weather / interact hooks', tier: 'medium', taskId: 'dev_suggest' },
+        { id: 'shaders', label: 'Material preset', tier: 'medium', taskId: 'dev_suggest' },
     ],
     animation: [
         { id: 'motion', label: 'Motion / rotation hooks', tier: 'medium', taskId: 'dev_suggest' },
@@ -53,13 +56,40 @@ function savePrefs(patch) {
     return next;
 }
 
+function productionBlock(ctx) {
+    if (!ctx.placement && !ctx.weatherExposure) return '';
+    const plan = buildProductionPlan({
+        type: ctx.taskType || 'world',
+        answers: {
+            title: ctx.title,
+            description: ctx.summary,
+            texRes: ctx.textureRes,
+            texture: ctx.workflow,
+            poly: ctx.polyBudget,
+            style: ctx.style,
+            production: {
+                placement: ctx.placement,
+                weatherExposure: ctx.weatherExposure,
+                weatherVariants: ctx.weatherVariants || [],
+                surfaceType: ctx.surfaceType,
+                collision: ctx.collision,
+                sheltered: ctx.sheltered,
+                atmospherePreset: ctx.atmospherePreset,
+                shaderPreset: ctx.shaderPreset,
+                audioZone: ctx.audioZone,
+            },
+        },
+    });
+    return `\n${buildProductionReviewPrompt(plan)}\n`;
+}
+
 function stepPrompt(step, ctx, priorCode) {
     const base = `BUILD STEP: ${step.label}
 Type: ${ctx.taskType || 'world'}
 Title: ${ctx.title || 'Untitled'}
 Summary: ${ctx.summary || ''}
 Style: ${ctx.style || 'realistic PBR default'}
-
+${productionBlock(ctx)}
 ${getSceneApiPrompt()}
 
 ${priorCode ? `PRIOR CODE (extend — do not duplicate objects):\n\`\`\`js\n${priorCode.slice(-1200)}\n\`\`\`` : ''}
@@ -82,7 +112,10 @@ Output ONLY new JavaScript to append inside the same IIFE pattern. Use World.cre
         return `${base}\nFocus: scatter interactive props, beacons, crates. Build on existing floor.`;
     }
     if (step.id === 'atmosphere') {
-        return `${base}\nFocus: Engine.setRenderMode(4), Environment.setTimeOfDay, Environment.setFog. No new meshes unless accents.`;
+        return `${base}\nFocus: Engine.setRenderMode(4), Environment.setTimeOfDay, Environment.setFog. userData.audioZone on interior volumes. No mesh spam.`;
+    }
+    if (step.id === 'shaders') {
+        return `${base}\nFocus: MaterialPresets.applyMaterialPreset per hero mesh; userData.materialPreset id. No CanvasTexture.`;
     }
     return base;
 }

@@ -22,11 +22,18 @@ UI.status('message') — feedback to user
 userData hooks (set on meshes):
   surfaceType — 'concrete'|'asphalt'|'wood'|'metal'|'gravel'|'grass'|'glass' (footsteps + rain wetness)
   wetGlass — true on glass panes (rain transmission/roughness lerp)
+  dustExposure — 0–1 dry wear when rain low (roughness + albedo mute)
+  snowCap — 0–1 snow accumulation on exterior wood/metal/concrete
   weatherMarquee — true on emissive signs (rain dampens glow)
   zoneSheltered — true for interior volumes (rain stress reduction)
+  materialPreset — preset id from MaterialPresets registry (export + re-apply)
+  audioZone — 'interior_warm'|'exterior_open' for ambient audio routing
   locked — true for static floors; hasPhysics + mass/friction for dynamics
   interactHint, interactRadius — F-key interact label and range
   name — MUST match GIMP texture manifest object name for PBR sync
+
+MaterialPresets.applyMaterialPreset(mesh, 'pbr_concrete_weathered') — tuned PBR, no CanvasTexture slop
+Environment.setTimeOfDay(14) · Environment.setFog(0.012) — atmosphere before PLAY verify
 
 WORKING TEMPLATE (copy structure exactly):
 (function() {

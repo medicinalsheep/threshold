@@ -10,6 +10,9 @@ import { GraphicsProfile } from '../shared/graphicsProfile.js';
 import { getGraphicsExportBlock } from '../shared/graphicsExportProfiles.js';
 import { SoundLibrary } from '../shared/soundLibrary.js';
 import { PROMPT_COOKBOOK } from '../shared/promptCookbook.js';
+import { ViewPrefs } from '../shared/viewPrefs.js';
+import { buildProductionPlan, buildProductionReviewPrompt } from '../shared/assetProductionPlan.js';
+import { getMaterialPresetPromptBlock } from '../shared/materialPresets.js';
 
 function renderSoundPicker() {
     const list = document.getElementById('prompt-sound-list');
@@ -116,6 +119,11 @@ ASSET OUTPUT (when scene uses textures/GLTF/video):
 - After RUN: user GIMP SYNC / INSERT GLTF / or textures:watch in dev — blobs are local until native bundle (Phase E)
 
 ${getReferencePromptBlock()}
+
+PRODUCTION PLAN (when SETUP design brief exists — follow pipeline order strictly):
+Use ViewPrefs designBriefDraft if present; otherwise infer placement/weather from the idea.
+
+${getMaterialPresetPromptBlock()}
 `,
 
     buildPrompt() {
@@ -139,12 +147,18 @@ ${getReferencePromptBlock()}
             ? `\n\n${getSoundContext(this.getSelectedSoundIds())}\n\nWhen generated features need audio, reference clip IDs above or leave soundClipId null for user to record later.`
             : '';
 
+        const brief = ViewPrefs.get('designBriefDraft', null);
+        const planBlock = brief?.answers?.production
+            ? `\n\n${buildProductionReviewPrompt(buildProductionPlan(brief))}`
+            : '\n\nIf building exterior surfaces: set userData.surfaceType, weather variants (wet/dust/snow), and MaterialPresets before codegen.';
+
         return {
             idea,
             prompt: `
 ${this.apiContext}
 ${sceneBlock}
 ${soundBlock}
+${planBlock}
 
 TASK: ${taskLines[taskType] || taskLines.extend}
 

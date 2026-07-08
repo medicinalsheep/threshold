@@ -42,16 +42,29 @@ export const WeatherSystem = {
     _particleVel: null,
     _particleData: null,
     _wetTargets: [],
+    _dustTargets: [],
+    _snowTargets: [],
     _fogBase: null,
     _pendingEvents: [],
     _seenEventIds: new Set(),
     _lastWeatherNet: 0,
 
     init() {
-        this._collectWetTargets();
+        this._collectWeatherTargets();
         const fog = window.Engine?.scene?.fog;
         if (fog?.isFogExp2) this._fogBase = fog.density;
         else if (fog?.isFog) this._fogBase = fog.near;
+    },
+
+    registerMesh(mesh) {
+        if (!mesh?.isMesh) return;
+        const st = mesh.userData?.surfaceType;
+        if (st === 'asphalt' || st === 'concrete' || mesh.userData?.id === 'starter_ground') {
+            this._registerWet(mesh);
+        }
+        if (mesh.userData?.wetGlass) this.registerWetGlass(mesh);
+        if (mesh.userData?.dustExposure != null) this._registerDust(mesh);
+        if (mesh.userData?.snowCap != null) this._registerSnow(mesh);
     },
 
     isHostAuthority() {
@@ -235,31 +248,108 @@ export const WeatherSystem = {
         if (!this._wetGlassTargets.includes(mesh)) this._wetGlassTargets.push(mesh);
     },
 
-    _collectWetTargets() {
+    _registerWet(mesh) {
+        const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+        mats.forEach((m) => {
+            if (m && m.roughness != null && m.userData?._dryRoughness == null) {
+                m.userData = m.userData || {};
+                m.userData._dryRoughness = m.roughness;
+            }
+        });
+        if (!this._wetTargets.includes(mesh)) this._wetTargets.push(mesh);
+    },
+
+    _registerDust(mesh) {
+        const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+        mats.forEach((m) => {
+            if (!m) return;
+            m.userData = m.userData || {};
+            if (m.userData._dryRoughness == null && m.roughness != null) {
+                m.userData._dryRoughness = m.roughness;
+            }
+            if (m.userData._dryColor == null && m.color) {
+                m.userData._dryColor = m.color.clone();
+            }
+        });
+        if (!this._dustTargets.includes(mesh)) this._dustTargets.push(mesh);
+    },
+
+    _registerSnow(mesh) {
+        const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+        mats.forEach((m) => {
+            if (!m) return;
+            m.userData = m.userData || {};
+            if (m.userData._dryRoughness == null && m.roughness != null) {
+                m.userData._dryRoughness = m.roughness;
+            }
+            if (m.userData._dryColor == null && m.color) {
+                m.userData._dryColor = m.color.clone();
+            }
+        });
+        if (!this._snowTargets.includes(mesh)) this._snowTargets.push(mesh);
+    },
+
+    _collectWeatherTargets() {
         const objects = window.State?.objects || [];
-        this._wetTargets = objects.filter((o) => {
-            const st = o.userData?.surfaceType;
-            return st === 'asphalt' || st === 'concrete' || o.userData?.id === 'starter_ground';
-        }).map((mesh) => {
+        this._wetTargets = [];
+        this._dustTargets = [];
+        this._snowTargets = [];
+        objects.forEach((o) => {
+            const visit = (mesh) => {
+                if (!mesh?.isMesh) return;
+                const ud = mesh.userData || {};
+                const st = ud.surfaceType;
+                if (st === 'asphalt' || st === 'concrete' || ud.id === 'starter_ground') {
+                    this._registerWet(mesh);
+                }
+                if (ud.wetGlass) this.registerWetGlass(mesh);
+                if (ud.dustExposure != null) this._registerDust(mesh);
+                if (ud.snowCap != null) this._registerSnow(mesh);
+            };
+            visit(o);
+            o.traverse?.(visit);
+        });
+    },
+
+    _applyDust(dryFactor = 1) {
+        const dustAmt = Math.max(0, 1 - this._intensity) * dryFactor;
+        this._dustTargets.forEach((mesh) => {
+            const exposure = Math.max(0, Math.min(1, mesh.userData?.dustExposure ?? 0.5));
+            const t = dustAmt * exposure;
             const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
             mats.forEach((m) => {
-                if (m && m.roughness != null && m.userData?._dryRoughness == null) {
-                    m.userData = m.userData || {};
-                    m.userData._dryRoughness = m.roughness;
+                if (!m || m.userData?._dryRoughness == null) return;
+                m.roughness = lerp(m.userData._dryRoughness, Math.min(1, m.userData._dryRoughness + 0.08), t);
+                if (m.color && m.userData._dryColor) {
+                    m.color.copy(m.userData._dryColor).multiplyScalar(lerp(1, 0.92, t));
                 }
             });
-            return mesh;
         });
-        objects.forEach((o) => {
-            if (o.userData?.wetGlass && o.isMesh) this.registerWetGlass(o);
-            o.traverse?.((c) => {
-                if (c.userData?.wetGlass && c.isMesh) this.registerWetGlass(c);
+    },
+
+    _applySnow() {
+        const snowBase = Math.max(0, 0.35 - this._intensity * 0.5);
+        this._snowTargets.forEach((mesh) => {
+            const cap = Math.max(0, Math.min(1, mesh.userData?.snowCap ?? 0.5));
+            const t = snowBase * cap;
+            const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+            mats.forEach((m) => {
+                if (!m || m.userData?._dryRoughness == null) return;
+                m.roughness = lerp(m.userData._dryRoughness, Math.min(0.98, m.userData._dryRoughness + 0.22), t);
+                if (m.color && m.userData._dryColor) {
+                    const white = { r: 0.92, g: 0.94, b: 0.96 };
+                    m.color.r = lerp(m.userData._dryColor.r, white.r, t * 0.55);
+                    m.color.g = lerp(m.userData._dryColor.g, white.g, t * 0.55);
+                    m.color.b = lerp(m.userData._dryColor.b, white.b, t * 0.55);
+                }
             });
         });
     },
 
     _applyWetness() {
         const wet = this._intensity;
+        this._applyDust();
+        this._applySnow();
         (this._wetGlassTargets || []).forEach((mesh) => {
             const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
             mats.forEach((m) => {
@@ -289,11 +379,26 @@ export const WeatherSystem = {
     },
 
     _restoreWetness() {
-        this._wetTargets.forEach((mesh) => {
+        const restore = (mesh) => {
             const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
             mats.forEach((m) => {
                 if (!m || m.userData?._dryRoughness == null) return;
                 m.roughness = m.userData._dryRoughness;
+                if (m.color && m.userData._dryColor) m.color.copy(m.userData._dryColor);
+            });
+        };
+        this._wetTargets.forEach(restore);
+        this._dustTargets.forEach(restore);
+        this._snowTargets.forEach(restore);
+        (this._wetGlassTargets || []).forEach((mesh) => {
+            const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+            mats.forEach((m) => {
+                if (!m || m.userData?._dryRoughness == null) return;
+                m.roughness = m.userData._dryRoughness;
+                if (m.opacity != null && m.userData._dryOpacity != null) m.opacity = m.userData._dryOpacity;
+                if (m.transmission != null && m.userData._dryTransmission != null) {
+                    m.transmission = m.userData._dryTransmission;
+                }
             });
         });
     },

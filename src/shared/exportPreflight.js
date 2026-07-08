@@ -3,6 +3,7 @@
 import { SoundLibrary } from './soundLibrary.js';
 import { TextureLibrary } from './textureLibrary.js';
 import { collectContentInventory } from './exportWalkthrough.js';
+import { assessSceneSlop } from './assetProductionPlan.js';
 
 function normPath(p) {
     return String(p || '').replace(/\\/g, '/').toLowerCase();
@@ -65,6 +66,8 @@ export function runExportPreflight() {
     if (lowTexObjects.length > 2) {
         warnings.push(`${lowTexObjects.length} object(s) lack 1K+ PBR maps — use GIMP SYNC or Blender GLB before ship.`);
     }
+
+    assessSceneSlop(sceneObjects).forEach((w) => warnings.push(w));
 
     if (inventory.soundRefs?.length) {
         infos.push(`${inventory.soundRefs.length} sound clip(s) referenced — blobs stay local until bundle:assets / native pack.`);

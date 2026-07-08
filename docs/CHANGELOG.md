@@ -1,5 +1,16 @@
 # Changelog
 
+## 10.12.0 — Creative OS gate + immersive prep
+
+- **Generation gate** — `validateProductionReady` blocks Portal GENERATE and SETUP RUN AGENT until placement, weather, collision intake complete
+- **11-step pipeline** — atmosphere + material presets added between weather and interact
+- **Weather runtime** — dust wear (`userData.dustExposure`) and snow accumulation (`userData.snowCap`) in `weatherSystem.js`
+- **materialPresets.js** — shader/material registry; agents pick preset ids instead of procedural CanvasTexture slop
+- **Export preflight** — `assessSceneSlop` warns on missing surfaceType, CanvasTexture maps, unhooked exterior meshes
+- **PromptGen** — pulls SETUP design brief production plan + material preset prompt block
+- **SETUP Step 3** — atmosphere preset, shader preset, ambient audio zone fields
+- **CREATIVE_OS.md** — planned-generation vision (weather, shaders, immersive environments)
+
 ## 10.11.3 — Asset production plan + prompt engineering
 
 - **assetProductionPlan.js** — 9-step pipeline (scope → collision → mesh → textures → HILOD → weather → interact → codegen → verify)

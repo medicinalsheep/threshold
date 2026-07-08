@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.11.3 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.12.0 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -80,6 +80,16 @@ UI reference: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Controls: [CONTROLS.md](CO
 - **Pipeline order** — scope → collision → mesh → textures → HILOD → weather → interact → codegen → verify
 - **Review gate** — SETUP brief Step 3: interior/exterior, weather variants, surfaceType, collision
 - **Agent prompts** — Portal + design agent embed engine texture/weather/collision rules
+
+## 10.12.0 — Creative OS gate + immersive prep ✅
+
+- **Generation gate** — Portal GENERATE + SETUP RUN AGENT blocked until production plan complete (`validateProductionReady`)
+- **11-step pipeline** — adds atmosphere + material presets before interact/codegen/verify
+- **Weather runtime** — dust (`dustExposure`) + snow (`snowCap`) material passes in `weatherSystem.js`
+- **Shader registry** — `materialPresets.js` — agent-directed MeshStandard presets, no CanvasTexture slop
+- **Slop scan** — `assessSceneSlop` wired into export preflight (procedural textures, missing surfaceType)
+- **PromptGen parity** — injects design brief production plan + material preset block
+- **Vision doc** — [CREATIVE_OS.md](CREATIVE_OS.md) — north star for planned generation
 
 ---
 

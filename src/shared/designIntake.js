@@ -18,6 +18,9 @@ import {
     buildDesignAgentSystemPrompt,
     formatPipelineChecklist,
     defaultProductionAnswers,
+    validateDesignBrief,
+    ATMOSPHERE_PRESETS,
+    SHADER_PRESET_OPTIONS,
 } from './assetProductionPlan.js';
 
 export const DESIGN_TYPES = [
@@ -304,6 +307,19 @@ export const DesignIntake = {
             <label class="design-check"><input type="checkbox" id="di-sheltered" ${p.sheltered ? 'checked' : ''}> zoneSheltered (interior / covered)</label>
             <label class="design-check"><input type="checkbox" id="di-interact" ${p.interact ? 'checked' : ''}> F-key interact + optional sound</label>
             <label class="design-field">
+                <span>Atmosphere preset</span>
+                <select id="di-atmosphere" class="insert-input">
+                    ${ATMOSPHERE_PRESETS.map((o) => `<option value="${esc(o.id)}" ${p.atmospherePreset === o.id ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}
+                </select>
+            </label>
+            <label class="design-field">
+                <span>Material / shader preset</span>
+                <select id="di-shader" class="insert-input">
+                    ${SHADER_PRESET_OPTIONS.map((o) => `<option value="${esc(o.id)}" ${p.shaderPreset === o.id ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}
+                </select>
+            </label>
+            <label class="design-check"><input type="checkbox" id="di-audio-zone" ${p.audioZone ? 'checked' : ''}> Ambient audio zone (interior reverb)</label>
+            <label class="design-field">
                 <span>Production notes</span>
                 <textarea id="di-prod-notes" class="insert-input" rows="2" placeholder="e.g. wet cobble only on exterior pad; glass kiosk uses wetGlass">${esc(p.notes || '')}</textarea>
             </label>
@@ -330,6 +346,9 @@ export const DesignIntake = {
             sheltered: !!document.getElementById('di-sheltered')?.checked,
             wetGlass: weatherVariants.includes('wet_glass'),
             interact: !!document.getElementById('di-interact')?.checked,
+            atmospherePreset: document.getElementById('di-atmosphere')?.value || 'day_clear',
+            shaderPreset: document.getElementById('di-shader')?.value || 'pbr_default',
+            audioZone: !!document.getElementById('di-audio-zone')?.checked,
             notes: document.getElementById('di-prod-notes')?.value?.trim() || '',
         };
     },
@@ -388,6 +407,7 @@ export const DesignIntake = {
                 <dt>Placement</dt><dd>${esc(plan.placementLabel)}</dd>
                 <dt>Weather</dt><dd>${esc(plan.weatherExposureLabel)}${plan.weatherVariants.length ? ` · ${esc(plan.weatherVariants.join(', '))}` : ''}</dd>
                 <dt>Surface / collision</dt><dd>${esc(plan.surfaceType)} · ${esc(plan.collisionLabel)}</dd>
+                <dt>Atmosphere / material</dt><dd>${esc(plan.atmospherePreset)} · ${esc(plan.shaderPreset)}</dd>
                 <dt>Export</dt><dd>${esc((a.exports || []).join(', '))}</dd>
                 <dt>Poly</dt><dd>${esc(a.poly)}${a.poly === 'custom' ? ` (${a.polyCustom} tris)` : ''}</dd>
                 <dt>Textures</dt><dd>${esc(a.texture)} · ${esc(a.texRes || '2k')} master · ${esc(a.style)}</dd>
@@ -475,6 +495,14 @@ Otherwise return executable Threshold JavaScript (IIFE) for Compiler — wire us
 
     async runAgent() {
         const status = document.getElementById('design-intake-status');
+        const gate = validateDesignBrief(this._brief);
+        if (!gate.canGenerate) {
+            const msg = gate.errors.join(' — ');
+            if (status) status.textContent = msg;
+            window.UI?.status?.(`Blocked: ${gate.errors[0]}`);
+            if (!this._brief?.answers?.production) this.showStep('production');
+            return;
+        }
         if (status) status.textContent = 'Contacting agent…';
         try {
             if (this._pendingQuestions) {

@@ -14,7 +14,7 @@ import { sanitizeSceneCode, codeReadinessSummary } from './codeSanitizer.js';
 import { TIER_GUIDE, tierOptionsHtml, renderTierGuideHtml } from './agentModelGuide.js';
 import { BuildJob } from './buildJob.js';
 import { getSceneApiPrompt } from './sceneApiPrompt.js';
-import { buildAgentPortalSystemPrompt, buildCompilerRequest } from './assetProductionPlan.js';
+import { buildAgentPortalSystemPrompt, buildCompilerRequest, validateProductionReady } from './assetProductionPlan.js';
 import { assessTierPrefs, renderMatrixHtml, buildModelMatrix, countDistinctLocalModels, getDeviceProfile } from './modelCapability.js';
 import { OllamaRunQueue } from './ollamaRunQueue.js';
 import { WorkFolderScope } from './workFolderScope.js';
@@ -612,6 +612,20 @@ export const AgentPortal = {
         if (!ctx?.ready) {
             window.UI?.status?.('Keep chatting — agent will signal when ready');
             return;
+        }
+
+        const gate = validateProductionReady(ctx);
+        if (!gate.canGenerate) {
+            const msg = gate.errors[0] || 'Production plan incomplete';
+            window.UI?.status?.(`Blocked: ${msg}`);
+            const status = document.getElementById('agent-portal-status');
+            if (status) {
+                status.textContent = `Plan incomplete — ${gate.errors.join(' · ')}`;
+            }
+            return;
+        }
+        if (gate.warnings.length) {
+            window.UI?.status?.(`Generating (${gate.warnings.length} plan warning(s) — review after)`);
         }
 
         if (ctx._code) {
