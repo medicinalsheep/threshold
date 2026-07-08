@@ -7,34 +7,15 @@ export async function buildStarterGrid() {
     const Engine = window.Engine;
     const State = window.State;
     const Physics = window.Physics;
-    const THREE = window.THREE;
     const C = window.CANNON;
-    if (!Engine?.scene || !THREE || !State) return null;
+    if (!Engine?.scene || !C || !State) return null;
 
-    if (State.objects.some((o) => o.userData?.id === 'starter_grid_pad')) return null;
+    if (State.starterGridBuilt) return State.objects.find((o) => o.userData?.id === 'engine_floor_deck') || null;
+    State.starterGridBuilt = true;
 
-    const pad = new THREE.Mesh(
-        new THREE.BoxGeometry(32, 0.06, 32),
-        new THREE.MeshStandardMaterial({
-            color: 0x1a1c20,
-            roughness: 0.92,
-            metalness: 0.02,
-            envMapIntensity: 0.2,
-        })
-    );
-    pad.position.set(0, 0.03, 0);
-    pad.receiveShadow = true;
-    pad.userData = {
-        id: 'starter_grid_pad',
-        name: 'Starter Ground',
-        type: 'platform',
-        locked: true,
-        surfaceType: 'concrete',
-    };
-    Engine.scene.add(pad);
-    State.objects.push(pad);
+    window.Environment?.ensureFloorDeck?.();
 
-    if (C && Physics?.addStaticBox) {
+    if (Physics?.addStaticBox) {
         Physics.addStaticBox(new C.Vec3(16, 0.03, 16), { x: 0, y: 0.03, z: 0 }, 'ground', 'concrete');
     }
 
@@ -74,7 +55,7 @@ export async function buildStarterGrid() {
 
     window.StarterTex?.wireStarterTextures?.().catch(() => {});
 
-    return pad;
+    return State.objects.find((o) => o.userData?.id === 'engine_floor_deck') || null;
 }
 
 window.buildStarterGrid = buildStarterGrid;

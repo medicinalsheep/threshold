@@ -3,9 +3,17 @@ import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 import { State, IS_TOUCH_DEVICE } from './state.js';
 import { GraphicsProfile } from '../shared/graphicsProfile.js';
 import { Engine } from './engineCore.js';
+import { createConcreteSlabDeck, wireDeckTextures, FLOOR_HALF } from './floorDeck.js';
+import {
+    createWaterShaderMaterial,
+    createFoamRingMaterial,
+    bindWaterEnvMap,
+    updateWaterShaderMaterials,
+    attachReflectorHooks,
+} from './waterSurface.js';
 
 /** Dry play slab half-extent (m). Water moat sits outside this. */
-export const FLOOR_HALF = 24;
+export { FLOOR_HALF };
 /** Water basin surface Y — below the concrete deck (deck top ≈ 0.06). */
 export const WATER_SURFACE_Y = -0.18;
 export const MOAT_OUTER_HALF = 56;
@@ -37,9 +45,12 @@ export const Environment = {
     hemiLight: null,
     waterMesh: null,
     waterReflector: null,
-    waterBasePositions: null,
+    waterShaderMat: null,
+    waterFoamMesh: null,
+    waterFoamMat: null,
     waterGroup: null,
     floorGroup: null,
+    floorTextureTarget: null,
 
     init: function () {
         this.ensureFloorDeck();
@@ -62,41 +73,29 @@ export const Environment = {
         }
     },
 
-    /** Opaque concrete deck — always visible; water never replaces this. */
     ensureFloorDeck: function () {
         if (this.floorGroup) return;
-        this.floorGroup = new THREE.Group();
-        this.floorGroup.name = 'threshold-floor';
-
-        const deckMat = new THREE.MeshStandardMaterial({
-            color: 0x1a1c1e,
-            roughness: 0.88,
-            metalness: 0.03,
-            envMapIntensity: 0.22,
-        });
-        const deck = new THREE.Mesh(
-            new THREE.BoxGeometry(FLOOR_HALF * 2, 0.12, FLOOR_HALF * 2),
-            deckMat,
-        );
-        deck.position.y = 0;
-        deck.receiveShadow = true;
-        deck.castShadow = false;
-        deck.renderOrder = 3;
-        deck.userData = {
-            id: 'engine_floor_deck',
-            name: 'Concrete deck',
-            isFloor: true,
-            surfaceType: 'concrete',
-            locked: true,
-        };
-        this.floorGroup.add(deck);
+        const deck = createConcreteSlabDeck(FLOOR_HALF);
+        this.floorGroup = deck.group;
+        this.floorTextureTarget = deck.textureTarget;
+        this.floorGroup.renderOrder = 3;
+        Engine.scene.add(this.floorGroup);
 
         if (Engine.groundPlane) {
             Engine.groundPlane.visible = false;
             Engine.groundPlane.userData._replacedByFloorDeck = true;
         }
 
-        Engine.scene.add(this.floorGroup);
+        if (!State.objects.some((o) => o.userData?.id === 'engine_floor_deck')) {
+            State.objects.push(this.floorGroup);
+        }
+
+        const instanced = this.floorGroup.children.find((c) => c.isInstancedMesh);
+        if (instanced) window.WeatherSystem?.registerMesh?.(instanced);
+
+        wireDeckTextures(this.floorTextureTarget).then((r) => {
+            if (r.maps) window.UI?.status?.(`Floor PBR · ${r.maps} maps`);
+        }).catch(() => {});
     },
 
     bindUi: function () {
@@ -180,60 +179,63 @@ export const Environment = {
         if (!this.waterGroup) {
             this.waterGroup = new THREE.Group();
             this.waterGroup.name = 'threshold-water';
-            this.waterGroup.renderOrder = 0;
             Engine.scene.add(this.waterGroup);
         }
 
         const tier = State.graphicsTier || 'realistic';
         const tierPreset = GraphicsProfile.getTier(tier);
         const texSize = tierPreset.waterTexSize || (IS_TOUCH_DEVICE ? 512 : 1024);
-        const ringGeo = createMoatRingGeometry(MOAT_OUTER_HALF, MOAT_INNER_HALF, IS_TOUCH_DEVICE ? 32 : 56);
+        const ringSegs = IS_TOUCH_DEVICE ? 40 : 72;
+        const ringGeo = createMoatRingGeometry(MOAT_OUTER_HALF, MOAT_INNER_HALF, ringSegs);
 
         this.waterReflector = new Reflector(ringGeo, {
             clipBias: 0.003,
             textureWidth: texSize,
             textureHeight: texSize,
-            color: 0x0c2230,
+            color: 0x061820,
         });
         this.waterReflector.position.y = WATER_SURFACE_Y;
         this.waterReflector.receiveShadow = true;
         this.waterReflector.renderOrder = 0;
         this.waterGroup.add(this.waterReflector);
 
-        const rippleSegs = IS_TOUCH_DEVICE ? 12 : 24;
-        const denseRipple = createMoatRingGeometry(MOAT_OUTER_HALF, MOAT_INNER_HALF, rippleSegs);
-        this.waterBasePositions = denseRipple.attributes.position.array.slice();
+        const rippleSegs = IS_TOUCH_DEVICE ? 16 : 36;
+        const rippleGeo = createMoatRingGeometry(MOAT_OUTER_HALF, MOAT_INNER_HALF, rippleSegs);
+        this.waterShaderMat = createWaterShaderMaterial(MOAT_INNER_HALF, 1.6);
+        bindWaterEnvMap(this.waterShaderMat, Engine.scene);
 
-        const rippleMat = new THREE.MeshStandardMaterial({
-            color: 0x2a7a92,
-            transparent: true,
-            opacity: 0.72,
-            metalness: 0.35,
-            roughness: 0.12,
-            depthWrite: true,
-            envMapIntensity: 0.55,
-            side: THREE.DoubleSide,
-        });
-        this.waterMesh = new THREE.Mesh(denseRipple, rippleMat);
-        this.waterMesh.position.y = WATER_SURFACE_Y + 0.04;
+        this.waterMesh = new THREE.Mesh(rippleGeo, this.waterShaderMat);
+        this.waterMesh.position.y = WATER_SURFACE_Y + 0.02;
         this.waterMesh.renderOrder = 1;
         this.waterGroup.add(this.waterMesh);
+
+        const foamGeo = new THREE.RingGeometry(MOAT_INNER_HALF - 0.15, MOAT_INNER_HALF + 1.1, IS_TOUCH_DEVICE ? 48 : 96);
+        foamGeo.rotateX(-Math.PI / 2);
+        this.waterFoamMat = createFoamRingMaterial();
+        this.waterFoamMesh = new THREE.Mesh(foamGeo, this.waterFoamMat);
+        this.waterFoamMesh.position.y = WATER_SURFACE_Y + 0.05;
+        this.waterFoamMesh.renderOrder = 2;
+        this.waterGroup.add(this.waterFoamMesh);
+
+        attachReflectorHooks(this);
     },
 
     removeWater: function () {
-        if (this.waterReflector) {
-            this.waterGroup?.remove(this.waterReflector);
-            this.waterReflector.geometry.dispose();
-            this.waterReflector.material.dispose();
-            this.waterReflector = null;
-        }
-        if (this.waterMesh) {
-            this.waterGroup?.remove(this.waterMesh);
-            this.waterMesh.geometry.dispose();
-            this.waterMesh.material.dispose();
-            this.waterMesh = null;
-        }
-        this.waterBasePositions = null;
+        const disposeMesh = (mesh) => {
+            if (!mesh) return;
+            this.waterGroup?.remove(mesh);
+            mesh.geometry?.dispose();
+            if (mesh.material?.dispose) mesh.material.dispose();
+        };
+        disposeMesh(this.waterReflector);
+        disposeMesh(this.waterMesh);
+        disposeMesh(this.waterFoamMesh);
+        this.waterReflector = null;
+        this.waterMesh = null;
+        this.waterFoamMesh = null;
+        this.waterShaderMat = null;
+        this.waterFoamMat = null;
+        this._reflectorHooks = false;
         if (this.waterGroup && this.waterGroup.children.length === 0) {
             Engine.scene.remove(this.waterGroup);
             this.waterGroup = null;
@@ -241,19 +243,8 @@ export const Environment = {
     },
 
     updateWater: function (time) {
-        if (!this.waterMesh || !this.waterBasePositions) return;
-        const pos = this.waterMesh.geometry.attributes.position;
-        const t = time * 0.001;
-        for (let i = 0; i < pos.count; i++) {
-            const x = this.waterBasePositions[i * 3];
-            const z = this.waterBasePositions[i * 3 + 2];
-            pos.setY(i,
-                Math.sin(x * 0.18 + t * 1.2) * 0.08
-                + Math.cos(z * 0.15 + t * 0.9) * 0.06
-                + Math.sin((x + z) * 0.1 + t * 1.6) * 0.04,
-            );
-        }
-        pos.needsUpdate = true;
+        if (!this.waterMesh) return;
+        updateWaterShaderMaterials(this, time, Engine.scene);
     },
 
     toggleAtmosphere: function () {

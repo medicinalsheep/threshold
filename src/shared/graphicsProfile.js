@@ -51,7 +51,7 @@ export const GRAPHICS_TIERS = {
         pixelRatioCap: 2,
         shadowMapSize: 4096,
         bloomStrength: 0.56,
-        waterTexSize: 1024,
+        waterTexSize: 2048,
         textureMax: 4096,
     },
     custom: {

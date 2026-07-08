@@ -1,5 +1,11 @@
 # Changelog
 
+## 10.12.9 — Slab concrete deck + water VFX pass
+
+- **Floor** — instanced 2 m concrete pavers with expansion joints, curb, dark substrate; `starter_ground` PBR maps (albedo/roughness/normal)
+- **Water** — GPU wave shader: fresnel, sun specular, env reflections, caustic shimmer, inner-edge foam ring; reflector 2K on Ultra
+- **Starter grid** — removed duplicate flat pad mesh; single slab deck + physics collider
+
 ## 10.12.8 — Floor / water separation
 
 - **Concrete deck** — opaque 48×48 slab always visible (`Environment.floorGroup`); water no longer replaces the floor
