@@ -1,5 +1,13 @@
 # Changelog
 
+## 10.12.7 — Phase 7: intent router, relay polish, store upload guide
+
+- **Intent router** — `intentRouter.js` keyword + LLM classify; game chat (T) routes export/spawn/edit/texture/etc.
+- **Relay** — PM2 `ecosystem.config.cjs`, `Dockerfile`, `nginx.conf.example`, graceful shutdown, `npm run relay:verify`
+- **Training** — classify.jsonl expanded to 15 examples; npc.jsonl to 8
+- **Store upload** — `npm run store:upload` generates per-platform `upload-guide.md` (signing stays local)
+- **CI** — `intent-router-verify` in deploy workflow
+
 ## 10.12.6 — Creator loop polish + dependency hygiene
 
 - **Walkthrough** — quick tour adds Export step; full tour de-emphasizes survival (points to `dev/survival/`)

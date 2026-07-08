@@ -28,9 +28,9 @@ ${getSceneContextBrief()}`;
         }
 
         case 'intent_classify': {
-            const system = `Classify Threshold Engine user intent. Reply ONE line only:
-INTENT: spawn|edit|physics|sound|texture|export|other
-API: primary API if spawn/edit (e.g. World.createObject)`;
+            const system = `Classify Threshold Engine user intent. Reply exactly two lines:
+INTENT: spawn|edit|physics|sound|texture|export|graphics|style|other
+API: primary API (e.g. World.createObject, ExportWizard, Engine.setRenderMode(4), State.env)`;
             return { system, user: payload.message || 'spawn a box' };
         }
 

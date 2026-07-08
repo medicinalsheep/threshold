@@ -1,3 +1,15 @@
 {"task":"intent_classify","messages":[{"role":"user","content":"add gimp texture to the crate"},{"role":"assistant","content":"INTENT: texture\nAPI: userData.textures + textures:watch"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"default realistic lighting"},{"role":"assistant","content":"INTENT: graphics\nAPI: Engine.setRenderMode(4)"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"add rain and fog"},{"role":"assistant","content":"INTENT: edit\nAPI: State.env"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"spawn a wooden crate near the spawn point"},{"role":"assistant","content":"INTENT: spawn\nAPI: World.createObject"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"export to web and github pages"},{"role":"assistant","content":"INTENT: export\nAPI: ExportWizard"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"make the scene look retro terminal green"},{"role":"assistant","content":"INTENT: style\nAPI: Engine.setRenderMode(2)"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"add footstep sounds on concrete"},{"role":"assistant","content":"INTENT: sound\nAPI: AudioSys + userData.surfaceType"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"enable physics on the barrel"},{"role":"assistant","content":"INTENT: physics\nAPI: Physics.addBody"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"what keys do I use to fly"},{"role":"assistant","content":"INTENT: other\nAPI: HelpMenu"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"ship this to steam"},{"role":"assistant","content":"INTENT: export\nAPI: ExportWizard"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"place a red sphere on the grid"},{"role":"assistant","content":"INTENT: spawn\nAPI: World.createObject"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"turn on sunset atmosphere"},{"role":"assistant","content":"INTENT: edit\nAPI: State.env + Environment"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"watch folder for new PBR maps"},{"role":"assistant","content":"INTENT: texture\nAPI: textures:watch"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"switch to toon shading"},{"role":"assistant","content":"INTENT: style\nAPI: Engine.setRenderMode(1)"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"publish android build to play store"},{"role":"assistant","content":"INTENT: export\nAPI: ExportWizard"}]}

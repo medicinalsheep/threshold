@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "10.12.6",
+  "version": "10.12.7",
   "type": "module",
   "engines": {
     "node": ">=22.0.0"
@@ -74,6 +74,9 @@
     "tc:verify": "node scripts/tc-verify.cjs",
     "controls:verify": "node scripts/controls-verify.cjs",
     "store:verify": "node scripts/store-verify.cjs",
+    "store:upload": "node scripts/store-upload.cjs",
+    "intent:verify": "node scripts/intent-router-verify.cjs",
+    "relay:verify": "node scripts/relay-verify.cjs",
     "ollama:serve": "node scripts/ollama-serve-threshold.cjs",
     "ollama:verify": "node scripts/ollama-verify.cjs",
     "ollama:benchmark": "node scripts/ollama-benchmark.cjs",

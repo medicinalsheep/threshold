@@ -35,6 +35,7 @@ jobs:
       - run: npm run controls:verify
       - run: node scripts/tc-drive-verify.cjs
       - run: node scripts/tc-circuit-verify.cjs
+      - run: node scripts/intent-router-verify.cjs
 
       - uses: actions/upload-pages-artifact@v3
         with:

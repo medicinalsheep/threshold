@@ -34,7 +34,7 @@ Action plan from project review. Execute in order; each phase should pass `npm r
 
 **Goal:** One source of truth for shipped version.
 
-- [x] Source of truth: `src/config.js` → `VERSION` (currently **10.12.6**)
+- [x] Source of truth: `src/config.js` → `VERSION` (currently **10.12.7**)
 - [x] `npm run version:sync` — patches `package.json`, `package-lock.json`, README + doc headers
 - [x] `npm run version:sync:check` — CI drift gate (exit 1 if headers stale)
 
@@ -80,16 +80,16 @@ Action plan from project review. Execute in order; each phase should pass `npm r
 
 ---
 
-## Phase 7 — Deferred (post-consolidation)
+## Phase 7 — Post-consolidation polish ✅ (2026-07-08)
 
-| Item | Notes |
-|------|-------|
-| Store upload automation | Signing stays local |
-| macOS notarization | Needs Mac hardware |
-| AWS relay polish | Scaffold exists in `relay/` |
-| `intent_classify` router | Prompt exists, no router |
-| Training dataset growth | ~15 JSONL examples |
-| GIMP hero 2K hand pass | Procedural seed ships |
+| Item | Status |
+|------|--------|
+| `intent_classify` router | ✅ `src/shared/intentRouter.js` + game chat (T) routing |
+| AWS relay polish | ✅ PM2, Docker, nginx example, `relay:verify`, graceful shutdown |
+| Training dataset growth | ✅ classify.jsonl 15 · npc.jsonl 8 examples |
+| Store upload automation | ✅ `npm run store:upload` → `upload-guide.md` (signing local) |
+| macOS notarization | Deferred — needs Mac hardware |
+| GIMP hero 2K hand pass | Deferred — procedural seed ships |
 
 ---
 

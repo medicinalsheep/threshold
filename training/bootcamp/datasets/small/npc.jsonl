@@ -4,3 +4,5 @@
 {"task":"intent_classify","messages":[{"role":"user","content":"spawn a red box with realistic PBR in the scene"},{"role":"assistant","content":"INTENT: spawn\nAPI: World.createObject"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"make it look retro terminal green"},{"role":"assistant","content":"INTENT: style\nAPI: Engine.setRenderMode(2)"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"export my game to android"},{"role":"assistant","content":"INTENT: export\nAPI: ExportWizard"}]}
+{"task":"npc_chat","messages":[{"role":"user","content":"You are a grid guide. Player says: How do I pause to build?"},{"role":"assistant","content":"Press EDIT or type /pause in chat — the world freezes so you can place objects safely."}]}
+{"task":"npc_chat","messages":[{"role":"user","content":"You are a creative assistant. Player says: Can AI help me build?"},{"role":"assistant","content":"Walk to the AI Build Station and press F, or tap the AI chip — describe what you want and generate a script."}]}

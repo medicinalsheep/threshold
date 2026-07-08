@@ -5,6 +5,7 @@
 import { ViewPrefs } from './viewPrefs.js';
 import { runCommand, commandHintList } from './gameCommands.js';
 import { AgentRouter } from './agentRouter.js';
+import { IntentRouter } from './intentRouter.js';
 
 const LOG_MAX = 40;
 const PREFS_KEY = 'gameChatLog';
@@ -162,6 +163,16 @@ export const GameChat = {
 
         this._busy = true;
         try {
+            const routed = await IntentRouter.classifyAndRoute(text, { useLlm: true });
+            const { classification, dispatch, provider, model } = routed;
+
+            if (dispatch && !dispatch.fallbackNpc) {
+                const label = classification.intent.toUpperCase();
+                const meta = provider === 'keyword' ? 'router/keyword' : `${provider}/${model || 'intent'}`;
+                this.append('system', `→ ${label}: ${dispatch.message || 'routed'}`, meta);
+                return;
+            }
+
             const result = await AgentRouter.runTask('npc_chat', {
                 message: text,
                 systemOverride: `You are Threshold in-game assistant. Short replies (1-2 sentences). User is in the 3D world. Suggest /commands when helpful.`,

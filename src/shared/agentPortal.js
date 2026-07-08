@@ -737,6 +737,11 @@ ${getSceneApiPrompt()}`;
         window.UI?.status?.(readyNote);
     },
 
+    prefillChat(text) {
+        const input = document.getElementById('agent-portal-chat-input');
+        if (input && text) input.value = String(text);
+    },
+
     show(opts = {}) {
         if (!this._modal) return;
         this._modal.classList.add('open');

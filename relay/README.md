@@ -27,6 +27,29 @@ VITE_PEER_SECURE=false
 
 Rebuild the web app after changing env.
 
+## PM2 (production VPS)
+
+```bash
+cd relay
+npm install
+pm2 start ecosystem.config.cjs
+pm2 save
+```
+
+Set `TRUST_PROXY=true` when behind nginx (see `nginx.conf.example`).
+
+## Docker
+
+```bash
+cd relay
+docker build -t threshold-relay .
+docker run -p 9000:9000 -e TRUST_PROXY=true threshold-relay
+```
+
+Health: `curl http://localhost:9000/health`
+
+From repo root: `npm run relay:verify` (CI smoke test).
+
 ## AWS free tier (outline)
 
 1. **EC2 t2.micro** or **Lightsail $3.50** — Ubuntu 22.04
