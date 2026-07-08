@@ -54,6 +54,7 @@ function disposeObjectGpu(root) {
 
 function snapshotObject(obj) {
     const ud = obj.userData || {};
+    const gltfPath = ud.gltfPath || ud.gltfUrl || null;
     return {
         obj,
         wasVisible: obj.visible,
@@ -63,11 +64,18 @@ function snapshotObject(obj) {
             rot: obj.rotation.clone(),
             scl: obj.scale.clone(),
         },
-        userData: { ...ud },
+        userData: {
+            ...ud,
+            gltfPath: ud.gltfPath || null,
+            gltfUrl: ud.gltfUrl || null,
+            gltfFile: ud.gltfFile || null,
+        },
+        gltfPath,
         color: obj.material?.color?.getHex?.() ?? ud.color ?? 0xffffff,
         type: ud.type || 'cube',
         name: ud.name || 'Object',
         removed: false,
+        restoreKey: gltfPath ? `${gltfPath}@${obj.position.x.toFixed(2)},${obj.position.z.toFixed(2)}` : null,
     };
 }
 
@@ -263,20 +271,53 @@ export const AiMemoryFreeze = {
             return;
         }
 
+        const restoredKeys = new Set();
+
         for (const snap of this._parked) {
             if (snap.removed) {
                 const ud = snap.userData || {};
+                if (snap.restoreKey && restoredKeys.has(snap.restoreKey)) continue;
+
                 if (ud.type === 'gltf' || ud.isGltf) {
+                    if (!ud.gltfPath && !ud.gltfUrl) {
+                        console.warn('[ai-freeze] GLTF missing path — placeholder', snap.name);
+                        if (World?.createObject) {
+                            const ph = World.createObject('cube', `${snap.name} (restore pending)`, 0x553322, false);
+                            if (ph) {
+                                ph.position.copy(snap.transform.pos);
+                                ph.scale.set(0.6, 0.6, 0.6);
+                                ph.userData = { ...ud, freezeRestoreFailed: true, locked: true };
+                            }
+                        }
+                        continue;
+                    }
                     try {
-                        await GltfImport.spawnSnapshot({
+                        const root = await GltfImport.spawnSnapshot({
                             name: snap.name,
                             pos: { x: snap.transform.pos.x, y: snap.transform.pos.y, z: snap.transform.pos.z },
                             rot: { x: snap.transform.rot.x, y: snap.transform.rot.y, z: snap.transform.rot.z },
                             scl: { x: snap.transform.scl.x, y: snap.transform.scl.y, z: snap.transform.scl.z },
-                            userData: ud,
+                            userData: {
+                                ...ud,
+                                gltfPath: ud.gltfPath || snap.gltfPath,
+                                gltfUrl: ud.gltfUrl,
+                            },
                         });
+                        if (root) {
+                            if (snap.restoreKey) restoredKeys.add(snap.restoreKey);
+                            window.ShaderRegistry?.registerMesh?.(root);
+                            window.AudioZoneSystem?.registerMesh?.(root);
+                            window.WeatherSystem?.registerMesh?.(root);
+                        }
                     } catch (e) {
                         console.warn('[ai-freeze] GLTF restore failed', snap.name, e);
+                        if (World?.createObject) {
+                            const ph = World.createObject('cube', `${snap.name} (restore failed)`, 0x442211, false);
+                            if (ph) {
+                                ph.position.copy(snap.transform.pos);
+                                ph.userData = { ...ud, freezeRestoreFailed: true };
+                            }
+                        }
                     }
                 } else if (World?.createObject) {
                     const mesh = World.createObject(snap.type, snap.name, snap.color, !!ud.hasPhysics);

@@ -1,5 +1,6 @@
 import { ViewPrefs } from './viewPrefs.js';
 import { AiMemoryFreeze } from './aiMemoryFreeze.js';
+import { WorkFolderScope } from './workFolderScope.js';
 
 const PREFS_KEY = 'ollamaRunPrefs';
 
@@ -37,8 +38,24 @@ export const OllamaRunQueue = {
     getStatus() {
         return { active: active?.model || null, taskId: active?.taskId || null, queueDepth, allowParallel: loadPrefs().allowParallelLocal };
     },
+    _parallelGuard() {
+        const objects = window.State?.objects || [];
+        const gltfCount = objects.filter((o) => o.userData?.type === 'gltf' || o.userData?.isGltf).length;
+        const scope = WorkFolderScope.getScope();
+        if (scope.parkMode === 'none' && gltfCount > 6) {
+            const msg = `Parallel local + ${gltfCount} GLBs + full world may OOM — switch working folder to Scene or Build`;
+            window.UI?.status?.(msg);
+            return { warn: true, gltfCount, scope: scope.id };
+        }
+        if (gltfCount > 12) {
+            throw new Error(`Too many GLB models (${gltfCount}) for parallel local run — use sequential queue or park GLBs`);
+        }
+        return null;
+    },
+
     async run(meta, fn) {
         if (loadPrefs().allowParallelLocal) {
+            this._parallelGuard();
             emitStatus({ note: 'parallel-local' });
             await AiMemoryFreeze.enter(meta);
             try { return await fn(); } finally { await AiMemoryFreeze.exit(); }

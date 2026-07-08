@@ -1,5 +1,8 @@
 /** Awareness overlay — highlights interactables / NPCs; green circle HUD when active */
 
+import { ViewPrefs } from './viewPrefs.js';
+
+const PEEK_PREFS_KEY = 'thirdEyePeekPrefs';
 const SCAN_MS = 100;
 const RADIUS = 18;
 const HIGHLIGHT = 0x2acc44;
@@ -33,11 +36,28 @@ export const ThirdEye = {
     _altPeek: false,
     _altTriggered: false,
     _altWired: false,
+    _enteredFullscreen: false,
 
     init() {
         this._indicator = document.getElementById('third-eye-indicator');
         this._crosshair = document.getElementById('fps-crosshair');
         this._wireAltPeek();
+        this._bindFullscreenPref();
+    },
+
+    _peekPrefs() {
+        return ViewPrefs.get(PEEK_PREFS_KEY, { fullscreenPeek: false });
+    },
+
+    _bindFullscreenPref() {
+        const el = document.getElementById('third-eye-fullscreen-peek');
+        if (!el || el.dataset.wired) return;
+        el.dataset.wired = '1';
+        el.checked = this._peekPrefs().fullscreenPeek;
+        el.addEventListener('change', () => {
+            ViewPrefs.set(PEEK_PREFS_KEY, { fullscreenPeek: el.checked });
+            window.UI?.status?.(el.checked ? 'Alt peek will try native fullscreen' : 'Alt peek — windowed');
+        });
     },
 
     _wireAltPeek() {
@@ -77,6 +97,8 @@ export const ThirdEye = {
             if (this._altTriggered) {
                 this._disablePeek({ fromAlt: true });
                 this._altTriggered = false;
+            } else {
+                this._exitFullscreenPeek();
             }
         });
     },
@@ -92,7 +114,27 @@ export const ThirdEye = {
         return this.active || this._altPeek;
     },
 
+    async _tryFullscreenPeek() {
+        if (!this._peekPrefs().fullscreenPeek || document.fullscreenElement) return;
+        try {
+            await document.documentElement.requestFullscreen();
+            this._enteredFullscreen = true;
+        } catch {
+            this._enteredFullscreen = false;
+        }
+    },
+
+    _exitFullscreenPeek() {
+        if (!this._enteredFullscreen || !document.fullscreenElement) {
+            this._enteredFullscreen = false;
+            return;
+        }
+        document.exitFullscreen?.().catch(() => {});
+        this._enteredFullscreen = false;
+    },
+
     _enablePeek({ fromAlt = false } = {}) {
+        if (fromAlt) void this._tryFullscreenPeek();
         window.Engine?._releaseLookLock?.();
         if (!this.active) {
             this.active = true;
@@ -113,7 +155,10 @@ export const ThirdEye = {
             this._clearHighlights();
             document.body.classList.remove('third-eye-active', 'third-eye-alt-peek');
             this.updateHud();
-            if (fromAlt) window.UI?.status?.('Third Eye peek off — LMB aim');
+            if (fromAlt) {
+                this._exitFullscreenPeek();
+                window.UI?.status?.('Third Eye peek off — LMB aim');
+            }
         }
     },
 

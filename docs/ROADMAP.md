@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.12.0 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.12.1 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -81,6 +81,13 @@ UI reference: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Controls: [CONTROLS.md](CO
 - **Review gate** — SETUP brief Step 3: interior/exterior, weather variants, surfaceType, collision
 - **Agent prompts** — Portal + design agent embed engine texture/weather/collision rules
 
+## 10.12.1 — Shader hooks + audio zones + agent stability ✅
+
+- **shaderRegistry.js** — 5 sandboxed hooks (wet boost, emissive pulse, dust, snow, heat shimmer)
+- **audioZoneSystem.js** — `userData.audioZone` drives spatial ambient loops from scene meshes
+- **Export manifest** — `immersive` block: weather, audioZones, shaderHooks for MP replay
+- **10.10 partial** — GLTF freeze restore hardening; parallel Ollama guard; Alt fullscreen peek (SETUP)
+
 ## 10.12.0 — Creative OS gate + immersive prep ✅
 
 - **Generation gate** — Portal GENERATE + SETUP RUN AGENT blocked until production plan complete (`validateProductionReady`)
@@ -93,13 +100,13 @@ UI reference: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Controls: [CONTROLS.md](CO
 
 ---
 
-## 10.10 — Agent stability + immersive peek
+## 10.10 — Agent stability (remaining)
 
 | Item | Deliverable |
 |------|-------------|
-| AI memory freeze | Harden GLTF park/restore edge cases |
-| Native fullscreen | Optional Fullscreen API for stronger Alt-hold Third Eye peek |
-| Parallel Ollama guard | Warn or block parallel local runs when freeze cannot park all assets |
+| AI memory freeze | ✅ GLTF path restore + placeholder fallback (10.12.1) |
+| Native fullscreen | ✅ SETUP toggle Alt peek → Fullscreen API (10.12.1) |
+| Parallel Ollama guard | ✅ Warn/block heavy GLB + full world (10.12.1) |
 
 ---
 

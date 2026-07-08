@@ -39,6 +39,8 @@ import '../shared/worldInteract.js';
 import '../shared/sessionUi.js';
 import '../shared/assetProductionPlan.js';
 import '../shared/materialPresets.js';
+import '../shared/shaderRegistry.js';
+import '../shared/audioZoneSystem.js';
 import '../shared/designIntake.js';
 import '../shared/agentPortal.js';
 import '../shared/agentReconnectChip.js';

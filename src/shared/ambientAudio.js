@@ -51,6 +51,8 @@ export const AmbientAudio = {
         await window.UrbanAmbient?.startStaggered?.();
         await window.InteriorAmbient?.startStaggered?.();
         await window.TeslaLabAmbient?.startStaggered?.();
+        await window.AudioZoneSystem?.start?.();
+        window.ShaderRegistry?.init?.();
     },
 
     stop() {
@@ -65,6 +67,7 @@ export const AmbientAudio = {
         window.UrbanAmbient?.stop?.();
         window.InteriorAmbient?.stop?.();
         window.TeslaLabAmbient?.stop?.();
+        window.AudioZoneSystem?.stop?.();
     },
 
     async _playLoop(clipId, vol, key) {
@@ -114,6 +117,8 @@ export const AmbientAudio = {
         if (this._powerHandle?.setVolume) this._powerHandle.setVolume(power);
 
         window.WeatherSystem?.tick?.(dt);
+        window.ShaderRegistry?.tick?.(dt);
+        window.AudioZoneSystem?.tick?.(dt);
         window.RecordedAmbient?.tick?.();
         window.WildlifeAmbient?.tick?.(dt);
         window.UrbanAmbient?.tick?.(dt);

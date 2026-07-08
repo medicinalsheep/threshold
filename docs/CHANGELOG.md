@@ -1,5 +1,15 @@
 # Changelog
 
+## 10.12.1 — Shader hooks, audio zones, agent stability
+
+- **shaderRegistry.js** — wet_surface_boost, emissive_pulse, dust_overlay, snow_freshen, heat_shimmer
+- **audioZoneSystem.js** — scene meshes with userData.audioZone register spatial ambient loops
+- **MaterialPresets** — auto-applies matching shader hooks; AudioZoneSystem on audioZone meshes
+- **Export manifest** — immersive.weather / audioZones / shaderHooks for guest replay
+- **AI memory freeze** — GLTF gltfPath restore, dedupe, placeholder on failure
+- **Parallel Ollama guard** — warns on full world + many GLBs; blocks >12 GLBs parallel
+- **Third Eye** — SETUP toggle: Alt-hold peek requests native fullscreen
+
 ## 10.12.0 — Creative OS gate + immersive prep
 
 - **Generation gate** — `validateProductionReady` blocks Portal GENERATE and SETUP RUN AGENT until placement, weather, collision intake complete

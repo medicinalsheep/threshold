@@ -130,10 +130,10 @@ export const SHADER_PRESET_OPTIONS = [
 export const IMMERSIVE_CAPABILITIES = {
     weather: ['rain_wetness', 'wet_glass', 'dust_wear', 'snow_accumulation', 'zone_sheltered', 'marquee_dampen'],
     atmosphere: ['time_of_day', 'fog', 'ambient_audio_zones', 'reverb_hints'],
-    materials: ['mesh_standard_presets', 'gimp_pbr_hilod', 'webp_lite_tiers'],
+    materials: ['mesh_standard_presets', 'shader_hooks', 'gimp_pbr_hilod', 'webp_lite_tiers'],
     physics: ['static_collision', 'dynamic_props', 'footsteps_surfaceType'],
     interact: ['f_key_radius', 'sound_triggers', 'ambient_zones'],
-    future: ['custom_shader_nodes', 'veo_cutscenes', 'trellis_mesh_gen'],
+    future: ['custom_glsl_nodes', 'veo_cutscenes', 'trellis_mesh_gen'],
 };
 
 const ENGINE_TEXTURE_RULES = `
@@ -173,7 +173,8 @@ THRESHOLD MATERIAL / SHADER RULES:
 - Hero surfaces MUST have GIMP 2K albedo/roughness/normal — preset alone is not enough for ship quality.
 - userData.materialPreset = preset id for export preflight and re-apply on load.
 - Retro render modes ONLY when brief style=retro — never as default slop fallback.
-- Future custom shaders: register id in userData.shaderHook — engine registry will load when available.
+- Shader hooks: userData.shaderHook = 'wet_surface_boost'|'emissive_pulse'|'dust_overlay'|'snow_freshen'|'heat_shimmer' — ShaderRegistry.applyHook(mesh, id).
+- Pair hooks with MaterialPresets; optional userData.shaderIntensity 0–1.5.
 `.trim();
 
 const ENGINE_COLLISION_RULES = `

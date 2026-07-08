@@ -2,7 +2,7 @@
 
 **North star:** Plan everything before generation. Creators design games; the tool makes pieces fall into place — not AI slop dumped into a blank chat.
 
-**Version:** 10.12.0 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.12.1 · **Live:** https://medicinalsheep.github.io/threshold/
 
 ---
 
@@ -71,7 +71,8 @@ Step 1 type → Step 2 details → **Step 3 production review** → review → R
 | **Marquee dampen** | emissive reduction in rain | `userData.weatherMarquee` |
 | **Atmosphere** | `Environment.setTimeOfDay`, `setFog` | atmosphere preset in brief |
 | **Material presets** | `materialPresets.js` registry | `userData.materialPreset` |
-| **Audio zones** | ambient routing hints | `userData.audioZone` |
+| **Shader hooks** | `shaderRegistry.js` tick effects | `userData.shaderHook` |
+| **Audio zones** | `audioZoneSystem.js` spatial loops | `userData.audioZone` |
 
 Registry: `IMMERSIVE_CAPABILITIES` in `assetProductionPlan.js`.
 
@@ -87,7 +88,9 @@ Registry: `IMMERSIVE_CAPABILITIES` in `assetProductionPlan.js`.
 
 Agents call `MaterialPresets.applyMaterialPreset(mesh, id)` — presets auto-wire weather hooks (`dustExposure`, `snowCap`, `wetGlass`).
 
-**Future:** custom shader node registry via `userData.shaderHook` — planned, not runtime yet.
+**Runtime hooks:** `wet_surface_boost`, `emissive_pulse`, `dust_overlay`, `snow_freshen`, `heat_shimmer` — no raw GLSL eval.
+
+**Future:** custom GLSL node graph — sandboxed loader when ready.
 
 ---
 
@@ -117,10 +120,9 @@ Export preflight — slop scan → ship
 
 | Phase | Focus |
 |-------|-------|
-| **10.10** | AI memory freeze, native fullscreen peek, parallel Ollama guard |
-| **10.12.1** | Custom shader hook loader; agent-generated GLSL snippets (sandboxed) |
-| **10.12.2** | Audio zone runtime (reverb zones tied to `audioZone`) |
-| **10.12.3** | MP weather state bundling in export wizard |
+| **10.12.2** | Custom GLSL node graph (sandboxed) |
+| **10.12.3** | Export wizard immersive review step (weather + zones preview) |
+| **10.13** | Trellis / Veo-class model gates when registry entries ship |
 | **Future** | Trellis mesh gen, Veo cutscenes — listed in capability registry, gated when ready |
 
 See [ROADMAP.md](ROADMAP.md) · [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) · [UI_AND_AGENTS.md](UI_AND_AGENTS.md)

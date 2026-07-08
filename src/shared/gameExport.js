@@ -165,6 +165,12 @@ export const GameExport = {
                 steps: ['info', 'branding', 'content', 'credits', 'review', 'targets', 'store', 'packs', 'package'],
             },
             world,
+            immersive: {
+                weather: world?.weather || window.WeatherSystem?.captureState?.() || null,
+                audioZones: window.AudioZoneSystem?.collectExportEntries?.() || [],
+                shaderHooks: window.ShaderRegistry?.collectExportEntries?.() || [],
+                note: 'Guests replay weather from world.weather on join; audioZone meshes re-register on scene load',
+            },
             scripts: {
                 input: project.scriptInput || document.getElementById('comp-input')?.value || '',
                 output: project.scriptOutput || document.getElementById('comp-output')?.value || '',

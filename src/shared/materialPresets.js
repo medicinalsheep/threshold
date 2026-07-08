@@ -129,6 +129,17 @@ export function applyMaterialPreset(mesh, presetId) {
     if (preset.dustExposure != null) mesh.userData.dustExposure = preset.dustExposure;
     if (preset.snowCap != null) mesh.userData.snowCap = preset.snowCap;
     window.WeatherSystem?.registerMesh?.(mesh);
+    const hookMap = {
+        pbr_concrete_weathered: 'dust_overlay',
+        pbr_asphalt_wet: 'wet_surface_boost',
+        pbr_wood_snow: 'snow_freshen',
+        pbr_glass_wet: 'wet_surface_boost',
+        pbr_emissive_marquee: 'emissive_pulse',
+        pbr_fabric_muted: 'dust_overlay',
+    };
+    const hookId = preset.shaderHook || hookMap[preset.id];
+    if (hookId) window.ShaderRegistry?.applyHook?.(mesh, hookId);
+    if (mesh.userData?.audioZone) window.AudioZoneSystem?.registerMesh?.(mesh);
     return preset;
 }
 
@@ -137,7 +148,8 @@ export function getMaterialPresetPromptBlock() {
 THRESHOLD MATERIAL PRESETS (pick one per hero mesh — never CanvasTexture noise):
 ${MATERIAL_PRESETS.map((p) => `- ${p.id}: ${p.label} — ${p.agentHint}`).join('\n')}
 Apply via MaterialPresets.applyMaterialPreset(mesh, 'preset_id') OR mirror params on MeshStandardMaterial.
-Always pair presets with GIMP 2K PBR maps when surfaces are visible in PLAY.`.trim();
+Always pair presets with GIMP 2K PBR maps when surfaces are visible in PLAY.
+Shader hooks auto-apply for weathered presets — or ShaderRegistry.applyHook(mesh, id).`.trim();
 }
 
 window.MaterialPresets = {

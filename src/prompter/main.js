@@ -13,6 +13,7 @@ import { PROMPT_COOKBOOK } from '../shared/promptCookbook.js';
 import { ViewPrefs } from '../shared/viewPrefs.js';
 import { buildProductionPlan, buildProductionReviewPrompt } from '../shared/assetProductionPlan.js';
 import { getMaterialPresetPromptBlock } from '../shared/materialPresets.js';
+import { getShaderHookPromptBlock } from '../shared/shaderRegistry.js';
 
 function renderSoundPicker() {
     const list = document.getElementById('prompt-sound-list');
@@ -124,6 +125,8 @@ PRODUCTION PLAN (when SETUP design brief exists — follow pipeline order strict
 Use ViewPrefs designBriefDraft if present; otherwise infer placement/weather from the idea.
 
 ${getMaterialPresetPromptBlock()}
+
+${getShaderHookPromptBlock()}
 `,
 
     buildPrompt() {

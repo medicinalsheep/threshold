@@ -27,12 +27,17 @@ userData hooks (set on meshes):
   weatherMarquee — true on emissive signs (rain dampens glow)
   zoneSheltered — true for interior volumes (rain stress reduction)
   materialPreset — preset id from MaterialPresets registry (export + re-apply)
-  audioZone — 'interior_warm'|'exterior_open' for ambient audio routing
+  shaderHook — ShaderRegistry id (wet_surface_boost, emissive_pulse, dust_overlay, snow_freshen, heat_shimmer)
+  shaderIntensity — 0–1.5 scale for hook strength
+  audioZone — interior_warm|exterior_open|industrial_hum|creek_near|highway_edge
+  audioZoneRadius — optional override (default per zone type)
   locked — true for static floors; hasPhysics + mass/friction for dynamics
   interactHint, interactRadius — F-key interact label and range
   name — MUST match GIMP texture manifest object name for PBR sync
 
 MaterialPresets.applyMaterialPreset(mesh, 'pbr_concrete_weathered') — tuned PBR, no CanvasTexture slop
+ShaderRegistry.applyHook(mesh, 'dust_overlay') — sandboxed material tick hooks
+mesh.userData.audioZone = 'interior_warm' — AudioZoneSystem spatial loops
 Environment.setTimeOfDay(14) · Environment.setFog(0.012) — atmosphere before PLAY verify
 
 WORKING TEMPLATE (copy structure exactly):
