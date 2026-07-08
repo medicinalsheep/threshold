@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), tiered local/cloud agents, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **10.11.1**)
+**Version:** `src/config.js` → `VERSION` (currently **10.12.4**)
 
 **Doc index:** [docs/README.md](docs/README.md) — full scope map
 
@@ -13,7 +13,13 @@ Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blen
 | Area | Path |
 |------|------|
 | Lobby | `src/lobby/` |
-| Engine | `src/engine/main.js` |
+| Engine bootstrap | `src/engine/main.js` — `initEngine()`, window globals |
+| Engine core | `src/engine/engineCore.js` — scene, render loop, input |
+| Engine UI | `src/engine/ui.js` — inspector, insert, bindings, agents |
+| Engine world | `src/engine/world.js` — create/delete/spawn, TC API |
+| Engine physics | `src/engine/physics.js` |
+| Engine environment | `src/engine/environment.js` |
+| Engine state | `src/engine/state.js` |
 | Starter scene | `src/shared/starterScene.js`, `starterGrid.js`, `starterTemplates.js` |
 | Guided session | `src/shared/guidedSession.js`, `walkthrough.js`, `actionHints.js` |
 | Quality intake | `designIntake.js`, `agentPortal.js`, `starterTex.js` |
@@ -43,6 +49,8 @@ Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blen
 ## Commands
 
 ```bash
+npm run version:sync            # align package.json + doc headers from src/config.js
+npm run version:sync:check      # CI drift gate (exit 1 if stale)
 npm run quickstart              # onboarding (+ --verify / --pack)
 npm run dev                     # Vite dev
 npm run build                   # GitHub Pages → dist-pages/

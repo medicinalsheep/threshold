@@ -1,5 +1,12 @@
 # Changelog
 
+## 10.12.4 — Engine split + version sync
+
+- **Engine modules** — `main.js` bootstrap only; subsystems in `state`, `physics`, `audioSys`, `recorder`, `environment`, `engineCore`, `world`, `io`, `ui`
+- **Consolidation plan** — `docs/CONSOLIDATION_PLAN.md` (phases 2–7 forward work)
+- **version:sync** — `npm run version:sync` aligns package.json + doc headers from `src/config.js`
+- **Verify scripts** — `tc-drive-verify` / `tc-circuit-verify` grep all `src/engine/*.js`
+
 ## 10.12.3 — Guest immersive replay
 
 - **immersiveReplay.js** — `reapplyFromState` wires weather, audioZone, shaderHook, shaderGraph after join/load

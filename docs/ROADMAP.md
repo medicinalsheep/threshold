@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.12.3 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.12.4 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -80,6 +80,12 @@ UI reference: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Controls: [CONTROLS.md](CO
 - **Pipeline order** — scope → collision → mesh → textures → HILOD → weather → interact → codegen → verify
 - **Review gate** — SETUP brief Step 3: interior/exterior, weather variants, surfaceType, collision
 - **Agent prompts** — Portal + design agent embed engine texture/weather/collision rules
+
+## 10.12.4 — Engine split + version sync ✅
+
+- **main.js** — 3k lines → bootstrap; subsystems in `src/engine/*.js`
+- **CONSOLIDATION_PLAN.md** — multi-phase review action plan
+- **npm run version:sync** — doc + package version alignment from `config.js`
 
 ## 10.12.3 — Guest immersive replay ✅
 

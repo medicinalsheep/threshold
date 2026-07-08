@@ -36,7 +36,14 @@ const net = fs.readFileSync(path.join(ROOT, 'src/shared/network.js'), 'utf8');
 });
 
 console.log('[tc-drive-verify] World API');
-const eng = fs.readFileSync(path.join(ROOT, 'src/engine/main.js'), 'utf8');
+function readEngineSources() {
+    const dir = path.join(ROOT, 'src/engine');
+    return fs.readdirSync(dir)
+        .filter((f) => f.endsWith('.js'))
+        .map((f) => fs.readFileSync(path.join(dir, f), 'utf8'))
+        .join('\n');
+}
+const eng = readEngineSources();
 ['claimTcVehicle', 'enterTcRace', 'TcDrive.prePhysics', "controlMode === 'vehicle'"].forEach((m) => {
     if (eng.includes(m)) ok(m);
     else bad(`engine missing ${m}`);

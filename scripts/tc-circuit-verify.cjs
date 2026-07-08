@@ -42,7 +42,14 @@ const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 HTML_MARKERS.forEach((m) => (html.includes(m) ? ok(m) : bad(`html missing ${m}`)));
 
 console.log('[tc-circuit-verify] World API');
-const eng = fs.readFileSync(path.join(ROOT, 'src/engine/main.js'), 'utf8');
+function readEngineSources() {
+    const dir = path.join(ROOT, 'src/engine');
+    return fs.readdirSync(dir)
+        .filter((f) => f.endsWith('.js'))
+        .map((f) => fs.readFileSync(path.join(dir, f), 'utf8'))
+        .join('\n');
+}
+const eng = readEngineSources();
 if (!eng.includes('startTcCircuit')) bad('engine missing startTcCircuit');
 else ok('World.startTcCircuit wired');
 
