@@ -445,7 +445,12 @@ export const Network = {
             }
         } else if (this.mode === 'guest' || this.mode === 'spectate') {
             if (data.type === 'FULL_STATE') {
-                Sync.applyState(data.state);
+                void Sync.applyState(data.state).then(() => {
+                    const applied = window.ImmersiveReplay?.getStatus?.();
+                    if (applied?.zones || applied?.hooks || applied?.graphs) {
+                        window.UI?.status?.(`Immersive replay — ${applied.zones} zone(s) · ${applied.hooks} hook(s) · ${applied.graphs} graph(s)`);
+                    }
+                });
                 if (data.state?.playerAvatars) {
                     window.TcDrive?.applyNetworkState?.(data.state.playerAvatars, data.state.vehicleClaims);
                 } else if (data.state?.playerPositions) {

@@ -49,28 +49,12 @@ const BUILD_PROFILES = {
 };
 
 function buildImmersiveManifestBlock(options = {}, world = null) {
-    const prefs = options.immersive || {};
-    const weather = prefs.replayWeather !== false
-        ? (world?.weather || window.WeatherSystem?.captureState?.() || null)
-        : null;
-    return {
-        weather,
-        audioZones: prefs.bundleAudioZones !== false
-            ? (window.AudioZoneSystem?.collectExportEntries?.() || [])
-            : [],
-        shaderHooks: prefs.bundleShaderGraphs !== false
-            ? (window.ShaderRegistry?.collectExportEntries?.() || [])
-            : [],
-        shaderGraphs: prefs.bundleShaderGraphs !== false
-            ? (window.ShaderNodeGraph?.collectExportEntries?.() || [])
-            : [],
-        prefs: {
-            replayWeather: prefs.replayWeather !== false,
-            bundleAudioZones: prefs.bundleAudioZones !== false,
-            bundleShaderGraphs: prefs.bundleShaderGraphs !== false,
-        },
-        note: 'Guests replay weather from world.weather on join; re-apply audioZone / shaderGraph on scene load',
-    };
+    const block = window.captureImmersiveBlock?.(options.immersive || {}) || {};
+    if (!block.weather && options.immersive?.replayWeather !== false) {
+        block.weather = world?.weather || window.WeatherSystem?.captureState?.() || null;
+    }
+    block.note = 'Guests replay via Sync.immersive + ImmersiveReplay on join';
+    return block;
 }
 
 function blobToBase64(blob) {

@@ -42,6 +42,7 @@ import '../shared/materialPresets.js';
 import '../shared/shaderRegistry.js';
 import '../shared/shaderNodeGraph.js';
 import '../shared/audioZoneSystem.js';
+import '../shared/immersiveReplay.js';
 import '../shared/designIntake.js';
 import '../shared/agentPortal.js';
 import '../shared/agentReconnectChip.js';
@@ -1281,6 +1282,7 @@ const Engine = {
         window.WorldInteract?.tick?.();
         ThirdEye.tick();
         window.AmbientAudio?.tick?.(dt);
+        window.ImmersiveReplay?.tick?.(dt);
         window.StarterAnim?.tick?.(time);
         if (Controls.consumeJustPressed('cameraReset')) {
             PlayerController.resetCameraBehind?.();

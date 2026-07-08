@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.12.2 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.12.3 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -80,6 +80,13 @@ UI reference: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Controls: [CONTROLS.md](CO
 - **Pipeline order** — scope → collision → mesh → textures → HILOD → weather → interact → codegen → verify
 - **Review gate** — SETUP brief Step 3: interior/exterior, weather variants, surfaceType, collision
 - **Agent prompts** — Portal + design agent embed engine texture/weather/collision rules
+
+## 10.12.3 — Guest immersive replay ✅
+
+- **immersiveReplay.js** — re-apply weather, audio zones, shader hooks/graphs on sync + manifest load
+- **Sync.capture** — includes `immersive` block for MP guest FULL_STATE
+- **Import** — `.threshold-game.json` manifest imports with immersive prefs
+- **Engine tick** — shader hooks/graphs tick in PLAY without requiring AmbientAudio
 
 ## 10.12.2 — Shader node graph + export immersive step ✅
 

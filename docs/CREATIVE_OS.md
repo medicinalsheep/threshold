@@ -2,7 +2,7 @@
 
 **North star:** Plan everything before generation. Creators design games; the tool makes pieces fall into place — not AI slop dumped into a blank chat.
 
-**Version:** 10.12.2 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.12.3 · **Live:** https://medicinalsheep.github.io/threshold/
 
 ---
 
@@ -95,6 +95,8 @@ Agents call `MaterialPresets.applyMaterialPreset(mesh, id)` — presets auto-wir
 
 **Export:** wizard IMMERSIVE step previews weather + zones + shaders before REVIEW.
 
+**Guest replay:** `ImmersiveReplay.reapplyFromState` on JOIN / `?world=` load — weather + zones + shaders restore from `Sync.immersive`.
+
 ---
 
 ## Creator journey
@@ -123,7 +125,7 @@ Export preflight — slop scan → ship
 
 | Phase | Focus |
 |-------|-------|
-| **10.12.3** | Guest join auto-reapply immersive manifest (zones + graphs from export) |
+| **10.13** | Trellis / Veo-class model gates when registry entries ship |
 | **10.13** | Trellis / Veo-class model gates when registry entries ship |
 | **Future** | Trellis mesh gen, Veo cutscenes — listed in capability registry, gated when ready |
 

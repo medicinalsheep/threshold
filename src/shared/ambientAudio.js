@@ -118,8 +118,6 @@ export const AmbientAudio = {
         if (this._powerHandle?.setVolume) this._powerHandle.setVolume(power);
 
         window.WeatherSystem?.tick?.(dt);
-        window.ShaderRegistry?.tick?.(dt);
-        window.ShaderNodeGraph?.tick?.(dt);
         window.AudioZoneSystem?.tick?.(dt);
         window.RecordedAmbient?.tick?.();
         window.WildlifeAmbient?.tick?.(dt);

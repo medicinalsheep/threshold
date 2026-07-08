@@ -53,6 +53,7 @@ export const Sync = {
             audioManifest: window.Network?.mode === 'host' ? buildHostAudioManifest() : undefined,
             textureManifest: window.Network?.mode === 'host' ? buildHostTextureManifest() : undefined,
             collab: window.CollaborateGuard?.captureState?.() || null,
+            immersive: window.captureImmersiveBlock?.() || null,
         };
     },
 
@@ -269,9 +270,7 @@ export const Sync = {
                 }
                 if (state.collab) window.CollaborateGuard?.applyState?.(state.collab);
             }
-            if (state.weather) {
-                window.WeatherSystem?.applyNetworkState?.(state.weather, { smooth: false });
-            }
+            await window.ImmersiveReplay?.reapplyFromState?.(state);
 
             window.UI?.updateControlMode?.();
             window.Spectate?.updateHud?.();

@@ -1,5 +1,13 @@
 # Changelog
 
+## 10.12.3 — Guest immersive replay
+
+- **immersiveReplay.js** — `reapplyFromState` wires weather, audioZone, shaderHook, shaderGraph after join/load
+- **Sync.capture** — ships `immersive` snapshot alongside `weather` for guests
+- **Manifest import** — `.threshold-game.json` loads `world` + `immersive` via Persistence
+- **Manifest fallback** — matches audio/shader entries by mesh name when userData drifted
+- **Engine loop** — ImmersiveReplay.tick drives shader systems in PLAY (not only when ambient on)
+
 ## 10.12.2 — Shader node graph + export immersive review
 
 - **shaderNodeGraph.js** — whitelisted GLSL nodes (fresnel_rim, rain_specular, vertex_sway…) + graph presets

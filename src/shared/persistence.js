@@ -85,7 +85,7 @@ export const Persistence = {
             try {
                 const cloud = await this._cloudLoad(trimmed);
                 if (cloud) {
-                    Sync.applyState(cloud.data);
+                    await Sync.applyState(cloud.data);
                     return cloud;
                 }
             } catch (e) {
@@ -102,7 +102,7 @@ export const Persistence = {
         });
 
         if (!record) throw new Error('World not found on this device — try cloud code or import file');
-        Sync.applyState(record.data);
+        await Sync.applyState(record.data);
         return record;
     },
 
@@ -118,7 +118,28 @@ export const Persistence = {
 
     async importFile(file) {
         const text = await file.text();
-        const record = JSON.parse(text);
+        const parsed = JSON.parse(text);
+
+        if (parsed.format === 'threshold-game' && parsed.world) {
+            const state = { ...parsed.world, immersive: parsed.immersive || null };
+            const record = {
+                code: randomSceneCode(),
+                name: parsed.game?.name || 'Imported game',
+                data: state,
+                savedAt: Date.now(),
+            };
+            const db = await openDb();
+            await new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE, 'readwrite');
+                tx.objectStore(STORE).put(record);
+                tx.oncomplete = resolve;
+                tx.onerror = () => reject(tx.error);
+            });
+            await Sync.applyState(state);
+            return record;
+        }
+
+        const record = parsed;
         if (!record.data) throw new Error('Invalid world file');
         const db = await openDb();
         const code = record.code || randomSceneCode();
@@ -129,7 +150,7 @@ export const Persistence = {
             tx.oncomplete = resolve;
             tx.onerror = () => reject(tx.error);
         });
-        Sync.applyState(record.data);
+        await Sync.applyState(record.data);
         return record;
     },
 
