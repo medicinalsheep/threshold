@@ -1,77 +1,25 @@
 import * as THREE from 'three';
-import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 import { VERSION } from '../config.js';
-import { State, IS_TOUCH_DEVICE } from './state.js';
+import { State } from './state.js';
 import { GraphicsProfile } from '../shared/graphicsProfile.js';
 import { Engine } from './engineCore.js';
-import { createConcreteSlabDeck, wireDeckTextures, FLOOR_HALF } from './floorDeck.js';
-import {
-    createWaterShaderMaterial,
-    createFoamRingMaterial,
-    bindWaterEnvMap,
-    updateWaterShaderMaterials,
-    attachReflectorHooks,
-} from './waterSurface.js';
 
-/** Dry play slab half-extent (m). Water moat sits outside this. */
-export { FLOOR_HALF };
-/** Water basin surface Y — below the concrete deck (deck top ≈ 0.06). */
-export const WATER_SURFACE_Y = -0.18;
-export const MOAT_OUTER_HALF = 48;
-export const MOAT_INNER_HALF = FLOOR_HALF + 0.85;
-
-function createMoatRingGeometry(outerHalf, innerHalf, segments = 48) {
-    const shape = new THREE.Shape();
-    shape.moveTo(-outerHalf, -outerHalf);
-    shape.lineTo(outerHalf, -outerHalf);
-    shape.lineTo(outerHalf, outerHalf);
-    shape.lineTo(-outerHalf, outerHalf);
-    shape.closePath();
-
-    const hole = new THREE.Path();
-    hole.moveTo(-innerHalf, -innerHalf);
-    hole.lineTo(-innerHalf, innerHalf);
-    hole.lineTo(innerHalf, innerHalf);
-    hole.lineTo(innerHalf, -innerHalf);
-    hole.closePath();
-    shape.holes.push(hole);
-
-    const geo = new THREE.ShapeGeometry(shape, segments);
-    geo.rotateX(-Math.PI / 2);
-    return geo;
-}
+export const FLOOR_HALF = 24;
 
 export const Environment = {
     sunLight: null,
     hemiLight: null,
-    waterMesh: null,
-    waterReflector: null,
-    waterShaderMat: null,
-    waterFoamMesh: null,
-    waterFoamMat: null,
-    waterGroup: null,
     floorGroup: null,
-    floorTextureTarget: null,
+    waterReflector: null,
+    waterMesh: null,
 
     init: function () {
-        this.ensureFloorDeck();
+        State.env.waterEnabled = false;
+        this.removeWater();
+        this.useSimpleGround();
         this.bindUi();
         this.setTimeOfDay(State.env.timeOfDay);
         this.setFog(State.env.fogDensity);
-        setTimeout(() => {
-            const tier = State.graphicsTier || 'realistic';
-            const tierLabel = GraphicsProfile.getTier(tier).label;
-            if (State.env.waterEnabled) {
-                window.UI?.status?.(`v${VERSION} · slab deck + moat water · ${tierLabel} · pan to pad edge`);
-            } else {
-                window.UI?.status?.(`v${VERSION} · slab deck ready · water OFF (${tierLabel}) — ENV → Realistic`);
-            }
-        }, 400);
-        if (State.env.waterEnabled) {
-            this.createWater();
-            const btn = document.getElementById('env-water-toggle');
-            if (btn) { btn.textContent = 'ON'; btn.classList.add('active'); }
-        }
         if (State.env.atmosphereEnabled) {
             if (!this.hemiLight) {
                 this.hemiLight = new THREE.HemisphereLight(0x87ceeb, 0x1a2a12, 0.55);
@@ -83,29 +31,43 @@ export const Environment = {
         }
     },
 
-    ensureFloorDeck: function () {
-        if (this.floorGroup) return;
-        const deck = createConcreteSlabDeck(FLOOR_HALF);
-        this.floorGroup = deck.group;
-        this.floorTextureTarget = deck.textureTarget;
-        this.floorGroup.renderOrder = 3;
-        Engine.scene.add(this.floorGroup);
+    useSimpleGround: function () {
+        this.clearFloorDeck();
+        const plane = Engine.groundPlane;
+        if (!plane) return;
 
-        if (Engine.groundPlane) {
-            Engine.groundPlane.visible = false;
-            Engine.groundPlane.userData._replacedByFloorDeck = true;
+        plane.visible = true;
+        plane.userData.id = 'engine_ground';
+        plane.userData.name = 'Starter Ground';
+        plane.userData.isFloor = true;
+        plane.userData.surfaceType = 'concrete';
+
+        if (!State.objects.includes(plane)) {
+            State.objects.push(plane);
         }
 
-        if (!State.objects.some((o) => o.userData?.id === 'engine_floor_deck')) {
-            State.objects.push(this.floorGroup);
-        }
+        window.StarterTex?.wireStarterTextures?.().catch(() => {});
+    },
 
-        const instanced = this.floorGroup.children.find((c) => c.isInstancedMesh);
-        if (instanced) window.WeatherSystem?.registerMesh?.(instanced);
+    clearFloorDeck: function () {
+        if (!this.floorGroup) return;
 
-        wireDeckTextures(this.floorTextureTarget).then((r) => {
-            if (r.maps) window.UI?.status?.(`Floor PBR · ${r.maps} maps (slab deck)`);
-        }).catch(() => {});
+        const disposeMesh = (mesh) => {
+            mesh.geometry?.dispose?.();
+            if (mesh.material?.dispose) mesh.material.dispose();
+        };
+
+        this.floorGroup.traverse((child) => {
+            if (child.isMesh || child.isInstancedMesh) disposeMesh(child);
+            if (child.isLine) child.geometry?.dispose?.();
+        });
+
+        Engine.scene.remove(this.floorGroup);
+        State.objects = State.objects.filter(
+            (o) => o !== this.floorGroup && o.userData?.id !== 'engine_floor_deck',
+        );
+        this.floorGroup = null;
+        this.floorTextureTarget = null;
     },
 
     bindUi: function () {
@@ -128,7 +90,6 @@ export const Environment = {
         document.getElementById('env-fog')?.addEventListener('input', (e) => {
             this.setFog(parseFloat(e.target.value));
         });
-        document.getElementById('env-water-toggle')?.addEventListener('click', () => this.toggleWater());
         document.getElementById('env-atmo-toggle')?.addEventListener('click', () => this.toggleAtmosphere());
     },
 
@@ -170,92 +131,32 @@ export const Environment = {
         if (Engine.scene?.fog) Engine.scene.fog.density = density;
     },
 
-    toggleWater: function () {
-        State.env.waterEnabled = !State.env.waterEnabled;
-        const btn = document.getElementById('env-water-toggle');
-        if (State.env.waterEnabled) {
-            this.createWater();
-            if (btn) { btn.textContent = 'ON'; btn.classList.add('active'); }
-        } else {
-            this.removeWater();
-            if (btn) { btn.textContent = 'OFF'; btn.classList.remove('active'); }
-        }
-    },
-
     createWater: function () {
-        if (this.waterReflector) return;
-        this.ensureFloorDeck();
-
-        if (!this.waterGroup) {
-            this.waterGroup = new THREE.Group();
-            this.waterGroup.name = 'threshold-water';
-            Engine.scene.add(this.waterGroup);
-        }
-
-        const tier = State.graphicsTier || 'realistic';
-        const tierPreset = GraphicsProfile.getTier(tier);
-        const texSize = tierPreset.waterTexSize || (IS_TOUCH_DEVICE ? 512 : 1024);
-        const ringSegs = IS_TOUCH_DEVICE ? 40 : 72;
-        const ringGeo = createMoatRingGeometry(MOAT_OUTER_HALF, MOAT_INNER_HALF, ringSegs);
-
-        this.waterReflector = new Reflector(ringGeo, {
-            clipBias: 0.003,
-            textureWidth: texSize,
-            textureHeight: texSize,
-            color: 0x061820,
-        });
-        this.waterReflector.position.y = WATER_SURFACE_Y;
-        this.waterReflector.receiveShadow = true;
-        this.waterReflector.renderOrder = 0;
-        this.waterGroup.add(this.waterReflector);
-
-        const rippleSegs = IS_TOUCH_DEVICE ? 16 : 36;
-        const rippleGeo = createMoatRingGeometry(MOAT_OUTER_HALF, MOAT_INNER_HALF, rippleSegs);
-        this.waterShaderMat = createWaterShaderMaterial(MOAT_INNER_HALF, 1.6);
-        bindWaterEnvMap(this.waterShaderMat, Engine.scene);
-
-        this.waterMesh = new THREE.Mesh(rippleGeo, this.waterShaderMat);
-        this.waterMesh.position.y = WATER_SURFACE_Y + 0.02;
-        this.waterMesh.renderOrder = 1;
-        this.waterGroup.add(this.waterMesh);
-
-        const foamGeo = new THREE.RingGeometry(MOAT_INNER_HALF - 0.15, MOAT_INNER_HALF + 1.1, IS_TOUCH_DEVICE ? 48 : 96);
-        foamGeo.rotateX(-Math.PI / 2);
-        this.waterFoamMat = createFoamRingMaterial();
-        this.waterFoamMesh = new THREE.Mesh(foamGeo, this.waterFoamMat);
-        this.waterFoamMesh.position.y = WATER_SURFACE_Y + 0.05;
-        this.waterFoamMesh.renderOrder = 2;
-        this.waterGroup.add(this.waterFoamMesh);
-
-        attachReflectorHooks(this);
+        State.env.waterEnabled = false;
     },
 
     removeWater: function () {
+        const group = Engine.scene?.getObjectByName?.('threshold-water');
+        if (!group) {
+            this.waterReflector = null;
+            this.waterMesh = null;
+            return;
+        }
+
         const disposeMesh = (mesh) => {
-            if (!mesh) return;
-            this.waterGroup?.remove(mesh);
-            mesh.geometry?.dispose();
+            mesh.geometry?.dispose?.();
             if (mesh.material?.dispose) mesh.material.dispose();
         };
-        disposeMesh(this.waterReflector);
-        disposeMesh(this.waterMesh);
-        disposeMesh(this.waterFoamMesh);
+
+        group.traverse((child) => {
+            if (child.isMesh) disposeMesh(child);
+        });
+        Engine.scene.remove(group);
         this.waterReflector = null;
         this.waterMesh = null;
-        this.waterFoamMesh = null;
-        this.waterShaderMat = null;
-        this.waterFoamMat = null;
-        this._reflectorHooks = false;
-        if (this.waterGroup && this.waterGroup.children.length === 0) {
-            Engine.scene.remove(this.waterGroup);
-            this.waterGroup = null;
-        }
     },
 
-    updateWater: function (time) {
-        if (!this.waterMesh) return;
-        updateWaterShaderMaterials(this, time, Engine.scene);
-    },
+    updateWater: function () {},
 
     toggleAtmosphere: function () {
         State.env.atmosphereEnabled = !State.env.atmosphereEnabled;

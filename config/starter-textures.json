@@ -12,6 +12,7 @@
     "AI Build Station": { "uvRepeat": [1, 1], "envMapIntensity": 0.32 }
   },
   "aliases": {
+    "engine_ground": "Starter Ground",
     "engine_floor_deck": "Starter Ground",
     "starter_grid_pad": "Starter Ground",
     "starter_ground": "Starter Ground",

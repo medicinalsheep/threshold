@@ -18,9 +18,9 @@ export const GRAPHICS_TIERS = {
     balanced: {
         id: 'balanced',
         label: 'Mobile',
-        description: 'PBR realistic · water · atmosphere — phones & tablets',
+        description: 'PBR realistic · atmosphere — phones & tablets',
         renderMode: 4,
-        env: { waterEnabled: true, atmosphereEnabled: true, fogDensity: 0.016 },
+        env: { waterEnabled: false, atmosphereEnabled: true, fogDensity: 0.016 },
         physicsIterations: 12,
         pixelRatioCap: 1.5,
         shadowMapSize: 2048,
@@ -31,9 +31,9 @@ export const GRAPHICS_TIERS = {
     realistic: {
         id: 'realistic',
         label: 'Realistic',
-        description: 'Full PBR · water · bloom · 2K textures — desktop default',
+        description: 'Full PBR · bloom · 2K textures — desktop default',
         renderMode: 4,
-        env: { waterEnabled: true, atmosphereEnabled: true, fogDensity: 0.015 },
+        env: { waterEnabled: false, atmosphereEnabled: true, fogDensity: 0.015 },
         physicsIterations: 15,
         pixelRatioCap: null,
         shadowMapSize: 2048,
@@ -46,7 +46,7 @@ export const GRAPHICS_TIERS = {
         label: 'Ultra',
         description: 'PBR max · sharp shadows · 4K textures — high-end desktop',
         renderMode: 4,
-        env: { waterEnabled: true, atmosphereEnabled: true, fogDensity: 0.012 },
+        env: { waterEnabled: false, atmosphereEnabled: true, fogDensity: 0.012 },
         physicsIterations: 20,
         pixelRatioCap: 2,
         shadowMapSize: 4096,
@@ -177,17 +177,9 @@ export const GraphicsProfile = {
 
         if (Environment) {
             Environment.setFog(State.env.fogDensity);
-            const waterOn = !!State.env.waterEnabled;
-            if (waterOn !== !!Environment.waterReflector) {
-                if (waterOn) Environment.createWater();
-                else Environment.removeWater();
-            }
-            const waterBtn = document.getElementById('env-water-toggle');
-            if (waterBtn) {
-                waterBtn.textContent = waterOn ? 'ON' : 'OFF';
-                waterBtn.classList.toggle('active', waterOn);
-            }
-            Environment.ensureFloorDeck?.();
+            State.env.waterEnabled = false;
+            Environment.removeWater?.();
+            Environment.useSimpleGround?.();
 
             if (State.env.atmosphereEnabled) {
                 if (!Environment.hemiLight && Engine?.scene) {

@@ -10,10 +10,10 @@ export async function buildStarterGrid() {
     const C = window.CANNON;
     if (!Engine?.scene || !C || !State) return null;
 
-    if (State.starterGridBuilt) return State.objects.find((o) => o.userData?.id === 'engine_floor_deck') || null;
+    if (State.starterGridBuilt) return State.objects.find((o) => o.userData?.id === 'engine_ground') || null;
     State.starterGridBuilt = true;
 
-    window.Environment?.ensureFloorDeck?.();
+    window.Environment?.useSimpleGround?.();
 
     if (Physics?.addStaticBox) {
         Physics.addStaticBox(new C.Vec3(16, 0.03, 16), { x: 0, y: 0.03, z: 0 }, 'ground', 'concrete');
@@ -55,7 +55,7 @@ export async function buildStarterGrid() {
 
     window.StarterTex?.wireStarterTextures?.().catch(() => {});
 
-    return State.objects.find((o) => o.userData?.id === 'engine_floor_deck') || null;
+    return State.objects.find((o) => o.userData?.id === 'engine_ground') || null;
 }
 
 window.buildStarterGrid = buildStarterGrid;

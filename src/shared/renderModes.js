@@ -8,7 +8,7 @@ export const RENDER_MODES = [
         key: 'hyper',
         name: 'REALISTIC (PBR)',
         short: 'Realistic',
-        tagline: 'Default — full PBR lighting, textures, bloom, water',
+        tagline: 'Default — full PBR lighting, textures, bloom',
         limits: 'MeshStandardMaterial + IBL + optional bloom. Use GIMP/Blender PBR textures.',
         tips: 'Default for all new worlds. Assign userData.textures albedo/roughness/metalness.',
         default: true,

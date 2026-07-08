@@ -28,7 +28,7 @@ export const State = {
     env: {
         timeOfDay: 14,
         fogDensity: 0.015,
-        waterEnabled: true,
+        waterEnabled: false,
         atmosphereEnabled: true,
     },
 };

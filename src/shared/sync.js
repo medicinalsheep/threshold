@@ -203,10 +203,8 @@ export const Sync = {
                     Object.assign(State.env, state.env);
                     Environment.setTimeOfDay(state.env.timeOfDay ?? 14);
                     Environment.setFog(state.env.fogDensity ?? 0.02);
-                    if (!!state.env.waterEnabled !== !!Environment.waterReflector) {
-                        if (state.env.waterEnabled) Environment.createWater();
-                        else Environment.removeWater();
-                    }
+                    State.env.waterEnabled = false;
+                    Environment.removeWater?.();
                     if (!!state.env.atmosphereEnabled !== !!Environment.hemiLight?.visible) {
                         if (state.env.atmosphereEnabled) {
                             if (!Environment.hemiLight && Engine?.scene && window.THREE) {

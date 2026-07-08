@@ -62,7 +62,7 @@ export const Engine = {
         // Visual Helpers
         this.gridHelper = new THREE.GridHelper(40, 40, 0x666666, 0x333333);
         this.scene.add(this.gridHelper);
-        // Raycast / fallback plane — Environment.ensureFloorDeck() replaces visible floor with opaque slab
+        // Default play surface — Environment.useSimpleGround() wires PBR maps
         const planeGeo = new THREE.PlaneGeometry(100, 100);
         const planeMat = new THREE.MeshStandardMaterial({ color: 0x1a1c1e, roughness: 0.78, metalness: 0.04, envMapIntensity: 0.28 });
         this.groundPlane = new THREE.Mesh(planeGeo, planeMat);
