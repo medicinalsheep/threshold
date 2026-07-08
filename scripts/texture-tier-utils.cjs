@@ -1,13 +1,29 @@
-/** Shared HILOD tier caps — PNG / WebP / KTX2 compress scripts */
+/** Shared HILOD tier caps — PNG masters, downscale targets, WebP encode dims */
 
-function maxDimFor(name) {
-    if (name.includes('_4k')) return 1024;
-    if (name.includes('_2k')) return 512;
-    if (name.includes('_1k')) return 256;
-    if (name.includes('_512')) return 128;
-    return 512;
+/** Downscale targets after master export (quality-first — no _512) */
+const HILOD_OUTPUT_TIERS = [
+    { suffix: '_1k', px: 1024 },
+    { suffix: '_2k', px: 2048 },
+];
+
+const MASTER_PX = 2048;
+const WEBP_QUALITY = 82;
+
+/** Max dimension when encoding WebP (delivery size, not source PNG size) */
+function maxDimFor(name = '') {
+    const lower = String(name).toLowerCase();
+    if (lower.includes('_4k')) return 2048;
+    if (lower.includes('_2k')) return 1024;
+    if (lower.includes('_1k')) return 512;
+    return 1024;
 }
 
-const HILOD_SUFFIXES = ['_512', '_1k', '_2k', '_4k', ''];
+const HILOD_SUFFIXES = ['_1k', '_2k', '_4k', ''];
 
-module.exports = { maxDimFor, HILOD_SUFFIXES };
+module.exports = {
+    HILOD_OUTPUT_TIERS,
+    MASTER_PX,
+    WEBP_QUALITY,
+    maxDimFor,
+    HILOD_SUFFIXES,
+};

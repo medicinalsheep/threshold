@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.11.1 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.11.2 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -69,6 +69,12 @@ UI reference: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Controls: [CONTROLS.md](CO
 - **Starter modules** — 14 unused Wardenclyffe builders → `old/src/shared/`
 - **`npm run manifest:prune`** — repeatable cleanup script
 
+## 10.11.2 — 2K defaults + compression pipeline ✅
+
+- **`textures:gen:default`** — 2K masters for Starter Ground + AI Build Station
+- **`textures:hilod`** — master PNG → `_1k`/`_2k` tiers; watch auto-runs on GIMP save
+- **WebP sidecars** — compressed delivery for Lite/Mobile tiers (per-tier encode caps)
+
 ---
 
 ## 10.10 — Agent stability + immersive peek
@@ -86,7 +92,7 @@ UI reference: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Controls: [CONTROLS.md](CO
 | Area | Notes |
 |------|-------|
 | **10.10** agent stability | AI memory freeze GLTF edge cases; native fullscreen peek; parallel Ollama guard |
-| Regenerate default textures at 2K | Grid pad + AI Build Station hero PBR pass in GIMP |
+| GIMP hero pass | Hand-painted 2K overrides for grid + AI station (procedural seed ships in 10.11.2) |
 | Doc version sync | `README.md`, `CAPABILITIES.md`, `GETTING_STARTED.md` still drift from live version |
 | `controls:verify` / `store:verify` | Not re-run since 10.8.x |
 | Mouse mode without Third Eye highlights | UI-only pointer mode for PLAY |

@@ -1,7 +1,7 @@
 {
   "format": "threshold-gimp-manifest",
   "formatVersion": 1,
-  "engineVersion": "10.11.1",
+  "engineVersion": "10.11.2",
   "textures": [
     {
       "id": "tc_run_albedo",
@@ -364,186 +364,6 @@
       ]
     },
     {
-      "id": "starter_terminal_albedo",
-      "objectName": "AI Build Station",
-      "slot": "albedo",
-      "file": "starter_terminal_albedo.png",
-      "path": "textures/starter_terminal_albedo.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_terminal_albedo_1k.png",
-          "path": "textures/starter_terminal_albedo_1k.png",
-          "maxPx": 256
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_terminal_albedo_2k.png",
-          "path": "textures/starter_terminal_albedo_2k.png",
-          "maxPx": 512
-        },
-        {
-          "suffix": "_4k",
-          "file": "starter_terminal_albedo_4k.png",
-          "path": "textures/starter_terminal_albedo_4k.png",
-          "maxPx": 1024
-        }
-      ]
-    },
-    {
-      "id": "starter_terminal_roughness",
-      "objectName": "AI Build Station",
-      "slot": "roughness",
-      "file": "starter_terminal_roughness.png",
-      "path": "textures/starter_terminal_roughness.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_terminal_roughness_1k.png",
-          "path": "textures/starter_terminal_roughness_1k.png",
-          "maxPx": 256
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_terminal_roughness_2k.png",
-          "path": "textures/starter_terminal_roughness_2k.png",
-          "maxPx": 512
-        },
-        {
-          "suffix": "_4k",
-          "file": "starter_terminal_roughness_4k.png",
-          "path": "textures/starter_terminal_roughness_4k.png",
-          "maxPx": 1024
-        }
-      ]
-    },
-    {
-      "id": "starter_terminal_metalness",
-      "objectName": "AI Build Station",
-      "slot": "metalness",
-      "file": "starter_terminal_metalness.png",
-      "path": "textures/starter_terminal_metalness.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_terminal_metalness_1k.png",
-          "path": "textures/starter_terminal_metalness_1k.png",
-          "maxPx": 256
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_terminal_metalness_2k.png",
-          "path": "textures/starter_terminal_metalness_2k.png",
-          "maxPx": 512
-        },
-        {
-          "suffix": "_4k",
-          "file": "starter_terminal_metalness_4k.png",
-          "path": "textures/starter_terminal_metalness_4k.png",
-          "maxPx": 1024
-        }
-      ]
-    },
-    {
-      "id": "starter_ground_albedo",
-      "objectName": "Starter Ground",
-      "slot": "albedo",
-      "file": "starter_ground_albedo.png",
-      "path": "textures/starter_ground_albedo.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_ground_albedo_1k.png",
-          "path": "textures/starter_ground_albedo_1k.png",
-          "maxPx": 256
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_ground_albedo_2k.png",
-          "path": "textures/starter_ground_albedo_2k.png",
-          "maxPx": 512
-        },
-        {
-          "suffix": "_4k",
-          "file": "starter_ground_albedo_4k.png",
-          "path": "textures/starter_ground_albedo_4k.png",
-          "maxPx": 1024
-        }
-      ]
-    },
-    {
-      "id": "starter_ground_roughness",
-      "objectName": "Starter Ground",
-      "slot": "roughness",
-      "file": "starter_ground_roughness.png",
-      "path": "textures/starter_ground_roughness.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_ground_roughness_1k.png",
-          "path": "textures/starter_ground_roughness_1k.png",
-          "maxPx": 256
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_ground_roughness_2k.png",
-          "path": "textures/starter_ground_roughness_2k.png",
-          "maxPx": 512
-        },
-        {
-          "suffix": "_4k",
-          "file": "starter_ground_roughness_4k.png",
-          "path": "textures/starter_ground_roughness_4k.png",
-          "maxPx": 1024
-        }
-      ]
-    },
-    {
-      "id": "starter_ground_normal",
-      "objectName": "Starter Ground",
-      "slot": "normal",
-      "file": "starter_ground_normal.png",
-      "path": "textures/starter_ground_normal.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_ground_normal_1k.png",
-          "path": "textures/starter_ground_normal_1k.png",
-          "maxPx": 256
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_ground_normal_2k.png",
-          "path": "textures/starter_ground_normal_2k.png",
-          "maxPx": 512
-        },
-        {
-          "suffix": "_4k",
-          "file": "starter_ground_normal_4k.png",
-          "path": "textures/starter_ground_normal_4k.png",
-          "maxPx": 1024
-        }
-      ]
-    },
-    {
       "id": "starter_skin_light_albedo",
       "objectName": "Avatar Skin Light",
       "slot": "albedo",
@@ -752,10 +572,154 @@
           "maxPx": 1024
         }
       ]
+    },
+    {
+      "id": "starter_ground_albedo",
+      "objectName": "Starter Ground",
+      "slot": "albedo",
+      "file": "starter_ground_albedo.png",
+      "path": "textures/starter_ground_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_ground_albedo_1k.png",
+          "path": "textures/starter_ground_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_ground_albedo_2k.png",
+          "path": "textures/starter_ground_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_ground_roughness",
+      "objectName": "Starter Ground",
+      "slot": "roughness",
+      "file": "starter_ground_roughness.png",
+      "path": "textures/starter_ground_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_ground_roughness_1k.png",
+          "path": "textures/starter_ground_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_ground_roughness_2k.png",
+          "path": "textures/starter_ground_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_ground_normal",
+      "objectName": "Starter Ground",
+      "slot": "normal",
+      "file": "starter_ground_normal.png",
+      "path": "textures/starter_ground_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_ground_normal_1k.png",
+          "path": "textures/starter_ground_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_ground_normal_2k.png",
+          "path": "textures/starter_ground_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_terminal_albedo",
+      "objectName": "AI Build Station",
+      "slot": "albedo",
+      "file": "starter_terminal_albedo.png",
+      "path": "textures/starter_terminal_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_terminal_albedo_1k.png",
+          "path": "textures/starter_terminal_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_terminal_albedo_2k.png",
+          "path": "textures/starter_terminal_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_terminal_roughness",
+      "objectName": "AI Build Station",
+      "slot": "roughness",
+      "file": "starter_terminal_roughness.png",
+      "path": "textures/starter_terminal_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_terminal_roughness_1k.png",
+          "path": "textures/starter_terminal_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_terminal_roughness_2k.png",
+          "path": "textures/starter_terminal_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_terminal_metalness",
+      "objectName": "AI Build Station",
+      "slot": "metalness",
+      "file": "starter_terminal_metalness.png",
+      "path": "textures/starter_terminal_metalness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_terminal_metalness_1k.png",
+          "path": "textures/starter_terminal_metalness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_terminal_metalness_2k.png",
+          "path": "textures/starter_terminal_metalness_2k.png",
+          "maxPx": 2048
+        }
+      ]
     }
   ],
   "exportDir": "textures",
   "tcRealism": "r8",
-  "exportedAt": "2026-07-06T07:11:15.159Z",
-  "note": "Quality-first manifest — min 1K HILOD; grid + TC + avatar slots only"
+  "exportedAt": "2026-07-08T00:03:16.189Z",
+  "note": "Quality-first default spawn — 2K masters with compressed _1k tiers for Lite/Mobile graphics"
 }

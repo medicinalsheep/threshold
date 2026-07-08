@@ -149,13 +149,14 @@ export const DesignIntake = {
                 </select>
             </label>
             <label class="design-field">
-                <span>Texture resolution (minimum)</span>
+                <span>Texture resolution (master export)</span>
                 <select id="di-texres" class="insert-input">
-                    <option value="1k" ${a.texRes === '1k' || !a.texRes ? 'selected' : ''}>1K — web / mobile default</option>
-                    <option value="2k" ${a.texRes === '2k' ? 'selected' : ''}>2K — desktop realistic</option>
-                    <option value="4k" ${a.texRes === '4k' ? 'selected' : ''}>4K — hero assets / ultra tier</option>
+                    <option value="1k" ${a.texRes === '1k' || !a.texRes ? 'selected' : ''}>1K master — small props</option>
+                    <option value="2k" ${a.texRes === '2k' ? 'selected' : ''}>2K master — desktop default (recommended)</option>
+                    <option value="4k" ${a.texRes === '4k' ? 'selected' : ''}>4K master — hero assets / ultra tier</option>
                 </select>
             </label>
+            <p class="insert-hint">Watch pipeline auto-downscales _1k tiers + WebP compression for Lite/Mobile — export the master PNG first.</p>
             <label class="design-field">
                 <span>Visual style</span>
                 <select id="di-style" class="insert-input">

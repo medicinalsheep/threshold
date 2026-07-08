@@ -97,10 +97,10 @@ function mirrorToBundle(relPath) {
     }
 }
 
-function compressWebpSibling(filePath) {
+function processTexturePng(filePath) {
     if (!filePath.toLowerCase().endsWith('.png')) return;
-    const script = path.join(__dirname, 'compress-one.cjs');
-    spawn(process.execPath, [script, filePath], { stdio: 'ignore', cwd: ROOT }).unref();
+    const hilod = path.join(__dirname, 'generate-hilod-tiers.cjs');
+    spawn(process.execPath, [hilod, filePath], { stdio: 'ignore', cwd: ROOT }).unref();
 }
 
 function emitChange(kind, filePath) {
@@ -122,7 +122,7 @@ function emitChange(kind, filePath) {
     }
 
     if (kind === 'textures' && ext === '.png') {
-        compressWebpSibling(filePath);
+        processTexturePng(filePath);
         mirrorToBundle(relative);
     }
 

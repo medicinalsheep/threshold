@@ -1,5 +1,12 @@
 # Changelog
 
+## 10.11.2 — 2K default textures + compression pipeline
+
+- **Default textures** — `npm run textures:gen:default` generates 2K PBR for Grid Pad + AI Build Station
+- **HILOD tiers** — `textures:hilod` + `textures:watch` auto-downscale `_1k` / `_2k` PNG tiers from masters
+- **WebP compression** — each tier gets a compressed `.webp` sibling for Lite/Mobile delivery (sharp or ffmpeg)
+- **AI / SETUP** — design brief + Agent Portal document master → tier → WebP workflow
+
 ## 10.11.1 — Manifest + starter module prune
 
 - **Manifest cleanup** — `threshold_manifest.json` pruned 100 → 25 entries; dropped `_512` variants and showcase-only object names

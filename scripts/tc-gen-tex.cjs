@@ -550,4 +550,16 @@ function main() {
     console.log(`[tc-gen-tex] ${fileCount} PNG(s) · manifest → textures/threshold_manifest.json`);
 }
 
-main();
+if (require.main === module) {
+    main();
+}
+
+module.exports = {
+    exportSlot,
+    slotFn,
+    mergeTcEntries,
+    loadManifest,
+    GIMP_MANIFEST,
+    TC_LIC,
+    REALISM,
+};

@@ -15,6 +15,7 @@ function run(label, args) {
     }
 }
 
+run('default-tex', ['textures:gen:default']);
 run('textures', ['tc:gen:tex']);
 run('avatars', ['avatar:gen']);
 run('sounds', ['sounds:gen']);
