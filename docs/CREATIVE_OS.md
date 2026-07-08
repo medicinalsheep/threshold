@@ -2,7 +2,7 @@
 
 **North star:** Plan everything before generation. Creators design games; the tool makes pieces fall into place — not AI slop dumped into a blank chat.
 
-**Version:** 10.12.1 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.12.2 · **Live:** https://medicinalsheep.github.io/threshold/
 
 ---
 
@@ -71,7 +71,8 @@ Step 1 type → Step 2 details → **Step 3 production review** → review → R
 | **Marquee dampen** | emissive reduction in rain | `userData.weatherMarquee` |
 | **Atmosphere** | `Environment.setTimeOfDay`, `setFog` | atmosphere preset in brief |
 | **Material presets** | `materialPresets.js` registry | `userData.materialPreset` |
-| **Shader hooks** | `shaderRegistry.js` tick effects | `userData.shaderHook` |
+| **Shader hooks** | `shaderRegistry.js` CPU tick effects | `userData.shaderHook` |
+| **Shader graphs** | `shaderNodeGraph.js` GPU node presets | `userData.shaderGraph` |
 | **Audio zones** | `audioZoneSystem.js` spatial loops | `userData.audioZone` |
 
 Registry: `IMMERSIVE_CAPABILITIES` in `assetProductionPlan.js`.
@@ -90,7 +91,9 @@ Agents call `MaterialPresets.applyMaterialPreset(mesh, id)` — presets auto-wir
 
 **Runtime hooks:** `wet_surface_boost`, `emissive_pulse`, `dust_overlay`, `snow_freshen`, `heat_shimmer` — no raw GLSL eval.
 
-**Future:** custom GLSL node graph — sandboxed loader when ready.
+**Graph presets:** `wet_hero`, `storm_exterior`, `neon_rim`, `wind_foliage`, `glass_rim` — whitelist nodes only.
+
+**Export:** wizard IMMERSIVE step previews weather + zones + shaders before REVIEW.
 
 ---
 
@@ -120,8 +123,7 @@ Export preflight — slop scan → ship
 
 | Phase | Focus |
 |-------|-------|
-| **10.12.2** | Custom GLSL node graph (sandboxed) |
-| **10.12.3** | Export wizard immersive review step (weather + zones preview) |
+| **10.12.3** | Guest join auto-reapply immersive manifest (zones + graphs from export) |
 | **10.13** | Trellis / Veo-class model gates when registry entries ship |
 | **Future** | Trellis mesh gen, Veo cutscenes — listed in capability registry, gated when ready |
 

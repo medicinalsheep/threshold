@@ -137,8 +137,16 @@ export function applyMaterialPreset(mesh, presetId) {
         pbr_emissive_marquee: 'emissive_pulse',
         pbr_fabric_muted: 'dust_overlay',
     };
+    const graphMap = {
+        pbr_asphalt_wet: 'wet_hero',
+        pbr_glass_wet: 'glass_rim',
+        pbr_emissive_marquee: 'neon_rim',
+        pbr_wood_snow: 'storm_exterior',
+    };
     const hookId = preset.shaderHook || hookMap[preset.id];
     if (hookId) window.ShaderRegistry?.applyHook?.(mesh, hookId);
+    const graphId = preset.shaderGraph || graphMap[preset.id];
+    if (graphId) window.ShaderNodeGraph?.applyGraph?.(mesh, graphId);
     if (mesh.userData?.audioZone) window.AudioZoneSystem?.registerMesh?.(mesh);
     return preset;
 }

@@ -1,5 +1,13 @@
 # Changelog
 
+## 10.12.2 — Shader node graph + export immersive review
+
+- **shaderNodeGraph.js** — whitelisted GLSL nodes (fresnel_rim, rain_specular, vertex_sway…) + graph presets
+- **MaterialPresets** — auto-applies matching shader graphs (wet_hero, glass_rim, neon_rim)
+- **Export wizard** — new IMMERSIVE step (10 steps): weather preview, audio zones, shader registry, slop scan
+- **Manifest** — immersive.prefs for replayWeather / bundleAudioZones / bundleShaderGraphs
+- **PromptGen** — shader node graph prompt block
+
 ## 10.12.1 — Shader hooks, audio zones, agent stability
 
 - **shaderRegistry.js** — wet_surface_boost, emissive_pulse, dust_overlay, snow_freshen, heat_shimmer

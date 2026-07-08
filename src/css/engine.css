@@ -2360,10 +2360,15 @@ body.ui-immersive.touch-off #status-msg {
 }
 
 .export-wizard-progress-8 span,
-.export-wizard-progress-9 span {
+.export-wizard-progress-9 span,
+.export-wizard-progress-10 span {
     font-size: 0.48rem;
     letter-spacing: 0.35px;
     padding: 3px 4px;
+}
+
+.export-wizard-ok {
+    color: #6fcf97;
 }
 
 .export-wizard-progress span {

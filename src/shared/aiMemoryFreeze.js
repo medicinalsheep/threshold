@@ -306,6 +306,7 @@ export const AiMemoryFreeze = {
                         if (root) {
                             if (snap.restoreKey) restoredKeys.add(snap.restoreKey);
                             window.ShaderRegistry?.registerMesh?.(root);
+                            window.ShaderNodeGraph?.registerMesh?.(root);
                             window.AudioZoneSystem?.registerMesh?.(root);
                             window.WeatherSystem?.registerMesh?.(root);
                         }

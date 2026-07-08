@@ -11,9 +11,9 @@ import { getTcIntroCredits } from './tcIntro.js';
 import storeAssetsConfig from '../../config/store-assets.json';
 
 
-export const EXPORT_STEPS = ['info', 'branding', 'content', 'credits', 'review', 'targets', 'store', 'packs', 'package'];
+export const EXPORT_STEPS = ['info', 'branding', 'content', 'credits', 'immersive', 'review', 'targets', 'store', 'packs', 'package'];
 
-export const EXPORT_STEP_LABELS = ['INFO', 'ICONS', 'SCENE', 'CREDITS', 'REVIEW', 'TARGETS', 'STORE', 'PACKS', 'SHIP'];
+export const EXPORT_STEP_LABELS = ['INFO', 'ICONS', 'SCENE', 'CREDITS', 'IMMERSIVE', 'REVIEW', 'TARGETS', 'STORE', 'PACKS', 'SHIP'];
 
 const PACK_KINDS = storeAssetsConfig.packKinds || {};
 
@@ -48,6 +48,12 @@ export function defaultExportDraft(base = {}) {
         author: base.author || '',
         description: base.description || '',
         includeSoundBlobs: false,
+        immersive: {
+            replayWeather: true,
+            bundleAudioZones: true,
+            bundleShaderGraphs: true,
+            ...(base.immersive || {}),
+        },
         targets: { web: true, android: false, windows: false, ios: false, steam: false },
         branding: { ...DEFAULT_BRANDING, ...(base.branding || {}) },
         credits: {
@@ -88,6 +94,59 @@ export function suggestStoreSku(bundleId, entry) {
 export function suggestRegistryUri(bundleId, entry) {
     const slug = assetSlug(entry.label, entry.id);
     return `threshold://${bundleId || 'com.threshold.game'}/asset/${slug}`;
+}
+
+export function collectImmersiveInventory() {
+    const objects = window.State?.objects || [];
+    const sceneObjects = objects.filter((o) => !o.userData?.isPlayer);
+
+    const weather = window.WeatherSystem?.captureState?.() || { active: false, intensity: 0 };
+    const audioZones = window.AudioZoneSystem?.collectExportEntries?.() || [];
+    const shaderHooks = window.ShaderRegistry?.collectExportEntries?.() || [];
+    const shaderGraphs = window.ShaderNodeGraph?.collectExportEntries?.() || [];
+
+    let exteriorFloors = 0;
+    let withSurfaceType = 0;
+    let weatherHooks = 0;
+    let zoneSheltered = 0;
+    let materialPresets = 0;
+
+    sceneObjects.forEach((o) => {
+        const ud = o.userData || {};
+        const visit = (mesh) => {
+            const u = mesh?.userData || ud;
+            if (u.surfaceType) withSurfaceType += 1;
+            if (u.zoneSheltered) zoneSheltered += 1;
+            if (u.materialPreset) materialPresets += 1;
+            if (u.dustExposure != null || u.snowCap != null || u.wetGlass || u.shaderHook || u.shaderGraph) {
+                weatherHooks += 1;
+            }
+        };
+        const isFloor = ud.locked || ud.hasPhysics || (o.scale?.y < 0.5 && o.scale?.x > 4);
+        if (isFloor && !ud.zoneSheltered) exteriorFloors += 1;
+        visit(o);
+        o.traverse?.(visit);
+    });
+
+    const slopWarnings = window.AssetProductionPlan?.assessSceneSlop?.(sceneObjects) || [];
+
+    return {
+        weather,
+        audioZones,
+        shaderHooks,
+        shaderGraphs,
+        slopWarnings,
+        counts: {
+            exteriorFloors,
+            withSurfaceType,
+            weatherHooks,
+            zoneSheltered,
+            materialPresets,
+            audioZoneCount: audioZones.length,
+            shaderHookCount: shaderHooks.length,
+            shaderGraphCount: shaderGraphs.length,
+        },
+    };
 }
 
 export function collectContentInventory() {
@@ -327,6 +386,19 @@ export function validateStep(stepId, draft, inventory) {
         if (missingLicense.length) warnings.push(`${missingLicense.length} asset(s) missing license text`);
     }
 
+    if (stepId === 'immersive') {
+        const inv = collectImmersiveInventory();
+        if (inv.slopWarnings.length) {
+            warnings.push(`${inv.slopWarnings.length} immersive quality warning(s) — review list on this step`);
+        }
+        if (inv.counts.exteriorFloors > 0 && inv.counts.withSurfaceType < inv.counts.exteriorFloors) {
+            warnings.push(`${inv.counts.exteriorFloors - inv.counts.withSurfaceType} walk surface(s) missing surfaceType`);
+        }
+        if (inv.weather?.active && inv.counts.weatherHooks === 0) {
+            warnings.push('Weather active in PLAY but no weather hooks on scene meshes');
+        }
+    }
+
     if (stepId === 'store') {
         if ((draft.targets?.android || draft.targets?.ios) && !draft.store?.contactEmail?.includes('@')) {
             warnings.push('Contact email recommended for Play/App Store privacy policy');
@@ -454,6 +526,7 @@ window.ExportWalkthrough = {
     EXPORT_STEP_LABELS,
     defaultExportDraft,
     collectContentInventory,
+    collectImmersiveInventory,
     buildAssetRegistry,
     buildKindPacks,
     validateStep,

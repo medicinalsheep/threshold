@@ -53,6 +53,7 @@ export const AmbientAudio = {
         await window.TeslaLabAmbient?.startStaggered?.();
         await window.AudioZoneSystem?.start?.();
         window.ShaderRegistry?.init?.();
+        window.ShaderNodeGraph?.init?.();
     },
 
     stop() {
@@ -118,6 +119,7 @@ export const AmbientAudio = {
 
         window.WeatherSystem?.tick?.(dt);
         window.ShaderRegistry?.tick?.(dt);
+        window.ShaderNodeGraph?.tick?.(dt);
         window.AudioZoneSystem?.tick?.(dt);
         window.RecordedAmbient?.tick?.();
         window.WildlifeAmbient?.tick?.(dt);

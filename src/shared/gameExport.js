@@ -48,6 +48,31 @@ const BUILD_PROFILES = {
     },
 };
 
+function buildImmersiveManifestBlock(options = {}, world = null) {
+    const prefs = options.immersive || {};
+    const weather = prefs.replayWeather !== false
+        ? (world?.weather || window.WeatherSystem?.captureState?.() || null)
+        : null;
+    return {
+        weather,
+        audioZones: prefs.bundleAudioZones !== false
+            ? (window.AudioZoneSystem?.collectExportEntries?.() || [])
+            : [],
+        shaderHooks: prefs.bundleShaderGraphs !== false
+            ? (window.ShaderRegistry?.collectExportEntries?.() || [])
+            : [],
+        shaderGraphs: prefs.bundleShaderGraphs !== false
+            ? (window.ShaderNodeGraph?.collectExportEntries?.() || [])
+            : [],
+        prefs: {
+            replayWeather: prefs.replayWeather !== false,
+            bundleAudioZones: prefs.bundleAudioZones !== false,
+            bundleShaderGraphs: prefs.bundleShaderGraphs !== false,
+        },
+        note: 'Guests replay weather from world.weather on join; re-apply audioZone / shaderGraph on scene load',
+    };
+}
+
 function blobToBase64(blob) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -162,15 +187,10 @@ export const GameExport = {
                 version: 2,
                 docs: 'docs/EXPORT_WALKTHROUGH.md',
                 storeAssetsDocs: 'docs/STORE_ASSETS.md',
-                steps: ['info', 'branding', 'content', 'credits', 'review', 'targets', 'store', 'packs', 'package'],
+                steps: ['info', 'branding', 'content', 'credits', 'immersive', 'review', 'targets', 'store', 'packs', 'package'],
             },
             world,
-            immersive: {
-                weather: world?.weather || window.WeatherSystem?.captureState?.() || null,
-                audioZones: window.AudioZoneSystem?.collectExportEntries?.() || [],
-                shaderHooks: window.ShaderRegistry?.collectExportEntries?.() || [],
-                note: 'Guests replay weather from world.weather on join; audioZone meshes re-register on scene load',
-            },
+            immersive: buildImmersiveManifestBlock(options, world),
             scripts: {
                 input: project.scriptInput || document.getElementById('comp-input')?.value || '',
                 output: project.scriptOutput || document.getElementById('comp-output')?.value || '',

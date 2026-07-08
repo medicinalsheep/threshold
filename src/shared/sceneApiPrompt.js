@@ -28,6 +28,8 @@ userData hooks (set on meshes):
   zoneSheltered — true for interior volumes (rain stress reduction)
   materialPreset — preset id from MaterialPresets registry (export + re-apply)
   shaderHook — ShaderRegistry id (wet_surface_boost, emissive_pulse, dust_overlay, snow_freshen, heat_shimmer)
+  shaderGraph — ShaderNodeGraph preset (wet_hero, storm_exterior, neon_rim, wind_foliage, glass_rim)
+  shaderNodes — custom whitelist node array (fresnel_rim, rain_specular, vertex_sway, desaturate_wet, emissive_breathe)
   shaderIntensity — 0–1.5 scale for hook strength
   audioZone — interior_warm|exterior_open|industrial_hum|creek_near|highway_edge
   audioZoneRadius — optional override (default per zone type)
@@ -36,7 +38,8 @@ userData hooks (set on meshes):
   name — MUST match GIMP texture manifest object name for PBR sync
 
 MaterialPresets.applyMaterialPreset(mesh, 'pbr_concrete_weathered') — tuned PBR, no CanvasTexture slop
-ShaderRegistry.applyHook(mesh, 'dust_overlay') — sandboxed material tick hooks
+ShaderRegistry.applyHook(mesh, 'dust_overlay') — CPU material tick hooks
+ShaderNodeGraph.applyGraph(mesh, 'wet_hero') — GPU onBeforeCompile node graph (sandboxed)
 mesh.userData.audioZone = 'interior_warm' — AudioZoneSystem spatial loops
 Environment.setTimeOfDay(14) · Environment.setFog(0.012) — atmosphere before PLAY verify
 

@@ -6,6 +6,7 @@ import {
     EXPORT_STEP_LABELS,
     defaultExportDraft,
     collectContentInventory,
+    collectImmersiveInventory,
     ensureCreditEntries,
     validateStep,
     suggestBundleId,
@@ -126,6 +127,14 @@ export const ExportWizard = {
         this.draft.targets.steam = !!document.getElementById('export-target-steam')?.checked;
     },
 
+    readImmersiveFromUi() {
+        this.draft.immersive = {
+            replayWeather: document.getElementById('export-immersive-weather')?.checked !== false,
+            bundleAudioZones: document.getElementById('export-immersive-audio')?.checked !== false,
+            bundleShaderGraphs: document.getElementById('export-immersive-shaders')?.checked !== false,
+        };
+    },
+
     readReviewFromUi() {
         this.draft.includeSoundBlobs = !!document.getElementById('export-include-sounds')?.checked;
     },
@@ -135,6 +144,7 @@ export const ExportWizard = {
         if (stepId === 'info') this.readInfoFromUi();
         if (stepId === 'branding') this.readBrandingFromUi();
         if (stepId === 'credits') this.readCreditsFromUi();
+        if (stepId === 'immersive') this.readImmersiveFromUi();
         if (stepId === 'review') this.readReviewFromUi();
         if (stepId === 'targets') this.readTargetsFromUi();
         if (stepId === 'store') this.readStoreFromUi();
@@ -154,6 +164,7 @@ export const ExportWizard = {
             credits: this.draft.credits,
             store: this.draft.store,
             assetOpportunity: this.draft.assetOpportunity,
+            immersive: this.draft.immersive,
         });
     },
 
@@ -267,8 +278,48 @@ export const ExportWizard = {
                 <label class="insert-hint">Global credits (shown in listings / future in-game credits)</label>
                 <textarea id="export-credits-global" class="insert-input" rows="2" maxlength="600" placeholder="Music by … · Textures original · Built with Threshold">${escapeText(this.draft.credits.global)}</textarea>
                 <div class="export-credits-list">${rows}</div>
-                <p class="insert-hint" style="margin-top:8px;">Next: <strong>REVIEW</strong> → TARGETS → STORE → <strong>PACKS</strong> (store SKUs / registry URIs).</p>
+                <p class="insert-hint" style="margin-top:8px;">Next: <strong>IMMERSIVE</strong> → REVIEW → TARGETS → STORE → <strong>PACKS</strong>.</p>
                 ${this._renderValidation('credits')}
+            `;
+            return;
+        }
+
+        if (stepId === 'immersive') {
+            const inv = collectImmersiveInventory();
+            const imm = this.draft.immersive || {};
+            const weatherLine = inv.weather?.active
+                ? `Rain ON · intensity ${Math.round((inv.weather.intensity || 0) * 100)}%`
+                : 'Weather off (snapshot uses last PLAY state)';
+            const zoneLines = inv.audioZones.length
+                ? inv.audioZones.map((z) => `<li>${escapeText(z.zoneId)} @ ${escapeText(z.name || 'mesh')} · r=${z.radius}</li>`).join('')
+                : '<li>No audioZone meshes — add userData.audioZone in Compiler</li>';
+            const hookLines = inv.shaderHooks.length
+                ? inv.shaderHooks.map((h) => `<li>${escapeText(h.shaderHook)} on ${escapeText(h.name)}</li>`).join('')
+                : '';
+            const graphLines = inv.shaderGraphs.length
+                ? inv.shaderGraphs.map((g) => `<li>${escapeText(g.shaderGraph || (g.shaderNodes || []).join('+'))} on ${escapeText(g.name)}</li>`).join('')
+                : '';
+            const slopLines = inv.slopWarnings.length
+                ? inv.slopWarnings.map((w) => `<li class="export-warn-soft">${escapeText(w)}</li>`).join('')
+                : '<li class="export-wizard-ok">No slop warnings — production quality looks good</li>';
+
+            body.innerHTML = `
+                <p class="insert-hint">Immersive stack preview — weather, audio zones, shader hooks/graphs ship in manifest for guest replay.</p>
+                <ul class="export-wizard-summary">
+                    <li><strong>Weather</strong> — ${escapeText(weatherLine)}</li>
+                    <li><strong>Hooks</strong> — ${inv.counts.weatherHooks} weather · ${inv.counts.materialPresets} presets · ${inv.counts.zoneSheltered} sheltered</li>
+                    <li><strong>Surface</strong> — ${inv.counts.withSurfaceType} surfaceType / ${inv.counts.exteriorFloors} exterior floors</li>
+                </ul>
+                <p class="insert-hint">Audio zones (${inv.audioZones.length}):</p>
+                <ul class="export-wizard-summary export-wizard-scroll">${zoneLines}</ul>
+                ${hookLines ? `<p class="insert-hint">Shader hooks:</p><ul class="export-wizard-summary">${hookLines}</ul>` : ''}
+                ${graphLines ? `<p class="insert-hint">Shader graphs:</p><ul class="export-wizard-summary">${graphLines}</ul>` : ''}
+                <p class="insert-hint">Quality scan:</p>
+                <ul class="export-wizard-summary">${slopLines}</ul>
+                <label class="export-wizard-check"><input type="checkbox" id="export-immersive-weather" ${imm.replayWeather !== false ? 'checked' : ''}> Bundle weather state for guest / export replay</label>
+                <label class="export-wizard-check"><input type="checkbox" id="export-immersive-audio" ${imm.bundleAudioZones !== false ? 'checked' : ''}> Include audio zone map in manifest</label>
+                <label class="export-wizard-check"><input type="checkbox" id="export-immersive-shaders" ${imm.bundleShaderGraphs !== false ? 'checked' : ''}> Include shader hook + graph registry</label>
+                ${this._renderValidation('immersive')}
             `;
             return;
         }
@@ -368,6 +419,7 @@ export const ExportWizard = {
                 <li>Assets: ${m.assetRegistry?.inventory?.objects ?? 0} obj · ${m.assetRegistry?.inventory?.sounds ?? 0} snd · ${m.assetRegistry?.inventory?.textures ?? 0} tex · ${m.videos?.length ?? 0} video</li>
                 <li>Credits: ${Object.keys(m.credits?.entries || {}).length} attributed · store assets: ${m.assetRegistry?.storeAssets?.status || 'scaffold'}</li>
                 <li>Graphics: ${escapeText(m.graphics?.tier || 'realistic')}</li>
+                <li>Immersive: weather ${m.immersive?.weather?.active ? 'on' : 'off'} · ${m.immersive?.audioZones?.length ?? 0} audio zone(s) · ${(m.immersive?.shaderHooks?.length ?? 0) + (m.immersive?.shaderGraphs?.length ?? 0)} shader entries</li>
             </ul>
             <label class="export-wizard-check" style="margin-top:10px;">
                 <input type="checkbox" id="export-include-sounds" ${this.draft.includeSoundBlobs ? 'checked' : ''}>

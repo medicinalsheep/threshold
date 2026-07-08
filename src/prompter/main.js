@@ -14,6 +14,7 @@ import { ViewPrefs } from '../shared/viewPrefs.js';
 import { buildProductionPlan, buildProductionReviewPrompt } from '../shared/assetProductionPlan.js';
 import { getMaterialPresetPromptBlock } from '../shared/materialPresets.js';
 import { getShaderHookPromptBlock } from '../shared/shaderRegistry.js';
+import { getShaderGraphPromptBlock } from '../shared/shaderNodeGraph.js';
 
 function renderSoundPicker() {
     const list = document.getElementById('prompt-sound-list');
@@ -127,6 +128,8 @@ Use ViewPrefs designBriefDraft if present; otherwise infer placement/weather fro
 ${getMaterialPresetPromptBlock()}
 
 ${getShaderHookPromptBlock()}
+
+${getShaderGraphPromptBlock()}
 `,
 
     buildPrompt() {

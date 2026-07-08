@@ -173,8 +173,10 @@ THRESHOLD MATERIAL / SHADER RULES:
 - Hero surfaces MUST have GIMP 2K albedo/roughness/normal — preset alone is not enough for ship quality.
 - userData.materialPreset = preset id for export preflight and re-apply on load.
 - Retro render modes ONLY when brief style=retro — never as default slop fallback.
-- Shader hooks: userData.shaderHook = 'wet_surface_boost'|'emissive_pulse'|'dust_overlay'|'snow_freshen'|'heat_shimmer' — ShaderRegistry.applyHook(mesh, id).
-- Pair hooks with MaterialPresets; optional userData.shaderIntensity 0–1.5.
+- Shader hooks: userData.shaderHook — ShaderRegistry.applyHook(mesh, id).
+- Shader graphs: userData.shaderGraph = 'wet_hero'|'storm_exterior'|'neon_rim'|'wind_foliage'|'glass_rim' — ShaderNodeGraph.applyGraph(mesh, id).
+- Custom node list: userData.shaderNodes = ['fresnel_rim','rain_specular'] — whitelist only.
+- Pair with MaterialPresets; optional userData.shaderIntensity 0–1.5.
 `.trim();
 
 const ENGINE_COLLISION_RULES = `
