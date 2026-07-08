@@ -34,40 +34,30 @@ Action plan from project review. Execute in order; each phase should pass `npm r
 
 **Goal:** One source of truth for shipped version.
 
-- [x] Source of truth: `src/config.js` → `VERSION` (currently **10.12.4**)
+- [x] Source of truth: `src/config.js` → `VERSION` (currently **10.12.5**)
 - [x] `npm run version:sync` — patches `package.json`, `package-lock.json`, README + doc headers
 - [x] `npm run version:sync:check` — CI drift gate (exit 1 if headers stale)
 
 ---
 
-## Phase 3 — CI verify gate
+## Phase 3 — CI verify gate ✅ (2026-07-08)
 
 **Goal:** Catch regressions before GitHub Pages deploy.
 
-Add to `.github/workflows/deploy-pages.yml` after `npm run build`:
-
-```bash
-node scripts/portal-ui-verify.cjs
-npm run controls:verify
-```
-
-Optional weekly: `npm run store:verify`, `npm run assets:verify`.
+- [x] `version:sync:check` before build
+- [x] After build: `portal-ui-verify`, `controls:verify`, `tc-drive-verify`, `tc-circuit-verify`
+- [ ] Optional later: `store:verify`, `assets:verify` on schedule
 
 ---
 
-## Phase 4 — Survival module purge
+## Phase 4 — Survival dev pack ✅ (2026-07-08)
 
-**Goal:** Finish 10.11 quality-first cleanup.
+**Goal:** Survival wired for developers, **not** in default shipped package.
 
-Files still in `src/shared/`:
-- `survivalGameplay.js`, `survivalInteract.js`, `survivalNeeds.js`
-- `survivalNeedsHud.js`, `survivalZones.js`, `survivalWorldHooks.js`
-
-**Options:**
-1. **Archive** → `old/src/shared/` + remove imports from engine tick / host panel.
-2. **Re-wire** → optional template toggle in SETUP (only if you want survival back).
-
-Default recommendation: archive unless actively used in PLAY tests.
+- [x] Modules → `dev/survival/` + `bootstrap.js`
+- [x] `npm run dev:survival` (`VITE_SURVIVAL_DEV=true`)
+- [x] Default build/Pages: survival **not** imported (engine hooks use `window.SurvivalNeeds?.` no-ops)
+- [x] `dev/survival/README.md` — DOM snippets + API table for fork authors
 
 ---
 

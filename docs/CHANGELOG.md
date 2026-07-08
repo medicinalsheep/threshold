@@ -1,5 +1,11 @@
 # Changelog
 
+## 10.12.5 — CI verify gate + survival dev pack
+
+- **CI** — `deploy-pages.yml` runs `version:sync:check`, `portal-ui-verify`, `controls:verify`, `tc-drive-verify`, `tc-circuit-verify` before deploy
+- **Survival** — moved to `dev/survival/` (opt-in via `npm run dev:survival`); not bundled in default Pages build
+- **controls:verify** — accepts current `BINDINGS_SCHEMA` version (v3+)
+
 ## 10.12.4 — Engine split + version sync
 
 - **Engine modules** — `main.js` bootstrap only; subsystems in `state`, `physics`, `audioSys`, `recorder`, `environment`, `engineCore`, `world`, `io`, `ui`

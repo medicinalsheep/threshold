@@ -179,5 +179,12 @@ export function initEngine() {
     }
 
     window.GuidedSession?.startIfNeeded?.();
+
+    if (import.meta.env.VITE_SURVIVAL_DEV === 'true') {
+        import('../../dev/survival/bootstrap.js')
+            .then((m) => m.initSurvivalDev())
+            .catch((e) => console.warn('Survival dev pack failed to load:', e));
+    }
+
     document.body.classList.add('engine-chrome');
 }

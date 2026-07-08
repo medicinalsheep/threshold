@@ -1,6 +1,6 @@
 /** Sprint S — survival loop: challenge card + Nikola bark */
 
-import { ViewPrefs } from './viewPrefs.js';
+import { ViewPrefs } from '../../src/shared/viewPrefs.js';
 
 const RUN_DURATION_MS = 180000;
 const RUN_MIN_STAT = 35;

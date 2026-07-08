@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), tiered local/cloud agents, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **10.12.4**)
+**Version:** `src/config.js` → `VERSION` (currently **10.12.5**)
 
 **Doc index:** [docs/README.md](docs/README.md) — full scope map
 
@@ -53,6 +53,7 @@ npm run version:sync            # align package.json + doc headers from src/conf
 npm run version:sync:check      # CI drift gate (exit 1 if stale)
 npm run quickstart              # onboarding (+ --verify / --pack)
 npm run dev                     # Vite dev
+npm run dev:survival            # dev + opt-in survival pack (dev/survival/)
 npm run build                   # GitHub Pages → dist-pages/
 npm run preview                 # :4173 smoke test
 npm run assets:pack             # tex + avatars + sounds + webp + build + bundle + kit

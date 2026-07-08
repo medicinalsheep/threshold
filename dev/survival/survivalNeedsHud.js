@@ -1,6 +1,6 @@
 /** Sprint J/S — vitals HUD (health, food, water, rest, stamina, stress) */
 
-import { ViewPrefs } from './viewPrefs.js';
+import { ViewPrefs } from '../../src/shared/viewPrefs.js';
 
 const BARS = [
     { key: 'health', label: 'HP', class: 'hp' },

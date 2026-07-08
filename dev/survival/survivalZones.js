@@ -1,6 +1,6 @@
 /** Sprint J/N — passive survival zone modifiers from ambient props + shelter */
 
-import { SITE } from './starterSiteLayout.js';
+import { SITE } from '../../src/shared/starterSiteLayout.js';
 
 const ZONE_DEFS = [
     { zone: 'creek', pos: () => SITE.creek, radius: 5.2, water: 0.9, stressRelief: 0.15, sheltered: false },

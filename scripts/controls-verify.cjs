@@ -36,10 +36,12 @@ if (controlsSrc.includes("fire: ['Mouse2'") || controlsSrc.includes('fire: ["Mou
     fail('default fire should bind to Mouse2');
 }
 
-if (controlsSrc.includes('BINDINGS_SCHEMA = 2')) {
-    ok('binding schema v2 present');
+const schemaMatch = controlsSrc.match(/const BINDINGS_SCHEMA = (\d+)/);
+const schema = schemaMatch ? parseInt(schemaMatch[1], 10) : 0;
+if (schema >= 2) {
+    ok(`binding schema v${schema} present`);
 } else {
-    fail('BINDINGS_SCHEMA = 2 missing');
+    fail('BINDINGS_SCHEMA missing or invalid');
 }
 
 if (!controlsSrc.includes('FiveM') && !controlsSrc.includes('GTA')) {

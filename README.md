@@ -2,7 +2,7 @@
 
 **Collaborative 3D game lab** — host a session, connect an AI agent, build in the browser, play with friends, export real packages.
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.12.4
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.12.5
 
 ---
 
