@@ -65,18 +65,32 @@ const STEPS = [
             },
         ],
     },
+    {
+        title: 'Export when ready',
+        body: '<strong>TOOLS → Export</strong> ships a web bundle by default. '
+            + 'Native targets (Android, iOS, Windows, Steam) stay collapsed until you expand them — skip until you need store packaging.',
+        highlight: '#hub-tools-toggle',
+        actions: [
+            {
+                label: 'Open export wizard',
+                run() {
+                    window.ExportWizard?.open?.();
+                },
+            },
+        ],
+    },
 ];
 
 const FULL_STEPS = [
     {
         title: 'Welcome to Threshold',
-        body: 'A game-creation sandbox with a polished starter site, survival systems, multiplayer sync, and export pipeline. '
-            + 'This full tour covers build tools, textures, agents, playtest, and ship.',
+        body: 'A browser-first 3D lab: blank grid, corner hubs, optional AI agents, multiplayer, and a web-first export path. '
+            + 'This tour covers build → playtest → ship in under thirty minutes.',
     },
     {
         title: 'PLAY vs BUILD',
         body: '<strong>BUILD</strong> (paused) unlocks insert, Compiler, inspector, and scene edits. '
-            + '<strong>PLAY</strong> runs physics, NPC patrol, weather, and survival vitals.',
+            + '<strong>PLAY</strong> runs physics, NPC patrol, weather, and walk controls.',
         highlight: '#sim-mode-badge',
     },
     {
@@ -116,9 +130,10 @@ const FULL_STEPS = [
         ],
     },
     {
-        title: 'Survival & interact',
-        body: 'In PLAY: vitals HUD (V toggle) · coffee/creek/bench on site · rain affects stress. '
-            + 'Wire your own props with <code>interactAction: \'survival\'</code>.',
+        title: 'Interact & extensions',
+        body: 'Press <strong>F</strong> at props with <code>interactHint</code>. '
+            + 'Optional dev packs (e.g. survival vitals) live in <code>dev/</code> — not bundled in the default web build. '
+            + 'Fork authors: see <code>dev/survival/README.md</code>.',
     },
     {
         title: 'Playtest',

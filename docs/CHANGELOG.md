@@ -1,5 +1,13 @@
 # Changelog
 
+## 10.12.6 — Creator loop polish + dependency hygiene
+
+- **Walkthrough** — quick tour adds Export step; full tour de-emphasizes survival (points to `dev/survival/`)
+- **Export wizard** — TARGETS defaults Web-only; Android/iOS/Windows/Steam collapsed under optional details
+- **Design brief** — export targets match wizard (Web first, native optional)
+- **package.json** — `engines.node` >= 22 (matches CI); `npm run audit:report`
+- **npm audit** — 19 highs remain in Electron/Capacitor **dev** tooling (`tar`, `node-gyp`); no runtime browser deps affected; no fix without major electron-builder bump
+
 ## 10.12.5 — CI verify gate + survival dev pack
 
 - **CI** — `deploy-pages.yml` runs `version:sync:check`, `portal-ui-verify`, `controls:verify`, `tc-drive-verify`, `tc-circuit-verify` before deploy

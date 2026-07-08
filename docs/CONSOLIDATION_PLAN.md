@@ -34,7 +34,7 @@ Action plan from project review. Execute in order; each phase should pass `npm r
 
 **Goal:** One source of truth for shipped version.
 
-- [x] Source of truth: `src/config.js` → `VERSION` (currently **10.12.5**)
+- [x] Source of truth: `src/config.js` → `VERSION` (currently **10.12.6**)
 - [x] `npm run version:sync` — patches `package.json`, `package-lock.json`, README + doc headers
 - [x] `npm run version:sync:check` — CI drift gate (exit 1 if headers stale)
 
@@ -61,20 +61,22 @@ Action plan from project review. Execute in order; each phase should pass `npm r
 
 ---
 
-## Phase 5 — Solo creator loop polish
+## Phase 5 — Solo creator loop polish ✅ (2026-07-08)
 
 **Goal:** Idea → playable scene → web export in under 30 minutes.
 
-- [ ] Walkthrough timing audit (corner hub → portal → first object → PLAY → export).
-- [ ] Export wizard defaults to Web-only; hide Steam/iOS until user expands TARGETS.
-- [ ] Agent Portal: first-run path without mandatory AI connect (10.9 explore-first — verify still holds).
+- [x] Quick walkthrough — 4 steps ending in Export wizard (web-first)
+- [x] Full tour copy — survival → `dev/survival/` dev pack pointer
+- [x] Export TARGETS + design brief — Web default; native collapsed in `<details>`
+- [x] Agent Portal explore-first — `startIfNeeded()` pulses only (no auto-open modal)
 
 ---
 
-## Phase 6 — Dependency hygiene
+## Phase 6 — Dependency hygiene ✅ (2026-07-08)
 
-- [ ] Run `npm audit` — triage Electron/Capacitor highs; document accepted risks in `docs/CHANGELOG.md`.
-- [ ] Pin Node 22 in CI (already set) + add `engines` field to `package.json`.
+- [x] `engines.node` >= 22 in `package.json` (CI already on Node 22)
+- [x] `npm run audit:report` — manual triage command
+- [x] Accepted risks documented in `CHANGELOG.md` (Electron/Capacitor dev tooling only)
 
 ---
 

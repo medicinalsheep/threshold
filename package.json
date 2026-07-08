@@ -1,12 +1,16 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "10.12.5",
+  "version": "10.12.6",
   "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "main": "electron/main.cjs",
   "scripts": {
     "version:sync": "node scripts/version-sync.cjs",
     "version:sync:check": "node scripts/version-sync.cjs --check",
+    "audit:report": "npm audit",
     "quickstart": "node scripts/quickstart.cjs",
     "dev": "vite",
     "dev:survival": "vite --mode survival",

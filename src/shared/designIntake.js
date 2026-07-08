@@ -40,6 +40,8 @@ const EXPORT_TARGETS = [
     { id: 'steam', label: 'Steam' },
 ];
 
+const NATIVE_EXPORT_TARGETS = EXPORT_TARGETS.filter((t) => t.id !== 'web');
+
 const POLY_OPTIONS = [
     { id: 'low', label: 'Low (< 2k tris)' },
     { id: 'medium', label: 'Medium (2k–12k)' },
@@ -150,9 +152,13 @@ export const DesignIntake = {
             </label>
             <fieldset class="design-fieldset">
                 <legend>Export targets</legend>
-                ${EXPORT_TARGETS.map((t) => `
-                    <label class="design-check"><input type="checkbox" name="di-export" value="${t.id}" ${(a.exports || ['web']).includes(t.id) ? 'checked' : ''}> ${esc(t.label)}</label>
-                `).join('')}
+                <label class="design-check"><input type="checkbox" name="di-export" value="web" ${(a.exports || ['web']).includes('web') ? 'checked' : ''}> Web (GitHub Pages)</label>
+                <details class="design-native-exports" ${(a.exports || []).some((id) => id !== 'web') ? 'open' : ''}>
+                    <summary>Native &amp; store targets (optional)</summary>
+                    ${NATIVE_EXPORT_TARGETS.map((t) => `
+                        <label class="design-check"><input type="checkbox" name="di-export" value="${t.id}" ${(a.exports || ['web']).includes(t.id) ? 'checked' : ''}> ${esc(t.label)}</label>
+                    `).join('')}
+                </details>
             </fieldset>
             <label class="design-field">
                 <span>Poly / mesh budget</span>

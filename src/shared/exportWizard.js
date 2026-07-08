@@ -332,14 +332,19 @@ export const ExportWizard = {
 
         if (stepId === 'targets') {
             const profiles = GameExport.getBuildProfiles();
+            const nativeOpen = this.draft.targets.android || this.draft.targets.windows
+                || this.draft.targets.ios || this.draft.targets.steam;
             body.innerHTML = `
-                <p class="insert-hint">Select only platforms you will package — SHIP step lists commands for checked targets only.</p>
+                <p class="insert-hint">Default path is <strong>Web only</strong> — fastest from idea to playable link. SHIP lists commands for checked targets only.</p>
                 <label class="export-wizard-check"><input type="checkbox" id="export-target-web" ${this.draft.targets.web ? 'checked' : ''}> ${profiles.web.label}</label>
-                <label class="export-wizard-check"><input type="checkbox" id="export-target-android" ${this.draft.targets.android ? 'checked' : ''}> ${profiles.android.label}</label>
-                <label class="export-wizard-check"><input type="checkbox" id="export-target-windows" ${this.draft.targets.windows ? 'checked' : ''}> ${profiles.windows.label}</label>
-                <label class="export-wizard-check"><input type="checkbox" id="export-target-ios" ${this.draft.targets.ios ? 'checked' : ''}> ${profiles.ios.label}</label>
-                <label class="export-wizard-check"><input type="checkbox" id="export-target-steam" ${this.draft.targets.steam ? 'checked' : ''}> ${profiles.steam.label}</label>
-                <p class="insert-hint" style="margin-top:6px;">Steam uses Windows Electron + <code>package:steam</code> · <code>docs/STEAM_RELEASE.md</code></p>
+                <details class="export-native-targets" id="export-native-targets" ${nativeOpen ? 'open' : ''}>
+                    <summary>Native &amp; store targets (optional)</summary>
+                    <label class="export-wizard-check"><input type="checkbox" id="export-target-android" ${this.draft.targets.android ? 'checked' : ''}> ${profiles.android.label}</label>
+                    <label class="export-wizard-check"><input type="checkbox" id="export-target-windows" ${this.draft.targets.windows ? 'checked' : ''}> ${profiles.windows.label}</label>
+                    <label class="export-wizard-check"><input type="checkbox" id="export-target-ios" ${this.draft.targets.ios ? 'checked' : ''}> ${profiles.ios.label}</label>
+                    <label class="export-wizard-check"><input type="checkbox" id="export-target-steam" ${this.draft.targets.steam ? 'checked' : ''}> ${profiles.steam.label}</label>
+                    <p class="insert-hint" style="margin-top:6px;">Steam uses Windows Electron + <code>package:steam</code> · <code>docs/STEAM_RELEASE.md</code></p>
+                </details>
             `;
             return;
         }
