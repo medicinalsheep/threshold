@@ -62,8 +62,8 @@ function checkChunkPaths() {
         const p = path.join(ROOT, 'dist-pages', ref);
         if (!fs.existsSync(p)) throw new Error(`chunk missing: ${ref}`);
     });
-    const entry = jsRefs.find((r) => r.includes('threshold.js'));
-    if (!entry) throw new Error('threshold.js entry not in index.html');
+    const entry = jsRefs.find((r) => /assets\/threshold(-[A-Za-z0-9]+)?\.js/.test(r));
+    if (!entry) throw new Error('threshold entry chunk not in index.html');
     const lazy = jsRefs.filter((r) => r.includes('app-engine') || r.includes('app-compiler'));
     if (!lazy.length) throw new Error('expected lazy app chunks in index.html preload');
     console.log(`  ✓ ${jsRefs.length} chunk refs resolve on disk`);
@@ -120,8 +120,8 @@ Options:
         if (electronHtml.includes('src="/threshold/')) {
             throw new Error('electron build still has GitHub Pages absolute paths');
         }
-        if (!electronHtml.includes('src="./assets/threshold.js"') && !electronHtml.includes('src="assets/threshold.js"')) {
-            throw new Error('electron build missing relative threshold.js entry');
+        if (!/src="\.?\/assets\/threshold(-[A-Za-z0-9]+)?\.js"/.test(electronHtml)) {
+            throw new Error('electron build missing relative threshold entry chunk');
         }
         console.log('  ✓ electron build uses relative chunk paths');
         run(`npm run export:graphics -- --profile windows --manifest "${args.manifest}"`, 'export:graphics windows');

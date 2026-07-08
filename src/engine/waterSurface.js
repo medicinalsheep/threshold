@@ -64,7 +64,9 @@ void main() {
     float sunSpec = pow(max(dot(reflect(-uSunDir, n), v), 0.0), 128.0) * 0.85;
     float sunSpecWide = pow(max(dot(reflect(-uSunDir, n), v), 0.0), 32.0) * 0.18;
 
-    vec3 refl = texture(uEnvMap, reflect(-v, n)).rgb * uEnvIntensity;
+    vec3 refl = uEnvIntensity > 0.0
+        ? texture(uEnvMap, reflect(-v, n)).rgb * uEnvIntensity
+        : vec3(0.08, 0.14, 0.18);
     float depthMix = smoothstep(uInnerRadius + 2.0, uInnerRadius + 18.0, length(xz));
     vec3 base = mix(uWaterColor, uDeepColor, depthMix * 0.65);
 
@@ -111,8 +113,8 @@ export function createWaterShaderMaterial(innerRadius, foamWidth = 1.4) {
     const uniforms = {
         uTime: { value: 0 },
         uSunDir: { value: new THREE.Vector3(0.4, 0.85, 0.25).normalize() },
-        uWaterColor: { value: new THREE.Color(0x1a6a7e) },
-        uDeepColor: { value: new THREE.Color(0x041820) },
+        uWaterColor: { value: new THREE.Color(0x2288a8) },
+        uDeepColor: { value: new THREE.Color(0x062830) },
         uInnerRadius: { value: innerRadius },
         uFoamWidth: { value: foamWidth },
         uEnvMap: { value: null },

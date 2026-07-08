@@ -122,6 +122,7 @@ export function initEngine() {
 
     Physics.init();
     Engine.init();
+    window.Environment = Environment;
     GraphicsProfile.bootstrap();
     Environment.init();
     UI.init();
@@ -132,7 +133,6 @@ export function initEngine() {
     window.CollaborateGuard?.init?.();
     window.HostMigration?.bindOnce?.();
     Physics.createFloor();
-    window.Environment = Environment;
     TouchControls.init();
 
     if (Network.mode === 'host') {

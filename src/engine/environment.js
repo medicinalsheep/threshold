@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
+import { VERSION } from '../config.js';
 import { State, IS_TOUCH_DEVICE } from './state.js';
 import { GraphicsProfile } from '../shared/graphicsProfile.js';
 import { Engine } from './engineCore.js';
@@ -16,8 +17,8 @@ import {
 export { FLOOR_HALF };
 /** Water basin surface Y — below the concrete deck (deck top ≈ 0.06). */
 export const WATER_SURFACE_Y = -0.18;
-export const MOAT_OUTER_HALF = 56;
-export const MOAT_INNER_HALF = FLOOR_HALF + 2;
+export const MOAT_OUTER_HALF = 48;
+export const MOAT_INNER_HALF = FLOOR_HALF + 0.85;
 
 function createMoatRingGeometry(outerHalf, innerHalf, segments = 48) {
     const shape = new THREE.Shape();
@@ -57,6 +58,15 @@ export const Environment = {
         this.bindUi();
         this.setTimeOfDay(State.env.timeOfDay);
         this.setFog(State.env.fogDensity);
+        setTimeout(() => {
+            const tier = State.graphicsTier || 'realistic';
+            const tierLabel = GraphicsProfile.getTier(tier).label;
+            if (State.env.waterEnabled) {
+                window.UI?.status?.(`v${VERSION} · slab deck + moat water · ${tierLabel} · pan to pad edge`);
+            } else {
+                window.UI?.status?.(`v${VERSION} · slab deck ready · water OFF (${tierLabel}) — ENV → Realistic`);
+            }
+        }, 400);
         if (State.env.waterEnabled) {
             this.createWater();
             const btn = document.getElementById('env-water-toggle');
@@ -94,7 +104,7 @@ export const Environment = {
         if (instanced) window.WeatherSystem?.registerMesh?.(instanced);
 
         wireDeckTextures(this.floorTextureTarget).then((r) => {
-            if (r.maps) window.UI?.status?.(`Floor PBR · ${r.maps} maps`);
+            if (r.maps) window.UI?.status?.(`Floor PBR · ${r.maps} maps (slab deck)`);
         }).catch(() => {});
     },
 

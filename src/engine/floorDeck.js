@@ -12,8 +12,41 @@ const TEXTURE_OBJECT_NAME = 'Starter Ground';
 
 export const FLOOR_HALF = 24;
 export const SLAB_SIZE = IS_TOUCH_DEVICE ? 4 : 2;
-export const SLAB_GAP = 0.042;
+export const SLAB_GAP = 0.072;
 export const SLAB_THICK = 0.12;
+
+function createProceduralConcreteMap(THREE, size = 256) {
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    const img = ctx.createImageData(size, size);
+    const d = img.data;
+    for (let y = 0; y < size; y += 1) {
+        for (let x = 0; x < size; x += 1) {
+            const u = x / size;
+            const v = y / size;
+            const tile = 16;
+            const gx = Math.floor(u * tile);
+            const gy = Math.floor(v * tile);
+            const edge = Math.min(u * tile - gx, v * tile - gy, 1 - (u * tile - gx), 1 - (v * tile - gy));
+            const n = ((x * 17 + y * 31) % 97) / 97;
+            const speck = n > 0.93 ? 18 : n > 0.88 ? 10 : 0;
+            const base = 118 + speck + ((gx * 13 + gy * 7) % 5) * 3;
+            const joint = edge < 0.06 ? 22 : base;
+            const i = (y * size + x) * 4;
+            d[i] = joint;
+            d[i + 1] = joint + 1;
+            d[i + 2] = joint + 3;
+            d[i + 3] = 255;
+        }
+    }
+    ctx.putImageData(img, 0, 0);
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.wrapS = THREE.RepeatWrapping;
+    tex.wrapT = THREE.RepeatWrapping;
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+}
 
 function slabGridCount(halfSize) {
     const span = halfSize * 2;
@@ -27,11 +60,16 @@ function buildInstancedSlabs(THREE, halfSize) {
     const origin = -((count - 1) * pitch) / 2;
 
     const mat = new THREE.MeshStandardMaterial({
-        color: 0x8a8c90,
-        roughness: 0.86,
-        metalness: 0.025,
-        envMapIntensity: 0.26,
+        color: 0x9a9da2,
+        map: createProceduralConcreteMap(THREE),
+        roughness: 0.84,
+        metalness: 0.03,
+        envMapIntensity: 0.32,
     });
+    if (mat.map) {
+        mat.map.repeat.set(2, 2);
+        mat.map.needsUpdate = true;
+    }
 
     const geo = new THREE.BoxGeometry(SLAB_SIZE, SLAB_THICK, SLAB_SIZE);
     const mesh = new THREE.InstancedMesh(geo, mat, count * count);
@@ -87,7 +125,7 @@ function buildSubstrate(THREE, halfSize) {
 function buildJointLines(THREE, halfSize, grid) {
     const { count, pitch, origin } = grid;
     const lines = new THREE.Group();
-    const mat = new THREE.LineBasicMaterial({ color: 0x060708, transparent: true, opacity: 0.55 });
+    const mat = new THREE.LineBasicMaterial({ color: 0x030405, transparent: true, opacity: 0.88 });
     const y = 0.061;
     const extent = halfSize - SLAB_GAP * 0.5;
 
@@ -113,10 +151,12 @@ function buildCurb(THREE, innerHalf) {
     const curbH = 0.14;
     const curbW = 0.22;
     const mat = new THREE.MeshStandardMaterial({
-        color: 0x6e7074,
-        roughness: 0.9,
+        color: 0x52565c,
+        roughness: 0.92,
         metalness: 0.02,
-        envMapIntensity: 0.2,
+        envMapIntensity: 0.22,
+        emissive: 0x0a1520,
+        emissiveIntensity: 0.35,
     });
     const group = new THREE.Group();
     const mk = (w, d, x, z) => {

@@ -18,9 +18,9 @@ export const GRAPHICS_TIERS = {
     balanced: {
         id: 'balanced',
         label: 'Mobile',
-        description: 'PBR realistic · atmosphere · lighter bloom — phones & tablets',
+        description: 'PBR realistic · water · atmosphere — phones & tablets',
         renderMode: 4,
-        env: { waterEnabled: false, atmosphereEnabled: true, fogDensity: 0.016 },
+        env: { waterEnabled: true, atmosphereEnabled: true, fogDensity: 0.016 },
         physicsIterations: 12,
         pixelRatioCap: 1.5,
         shadowMapSize: 2048,

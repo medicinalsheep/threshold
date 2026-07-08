@@ -77,6 +77,25 @@ for (const file of headerFiles) {
     }
 }
 
+const indexPath = path.join(ROOT, 'index.html');
+if (fs.existsSync(indexPath)) {
+    let html = fs.readFileSync(indexPath, 'utf8');
+    let next = html
+        .replace(/<meta name="threshold-version" content="[^"]*"\s*\/?>/, `<meta name="threshold-version" content="${version}" />`)
+        .replace(/id="app-version">v[^<]+</, `id="app-version">v${version}<`);
+    if (!next.includes('name="threshold-version"')) {
+        next = next.replace(
+            /<meta name="theme-color"/,
+            `<meta name="threshold-version" content="${version}" />\n    <meta name="theme-color"`,
+        );
+    }
+    if (next !== html) {
+        if (!checkOnly) fs.writeFileSync(indexPath, next);
+        changed += 1;
+        console.log(`  ${checkOnly ? 'DRIFT' : 'updated'}: index.html`);
+    }
+}
+
 if (checkOnly) {
     if (changed) {
         console.error(`\nversion:sync --check FAILED — ${changed} file(s) out of sync with ${version}`);

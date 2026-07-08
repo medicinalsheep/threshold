@@ -35,7 +35,7 @@ export default defineConfig(({ mode }) => {
                     warn(warning);
                 },
                 output: {
-                    entryFileNames: isDistPages ? 'assets/threshold.js' : 'assets/[name].js',
+                    entryFileNames: 'assets/threshold-[hash].js',
                     chunkFileNames: 'assets/[name]-[hash].js',
                     assetFileNames: (info) => {
                         if (info.name?.endsWith('.css')) return 'assets/threshold.css';
