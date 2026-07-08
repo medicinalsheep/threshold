@@ -965,9 +965,9 @@ export const UI = {
         }
     },
     openInsert: function () {
-        if (IS_TOUCH_DEVICE && Engine.groundPlane) {
+        if (IS_TOUCH_DEVICE) {
             Engine.raycaster.setFromCamera(new THREE.Vector2(0, 0), Engine.camera);
-            const hit = Engine.raycaster.intersectObject(Engine.groundPlane);
+            const hit = Engine.intersectFloor?.() || [];
             if (hit.length) State.ctxTargetPos.copy(hit[0].point);
         }
         Session.refreshSavedPlayerList();

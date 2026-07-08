@@ -187,7 +187,7 @@ export const GraphicsProfile = {
                 waterBtn.textContent = waterOn ? 'ON' : 'OFF';
                 waterBtn.classList.toggle('active', waterOn);
             }
-            if (Engine?.groundPlane) Engine.groundPlane.visible = !waterOn;
+            Environment.ensureFloorDeck?.();
 
             if (State.env.atmosphereEnabled) {
                 if (!Environment.hemiLight && Engine?.scene) {

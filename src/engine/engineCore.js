@@ -62,11 +62,14 @@ export const Engine = {
         // Visual Helpers
         this.gridHelper = new THREE.GridHelper(40, 40, 0x666666, 0x333333);
         this.scene.add(this.gridHelper);
+        // Raycast / fallback plane — Environment.ensureFloorDeck() replaces visible floor with opaque slab
         const planeGeo = new THREE.PlaneGeometry(100, 100);
         const planeMat = new THREE.MeshStandardMaterial({ color: 0x1a1c1e, roughness: 0.78, metalness: 0.04, envMapIntensity: 0.28 });
         this.groundPlane = new THREE.Mesh(planeGeo, planeMat);
         this.groundPlane.rotation.x = -Math.PI / 2;
-        this.groundPlane.receiveShadow = true; // Floor receives shadows
+        this.groundPlane.position.y = 0.06;
+        this.groundPlane.receiveShadow = true;
+        this.groundPlane.userData = { id: 'engine_ground', isFloor: true, surfaceType: 'concrete' };
         this.scene.add(this.groundPlane);
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableDamping = true;
@@ -346,12 +349,20 @@ export const Engine = {
             UI.openCtx(clientX, clientY, 'object', picked);
             return;
         }
-        const intersects = this.raycaster.intersectObject(this.groundPlane);
+        const intersects = this.intersectFloor();
         if (intersects.length > 0) {
             State.ctxTargetPos.copy(intersects[0].point);
             UI.openCtx(clientX, clientY, 'ground');
         }
     },
+
+    intersectFloor() {
+        const targets = [];
+        if (Environment.floorGroup) targets.push(Environment.floorGroup);
+        if (this.groundPlane) targets.push(this.groundPlane);
+        return targets.length ? this.raycaster.intersectObjects(targets, true) : [];
+    },
+
     onPointerMove: function (e) {
         if (this._holdPointer && Math.hypot(e.clientX - this._holdPointer.x, e.clientY - this._holdPointer.y) > 14) {
             clearTimeout(this._holdPointer.timer);
@@ -445,7 +456,7 @@ export const Engine = {
             UI.openCtx(e.clientX, e.clientY, 'object', picked);
             return;
         }
-        const intersects = this.raycaster.intersectObject(this.groundPlane);
+        const intersects = this.intersectFloor();
         if (intersects.length > 0) {
             State.ctxTargetPos.copy(intersects[0].point);
             UI.openCtx(e.clientX, e.clientY, 'ground');

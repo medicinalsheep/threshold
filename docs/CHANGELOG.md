@@ -1,5 +1,12 @@
 # Changelog
 
+## 10.12.8 — Floor / water separation
+
+- **Concrete deck** — opaque 48×48 slab always visible (`Environment.floorGroup`); water no longer replaces the floor
+- **Water moat** — ring basin outside the play pad at y ≈ −0.18; no full-plane overlay on concrete
+- **Water quality** — denser ripples, higher opacity, depthWrite on; reflector tint tuned
+- **Raycast** — `Engine.intersectFloor()` hits deck + ground plane for placement / context menu
+
 ## 10.12.7 — Phase 7: intent router, relay polish, store upload guide
 
 - **Intent router** — `intentRouter.js` keyword + LLM classify; game chat (T) routes export/spawn/edit/texture/etc.
