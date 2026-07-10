@@ -1,5 +1,10 @@
 # Changelog
 
+## 10.12.15 — Practical touch layout + store-verify fix
+
+- **Touch layout v3** — dual-stick practical defaults: move/sprint left; fire/ADS/jump arc above look stick; interact mid-right; meta top-right; **UI** touch button
+- **store:verify** — accept Vite entry hashes with `_` (e.g. `threshold-DU_e-GTF.js`)
+
 ## 10.12.14 — UI mouse mode (PLAY)
 
 - **UI mouse** — **M** toggles free cursor in PLAY without Third Eye green highlights (click hubs/panels)

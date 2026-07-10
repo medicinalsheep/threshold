@@ -45,7 +45,16 @@ See [UI_AND_AGENTS.md](UI_AND_AGENTS.md) for touch layout, UNLOCK UI edit, and a
 
 No ADS while any free-pointer mode is active.
 
-**Touch:** corner hub **TOUCH** · full controller buttons · arrange via hub **UNLOCK** · **+ BTN** for custom actions.
+**Touch:** corner hub **TOUCH** · dual-stick practical default (v3):
+
+| Zone | Controls |
+|------|----------|
+| **Bottom-left** | Move stick · RUN · CRH |
+| **Bottom-right** | Look stick · **FIRE** · **ADS** · JMP · R · ATK |
+| **Mid-right** | **F** interact · VEH · 👁 Third Eye · **UI** mouse |
+| **Top-right** | Pause · FPS · light · holster |
+
+Arrange via hub **UNLOCK** · **+ BTN** for custom · reset layout restores defaults.
 
 ---
 

@@ -62,7 +62,7 @@ function checkChunkPaths() {
         const p = path.join(ROOT, 'dist-pages', ref);
         if (!fs.existsSync(p)) throw new Error(`chunk missing: ${ref}`);
     });
-    const entry = jsRefs.find((r) => /assets\/threshold(-[A-Za-z0-9]+)?\.js/.test(r));
+    const entry = jsRefs.find((r) => /assets\/threshold(-[A-Za-z0-9_-]+)?\.js/.test(r));
     if (!entry) throw new Error('threshold entry chunk not in index.html');
     const lazy = jsRefs.filter((r) => r.includes('app-engine') || r.includes('app-compiler'));
     if (!lazy.length) throw new Error('expected lazy app chunks in index.html preload');
@@ -120,7 +120,8 @@ Options:
         if (electronHtml.includes('src="/threshold/')) {
             throw new Error('electron build still has GitHub Pages absolute paths');
         }
-        if (!/src="\.?\/assets\/threshold(-[A-Za-z0-9]+)?\.js"/.test(electronHtml)) {
+        // Vite hashes may include _ (e.g. threshold-DU_e-GTF.js)
+        if (!/src="\.?\/assets\/threshold(-[A-Za-z0-9_-]+)?\.js"/.test(electronHtml)) {
             throw new Error('electron build missing relative threshold entry chunk');
         }
         console.log('  ✓ electron build uses relative chunk paths');

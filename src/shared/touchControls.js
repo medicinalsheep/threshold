@@ -3,48 +3,76 @@ import { CONTROL_ACTIONS } from './controls.js';
 
 const HOLD_MS = 480;
 const DOUBLE_MS = 380;
-const LAYOUT_KEY = 'touchLayoutV2';
-const STICK_SIZE = 120;
+/** Bump key when default positions change so users get new practical layout once */
+const LAYOUT_KEY = 'touchLayoutV3';
+const STICK_SIZE = 128;
 const BTN_SIZE = 52;
 
-/** Standard controller-style touch actions */
+/**
+ * Standard touch actions — labels short for thumbs.
+ * Layout is dual-stick mobile TPS/FPS practical:
+ *   L: move stick + sprint/crouch
+ *   R: look stick + fire/ADS/jump arc above stick
+ *   mid-R: interact / vehicle
+ *   top-R: pause / view / utility (less used)
+ */
 export const STANDARD_TOUCH_BUTTONS = [
-    { id: 'jump', action: 'jump', label: '⬆', size: 52 },
+    { id: 'jump', action: 'jump', label: 'JMP', size: 52 },
     { id: 'sprint', action: 'sprint', label: 'RUN', size: 48 },
-    { id: 'crouch', action: 'crouch', label: '↓', size: 44 },
-    { id: 'aim', action: 'aim', label: 'ADS', size: 56, hold: true },
-    { id: 'fire', action: 'fire', label: '●', size: 56, hold: true },
-    { id: 'reload', action: 'reload', label: 'R', size: 44 },
-    { id: 'melee', action: 'melee', label: 'M', size: 44 },
-    { id: 'holster', action: 'holster', label: 'H', size: 44 },
-    { id: 'interact', action: 'interact', label: 'F', size: 52 },
-    { id: 'thirdEye', action: 'thirdEye', label: '👁', size: 48 },
-    { id: 'enterVehicle', action: 'enterVehicle', label: 'VEH', size: 44 },
-    { id: 'flashlight', action: 'flashlight', label: '🔦', size: 44 },
-    { id: 'toggleView', action: 'toggleView', label: 'FPS', size: 44 },
-    { id: 'pause', action: 'pause', label: '⏸', size: 44 },
+    { id: 'crouch', action: 'crouch', label: 'CRH', size: 44 },
+    { id: 'aim', action: 'aim', label: 'ADS', size: 58, hold: true },
+    { id: 'fire', action: 'fire', label: '●', size: 64, hold: true },
+    { id: 'reload', action: 'reload', label: 'R', size: 46 },
+    { id: 'melee', action: 'melee', label: 'ATK', size: 44 },
+    { id: 'holster', action: 'holster', label: 'H', size: 40 },
+    { id: 'interact', action: 'interact', label: 'F', size: 54 },
+    { id: 'thirdEye', action: 'thirdEye', label: '👁', size: 46 },
+    { id: 'uiMouse', action: 'uiMouse', label: 'UI', size: 46 },
+    { id: 'enterVehicle', action: 'enterVehicle', label: 'VEH', size: 46 },
+    { id: 'flashlight', action: 'flashlight', label: 'LIT', size: 40 },
+    { id: 'toggleView', action: 'toggleView', label: 'FPS', size: 42 },
+    { id: 'pause', action: 'pause', label: 'II', size: 42 },
 ];
 
+/**
+ * Coordinates: bottom-left origin unless anchor 'br' (x negative = left from right edge).
+ * Safe margins keep thumbs off home indicators / corners.
+ */
 const DEFAULT_LAYOUT = {
     sticks: {
-        'stick-left': { x: 16, y: 24, w: STICK_SIZE, h: STICK_SIZE },
-        'stick-right': { x: -136, y: 24, w: STICK_SIZE, h: STICK_SIZE, anchor: 'br' },
+        // Move — large, clear of left bezel
+        'stick-left': { x: 20, y: 28, w: STICK_SIZE, h: STICK_SIZE, anchor: 'bl' },
+        // Look — bottom-right, room above for fire cluster
+        'stick-right': { x: -148, y: 24, w: STICK_SIZE, h: STICK_SIZE, anchor: 'br' },
     },
     buttons: {
-        jump: { x: -148, y: 100, w: 52, h: 52, anchor: 'br' },
-        sprint: { x: -148, y: 36, w: 48, h: 48, anchor: 'br' },
-        crouch: { x: -204, y: 36, w: 44, h: 44, anchor: 'br' },
-        aim: { x: -84, y: 68, w: 56, h: 56, anchor: 'br' },
-        fire: { x: -36, y: 100, w: 56, h: 56, anchor: 'br' },
-        reload: { x: -204, y: 100, w: 44, h: 44, anchor: 'br' },
-        melee: { x: -36, y: 36, w: 44, h: 44, anchor: 'br' },
-        holster: { x: -84, y: 36, w: 44, h: 44, anchor: 'br' },
-        interact: { x: -260, y: 68, w: 52, h: 52, anchor: 'br' },
-        thirdEye: { x: -260, y: 128, w: 48, h: 48, anchor: 'br' },
-        enterVehicle: { x: -316, y: 68, w: 44, h: 44, anchor: 'br' },
-        flashlight: { x: -316, y: 128, w: 44, h: 44, anchor: 'br' },
-        toggleView: { x: -316, y: 24, w: 44, h: 44, anchor: 'br' },
-        pause: { x: -372, y: 24, w: 44, h: 44, anchor: 'br' },
+        // ── Left hand: locomotion near move stick ──
+        sprint: { x: 158, y: 36, w: 52, h: 48, anchor: 'bl' },
+        crouch: { x: 158, y: 96, w: 48, h: 48, anchor: 'bl' },
+
+        // ── Right hand combat arc (above look stick, primary thumbs) ──
+        // Fire: large, easy reach (upper-right of combat zone)
+        fire: { x: -42, y: 162, w: 64, h: 64, anchor: 'br' },
+        // ADS: left of fire
+        aim: { x: -118, y: 168, w: 58, h: 58, anchor: 'br' },
+        // Jump: above fire
+        jump: { x: -48, y: 236, w: 52, h: 52, anchor: 'br' },
+        // Reload: left of ADS
+        reload: { x: -188, y: 168, w: 46, h: 46, anchor: 'br' },
+        // Melee: above reload
+        melee: { x: -188, y: 224, w: 44, h: 44, anchor: 'br' },
+
+        // ── World actions (mid-right, still right-thumb reachable) ──
+        interact: { x: -258, y: 175, w: 54, h: 54, anchor: 'br' },
+        enterVehicle: { x: -258, y: 238, w: 46, h: 46, anchor: 'br' },
+        thirdEye: { x: -318, y: 175, w: 46, h: 46, anchor: 'br' },
+        uiMouse: { x: -318, y: 230, w: 46, h: 46, anchor: 'br' },
+
+        // ── Utility / meta (top-right — rarely mid-combat) ──
+        pause: { x: -16, y: 16, w: 42, h: 42, anchor: 'tr' },
+        toggleView: { x: -66, y: 16, w: 42, h: 42, anchor: 'tr' },
+        flashlight: { x: -116, y: 16, w: 40, h: 40, anchor: 'tr' },
+        holster: { x: -162, y: 16, w: 40, h: 40, anchor: 'tr' },
     },
     custom: [],
     hidden: [],
@@ -53,6 +81,7 @@ const DEFAULT_LAYOUT = {
 function loadLayout() {
     const saved = ViewPrefs.get(LAYOUT_KEY, null);
     if (!saved) return JSON.parse(JSON.stringify(DEFAULT_LAYOUT));
+    // Merge so new default buttons (e.g. uiMouse) appear even on saved layouts
     return {
         sticks: { ...DEFAULT_LAYOUT.sticks, ...saved.sticks },
         buttons: { ...DEFAULT_LAYOUT.buttons, ...saved.buttons },
