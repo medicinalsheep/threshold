@@ -17,7 +17,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.12.18" />
+    <meta name="threshold-version" content="10.12.19" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD SUITE</title>
 </head>
@@ -170,7 +170,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.12.18</span><span class="edition-badge" id="edition-badge">WEB</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.12.19</span><span class="edition-badge" id="edition-badge">WEB</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
@@ -784,14 +784,11 @@
                 <div class="prop-row"><label>Pants</label><input type="color" id="skin-pants-color" value="#232830"></div>
                 <div class="prop-row"><label>Hair</label><input type="color" id="skin-hair-color" value="#2a1810"></div>
                 <div class="prop-row"><label>Shine</label><input type="range" id="skin-rough" min="0" max="1" step="0.05" value="0.7"></div>
-                <p class="insert-hint" style="margin:10px 0 4px;"><strong>MOD layer</strong> — modular gear (stacks on body · LOD-aware)</p>
-                <div id="skin-mod-list" class="skin-mod-list">
-                    <label class="skin-mod-opt"><input type="checkbox" data-mod-id="jacket_field"> Field jacket</label>
-                    <label class="skin-mod-opt"><input type="checkbox" data-mod-id="vest_tactical"> Tactical vest</label>
-                    <label class="skin-mod-opt"><input type="checkbox" data-mod-id="pack_field"> Field pack</label>
-                    <label class="skin-mod-opt"><input type="checkbox" data-mod-id="hat_cap"> Cap</label>
-                    <label class="skin-mod-opt"><input type="checkbox" data-mod-id="goggles_tech"> Tech goggles</label>
-                </div>
+                <p class="insert-hint" style="margin:10px 0 4px;"><strong>MOD layer</strong> — full gear kit (exclusive slots · presets · LOD-aware)</p>
+                <div id="skin-mod-presets" class="skin-mod-presets"></div>
+                <input type="search" id="skin-mod-search" class="insert-input" placeholder="Search mods…" style="margin-bottom:6px;" autocomplete="off">
+                <div id="skin-mod-list" class="skin-mod-list skin-mod-list-scroll"></div>
+                <p class="insert-hint" style="margin:4px 0 0;font-size:0.55rem;">Exclusive slots (hat vs helmet, jacket vs coat) auto-resolve — last pick wins. Accessories stack up to 6.</p>
                 <p id="skin-custom-status" class="insert-hint" style="margin:8px 0 4px;">Custom body: default manifest · LOD 0/1/2 auto</p>
                 <label class="insert-hint">import/ body GLB (persistent)</label>
                 <input type="text" id="skin-body-import" class="insert-input" placeholder="my_avatar.glb" style="margin-bottom:6px;">

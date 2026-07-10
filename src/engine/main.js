@@ -177,6 +177,11 @@ export function initEngine() {
             import('../shared/helpMenu.js').then((m) => m.HelpMenu.init());
             import('../shared/hubLayout.js').then((m) => m.HubLayout.init());
             import('../shared/modelStatusHud.js').then((m) => m.ModelStatusHud.init());
+            // Full MOD catalog UI (avatar-mods.json)
+            try {
+                const mods = window.AppearanceStore?.getPlayerProfile?.()?.mods || [];
+                window.AppearanceProfile?.initModPickerUi?.(mods);
+            } catch { /* optional */ }
         }, 120);
     }
 

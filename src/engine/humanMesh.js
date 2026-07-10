@@ -346,6 +346,7 @@ export const HumanMesh = {
             });
         }
         window.HairSlot?.setFirstPersonVisible?.(group, show);
+        window.AvatarMod?.setFirstPersonVisible?.(group, show);
     },
 
     updateWalk(group, horizontalSpeed, dt = 0.016, sprinting = false) {

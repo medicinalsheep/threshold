@@ -3111,28 +3111,87 @@ body.shell-steam.shell-electron::after {
     color: #e8b84a;
 }
 
+.skin-mod-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 0 0 8px;
+}
+
+.skin-mod-preset {
+    font-size: 0.55rem !important;
+    padding: 4px 8px !important;
+    min-height: 28px;
+}
+
 .skin-mod-list {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
     margin: 0 0 8px;
-    padding: 8px 10px;
+    padding: 6px 8px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     background: rgba(0, 0, 0, 0.2);
 }
 
+.skin-mod-list-scroll {
+    max-height: min(42vh, 320px);
+    overflow-y: auto;
+}
+
+.skin-mod-cat {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: 4px;
+}
+
+.skin-mod-cat summary {
+    cursor: pointer;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    letter-spacing: 0.04em;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0;
+}
+
+.skin-mod-cat summary::-webkit-details-marker { display: none; }
+
+.skin-mod-count {
+    opacity: 0.5;
+    font-weight: 500;
+    font-size: 0.52rem;
+}
+
+.skin-mod-cat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px 8px;
+    padding: 2px 0 6px;
+}
+
 .skin-mod-opt {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 0.62rem;
+    gap: 6px;
+    font-size: 0.58rem;
     cursor: pointer;
     user-select: none;
+    min-height: 24px;
 }
 
 .skin-mod-opt input {
     accent-color: var(--accent-color);
+    flex-shrink: 0;
+}
+
+.skin-mod-opt span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .touch-btn[data-touch-btn="sprint"],

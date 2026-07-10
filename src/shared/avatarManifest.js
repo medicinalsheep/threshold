@@ -1,9 +1,11 @@
-/** Avatar manifest resolver — bodies, hair, roles (R8.2) */
+/** Avatar manifest resolver — bodies, hair, roles, mods (R8.2+) */
 
 import manifest from '../../config/avatar-manifest.json';
+import modPack from '../../config/avatar-mods.json';
 
 export const AvatarManifest = {
     raw: manifest,
+    modPack,
 
     bodies() {
         return manifest.bodies || {};
@@ -25,8 +27,21 @@ export const AvatarManifest = {
         return manifest.hair?.[hairId] || null;
     },
 
+    /** Full MOD catalog (avatar-mods.json preferred; manifest.mods legacy fallback) */
     mods() {
-        return manifest.mods || {};
+        return modPack?.mods || manifest.mods || {};
+    },
+
+    modSlots() {
+        return modPack?.slots || {};
+    },
+
+    modCategories() {
+        return modPack?.categories || [];
+    },
+
+    modPresets() {
+        return modPack?.presets || {};
     },
 
     mod(modId) {

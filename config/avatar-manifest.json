@@ -9,8 +9,14 @@
   "attachPoints": {
     "hair": ["hair_anchor", "head"],
     "torso_prop": ["torso", "prop_torso", "shoulders"],
-    "head_prop": ["head", "prop_head", "hair_anchor"]
+    "head_prop": ["head", "prop_head", "hair_anchor"],
+    "neck": ["neck", "collar", "head"],
+    "hips": ["hips", "torso"],
+    "hand_r": ["hand_R", "hand_r", "armR"],
+    "hand_l": ["hand_L", "hand_l", "armL"]
   },
+  "modsCatalog": "config/avatar-mods.json",
+  "modsNote": "Full MOD pack lives in avatar-mods.json (slots, presets, 50+ pieces). Legacy inline mods below kept as stubs.",
   "lodDefaults": {
     "distances": [0, 10, 22],
     "note": "Avatar mesh LOD (m) — closer than world MeshLod defaults for faces"

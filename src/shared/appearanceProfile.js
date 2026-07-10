@@ -142,6 +142,76 @@ export function modsFromUi() {
     return [...root.querySelectorAll('input[data-mod-id]:checked')].map((el) => el.dataset.modId);
 }
 
+/** Fill SKIN MOD picker from catalog (categories + presets). Call once on engine boot. */
+export function initModPickerUi(selected = []) {
+    const list = document.getElementById('skin-mod-list');
+    const presets = document.getElementById('skin-mod-presets');
+    if (!list) return;
+
+    const Mod = window.AvatarMod;
+    if (!Mod?.renderPickerHtml) {
+        list.innerHTML = '<p class="insert-hint">MOD catalog loading…</p>';
+        return;
+    }
+
+    const paint = (sel, q = '') => {
+        if (q) {
+            const items = Mod.list({ q });
+            const set = new Set(sel);
+            list.innerHTML = items.length
+                ? `<div class="skin-mod-cat-grid">${items.map((m) => `
+                    <label class="skin-mod-opt" title="${(m.tags || []).join(', ')} · ${m.slot}">
+                        <input type="checkbox" data-mod-id="${m.id}" ${set.has(m.id) ? 'checked' : ''}>
+                        <span>${m.label || m.id}</span>
+                    </label>`).join('')}</div>`
+                : '<p class="insert-hint">No mods match</p>';
+        } else {
+            list.innerHTML = Mod.renderPickerHtml(sel);
+        }
+    };
+
+    paint(selected);
+
+    if (presets && !presets.dataset.ready) {
+        presets.dataset.ready = '1';
+        presets.innerHTML = Mod.renderPresetButtonsHtml?.() || '';
+        presets.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-mod-preset]');
+            if (!btn) return;
+            Mod.applyPresetToUi?.(btn.dataset.modPreset);
+            // Re-paint full catalog with new selection so exclusive siblings stay honest
+            paint(modsFromUi());
+            window.UI?.status?.(`MOD preset: ${btn.textContent.trim()}`);
+        });
+    }
+
+    if (!list.dataset.bound) {
+        list.dataset.bound = '1';
+        list.addEventListener('change', (e) => {
+            const input = e.target.closest?.('input[data-mod-id]');
+            if (!input?.checked) return;
+            const id = input.dataset.modId;
+            const spec = Mod.catalog?.()?.[id];
+            const slot = spec?.slot;
+            const exclusive = slot && Mod.slots?.()?.[slot]?.exclusive;
+            if (!exclusive) return;
+            list.querySelectorAll('input[data-mod-id]').forEach((el) => {
+                if (el === input) return;
+                const s = Mod.catalog?.()?.[el.dataset.modId];
+                if (s?.slot === slot) el.checked = false;
+            });
+        });
+    }
+
+    const search = document.getElementById('skin-mod-search');
+    if (search && !search.dataset.bound) {
+        search.dataset.bound = '1';
+        search.addEventListener('input', () => {
+            paint(modsFromUi(), search.value.trim());
+        });
+    }
+}
+
 export function profileFromUi(base = {}) {
     const p = normalizeProfile(base);
     const pick = (id, fallback) => document.getElementById(id)?.value ?? fallback;
@@ -182,12 +252,9 @@ export function syncUiFromProfile(profile) {
     const hairSel = document.getElementById('skin-hair-preset');
     if (bodySel) bodySel.value = p.bodyId;
     if (hairSel) hairSel.value = p.hairId;
-    const modRoot = document.getElementById('skin-mod-list');
-    if (modRoot) {
-        const set = new Set(p.mods || []);
-        modRoot.querySelectorAll('input[data-mod-id]').forEach((el) => {
-            el.checked = set.has(el.dataset.modId);
-        });
+    // Rebuild / sync MOD checkboxes (catalog may be large)
+    if (document.getElementById('skin-mod-list')) {
+        initModPickerUi(p.mods || []);
     }
     const toneSel = document.getElementById('skin-tone-preset');
     if (toneSel) toneSel.value = resolveSkinSlug(p);
@@ -216,6 +283,7 @@ window.AppearanceProfile = {
     colorsFromUi,
     texturesFromUi,
     modsFromUi,
+    initModPickerUi,
     profileFromUi,
     syncUiFromProfile,
 };

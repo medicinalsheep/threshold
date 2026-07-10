@@ -1,5 +1,13 @@
 # Changelog
 
+## 10.12.19 — Full MOD gear system
+
+- **avatar-mods.json** — 50+ pieces across 13 slots (headwear→props), 8 categories, 8 loadout presets
+- **Exclusive slot resolve** — hat vs helmet, jacket vs coat, etc.; accessories stack (max 6)
+- **SKIN UI** — search, category groups, preset buttons (Explorer / Operator / Scientist / Spacer / …)
+- **Procedural builders** — field, tactical, lab, urban, sci-fi, fantasy, tools; GLB override hook
+- **FPS hide** — head/face mods respect first-person visibility
+
 ## 10.12.18 — Combat touch + avatar LOD + MOD layer
 
 - **Combat touch** — fire/ADS/reload/melee appear when weapon drawn; holster always reachable; start holstered for lean pad
