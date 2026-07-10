@@ -393,7 +393,16 @@ export const Engine = {
         return false;
     },
     onPointerDown: function (e) {
-        if (e.button !== 0) { UI.closeCtx(); return; }
+        // Track all mouse buttons (0–4) so secondary binds like MMB / Mouse4 work for VOIP, fire, etc.
+        if (e.pointerType === 'mouse' || e.pointerType === 'pen') {
+            Controls.setMouseButton(e.button, true);
+            if (e.button === 3 || e.button === 4) e.preventDefault();
+        }
+        // Non-LMB: controls only (no world place / context). Still allow aim/fire/PTT via bindings.
+        if (e.button !== 0) {
+            UI.closeCtx();
+            return;
+        }
         if (TouchControls.enabled && e.pointerType === 'touch') return;
 
         if (e.pointerType === 'mouse' || e.pointerType === 'pen') {
@@ -401,19 +410,12 @@ export const Engine = {
             const pointerFree = ThirdEye.isPointerFree?.();
 
             if (playWalk && pointerFree) {
-                if (e.button === 0) {
-                    if (window.WorldInteract?.tryInteract?.()) return;
-                } else {
-                    Controls.setMouseButton(e.button, true);
-                }
+                if (window.WorldInteract?.tryInteract?.()) return;
             } else if (playWalk && !pointerFree) {
-                Controls.setMouseButton(e.button, true);
-                if (e.button === 0 && State.viewMode === 'fps' && !Controls.isHolstered?.()) {
+                if (State.viewMode === 'fps' && !Controls.isHolstered?.()) {
                     this._requestLookLock();
                 }
                 if (playWalk) return;
-            } else {
-                Controls.setMouseButton(e.button, true);
             }
         }
 

@@ -4,6 +4,8 @@
 
 Default layout: **LMB aim (hold)** · **RMB shoot** · **F interact / Third Eye** · **M UI mouse** · **E vehicle** · **T chat** · **Alt** hold = temporary UI mouse.
 
+Each action supports a **primary** key and an optional **2nd** key or mouse button (e.g. Voice PTT: `N` + **MMB** / Mouse4). Open **KEYS** → click **Key 1** or **+ 2nd** → press key or mouse. Mouse labels: LMB · MMB · RMB · Mouse4 · Mouse5.
+
 See [UI_AND_AGENTS.md](UI_AND_AGENTS.md) for touch layout, UNLOCK UI edit, and agent freeze workflow.
 
 ---

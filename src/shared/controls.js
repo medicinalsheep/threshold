@@ -126,15 +126,22 @@ const DEFAULT_USER_KEYBOARD = {
     cameraReset: []
 };
 
+/** Max keyboard/mouse codes per action (primary + secondary) */
+export const MAX_KB_BINDS = 2;
+
 const KEY_LABELS = {
     KeyW: 'W', KeyA: 'A', KeyS: 'S', KeyD: 'D', KeyQ: 'Q', KeyE: 'E', KeyC: 'C',
     KeyF: 'F', KeyG: 'G', KeyH: 'H', KeyP: 'P', KeyR: 'R', KeyT: 'T', KeyV: 'V',
     KeyX: 'X', KeyY: 'Y', KeyZ: 'Z', KeyM: 'M', KeyN: 'N', KeyL: 'L', KeyB: 'B',
     KeyU: 'U', Space: 'Space', ShiftLeft: 'Shift', ShiftRight: 'Shift',
-    ControlLeft: 'Ctrl', ControlRight: 'Ctrl', AltLeft: 'Alt',
+    ControlLeft: 'Ctrl', ControlRight: 'Ctrl', AltLeft: 'Alt', AltRight: 'Alt',
     Mouse0: 'LMB', Mouse1: 'MMB', Mouse2: 'RMB',
+    Mouse3: 'Mouse4', Mouse4: 'Mouse5',
     Backquote: '`', Tab: 'Tab', Home: 'Home',
-    ArrowUp: '↑', ArrowDown: '↓', ArrowLeft: '←', ArrowRight: '→'
+    ArrowUp: '↑', ArrowDown: '↓', ArrowLeft: '←', ArrowRight: '→',
+    Enter: 'Enter', Escape: 'Esc',
+    Digit0: '0', Digit1: '1', Digit2: '2', Digit3: '3', Digit4: '4',
+    Digit5: '5', Digit6: '6', Digit7: '7', Digit8: '8', Digit9: '9',
 };
 
 const GAMEPAD_DEADZONE = 0.18;
@@ -277,8 +284,28 @@ export const Controls = {
             }
             if (!this._rebind) return;
             e.preventDefault();
+            e.stopPropagation();
             this._finishKeyboardRebind(e.code);
-        });
+        }, true);
+        // Capture mouse for secondary binds (LMB / MMB / RMB / side Mouse4–5)
+        window.addEventListener('mousedown', (e) => {
+            if (!this._rebind) return;
+            e.preventDefault();
+            e.stopPropagation();
+            this._finishKeyboardRebind(`Mouse${e.button}`);
+        }, true);
+        window.addEventListener('contextmenu', (e) => {
+            if (!this._rebind) return;
+            e.preventDefault();
+            e.stopPropagation();
+        }, true);
+        // Side buttons (Mouse3/4) can navigate history — block while playing or rebinding
+        window.addEventListener('mouseup', (e) => {
+            if (e.button !== 3 && e.button !== 4) return;
+            if (this._rebind || window.State?.controlMode === 'walk') {
+                e.preventDefault();
+            }
+        }, true);
     },
 
     getProfile() {
@@ -368,7 +395,8 @@ export const Controls = {
     },
 
     formatCode(code) {
-        return KEY_LABELS[code] || code.replace('Key', '').replace('Mouse', 'M');
+        if (!code) return '—';
+        return KEY_LABELS[code] || code.replace(/^Key/, '').replace(/^Digit/, '').replace(/^Mouse/, 'M');
     },
 
     formatGamepadButton(idx) {
@@ -577,9 +605,16 @@ export const Controls = {
         return `${profile}${admin}: fly · Y walk · R-stick cam${pad}${touch}`;
     },
 
-    startKeyboardRebind(profile, action, onDone) {
+    /**
+     * @param {string} profile host|user
+     * @param {string} action
+     * @param {(ok: boolean) => void} [onDone]
+     * @param {{ slot?: number }} [opts] slot 0 = primary, 1 = secondary (optional 2nd key)
+     */
+    startKeyboardRebind(profile, action, onDone, opts = {}) {
         if (profile === 'host' && window.Network?.mode === 'guest') { onDone?.(false); return; }
-        this._rebind = { profile, action, onDone };
+        const slot = typeof opts.slot === 'number' ? Math.max(0, Math.min(MAX_KB_BINDS - 1, opts.slot)) : 0;
+        this._rebind = { profile, action, onDone, slot };
     },
 
     startGamepadRebind(profile, action, onDone) {
@@ -589,16 +624,44 @@ export const Controls = {
 
     _finishKeyboardRebind(code) {
         if (!this._rebind) return;
-        const { profile, action, onDone } = this._rebind;
+        const { profile, action, onDone, slot = 0 } = this._rebind;
         this._rebind = null;
         if (code === 'Escape') { onDone?.(false); return; }
 
-        const list = this.bindings[profile][action] || [];
-        if (!list.includes(code)) list.unshift(code);
-        this.bindings[profile][action] = list.slice(0, 2);
+        const next = this._setBindingSlot(
+            this.bindings[profile][action] || [],
+            slot,
+            code,
+        );
+        this.bindings[profile][action] = next;
         saveKeyboard(profile, this.bindings[profile]);
         if (profile === 'host') this.saveHostAndBroadcast();
-        onDone?.(true);
+        onDone?.(true, code);
+    },
+
+    /**
+     * Set primary (0) or secondary (1) key/mouse code for an action.
+     * @param {string[]} list
+     * @param {number} slot
+     * @param {string} code
+     */
+    _setBindingSlot(list, slot, code) {
+        const arr = [list[0] || null, list[1] || null];
+        for (let i = 0; i < MAX_KB_BINDS; i++) {
+            if (arr[i] === code) arr[i] = null;
+        }
+        arr[slot] = code;
+        return arr.filter(Boolean).slice(0, MAX_KB_BINDS);
+    },
+
+    /** Clear one slot; if primary cleared, secondary promotes */
+    clearKeyboardSlot(profile, action, slot) {
+        const list = [...(this.bindings[profile][action] || [])];
+        if (slot === 0) list.shift();
+        else if (slot === 1) list.splice(1, 1);
+        this.bindings[profile][action] = list.filter(Boolean).slice(0, MAX_KB_BINDS);
+        saveKeyboard(profile, this.bindings[profile]);
+        if (profile === 'host') this.saveHostAndBroadcast();
     },
 
     _finishGamepadRebind(buttonIndex) {
@@ -656,37 +719,56 @@ export const Controls = {
         if (note) {
             if (profile === 'host') {
                 note.textContent = canEditHost
-                    ? 'Action defaults — LMB aim · RMB fire · F interact/third eye · E vehicle · host syncs to guests.'
+                    ? 'Primary + optional 2nd key (keyboard or mouse). LMB aim · RMB fire · click empty slot to bind · host syncs to guests.'
                     : 'Host controls are read-only for guests — customize Guest profile locally.';
             } else {
-                note.textContent = 'Guest profile saved on this device — overrides host per key/button.';
+                note.textContent = 'Guest profile — primary + optional second key/mouse per action (saved on this device).';
             }
         }
 
         const actions = Object.entries(CONTROL_ACTIONS).filter(([, meta]) => !meta.hostOnly || isHostProfile);
         const locked = isHostProfile && !canEditHost;
 
-        const rowsForGroup = (groupId, bindAttr, clearAttr, isGp = false) => actions
-            .filter(([, meta]) => meta.group === groupId)
-            .filter(([a]) => !isGp || DEFAULT_GAMEPAD_BINDINGS[a] !== undefined)
-            .map(([action, meta]) => `
+        const kbRow = (action, meta) => {
+            const codes = this.bindings[profile][action] || [];
+            const primary = codes[0];
+            const secondary = codes[1];
+            if (locked) {
+                const shown = codes.map((c) => this.formatCode(c)).join(' · ') || 'Host only';
+                return `
+                <div class="binding-row" data-action="${action}">
+                    <span class="binding-label">${meta.label}</span>
+                    <button type="button" class="binding-key btn-sm" disabled>${shown}</button>
+                </div>`;
+            }
+            return `
             <div class="binding-row" data-action="${action}">
                 <span class="binding-label">${meta.label}</span>
-                <button type="button" class="binding-key btn-sm" data-${bindAttr}="${action}" ${locked ? 'disabled' : ''}>
-                    ${isGp
-        ? this.formatGamepadButton(this.gamepadBindings[profile][action])
-        : (this.bindings[profile][action] || []).map((c) => this.formatCode(c)).join(', ') || (locked ? 'Host only' : 'Bind key')}
+                <div class="binding-slots">
+                    <button type="button" class="binding-key btn-sm" data-bind="${action}" data-slot="0"
+                        title="Primary key or mouse">${primary ? this.formatCode(primary) : 'Key 1'}</button>
+                    <button type="button" class="binding-key binding-key-2nd btn-sm" data-bind="${action}" data-slot="1"
+                        title="Optional second key or mouse (e.g. MMB, Mouse4)">${secondary ? this.formatCode(secondary) : '+ 2nd'}</button>
+                </div>
+                <button type="button" class="binding-clear btn-sm" data-clear-kb="${action}" title="Clear both keys">✕</button>
+            </div>`;
+        };
+
+        const gpRow = (action, meta) => `
+            <div class="binding-row" data-action="${action}">
+                <span class="binding-label">${meta.label}</span>
+                <button type="button" class="binding-key btn-sm" data-gpad-bind="${action}" ${locked ? 'disabled' : ''}>
+                    ${this.formatGamepadButton(this.gamepadBindings[profile][action])}
                 </button>
-                ${locked ? '' : `<button type="button" class="binding-clear btn-sm" data-${clearAttr}="${action}" title="${isGp ? 'Reset default' : 'Clear'}">${isGp ? '↺' : '✕'}</button>`}
-            </div>
-        `).join('');
+                ${locked ? '' : `<button type="button" class="binding-clear btn-sm" data-clear-gp="${action}" title="Reset default">↺</button>`}
+            </div>`;
 
         kbList.innerHTML = CONTROL_GROUPS
             .filter((g) => actions.some(([, m]) => m.group === g.id))
             .map((g) => `
             <div class="binding-group">
                 <div class="binding-group-title">${g.label}</div>
-                ${rowsForGroup(g.id, 'bind', 'clear-kb')}
+                ${actions.filter(([, m]) => m.group === g.id).map(([a, m]) => kbRow(a, m)).join('')}
             </div>
         `).join('');
 
@@ -697,7 +779,10 @@ export const Controls = {
         .map((g) => `
             <div class="binding-group">
                 <div class="binding-group-title">${g.label}</div>
-                ${rowsForGroup(g.id, 'gpad-bind', 'clear-gp', true)}
+                ${actions
+            .filter(([a, m]) => m.group === g.id && DEFAULT_GAMEPAD_BINDINGS[a] !== undefined)
+            .map(([a, m]) => gpRow(a, m))
+            .join('')}
             </div>
         `).join('')}`;
     }

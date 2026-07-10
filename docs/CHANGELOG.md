@@ -1,3 +1,10 @@
+## 10.12.29 — Secondary keybinds (keyboard + mouse)
+
+- **KEYS** menu: every action has **primary** + optional **+ 2nd** slot (mouse or key)
+- Capture mouse during rebind (LMB / MMB / RMB / side Mouse4–5) — e.g. VOIP PTT = `N` + MMB
+- Engine tracks all mouse buttons for bound hold/edge actions (fixes non-LMB action state)
+- Side buttons blocked from browser history while walking / rebinding
+
 ## 10.12.28 — Session start reliability + lobby UI rebuild
 
 - **Host timeout** — CREATE no longer hangs forever if PeerJS never opens (12s + clear error)

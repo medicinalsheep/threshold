@@ -227,7 +227,10 @@ export const UI = {
         document.getElementById('bindings-list')?.addEventListener('click', (e) => {
             const bindBtn = e.target.closest('[data-bind]');
             const clearBtn = e.target.closest('[data-clear-kb]');
-            if (bindBtn && !bindBtn.disabled) UI.startKeyboardBinding(bindBtn.dataset.bind);
+            if (bindBtn && !bindBtn.disabled) {
+                const slot = parseInt(bindBtn.dataset.slot || '0', 10);
+                UI.startKeyboardBinding(bindBtn.dataset.bind, Number.isFinite(slot) ? slot : 0);
+            }
             if (clearBtn) UI.clearKeyboardBinding(clearBtn.dataset.clearKb);
         });
         document.getElementById('gamepad-bindings-list')?.addEventListener('click', (e) => {
@@ -1210,14 +1213,24 @@ export const UI = {
         this.renderBindingsEditor(profile);
         this.status(`${profile === 'host' ? 'Host' : 'Guest'} keyboard + controller reset`);
     },
-    startKeyboardBinding: function (action) {
+    startKeyboardBinding: function (action, slot = 0) {
         const profile = document.getElementById('bindings-profile')?.value || 'host';
-        const btn = document.querySelector(`[data-bind="${action}"]`);
-        if (btn) btn.textContent = 'Press key… (Esc cancel)';
-        Controls.startKeyboardRebind(profile, action, (ok) => {
-            this.renderBindingsEditor(profile);
-            if (ok) this.status(`Key bound: ${CONTROL_ACTIONS[action]?.label || action}`);
+        const slotIdx = slot === 1 ? 1 : 0;
+        document.querySelectorAll(`[data-bind="${action}"]`).forEach((btn) => {
+            const s = parseInt(btn.dataset.slot || '0', 10);
+            if (s === slotIdx) {
+                btn.textContent = slotIdx === 1 ? '2nd… Esc' : 'Key… Esc';
+                btn.classList.add('binding-listening');
+            }
         });
+        Controls.startKeyboardRebind(profile, action, (ok, code) => {
+            this.renderBindingsEditor(profile);
+            if (ok) {
+                const label = CONTROL_ACTIONS[action]?.label || action;
+                const which = slotIdx === 1 ? '2nd' : 'primary';
+                this.status(`${label}: ${which} → ${Controls.formatCode(code)}`);
+            }
+        }, { slot: slotIdx });
     },
     startGamepadBinding: function (action) {
         const profile = document.getElementById('bindings-profile')?.value || 'host';

@@ -75,6 +75,24 @@ if (controlsSrc.includes("uiMouse:") && controlsSrc.includes("uiMouse: ['KeyM']"
     fail('uiMouse binding missing or not KeyM');
 }
 
+if (controlsSrc.includes('MAX_KB_BINDS') && controlsSrc.includes('_setBindingSlot')) {
+    ok('secondary keybind slots (primary + 2nd) present');
+} else {
+    fail('missing dual keybind slot helpers');
+}
+
+if (controlsSrc.includes("Mouse3: 'Mouse4'") || controlsSrc.includes('Mouse3: "Mouse4"')) {
+    ok('Mouse3/Mouse4 labels for side buttons');
+} else {
+    fail('Mouse3/Mouse4 labels missing');
+}
+
+if (controlsSrc.includes("mousedown") && controlsSrc.includes('_finishKeyboardRebind')) {
+    ok('rebind captures mouse buttons');
+} else {
+    fail('keyboard rebind should listen for mousedown');
+}
+
 if (controlsMd.includes('UI mouse') || controlsMd.includes('UI mouse mode')) {
     ok('CONTROLS.md documents UI mouse mode');
 } else {
