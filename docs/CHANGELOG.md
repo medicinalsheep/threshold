@@ -1,3 +1,8 @@
+## Extension — Threshold Bridge (Chrome)
+
+- **`extension/threshold-chrome`** — MV3 extension: run local **threshold-mini-mobile** (Ollama) → optional **Send to Grok tab** (fills open grok.x.ai composer; you still hit send)
+- Unpacked load; no store publish required. See `extension/threshold-chrome/README.md`
+
 ## 10.12.30 — Texture load reliability (Pages / bundle)
 
 - **AssetBundle** — uses Vite `BASE_URL`, multi-URL fallbacks, retries on 429/5xx, WebP→PNG fallback

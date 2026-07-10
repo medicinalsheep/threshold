@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Threshold Bridge options</title>
+  <link rel="stylesheet" href="popup.css" />
+  <style>body { width: auto; max-width: 420px; }</style>
+</head>
+<body>
+  <header><div class="brand">THRESHOLD OPTIONS</div></header>
+  <label class="lbl" for="ollamaBase">Ollama base URL</label>
+  <input id="ollamaBase" class="field" type="text" placeholder="http://127.0.0.1:11434" />
+  <label class="lbl" for="model">Default model</label>
+  <input id="model" class="field" type="text" placeholder="threshold-mini-mobile" />
+  <label class="lbl" for="system">System prompt</label>
+  <textarea id="system" class="field area" rows="4"></textarea>
+  <div class="row"><button type="button" id="save" class="btn primary">Save</button></div>
+  <p id="msg" class="msg"></p>
+  <script src="options.js"></script>
+</body>
+</html>

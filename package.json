@@ -40,6 +40,7 @@
     "build:icons": "node scripts/build-icons.cjs",
     "gimp:install": "node scripts/install-gimp-plugin.cjs",
     "blender:install": "node scripts/install-blender-addon.cjs",
+    "extension:chrome": "node -e \"console.log('Load unpacked in chrome://extensions →', require('path').resolve('extension/threshold-chrome'))\"",
     "textures:watch": "node scripts/creative-watch.cjs",
     "manifest:prune": "node scripts/prune-manifest.cjs",
     "textures:gen:default": "node scripts/gen-default-tex.cjs",

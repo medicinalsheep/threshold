@@ -1,0 +1,133 @@
+:root {
+  --bg: #0a0c0b;
+  --panel: #121612;
+  --text: #e8f0e8;
+  --muted: #7a8a7a;
+  --accent: #39ff14;
+  --border: #2a3a2a;
+  --danger: #ff5555;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  width: 360px;
+  margin: 0;
+  padding: 12px 14px 14px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 12px;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.brand {
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  font-size: 13px;
+}
+
+.chip {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.chip.ok { border-color: var(--accent); color: var(--accent); }
+.chip.bad { border-color: var(--danger); color: var(--danger); }
+
+.hint {
+  margin: 0 0 10px;
+  color: var(--muted);
+  line-height: 1.4;
+  font-size: 11px;
+}
+
+.lbl {
+  display: block;
+  margin: 8px 0 4px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.field {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 8px;
+  font: inherit;
+  resize: vertical;
+}
+.field:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.area { min-height: 72px; line-height: 1.35; }
+
+.row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn {
+  flex: 1;
+  border: 1px solid var(--border);
+  background: #1a1f1a;
+  color: var(--text);
+  border-radius: 6px;
+  padding: 9px 10px;
+  font: inherit;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+.btn:hover { border-color: var(--accent); }
+.btn:disabled { opacity: 0.45; cursor: wait; }
+.btn.primary {
+  background: rgba(57, 255, 20, 0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.btn.accent {
+  background: #000;
+  border-color: #e7e9ea;
+  color: #fff;
+}
+.btn.ghost { background: transparent; }
+.btn.full { width: 100%; margin-top: 8px; flex: none; }
+
+.msg {
+  min-height: 1.2em;
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+  word-break: break-word;
+}
+.msg.err { color: var(--danger); }
+.msg.ok { color: var(--accent); }
+
+.foot {
+  margin: 10px 0 0;
+  color: #555;
+  font-size: 10px;
+  line-height: 1.35;
+}
+.foot code {
+  color: #888;
+  font-size: 9px;
+}

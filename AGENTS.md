@@ -43,6 +43,7 @@ Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blen
 | Starter kit | `config/starter-kit.json`, `export-starter-kit.cjs` |
 | Native | `electron/`, `capacitor.config.json`, `thresholdShell.js` |
 | Plugins | `plugins/threshold-gimp/`, `plugins/threshold-blender/` |
+| Chrome extension | `extension/threshold-chrome/` — Ollama mini → paste into open Grok tab |
 | Legacy archive | `old/` — pre-tc-* editions, R2 child-vehicle scripts |
 
 ---

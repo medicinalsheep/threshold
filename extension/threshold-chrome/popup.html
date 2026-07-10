@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Threshold Bridge</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <div class="brand">THRESHOLD</div>
+    <span id="status-chip" class="chip">…</span>
+  </header>
+
+  <p class="hint">
+    Local mini model on your PC → optional paste into <strong>your</strong> open Grok tab.
+    You click send. No API key required for the mini.
+  </p>
+
+  <label class="lbl" for="model">Model</label>
+  <select id="model" class="field">
+    <option value="threshold-mini-mobile">threshold-mini-mobile</option>
+    <option value="threshold-mini-dev">threshold-mini-dev</option>
+    <option value="threshold-mini-npc">threshold-mini-npc</option>
+    <option value="llama3.2:1b">llama3.2:1b</option>
+  </select>
+
+  <label class="lbl" for="prompt">Prompt / code / text</label>
+  <textarea id="prompt" class="field area" rows="5" placeholder="Describe what you need, or paste code to refine…"></textarea>
+
+  <div class="row">
+    <button type="button" id="btn-run" class="btn primary">Run mini</button>
+    <button type="button" id="btn-ping" class="btn ghost">Ping Ollama</button>
+  </div>
+
+  <label class="lbl" for="result">Result</label>
+  <textarea id="result" class="field area" rows="7" placeholder="Model output appears here…"></textarea>
+
+  <div class="row">
+    <button type="button" id="btn-copy" class="btn ghost">Copy</button>
+    <button type="button" id="btn-grok" class="btn accent">Send to Grok tab →</button>
+  </div>
+  <button type="button" id="btn-open-grok" class="btn ghost full">Open grok.x.ai</button>
+
+  <p id="msg" class="msg" role="status"></p>
+  <p class="foot">
+    Needs Ollama running (<code>ollama serve</code>) +
+    <code>ollama pull medicinalsheep/threshold-mini-mobile</code>
+  </p>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
