@@ -18,8 +18,9 @@ const PKCE_KEY = 'threshold_x_pkce';
 const AUTH_URL = 'https://x.com/i/oauth2/authorize';
 const TOKEN_URL = 'https://api.twitter.com/2/oauth2/token';
 const ME_URL = 'https://api.twitter.com/2/users/me';
-/** tweet.write required for Compose Post; re-login if you signed in before v2 */
-const SCOPES = ['tweet.read', 'tweet.write', 'users.read', 'offline.access'].join(' ');
+/** Required scopes — missing any means re-sign-in (refresh does not upgrade scopes) */
+const SCOPE_LIST = ['tweet.read', 'tweet.write', 'users.read', 'offline.access'];
+const SCOPES = SCOPE_LIST.join(' ');
 
 function clientId() {
     return (import.meta.env.VITE_X_CLIENT_ID || '').trim();
@@ -153,6 +154,37 @@ export const XAuth = {
         return loadSession()?.accessToken || null;
     },
 
+    getGrantedScopes() {
+        const raw = loadSession()?.scope || '';
+        return new Set(String(raw).split(/[\s+]+/).filter(Boolean));
+    },
+
+    hasScope(scope) {
+        return this.getGrantedScopes().has(scope);
+    },
+
+    /** Scopes we need that the token does not include */
+    missingScopes() {
+        const granted = this.getGrantedScopes();
+        // If scope string empty (old session), treat all as unknown → require re-auth for write
+        if (!granted.size && this.isLoggedIn()) {
+            return [...SCOPE_LIST];
+        }
+        return SCOPE_LIST.filter((s) => !granted.has(s));
+    },
+
+    canPost() {
+        return this.isLoggedIn() && this.hasScope('tweet.write');
+    },
+
+    needsRescope() {
+        return this.isLoggedIn() && this.missingScopes().length > 0;
+    },
+
+    requiredScopes() {
+        return [...SCOPE_LIST];
+    },
+
     async _authFetch(url, options = {}) {
         await this.refreshIfNeeded();
         const token = this.getAccessToken();
@@ -234,11 +266,14 @@ export const XAuth = {
         }
     },
 
-    /** Post a tweet (needs tweet.write scope — re-login after upgrade) */
+    /** Post a tweet (needs tweet.write — call login() again after enabling in developer.x.com) */
     async createPost(text) {
         const body = String(text || '').trim();
         if (!body) throw new Error('Write something first');
         if (body.length > 280) throw new Error(`Too long (${body.length}/280)`);
+        if (!this.canPost()) {
+            throw new Error('Missing tweet.write — Sign out of X, then Sign in with X again (and enable tweet.write on developer.x.com)');
+        }
         const data = await this._authFetch('https://api.twitter.com/2/tweets', {
             method: 'POST',
             body: JSON.stringify({ text: body }),

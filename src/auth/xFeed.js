@@ -89,12 +89,33 @@ export const XFeed = {
         const guest = document.getElementById('x-feed-guest');
         const main = document.getElementById('x-feed-main');
         const title = document.getElementById('x-feed-title');
+        const rescope = document.getElementById('x-feed-rescope');
+        const postBtn = document.getElementById('x-post-submit');
         if (guest) guest.hidden = signedIn;
         if (main) main.hidden = !signedIn;
         if (title) {
             title.textContent = signedIn
                 ? `X · @${user?.username || 'you'}`
                 : 'X';
+        }
+        const needWrite = signedIn && !XAuth.canPost();
+        if (rescope) {
+            rescope.hidden = !needWrite;
+            if (needWrite) {
+                const miss = (XAuth.missingScopes() || []).join(', ') || 'tweet.write';
+                rescope.innerHTML = `Posting needs <code>${esc(miss)}</code>. `
+                    + `Enable scopes on <a href="https://developer.x.com" target="_blank" rel="noopener">developer.x.com</a>, `
+                    + `then <button type="button" class="btn-sm" id="x-feed-relogin">Re-sign in with X</button>`;
+                document.getElementById('x-feed-relogin')?.addEventListener('click', () => {
+                    XAuth.logout();
+                    void XAuth.login().catch((e) => window.UI?.status?.(e.message));
+                });
+            }
+        }
+        if (postBtn) {
+            postBtn.title = needWrite
+                ? 'Re-sign in with X after enabling tweet.write'
+                : 'Post to X';
         }
         this._syncCount();
     },
@@ -107,7 +128,12 @@ export const XFeed = {
         const n = ta.value.length;
         count.textContent = `${n}/280`;
         count.classList.toggle('over', n > 280);
-        if (btn) btn.disabled = n === 0 || n > 280 || this._loading;
+        const needWrite = XAuth.isLoggedIn() && !XAuth.canPost();
+        if (btn) {
+            btn.disabled = n === 0 || n > 280 || this._loading || needWrite;
+            if (needWrite) btn.textContent = 'Re-sign in to post';
+            else btn.textContent = 'Post';
+        }
     },
 
     async loadFeed() {

@@ -311,12 +311,24 @@ export const AgentPortal = {
         }
         const user = X.getUser?.();
         if (user?.username) {
+            const missing = X.missingScopes?.() || [];
+            const canPost = X.canPost?.() !== false && !missing.includes('tweet.write');
+            let detail = `Connected as @${user.username}${user.name ? ` · ${user.name}` : ''}`;
+            if (missing.length) {
+                detail += ` · re-sign-in needed for: ${missing.join(', ')}`;
+            } else if (canPost) {
+                detail += ' · tweet.write ✓';
+            }
             return {
-                ok: true,
+                ok: !missing.length,
                 configured: true,
                 username: user.username,
                 name: user.name || user.username,
-                detail: `Connected as @${user.username}${user.name ? ` · ${user.name}` : ''}`,
+                canPost,
+                missingScopes: missing,
+                detail,
+                // still "connected" for identity even if scopes incomplete
+                signedIn: true,
             };
         }
         return {
@@ -417,9 +429,9 @@ export const AgentPortal = {
             : { state: 'off', label: 'Ollama (your models)', detail: ollamaDetail };
 
         const x = probe.xAuth || this._xStatus();
-        const xLine = x.ok
+        const xLine = x.signedIn || x.ok
             ? {
-                state: 'ok',
+                state: x.ok ? 'ok' : 'warn',
                 label: 'X (identity)',
                 detail: x.detail || `Connected as @${x.username}`,
             }

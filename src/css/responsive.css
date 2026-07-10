@@ -847,10 +847,22 @@ body.grok-auth-open {
 }
 
 .x-feed-status,
-.x-feed-notice {
+.x-feed-notice,
+.x-feed-rescope {
     margin: 0;
     padding: 6px 14px;
     font-size: 0.55rem;
+}
+
+.x-feed-rescope {
+    background: rgba(232, 184, 74, 0.12);
+    border-bottom: 1px solid rgba(232, 184, 74, 0.35);
+    color: #e8b84a;
+    line-height: 1.45;
+}
+
+.x-feed-rescope code {
+    font-size: 0.52rem;
 }
 
 .x-feed-list {
