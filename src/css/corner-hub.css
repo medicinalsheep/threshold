@@ -68,11 +68,17 @@
     color: #e8b84a;
 }
 
+/* Clear ✕ EXIT immersive control (top-left) — hub sits under it by default */
 .corner-hub-tl {
-    top: max(36px, calc(env(safe-area-inset-top, 0px) + 28px));
+    top: max(56px, calc(env(safe-area-inset-top, 0px) + 48px));
     left: max(8px, env(safe-area-inset-left, 0px));
     flex-direction: column;
     align-items: flex-start;
+}
+
+/* Immersive EXIT is ~44–52px tall at top:8px — keep PLAY/AI/LINK clear of it */
+body.ui-immersive .corner-hub-tl {
+    top: max(64px, calc(env(safe-area-inset-top, 0px) + 56px));
 }
 
 .corner-hub-tl .corner-hub-arm-v {
@@ -117,7 +123,8 @@ body.hub-layout-edit .corner-hub-menu {
 body.hub-layout-edit #creator-perf-hud,
 body.hub-layout-edit #model-status-hud-float,
 body.hub-layout-edit #game-chat,
-body.hub-layout-edit #app-nav .brand {
+body.hub-layout-edit #app-nav .brand,
+body.hub-layout-edit #proximity-panel {
     pointer-events: auto;
 }
 
@@ -132,7 +139,8 @@ body.hub-layout-edit #app-nav {
 body.hub-layout-edit #creator-perf-hud,
 body.hub-layout-edit #model-status-hud-float,
 body.hub-layout-edit #game-chat .game-chat-header,
-body.hub-layout-edit #app-nav .brand {
+body.hub-layout-edit #app-nav .brand,
+body.hub-layout-edit #proximity-chip {
     cursor: grab;
 }
 
@@ -185,9 +193,16 @@ body.nav-ui-custom .nav-restore-btn {
     display: none !important;
 }
 
-body.nav-collapsed .corner-hub-tl,
+body.nav-collapsed .corner-hub-tl {
+    top: max(56px, calc(env(safe-area-inset-top, 0px) + 48px));
+}
+
 body.nav-collapsed .corner-hub-tr {
     top: max(8px, env(safe-area-inset-top, 0px));
+}
+
+body.ui-immersive.nav-collapsed .corner-hub-tl {
+    top: max(64px, calc(env(safe-area-inset-top, 0px) + 56px));
 }
 
 .corner-hub-bl {
@@ -281,27 +296,6 @@ body.play-mode #creator-sync-chip,
 body.play-mode #agent-reconnect-chip,
 body.play-mode #btn-mobile-insert {
     display: none !important;
-}
-
-body.play-mode #proximity-panel .panel-chrome-header {
-    display: none !important;
-}
-
-body.play-mode #proximity-panel.float-panel {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    min-width: 0 !important;
-}
-
-body.play-mode #proximity-panel.has-hint .interact-hint {
-    display: block;
-    padding: 6px 12px;
-    border-radius: 20px;
-    background: rgba(8, 10, 14, 0.75);
-    border: 1px solid var(--accent-color);
-    font-size: 0.62rem;
 }
 
 body.play-mode #survival-needs-hud:not(.user-expanded) {

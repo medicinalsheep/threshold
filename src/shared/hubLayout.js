@@ -13,6 +13,7 @@ const UI_OVERLAYS = [
     { id: 'model-hud', selector: '#model-status-hud-float' },
     { id: 'game-chat', selector: '#game-chat', grip: '.game-chat-header' },
     { id: 'app-nav', selector: '#app-nav', grip: '.brand' },
+    { id: 'proximity', selector: '#proximity-panel', grip: '#proximity-chip' },
 ];
 
 function loadHubPositions() {
@@ -149,7 +150,7 @@ export const HubLayout = {
             window.UI?.status?.('UI layout locked');
         } else {
             document.getElementById('app-nav')?.classList.remove('nav-ui-hidden-for-edit');
-            window.UI?.status?.('Drag corners, HUD, chat, header & touch controls — tap LOCK when done');
+            window.UI?.status?.('Drag corners, proximity chip, HUD, chat, header & touch — tap LOCK when done');
         }
     },
 
@@ -258,6 +259,8 @@ export const HubLayout = {
         const el = overlayEl(item);
         const grip = overlayGrip(item);
         if (!el || !grip) return;
+        // Proximity: allow drag from whole chip while unlocked
+        if (item.id === 'proximity' && !e.target.closest('#proximity-chip, #proximity-panel')) return;
 
         if (item.id === 'app-nav') {
             el.classList.remove('nav-ui-hidden-for-edit');

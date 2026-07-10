@@ -15,12 +15,16 @@
     "male_default": {
       "glb": "starter_avatar.glb",
       "heightM": 1.75,
-      "fallback": { "torsoScale": [1.04, 1, 0.95] }
+      "label": "Male formed",
+      "form": "male",
+      "fallback": { "torsoScale": [1.06, 1.02, 0.98], "hipScale": [1, 1, 1] }
     },
     "female_default": {
       "glb": "starter_avatar_female.glb",
       "heightM": 1.65,
-      "fallback": { "torsoScale": [0.92, 1, 0.88], "hipScale": [0.95, 1, 0.95] }
+      "label": "Female formed",
+      "form": "female",
+      "fallback": { "torsoScale": [0.9, 0.98, 0.88], "hipScale": [1.1, 1, 1.06] }
     }
   },
   "hair": {

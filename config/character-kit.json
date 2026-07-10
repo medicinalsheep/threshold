@@ -31,7 +31,7 @@
   "appearancePresets": [
     {
       "id": "male_default",
-      "label": "Male starter",
+      "label": "Male formed",
       "profile": {
         "bodyId": "male_default",
         "hairId": "hair_short_m",
@@ -40,7 +40,7 @@
     },
     {
       "id": "female_default",
-      "label": "Female starter",
+      "label": "Female formed",
       "profile": {
         "bodyId": "female_default",
         "hairId": "hair_long_f",

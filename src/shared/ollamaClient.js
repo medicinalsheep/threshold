@@ -162,6 +162,82 @@ export const OllamaClient = {
         if (thinking && options.allowThinkingFallback) return stripOllamaThinking(thinking);
         return cleaned;
     },
+
+    /**
+     * Pull a model into local Ollama (requires ollama serve reachable from this tab).
+     * Streams NDJSON progress from POST /api/pull.
+     * @param {string} name e.g. medicinalsheep/threshold-mini-npc
+     * @param {{ onProgress?: (p: {status:string, completed?:number, total?:number, percent?:number}) => void, signal?: AbortSignal }} options
+     */
+    async pull(name, options = {}) {
+        const model = String(name || '').trim();
+        if (!model) throw new Error('Model name required');
+
+        const res = await fetch(`${this.baseUrl}/api/pull`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: model, stream: true }),
+            signal: options.signal,
+        });
+        if (!res.ok) {
+            const t = await res.text().catch(() => '');
+            const hint = ollamaCorsHelp(res.status);
+            throw new Error(hint || `Ollama pull failed (${res.status}): ${t.slice(0, 160)}`);
+        }
+
+        const reader = res.body?.getReader?.();
+        if (!reader) {
+            // Non-streaming fallback
+            const data = await res.json().catch(() => ({}));
+            if (data.error) throw new Error(data.error);
+            options.onProgress?.({ status: data.status || 'success', percent: 100 });
+            return { ok: true, model };
+        }
+
+        const decoder = new TextDecoder();
+        let buf = '';
+        let last = { status: 'starting' };
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buf += decoder.decode(value, { stream: true });
+            const lines = buf.split('\n');
+            buf = lines.pop() || '';
+            for (const line of lines) {
+                const s = line.trim();
+                if (!s) continue;
+                let msg;
+                try {
+                    msg = JSON.parse(s);
+                } catch {
+                    continue;
+                }
+                if (msg.error) throw new Error(msg.error);
+                const total = Number(msg.total) || 0;
+                const completed = Number(msg.completed) || 0;
+                const percent = total > 0 ? Math.min(100, Math.round((completed / total) * 100)) : undefined;
+                last = {
+                    status: msg.status || 'pulling',
+                    completed: total ? completed : undefined,
+                    total: total || undefined,
+                    percent,
+                    digest: msg.digest,
+                };
+                options.onProgress?.(last);
+            }
+        }
+        if (buf.trim()) {
+            try {
+                const msg = JSON.parse(buf.trim());
+                if (msg.error) throw new Error(msg.error);
+            } catch (e) {
+                if (e.message && !e.message.includes('JSON')) throw e;
+            }
+        }
+        options.onProgress?.({ status: 'success', percent: 100 });
+        return { ok: true, model, last };
+    },
 };
 
 window.OllamaClient = OllamaClient;

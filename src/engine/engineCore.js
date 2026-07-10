@@ -506,6 +506,13 @@ export const Engine = {
 
         Controls.pollGamepad();
         Controls.applyCameraStick();
+        // Situational touch: VEH only when a vehicle exists or already driving
+        if (window.TouchControls?.enabled) {
+            const vehReady = State.controlMode === 'vehicle'
+                || !!window.TcDrive?.active
+                || State.objects.some((o) => o.userData?.id === 'tc_run' || o.userData?.id === 'tc_haul');
+            window.TouchControls.setContextVisible?.('enterVehicle', vehReady);
+        }
         if (Controls.consumeJustPressed('toggleMode')) UI.toggleControlMode();
         if (Controls.consumeJustPressed('pause') && Controls.canUse('pause')) UI.togglePause();
         if (Controls.consumeJustPressed('bindingsMenu')) UI.openBindingsModal?.();

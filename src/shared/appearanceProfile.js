@@ -72,6 +72,7 @@ export function profileFromLegacyAppearance(appearance = {}) {
 
 export function profileToMeshOpts(profile) {
     const p = normalizeProfile(profile);
+    const female = p.bodyId === 'female_default';
     return {
         skinColor: hexToNum(p.colors.skin),
         bodyColor: hexToNum(p.colors.shirt),
@@ -79,8 +80,10 @@ export function profileToMeshOpts(profile) {
         hairColor: hexToNum(p.colors.hair),
         roughness: p.roughness ?? 0.72,
         bodyId: p.bodyId,
-        torsoScale: p.bodyId === 'female_default' ? [0.92, 1, 0.88] : [1.04, 1, 0.95],
-        hipScale: p.bodyId === 'female_default' ? [0.95, 1, 0.95] : [1, 1, 1],
+        form: female ? 'female' : 'male',
+        // Formed presets — wider hips / narrower shoulders for female
+        torsoScale: female ? [0.9, 0.98, 0.88] : [1.06, 1.02, 0.98],
+        hipScale: female ? [1.1, 1, 1.06] : [1, 1, 1],
     };
 }
 

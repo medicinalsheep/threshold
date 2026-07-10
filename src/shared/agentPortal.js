@@ -27,6 +27,41 @@ const TIER_HINTS = {
     large: ['threshold-dev', 'threshold-large-scenes', 'llama3.1:8b', 'deepseek-r1:8b'],
 };
 
+/** Published Threshold-trained models (Ollama library namespace medicinalsheep). */
+const TRAINED_PULLS = [
+    {
+        id: 'threshold-mini-npc',
+        pull: 'medicinalsheep/threshold-mini-npc',
+        label: 'Mini NPC',
+        detail: 'Intent + NPC chat · small tier',
+        size: '~2 GB',
+        page: 'https://ollama.com/medicinalsheep/threshold-mini-npc',
+    },
+    {
+        id: 'threshold-mini-dev',
+        pull: 'medicinalsheep/threshold-mini-dev',
+        label: 'Mini Dev',
+        detail: 'Patches + plans · medium tier',
+        size: '~1 GB',
+        page: 'https://ollama.com/medicinalsheep/threshold-mini-dev',
+    },
+    {
+        id: 'threshold-mini-mobile',
+        pull: 'medicinalsheep/threshold-mini-mobile',
+        label: 'Mini Mobile',
+        detail: '1B intent/NPC · low RAM',
+        size: '~1.3 GB',
+        page: 'https://ollama.com/medicinalsheep/threshold-mini-mobile',
+    },
+];
+
+function modelIsInstalled(installed, entry) {
+    const list = (installed || []).map((m) => String(m).toLowerCase());
+    const id = entry.id.toLowerCase();
+    const pull = entry.pull.toLowerCase();
+    return list.some((m) => m === id || m.startsWith(`${id}:`) || m.includes(pull) || m.includes(id));
+}
+
 function esc(s) {
     return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 }
@@ -171,7 +206,17 @@ export const AgentPortal = {
         });
 
         this._modal?.addEventListener('click', (e) => {
-            if (e.target === this._modal && !this._busy) this.hide();
+            if (e.target === this._modal && !this._busy && !this._pulling) this.hide();
+            const pullBtn = e.target.closest?.('[data-ollama-pull]');
+            if (pullBtn && !pullBtn.disabled) {
+                e.preventDefault();
+                void this.pullTrainedModel(pullBtn.dataset.ollamaPull, pullBtn);
+                return;
+            }
+            if (e.target.closest?.('[data-ollama-pull-all]')) {
+                e.preventDefault();
+                void this.pullAllTrainedModels();
+            }
         });
     },
 
@@ -224,10 +269,10 @@ export const AgentPortal = {
         const ollamaDetail = probe.ollama?.ok
             ? `${probe.ollama.models.length} models on this device — incl. threshold-mini-* if installed`
             : probe.ollama?.corsBlocked
-                ? 'CORS 403 — restart with: npm run ollama:serve (or set OLLAMA_ORIGINS)'
+                ? 'CORS 403 — stop plain ollama serve; from the repo run: npm run ollama:serve'
                 : ctx.onPages && !ctx.onLocal
-                    ? 'Open this page on the PC running Ollama, then run: ollama serve'
-                    : `Not reachable — run: ollama serve (${probe.ollama?.error || 'offline'})`;
+                    ? 'Ollama only works on the PC running it — clone the repo on that machine and use npm run ollama:serve'
+                    : `Not reachable — install Ollama, clone the repo, then: npm run ollama:serve (${probe.ollama?.error || 'offline'})`;
 
         const ollamaLine = probe.ollama?.ok
             ? { state: 'ok', label: 'Ollama (your models)', detail: ollamaDetail }
@@ -238,6 +283,25 @@ export const AgentPortal = {
             : { state: 'off', label: 'Creative watch', detail: 'Optional — npm run textures:watch' };
 
         const rows = [grokLine, ollamaLine, watchLine];
+        const ollamaHowTo = !probe.ollama?.ok ? `
+            <div class="agent-portal-ollama-howto insert-hint">
+                <strong>Use Ollama (desktop / laptop):</strong>
+                <ol class="agent-portal-howto-steps">
+                    <li>Install <a href="https://ollama.com" target="_blank" rel="noopener">Ollama</a> on this PC</li>
+                    <li>Download the repo:
+                        <code>git clone https://github.com/medicinalsheep/threshold.git</code>
+                        (or ZIP from GitHub → Extract)</li>
+                    <li>In that folder: <code>npm install</code></li>
+                    <li>Start with CORS for Pages/local:
+                        <code>npm run ollama:serve</code>
+                        <em>— not plain <code>ollama serve</code> (that causes 403)</em></li>
+                    <li>Then use <strong>Download</strong> buttons below (or terminal <code>ollama pull …</code>)</li>
+                    <li>Reload this tab → <strong>RE-SCAN</strong></li>
+                </ol>
+                <p class="agent-portal-howto-note">Phones: use a Grok/xAI key above — local Ollama is not on-device in the APK.</p>
+            </div>
+        ` : '';
+
         el.innerHTML = `
             <p class="agent-portal-kicker">Scanning your machine…</p>
             <ul class="agent-portal-detect-list">
@@ -248,7 +312,9 @@ export const AgentPortal = {
                     </li>
                 `).join('')}
             </ul>
-            ${!hasAnyProvider(probe) ? `<p class="insert-hint"><strong>Bring your own model:</strong> paste a Grok/xAI key (works on any device), or open this tab on the PC where <code>ollama serve</code> runs. Install Threshold mini models: <code>npm run models:mini</code> (dev machine). You can explore the grid without AI.</p>` : ''}
+            ${ollamaHowTo}
+            ${this.renderTrainedPullsHtml(probe)}
+            ${!hasAnyProvider(probe) ? `<p class="insert-hint"><strong>Bring your own model:</strong> paste a Grok/xAI key (works on any device including phone), <em>or</em> start Ollama and download our trained minis below. You can explore the grid without AI.</p>` : ''}
             ${ctx.onPages ? '<p class="insert-hint">Hosted on GitHub Pages — scene runs in your browser; AI keys and Ollama stay on your device, never on our repo.</p>' : ''}
         `;
 
@@ -257,6 +323,168 @@ export const AgentPortal = {
 
         const keyWrap = document.getElementById('agent-portal-xai-wrap');
         if (keyWrap) keyWrap.style.display = probe.grokKey ? 'none' : '';
+    },
+
+    renderTrainedPullsHtml(probe) {
+        const installed = probe.ollama?.ok ? (probe.ollama.models || []) : [];
+        const ollamaReady = !!probe.ollama?.ok;
+        const cards = TRAINED_PULLS.map((m) => {
+            const ok = modelIsInstalled(installed, m);
+            const btnLabel = ok ? 'Installed ✓' : 'Download';
+            const disabled = ok || !ollamaReady || this._pulling ? 'disabled' : '';
+            const stateClass = ok ? 'installed' : (ollamaReady ? 'ready' : 'blocked');
+            return `
+                <div class="agent-portal-pull-card agent-portal-pull-${stateClass}" data-pull-card="${esc(m.pull)}">
+                    <div class="agent-portal-pull-meta">
+                        <strong>${esc(m.label)}</strong>
+                        <span class="agent-portal-pull-detail">${esc(m.detail)} · ${esc(m.size)}</span>
+                        <code class="agent-portal-pull-name">${esc(m.pull)}</code>
+                    </div>
+                    <div class="agent-portal-pull-actions">
+                        <button type="button" class="btn-sm agent-portal-pull-btn" data-ollama-pull="${esc(m.pull)}" ${disabled}
+                            title="${ok ? 'Already on this PC' : (ollamaReady ? 'Pull into local Ollama' : 'Start Ollama first')}">
+                            ${btnLabel}
+                        </button>
+                        <a class="agent-portal-pull-link" href="${esc(m.page)}" target="_blank" rel="noopener">Library</a>
+                    </div>
+                    <div class="agent-portal-pull-progress" hidden>
+                        <div class="agent-portal-pull-bar"><span style="width:0%"></span></div>
+                        <span class="agent-portal-pull-status"></span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        const anyMissing = TRAINED_PULLS.some((m) => !modelIsInstalled(installed, m));
+        const allDisabled = !ollamaReady || this._pulling || !anyMissing ? 'disabled' : '';
+
+        return `
+            <div class="agent-portal-pulls" id="agent-portal-pulls">
+                <p class="agent-portal-kicker">Threshold trained models</p>
+                <p class="insert-hint">Pull our published minis into <strong>your</strong> Ollama (same PC as this tab). Needs <code>npm run ollama:serve</code> or Ollama with CORS.</p>
+                <div class="agent-portal-pull-list">${cards}</div>
+                <div class="agent-portal-pull-footer">
+                    <button type="button" class="btn-sm" data-ollama-pull-all ${allDisabled}
+                        title="${ollamaReady ? 'Download all missing minis' : 'Start Ollama first'}">
+                        Download all minis
+                    </button>
+                    ${!ollamaReady ? '<span class="insert-hint">Ollama offline — start it, then RE-SCAN</span>' : ''}
+                </div>
+                <p id="agent-portal-pull-log" class="agent-portal-pull-log insert-hint" aria-live="polite"></p>
+            </div>
+        `;
+    },
+
+    setPullUi(model, { percent, status, error, done, installed } = {}) {
+        const card = [...document.querySelectorAll('[data-pull-card]')].find((c) => c.dataset.pullCard === model);
+        if (!card) return;
+        const progress = card.querySelector('.agent-portal-pull-progress');
+        const bar = card.querySelector('.agent-portal-pull-bar span');
+        const st = card.querySelector('.agent-portal-pull-status');
+        const btn = card.querySelector('[data-ollama-pull]');
+        if (progress) progress.hidden = !!(done && !error);
+        if (progress && (status || percent != null)) progress.hidden = false;
+        if (bar && percent != null) bar.style.width = `${Math.max(0, Math.min(100, percent))}%`;
+        if (st) {
+            if (error) st.textContent = error;
+            else if (status) st.textContent = percent != null ? `${status} · ${percent}%` : status;
+        }
+        if (btn) {
+            if (installed || (done && !error)) {
+                btn.textContent = 'Installed ✓';
+                btn.disabled = true;
+                card.classList.add('agent-portal-pull-installed');
+                card.classList.remove('agent-portal-pull-ready', 'agent-portal-pull-blocked');
+                if (progress) progress.hidden = true;
+            } else if (this._pulling) {
+                btn.disabled = true;
+            }
+        }
+        const log = document.getElementById('agent-portal-pull-log');
+        if (log && (status || error)) {
+            log.textContent = error
+                ? `Pull failed: ${error}`
+                : `${model}: ${status}${percent != null ? ` (${percent}%)` : ''}`;
+        }
+    },
+
+    async pullTrainedModel(model, btnEl) {
+        const name = String(model || '').trim();
+        if (!name || this._pulling) return;
+
+        const probe = this._probe || await this.probe();
+        if (!probe.ollama?.ok) {
+            window.UI?.status?.('Start Ollama first (npm run ollama:serve), then RE-SCAN');
+            const log = document.getElementById('agent-portal-pull-log');
+            if (log) log.textContent = 'Ollama offline — cannot download until serve is up.';
+            return;
+        }
+
+        this._pulling = true;
+        document.querySelectorAll('[data-ollama-pull], [data-ollama-pull-all]').forEach((b) => {
+            b.disabled = true;
+        });
+        if (btnEl) btnEl.textContent = 'Downloading…';
+        this.setPullUi(name, { status: 'starting', percent: 0 });
+
+        try {
+            await OllamaClient.pull(name, {
+                onProgress: (p) => {
+                    this.setPullUi(name, {
+                        status: p.status || 'pulling',
+                        percent: p.percent ?? (p.status === 'success' ? 100 : undefined),
+                    });
+                },
+            });
+            this.setPullUi(name, { status: 'success', percent: 100, done: true, installed: true });
+            window.UI?.status?.(`Downloaded ${name}`);
+            OllamaClient.setPreferredModel(name);
+            await this.runDetect();
+        } catch (e) {
+            const msg = e.message || 'pull failed';
+            this.setPullUi(name, { error: msg, done: true });
+            window.UI?.status?.(msg.slice(0, 80));
+            if (btnEl && !btnEl.textContent.includes('Installed')) btnEl.textContent = 'Retry download';
+        } finally {
+            this._pulling = false;
+            // re-enable missing buttons via re-render if detect ran; else soft unlock
+            if (!document.getElementById('agent-portal-pulls')) return;
+            const still = this._probe;
+            if (still?.ollama?.ok) {
+                document.querySelectorAll('[data-ollama-pull]').forEach((b) => {
+                    const m = TRAINED_PULLS.find((t) => t.pull === b.dataset.ollamaPull);
+                    if (m && !modelIsInstalled(still.ollama.models, m)) {
+                        b.disabled = false;
+                        if (b.textContent === 'Downloading…') b.textContent = 'Download';
+                    }
+                });
+                const anyMissing = TRAINED_PULLS.some((m) => !modelIsInstalled(still.ollama.models, m));
+                const allBtn = document.querySelector('[data-ollama-pull-all]');
+                if (allBtn) allBtn.disabled = !anyMissing;
+            }
+        }
+    },
+
+    async pullAllTrainedModels() {
+        if (this._pulling) return;
+        const probe = this._probe || await this.probe();
+        if (!probe.ollama?.ok) {
+            window.UI?.status?.('Start Ollama first, then RE-SCAN');
+            return;
+        }
+        const missing = TRAINED_PULLS.filter((m) => !modelIsInstalled(probe.ollama.models, m));
+        if (!missing.length) {
+            window.UI?.status?.('All Threshold minis already installed');
+            return;
+        }
+        for (const m of missing) {
+            const btn = [...document.querySelectorAll('[data-ollama-pull]')].find((b) => b.dataset.ollamaPull === m.pull);
+            await this.pullTrainedModel(m.pull, btn);
+            if (!this._probe?.ollama?.ok) break;
+            // stop chain if a pull left an error on the log without installing
+            const stillMissing = !modelIsInstalled(this._probe?.ollama?.models || [], m);
+            if (stillMissing) break;
+        }
     },
 
     renderProviderPick(probe) {

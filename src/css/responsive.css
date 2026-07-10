@@ -359,8 +359,12 @@
     }
 
     .corner-hub-tl {
-        top: max(6px, env(safe-area-inset-top, 0px));
+        top: max(56px, calc(env(safe-area-inset-top, 0px) + 48px));
         left: max(6px, env(safe-area-inset-left, 0px));
+    }
+
+    body.ui-immersive .corner-hub-tl {
+        top: max(64px, calc(env(safe-area-inset-top, 0px) + 56px));
     }
 
     .corner-hub-tr {

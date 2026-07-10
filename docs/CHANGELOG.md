@@ -1,5 +1,13 @@
 # Changelog
 
+## 10.12.17 — Lean touch, formed avatars, proximity chip
+
+- **Touch layout v4** — core only (sticks + JMP/RUN/F/II); combat/utility add via **+ BTN** (unlock); double-tap hide/show; VEH context when TC vehicle present
+- **Player avatars** — moderate-poly male/female formed bodies (`starter_avatar*.glb` ~2.3–2.6k tris), walk clip, SKIN presets
+- **Proximity** — sleek F-chip (hidden until near); **movable in UNLOCK**; better horizontal range + tree interact scan
+- **Agent Portal** — download buttons for `medicinalsheep/threshold-mini-*` + Ollama setup steps
+- **UI** — TL hub clearance under ✕ EXIT immersive
+
 ## 10.12.16 — Hero default textures + Android prep doc
 
 - **Starter Ground** — richer concrete: tile joints, grit FBM, joint-aware roughness/normal @ 2K

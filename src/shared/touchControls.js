@@ -3,18 +3,14 @@ import { CONTROL_ACTIONS } from './controls.js';
 
 const HOLD_MS = 480;
 const DOUBLE_MS = 380;
-/** Bump key when default positions change so users get new practical layout once */
-const LAYOUT_KEY = 'touchLayoutV3';
+/** Bump when default visible set / positions change so users get new lean layout once */
+const LAYOUT_KEY = 'touchLayoutV4';
 const STICK_SIZE = 128;
 const BTN_SIZE = 52;
 
 /**
- * Standard touch actions — labels short for thumbs.
- * Layout is dual-stick mobile TPS/FPS practical:
- *   L: move stick + sprint/crouch
- *   R: look stick + fire/ADS/jump arc above stick
- *   mid-R: interact / vehicle
- *   top-R: pause / view / utility (less used)
+ * Catalog of touch actions — all wired in applyToControls when visible.
+ * Only CORE_TOUCH_IDS ship visible by default; others add via + BTN (layout unlock).
  */
 export const STANDARD_TOUCH_BUTTONS = [
     { id: 'jump', action: 'jump', label: 'JMP', size: 52 },
@@ -34,59 +30,54 @@ export const STANDARD_TOUCH_BUTTONS = [
     { id: 'pause', action: 'pause', label: 'II', size: 42 },
 ];
 
+/** Always on when touch UI is enabled — move / look + essentials */
+export const CORE_TOUCH_IDS = ['jump', 'sprint', 'interact', 'pause'];
+
 /**
- * Coordinates: bottom-left origin unless anchor 'br' (x negative = left from right edge).
- * Safe margins keep thumbs off home indicators / corners.
+ * Coordinates: bottom-left origin unless anchor 'br'/'tr' (x negative = left from right edge).
  */
 const DEFAULT_LAYOUT = {
     sticks: {
-        // Move — large, clear of left bezel
         'stick-left': { x: 20, y: 28, w: STICK_SIZE, h: STICK_SIZE, anchor: 'bl' },
-        // Look — bottom-right, room above for fire cluster
         'stick-right': { x: -148, y: 24, w: STICK_SIZE, h: STICK_SIZE, anchor: 'br' },
     },
     buttons: {
-        // ── Left hand: locomotion near move stick ──
         sprint: { x: 158, y: 36, w: 52, h: 48, anchor: 'bl' },
         crouch: { x: 158, y: 96, w: 48, h: 48, anchor: 'bl' },
 
-        // ── Right hand combat arc (above look stick, primary thumbs) ──
-        // Fire: large, easy reach (upper-right of combat zone)
         fire: { x: -42, y: 162, w: 64, h: 64, anchor: 'br' },
-        // ADS: left of fire
         aim: { x: -118, y: 168, w: 58, h: 58, anchor: 'br' },
-        // Jump: above fire
         jump: { x: -48, y: 236, w: 52, h: 52, anchor: 'br' },
-        // Reload: left of ADS
         reload: { x: -188, y: 168, w: 46, h: 46, anchor: 'br' },
-        // Melee: above reload
         melee: { x: -188, y: 224, w: 44, h: 44, anchor: 'br' },
 
-        // ── World actions (mid-right, still right-thumb reachable) ──
         interact: { x: -258, y: 175, w: 54, h: 54, anchor: 'br' },
         enterVehicle: { x: -258, y: 238, w: 46, h: 46, anchor: 'br' },
         thirdEye: { x: -318, y: 175, w: 46, h: 46, anchor: 'br' },
         uiMouse: { x: -318, y: 230, w: 46, h: 46, anchor: 'br' },
 
-        // ── Utility / meta (top-right — rarely mid-combat) ──
         pause: { x: -16, y: 16, w: 42, h: 42, anchor: 'tr' },
         toggleView: { x: -66, y: 16, w: 42, h: 42, anchor: 'tr' },
         flashlight: { x: -116, y: 16, w: 40, h: 40, anchor: 'tr' },
         holster: { x: -162, y: 16, w: 40, h: 40, anchor: 'tr' },
     },
     custom: [],
-    hidden: [],
+    /** Non-core buttons start hidden — add via + BTN when unlocked */
+    hidden: STANDARD_TOUCH_BUTTONS.map((b) => b.id).filter((id) => !CORE_TOUCH_IDS.includes(id)),
 };
 
 function loadLayout() {
     const saved = ViewPrefs.get(LAYOUT_KEY, null);
     if (!saved) return JSON.parse(JSON.stringify(DEFAULT_LAYOUT));
-    // Merge so new default buttons (e.g. uiMouse) appear even on saved layouts
+    const coreHidden = STANDARD_TOUCH_BUTTONS.map((b) => b.id).filter((id) => !CORE_TOUCH_IDS.includes(id));
+    const hidden = Array.isArray(saved.hidden)
+        ? [...new Set(saved.hidden)]
+        : coreHidden;
     return {
         sticks: { ...DEFAULT_LAYOUT.sticks, ...saved.sticks },
         buttons: { ...DEFAULT_LAYOUT.buttons, ...saved.buttons },
         custom: saved.custom || [],
-        hidden: saved.hidden || [],
+        hidden,
     };
 }
 
@@ -105,6 +96,7 @@ export const TouchControls = {
     _holdPoint: null,
     _edgeLatches: {},
     _layout: loadLayout(),
+    _contextVisible: new Set(),
 
     init() {
         const stored = ViewPrefs.get('touchControls');
@@ -131,6 +123,24 @@ export const TouchControls = {
         saveLayout(this._layout);
     },
 
+    isButtonVisible(id) {
+        if ((this._layout.hidden || []).includes(id)) return false;
+        if (this._contextVisible.has(id)) return true;
+        return CORE_TOUCH_IDS.includes(id)
+            || !!(this._layout.buttons?.[id] && !(this._layout.hidden || []).includes(id));
+    },
+
+    /**
+     * Context show/hide for situational actions (e.g. vehicle near player).
+     * Does not permanently unhide in saved layout.
+     */
+    setContextVisible(id, on) {
+        const was = this._contextVisible.has(id);
+        if (on) this._contextVisible.add(id);
+        else this._contextVisible.delete(id);
+        if (was !== on) this._renderLayout();
+    },
+
     _syncEditMode() {
         const editing = document.body.classList.contains('hub-layout-edit');
         const root = document.getElementById('touch-controls');
@@ -138,6 +148,19 @@ export const TouchControls = {
         if (root) root.classList.toggle('touch-layout-edit', editing);
         if (addBtn) addBtn.hidden = !editing;
         if (editing) root?.classList.add('visible');
+        this._renderLayout();
+    },
+
+    _isHidden(id) {
+        const editing = document.body.classList.contains('hub-layout-edit');
+        const permanentlyHidden = (this._layout.hidden || []).includes(id);
+        if (editing) {
+            // In unlock mode show all standard buttons so user can position / unhide
+            return false;
+        }
+        if (!permanentlyHidden) return false;
+        // Context can temporarily surface a hidden wired action
+        return !this._contextVisible.has(id);
     },
 
     _renderLayout() {
@@ -145,10 +168,11 @@ export const TouchControls = {
         if (!root) return;
         root.innerHTML = '';
 
-        const hidden = new Set(this._layout.hidden || []);
+        const editing = document.body.classList.contains('hub-layout-edit');
 
         Object.entries(this._layout.sticks || {}).forEach(([id, pos]) => {
-            if (hidden.has(id)) return;
+            if (this._isHidden(id) && !editing) return;
+            if ((this._layout.hidden || []).includes(id) && !editing) return;
             const role = id.includes('right') ? 'camera' : 'move';
             const zone = document.createElement('div');
             zone.id = id;
@@ -162,15 +186,23 @@ export const TouchControls = {
             this._bindStick(zone, id.includes('right') ? 'right' : 'left');
         });
 
-        const builtIn = STANDARD_TOUCH_BUTTONS.filter((b) => !hidden.has(b.id));
-        builtIn.forEach((def) => {
+        STANDARD_TOUCH_BUTTONS.forEach((def) => {
+            const permanentlyHidden = (this._layout.hidden || []).includes(def.id);
+            if (!editing && permanentlyHidden && !this._contextVisible.has(def.id)) return;
             const pos = this._layout.buttons?.[def.id] || DEFAULT_LAYOUT.buttons[def.id];
             if (!pos) return;
-            root.appendChild(this._createButtonEl(def.id, def.action, def.label, def.size || BTN_SIZE, pos));
+            const el = this._createButtonEl(def.id, def.action, def.label, def.size || BTN_SIZE, pos);
+            if (editing && permanentlyHidden) {
+                el.classList.add('touch-btn-dormant');
+                el.title = `${CONTROL_ACTIONS[def.action]?.label || def.action} — double-tap to enable`;
+            } else if (editing) {
+                el.title = `${CONTROL_ACTIONS[def.action]?.label || def.action} — double-tap to hide`;
+            }
+            root.appendChild(el);
         });
 
         (this._layout.custom || []).forEach((c) => {
-            if (hidden.has(c.id)) return;
+            if (!editing && (this._layout.hidden || []).includes(c.id)) return;
             root.appendChild(this._createButtonEl(c.id, c.action, c.label, c.size || BTN_SIZE, c));
         });
     },
@@ -187,7 +219,7 @@ export const TouchControls = {
         btn.style.width = `${size}px`;
         btn.style.height = `${size}px`;
         this._applyItemPosition(btn, { ...pos, w: size, h: size });
-        this._bindButton(btn, action);
+        this._bindButton(btn, action, id);
         return btn;
     },
 
@@ -246,6 +278,56 @@ export const TouchControls = {
         this.saveLayout();
     },
 
+    /** Enable a built-in (remove from hidden) or add a custom action button. */
+    addOrShowAction(action = 'interact', label = '+') {
+        const builtIn = STANDARD_TOUCH_BUTTONS.find((b) => b.action === action);
+        if (builtIn) {
+            this._layout.hidden = (this._layout.hidden || []).filter((id) => id !== builtIn.id);
+            if (!this._layout.buttons[builtIn.id]) {
+                this._layout.buttons[builtIn.id] = {
+                    ...(DEFAULT_LAYOUT.buttons[builtIn.id] || {
+                        x: 16, y: 160, w: 48, h: 48, anchor: 'bl',
+                    }),
+                };
+            }
+            this.saveLayout();
+            this._renderLayout();
+            window.UI?.status?.(`${CONTROL_ACTIONS[action]?.label || action} touch button shown — drag to place, LOCK when done`);
+            return builtIn.id;
+        }
+        return this.addCustomButton(action, label);
+    },
+
+    hideButton(id) {
+        if (!id || id.startsWith('stick-')) return;
+        if (CORE_TOUCH_IDS.includes(id) && !id.startsWith('custom_')) {
+            // Allow hiding core too if user insists, but warn
+            window.UI?.status?.('Core control hidden — restore via + BTN');
+        }
+        this._layout.hidden = [...new Set([...(this._layout.hidden || []), id])];
+        // custom: also remove from list if permanently hidden
+        if (String(id).startsWith('custom_')) {
+            this._layout.custom = (this._layout.custom || []).filter((c) => c.id !== id);
+            this._layout.hidden = (this._layout.hidden || []).filter((h) => h !== id);
+        }
+        this.saveLayout();
+        this._renderLayout();
+        window.UI?.status?.('Touch button hidden');
+    },
+
+    toggleBuiltInVisible(id) {
+        const hidden = new Set(this._layout.hidden || []);
+        if (hidden.has(id)) {
+            hidden.delete(id);
+            this._layout.hidden = [...hidden];
+            this.saveLayout();
+            this._renderLayout();
+            window.UI?.status?.('Touch button enabled');
+        } else {
+            this.hideButton(id);
+        }
+    },
+
     addCustomButton(action = 'interact', label = '+') {
         const id = `custom_${Date.now().toString(36)}`;
         const entry = {
@@ -263,20 +345,22 @@ export const TouchControls = {
         this._layout.custom.push(entry);
         this.saveLayout();
         this._renderLayout();
-        window.UI?.status?.(`Touch button added — drag to position, LOCK when done`);
+        window.UI?.status?.('Touch button added — drag to position, LOCK when done');
+        return id;
     },
 
     resetLayout() {
         this._layout = JSON.parse(JSON.stringify(DEFAULT_LAYOUT));
         this.saveLayout();
         this._renderLayout();
+        window.UI?.status?.('Touch layout reset — core buttons only');
     },
 
     _wireAddButton() {
         document.getElementById('touch-add-btn')?.addEventListener('click', () => {
             window.TouchActionPicker?.open?.(({ action, label }) => {
-                this.addCustomButton(action, label);
-            }, 'interact');
+                this.addOrShowAction(action, label);
+            }, 'fire');
         });
     },
 
@@ -306,12 +390,25 @@ export const TouchControls = {
         this.setEnabled(!this.enabled);
     },
 
-    _bindButton(btn, action) {
+    _bindButton(btn, action, id) {
         const hold = STANDARD_TOUCH_BUTTONS.find((b) => b.action === action)?.hold
             || ['aim', 'fire', 'sprint', 'crouch', 'stealthWalk', 'voipPtt'].includes(action);
 
+        let lastTap = 0;
         btn.addEventListener('pointerdown', (e) => {
-            if (document.body.classList.contains('hub-layout-edit')) return;
+            if (document.body.classList.contains('hub-layout-edit')) {
+                // Double-tap in unlock mode toggles hide/show for built-ins
+                const now = Date.now();
+                if (now - lastTap < DOUBLE_MS && id) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.toggleBuiltInVisible(id);
+                    lastTap = 0;
+                    return;
+                }
+                lastTap = now;
+                return;
+            }
             e.preventDefault();
             this.buttons[action] = true;
             btn.classList.add('pressed');
@@ -432,6 +529,7 @@ export const TouchControls = {
         const edgeActions = [
             'jump', 'interact', 'reload', 'melee', 'holster', 'thirdEye',
             'enterVehicle', 'flashlight', 'toggleView', 'pause', 'emote', 'horn',
+            'uiMouse',
         ];
         edgeActions.forEach((action) => {
             if (!this.buttons[action]) {
@@ -447,4 +545,3 @@ export const TouchControls = {
 };
 
 window.TouchControls = TouchControls;
-window.STANDARD_TOUCH_BUTTONS = STANDARD_TOUCH_BUTTONS;

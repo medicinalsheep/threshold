@@ -32,8 +32,8 @@ export const PROVIDER_GUIDE = {
     },
     ollama: {
         label: 'Ollama (local)',
-        when: 'Same PC as ollama serve — privacy, offline, Threshold mini models',
-        why: 'threshold-mini-* models tuned for Threshold API. Free after download.',
+        when: 'Same PC as Threshold repo + Ollama — privacy, offline, mini models',
+        why: 'Clone repo → npm run ollama:serve (CORS). Pull medicinalsheep/threshold-mini-* or npm run models:mini.',
     },
     auto: {
         label: 'Auto routing',

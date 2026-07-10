@@ -17,7 +17,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.12.16" />
+    <meta name="threshold-version" content="10.12.17" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD SUITE</title>
 </head>
@@ -170,7 +170,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.12.16</span><span class="edition-badge" id="edition-badge">WEB</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.12.17</span><span class="edition-badge" id="edition-badge">WEB</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
@@ -502,13 +502,12 @@
             <p id="intro-caption" class="intro-caption" aria-live="polite"></p>
             <div id="third-eye-indicator" class="third-eye-indicator" aria-hidden="true" title="Third Eye active"></div>
             <div id="ui-mouse-indicator" class="ui-mouse-indicator" aria-hidden="true" title="UI mouse mode"></div>
-            <div id="proximity-panel" class="proximity-panel panel">
-                <div class="panel-chrome-header panel-drag-handle">
-                    <span class="panel-chrome-grip" aria-hidden="true">⠿</span>
-                    <span class="panel-chrome-title">NEARBY</span>
-                    <button type="button" class="panel-lock-btn btn-sm" title="Lock position">LOCK</button>
+            <div id="proximity-panel" class="proximity-panel" aria-live="polite" title="Nearby interact — drag when UI unlocked">
+                <div class="proximity-chip" id="proximity-chip">
+                    <span class="proximity-key" aria-hidden="true">F</span>
+                    <p id="interact-hint" class="interact-hint">Walk near terminals &amp; props</p>
+                    <span class="proximity-drag-grip" aria-hidden="true" title="Drag when unlocked">⠿</span>
                 </div>
-                <p id="interact-hint" class="interact-hint" aria-live="polite">Walk close to terminals and props</p>
             </div>
 
             <!-- Right dock: ENV / EDIT / SKIN -->
@@ -696,7 +695,7 @@
                 <label class="export-wizard-check" style="margin-bottom:10px;"><input type="checkbox" id="setup-show-all-tools"> Compact UI (hide extra hints — full tabs stay in nav)</label>
                 <details class="setup-advanced-wrap" open>
                     <summary>Providers — Grok &amp; Ollama</summary>
-                <p class="insert-hint" style="margin:0 0 8px;"><strong>Ollama 403 on refresh?</strong> Stop plain <code>ollama serve</code>. Run <code>npm run ollama:serve</code> instead — allows GitHub Pages + localhost origins.</p>
+                <p class="insert-hint" style="margin:0 0 8px;"><strong>Ollama setup:</strong> clone <code>https://github.com/medicinalsheep/threshold</code> → <code>npm install</code> → <code>npm run ollama:serve</code> (not plain <code>ollama serve</code> — fixes 403 CORS). Minis: <code>ollama pull medicinalsheep/threshold-mini-npc</code> or <code>npm run models:mini</code>.</p>
                 <label class="insert-hint">xAI API key (session — not shared from other browser tabs)</label>
                 <div class="prop-row" style="margin-bottom:6px;">
                     <input type="password" id="agent-xai-key" class="insert-input" placeholder="xai-…" autocomplete="off" style="flex:1;">
@@ -761,8 +760,8 @@
                 <p class="insert-hint" style="margin:0 0 8px;">PLAY mode: edit your avatar only. World stays locked.</p>
                 <div class="prop-row"><label>Build</label>
                     <select id="skin-body-preset" class="insert-input" style="flex:1;">
-                        <option value="male_default">Male default</option>
-                        <option value="female_default">Female default</option>
+                        <option value="male_default">Male formed</option>
+                        <option value="female_default">Female formed</option>
                     </select>
                 </div>
                 <div class="prop-row"><label>Hair style</label>

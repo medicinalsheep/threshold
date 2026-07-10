@@ -266,6 +266,145 @@ body.agent-portal-open .agent-portal-modal.open {
 .agent-portal-warn .agent-portal-detect-dot { background: #e8b84a; }
 .agent-portal-off .agent-portal-detect-dot { background: #666; }
 
+.agent-portal-pulls {
+    margin: 0 0 14px;
+}
+
+.agent-portal-pull-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.agent-portal-pull-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px 12px;
+    align-items: start;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.22);
+}
+
+.agent-portal-pull-card.agent-portal-pull-installed {
+    border-color: #3ecf8e55;
+}
+
+.agent-portal-pull-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    font-size: 0.65rem;
+}
+
+.agent-portal-pull-detail {
+    opacity: 0.75;
+    font-size: 0.58rem;
+}
+
+.agent-portal-pull-name {
+    font-size: 0.55rem;
+    opacity: 0.7;
+    word-break: break-all;
+}
+
+.agent-portal-pull-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+}
+
+.agent-portal-pull-btn {
+    min-width: 110px;
+    white-space: nowrap;
+}
+
+.agent-portal-pull-btn:disabled {
+    opacity: 0.65;
+    cursor: default;
+}
+
+.agent-portal-pull-link {
+    font-size: 0.55rem;
+    text-align: center;
+    color: var(--accent-color);
+    opacity: 0.85;
+}
+
+.agent-portal-pull-progress {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.agent-portal-pull-bar {
+    height: 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+.agent-portal-pull-bar span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, var(--accent-color), #3ecf8e);
+    transition: width 0.2s ease;
+}
+
+.agent-portal-pull-status {
+    font-size: 0.55rem;
+    opacity: 0.8;
+}
+
+.agent-portal-pull-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.agent-portal-pull-log {
+    margin: 6px 0 0;
+    min-height: 1.1em;
+}
+
+.agent-portal-ollama-howto {
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.25);
+    line-height: 1.45;
+}
+
+.agent-portal-howto-steps {
+    margin: 8px 0 6px;
+    padding-left: 1.25rem;
+    font-size: 0.62rem;
+}
+
+.agent-portal-howto-steps li {
+    margin-bottom: 6px;
+}
+
+.agent-portal-howto-steps code {
+    font-size: 0.58rem;
+    word-break: break-all;
+}
+
+.agent-portal-howto-note {
+    margin: 6px 0 0;
+    opacity: 0.8;
+    font-size: 0.58rem;
+}
+
 .agent-portal-detect-detail {
     opacity: 0.75;
     font-size: 0.6rem;
@@ -1483,41 +1622,131 @@ body.ui-immersive .creator-perf-hud {
     z-index: 5;
 }
 
+/* Sleek proximity interact chip — bottom center, above dual sticks */
 #proximity-panel {
-    z-index: 22;
-    padding: 0 !important;
-    pointer-events: auto;
-    opacity: 0.55;
-    transition: opacity 0.2s ease;
+    position: fixed;
+    left: 50%;
+    bottom: max(108px, calc(env(safe-area-inset-bottom, 0px) + 96px));
+    transform: translateX(-50%);
+    z-index: 42;
+    width: auto;
+    max-width: min(92vw, 420px);
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.18s ease, visibility 0.18s ease, transform 0.18s ease;
 }
 
-#proximity-panel.has-hint {
+#proximity-panel.has-hint,
+#proximity-panel.proximity-idle,
+body.hub-layout-edit #proximity-panel {
     opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 }
 
-#proximity-panel.float-panel {
+#proximity-panel[data-ui-positioned="1"] {
+    transform: none;
+}
+
+.proximity-chip {
     display: flex;
-    flex-direction: column;
-    min-height: 0;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    padding: 6px 12px 6px 8px;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--accent-color) 55%, transparent);
+    background: rgba(6, 10, 14, 0.78);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.4);
+    cursor: default;
+}
+
+#proximity-panel.has-hint .proximity-chip {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-color) 25%, transparent),
+        0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.proximity-key {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 26px;
+    height: 26px;
+    padding: 0 6px;
+    border-radius: 7px;
+    border: 1px solid var(--accent-color);
+    background: color-mix(in srgb, var(--accent-color) 18%, transparent);
+    color: var(--accent-color);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
 }
 
 #proximity-panel .interact-hint {
     margin: 0;
-    padding: 8px 10px;
-    font-size: 0.68rem;
-    color: var(--accent-color);
-    text-align: center;
-    line-height: 1.35;
+    padding: 0;
+    flex: 1;
+    min-width: 0;
+    font-size: 0.66rem;
+    font-weight: 600;
+    color: var(--text-color);
+    text-align: left;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     pointer-events: none;
 }
 
 #proximity-panel:not(.has-hint) .interact-hint {
-    color: #888;
-    font-size: 0.62rem;
+    color: #8a9098;
+    font-weight: 500;
+    font-size: 0.6rem;
 }
 
+#proximity-panel.has-hint .interact-hint,
 .interact-hint.visible {
     color: var(--accent-color);
+}
+
+.proximity-drag-grip {
+    display: none;
+    flex-shrink: 0;
+    opacity: 0.45;
+    font-size: 0.7rem;
+    letter-spacing: -0.08em;
+    color: var(--text-color);
+    cursor: grab;
+    user-select: none;
+}
+
+body.hub-layout-edit #proximity-panel {
+    outline: 1px dashed rgba(94, 184, 255, 0.5);
+    outline-offset: 4px;
+    border-radius: 999px;
+}
+
+body.hub-layout-edit #proximity-panel .proximity-chip {
+    cursor: grab;
+}
+
+body.hub-layout-edit #proximity-panel .proximity-drag-grip {
+    display: inline-block;
+}
+
+body.hub-layout-edit #proximity-panel.proximity-idle .proximity-key {
+    opacity: 0.55;
 }
 
 .intro-caption {
@@ -2861,6 +3090,13 @@ body.shell-steam.shell-electron::after {
 .touch-btn.pressed {
     background: var(--accent-color);
     color: #000;
+}
+
+/* Unlock mode: hidden-but-available buttons (double-tap to enable) */
+.touch-btn.touch-btn-dormant {
+    opacity: 0.35;
+    border-style: dashed;
+    filter: grayscale(0.4);
 }
 
 .touch-btn[data-touch-btn="sprint"],

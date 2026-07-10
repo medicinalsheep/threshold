@@ -361,17 +361,7 @@ const CHROME_PANELS = [
 ];
 
 const PANEL_CONFIG = [
-    {
-        selector: '#proximity-panel',
-        id: 'proximity-panel',
-        handleSelector: '.panel-chrome-header',
-        defaultSize: { w: 300, h: 88, anchor: 'bottom-center' },
-        minW: 220,
-        minH: 72,
-        maxW: 480,
-        maxH: 160,
-        anchor: 'bottom-center',
-    },
+    // proximity-panel: HubLayout overlay (sleek chip) — not a float resize panel
     { selector: '#insert-sheet', defaultSize: { w: 420, h: 440 } },
     { selector: '#bindings-sheet', defaultSize: { w: 440, h: 520 } },
     { selector: '#host-panel-sheet', defaultSize: { w: 400, h: 480 } },
