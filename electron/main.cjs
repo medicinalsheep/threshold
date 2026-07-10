@@ -46,6 +46,39 @@ function createWindow() {
     });
 }
 
+/** Open https://x.com (or any http/https URL) in the OS default browser (Chrome if user set it). */
+ipcMain.handle('shell:openExternal', async (_e, url) => {
+    const href = String(url || '').trim();
+    if (!/^https?:\/\//i.test(href)) return { ok: false, error: 'invalid url' };
+    await shell.openExternal(href);
+    return { ok: true };
+});
+
+/**
+ * Optional Chromium window inside Electron (not system Chrome binary).
+ * User can log into X here for browsing — we do NOT read cookies into Threshold.
+ */
+ipcMain.handle('shell:openBrowserWindow', async (_e, url) => {
+    const href = String(url || 'https://x.com/').trim();
+    if (!/^https?:\/\//i.test(href)) return { ok: false, error: 'invalid url' };
+    const win = new BrowserWindow({
+        width: 1100,
+        height: 800,
+        minWidth: 640,
+        minHeight: 480,
+        backgroundColor: '#000000',
+        autoHideMenuBar: true,
+        title: 'X',
+        webPreferences: {
+            contextIsolation: true,
+            nodeIntegration: false,
+            sandbox: true,
+        },
+    });
+    win.loadURL(href);
+    return { ok: true };
+});
+
 app.whenReady().then(() => {
     createWindow();
     app.on('activate', () => {

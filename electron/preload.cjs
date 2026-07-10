@@ -41,4 +41,8 @@ contextBridge.exposeInMainWorld('ThresholdShell', {
         isAchievementUnlocked: (id) => ipcRenderer.invoke('steam:achievement:isUnlocked', id),
         openOverlay: (dialog) => ipcRenderer.invoke('steam:overlay:open', dialog),
     },
+    /** Open URL in OS default browser (Chrome if that's the default). */
+    openExternal: (url) => ipcRenderer.invoke('shell:openExternal', url),
+    /** Open URL in an in-app Chromium window (Electron only). No cookie harvest. */
+    openBrowserWindow: (url) => ipcRenderer.invoke('shell:openBrowserWindow', url),
 });

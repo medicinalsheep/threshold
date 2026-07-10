@@ -96,6 +96,37 @@ export const ThresholdShell = {
         if (api?.mic?.supported != null) return api.mic.supported;
         return !!navigator.mediaDevices?.getUserMedia;
     },
+
+    /**
+     * Open URL in the computer’s default browser (Chrome if the user set it as default).
+     * Web: window.open. Electron: shell.openExternal.
+     */
+    async openExternal(url) {
+        const href = String(url || '').trim();
+        if (!/^https?:\/\//i.test(href)) return false;
+        const api = shellApi();
+        if (api?.openExternal) {
+            const r = await api.openExternal(href);
+            return r?.ok !== false;
+        }
+        window.open(href, '_blank', 'noopener,noreferrer');
+        return true;
+    },
+
+    /**
+     * Electron: separate Chromium window. Web: same as openExternal.
+     * For browsing only — not for stealing logins into Threshold.
+     */
+    async openBrowserWindow(url) {
+        const href = String(url || '').trim();
+        if (!/^https?:\/\//i.test(href)) return false;
+        const api = shellApi();
+        if (api?.openBrowserWindow) {
+            const r = await api.openBrowserWindow(href);
+            return r?.ok !== false;
+        }
+        return this.openExternal(href);
+    },
 };
 
 export function initThresholdShell() {

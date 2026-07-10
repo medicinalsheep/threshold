@@ -281,7 +281,36 @@ export const XAuth = {
         return data.data || data;
     },
 
-    /** Start OAuth redirect (PKCE) */
+    /** x.com home — open in the computer’s browser (Chrome if default). Browse/login there freely. */
+    X_HOME: 'https://x.com/',
+
+    /**
+     * Open X in a real browser on this PC.
+     * @param {{ inApp?: boolean }} [opts] Electron: inApp true = Chromium window; false/default = OS browser
+     */
+    async openInBrowser(opts = {}) {
+        const url = this.X_HOME;
+        const shell = window.ThresholdShellBridge || window.ThresholdShell;
+        try {
+            if (opts.inApp && shell?.openBrowserWindow) {
+                await shell.openBrowserWindow(url);
+                window.UI?.status?.('Opened X in app window — log in there if you want (separate from Threshold)');
+                return true;
+            }
+            if (shell?.openExternal) {
+                await shell.openExternal(url);
+            } else {
+                window.open(url, '_blank', 'noopener,noreferrer');
+            }
+            window.UI?.status?.('Opened X in your browser (Chrome if it’s the default)');
+            return true;
+        } catch (e) {
+            window.UI?.status?.(e?.message || 'Could not open browser');
+            return false;
+        }
+    },
+
+    /** Start OAuth redirect (PKCE) — optional Threshold account link, not required to browse X */
     async login() {
         if (!this.isConfigured()) {
             throw new Error('X login not configured — set VITE_X_CLIENT_ID (developer.x.com app, SPA + PKCE)');
@@ -511,6 +540,14 @@ export const XAuth = {
             btn.addEventListener('click', () => {
                 this.logout();
                 window.UI?.status?.('Signed out of X');
+            });
+        });
+        // Open X in OS browser / optional Electron Chromium window
+        document.querySelectorAll('[data-x-open-browser]').forEach((btn) => {
+            if (btn.dataset.bound) return;
+            btn.dataset.bound = '1';
+            btn.addEventListener('click', () => {
+                void this.openInBrowser({ inApp: btn.dataset.xOpenBrowser === 'app' });
             });
         });
         this.syncUi();

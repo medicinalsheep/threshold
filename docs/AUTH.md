@@ -20,9 +20,20 @@ You cannot “hijack” a SuperGrok tab session into this app (browser security)
 
 ---
 
-## How login works (not automatic)
+## Use X on this computer (browser)
 
-**Being logged into x.com / SuperGrok / Grok in another tab does nothing for Threshold.**
+**Open X in browser** (lobby Accounts / X menu) opens [x.com](https://x.com/) in:
+
+- **Web / default:** your system browser (Chrome if it’s the default)
+- **Electron desktop:** same, or **Open X in app window** = separate Chromium window
+
+Log into X there and use the site normally. That session stays in the browser — Threshold does **not** copy it.
+
+---
+
+## How OAuth login works (optional, not automatic)
+
+**Being logged into x.com / SuperGrok / Grok in another tab does nothing for Threshold’s in-app @handle.**
 
 Browsers block reading other sites’ cookies. Threshold uses the same pattern as “Sign in with Google/X” apps:
 

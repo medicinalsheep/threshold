@@ -39,6 +39,7 @@ export const XFeed = {
         document.getElementById('x-feed-login')?.addEventListener('click', () => {
             void XAuth.login().catch((e) => window.UI?.status?.(e.message));
         });
+        // data-x-open-browser bound in XAuth.bindUi
         document.getElementById('x-post-submit')?.addEventListener('click', () => this.submitPost());
         document.getElementById('x-post-text')?.addEventListener('input', () => this._syncCount());
 
