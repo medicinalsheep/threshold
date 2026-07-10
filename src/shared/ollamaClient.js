@@ -1,11 +1,17 @@
-/** Ollama browser client — localhost uses /ollama Vite proxy; GitHub Pages needs OLLAMA_ORIGINS on serve. */
+/** Ollama browser client — Vite /ollama proxy locally; Pages uses :11435 PNA proxy. */
 
 const STORAGE_MODEL_KEY = 'threshold_ollama_model';
 const DEFAULT_MODEL = import.meta.env.VITE_OLLAMA_MODEL || 'llama3.2:3b';
 /** Cap context on mid-range GPUs (e.g. RTX 2060 6GB) so large tags don't thrash VRAM. */
 const DEFAULT_NUM_CTX = Number(import.meta.env.VITE_OLLAMA_NUM_CTX) || 4096;
 
+/** Local proxy with CORS + Access-Control-Allow-Private-Network (npm run ollama:serve) */
+const PAGES_PROXY_URL = (import.meta.env.VITE_OLLAMA_URL || '').trim()
+    || 'http://127.0.0.1:11435';
+const DIRECT_URL = 'http://127.0.0.1:11434';
+
 let probeInflight = null;
+let resolvedBase = null;
 
 /** Models that default to chain-of-thought; disable for agent code/intent unless opted in. */
 function isThinkingModel(name) {
@@ -29,30 +35,102 @@ function isLocalPage() {
     return h === 'localhost' || h === '127.0.0.1';
 }
 
-function resolveBaseUrl() {
-    const explicit = (import.meta.env.VITE_OLLAMA_URL || '').trim();
+function isPagesHost() {
+    if (typeof window === 'undefined') return false;
+    const h = window.location.hostname;
+    return h.includes('github.io') || h.includes('github.dev');
+}
+
+function candidateBases() {
     const forceDirect = import.meta.env.VITE_OLLAMA_DIRECT === '1';
+    const explicit = (import.meta.env.VITE_OLLAMA_URL || '').trim();
+    if (explicit) return [explicit.replace(/\/$/, '')];
 
-    // Local dev/preview: same-origin proxy avoids Ollama CORS 403 on refresh
     if (!forceDirect && isLocalPage()) {
-        return '/ollama';
+        // Vite dev/preview same-origin proxy first, then PNA proxy, then raw
+        return ['/ollama', PAGES_PROXY_URL, DIRECT_URL];
     }
+    // GitHub Pages / remote origin: prefer :11435 (CORS+PNA proxy), then raw :11434
+    return [PAGES_PROXY_URL, DIRECT_URL];
+}
 
-    if (explicit) return explicit;
-    return 'http://127.0.0.1:11434';
+function resolveBaseUrl() {
+    if (resolvedBase) return resolvedBase;
+    const list = candidateBases();
+    return list[0];
 }
 
 export function ollamaCorsHelp(status) {
     if (status !== 403) return null;
     const origin = typeof window !== 'undefined' ? window.location.origin : 'your-page-origin';
-    return `Ollama CORS blocked (403). Stop ollama, then run:\n`
+    return `Ollama CORS blocked (403). Stop plain ollama, then from the Threshold repo:\n`
         + `  npm run ollama:serve\n`
+        + `(starts Ollama + proxy on :11435 for Pages)\n`
         + `Or: set OLLAMA_ORIGINS=${origin},* && ollama serve`;
+}
+
+function classifyFetchError(err) {
+    const msg = String(err?.message || err || 'offline');
+    const name = err?.name || '';
+    if (name === 'TimeoutError' || /aborted|timeout/i.test(msg)) {
+        return {
+            error: 'timeout — Ollama busy or not running (npm run ollama:serve)',
+            hint: 'timeout',
+        };
+    }
+    if (/Failed to fetch|NetworkError|Load failed|Network request failed/i.test(msg)) {
+        if (isPagesHost() || (typeof window !== 'undefined' && window.isSecureContext && !isLocalPage())) {
+            return {
+                error: 'blocked from this page — run: npm run ollama:serve (opens :11435 proxy for GitHub Pages)',
+                hint: 'pna_or_mixed',
+                corsBlocked: true,
+            };
+        }
+        return {
+            error: 'unreachable — start Ollama: npm run ollama:serve',
+            hint: 'offline',
+        };
+    }
+    return { error: msg, hint: 'unknown' };
+}
+
+async function probeUrl(base, timeoutMs) {
+    const url = `${base.replace(/\/$/, '')}/api/tags`;
+    const res = await fetch(url, {
+        signal: AbortSignal.timeout(timeoutMs),
+        mode: 'cors',
+        cache: 'no-store',
+    });
+    if (!res.ok) {
+        const cors = ollamaCorsHelp(res.status);
+        return {
+            ok: false,
+            models: [],
+            error: cors ? 'CORS 403 — run: npm run ollama:serve' : `HTTP ${res.status}`,
+            corsBlocked: res.status === 403,
+            corsHelp: cors,
+            baseUrl: base,
+        };
+    }
+    const data = await res.json();
+    const models = (data.models || []).map((m) => m.name || m.model).filter(Boolean);
+    return {
+        ok: true,
+        models,
+        error: null,
+        corsBlocked: false,
+        baseUrl: base,
+    };
 }
 
 export const OllamaClient = {
     get baseUrl() {
         return resolveBaseUrl().replace(/\/$/, '');
+    },
+
+    /** Forget cached base after ollama:serve restart */
+    resetBase() {
+        resolvedBase = null;
     },
 
     get defaultModel() {
@@ -64,7 +142,7 @@ export const OllamaClient = {
         if (m) sessionStorage.setItem(STORAGE_MODEL_KEY, m);
     },
 
-    async probe(timeoutMs = 2000) {
+    async probe(timeoutMs = 4000) {
         if (probeInflight) return probeInflight;
         probeInflight = this._probeOnce(timeoutMs).finally(() => {
             probeInflight = null;
@@ -73,26 +151,42 @@ export const OllamaClient = {
     },
 
     async _probeOnce(timeoutMs) {
-        try {
-            const res = await fetch(`${this.baseUrl}/api/tags`, {
-                signal: AbortSignal.timeout(timeoutMs),
-            });
-            if (!res.ok) {
-                const cors = ollamaCorsHelp(res.status);
-                return {
-                    ok: false,
-                    models: [],
-                    error: cors ? 'CORS 403 — run: npm run ollama:serve' : `HTTP ${res.status}`,
-                    corsBlocked: res.status === 403,
-                    corsHelp: cors,
-                };
+        const bases = candidateBases();
+        const errors = [];
+
+        for (const base of bases) {
+            try {
+                const result = await probeUrl(base, timeoutMs);
+                if (result.ok) {
+                    resolvedBase = base.replace(/\/$/, '');
+                    return result;
+                }
+                errors.push(`${base}: ${result.error}`);
+                // 403 on one base — try next (proxy may still work)
+                if (!result.corsBlocked) {
+                    // keep trying other bases
+                }
+            } catch (e) {
+                const c = classifyFetchError(e);
+                errors.push(`${base}: ${c.error}`);
             }
-            const data = await res.json();
-            const models = (data.models || []).map((m) => m.name || m.model).filter(Boolean);
-            return { ok: true, models, error: null, corsBlocked: false };
-        } catch (e) {
-            return { ok: false, models: [], error: e.message || 'offline', corsBlocked: false };
         }
+
+        const last = errors[errors.length - 1] || 'offline';
+        const anyPna = errors.some((e) => /blocked from this page|pna/i.test(e));
+        return {
+            ok: false,
+            models: [],
+            error: anyPna
+                ? 'Pages blocked raw Ollama — run npm run ollama:serve (proxy :11435), then RE-SCAN'
+                : last.replace(/^[^:]+:\s*/, ''),
+            corsBlocked: anyPna,
+            corsHelp: anyPna
+                ? ollamaCorsHelp(403)
+                : `Tried: ${bases.join(', ')}. Keep "npm run ollama:serve" running, then RE-SCAN.`,
+            tried: bases,
+            errors,
+        };
     },
 
     async generate(prompt, options = {}) {
@@ -126,7 +220,6 @@ export const OllamaClient = {
 
     async chat(system, user, options = {}) {
         const model = options.model || this.defaultModel;
-        // Reasoning tags (qwen3, gemma4, r1) burn num_predict on CoT — off by default for agents
         const think = options.think ?? (isThinkingModel(model) ? false : undefined);
         const body = {
             model,
@@ -156,7 +249,6 @@ export const OllamaClient = {
         const data = await res.json();
         const content = data.message?.content || '';
         const thinking = data.message?.thinking || '';
-        // Prefer content; if model stuffed answer into thinking only, fall back carefully
         const cleaned = stripOllamaThinking(content);
         if (cleaned) return cleaned;
         if (thinking && options.allowThinkingFallback) return stripOllamaThinking(thinking);
@@ -165,9 +257,6 @@ export const OllamaClient = {
 
     /**
      * Pull a model into local Ollama (requires ollama serve reachable from this tab).
-     * Streams NDJSON progress from POST /api/pull.
-     * @param {string} name e.g. medicinalsheep/threshold-mini-npc
-     * @param {{ onProgress?: (p: {status:string, completed?:number, total?:number, percent?:number}) => void, signal?: AbortSignal }} options
      */
     async pull(name, options = {}) {
         const model = String(name || '').trim();
@@ -187,7 +276,6 @@ export const OllamaClient = {
 
         const reader = res.body?.getReader?.();
         if (!reader) {
-            // Non-streaming fallback
             const data = await res.json().catch(() => ({}));
             if (data.error) throw new Error(data.error);
             options.onProgress?.({ status: data.status || 'success', percent: 100 });
@@ -225,14 +313,6 @@ export const OllamaClient = {
                     digest: msg.digest,
                 };
                 options.onProgress?.(last);
-            }
-        }
-        if (buf.trim()) {
-            try {
-                const msg = JSON.parse(buf.trim());
-                if (msg.error) throw new Error(msg.error);
-            } catch (e) {
-                if (e.message && !e.message.includes('JSON')) throw e;
             }
         }
         options.onProgress?.({ status: 'success', percent: 100 });

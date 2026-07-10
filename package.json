@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "10.12.20",
+  "version": "10.12.21",
   "type": "module",
   "engines": {
     "node": ">=22.0.0"
@@ -78,6 +78,7 @@
     "intent:verify": "node scripts/intent-router-verify.cjs",
     "relay:verify": "node scripts/relay-verify.cjs",
     "ollama:serve": "node scripts/ollama-serve-threshold.cjs",
+    "ollama:proxy": "node scripts/ollama-cors-proxy.cjs",
     "ollama:verify": "node scripts/ollama-verify.cjs",
     "ollama:benchmark": "node scripts/ollama-benchmark.cjs",
     "ollama:stress": "node scripts/ollama-workflow-stress.cjs",

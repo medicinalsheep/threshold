@@ -1,3 +1,9 @@
+## 10.12.21 — Ollama Pages connectivity (CORS/PNA proxy)
+
+- **`npm run ollama:serve`** — keeps Ollama up + local proxy on **:11435** with `Access-Control-Allow-Private-Network` (Chrome/Pages fix)
+- **OllamaClient** — tries `/ollama` (vite) → `:11435` (proxy) → `:11434`; clearer offline/CORS errors; RE-SCAN resets base
+- Portal copy: run `ollama:serve` and leave it open when using GitHub Pages
+
 ## 10.12.20 — Generation reasoning (intensity + MOD policy)
 
 - **generation-policy.json** — minimal → maximal intensity budgets (props, NPCs, weather, tex/poly)

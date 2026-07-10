@@ -186,7 +186,10 @@ export const AgentPortal = {
 
         document.getElementById('agent-portal-close')?.addEventListener('click', () => this.hide());
         document.getElementById('agent-portal-skip')?.addEventListener('click', () => this.skip());
-        document.getElementById('agent-portal-reprobe')?.addEventListener('click', () => this.runDetect());
+        document.getElementById('agent-portal-reprobe')?.addEventListener('click', () => {
+            window.OllamaClient?.resetBase?.();
+            this.runDetect();
+        });
         document.getElementById('agent-portal-connect')?.addEventListener('click', () => this.connect());
         document.getElementById('agent-portal-send')?.addEventListener('click', () => this.sendChat());
         document.getElementById('agent-portal-generate')?.addEventListener('click', () => this.generateFromContext());
@@ -277,13 +280,14 @@ export const AgentPortal = {
                     : { state: 'warn', label: 'Grok / xAI API', detail: 'Paste your xAI key below — works from GitHub Pages anywhere' };
 
         const ctx = hostingContext();
+        const ollamaBase = probe.ollama?.baseUrl ? ` via ${probe.ollama.baseUrl}` : '';
         const ollamaDetail = probe.ollama?.ok
-            ? `${probe.ollama.models.length} models on this device — incl. threshold-mini-* if installed`
-            : probe.ollama?.corsBlocked
-                ? 'CORS 403 — stop plain ollama serve; from the repo run: npm run ollama:serve'
+            ? `${probe.ollama.models.length} models${ollamaBase} — incl. threshold-mini-* if installed`
+            : probe.ollama?.corsBlocked || /blocked from this page|11435|Private/i.test(probe.ollama?.error || '')
+                ? 'Browser blocked localhost Ollama (Pages/CORS). On this PC: npm run ollama:serve → keep open → RE-SCAN'
                 : ctx.onPages && !ctx.onLocal
-                    ? 'Ollama only works on the PC running it — clone the repo on that machine and use npm run ollama:serve'
-                    : `Not reachable — install Ollama, clone the repo, then: npm run ollama:serve (${probe.ollama?.error || 'offline'})`;
+                    ? 'Pages needs local proxy: in Threshold repo run npm run ollama:serve (listens :11435), then RE-SCAN'
+                    : `Not reachable — ${probe.ollama?.error || 'offline'}. Run: npm run ollama:serve`;
 
         const ollamaLine = probe.ollama?.ok
             ? { state: 'ok', label: 'Ollama (your models)', detail: ollamaDetail }
