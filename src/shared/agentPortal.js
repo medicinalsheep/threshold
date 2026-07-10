@@ -7,6 +7,7 @@ import { Auth } from '../auth/main.js';
 import { IS_GROK_EDITION, CREATIVE_WATCH_URL } from '../config.js';
 import { ViewPrefs } from './viewPrefs.js';
 import { OllamaClient } from './ollamaClient.js';
+import { GrokClient } from '../grok/client.js';
 import { AgentRouter } from './agentRouter.js';
 import { AgentStatus } from './agentStatus.js';
 import { stripCodeFences } from './agentPrompts.js';
@@ -96,7 +97,7 @@ function tierForModel(name) {
 }
 
 function hasAnyProvider(probe) {
-    return probe.grokKey || probe.grokBuild || probe.ollama?.ok;
+    return probe.grokApi?.ok || probe.grokKey || probe.grokBuild || probe.ollama?.ok;
 }
 
 function hostingContext() {
@@ -213,11 +214,29 @@ export const AgentPortal = {
 
         document.getElementById('agent-portal-xai-save')?.addEventListener('click', () => {
             const key = document.getElementById('agent-portal-xai-key')?.value?.trim();
-            if (key && Auth.login(key)) {
-                window.UI?.status?.('xAI key saved for this tab');
+            const remember = document.getElementById('agent-portal-xai-remember')?.checked === true;
+            if (key && Auth.login(key, { remember })) {
+                window.UI?.status?.(remember ? 'xAI key saved on this device' : 'xAI key saved for this tab');
+                this.fillGrokModelSelect();
                 this.runDetect();
             }
         });
+
+        document.getElementById('agent-portal-grok-test')?.addEventListener('click', () => {
+            void this.testGrokKey();
+        });
+
+        document.getElementById('agent-portal-grok-model')?.addEventListener('change', (e) => {
+            const id = e.target?.value;
+            if (id) {
+                GrokClient.setPrefs({ chatModel: id, codeModel: id });
+                window.UI?.status?.(`Grok model: ${id}`);
+            }
+        });
+
+        this.fillGrokModelSelect();
+        const rem = document.getElementById('agent-portal-xai-remember');
+        if (rem) rem.checked = Auth.isRemembered?.() === true;
 
         this._modal?.addEventListener('click', (e) => {
             if (e.target === this._modal && !this._busy && !this._pulling) this.hide();
@@ -234,9 +253,53 @@ export const AgentPortal = {
         });
     },
 
+    fillGrokModelSelect() {
+        const sel = document.getElementById('agent-portal-grok-model');
+        if (!sel || !GrokClient?.listChatModels) return;
+        const current = GrokClient.getChatModel();
+        const models = GrokClient.listChatModels();
+        sel.innerHTML = models.map((m) =>
+            `<option value="${m.id}" ${m.id === current ? 'selected' : ''}>${m.label || m.id}</option>`
+        ).join('');
+    },
+
+    async testGrokKey() {
+        const status = document.getElementById('agent-portal-grok-status');
+        const keyInput = document.getElementById('agent-portal-xai-key');
+        const remember = document.getElementById('agent-portal-xai-remember')?.checked === true;
+        const typed = keyInput?.value?.trim();
+        if (typed) Auth.login(typed, { remember });
+        if (!Auth.isLoggedIn()) {
+            if (status) status.textContent = 'Paste an xai-… key from console.x.ai first';
+            return;
+        }
+        if (status) status.textContent = 'Testing api.x.ai…';
+        const result = await GrokClient.probe(10000);
+        if (result.ok) {
+            if (status) {
+                status.textContent = `✓ Grok API OK · model ${result.model || GrokClient.getChatModel()}${result.via ? ` (${result.via})` : ''}`;
+            }
+            window.UI?.status?.('Grok API connected');
+            this.runDetect();
+        } else {
+            if (status) status.textContent = `✗ ${result.detail || result.error}`;
+            window.UI?.status?.(String(result.error || 'Grok probe failed').slice(0, 80));
+        }
+    },
+
     async probe() {
+        Auth.hydrate?.();
         const grokKey = Auth.isLoggedIn();
         const grokBuild = IS_GROK_EDITION && grokKey;
+
+        let grokApi = { ok: false, error: 'no_key' };
+        if (grokKey) {
+            try {
+                grokApi = await GrokClient.probe(6000);
+            } catch (e) {
+                grokApi = { ok: false, error: e.message };
+            }
+        }
 
         let ollama = { ok: false, models: [], error: 'offline' };
         try {
@@ -258,6 +321,8 @@ export const AgentPortal = {
             grokBuild,
             grokEdition: IS_GROK_EDITION,
             grokKey,
+            grokApi,
+            grokModel: GrokClient.getChatModel?.() || 'grok-4.5',
             ollama,
             watchHealth,
             at: Date.now(),
@@ -273,11 +338,27 @@ export const AgentPortal = {
 
         const grokLine = probe.grokBuild
             ? { state: 'ok', label: 'Grok Build portal', detail: 'Connected via Grok Build edition' }
-            : probe.grokKey
-                ? { state: 'ok', label: 'Grok API', detail: 'xAI key active in this tab' }
-                : probe.grokEdition
-                    ? { state: 'warn', label: 'Grok Build', detail: 'Sign in with your xAI key below' }
-                    : { state: 'warn', label: 'Grok / xAI API', detail: 'Paste your xAI key below — works from GitHub Pages anywhere' };
+            : probe.grokApi?.ok
+                ? {
+                    state: 'ok',
+                    label: 'Grok API (xAI)',
+                    detail: `Live · ${probe.grokModel || GrokClient.getChatModel()} — SuperGrok-class models via console key`,
+                }
+                : probe.grokKey
+                    ? {
+                        state: 'warn',
+                        label: 'Grok API key present',
+                        detail: probe.grokApi?.error
+                            ? `Key saved but probe failed: ${String(probe.grokApi.error).slice(0, 80)}`
+                            : 'Key saved — tap TEST to verify api.x.ai',
+                    }
+                    : probe.grokEdition
+                        ? { state: 'warn', label: 'Grok Build', detail: 'Sign in with your xAI key below' }
+                        : {
+                            state: 'warn',
+                            label: 'Grok / xAI API',
+                            detail: 'Paste console.x.ai key below (not SuperGrok tab cookie) — works on Pages + local',
+                        };
 
         const ctx = hostingContext();
         const ollamaBase = probe.ollama?.baseUrl ? ` via ${probe.ollama.baseUrl}` : '';

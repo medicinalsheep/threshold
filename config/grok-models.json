@@ -1,0 +1,72 @@
+{
+  "format": "threshold-grok-models",
+  "version": 1,
+  "note": "Official xAI API (api.x.ai) — same model family as SuperGrok chat. SuperGrok browser tab sessions cannot be shared with web apps; use a console.x.ai API key.",
+  "baseUrl": "https://api.x.ai/v1",
+  "chatCompletionsPath": "/chat/completions",
+  "imagesGenerationsPath": "/images/generations",
+  "defaultChat": "grok-4.5",
+  "defaultCode": "grok-4.5",
+  "defaultBuild": "grok-build-0.1",
+  "models": [
+    {
+      "id": "grok-4.5",
+      "label": "Grok 4.5 (recommended)",
+      "tier": "large",
+      "role": "chat_code",
+      "context": "500k",
+      "note": "Best general intelligence + coding"
+    },
+    {
+      "id": "grok-4.3",
+      "label": "Grok 4.3",
+      "tier": "large",
+      "role": "chat_code",
+      "context": "1M",
+      "note": "Long context chat/code"
+    },
+    {
+      "id": "grok-4.20-0309-reasoning",
+      "label": "Grok 4.20 reasoning",
+      "tier": "large",
+      "role": "reasoning",
+      "context": "1M"
+    },
+    {
+      "id": "grok-4.20-0309-non-reasoning",
+      "label": "Grok 4.20 fast",
+      "tier": "large",
+      "role": "chat_code",
+      "context": "1M"
+    },
+    {
+      "id": "grok-4.20-multi-agent-0309",
+      "label": "Grok 4.20 multi-agent",
+      "tier": "large",
+      "role": "agent",
+      "context": "1M"
+    },
+    {
+      "id": "grok-build-0.1",
+      "label": "Grok Build 0.1",
+      "tier": "large",
+      "role": "code",
+      "context": "256k",
+      "note": "Code/build oriented"
+    },
+    {
+      "id": "grok-imagine-image",
+      "label": "Imagine image (fast)",
+      "tier": "image",
+      "role": "imagine",
+      "api": "images"
+    },
+    {
+      "id": "grok-imagine-image-quality",
+      "label": "Imagine image (quality)",
+      "tier": "image",
+      "role": "imagine",
+      "api": "images"
+    }
+  ]
+}

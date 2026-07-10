@@ -1,11 +1,19 @@
 import tasksConfig from '../../config/agent-tasks.json';
 import { Auth } from '../auth/main.js';
-import { API_URL, MODEL as GROK_MODEL } from '../grok/client.js';
+import { GrokClient, MODEL as GROK_MODEL_FALLBACK } from '../grok/client.js';
 import { OllamaClient } from './ollamaClient.js';
 import { ViewPrefs } from './viewPrefs.js';
 import { buildTaskPrompt, finalizeAgentCode } from './agentPrompts.js';
 import { assessModel } from './modelCapability.js';
 import { OllamaRunQueue } from './ollamaRunQueue.js';
+
+function grokModelForTier(tierId) {
+    // Prefer code model for build/codegen tiers
+    if (tierId === 'large' || tierId === 'medium') {
+        return GrokClient.getCodeModel?.() || GrokClient.getChatModel?.() || GROK_MODEL_FALLBACK;
+    }
+    return GrokClient.getChatModel?.() || GROK_MODEL_FALLBACK;
+}
 
 const PREFS_KEY = 'agentTierModels';
 const ROUTE_LOG_KEY = 'agentRouteLog';
@@ -46,54 +54,37 @@ function resolveModelForTier(tierId, installed, overrides = {}) {
     const prefs = { ...loadTierPrefs(), ...overrides.prefs };
     const pref = overrides.model || prefs[tierId] || 'auto';
 
-    if (pref === 'grok') return { provider: 'grok', model: GROK_MODEL };
+    if (pref === 'grok') return { provider: 'grok', model: grokModelForTier(tierId) };
     if (pref && pref !== 'auto') return { provider: 'ollama', model: pref };
 
     if (tierId === 'large' && tier?.grokPreferred && prefs.preferGrokLarge !== false && Auth.isLoggedIn()) {
-        return { provider: 'grok', model: GROK_MODEL };
+        return { provider: 'grok', model: grokModelForTier(tierId) };
     }
 
     const model = pickInstalled(tier?.ollamaModels, installed);
     if (model) return { provider: 'ollama', model };
 
     if (tier?.grok === 'fallback' && Auth.isLoggedIn()) {
-        return { provider: 'grok', model: GROK_MODEL };
+        return { provider: 'grok', model: grokModelForTier(tierId) };
     }
     if (Auth.isLoggedIn() && tierId === 'large') {
-        return { provider: 'grok', model: GROK_MODEL };
+        return { provider: 'grok', model: grokModelForTier(tierId) };
     }
 
-    throw new Error(`No model for tier "${tierId}" — set Ollama models or xAI key`);
+    throw new Error(`No model for tier "${tierId}" — set Ollama models or xAI key (console.x.ai)`);
 }
 
 async function callGrok(system, user, options = {}) {
-    if (!Auth.isLoggedIn()) throw new Error('xAI key required — paste in AGENTS panel');
-    const timeoutMs = options.timeoutMs ?? 120000;
-    const signal = options.signal
-        || (typeof AbortSignal?.timeout === 'function' ? AbortSignal.timeout(timeoutMs) : undefined);
-    const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${Auth.apiKey}`,
-        },
-        body: JSON.stringify({
-            model: options.model || GROK_MODEL,
-            messages: [
-                { role: 'system', content: system },
-                { role: 'user', content: user },
-            ],
-            temperature: options.temperature ?? 0.4,
-            max_tokens: options.maxTokens ?? 2048,
-        }),
-        signal,
-    });
-    if (!res.ok) {
-        const t = await res.text();
-        throw new Error(`Grok (${res.status}): ${t.slice(0, 120)}`);
+    if (!Auth.isLoggedIn()) {
+        throw new Error('xAI key required — paste in Agent Portal (console.x.ai). SuperGrok browser tab cannot be used directly.');
     }
-    const data = await res.json();
-    return data.choices?.[0]?.message?.content?.trim() || '';
+    return GrokClient.chat(system, user, {
+        model: options.model || grokModelForTier(options.tierId || 'large'),
+        temperature: options.temperature,
+        maxTokens: options.maxTokens,
+        timeoutMs: options.timeoutMs,
+        signal: options.signal,
+    });
 }
 
 async function callOllama(system, user, options = {}) {
@@ -166,17 +157,17 @@ export const AgentRouter = {
             if (assessment.state === 'fail') {
                 if (Auth.isLoggedIn()) {
                     usedProvider = 'grok';
-                    route.model = GROK_MODEL;
-                    assessment = { ...assessment, fallback: 'grok', reason: `${assessment.reason} — using Grok` };
+                    route.model = grokModelForTier(task.tier);
+                    assessment = { ...assessment, fallback: 'grok', reason: `${assessment.reason} — using Grok API` };
                 } else {
-                    throw new Error(`${assessment.reason} (or add Grok key)`);
+                    throw new Error(`${assessment.reason} (or add xAI key from console.x.ai)`);
                 }
             }
         }
 
         try {
             if (usedProvider === 'grok') {
-                text = await callGrok(system, user, callOpts);
+                text = await callGrok(system, user, { ...callOpts, tierId: task.tier });
             } else {
                 text = await OllamaRunQueue.run(
                     { model: route.model, taskId, tier: task.tier },
@@ -185,10 +176,17 @@ export const AgentRouter = {
             }
         } catch (primaryErr) {
             if (usedProvider === 'ollama' && tier?.grok === 'fallback' && Auth.isLoggedIn()) {
-                text = await callGrok(system, user, { temperature: tier?.temperature, maxTokens: tier?.maxTokens, timeoutMs: callOpts.timeoutMs });
+                const gm = grokModelForTier(task.tier);
+                text = await callGrok(system, user, {
+                    model: gm,
+                    temperature: tier?.temperature,
+                    maxTokens: tier?.maxTokens,
+                    timeoutMs: callOpts.timeoutMs,
+                    tierId: task.tier,
+                });
                 usedProvider = 'grok';
-                route.model = GROK_MODEL;
-                assessment = { state: 'warn', reason: 'Ollama failed — fell back to Grok' };
+                route.model = gm;
+                assessment = { state: 'warn', reason: 'Ollama failed — fell back to Grok API' };
             } else {
                 throw primaryErr;
             }

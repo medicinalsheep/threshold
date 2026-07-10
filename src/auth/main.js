@@ -1,29 +1,64 @@
 import { IS_GROK_EDITION } from '../config.js';
 
-const STORAGE_KEY = 'threshold_xai_key';
+const SESSION_KEY = 'threshold_xai_key';
+const LOCAL_KEY = 'threshold_xai_key_persistent';
+const REMEMBER_FLAG = 'threshold_xai_remember';
 
 export const Auth = {
     get apiKey() {
-        return sessionStorage.getItem(STORAGE_KEY) || '';
+        return sessionStorage.getItem(SESSION_KEY)
+            || (localStorage.getItem(REMEMBER_FLAG) === '1' ? localStorage.getItem(LOCAL_KEY) : '')
+            || '';
     },
 
     isLoggedIn() {
         return Boolean(this.apiKey);
     },
 
-    login(apiKey) {
-        const key = apiKey.trim();
+    isRemembered() {
+        return localStorage.getItem(REMEMBER_FLAG) === '1' && Boolean(localStorage.getItem(LOCAL_KEY));
+    },
+
+    /**
+     * @param {string} apiKey
+     * @param {{ remember?: boolean }} [opts]
+     */
+    login(apiKey, opts = {}) {
+        const key = String(apiKey || '').trim();
         if (!key) return false;
-        sessionStorage.setItem(STORAGE_KEY, key);
+        sessionStorage.setItem(SESSION_KEY, key);
+        if (opts.remember) {
+            localStorage.setItem(REMEMBER_FLAG, '1');
+            localStorage.setItem(LOCAL_KEY, key);
+        } else if (opts.remember === false) {
+            localStorage.removeItem(REMEMBER_FLAG);
+            localStorage.removeItem(LOCAL_KEY);
+        }
+        // hydrate session from persistent if only local was set
+        if (!sessionStorage.getItem(SESSION_KEY) && this.isRemembered()) {
+            sessionStorage.setItem(SESSION_KEY, localStorage.getItem(LOCAL_KEY));
+        }
         return true;
     },
 
     logout() {
-        sessionStorage.removeItem(STORAGE_KEY);
-    }
+        sessionStorage.removeItem(SESSION_KEY);
+        localStorage.removeItem(REMEMBER_FLAG);
+        localStorage.removeItem(LOCAL_KEY);
+    },
+
+    /** Ensure sessionStorage has key if user opted into remember */
+    hydrate() {
+        if (!sessionStorage.getItem(SESSION_KEY) && this.isRemembered()) {
+            sessionStorage.setItem(SESSION_KEY, localStorage.getItem(LOCAL_KEY) || '');
+        }
+        return this.isLoggedIn();
+    },
 };
 
 export function initAuth() {
+    Auth.hydrate();
+
     const overlay = document.getElementById('auth-overlay');
     const form = document.getElementById('auth-form');
     const input = document.getElementById('auth-api-key');
@@ -37,7 +72,16 @@ export function initAuth() {
 
     if (!IS_GROK_EDITION) {
         overlay?.remove();
-        logoutBtn?.remove();
+        // Keep logout hidden on web unless key present
+        if (logoutBtn) {
+            logoutBtn.style.display = Auth.isLoggedIn() ? 'inline-block' : 'none';
+            logoutBtn.addEventListener('click', () => {
+                Auth.logout();
+                logoutBtn.style.display = 'none';
+                window.AgentStatus?.refresh?.();
+                window.AgentPortal?.runDetect?.();
+            });
+        }
         return;
     }
 
@@ -61,7 +105,8 @@ export function initAuth() {
 
     form?.addEventListener('submit', (e) => {
         e.preventDefault();
-        if (Auth.login(input?.value || '')) {
+        const remember = document.getElementById('auth-remember-key')?.checked === true;
+        if (Auth.login(input?.value || '', { remember })) {
             syncAuthUi();
             if (input) input.value = '';
             window.AgentStatus?.refresh?.();

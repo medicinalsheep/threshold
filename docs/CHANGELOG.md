@@ -1,3 +1,10 @@
+## 10.12.22 — Grok / SuperGrok-class API hooks
+
+- **GrokClient** — official `api.x.ai` chat + Imagine hooks; models from `config/grok-models.json` (4.5, 4.3, 4.20, build, imagine)
+- **AgentRouter** — uses selected Grok code/chat model (default **grok-4.5**)
+- **Portal** — key save + remember device, TEST probe, model dropdown; honest note that SuperGrok *tabs* cannot share session
+- **Auth** — optional localStorage remember for xAI key
+
 ## 10.12.21 — Ollama Pages connectivity (CORS/PNA proxy)
 
 - **`npm run ollama:serve`** — keeps Ollama up + local proxy on **:11435** with `Access-Control-Allow-Private-Network` (Chrome/Pages fix)
