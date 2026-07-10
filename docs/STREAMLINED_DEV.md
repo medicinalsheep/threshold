@@ -1,6 +1,6 @@
-# Streamlined dev path (v10.8)
+# Streamlined dev path (v10.12)
 
-One linear path from lobby to shipped build — host/join, Agent Portal, creative tools, export.
+One linear path from lobby to shipped build — solo ENTER, optional host/join, Agent Portal, creative tools, export.
 
 ---
 
@@ -8,11 +8,11 @@ One linear path from lobby to shipped build — host/join, Agent Portal, creativ
 
 | Step | Action |
 |------|--------|
-| **Host** | Lobby → **CREATE SESSION** → share room code |
-| **Join** | Lobby → paste code → **JOIN** |
-| **Enter** | **ENTER** → blank grid (EDIT mode = paused physics) |
+| **Solo (default)** | Lobby → **ENTER →** → blank grid (BUILD / EDIT, no network) |
+| **Host** | Lobby → **CREATE SESSION** → copy invite → **ENTER SESSION** |
+| **Join** | Lobby → paste code → **JOIN** (+ passcode if host set one) |
 
-Multiplayer is optional PeerJS — no API key required for local solo dev.
+Multiplayer is optional PeerJS. **No X or Grok account required** for local solo dev.
 
 ---
 
@@ -22,7 +22,8 @@ Multiplayer is optional PeerJS — no API key required for local solo dev.
 
 | Chip | Meaning |
 |------|---------|
-| **Grok ✓** | xAI API key in **this browser tab** (`sessionStorage`) |
+| **Grok ✓** | xAI API key in this tab (or remembered on device) |
+| **X ✓** | Optional OAuth identity — feed/posts, display name |
 | **Ollama ✓** | `npm run ollama:serve` + models listed |
 | **Watch ✓** | `npm run textures:watch` — GIMP/Blender hot-reload |
 | **Tex N** | Textures loaded in scene library |
@@ -30,9 +31,10 @@ Multiplayer is optional PeerJS — no API key required for local solo dev.
 
 ### Grok API key
 
-- Get a key at [console.x.ai](https://console.x.ai).
-- Paste in SETUP or Portal → SAVE.
-- Keys are **per-tab** — not auto-shared from other x.ai sessions.
+- Get a key at [console.x.ai](https://console.x.ai) — **not** SuperGrok browser tab.
+- Paste in SETUP, Portal, or nav **Grok** modal → SAVE.
+- Keys are **per-tab** by default; optional remember-on-device.
+- Full dual-auth notes: [AUTH.md](AUTH.md).
 
 ### Tiered models (small / medium / large)
 
@@ -98,8 +100,8 @@ npm run ollama:verify
 ## Quick reference
 
 ```
-CREATE SESSION → Portal (Grok/Ollama) → SETUP tiers
+ENTER (solo) → Portal (Grok/Ollama) → SETUP tiers
 → GIMP+watch / Blender → BUILD scene → TOOLS → EXPORT → store:prep → package:*
 ```
 
-Related: [GETTING_STARTED.md](GETTING_STARTED.md) · [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) · [ROADMAP.md](ROADMAP.md)
+Related: [GETTING_STARTED.md](GETTING_STARTED.md) · [AUTH.md](AUTH.md) · [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) · [ROADMAP.md](ROADMAP.md)

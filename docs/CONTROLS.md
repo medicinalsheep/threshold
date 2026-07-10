@@ -1,6 +1,6 @@
 # Action controls reference
 
-**Version:** 10.7+ · Rebind in toolbar → **KEYS** (or corner hub → TOOLS in EDIT)
+**Version:** 10.12+ · Rebind in toolbar → **KEYS** (or corner hub → TOOLS in EDIT)
 
 Default layout: **LMB aim (hold)** · **RMB shoot** · **F interact / Third Eye** · **M UI mouse** · **E vehicle** · **T chat** · **Alt** hold = temporary UI mouse.
 

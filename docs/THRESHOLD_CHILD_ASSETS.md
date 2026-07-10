@@ -46,7 +46,7 @@ Developers may use `reference/_dev-seeds/` locally to **compare** workflows; tho
 | `tc-sfx` | **Active** | 5 synthesized original SFX seeds |
 | `tc-lite` | **Active (fallback)** | Procedural Runner, Hauler, TC Span v1.1 |
 
-Legacy ids `threshold-child-*` → `tc-*` (v5.8). Archived manifests in `old/reference-editions/`. Lobby button: **TC →**
+Legacy ids `threshold-child-*` → `tc-*` (v5.8). Archived manifests in `old/reference-editions/`. Lobby button: **TC DEMO**
 
 Config: `config/reference-editions.json`
 
@@ -97,7 +97,7 @@ Use Child assets as **design seeds** — same objects can anchor many game types
 | Zone theming | `npm run tc:gen:tex` or GIMP **Build TC Textures (R6)** |
 | Graphics tier demo | HILOD `_512`/`_1k`/`_2k` — `TextureHilod` distance + tier pick |
 | Store asset pack | EXPORT **CREDITS** lists `tc_tex_*` · PACKS texture SKU |
-| Auto apply | Lobby **TC →** → `wireTcTextures()` on spawn |
+| Auto apply | Lobby **TC DEMO** → `wireTcTextures()` on spawn |
 
 ### Export & store (all editions)
 
@@ -116,7 +116,7 @@ Use Child assets as **design seeds** — same objects can anchor many game types
 |------|----------------|
 | Build video | `npm run tc:gen:vid` (Python: pillow + imageio + imageio-ffmpeg) |
 | Asset | `video/tc_intro.webm` |
-| Runtime | `tcIntro.js` — auto after Lobby **TC →** (once per browser) |
+| Runtime | `tcIntro.js` — auto after Lobby **TC DEMO** (once per browser) |
 | API | `World.playCutscene('video/tc_intro.webm', { skippable: true })` |
 | Replay | `TcIntro.playTcIntro({ force: true })` in Compiler |
 
@@ -153,7 +153,7 @@ Use Child assets as **design seeds** — same objects can anchor many game types
 | Loader | `src/shared/tcVeh.js` — `MeshLod` @ `[0, 12, 28]` |
 | Verify | `npm run tc:verify` |
 
-Lobby **TC →** loads the **Showcase** (vehicles + NPCs + SFX); falls back to vehicles-only or TC Lite procedural.
+Lobby **TC DEMO** loads the **Showcase** (vehicles + NPCs + SFX); falls back to vehicles-only or TC Lite procedural.
 
 ---
 
@@ -177,7 +177,7 @@ Audio clips wire automatically: `tc_sfx_imp` → vehicles, `tc_sfx_ft` → NPCs,
 3. **Name** — `TC <Role>` (e.g. `TC Runner`); export paths `tc_<role>`
 4. **Register** — `config/reference-editions.json` + loader in `src/shared/tc*.js` (legacy manifests archived in `old/reference-editions/`)
 5. **Credit** — `reference/ATTRIBUTION.md` — license: `Original — TC`
-6. **Test** — Lobby TC → → EXPORT walkthrough · `npm run tc:verify`
+6. **Test** — Lobby TC DEMO → EXPORT walkthrough · `npm run tc:verify`
 7. **Never** commit unmodified third-party files as shipped TC assets (dev seeds only in `reference/_dev-seeds/`)
 
 ---

@@ -34,6 +34,7 @@ function bump(n) {
 }
 
 if (writeIfChanged('package.json', (s) => s.replace(/"version": "[^"]+"/, `"version": "${version}"`))) bump(1);
+if (writeIfChanged('config/native-app.json', (s) => s.replace(/"version": "[^"]+"/, `"version": "${version}"`))) bump(1);
 if (writeIfChanged('package-lock.json', (s) => {
     let n = 0;
     return s.replace(/^  "version": "[^"]+"/m, () => { n += 1; return `  "version": "${version}"`; })

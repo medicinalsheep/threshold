@@ -4,7 +4,7 @@
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
-**Forward plan:** [ROADMAP.md](ROADMAP.md) · **UI reference:** [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
+**Forward plan:** [ROADMAP.md](ROADMAP.md) · **UI reference:** [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · **Accounts:** [AUTH.md](AUTH.md)
 
 ---
 
@@ -13,12 +13,13 @@ Single progress snapshot — what ships today, how the pieces connect, and what 
 | Capability | Module / doc |
 |------------|--------------|
 | Blank grid spawn | `starterScene.js`, `starterTemplates.js` |
-| Host-first lobby | `lobby/main.js` — CREATE SESSION primary |
+| Lobby (ENTER primary) | `lobby/main.js` — solo **ENTER** · CREATE optional multiplayer |
 | Progressive UI unlock | Scene dock, Compiler, PromptGen opt-in |
-| Agent Portal on ENTER | `agentPortal.js` — Grok/Ollama auto-detect |
+| Agent Portal on ENTER | `agentPortal.js` — Grok/Ollama/X auto-detect |
 | Corner hub UI | `hubLayout.js` — PLAY/EDIT, TOOLS, SCENE menus |
-| Room codes | `roomCode.js` — `NAME4-KEY6-RAND4` format |
-| Short hub tour | `walkthrough.js` — 3 steps (not showcase walkthrough) |
+| Room codes + passcode | `roomCode.js`, `hostPasscode.js` |
+| Dual accounts (optional) | X OAuth + Grok API key — [AUTH.md](AUTH.md) |
+| Short hub tour | `walkthrough.js` — ~3 steps |
 
 ---
 
@@ -27,7 +28,7 @@ Single progress snapshot — what ships today, how the pieces connect, and what 
 | Layer | Entry | What you get |
 |-------|-------|--------------|
 | **Your game** | BUILD + Portal | Blank grid, quality-gated AI, GIMP/Blender PBR, export |
-| **TC editions** | Lobby → **TC →** | Vehicles, NPCs, circuit — bundled reference only |
+| **TC editions** | Lobby → **TC DEMO** | Vehicles, NPCs, circuit — bundled reference only |
 
 Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survival docs archived in `old/docs/`
 
@@ -38,9 +39,10 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | Capability | Module / doc |
 |------------|--------------|
 | TPS / FPS + ADS | `player.js`, `fpsViewmodel.js` — LMB aim · RMB shoot |
-| Alt peek / Third Eye | `thirdEye.js` — Alt hold peek in immersive |
+| UI mouse / Third Eye | `thirdEye.js` — **M** / Alt peek; **F** Third Eye |
 | Walk / sprint / crouch / stealth | `controls.js` — stealth on **U** hold |
-| Touch controls | `touchControls.js` — full pad, UNLOCK drag layout |
+| Touch controls | `touchControls.js` — practical pad v4, UNLOCK drag |
+| Avatar LOD + MOD gear | `avatarMod.js`, LOD GLBs, `generation-policy.json` |
 | Weather | `weatherSystem.js` |
 | F interact | `worldInteract.js` |
 | TC circuit + drive | `tcCircuit.js`, `tcDrive.js` |
@@ -56,6 +58,7 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 |------------|--------------|
 | Agent Portal + SETUP | `agentPortal.js`, scene dock SETUP tab |
 | Tiered agents + freeze | `agentRouter.js`, `aiMemoryFreeze.js`, `ollamaRunQueue.js` |
+| Generation intensity / MOD policy | `generation-policy.json`, agent reasoning |
 | Working folder scope | `workFolderScope.js` — memory prefs during Ollama |
 | Compiler + scene undo | `compiler/main.js`, `sceneHistory.js` |
 | PromptGen + EXAMPLES | `prompter/main.js`, `promptCookbook.js` |
@@ -72,12 +75,14 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 
 | Capability | Module / doc |
 |------------|--------------|
-| PeerJS rooms | `network.js` |
+| PeerJS rooms | `network.js` — host start **12s timeout** |
 | Host-authoritative sync | `sync.js`, `actions.js` |
 | Host migration handoff | `hostMigration.js` |
-| VOIP proximity | `voip.js` |
+| Optional host passcode | Lobby More options + PLAYERS panel |
+| VOIP proximity + PTT | `voip.js` — mic after start; PTT default **N** |
 | Spectate mode | `spectate/main.js` |
 | xAI keys per tab | `sessionStorage` — not synced to guests |
+| X identity (optional) | `xAuth.js` — not required for play |
 
 ---
 
@@ -133,5 +138,6 @@ npm run build
 - [docs/README.md](README.md) — doc index
 - [ROADMAP.md](ROADMAP.md) — v10.8+ forward plan
 - [CHANGELOG.md](CHANGELOG.md) — version history
+- [AUTH.md](AUTH.md) — X + Grok accounts
 - [AGENTS.md](../AGENTS.md) — contributor map
 - [old/docs/](../old/docs/) — archived phase history

@@ -25,13 +25,16 @@ Threshold is for people who want to **go from idea → playable 3D scene → shi
 ## First run (walked through)
 
 ```
-1. LOBBY     → name · PLAY or BUILD · CREATE SESSION (or **ENTER →** solo — starts in BUILD)
-2. ENTER     → blank grid · corner hub tour (3 steps)
+1. LOBBY     → name · PLAY or BUILD · **ENTER →** (solo; no account needed)
+2. ENGINE    → blank grid · corner hub tour (~3 steps)
 3. PORTAL    → AI scans Grok/Ollama · describe what to build
 4. EDIT      → TOOLS menu → Compiler / PromptGen / insert
 5. PLAY      → tap PLAY (top-left) · touch toggle (bottom-left) · test walk physics
 6. SHIP      → TOOLS → Export when ready
 ```
+
+Multiplayer: **CREATE SESSION** → copy invite → **ENTER SESSION**. Friends **JOIN** with room code.  
+Optional: **X** sign-in (identity/feed) and **Grok** API key (cloud AI) — see [docs/AUTH.md](docs/AUTH.md).
 
 ---
 
@@ -41,10 +44,10 @@ Fullscreen immersive mode with **L-shaped toggles** — menus only open when you
 
 | Corner | PLAY mode | EDIT mode |
 |--------|-----------|-----------|
-| **Top-left** | PLAY badge · AI agent · LINK | EDIT badge · AI · LINK |
+| **Top-left** | PLAY badge · AI · LINK · UNLOCK | EDIT badge · AI · LINK · UNLOCK |
 | **Top-right** | hidden | **TOOLS** popup (Compiler, PromptGen, insert, export…) |
 | **Bottom-left** | TOUCH · WALK/FLY · FULL | same |
-| **Bottom-right** | **SKIN** popup | **SCENE** popup (inspect, env, agents) |
+| **Bottom-right** | PLAY+ menu | **SCENE** popup (ENV, EDIT, SKIN, SFX, SETUP) |
 
 Tap **PLAY/EDIT** (top-left) to switch modes — physics pauses in EDIT so you can build safely.
 
@@ -78,18 +81,19 @@ Host-authoritative **PeerJS (WebRTC)**. Host browser is session authority.
 
 ---
 
-## AI providers (bring your own)
+## AI & accounts (bring your own)
 
-Visitors use **their** models — nothing is bundled on GitHub except small Modelfiles/recipes.
+Visitors use **their** models — nothing is bundled on GitHub except small Modelfiles/recipes. Play works with no accounts.
 
-| Provider | How | GitHub link on your PC | Phone |
-|----------|-----|------------------------|-------|
-| **Grok / xAI** | Paste API key in Agent Portal | ✅ | ✅ |
-| **Ollama** | `npm run ollama:serve` on **this** device (fixes CORS 403) | ✅ | ❌ on phone |
-| **Threshold mini models** | `ollama pull medicinalsheep/threshold-mini-npc` (etc.) or `npm run models:mini` | ✅ | 1B mobile mini experimental; codegen → Grok |
+| Provider | How | Pages / laptop | Phone |
+|----------|-----|----------------|-------|
+| **Grok / xAI** | API key from [console.x.ai](https://console.x.ai) (not SuperGrok tab) | ✅ | ✅ |
+| **Ollama** | `npm run ollama:serve` on **this** device (CORS/PNA for Pages) | ✅ | ❌ on phone |
+| **X (optional)** | Sign in with X — identity, feed, posts (`VITE_X_CLIENT_ID`) | ✅ | ✅ |
+| **Threshold mini models** | `ollama pull medicinalsheep/threshold-mini-npc` or `npm run models:mini` | ✅ | codegen → Grok |
 | GIMP/Blender watch | `npm run textures:watch` | ✅ local dev only | ❌ |
 
-Keys and GGUF weights never go to GitHub — only your browser tab session.
+Keys and GGUF weights never go to GitHub. Full dual-auth setup: [docs/AUTH.md](docs/AUTH.md).
 
 ---
 

@@ -12,7 +12,8 @@ Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blen
 
 | Area | Path |
 |------|------|
-| Lobby | `src/lobby/` |
+| Lobby | `src/lobby/` — ENTER solo primary; CREATE/JOIN multiplayer |
+| Auth (optional) | `src/auth/` — `Auth` (xAI key), `XAuth`/`XFeed`, `DisplayName`, `GrokAuthUi` |
 | Engine bootstrap | `src/engine/main.js` — `initEngine()`, window globals |
 | Engine core | `src/engine/engineCore.js` — scene, render loop, input |
 | Engine UI | `src/engine/ui.js` — inspector, insert, bindings, agents |
@@ -77,12 +78,12 @@ npm run store:verify            # packaging E2E smoke
 ### Agents & Ollama
 
 ```bash
-ollama serve
+npm run ollama:serve            # keep Ollama up + CORS/PNA proxy (:11435) for Pages
 npm run ollama:verify           # local LLM smoke
 npm run ollama:benchmark        # rank models → dist-store/ollama-benchmark.json
 ```
 
-Copy `.env.local.example` → `.env.local` for `VITE_OLLAMA_URL` and optional `VITE_OLLAMA_TIER_*` defaults.
+Copy `.env.local.example` → `.env.local` for `VITE_OLLAMA_URL`, optional `VITE_OLLAMA_TIER_*`, `VITE_X_CLIENT_ID` (X OAuth), and xAI model overrides. Dual accounts: [docs/AUTH.md](docs/AUTH.md).
 
 ### Training bootcamp
 
@@ -154,6 +155,7 @@ Live manifest: `textures/threshold_manifest.json` (not `old/plugins/...` sample)
 | [docs/README.md](docs/README.md) | **Full scope index** |
 | [README.md](README.md) | Quick start + capabilities |
 | [docs/STREAMLINED_DEV.md](docs/STREAMLINED_DEV.md) | Lobby → agents → export path |
+| [docs/AUTH.md](docs/AUTH.md) | Optional X OAuth + Grok API key |
 | [docs/AGENT_ROUTING.md](docs/AGENT_ROUTING.md) | Tiered router, benchmarks, providers |
 | [docs/MODEL_DISTRIBUTION.md](docs/MODEL_DISTRIBUTION.md) | GitHub vs local weights policy |
 | [docs/BOOTCAMP.md](docs/BOOTCAMP.md) | Training bootcamp quick start |
@@ -165,7 +167,8 @@ Live manifest: `textures/threshold_manifest.json` (not `old/plugins/...` sample)
 | [docs/EXPORT_WALKTHROUGH.md](docs/EXPORT_WALKTHROUGH.md) | 9-step export wizard |
 | [docs/THRESHOLD_CHILD_ASSETS.md](docs/THRESHOLD_CHILD_ASSETS.md) | TC original-asset policy |
 | [docs/REFERENCE_EDITIONS.md](docs/REFERENCE_EDITIONS.md) | TC edition registry |
-| [docs/UI_AND_AGENTS.md](docs/UI_AND_AGENTS.md) | Corner hubs, freeze, touch |
+| [docs/UI_AND_AGENTS.md](docs/UI_AND_AGENTS.md) | Lobby, hubs, freeze, touch, dual auth |
+| [docs/CAPABILITIES.md](docs/CAPABILITIES.md) | Shipped snapshot |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | v10.8+ forward plan |
 | [docs/CHANGELOG.md](docs/CHANGELOG.md) | Version history |
 | [old/README.md](old/README.md) | Archived legacy files + `old/docs/` |

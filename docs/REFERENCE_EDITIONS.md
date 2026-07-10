@@ -11,7 +11,7 @@ Bundled content is **TC** (Threshold Child) — **original** assets for learning
 | Edition | Lobby | Contents |
 |---------|-------|----------|
 | `threshold` | SOLO PLAY | Core starter scene |
-| **`tc-show`** | **TC →** (default) | Runner, Hauler, Marshal, Mechanic, Span, Checkpoint — GLB+LOD, SFX |
+| **`tc-show`** | **TC DEMO** (lobby) | Runner, Hauler, Marshal, Mechanic, Span, Checkpoint — GLB+LOD, SFX |
 | `tc-veh` | fallback | Runner, Hauler — GLB + LOD; TC Span procedural |
 | `tc-chr` | — | Marshal + Mechanic HumanMesh NPCs |
 | `tc-sfx` | — | 5 synthesized TC SFX seeds |
@@ -32,7 +32,7 @@ npm run tc:gen:tex    # textures only (48 PNGs + threshold_manifest.json)
 npm run tc:verify     # smoke test modules, GLBs, textures, HILOD, aliases
 ```
 
-Lobby → **TC →** — full showcase (≥6 objects): GLB vehicles + characters with LOD @ 12m/28m, TC Span, checkpoint, SFX.
+Lobby → **TC DEMO** — full showcase (≥6 objects): GLB vehicles + characters with LOD @ 12m/28m, TC Span, checkpoint, SFX.
 
 Then **MORE → EXPORT** — **SCENE** shows TC GLTF objects; **CREDITS** + **PACKS** pre-fill.
 

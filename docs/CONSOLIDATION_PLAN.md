@@ -118,5 +118,5 @@ npm run preview:pages   # smoke at :4173
 
 1. `src/engine/main.js` under 250 lines. ✅
 2. All verify scripts PASS.
-3. Live demo behavior unchanged (lobby → BUILD → PLAY → export).
-4. Version strings aligned across README + config + package.json.
+3. Live demo: lobby **ENTER** → BUILD → PLAY → export (multiplayer CREATE optional).
+4. Version strings aligned via `npm run version:sync` (`config.js` → package + doc headers + `native-app.json`).

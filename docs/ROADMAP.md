@@ -139,23 +139,30 @@ UI reference: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Controls: [CONTROLS.md](CO
 
 ---
 
+## 10.12.16–10.12.28 — Polish, auth, session reliability ✅
+
+| Slice | Focus |
+|-------|-------|
+| **10.12.16–19** | Hero textures · Android prep · combat touch · avatar LOD · full MOD gear |
+| **10.12.20–21** | Generation intensity / MOD policy · Ollama Pages CORS/PNA proxy (`ollama:serve`) |
+| **10.12.22–26** | Grok API hooks · X OAuth · feed/post · display name · dual-auth UI · portal X status |
+| **10.12.27–28** | CREATE no longer blocked by VoIP · Peer host 12s timeout · lobby ENTER-first UI rebuild |
+
+Accounts guide: [AUTH.md](AUTH.md) · Snapshot: [CAPABILITIES.md](CAPABILITIES.md)
+
+---
+
 ## Open / deferred (unpolished)
 
 | Area | Notes |
 |------|-------|
-| **10.10** agent stability | AI memory freeze GLTF edge cases; native fullscreen peek; parallel Ollama guard |
-| GIMP hero pass | ✅ v10.12.16 procedural hero upgrade (joints/kiosk); hand-paint optional via GIMP SYNC |
-| Doc version sync | `README.md`, `CAPABILITIES.md`, `GETTING_STARTED.md` still drift from live version |
-| `controls:verify` / `store:verify` | ✅ re-run 10.12.15 (store chunk hash fix) |
-| Mouse mode without Third Eye highlights | ✅ v10.12.14 — **M** UI mouse + Alt peek (no highlights); F = Third Eye awareness |
-| `intent_classify` router | ✅ v10.12.7 — `intentRouter.js` + game chat routing |
+| GIMP hero hand-paint | Optional via GIMP SYNC (procedural heroes shipped 10.12.16) |
+| Doc / version hygiene | ✅ `version:sync` + 10.12.28 doc sweep (`AUTH.md`, lobby truth) |
 | Store upload automation | Signing keys remain local; upload manual |
-| Training dataset growth | ✅ waves 1–4 + `train:mini` + `ollama:golden` (10.12.13); grow via Compiler EXPORT TRAINING PAIR |
-| Local Ollama tier picks (2060) | ✅ `ollama:benchmark --all` + `laptop2060Defaults`; client `think:false` + num_ctx |
+| Training dataset growth | Waves 1–4 + `train:mini` + `ollama:golden`; grow via EXPORT TRAINING PAIR |
 | macOS notarization | Planned |
-| AWS relay polish | ✅ v10.12.7 — Docker/PM2/nginx + relay:verify |
 | Trellis/Veo-class models | Listed in `models-registry.json` |
-| TC reference edition | Lobby **TC →** path kept; separate from default grid |
+| TC reference edition | Lobby **TC DEMO** path kept; separate from default grid |
 
 ---
 

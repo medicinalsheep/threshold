@@ -44,7 +44,7 @@ const steps = `
    npm run kit:verify
 
 6. TC showcase (export practice)
-   Lobby → TC →
+   Lobby → TC DEMO
    npm run tc:build && npm run tc:verify
 
 Docs: docs/README.md · docs/GETTING_STARTED.md · docs/REALISTIC_GAMEPLAY.md

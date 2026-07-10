@@ -390,8 +390,8 @@ Object.assign(shelter.userData, {
             title: 'AI Agents — Tiered Ollama + Grok',
             summary: 'SCENE dock → AI tab. Router picks small/medium/large models; Grok optional for large tasks.',
             checklist: ['ollama serve + npm run models:mini', 'Optional xAI key in AI tab', 'SAVE TIERS or RUN BENCHMARK → APPLY SUGGESTED', 'ATTACH TO NPC · NPC TALK · SMART DEV'],
-            code: `// NPC: select human NPC → SCENE → AI → ATTACH TO NPC → NPC TALK
-// Dev: Compiler draft → SCENE → AI → SMART DEV: APPLY (tiered medium)
+            code: `// NPC: select human NPC → SETUP / Portal → ATTACH TO NPC → NPC TALK
+// Dev: Compiler draft → SETUP → SMART DEV: APPLY (tiered medium)
 // Force provider: GROK DEV or OLLAMA DEV buttons
 // Local: interval script in AI tab — no API key
 // userData.agentPersona on NPCs persists in world export`

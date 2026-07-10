@@ -41,7 +41,7 @@ export const ActionHints = {
         document.getElementById('tc-quest-dismiss')?.addEventListener('click', () => this.dismissTcQuest());
         document.getElementById('tc-quest-go')?.addEventListener('click', () => {
             this.dismissTcQuest();
-            window.UI?.status?.('Exit to lobby → TC → for the 60s lap challenge');
+            window.UI?.status?.('Exit to lobby → TC DEMO for the 60s lap challenge');
         });
     },
 

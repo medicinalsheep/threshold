@@ -14,6 +14,8 @@
 
 **Not committed:** GGUF/Ollama weights, API keys, personal paths, machine benchmark JSON, internal training notes.
 
+For GitHub Pages + local Ollama, run **`npm run ollama:serve`** (keeps Ollama up and proxies CORS/Private Network Access on **:11435**). Plain `ollama serve` alone often fails from Pages (Chrome PNA). Grok keys are separate — [AUTH.md](AUTH.md).
+
 ## Local only (gitignored)
 
 | Asset | Location |

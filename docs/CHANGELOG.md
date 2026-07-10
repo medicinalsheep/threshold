@@ -5,6 +5,7 @@
 - Lobby UI rebuilt after auth clutter: big **ENTER** primary zone · multiplayer secondary · More options (passcode/voice/accounts) collapsed
 - Share panel: **ENTER SESSION** is the primary action after CREATE
 - Fixed Grok clear-key using bare `Auth` in module scope
+- **Docs sweep** — [AUTH.md](AUTH.md); lobby ENTER-primary truth; PTT default **N**; dual-auth + passcode reflected across guides
 
 ## 10.12.27 — Lobby session start fix + layout cleanup
 

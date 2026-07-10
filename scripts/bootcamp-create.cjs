@@ -23,6 +23,6 @@ if (args.includes('--large')) {
 }
 
 console.log(failed ? '\nbootcamp:create — FAIL' : '\nbootcamp:create — PASS');
-console.log('  SCENE → AI tab → SAVE TIERS → threshold-mini-npc (small) · threshold-mini-dev (medium)');
+console.log('  SETUP tab → SAVE TIERS → threshold-mini-npc (small) · threshold-mini-dev (medium)');
 console.log('  Prefer: npm run bootcamp:build && npm run models:mini');
 process.exit(failed ? 1 : 0);

@@ -13,23 +13,24 @@ Full scope map — quality-first blank grid, optional TC reference editions, and
 | Layer | What | Policy |
 |-------|------|--------|
 | **Your game** | Blank grid + quality-gated AI + PBR export | Default path since 10.0; min 1K textures since 10.11 |
-| **TC editions** | Lobby → **TC →** — vehicles, circuit, export demo | Bundled reference only — [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) |
+| **TC editions** | Lobby → **TC DEMO** — vehicles, circuit, export demo | Bundled reference only — [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) |
 
 Legacy edition manifests (`threshold-child-*`) live in `old/reference-editions/` — active ids are `tc-*`.
 
 ---
 
-## Capability map (v10.8)
+## Capability map (v10.12)
 
 ```mermaid
 flowchart TB
     subgraph session [Session]
-        LOBBY[CREATE / JOIN room code]
+        LOBBY[ENTER solo / CREATE / JOIN]
         PORTAL[Agent Portal]
         HUBS[Corner hub UI]
+        AUTH[Optional X + Grok]
     end
     subgraph play [Play]
-        TPS[TPS / FPS / ADS / Alt peek]
+        TPS[TPS / FPS / ADS / UI mouse]
         TOUCH[Touch + UNLOCK layout]
         PBR[Quality PBR 1K+]
         TE[Third Eye + F interact]
@@ -46,6 +47,7 @@ flowchart TB
     end
     LOBBY --> PORTAL --> create
     LOBBY --> play
+    AUTH -.-> PORTAL
     SETUP --> COMP
     ART --> play
     play --> EXP --> NAT
@@ -57,18 +59,18 @@ flowchart TB
 
 | I want to… | Read | Run |
 |------------|------|-----|
-| Play immediately | [README.md](../README.md) Quick start | Live URL → **CREATE SESSION** |
+| Play immediately | [README.md](../README.md) Quick start | Live URL → **ENTER →** |
 | Clone & develop | [GETTING_STARTED.md](GETTING_STARTED.md) | `npm install` → `npm run quickstart` |
 | Streamlined dev path | [STREAMLINED_DEV.md](STREAMLINED_DEV.md) | Portal → SETUP → EXPORT |
+| X / Grok accounts | [AUTH.md](AUTH.md) | Optional — not required to play |
 | Agent tiers & benchmarks | [AGENT_ROUTING.md](AGENT_ROUTING.md) | `ollama:benchmark` · SMART DEV |
-| UI layout + agents (10.7+) | [UI_AND_AGENTS.md](UI_AND_AGENTS.md) | Portal · freeze · touch · UNLOCK layout |
+| UI layout + agents | [UI_AND_AGENTS.md](UI_AND_AGENTS.md) | Portal · freeze · touch · UNLOCK |
 | Train mini agents | [BOOTCAMP.md](BOOTCAMP.md) · [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) | `npm run train:mini -- --no-seed` · `ollama:golden` |
 | Android APK (after polish) | [ANDROID_PREP.md](ANDROID_PREP.md) · [STORE_RELEASE.md](STORE_RELEASE.md) | `npm run package:android` |
-| Action controls | [CONTROLS.md](CONTROLS.md) | PLAY mode · weather · F interact |
+| Action controls | [CONTROLS.md](CONTROLS.md) | LMB aim · RMB shoot · F interact · PTT **N** |
 | Creative loop | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | BUILD → insert · PromptGen |
-| Action controls | [CONTROLS.md](CONTROLS.md) | LMB aim · RMB shoot · F interact |
 | Full asset pipeline | [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | `npm run assets:pack` |
-| TC export practice | [REFERENCE_EDITIONS.md](REFERENCE_EDITIONS.md) | Lobby → **TC →** |
+| TC export practice | [REFERENCE_EDITIONS.md](REFERENCE_EDITIONS.md) | Lobby → **TC DEMO** |
 | Ship to stores | [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) | TOOLS → EXPORT → `store:prep` |
 
 ---
@@ -98,6 +100,7 @@ npm run build                   # GitHub Pages → dist-pages/
 | Doc | Topic |
 |-----|-------|
 | [GETTING_STARTED.md](GETTING_STARTED.md) | Lobby → ship linear path |
+| [AUTH.md](AUTH.md) | Optional X OAuth + Grok API key |
 | [ROADMAP.md](ROADMAP.md) | v10.8+ forward plan |
 | [PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md) | Vision + pillars |
 | `old/docs/REALISTIC_GAMEPLAY.md` | Archived — survival + showcase (pre-10.11) |
@@ -106,7 +109,7 @@ npm run build                   # GitHub Pages → dist-pages/
 | [AGENT_ROUTING.md](AGENT_ROUTING.md) | Tiered agents + bootcamp |
 | [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) | GitHub vs local weights |
 | [CAPABILITIES.md](CAPABILITIES.md) | Progress snapshot |
-| [UI_AND_AGENTS.md](UI_AND_AGENTS.md) | Corner hubs, freeze, touch |
+| [UI_AND_AGENTS.md](UI_AND_AGENTS.md) | Lobby, hubs, freeze, touch, dual auth |
 | [STORE_VERIFY.md](STORE_VERIFY.md) | Store/native verify plan |
 | [GIMP_TEXTURES.md](GIMP_TEXTURES.md) | GIMP install, batch, live SYNC |
 | [BLENDER_AVATARS.md](BLENDER_AVATARS.md) | Rigged GLB export |

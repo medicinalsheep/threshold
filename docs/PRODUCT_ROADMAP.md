@@ -24,15 +24,15 @@
 ## User journey (v10+)
 
 ```
-1. LOBBY        → CREATE SESSION (or JOIN with room code)
-2. ENTER        → blank grid · corner hub tour
+1. LOBBY        → ENTER → (solo) or CREATE SESSION (host) / JOIN
+2. ENGINE       → blank grid · corner hub tour
 3. PORTAL       → Agent Portal scans Grok/Ollama · describe what to build
 4. EDIT         → TOOLS menu → Compiler / PromptGen / insert
 5. PLAY         → top-left PLAY · touch toggle · walk physics
 6. SHIP         → TOOLS → Export when ready
 ```
 
-Optional: **Lobby → TC →** for bundled reference editions and export practice.
+Optional: **Lobby → TC DEMO** for bundled reference editions. Optional **X / Grok** accounts — [AUTH.md](AUTH.md).
 
 See [GETTING_STARTED.md](GETTING_STARTED.md) · [STREAMLINED_DEV.md](STREAMLINED_DEV.md) · [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
 
@@ -59,7 +59,8 @@ See [GETTING_STARTED.md](GETTING_STARTED.md) · [STREAMLINED_DEV.md](STREAMLINED
 | **SETUP** | Grok key, Ollama tiers, freeze, working folder | SCENE → SETUP |
 | **AgentRouter** | small / medium / large task routing | `agentRouter.js` |
 | **Ollama** | NPC chat, SMART DEV, local PromptGen | localhost only |
-| **Grok** | Large scenes, fallback | xAI key per tab |
+| **Grok** | Large scenes, fallback | xAI key (console.x.ai) — [AUTH.md](AUTH.md) |
+| **X** | Identity / feed / posts (optional) | OAuth PKCE — not an AI provider |
 | **Mini trained** | `threshold-mini-npc`, `threshold-mini-dev` | `npm run models:mini` |
 
 Install: [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) · Routing: [AGENT_ROUTING.md](AGENT_ROUTING.md)

@@ -79,7 +79,7 @@ export const TcCircuit = {
 
         const cp = this.findCheckpoint();
         if (!cp && !options.force) {
-            window.UI?.status?.('TC Circuit — load TC showcase first (Lobby → TC →)');
+            window.UI?.status?.('TC Circuit — load TC showcase first (Lobby → TC DEMO)');
             return this.state;
         }
 

@@ -9,13 +9,14 @@ One linear path from lobby to shipping — blank grid default, Agent Portal, tie
 ## The loop
 
 ```
-Lobby → CREATE SESSION → ENTER → Agent Portal → EDIT or PLAY → Export → Package
+Lobby → ENTER (solo) → Agent Portal → EDIT or PLAY → Export → Package
+         ↘ CREATE SESSION → share invite → ENTER SESSION (multiplayer host)
 ```
 
 | Step | Where | What you learn |
 |------|--------|----------------|
-| 1 | **Lobby → ENTER →** or **CREATE** | Solo **ENTER →** starts in BUILD (EDIT); host gets room code |
-| 2 | **ENTER** | Blank grid · short corner-hub tour |
+| 1 | **Lobby → ENTER →** | Solo primary — starts BUILD; no network needed |
+| 2 | Engine | Blank grid · short corner-hub tour |
 | 3 | **Agent Portal** | Describe what to build · Grok/Ollama auto-detect |
 | 4 | **EDIT** | TOOLS menu → insert, Compiler, PromptGen, textures |
 | 5 | **PLAY** | Top-left PLAY · walk physics · **F** interact |
@@ -23,7 +24,8 @@ Lobby → CREATE SESSION → ENTER → Agent Portal → EDIT or PLAY → Export 
 | 7 | **TOOLS → EXPORT** | 9-step walkthrough → manifest (TARGETS default Web only) |
 | 8 | **CLI** | `store:prep`, `package:*` or `package:steam` |
 
-Optional: **Lobby → TC →** — vehicles, NPCs, circuit, full export practice.
+Optional multiplayer: **CREATE SESSION** → copy code/link → **ENTER SESSION**. Friends **JOIN** with code (+ passcode if set).  
+Optional demo: **Lobby → TC DEMO**. Accounts (X / Grok) are optional — [AUTH.md](AUTH.md).
 
 ---
 
@@ -140,7 +142,7 @@ npm run store:verify              # optional smoke
 
 ## Multiplayer (optional)
 
-**CREATE SESSION** → share room code → friends **JOIN**. Host pauses for EDIT; guests need **Admin** to build.
+**CREATE SESSION** → share room code/link → **ENTER SESSION** → friends **JOIN**. Optional host passcode under **More options**. Host pauses for EDIT; guests need **Admin** to build. CREATE times out after 12s if the peer server is unreachable — use **ENTER** for solo.
 
 ---
 
@@ -148,6 +150,8 @@ npm run store:verify              # optional smoke
 
 - [ROADMAP.md](ROADMAP.md) — v10.8+ forward plan
 - [STREAMLINED_DEV.md](STREAMLINED_DEV.md) — Portal → SETUP → export
+- [AUTH.md](AUTH.md) — optional X + Grok accounts
 - [AGENT_ROUTING.md](AGENT_ROUTING.md) — tiered Ollama + Grok
+- [UI_AND_AGENTS.md](UI_AND_AGENTS.md) — lobby, hubs, freeze
 - [CONTROLS.md](CONTROLS.md) — action controls + movement tuning
 - [CHANGELOG.md](CHANGELOG.md) — version history
