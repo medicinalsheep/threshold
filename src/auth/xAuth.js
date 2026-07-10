@@ -396,15 +396,36 @@ export const XAuth = {
         const configured = this.isConfigured();
 
         document.querySelectorAll('[data-x-auth-login]').forEach((btn) => {
-            btn.hidden = !configured;
-            btn.disabled = false;
+            // Always show the control — disabled + title if app not configured
+            btn.hidden = false;
+            btn.disabled = !configured || !!user;
+            if (!configured) {
+                btn.title = 'Set VITE_X_CLIENT_ID (developer.x.com SPA app) then rebuild';
+                btn.setAttribute('aria-disabled', 'true');
+            } else if (user) {
+                btn.title = `Signed in as @${user.username}`;
+                btn.setAttribute('aria-disabled', 'true');
+            } else {
+                btn.title = 'Opens X OAuth — authorize Threshold (not SuperGrok tab cookies)';
+                btn.removeAttribute('aria-disabled');
+            }
+            // Hide login once signed in (avatar/handle take its place)
+            if (user && (btn.closest('.lobby-account-card') || btn.closest('.lobby-x-auth') || btn.closest('#auth-card'))) {
+                btn.style.display = 'none';
+            } else {
+                btn.style.display = '';
+            }
         });
         document.querySelectorAll('[data-x-auth-logout]').forEach((btn) => {
             btn.hidden = !user;
         });
         document.querySelectorAll('[data-x-menu-open]').forEach((btn) => {
-            btn.hidden = !configured;
+            btn.hidden = false;
+            btn.disabled = !configured;
             btn.classList.toggle('x-menu-signed-in', !!user);
+            btn.title = !configured
+                ? 'X menu needs VITE_X_CLIENT_ID'
+                : (user ? `X · @${user.username}` : 'X feed & post — sign in first');
         });
         document.querySelectorAll('[data-x-auth-user]').forEach((el) => {
             if (!user) {
@@ -430,27 +451,36 @@ export const XAuth = {
         document.querySelectorAll('.lobby-x-user').forEach((row) => {
             row.hidden = !user;
         });
-        document.querySelectorAll('[data-x-auth-login]').forEach((btn) => {
-            if (user && btn.closest('.lobby-x-auth, #agent-portal-xai-wrap, #auth-card')) {
-                btn.style.display = user ? 'none' : '';
-            } else if (configured) {
-                btn.style.display = '';
-            }
-        });
         document.querySelectorAll('[data-x-auth-configured]').forEach((el) => {
+            // Show setup hint when Client ID missing
             el.hidden = configured;
+        });
+
+        // Nav: Sign in X vs chip
+        document.querySelectorAll('nav [data-x-auth-login], #app-nav [data-x-auth-login]').forEach((btn) => {
+            if (!configured) {
+                btn.style.display = '';
+                btn.textContent = 'X (setup)';
+            } else if (user) {
+                btn.style.display = 'none';
+            } else {
+                btn.style.display = '';
+                if (btn.textContent.includes('setup') || btn.textContent.trim() === 'X (setup)') {
+                    btn.textContent = 'Sign in X';
+                }
+            }
         });
 
         // Nav logout: show if X or xAI session
         const logoutBtn = document.getElementById('auth-logout-btn');
-        if (logoutBtn && !document.body.dataset.authLogoutBound) {
-            // leave existing handler; visibility managed below
-        }
         if (logoutBtn) {
             const show = Boolean(user) || Boolean(window.Auth?.isLoggedIn?.());
             logoutBtn.style.display = show ? 'inline-block' : 'none';
             logoutBtn.title = user ? `Sign out @${user.username}` : 'Clear xAI key';
         }
+
+        // Display-name X options (lobby)
+        window.DisplayName?.syncUi?.();
     },
 
     bindUi() {
@@ -459,6 +489,15 @@ export const XAuth = {
             btn.dataset.bound = '1';
             btn.addEventListener('click', async () => {
                 try {
+                    if (!this.isConfigured()) {
+                        window.UI?.status?.('X login needs VITE_X_CLIENT_ID — see docs/AUTH.md');
+                        return;
+                    }
+                    if (this.isLoggedIn()) {
+                        window.UI?.status?.(`Already signed in as @${this.getUser()?.username}`);
+                        return;
+                    }
+                    window.UI?.status?.('Redirecting to X to authorize…');
                     await this.login();
                 } catch (e) {
                     window.UI?.status?.(e.message || 'X login failed');
