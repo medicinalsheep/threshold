@@ -80,6 +80,7 @@
     "ollama:serve": "node scripts/ollama-serve-threshold.cjs",
     "ollama:verify": "node scripts/ollama-verify.cjs",
     "ollama:benchmark": "node scripts/ollama-benchmark.cjs",
+    "ollama:stress": "node scripts/ollama-workflow-stress.cjs",
     "bootcamp:init": "node scripts/bootcamp-init.cjs",
     "bootcamp:build": "node scripts/bootcamp-build.cjs",
     "bootcamp:create": "node scripts/bootcamp-create.cjs",
