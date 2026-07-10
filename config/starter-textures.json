@@ -4,12 +4,12 @@
   "note": "Quality-only PBR — minimum 1K maps (albedo, roughness, normal); GIMP/Blender workflow for user-added assets",
   "defaults": {
     "uvRepeat": [4, 4],
-    "normalScale": 0.85,
-    "envMapIntensity": 0.28
+    "normalScale": 0.9,
+    "envMapIntensity": 0.3
   },
   "objects": {
-    "Starter Ground": { "uvRepeat": [7, 7], "normalScale": 0.75, "envMapIntensity": 0.24 },
-    "AI Build Station": { "uvRepeat": [1, 1], "envMapIntensity": 0.32 }
+    "Starter Ground": { "uvRepeat": [5, 5], "normalScale": 0.95, "envMapIntensity": 0.26 },
+    "AI Build Station": { "uvRepeat": [1, 1], "normalScale": 0.55, "envMapIntensity": 0.38 }
   },
   "aliases": {
     "engine_ground": "Starter Ground",

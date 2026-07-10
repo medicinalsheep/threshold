@@ -1,5 +1,12 @@
 # Changelog
 
+## 10.12.16 — Hero default textures + Android prep doc
+
+- **Starter Ground** — richer concrete: tile joints, grit FBM, joint-aware roughness/normal @ 2K
+- **AI Build Station** — kiosk chassis, bezel, scanline screen, status LEDs, metalness map
+- **Regen** — `npm run textures:gen:default` (+ HILOD tiers + WebP compress)
+- **Docs** — [ANDROID_PREP.md](ANDROID_PREP.md) APK path after polish; Grok-on-mobile honesty
+
 ## 10.12.15 — Practical touch layout + store-verify fix
 
 - **Touch layout v3** — dual-stick practical defaults: move/sprint left; fire/ADS/jump arc above look stick; interact mid-right; meta top-right; **UI** touch button

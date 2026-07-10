@@ -1,8 +1,8 @@
 {
   "format": "threshold-game",
   "formatVersion": 1,
-  "engineVersion": "9.16.0",
-  "exportedAt": "2026-07-06T07:36:27.686Z",
+  "engineVersion": "10.12.14",
+  "exportedAt": "2026-07-10T09:19:34.363Z",
   "source": "tc-export-manifest",
   "tcEdition": "tc-show",
   "game": {
@@ -1421,12 +1421,6 @@
       "realism": "r8",
       "variants": [
         {
-          "suffix": "_512",
-          "file": "tc_run_albedo_512.png",
-          "path": "textures/tc_run_albedo_512.png",
-          "maxPx": 128
-        },
-        {
           "suffix": "_1k",
           "file": "tc_run_albedo_1k.png",
           "path": "textures/tc_run_albedo_1k.png",
@@ -1456,12 +1450,6 @@
       "license": "Original — TC",
       "realism": "r8",
       "variants": [
-        {
-          "suffix": "_512",
-          "file": "tc_run_roughness_512.png",
-          "path": "textures/tc_run_roughness_512.png",
-          "maxPx": 128
-        },
         {
           "suffix": "_1k",
           "file": "tc_run_roughness_1k.png",
@@ -1493,12 +1481,6 @@
       "realism": "r8",
       "variants": [
         {
-          "suffix": "_512",
-          "file": "tc_run_metalness_512.png",
-          "path": "textures/tc_run_metalness_512.png",
-          "maxPx": 128
-        },
-        {
           "suffix": "_1k",
           "file": "tc_run_metalness_1k.png",
           "path": "textures/tc_run_metalness_1k.png",
@@ -1528,12 +1510,6 @@
       "license": "Original — TC",
       "realism": "r8",
       "variants": [
-        {
-          "suffix": "_512",
-          "file": "tc_haul_albedo_512.png",
-          "path": "textures/tc_haul_albedo_512.png",
-          "maxPx": 128
-        },
         {
           "suffix": "_1k",
           "file": "tc_haul_albedo_1k.png",
@@ -1565,12 +1541,6 @@
       "realism": "r8",
       "variants": [
         {
-          "suffix": "_512",
-          "file": "tc_haul_roughness_512.png",
-          "path": "textures/tc_haul_roughness_512.png",
-          "maxPx": 128
-        },
-        {
           "suffix": "_1k",
           "file": "tc_haul_roughness_1k.png",
           "path": "textures/tc_haul_roughness_1k.png",
@@ -1600,12 +1570,6 @@
       "license": "Original — TC",
       "realism": "r8",
       "variants": [
-        {
-          "suffix": "_512",
-          "file": "tc_haul_metalness_512.png",
-          "path": "textures/tc_haul_metalness_512.png",
-          "maxPx": 128
-        },
         {
           "suffix": "_1k",
           "file": "tc_haul_metalness_1k.png",
@@ -1637,12 +1601,6 @@
       "realism": "r8",
       "variants": [
         {
-          "suffix": "_512",
-          "file": "tc_msh_albedo_512.png",
-          "path": "textures/tc_msh_albedo_512.png",
-          "maxPx": 128
-        },
-        {
           "suffix": "_1k",
           "file": "tc_msh_albedo_1k.png",
           "path": "textures/tc_msh_albedo_1k.png",
@@ -1672,12 +1630,6 @@
       "license": "Original — TC",
       "realism": "r8",
       "variants": [
-        {
-          "suffix": "_512",
-          "file": "tc_msh_roughness_512.png",
-          "path": "textures/tc_msh_roughness_512.png",
-          "maxPx": 128
-        },
         {
           "suffix": "_1k",
           "file": "tc_msh_roughness_1k.png",
@@ -1709,12 +1661,6 @@
       "realism": "r8",
       "variants": [
         {
-          "suffix": "_512",
-          "file": "tc_mec_albedo_512.png",
-          "path": "textures/tc_mec_albedo_512.png",
-          "maxPx": 128
-        },
-        {
           "suffix": "_1k",
           "file": "tc_mec_albedo_1k.png",
           "path": "textures/tc_mec_albedo_1k.png",
@@ -1744,12 +1690,6 @@
       "license": "Original — TC",
       "realism": "r8",
       "variants": [
-        {
-          "suffix": "_512",
-          "file": "tc_mec_roughness_512.png",
-          "path": "textures/tc_mec_roughness_512.png",
-          "maxPx": 128
-        },
         {
           "suffix": "_1k",
           "file": "tc_mec_roughness_1k.png",
@@ -1781,12 +1721,6 @@
       "realism": "r8",
       "variants": [
         {
-          "suffix": "_512",
-          "file": "tc_span_albedo_512.png",
-          "path": "textures/tc_span_albedo_512.png",
-          "maxPx": 128
-        },
-        {
           "suffix": "_1k",
           "file": "tc_span_albedo_1k.png",
           "path": "textures/tc_span_albedo_1k.png",
@@ -1816,12 +1750,6 @@
       "license": "Original — TC",
       "realism": "r8",
       "variants": [
-        {
-          "suffix": "_512",
-          "file": "tc_span_roughness_512.png",
-          "path": "textures/tc_span_roughness_512.png",
-          "maxPx": 128
-        },
         {
           "suffix": "_1k",
           "file": "tc_span_roughness_1k.png",

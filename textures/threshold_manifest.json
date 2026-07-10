@@ -1,7 +1,7 @@
 {
   "format": "threshold-gimp-manifest",
   "formatVersion": 1,
-  "engineVersion": "10.11.2",
+  "engineVersion": "10.12.15",
   "textures": [
     {
       "id": "tc_run_albedo",
@@ -720,6 +720,6 @@
   ],
   "exportDir": "textures",
   "tcRealism": "r8",
-  "exportedAt": "2026-07-08T00:03:16.189Z",
-  "note": "Quality-first default spawn — 2K masters with compressed _1k tiers for Lite/Mobile graphics"
+  "exportedAt": "2026-07-10T09:25:43.615Z",
+  "note": "Hero-quality procedural defaults — 2K masters + HILOD 1k/2k + WebP for Lite/Mobile. GIMP can override any slot."
 }

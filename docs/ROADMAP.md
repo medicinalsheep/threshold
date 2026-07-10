@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.12.15 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.12.16 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -144,7 +144,7 @@ UI reference: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Controls: [CONTROLS.md](CO
 | Area | Notes |
 |------|-------|
 | **10.10** agent stability | AI memory freeze GLTF edge cases; native fullscreen peek; parallel Ollama guard |
-| GIMP hero pass | Hand-painted 2K overrides for grid + AI station (procedural seed ships in 10.11.2) |
+| GIMP hero pass | ✅ v10.12.16 procedural hero upgrade (joints/kiosk); hand-paint optional via GIMP SYNC |
 | Doc version sync | `README.md`, `CAPABILITIES.md`, `GETTING_STARTED.md` still drift from live version |
 | `controls:verify` / `store:verify` | ✅ re-run 10.12.15 (store chunk hash fix) |
 | Mouse mode without Third Eye highlights | ✅ v10.12.14 — **M** UI mouse + Alt peek (no highlights); F = Third Eye awareness |

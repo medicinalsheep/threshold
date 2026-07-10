@@ -1,13 +1,13 @@
 {
   "format": "threshold-default-textures",
-  "version": 1,
-  "note": "Quality-first default spawn — 2K masters with compressed _1k tiers for Lite/Mobile graphics",
+  "version": 2,
+  "note": "Hero-quality procedural defaults — 2K masters + HILOD 1k/2k + WebP for Lite/Mobile. GIMP can override any slot.",
   "masterPx": 2048,
   "hilod": [
     { "suffix": "_1k", "px": 1024 },
     { "suffix": "_2k", "px": 2048 }
   ],
-  "webpQuality": 82,
+  "webpQuality": 84,
   "assets": [
     {
       "slug": "starter_ground",
@@ -15,9 +15,9 @@
       "tcEd": "tc-lite",
       "slots": ["albedo", "roughness", "normal"],
       "palette": {
-        "base": [42, 44, 48],
-        "speck": [58, 60, 66],
-        "ring": [72, 76, 82]
+        "base": [48, 50, 54],
+        "speck": [62, 64, 70],
+        "ring": [78, 82, 88]
       },
       "style": "concrete"
     },
@@ -27,9 +27,10 @@
       "tcEd": "tc-lite",
       "slots": ["albedo", "roughness", "metalness"],
       "palette": {
-        "body": [36, 40, 48],
-        "screen": [14, 28, 44],
-        "trim": [68, 74, 84]
+        "body": [32, 36, 44],
+        "screen": [10, 32, 52],
+        "trim": [72, 80, 92],
+        "accent": [36, 170, 230]
       },
       "style": "terminal"
     }

@@ -1,6 +1,6 @@
 # Threshold documentation index
 
-**Version:** 10.12.15 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.12.16 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Full scope map — quality-first blank grid, optional TC reference editions, and where to read more.
 
@@ -63,6 +63,7 @@ flowchart TB
 | Agent tiers & benchmarks | [AGENT_ROUTING.md](AGENT_ROUTING.md) | `ollama:benchmark` · SMART DEV |
 | UI layout + agents (10.7+) | [UI_AND_AGENTS.md](UI_AND_AGENTS.md) | Portal · freeze · touch · UNLOCK layout |
 | Train mini agents | [BOOTCAMP.md](BOOTCAMP.md) · [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) | `npm run train:mini -- --no-seed` · `ollama:golden` |
+| Android APK (after polish) | [ANDROID_PREP.md](ANDROID_PREP.md) · [STORE_RELEASE.md](STORE_RELEASE.md) | `npm run package:android` |
 | Action controls | [CONTROLS.md](CONTROLS.md) | PLAY mode · weather · F interact |
 | Creative loop | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | BUILD → insert · PromptGen |
 | Action controls | [CONTROLS.md](CONTROLS.md) | LMB aim · RMB shoot · F interact |

@@ -48,9 +48,19 @@ HILOD tiers read from JSON: `_512` / `_1k` / `_2k` / `_4k`
 
 ---
 
-## Starter scene tiling
+## Hero defaults (grid + AI station)
 
-After manifest wiring, `config/starter-textures.json` applies UV repeat + normal scale per object — keeps 512px maps sharp on large floors without bigger files.
+Regenerate quality-first 2K masters (no GIMP required):
+
+```bash
+npm run textures:gen:default
+npm run bundle:assets
+```
+
+- **Starter Ground** — concrete slabs, expansion joints, grit, normals  
+- **AI Build Station** — metal chassis, screen, LEDs  
+
+Hand-paint overrides: open the PNG → paint → Export / `textures:watch` SYNC (object name must match).
 
 ---
 

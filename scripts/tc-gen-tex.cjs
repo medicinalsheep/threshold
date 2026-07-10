@@ -88,21 +88,99 @@ function spanRough(x, y, w, h) {
     return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
 }
 
+/** Multi-octave noise for hero-quality surfaces */
+function fbm(x, y, seed = 0, octaves = 4) {
+    let amp = 1;
+    let freq = 1;
+    let sum = 0;
+    let norm = 0;
+    for (let i = 0; i < octaves; i++) {
+        sum += noise(x * freq, y * freq, seed + i * 17) * amp;
+        norm += amp;
+        amp *= 0.5;
+        freq *= 2.1;
+    }
+    return sum / (norm || 1);
+}
+
+/**
+ * Hero concrete slab — expansion joints, grit, soft AO in tile centers.
+ * Used for Starter Ground / grid pad (quality-first default).
+ */
 function concreteAlbedo(x, y, w, h, pal) {
     const u = x / w;
     const v = y / h;
+    // Large-scale tile grid (≈4×4 panels)
+    const tiles = 4;
+    const tu = (u * tiles) % 1;
+    const tv = (v * tiles) % 1;
+    const jointW = 0.028;
+    const joint = tu < jointW || tv < jointW || tu > 1 - jointW || tv > 1 - jointW;
+    // Micro grit + soft variation
+    const grit = fbm(x * 0.9, y * 0.9, 23, 5);
+    const speck = fbm(x * 3.2, y * 3.2, 29, 3);
+    // Subtle radial pad edge (lab floor ring)
     const ring = Math.hypot(u - 0.5, v - 0.5);
-    const edge = ring > 0.38 && ring < 0.44;
-    let base = edge ? pal.ring : pal.base;
-    const n = noise(x, y, 23) * 14;
-    const speck = noise(x * 2, y * 2, 29) > 0.92 ? 18 : 0;
-    return [Math.min(255, base[0] + n + speck), Math.min(255, base[1] + n + speck), Math.min(255, base[2] + n + speck), 255];
+    const edgeBand = ring > 0.42 && ring < 0.47;
+    // Tile-center darkening (wear bowl)
+    const mid = Math.hypot(tu - 0.5, tv - 0.5);
+    const wear = Math.max(0, 1 - mid * 2.2) * 10;
+
+    let base = joint ? (pal.ring || [72, 76, 82]) : (pal.base || [42, 44, 48]);
+    if (edgeBand && !joint) {
+        base = [
+            Math.min(255, base[0] + 14),
+            Math.min(255, base[1] + 12),
+            Math.min(255, base[2] + 10),
+        ];
+    }
+    const n = (grit - 0.5) * 28 + (speck > 0.78 ? 12 : 0) - wear;
+    const speck2 = speck > 0.93 ? 16 : 0;
+    return [
+        Math.max(0, Math.min(255, base[0] + n + speck2)),
+        Math.max(0, Math.min(255, base[1] + n + speck2 * 0.9)),
+        Math.max(0, Math.min(255, base[2] + n + speck2 * 0.85)),
+        255,
+    ];
 }
 
 function concreteRough(x, y, w, h) {
-    const base = 198;
-    const n = noise(x, y, 31) * 22;
-    return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
+    const u = x / w;
+    const v = y / h;
+    const tiles = 4;
+    const tu = (u * tiles) % 1;
+    const tv = (v * tiles) % 1;
+    const jointW = 0.028;
+    const joint = tu < jointW || tv < jointW || tu > 1 - jointW || tv > 1 - jointW;
+    // Joints slightly smoother (filled sealant); field is matte concrete
+    const base = joint ? 165 : 205;
+    const n = (fbm(x, y, 31, 4) - 0.5) * 36;
+    const val = Math.max(40, Math.min(255, base + n));
+    return [val, val, val, 255];
+}
+
+function concreteNormal(x, y, w, h) {
+    // Height proxy: joints + grit for readable relief at 2K
+    const u = x / w;
+    const v = y / h;
+    const tiles = 4;
+    const tu = (u * tiles) % 1;
+    const tv = (v * tiles) % 1;
+    const jointW = 0.03;
+    const joint = tu < jointW || tv < jointW || tu > 1 - jointW || tv > 1 - jointW;
+    const h0 = fbm(x, y, 71, 4) * 0.55 + (joint ? 0.35 : 0);
+    const hx = fbm(x + 1.2, y, 71, 4) * 0.55 + (((x + 1.2) / w * tiles) % 1 < jointW ? 0.35 : 0);
+    const hy = fbm(x, y + 1.2, 71, 4) * 0.55 + ((v + 1.2 / h) * tiles % 1 < jointW ? 0.35 : 0);
+    const nx = -(hx - h0) * 2.4;
+    const ny = -(hy - h0) * 2.4;
+    const nz = 1;
+    const len = Math.hypot(nx, ny, nz) || 1;
+    return [
+        Math.round((nx / len * 0.5 + 0.5) * 255),
+        Math.round((ny / len * 0.5 + 0.5) * 255),
+        Math.round((nz / len * 0.5 + 0.5) * 255),
+        255,
+    ];
 }
 
 function wallAlbedo(x, y, w, h, pal) {
@@ -151,32 +229,87 @@ function surfaceNormal(x, y, seed = 71, strength = 0.85) {
     ];
 }
 
+/**
+ * Hero AI Build Station kiosk — chassis, bezel, glowing screen grid, status LEDs.
+ */
 function terminalAlbedo(x, y, w, h, pal) {
     const u = x / w;
     const v = y / h;
-    const screen = u > 0.18 && u < 0.82 && v > 0.52 && v < 0.82;
-    const trim = v < 0.2 || v > 0.88;
-    let base = pal.body;
-    if (screen) base = pal.screen;
-    if (trim) base = pal.trim;
-    const n = noise(x, y, 37) * 10;
-    return [Math.min(255, base[0] + n), Math.min(255, base[1] + n), Math.min(255, base[2] + n), 255];
+    const body = pal.body || [36, 40, 48];
+    const screen = pal.screen || [14, 28, 44];
+    const trim = pal.trim || [68, 74, 84];
+    const accent = pal.accent || [40, 160, 220];
+
+    // Chassis regions
+    const foot = v < 0.12;
+    const topCap = v > 0.9;
+    const sideRail = u < 0.1 || u > 0.9;
+    const screenRect = u > 0.16 && u < 0.84 && v > 0.28 && v < 0.78;
+    const bezel = screenRect && (u < 0.2 || u > 0.8 || v < 0.32 || v > 0.74);
+    const glass = screenRect && !bezel;
+    // Status strip under screen
+    const statusBar = u > 0.22 && u < 0.78 && v > 0.18 && v < 0.24;
+    const ledOn = statusBar && ((Math.floor(u * 18) % 5) === 0);
+
+    let base = body;
+    if (foot || topCap || sideRail) base = trim;
+    if (bezel) base = [trim[0] + 8, trim[1] + 8, trim[2] + 10];
+    if (glass) {
+        // Soft scanline + vignette
+        const scan = Math.sin(v * h * 0.35) * 0.5 + 0.5;
+        const vig = 1 - Math.hypot(u - 0.5, (v - 0.53) * 1.1) * 1.4;
+        const glow = Math.max(0, vig) * 40;
+        base = [
+            Math.min(255, screen[0] + glow * 0.4 + scan * 8),
+            Math.min(255, screen[1] + glow * 0.85 + scan * 12),
+            Math.min(255, screen[2] + glow + scan * 18),
+        ];
+        // Grid of soft “UI tiles”
+        const gx = Math.floor((u - 0.2) / 0.08);
+        const gy = Math.floor((v - 0.34) / 0.07);
+        if (gx >= 0 && gy >= 0 && (gx + gy) % 3 === 0) {
+            base = [
+                Math.min(255, base[0] + 12),
+                Math.min(255, base[1] + 28),
+                Math.min(255, base[2] + 40),
+            ];
+        }
+    }
+    if (statusBar) base = ledOn ? accent : [22, 26, 32];
+
+    const n = (fbm(x, y, 37, 3) - 0.5) * 14;
+    return [
+        Math.max(0, Math.min(255, base[0] + n)),
+        Math.max(0, Math.min(255, base[1] + n)),
+        Math.max(0, Math.min(255, base[2] + n)),
+        255,
+    ];
 }
 
 function terminalRough(x, y, w, h) {
+    const u = x / w;
     const v = y / h;
-    const screen = v > 0.52 && v < 0.82;
-    const base = screen ? 95 : 175;
-    const n = noise(x, y, 41) * 20;
-    return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
+    const glass = u > 0.2 && u < 0.8 && v > 0.32 && v < 0.74;
+    const bezel = u > 0.16 && u < 0.84 && v > 0.28 && v < 0.78 && !glass;
+    const base = glass ? 55 : bezel ? 120 : 185;
+    const n = (fbm(x, y, 41, 3) - 0.5) * 24;
+    const val = Math.max(20, Math.min(255, base + n));
+    return [val, val, val, 255];
 }
 
 function terminalMetal(x, y, w, h) {
+    const u = x / w;
     const v = y / h;
-    const bezel = v > 0.48 && v < 0.86;
-    const val = bezel ? 140 : 18;
-    const n = noise(x, y, 43) * 12;
-    return [Math.min(255, val + n), Math.min(255, val + n), Math.min(255, val + n), 255];
+    const glass = u > 0.2 && u < 0.8 && v > 0.32 && v < 0.74;
+    const bezel = u > 0.16 && u < 0.84 && v > 0.28 && v < 0.78 && !glass;
+    const rails = u < 0.1 || u > 0.9 || v < 0.12 || v > 0.9;
+    let val = 22;
+    if (rails) val = 95;
+    if (bezel) val = 155;
+    if (glass) val = 8;
+    const n = (fbm(x, y, 43, 2) - 0.5) * 16;
+    const o = Math.max(0, Math.min(255, val + n));
+    return [o, o, o, 255];
 }
 
 function grassAlbedo(x, y, w, h, pal) {
@@ -389,7 +522,7 @@ function slotFn(asset, slot) {
     if (asset.style === 'concrete') {
         if (slot === 'albedo') return (x, y, w, h) => concreteAlbedo(x, y, w, h, asset.palette);
         if (slot === 'roughness') return (x, y, w, h) => concreteRough(x, y, w, h);
-        if (slot === 'normal') return (x, y) => surfaceNormal(x, y, 71, 0.75);
+        if (slot === 'normal') return (x, y, w, h) => concreteNormal(x, y, w, h);
     }
     if (asset.style === 'wall') {
         if (slot === 'albedo') return (x, y, w, h) => wallAlbedo(x, y, w, h, asset.palette);

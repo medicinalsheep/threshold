@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), tiered local/cloud agents, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **10.12.15**)
+**Version:** `src/config.js` → `VERSION` (currently **10.12.16**)
 
 **Doc index:** [docs/README.md](docs/README.md) — full scope map
 
