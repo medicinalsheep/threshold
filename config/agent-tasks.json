@@ -1,30 +1,58 @@
 {
   "format": "threshold-agent-tasks",
-  "version": 1,
+  "version": 2,
   "tiers": {
     "small": {
       "label": "Small — chat, classify, status",
       "maxTokens": 256,
       "timeoutMs": 60000,
       "temperature": 0.5,
-      "ollamaModels": ["threshold-mini-npc", "llama3.2:3b", "gemma3:4b", "qwen2.5-coder:1.5b-base"],
-      "grok": false
+      "ollamaModels": [
+        "threshold-mini-npc",
+        "llama3.2:3B",
+        "llama3.2:3b",
+        "qwen3:4b",
+        "gemma3:4b",
+        "qwen2.5-coder:1.5b-base"
+      ],
+      "grok": false,
+      "notes": "2060 laptop: llama3.2:3B ~70 tok/s, full probe pass. qwen3:4b needs think:false (client default)."
     },
     "medium": {
       "label": "Medium — patches, compiler fixes",
       "maxTokens": 1536,
       "timeoutMs": 180000,
       "temperature": 0.35,
-      "ollamaModels": ["threshold-mini-dev", "qwen2.5-coder:1.5b-base", "qwen2.5-coder:7b"],
-      "grok": "fallback"
+      "ollamaModels": [
+        "threshold-mini-dev",
+        "llama3.2:3B",
+        "llama3.2:3b",
+        "qwen2.5:latest",
+        "qwen2.5-coder:7b",
+        "qwen2.5-coder:1.5b-base",
+        "qwen3:4b"
+      ],
+      "grok": "fallback",
+      "notes": "Prefer llama3.2 for interactive latency; qwen2.5:latest for stronger JS when wait is OK (~15 tok/s on 2060)."
     },
     "large": {
       "label": "Large — full scene scripts",
       "maxTokens": 4096,
       "timeoutMs": 300000,
       "temperature": 0.4,
-      "ollamaModels": ["threshold-dev", "threshold-large-scenes", "llama3.1:8b", "MFDoom/deepseek-r1-tool-calling:8b", "deepseek-r1:8b", "qwen2.5-coder:7b"],
-      "grokPreferred": true
+      "ollamaModels": [
+        "threshold-dev",
+        "threshold-large-scenes",
+        "qwen2.5:latest",
+        "llama3.2:3B",
+        "gemma4:latest",
+        "llama3.1:8b",
+        "MFDoom/deepseek-r1-tool-calling:8b",
+        "deepseek-r1:8b",
+        "qwen2.5-coder:7b"
+      ],
+      "grokPreferred": true,
+      "notes": "2060: qwen2.5:latest solid full scenes (~15 tok/s). gemma4:latest quality OK but ~9.6GB + slow cold load. Prefer Grok when online."
     }
   },
   "tasks": {
@@ -35,6 +63,15 @@
     "prompt_snippet": { "tier": "medium", "label": "PromptGen partial" },
     "scene_script": { "tier": "large", "label": "Full scene generation" },
     "prompter_generate": { "tier": "large", "label": "PromptGen run" }
+  },
+  "laptop2060Defaults": {
+    "small": "llama3.2:3B",
+    "medium": "llama3.2:3B",
+    "large": "qwen2.5:latest",
+    "avoidForCode": ["qwen3:4b"],
+    "avoidForInteractive": ["gemma4:latest"],
+    "benchmark": "npm run ollama:benchmark -- --all",
+    "ranAt": "2026-07-10"
   },
   "training": {
     "bootcamp": "./training/bootcamp",

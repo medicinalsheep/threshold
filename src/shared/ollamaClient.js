@@ -2,8 +2,26 @@
 
 const STORAGE_MODEL_KEY = 'threshold_ollama_model';
 const DEFAULT_MODEL = import.meta.env.VITE_OLLAMA_MODEL || 'llama3.2:3b';
+/** Cap context on mid-range GPUs (e.g. RTX 2060 6GB) so large tags don't thrash VRAM. */
+const DEFAULT_NUM_CTX = Number(import.meta.env.VITE_OLLAMA_NUM_CTX) || 4096;
 
 let probeInflight = null;
+
+/** Models that default to chain-of-thought; disable for agent code/intent unless opted in. */
+function isThinkingModel(name) {
+    const n = String(name || '').toLowerCase();
+    return /qwen3|gemma4|deepseek-r1|r1-tool|thinking|reason/.test(n);
+}
+
+/** Strip CoT blocks so Compiler / intent routers get usable text. */
+export function stripOllamaThinking(text) {
+    let t = String(text || '');
+    t = t.replace(/<think>[\s\S]*?<\/think>/gi, '');
+    t = t.replace(/<thinking>[\s\S]*?<\/thinking>/gi, '');
+    t = t.replace(/<\|thinking\|>[\s\S]*?<\|\/thinking\|>/gi, '');
+    t = t.replace(/^[\s\S]*?<\/think>/i, '');
+    return t.trim();
+}
 
 function isLocalPage() {
     if (typeof window === 'undefined') return false;
@@ -79,15 +97,22 @@ export const OllamaClient = {
 
     async generate(prompt, options = {}) {
         const model = options.model || this.defaultModel;
+        const think = options.think ?? (isThinkingModel(model) ? false : undefined);
+        const body = {
+            model,
+            prompt,
+            stream: false,
+            options: {
+                temperature: options.temperature ?? 0.35,
+                num_predict: options.maxTokens ?? 2048,
+                num_ctx: options.numCtx ?? DEFAULT_NUM_CTX,
+            },
+        };
+        if (think !== undefined) body.think = think;
         const res = await fetch(`${this.baseUrl}/api/generate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                model,
-                prompt,
-                stream: false,
-                options: { temperature: options.temperature ?? 0.35, num_predict: options.maxTokens ?? 2048 },
-            }),
+            body: JSON.stringify(body),
             signal: AbortSignal.timeout(options.timeoutMs ?? 120000),
         });
         if (!res.ok) {
@@ -96,26 +121,31 @@ export const OllamaClient = {
             throw new Error(hint || `Ollama error (${res.status}): ${t.slice(0, 120)}`);
         }
         const data = await res.json();
-        return (data.response || '').trim();
+        return stripOllamaThinking(data.response || '');
     },
 
     async chat(system, user, options = {}) {
         const model = options.model || this.defaultModel;
+        // Reasoning tags (qwen3, gemma4, r1) burn num_predict on CoT — off by default for agents
+        const think = options.think ?? (isThinkingModel(model) ? false : undefined);
+        const body = {
+            model,
+            messages: [
+                { role: 'system', content: system },
+                { role: 'user', content: user },
+            ],
+            stream: false,
+            options: {
+                temperature: options.temperature ?? 0.35,
+                num_predict: options.maxTokens ?? 1024,
+                num_ctx: options.numCtx ?? DEFAULT_NUM_CTX,
+            },
+        };
+        if (think !== undefined) body.think = think;
         const res = await fetch(`${this.baseUrl}/api/chat`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                model,
-                messages: [
-                    { role: 'system', content: system },
-                    { role: 'user', content: user },
-                ],
-                stream: false,
-                options: {
-                    temperature: options.temperature ?? 0.35,
-                    num_predict: options.maxTokens ?? 1024,
-                },
-            }),
+            body: JSON.stringify(body),
             signal: AbortSignal.timeout(options.timeoutMs ?? 120000),
         });
         if (!res.ok) {
@@ -124,7 +154,13 @@ export const OllamaClient = {
             throw new Error(hint || `Ollama chat (${res.status}): ${t.slice(0, 120)}`);
         }
         const data = await res.json();
-        return (data.message?.content || '').trim();
+        const content = data.message?.content || '';
+        const thinking = data.message?.thinking || '';
+        // Prefer content; if model stuffed answer into thinking only, fall back carefully
+        const cleaned = stripOllamaThinking(content);
+        if (cleaned) return cleaned;
+        if (thinking && options.allowThinkingFallback) return stripOllamaThinking(thinking);
+        return cleaned;
     },
 };
 

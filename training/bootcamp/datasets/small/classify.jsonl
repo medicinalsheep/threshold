@@ -13,3 +13,13 @@
 {"task":"intent_classify","messages":[{"role":"user","content":"watch folder for new PBR maps"},{"role":"assistant","content":"INTENT: texture\nAPI: textures:watch"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"switch to toon shading"},{"role":"assistant","content":"INTENT: style\nAPI: Engine.setRenderMode(1)"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"publish android build to play store"},{"role":"assistant","content":"INTENT: export\nAPI: ExportWizard"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"delete the red crate"},{"role":"assistant","content":"INTENT: edit\nAPI: World.deleteObject"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"open the compiler and fix my script"},{"role":"assistant","content":"INTENT: other\nAPI: Compiler"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"connect ollama for NPC chat"},{"role":"assistant","content":"INTENT: other\nAPI: AgentPortal + OllamaClient"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"add wet glass shader on the window"},{"role":"assistant","content":"INTENT: style\nAPI: shaderRegistry + userData.shaderHook"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"join room ALPHA with passcode"},{"role":"assistant","content":"INTENT: other\nAPI: Lobby.join"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"record a gameplay clip"},{"role":"assistant","content":"INTENT: other\nAPI: Recorder"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"attach ambient rain loop to the courtyard zone"},{"role":"assistant","content":"INTENT: sound\nAPI: audioZoneSystem"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"generate a full lab scene with AI"},{"role":"assistant","content":"INTENT: spawn\nAPI: AgentPortal + World.createObject"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"switch graphics tier to mobile lite"},{"role":"assistant","content":"INTENT: graphics\nAPI: graphicsProfile"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"import my blender glb avatar"},{"role":"assistant","content":"INTENT: spawn\nAPI: gltfImport"}]}

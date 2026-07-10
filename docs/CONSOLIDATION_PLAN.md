@@ -34,7 +34,7 @@ Action plan from project review. Execute in order; each phase should pass `npm r
 
 **Goal:** One source of truth for shipped version.
 
-- [x] Source of truth: `src/config.js` → `VERSION` (currently **10.12.11**)
+- [x] Source of truth: `src/config.js` → `VERSION` (currently **10.12.12**)
 - [x] `npm run version:sync` — patches `package.json`, `package-lock.json`, README + doc headers
 - [x] `npm run version:sync:check` — CI drift gate (exit 1 if headers stale)
 
@@ -90,6 +90,8 @@ Action plan from project review. Execute in order; each phase should pass `npm r
 | Store upload automation | ✅ `npm run store:upload` → `upload-guide.md` (signing local) |
 | macOS notarization | Deferred — needs Mac hardware |
 | GIMP hero 2K hand pass | Deferred — procedural seed ships |
+| Training dataset growth | ✅ 2026-07-10 — classify/npc/compiler/scenes expanded |
+| Local Ollama 2060 bench | ✅ llama3.2:3B default; qwen2.5 large; client think/num_ctx |
 
 ---
 

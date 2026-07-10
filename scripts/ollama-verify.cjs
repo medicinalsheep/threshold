@@ -57,29 +57,48 @@ function getJson(urlPath, timeoutMs = 5000) {
     });
 }
 
+function isThinkingModel(name) {
+    return /qwen3|gemma4|deepseek-r1|r1-tool|thinking|reason/i.test(String(name || ''));
+}
+
+function pickSmokeModel(models, preferred) {
+    const lower = (s) => String(s || '').toLowerCase();
+    const pref = lower(preferred);
+    const exact = models.find((m) => lower(m) === pref);
+    if (exact) return exact;
+    const base = pref.split(':')[0];
+    const tag = models.find((m) => lower(m).startsWith(`${base}:`));
+    if (tag) return tag;
+    // Prefer non-reasoning tags for smoke (qwen3 may empty with tiny num_predict)
+    const plain = models.find((m) => !isThinkingModel(m));
+    return plain || models[0];
+}
+
 function postGenerate(model, prompt, timeoutMs = 90000) {
     return new Promise((resolve, reject) => {
         const url = new URL('/api/generate', BASE);
-        const payload = JSON.stringify({
+        const body = {
             model,
             prompt,
             stream: false,
-            options: { num_predict: 32 },
-        });
+            options: { num_predict: 48, num_ctx: 2048 },
+        };
+        if (isThinkingModel(model)) body.think = false;
+        const payload = JSON.stringify(body);
         const req = http.request(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) },
             timeout: timeoutMs,
         }, (res) => {
-            let body = '';
-            res.on('data', (c) => { body += c; });
+            let bodyText = '';
+            res.on('data', (c) => { bodyText += c; });
             res.on('end', () => {
                 if (res.statusCode < 200 || res.statusCode >= 300) {
-                    reject(new Error(`HTTP ${res.statusCode}: ${body.slice(0, 120)}`));
+                    reject(new Error(`HTTP ${res.statusCode}: ${bodyText.slice(0, 120)}`));
                     return;
                 }
                 try {
-                    resolve(JSON.parse(body));
+                    resolve(JSON.parse(bodyText));
                 } catch (e) {
                     reject(e);
                 }
@@ -125,7 +144,7 @@ async function main() {
     const models = (tags.models || []).map((m) => m.name || m.model).filter(Boolean);
     ok(`Ollama reachable — ${models.length} model(s)`);
 
-    const pick = models.includes(MODEL) ? MODEL : models[0];
+    const pick = pickSmokeModel(models, MODEL);
     if (!pick) {
         fail('No models pulled — run: ollama pull llama3.2:3b');
         process.exit(1);
@@ -134,7 +153,8 @@ async function main() {
     const t0 = Date.now();
     try {
         const data = await postGenerate(pick, 'Reply with exactly: THRESHOLD_OK');
-        const text = (data.response || '').trim();
+        let text = (data.response || '').trim();
+        text = text.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
         if (text.length < 2) {
             fail(`Empty response from ${pick}`);
         } else {

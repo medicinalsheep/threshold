@@ -10,6 +10,20 @@
     "vision": "On-device mini agents now; large scene/video models later (Trellis-class 3D + Veo-class video) with tiered download",
     "crossDevice": "Mini models on phone/desktop via Ollama; cloud optional for large only"
   },
+  "localRecommended": {
+    "deviceClass": "RTX 2060 6GB laptop (reference bench 2026-07-10)",
+    "numCtx": 4096,
+    "command": "npm run ollama:benchmark -- --all",
+    "tiers": {
+      "small": { "model": "llama3.2:3B", "why": "~70 tok/s, 100% workflow probes, best interactive NPC/intent" },
+      "medium": { "model": "llama3.2:3B", "alt": "qwen2.5:latest", "why": "3B fast patches; qwen2.5 stronger JS when latency OK" },
+      "large": { "model": "qwen2.5:latest", "alt": "gemma4:latest", "why": "qwen2.5 ~15 tok/s full scenes; gemma4 quality OK but 9.6GB + slow cold load" }
+    },
+    "avoid": {
+      "qwen3:4b": "Thinking model — burns num_predict on CoT; empty code after strip unless think:false + more tokens; still rambling for JS",
+      "gemma4:latest": "Interactive sessions — cold load 60–85s class; OK for offline batch large only"
+    }
+  },
   "mini": [
     {
       "id": "threshold-mini-npc",
@@ -30,6 +44,44 @@
       "modelfile": "training/bootcamp/modelfiles/threshold-mini-dev.Modelfile",
       "datasets": ["training/bootcamp/datasets/medium/compiler.jsonl"],
       "onGitHub": true
+    }
+  ],
+  "community": [
+    {
+      "id": "llama3.2:3B",
+      "tier": "small",
+      "label": "General 3B (2060 sweet spot)",
+      "basePull": "llama3.2:3b",
+      "baseSizeGb": 2.0,
+      "onGitHub": false,
+      "workflowFit": "excellent"
+    },
+    {
+      "id": "qwen2.5:latest",
+      "tier": "large",
+      "label": "Qwen2.5 7B general",
+      "basePull": "qwen2.5:latest",
+      "baseSizeGb": 4.7,
+      "onGitHub": false,
+      "workflowFit": "excellent-slow"
+    },
+    {
+      "id": "qwen3:4b",
+      "tier": "small",
+      "label": "Qwen3 4B (thinking)",
+      "basePull": "qwen3:4b",
+      "baseSizeGb": 2.5,
+      "onGitHub": false,
+      "workflowFit": "poor-for-code-without-finetune"
+    },
+    {
+      "id": "gemma4:latest",
+      "tier": "large",
+      "label": "Gemma4 8B multimodal",
+      "basePull": "gemma4:latest",
+      "baseSizeGb": 9.6,
+      "onGitHub": false,
+      "workflowFit": "good-heavy"
     }
   ],
   "large": [

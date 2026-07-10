@@ -1,5 +1,13 @@
 # Changelog
 
+## 10.12.12 — Local Ollama fit + training growth
+
+- **Training** — classify 15→25, npc +5, compiler +4, scenes +3 JSONL examples for bootcamp mini agents
+- **Benchmark** — `npm run ollama:benchmark -- --all` tests every installed model; tok/s, think-strip, `num_ctx` (default 4096)
+- **2060 laptop results** — `llama3.2:3B` best interactive (100% probes, ~70 tok/s); `qwen2.5:latest` best large; `qwen3:4b` poor for code (CoT); `gemma4` quality OK but heavy
+- **agent-tasks** — preferred model lists + `laptop2060Defaults`; community models in `models-registry.json`
+- **OllamaClient** — `num_ctx` default 4096, auto `think: false` on reasoning tags, strip CoT from replies
+
 ## 10.12.9 — Slab concrete deck + water VFX pass
 
 - **Floor** — instanced 2 m concrete pavers with expansion joints, curb, dark substrate; `starter_ground` PBR maps (albedo/roughness/normal)

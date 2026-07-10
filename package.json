@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "10.12.11",
+  "version": "10.12.12",
   "type": "module",
   "engines": {
     "node": ">=22.0.0"

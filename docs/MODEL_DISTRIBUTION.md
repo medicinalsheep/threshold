@@ -57,11 +57,54 @@ npm run models:large -- --yes
 - Optional ramdisk: `config/bootcamp.local.json` — **never pushed**
 - Engine works from any path; Ollama always `127.0.0.1:11434` on the machine running `ollama serve`
 
+## Local laptop benchmark (RTX 2060 class)
+
+```bash
+# All installed models × workflow probes (NPC, intent, patch, suggest, scene)
+npm run ollama:benchmark -- --all
+# Optional: --ctx 4096 (default) · --only llama3.2:3B,qwen2.5:latest
+```
+
+Writes machine-local `dist-store/ollama-benchmark.json` (gitignored).
+
+### Reference results (2026-07-10 · 2060 laptop · num_ctx 4096)
+
+| Model | Fit | Avg latency | tok/s | Notes |
+|-------|-----|-------------|-------|--------|
+| **llama3.2:3B** | ✅ 100% | ~9.6 s | ~70 | **Best default** — NPC, intent, patches, scenes |
+| **qwen2.5:latest** (~7B) | ✅ 100% | ~27 s | ~15 | Strong JS; use for large when you can wait |
+| **gemma4:latest** (~8B / 9.6 GB) | ✅ 100% | ~41 s | ~40 | Quality OK; cold load slow — not interactive |
+| **qwen3:4b** | ❌ 14% | ~19 s | ~59 | Thinking model; CoT eats budget — poor for code agents |
+
+**Recommended tier picks on this class of GPU** (also in `config/agent-tasks.json` → `laptop2060Defaults`):
+
+| Tier | Model |
+|------|--------|
+| small | `llama3.2:3B` |
+| medium | `llama3.2:3B` (or `qwen2.5:latest` for harder patches) |
+| large | `qwen2.5:latest` (Grok preferred when online) |
+
+Client notes (`src/shared/ollamaClient.js`):
+
+- Default `num_ctx` = 4096 (`VITE_OLLAMA_NUM_CTX` to override)
+- Thinking models get `think: false` + CoT strip so Compiler/intent stay usable
+
+## Training dataset growth
+
+Bootcamp JSONL (intent / NPC / compiler / scenes) is the main on-device improvement lever. Expand via real Compiler exports and `npm run bootcamp:build` after edits.
+
+| Dataset | Role |
+|---------|------|
+| `small/classify.jsonl` | Intent router |
+| `small/npc.jsonl` | NPC chat |
+| `medium/compiler.jsonl` | Patches / suggests |
+| `large/scenes.jsonl` | Full IIFE scenes |
+
 ## Roadmap (Trellis / Veo class)
 
 | Phase | Goal |
 |-------|------|
-| **Now** | Mini JSONL + Modelfile agents; realistic PBR game code |
+| **Now** | Mini JSONL + Modelfile agents; realistic PBR game code; local Ollama tier picks |
 | **Next** | Expand datasets from Compiler exports; bootcamp CI builds Modelfiles only |
 | **Later** | Large downloadable scene/video models; tiered CDN/HF — manifest on GitHub, weights off-repo |
 | **North star** | On-device quality approaching Trellis 2 (3D) + Veo 2 (video) with Lite/Mobile/Ultra graphics tiers |
