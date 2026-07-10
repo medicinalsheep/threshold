@@ -17,7 +17,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.12.26" />
+    <meta name="threshold-version" content="10.12.27" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD SUITE</title>
 </head>
@@ -62,33 +62,50 @@
                         <span class="lobby-actions-sub">Host or join · solo · spectate</span>
                     </div>
                     <div class="lobby-name-block">
-                        <label class="lobby-share-label" for="lobby-name-source">Display name</label>
+                        <label class="lobby-share-label" for="lobby-name">Display name</label>
                         <div class="lobby-name-row">
                             <select id="lobby-name-source" class="lobby-input lobby-name-source" title="Use custom text or X profile">
                                 <option value="custom">Custom</option>
-                                <option value="x_username">X handle (@…)</option>
-                                <option value="x_name">X profile name</option>
+                                <option value="x_username">X @handle</option>
+                                <option value="x_name">X name</option>
                             </select>
                             <input type="text" id="lobby-name" class="lobby-input" placeholder="Your name" maxlength="24" autocomplete="nickname">
                         </div>
-                        <p id="lobby-name-hint" class="lobby-voip-hint">Custom name, or use your X @handle / profile name when signed in.</p>
+                        <p id="lobby-name-hint" class="lobby-voip-hint">Custom, or X profile when signed in.</p>
                     </div>
+
+                    <div class="lobby-mode-row" role="group" aria-label="Start mode">
+                        <span class="lobby-mode-label">START IN</span>
+                        <button type="button" id="lobby-mode-play" class="lobby-mode-btn active" data-mode="play">PLAY</button>
+                        <button type="button" id="lobby-mode-build" class="lobby-mode-btn" data-mode="build">BUILD</button>
+                    </div>
+                    <p class="lobby-mode-hint">PLAY = physics · BUILD = edit world</p>
+
+                    <div class="lobby-quick-row">
+                        <button id="lobby-solo" class="lobby-btn lobby-btn-primary">ENTER →</button>
+                        <button id="lobby-tc" class="lobby-btn lobby-btn-ghost" title="TC Circuit demo">TC →</button>
+                        <button id="lobby-spectate" class="lobby-btn lobby-btn-spectate">SPECTATE</button>
+                    </div>
+
                     <button id="lobby-create" class="lobby-btn lobby-btn-primary">CREATE SESSION</button>
                     <div class="lobby-join-row">
                         <input type="text" id="lobby-join-code" class="lobby-input" placeholder="Room code (e.g. BOB3-KEY12-X7K2)" maxlength="24" autocomplete="off" spellcheck="false">
                         <button id="lobby-join" class="lobby-btn lobby-btn-join">JOIN</button>
                     </div>
                     <input type="password" id="lobby-join-passcode" class="lobby-input" placeholder="Passcode (if host set one)" maxlength="32" autocomplete="off" spellcheck="false">
-                    <p class="lobby-join-hint">Friends can open your invite link or enter the room code (e.g. <strong>BOB3-KEY12-X7K2</strong>).</p>
+                    <p class="lobby-join-hint">Invite link or room code · multiplayer optional</p>
+
+                    <button id="lobby-play-last-export" class="lobby-btn lobby-btn-ghost lobby-export-play" type="button" title="Open last EXPORT &amp; PLAY tab">▶ PLAY LAST EXPORT</button>
+
                     <details class="lobby-passcode-wrap">
                         <summary>Host passcode (optional)</summary>
                         <label class="lobby-passcode-row">Require passcode to join
                             <input type="password" id="lobby-host-passcode" class="lobby-input" placeholder="Leave blank for open session" maxlength="32" autocomplete="new-password" spellcheck="false">
                         </label>
-                        <p class="lobby-voip-hint">Set before CREATE SESSION — change anytime in PLAYERS panel.</p>
                     </details>
-                    <details class="lobby-voip-wrap" open>
-                        <summary>Voice — host sets before CREATE</summary>
+
+                    <details class="lobby-voip-wrap">
+                        <summary>Voice (optional)</summary>
                         <div class="lobby-voip-grid">
                             <label class="lobby-voip-row"><input type="checkbox" id="lobby-voip-enabled" checked> Enable voice</label>
                             <label class="lobby-voip-row">Mode
@@ -105,30 +122,26 @@
                                     <option value="open">Open mic (proximity gated)</option>
                                 </select>
                             </label>
-                            <label class="lobby-voip-row lobby-voip-webrtc-only"><input type="checkbox" id="lobby-voip-proximity" checked> Proximity falloff (hear nearby)</label>
+                            <label class="lobby-voip-row lobby-voip-webrtc-only"><input type="checkbox" id="lobby-voip-proximity" checked> Proximity falloff</label>
                             <label class="lobby-voip-row lobby-voip-discord-only">Discord invite
-                                <input type="text" id="lobby-voip-discord" class="lobby-input" placeholder="https://discord.gg/… or invite code">
+                                <input type="text" id="lobby-voip-discord" class="lobby-input" placeholder="https://discord.gg/…">
                             </label>
                             <label class="lobby-voip-row"><input type="checkbox" id="lobby-voip-spec-hear"> Spectators hear voice</label>
-                            <p class="lobby-voip-hint">Default: WebRTC + PTT + proximity — works in browser without Discord. True Discord/TeamSpeak embed is not available in web; hybrid opens Discord in parallel.</p>
+                            <p class="lobby-voip-hint">Mic is requested after the session starts — it will not block CREATE.</p>
                         </div>
                     </details>
-                    <div class="lobby-mode-row" role="group" aria-label="Start mode">
-                        <span class="lobby-mode-label">START IN</span>
-                        <button type="button" id="lobby-mode-play" class="lobby-mode-btn active" data-mode="play">PLAY</button>
-                        <button type="button" id="lobby-mode-build" class="lobby-mode-btn" data-mode="build">BUILD</button>
-                    </div>
-                    <p class="lobby-mode-hint">PLAY runs physics · BUILD pauses to edit your world</p>
+
                     <label class="lobby-template-row">
                         <span class="lobby-template-label">STARTER WORLD</span>
                         <select id="lobby-template" class="lobby-input lobby-template-select" title="Template loaded on solo / host">
                             <option value="grid">Blank Grid</option>
                         </select>
                     </label>
-                    <p id="lobby-template-desc" class="lobby-template-desc">Empty grid — add your own assets when ready</p>
-                    <div class="lobby-accounts" id="lobby-accounts">
-                        <span class="lobby-share-label">Accounts (optional)</span>
-                        <p class="lobby-voip-hint" style="margin:0 0 8px;">Two separate logins: <strong>X</strong> = identity · <strong>Grok</strong> = AI generation</p>
+                    <p id="lobby-template-desc" class="lobby-template-desc">Empty grid — add assets when ready</p>
+
+                    <details class="lobby-accounts" id="lobby-accounts">
+                        <summary>Accounts — X &amp; Grok (optional)</summary>
+                        <p class="lobby-voip-hint" style="margin:8px 0;">X = identity · Grok = AI generation · neither required to play</p>
                         <div class="lobby-accounts-row">
                             <div class="lobby-account-card">
                                 <span class="lobby-account-title">𝕏 X</span>
@@ -154,13 +167,7 @@
                                 <p class="lobby-voip-hint">Key from <a href="https://console.x.ai" target="_blank" rel="noopener">console.x.ai</a></p>
                             </div>
                         </div>
-                    </div>
-                    <div class="lobby-quick-row">
-                        <button id="lobby-solo" class="lobby-btn lobby-btn-primary">ENTER →</button>
-                        <button id="lobby-tc" class="lobby-btn lobby-btn-ghost" title="TC Circuit demo">TC →</button>
-                        <button id="lobby-spectate" class="lobby-btn lobby-btn-spectate">SPECTATE</button>
-                    </div>
-                    <button id="lobby-play-last-export" class="lobby-btn lobby-btn-ghost lobby-export-play" type="button" title="Open last EXPORT &amp; PLAY tab">▶ PLAY LAST EXPORT</button>
+                    </details>
                     </div>
                     <div id="lobby-share-panel" class="lobby-share-panel hidden" aria-live="polite">
                         <div class="lobby-actions-head">
@@ -243,7 +250,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.12.26</span><span class="edition-badge" id="edition-badge">WEB</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.12.27</span><span class="edition-badge" id="edition-badge">WEB</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>

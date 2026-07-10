@@ -109,7 +109,7 @@
 #lobby-card {
     position: relative;
     width: min(960px, 100%);
-    max-height: min(92vh, 640px);
+    max-height: min(94vh, 720px);
     background: rgba(5, 5, 8, 0.92);
     border: 1px solid var(--accent-color);
     padding: 0;
@@ -173,10 +173,28 @@
 .lobby-actions-panel {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding: clamp(18px, 3vw, 28px) clamp(18px, 3vw, 32px);
+    justify-content: flex-start;
+    padding: clamp(14px, 2.5vw, 24px) clamp(16px, 3vw, 28px);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    max-height: min(94vh, 720px);
+}
+
+.lobby-session-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.lobby-quick-row {
+    display: grid;
+    grid-template-columns: 1.4fr 0.8fr 1fr;
+    gap: 8px;
+    margin: 4px 0 12px;
+}
+
+.lobby-quick-row .lobby-btn {
+    margin-bottom: 0;
 }
 
 .lobby-actions-head {

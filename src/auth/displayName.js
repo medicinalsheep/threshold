@@ -73,19 +73,37 @@ export const DisplayName = {
         return n;
     },
 
-    /** Read from lobby controls + persist */
+    /** Read from lobby controls + persist (safe — never throws) */
     commitFromLobby() {
-        const sourceEl = document.getElementById('lobby-name-source');
-        const input = document.getElementById('lobby-name');
-        if (sourceEl) this.setSource(sourceEl.value);
-        if (this.getSource() === 'custom' && input) {
-            this.setCustom(input.value);
-        } else {
-            this.applyResolvedToStorage();
+        try {
+            const sourceEl = document.getElementById('lobby-name-source');
+            const input = document.getElementById('lobby-name');
+            const rawSource = sourceEl?.value || this.getSource();
+            let source = rawSource === 'x_username' || rawSource === 'x_name' ? rawSource : 'custom';
+            // Fall back to custom if X source but not signed in
+            if (source.startsWith('x_') && !xUser()) source = 'custom';
+            localStorage.setItem(SOURCE_KEY, source);
+
+            if (source === 'custom' && input) {
+                const n = String(input.value || '').trim().slice(0, 24);
+                if (n) {
+                    localStorage.setItem(CUSTOM_KEY, n);
+                    localStorage.setItem(NAME_KEY, n);
+                }
+            }
+
+            const resolved = this.resolve() || 'Player';
+            localStorage.setItem(NAME_KEY, resolved);
+            if (window.Session) {
+                window.Session.playerName = resolved;
+                try { window.Session.updateUi?.(); } catch { /* ignore */ }
+            }
+            try { this.syncUi(); } catch { /* ignore */ }
+            return resolved;
+        } catch (e) {
+            console.warn('[display-name] commit', e);
+            return localStorage.getItem(NAME_KEY) || 'Player';
         }
-        // Keep input showing resolved or custom for clarity
-        this.syncUi();
-        return this.resolve();
     },
 
     syncUi() {

@@ -154,13 +154,33 @@ export function initLobby(onReady) {
 
     bindLobbySharePanel(setStatus, enterApp);
 
+    const applyDisplayName = () => {
+        try {
+            const n = window.DisplayName?.commitFromLobby?.();
+            if (n) Session.playerName = n;
+            else {
+                const typed = document.getElementById('lobby-name')?.value?.trim();
+                if (typed) {
+                    Session.playerName = typed;
+                    localStorage.setItem('threshold_player_name', typed);
+                }
+            }
+        } catch (e) {
+            console.warn('[lobby] display name', e);
+            const typed = document.getElementById('lobby-name')?.value?.trim();
+            if (typed) Session.playerName = typed;
+            if (!Session.playerName) Session.playerName = `Player-${Session.playerKey || '1'}`;
+        }
+        return Session.playerName;
+    };
+
     document.getElementById('lobby-create')?.addEventListener('click', async () => {
         setStatus('Creating session...');
+        const btn = document.getElementById('lobby-create');
+        if (btn) btn.disabled = true;
         try {
             Session.init();
-            Session.playerName = window.DisplayName?.commitFromLobby?.()
-                || document.getElementById('lobby-name')?.value?.trim()
-                || Session.playerName;
+            applyDisplayName();
             const voipConfig = readLobbyVoipConfig();
             const passcode = normalizePasscode(document.getElementById('lobby-host-passcode')?.value);
             let roomId = generateHostRoomId(Session.playerName, Session.playerKey);
@@ -175,8 +195,16 @@ export function initLobby(onReady) {
                     attempts += 1;
                 }
             }
-            window.Voip?.init?.(voipConfig);
-            await window.Voip?.startIfNeeded?.();
+            // Never block session start on mic permission / VoIP
+            try {
+                window.Voip?.init?.(voipConfig);
+                void window.Voip?.startIfNeeded?.()?.catch?.((err) => {
+                    console.warn('[lobby] voip start', err);
+                    window.UI?.status?.(err?.message || 'Voice unavailable — session still live');
+                });
+            } catch (voipErr) {
+                console.warn('[lobby] voip init', voipErr);
+            }
             setSelectedTemplateId('grid');
             persistLobbyMode();
             showLobbySharePanel(Network.roomId, passcode);
@@ -184,6 +212,8 @@ export function initLobby(onReady) {
         } catch (e) {
             console.error('[lobby] create session', e);
             setStatus(e?.message || String(e) || 'Failed to create session', true);
+        } finally {
+            if (btn) btn.disabled = false;
         }
     });
 
@@ -191,25 +221,22 @@ export function initLobby(onReady) {
         const code = normalizeRoomCode(joinInput?.value);
         if (!code) { setStatus('Enter a room code', true); return; }
         setStatus('Joining...');
+        const btn = document.getElementById('lobby-join');
+        if (btn) btn.disabled = true;
         try {
             Session.init();
-            Session.playerName = window.DisplayName?.commitFromLobby?.()
-                || document.getElementById('lobby-name')?.value?.trim()
-                || Session.playerName;
+            applyDisplayName();
             const passcode = normalizePasscode(document.getElementById('lobby-join-passcode')?.value);
             await Network.joinRoom(code, { passcode });
             persistLobbyMode();
             enterApp();
         } catch (e) {
-            setStatus('Could not join — check code & host is online', true);
+            console.error('[lobby] join', e);
+            setStatus(e?.message || 'Could not join — check code & host is online', true);
+        } finally {
+            if (btn) btn.disabled = false;
         }
     });
-
-    const applyDisplayName = () => {
-        Session.playerName = window.DisplayName?.commitFromLobby?.()
-            || document.getElementById('lobby-name')?.value?.trim()
-            || Session.playerName;
-    };
 
     document.getElementById('lobby-solo')?.addEventListener('click', () => {
         Session.init();

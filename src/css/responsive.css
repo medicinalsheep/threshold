@@ -589,13 +589,15 @@
 }
 
 .lobby-name-source {
-    flex: 0 0 min(42%, 148px);
-    max-width: 160px;
+    flex: 0 0 min(38%, 132px);
+    max-width: 140px;
+    margin-bottom: 0 !important;
 }
 
 .lobby-name-row #lobby-name {
     flex: 1;
     min-width: 0;
+    margin-bottom: 0 !important;
 }
 
 .lobby-name-from-x {
@@ -605,8 +607,22 @@
 }
 
 .lobby-accounts {
-    margin: 0 0 14px;
+    margin: 10px 0 4px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0 10px 8px;
 }
+
+.lobby-accounts > summary {
+    cursor: pointer;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    color: var(--accent-color);
+    padding: 10px 0;
+    list-style: none;
+}
+
+.lobby-accounts > summary::-webkit-details-marker { display: none; }
 
 .lobby-accounts-row {
     display: grid;

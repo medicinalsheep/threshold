@@ -1,3 +1,10 @@
+## 10.12.27 — Lobby session start fix + layout cleanup
+
+- **CREATE SESSION** no longer waits on mic/VoIP (was blocking on getUserMedia)
+- Safer display-name commit; clearer join/create errors
+- Lobby reordered: name → PLAY/BUILD → **ENTER** → create/join → optional accounts/voice collapsed
+- Fixed Grok auth UI circular import (uses `window.Auth`)
+
 ## 10.12.26 — Dual auth: X + Grok side by side
 
 - Lobby **Accounts**: X identity card + Grok API card (both optional for play)

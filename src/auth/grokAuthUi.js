@@ -3,8 +3,11 @@
  * Uses Auth (API key) + GrokClient probe; does not use SuperGrok browser session.
  */
 
-import { Auth } from './main.js';
 import { GrokClient } from '../grok/client.js';
+
+function auth() {
+    return window.Auth;
+}
 
 export const GrokAuthUi = {
     init() {
@@ -47,16 +50,17 @@ export const GrokAuthUi = {
 
     openModal() {
         this.fillModels();
+        const Auth = auth();
         const rem = document.getElementById('grok-auth-remember');
-        if (rem) rem.checked = Auth.isRemembered?.() === true;
+        if (rem) rem.checked = Auth?.isRemembered?.() === true;
         const input = document.getElementById('grok-auth-key');
         if (input) {
             input.value = '';
-            input.placeholder = Auth.isLoggedIn() ? '•••••••• (saved — paste to replace)' : 'xai-…';
+            input.placeholder = Auth?.isLoggedIn?.() ? '•••••••• (saved — paste to replace)' : 'xai-…';
         }
         const status = document.getElementById('grok-auth-status');
         if (status) {
-            status.textContent = Auth.isLoggedIn()
+            status.textContent = Auth?.isLoggedIn?.()
                 ? `Key on file · model ${GrokClient.getChatModel?.() || 'grok-4.5'}`
                 : 'No key yet — get one at console.x.ai';
         }
@@ -70,12 +74,11 @@ export const GrokAuthUi = {
     },
 
     saveFromModal() {
+        const Auth = auth();
         const key = document.getElementById('grok-auth-key')?.value?.trim();
         const remember = document.getElementById('grok-auth-remember')?.checked === true;
-        if (!key && Auth.isLoggedIn()) {
-            // keep existing key; only update remember if unchecked
-            if (!remember && Auth.isRemembered()) {
-                // re-save session-only: clear persistent
+        if (!key && Auth?.isLoggedIn?.()) {
+            if (!remember && Auth.isRemembered?.()) {
                 const k = Auth.apiKey;
                 Auth.logout();
                 Auth.login(k, { remember: false });
@@ -89,7 +92,7 @@ export const GrokAuthUi = {
             window.UI?.status?.('Paste an xai-… key');
             return;
         }
-        if (Auth.login(key, { remember })) {
+        if (Auth?.login?.(key, { remember })) {
             this.syncUi();
             void this.testFromModal(true);
             window.AgentPortal?.runDetect?.();
@@ -99,11 +102,12 @@ export const GrokAuthUi = {
     },
 
     async testFromModal(quiet = false) {
+        const Auth = auth();
         const status = document.getElementById('grok-auth-status');
         const typed = document.getElementById('grok-auth-key')?.value?.trim();
         const remember = document.getElementById('grok-auth-remember')?.checked === true;
-        if (typed) Auth.login(typed, { remember });
-        if (!Auth.isLoggedIn()) {
+        if (typed) Auth?.login?.(typed, { remember });
+        if (!Auth?.isLoggedIn?.()) {
             if (status) status.textContent = 'Paste key first';
             return;
         }
@@ -121,7 +125,7 @@ export const GrokAuthUi = {
     },
 
     syncUi() {
-        const on = Auth.isLoggedIn();
+        const on = !!auth()?.isLoggedIn?.();
         document.querySelectorAll('[data-grok-auth-status]').forEach((el) => {
             el.textContent = on ? 'Grok ✓' : 'Grok';
             el.classList.toggle('grok-auth-on', on);
