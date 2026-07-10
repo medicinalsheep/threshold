@@ -246,7 +246,12 @@ module.exports = {
     bootcampPath,
     readJsonl,
     buildModelfile,
+    sampleEntries,
+    messagesToModelfileBlocks,
+    escapeSystem,
     ensureDirs,
     ollamaExe,
     SYSTEM_PROMPTS,
+    TIER_PARAMS,
+    entryPriority,
 };

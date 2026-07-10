@@ -6,9 +6,23 @@
     "localOnly": "Ollama weights in ~/.ollama/models, .env.local, bootcamp.local.json, dist-store benchmarks",
     "largeModels": "User runs ollama pull for base weights; npm run models:mini creates thin custom layers"
   },
+  "publish": {
+    "namespace": "medicinalsheep",
+    "command": "npm run models:publish",
+    "pull": [
+      "ollama pull medicinalsheep/threshold-mini-npc",
+      "ollama pull medicinalsheep/threshold-mini-dev",
+      "ollama pull medicinalsheep/threshold-mini-mobile"
+    ],
+    "urls": [
+      "https://ollama.com/medicinalsheep/threshold-mini-npc",
+      "https://ollama.com/medicinalsheep/threshold-mini-dev",
+      "https://ollama.com/medicinalsheep/threshold-mini-mobile"
+    ]
+  },
   "roadmap": {
     "vision": "On-device mini agents now; large scene/video models later (Trellis-class 3D + Veo-class video) with tiered download",
-    "crossDevice": "Mini models on phone/desktop via Ollama; cloud optional for large only"
+    "crossDevice": "Desktop: Ollama minis. Mobile: 1B mobile mini + Grok for codegen; future WebLLM/native pack"
   },
   "localRecommended": {
     "deviceClass": "RTX 2060 6GB laptop (reference bench 2026-07-10)",
@@ -31,6 +45,7 @@
       "label": "NPC chat + intent",
       "basePull": "llama3.2:3b",
       "baseSizeGb": 2.0,
+      "ollamaPull": "medicinalsheep/threshold-mini-npc",
       "modelfile": "training/bootcamp/modelfiles/threshold-mini-npc.Modelfile",
       "datasets": ["training/bootcamp/datasets/small/npc.jsonl", "training/bootcamp/datasets/small/classify.jsonl"],
       "onGitHub": true
@@ -41,8 +56,21 @@
       "label": "Compiler patches (mini)",
       "basePull": "qwen2.5-coder:1.5b",
       "baseSizeGb": 0.99,
+      "ollamaPull": "medicinalsheep/threshold-mini-dev",
       "modelfile": "training/bootcamp/modelfiles/threshold-mini-dev.Modelfile",
       "datasets": ["training/bootcamp/datasets/medium/compiler.jsonl"],
+      "onGitHub": true
+    },
+    {
+      "id": "threshold-mini-mobile",
+      "tier": "small",
+      "label": "Mobile intent + short NPC (1B quality pack)",
+      "basePull": "llama3.2:1b",
+      "baseSizeGb": 1.3,
+      "ollamaPull": "medicinalsheep/threshold-mini-mobile",
+      "modelfile": "training/bootcamp/modelfiles/threshold-mini-mobile.Modelfile",
+      "command": "npm run models:mobile",
+      "notes": "Flagship phones (8GB+): good for intent/NPC. Codegen still prefers cloud Grok or desktop mini-dev.",
       "onGitHub": true
     }
   ],

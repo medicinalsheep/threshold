@@ -9,14 +9,18 @@
       "temperature": 0.5,
       "ollamaModels": [
         "threshold-mini-npc",
+        "medicinalsheep/threshold-mini-npc",
+        "threshold-mini-mobile",
+        "medicinalsheep/threshold-mini-mobile",
         "llama3.2:3B",
         "llama3.2:3b",
+        "llama3.2:1b",
         "qwen3:4b",
         "gemma3:4b",
         "qwen2.5-coder:1.5b-base"
       ],
       "grok": false,
-      "notes": "2060 laptop: llama3.2:3B ~70 tok/s, full probe pass. qwen3:4b needs think:false (client default)."
+      "notes": "Desktop: mini-npc or llama3.2:3B. Mobile/low-RAM: threshold-mini-mobile (1B). qwen3:4b needs think:false."
     },
     "medium": {
       "label": "Medium — patches, compiler fixes",
@@ -25,10 +29,12 @@
       "temperature": 0.35,
       "ollamaModels": [
         "threshold-mini-dev",
+        "medicinalsheep/threshold-mini-dev",
         "llama3.2:3B",
         "llama3.2:3b",
         "qwen2.5:latest",
         "qwen2.5-coder:7b",
+        "qwen2.5-coder:1.5b",
         "qwen2.5-coder:1.5b-base",
         "qwen3:4b"
       ],

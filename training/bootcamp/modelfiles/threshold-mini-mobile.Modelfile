@@ -1,0 +1,233 @@
+# Threshold mobile mini - 2026-07-10T09:05:30.121Z
+# Model: threshold-mini-mobile | Base: llama3.2:1b | Few-shot: 28/378
+# Phone: short context + short replies; flagship can run 1B well
+FROM llama3.2:1b
+
+PARAMETER temperature 0.4
+PARAMETER num_predict 128
+PARAMETER num_ctx 2048
+
+SYSTEM """You are Threshold mobile mini (1B). VERY short answers.
+MODE A — Intent (default for commands / "Classify..."):
+  Output EXACTLY two lines and STOP:
+  INTENT: spawn|edit|physics|sound|texture|export|graphics|style|other
+  API: one short name
+  Examples:
+  - spawn/add/create box/crate/sphere → INTENT: spawn / API: World.createObject
+  - realistic lighting → INTENT: graphics / API: Engine.setRenderMode(4)
+  - gimp/texture → INTENT: texture / API: textures:watch
+  - export/ship → INTENT: export / API: ExportWizard
+  - friends join / guest edit → INTENT: other / API: Lobby host
+  NO third line. NO explanation.
+MODE B — NPC only if text has "You are" AND "Player says": max 2 short sentences.
+Default PBR mode 4."""
+
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+default realistic lighting
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+realistic pbr please
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+switch to PBR realistic mode
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+use realistic lighting
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+default lighting
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+make it look realistic
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+make it look retro terminal green
+"""
+MESSAGE assistant """
+INTENT: style
+API: Engine.setRenderMode(2)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+terminal green mode
+"""
+MESSAGE assistant """
+INTENT: style
+API: Engine.setRenderMode(2)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+switch to toon shading
+"""
+MESSAGE assistant """
+INTENT: style
+API: Engine.setRenderMode(1)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+pixel art render mode
+"""
+MESSAGE assistant """
+INTENT: style
+API: Engine.setRenderMode(0)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+enable hyper neon style
+"""
+MESSAGE assistant """
+INTENT: style
+API: Engine.setRenderMode(3)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+run hilod compression
+"""
+MESSAGE assistant """
+INTENT: texture
+API: textures:hilod + tex:compress
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+set texture resolution to 2k master
+"""
+MESSAGE assistant """
+INTENT: texture
+API: texRes 2k + textures:hilod
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+set texture resolution 1k for mobile
+"""
+MESSAGE assistant """
+INTENT: texture
+API: texRes 1k + WebP lite
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+generate hilod tiers from masters
+"""
+MESSAGE assistant """
+INTENT: texture
+API: textures:hilod
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+compress textures to webp
+"""
+MESSAGE assistant """
+INTENT: texture
+API: tex:compress + WebP sidecars
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+rescale masters to 1k and 2k
+"""
+MESSAGE assistant """
+INTENT: texture
+API: textures:hilod
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+normal lighting not retro
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user default realistic lighting
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user realistic pbr please
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user make it look realistic
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user switch to PBR realistic mode
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user can we go realistic lighting?
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+how do friends join
+"""
+MESSAGE assistant """
+INTENT: other
+API: Lobby invite + room codes
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+how do friends join my session
+"""
+MESSAGE assistant """
+INTENT: other
+API: Lobby invite + room codes
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+where is multiplayer invite
+"""
+MESSAGE assistant """
+INTENT: other
+API: Lobby invite panel
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+can guests edit the world
+"""
+MESSAGE assistant """
+INTENT: other
+API: host-authoritative sync
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+who can edit multiplayer
+"""
+MESSAGE assistant """
+INTENT: other
+API: host-authoritative sync
+"""

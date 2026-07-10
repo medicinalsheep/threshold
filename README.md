@@ -86,7 +86,7 @@ Visitors use **their** models — nothing is bundled on GitHub except small Mode
 |----------|-----|------------------------|-------|
 | **Grok / xAI** | Paste API key in Agent Portal | ✅ | ✅ |
 | **Ollama** | `npm run ollama:serve` on **this** device (fixes CORS 403) | ✅ | ❌ on phone |
-| **Threshold mini models** | `npm run bootcamp:build && npm run models:mini` | ✅ after `ollama pull` | ❌ |
+| **Threshold mini models** | `ollama pull medicinalsheep/threshold-mini-npc` (etc.) or `npm run models:mini` | ✅ | 1B mobile mini experimental; codegen → Grok |
 | GIMP/Blender watch | `npm run textures:watch` | ✅ local dev only | ❌ |
 
 Keys and GGUF weights never go to GitHub — only your browser tab session.

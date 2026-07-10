@@ -24,11 +24,35 @@
 | `dist-store/ollama-*.json` | Benchmark / golden / stress machine reports |
 | `docs/TRAINING_BACKLOG.md` | Maintainer-only backlog (if present locally) |
 
+## Published on Ollama (namespace `medicinalsheep`)
+
+Anyone with Ollama (no repo clone required for weights):
+
+```bash
+ollama pull medicinalsheep/threshold-mini-npc      # ~2 GB — intent + NPC
+ollama pull medicinalsheep/threshold-mini-dev      # ~1 GB — patches / plans
+ollama pull medicinalsheep/threshold-mini-mobile   # ~1.3 GB — 1B phone-friendly
+```
+
+| Model | Page |
+|-------|------|
+| NPC | https://ollama.com/medicinalsheep/threshold-mini-npc |
+| Dev | https://ollama.com/medicinalsheep/threshold-mini-dev |
+| Mobile | https://ollama.com/medicinalsheep/threshold-mini-mobile |
+
+Re-publish after retraining (signed in as `medicinalsheep`):
+
+```bash
+npm run models:mini && npm run models:mobile
+npm run models:publish -- --all
+```
+
 ## Mini models (clone → pull base → create)
 
 ```bash
 npm run bootcamp:build
-npm run models:mini
+npm run models:mini              # npc + dev
+npm run models:mobile            # 1B mobile quality pack
 # or: npm run train:mini -- --no-seed
 ```
 
@@ -36,10 +60,22 @@ npm run models:mini
 |-------|-----------------|------|------|
 | `threshold-mini-npc` | `llama3.2:3b` (~2 GB) | Small | Intent + NPC + coaches |
 | `threshold-mini-dev` | `qwen2.5-coder:1.5b` (~1 GB) | Medium | Patches, plans, safety JS |
+| `threshold-mini-mobile` | `llama3.2:1b` (~1.3 GB) | Small | Short intent/NPC for phones / low RAM |
 
 Use the **instruct** `qwen2.5-coder:1.5b` tag (not `-base`) so `/api/chat` works.
 
 Few-shot MESSAGE caps keep Modelfiles small; full JSONL stays on disk for rebuilds.
+
+### Phones & “powerful” devices
+
+| Device class | Practical choice |
+|--------------|------------------|
+| **Flagship phone** (8–16 GB RAM, recent SoC) | `threshold-mini-mobile` (1B) for chat/intent; **Grok** for full scene codegen |
+| **Mid phone** | Short intent/NPC only; prefer cloud agents |
+| **Desktop / laptop with Ollama** | `threshold-mini-npc` + `threshold-mini-dev` |
+| **No Ollama** | Grok API key in Agent Portal |
+
+1B is the quality/size sweet spot for on-device today. 3B NPC can run on some flagships but heat/battery suffer; full Compiler-quality still wants desktop or cloud.
 
 ## Large models (optional)
 

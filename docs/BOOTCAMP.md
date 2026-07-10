@@ -20,12 +20,24 @@ npm run models:mini
 
 In Engine: **SETUP / AGENTS** → Small `threshold-mini-npc` · Medium `threshold-mini-dev` → **SAVE TIERS**.
 
-| Model | Tier | Base pull (Ollama) | Trained on |
+| Model | Tier | Base / public pull | Trained on |
 |-------|------|--------------------|------------|
-| `threshold-mini-npc` | Small | `llama3.2:3b` | intent, NPC coaches, recovery |
-| `threshold-mini-dev` | Medium | `qwen2.5-coder:1.5b` (**instruct**, not `-base`) | patches, plans, perf, safety |
+| `threshold-mini-npc` | Small | `llama3.2:3b` · `medicinalsheep/threshold-mini-npc` | intent, NPC, recovery |
+| `threshold-mini-dev` | Medium | `qwen2.5-coder:1.5b` · `medicinalsheep/threshold-mini-dev` | patches, plans, safety |
+| `threshold-mini-mobile` | Small | `llama3.2:1b` · `medicinalsheep/threshold-mini-mobile` | short intent/NPC (phones) |
 | `threshold-dev` | Large | `qwen2.5-coder:7b` | full scenes (optional) |
 | `threshold-large-scenes` | Large | `llama3.1:8b` | full scenes (optional) |
+
+```bash
+# Public registry (no clone needed for weights)
+ollama pull medicinalsheep/threshold-mini-npc
+ollama pull medicinalsheep/threshold-mini-dev
+ollama pull medicinalsheep/threshold-mini-mobile
+
+# Local build + publish (maintainers)
+npm run models:mobile
+npm run models:publish -- --all
+```
 
 Optional large: `npm run models:large -- --yes` (multi‑GB download).
 
