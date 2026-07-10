@@ -3,7 +3,7 @@ import { Auth } from '../auth/main.js';
 import { API_URL, MODEL as GROK_MODEL } from '../grok/client.js';
 import { OllamaClient } from './ollamaClient.js';
 import { ViewPrefs } from './viewPrefs.js';
-import { buildTaskPrompt, stripCodeFences } from './agentPrompts.js';
+import { buildTaskPrompt, finalizeAgentCode } from './agentPrompts.js';
 import { assessModel } from './modelCapability.js';
 import { OllamaRunQueue } from './ollamaRunQueue.js';
 
@@ -196,9 +196,15 @@ export const AgentRouter = {
 
         const ms = Math.round(performance.now() - t0);
         const codeTasks = ['dev_patch', 'dev_suggest', 'prompt_snippet', 'scene_script', 'prompter_generate'];
+        const userHint = [
+            payload?.code,
+            payload?.idea,
+            payload?.message,
+            payload?.userOverride,
+        ].filter(Boolean).join('\n');
         const result = {
             text,
-            code: codeTasks.includes(taskId) ? stripCodeFences(text) : text,
+            code: codeTasks.includes(taskId) ? finalizeAgentCode(text, userHint) : text,
             taskId,
             tier: task.tier,
             provider: usedProvider,

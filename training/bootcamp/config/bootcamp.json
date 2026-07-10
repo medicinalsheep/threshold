@@ -1,6 +1,6 @@
 {
   "format": "threshold-bootcamp",
-  "version": 2,
+  "version": 5,
   "root": "./training/bootcamp",
   "note": "Portable path in repo. Override with config/bootcamp.local.json or BOOTCAMP_ROOT env (gitignored).",
   "ollamaHost": "http://127.0.0.1:11434",
@@ -8,14 +8,30 @@
     "small": {
       "name": "threshold-mini-npc",
       "base": "llama3.2:3b",
-      "datasets": ["datasets/small/npc.jsonl", "datasets/small/classify.jsonl"],
-      "modelfile": "modelfiles/threshold-mini-npc.Modelfile"
+      "datasets": [
+        "datasets/small/critical.jsonl",
+        "datasets/small/safety_npc.jsonl",
+        "datasets/small/classify.jsonl",
+        "datasets/small/npc.jsonl",
+        "datasets/small/guide.jsonl"
+      ],
+      "modelfile": "modelfiles/threshold-mini-npc.Modelfile",
+      "maxExamples": 88
     },
     "medium": {
       "name": "threshold-mini-dev",
-      "base": "qwen2.5-coder:1.5b-base",
-      "datasets": ["datasets/medium/compiler.jsonl"],
-      "modelfile": "modelfiles/threshold-mini-dev.Modelfile"
+      "base": "qwen2.5-coder:1.5b",
+      "datasets": [
+        "datasets/medium/critical.jsonl",
+        "datasets/medium/safety.jsonl",
+        "datasets/medium/plan_code.jsonl",
+        "datasets/medium/planning.jsonl",
+        "datasets/medium/performance.jsonl",
+        "datasets/medium/compiler.jsonl"
+      ],
+      "modelfile": "modelfiles/threshold-mini-dev.Modelfile",
+      "maxExamples": 72,
+      "note": "safety + plan/code + planning + performance + compiler"
     },
     "large_dev": {
       "name": "threshold-dev",

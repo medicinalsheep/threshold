@@ -21,7 +21,8 @@ Object.entries(models).forEach(([tier, modelCfg]) => {
     const out = bootcampPath(cfg, modelCfg.modelfile);
     fs.mkdirSync(path.dirname(out), { recursive: true });
     fs.writeFileSync(out, buildModelfile(tier, modelCfg, entries));
-    console.log(`  → ${modelCfg.modelfile} (${entries.length} total)\n`);
+    const capNote = modelCfg.maxExamples ? ` cap=${modelCfg.maxExamples}` : '';
+    console.log(`  → ${modelCfg.modelfile} (${entries.length} JSONL${capNote}; see Modelfile header for few-shot count)\n`);
     built += 1;
 });
 

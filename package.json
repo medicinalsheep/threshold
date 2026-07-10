@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "10.12.12",
+  "version": "10.12.13",
   "type": "module",
   "engines": {
     "node": ">=22.0.0"
@@ -82,11 +82,18 @@
     "ollama:benchmark": "node scripts/ollama-benchmark.cjs",
     "ollama:stress": "node scripts/ollama-workflow-stress.cjs",
     "bootcamp:init": "node scripts/bootcamp-init.cjs",
+    "bootcamp:seed": "node scripts/bootcamp-seed.cjs",
+    "bootcamp:seed:wave2": "node scripts/bootcamp-seed-wave2.cjs",
+    "bootcamp:seed:critical": "node scripts/bootcamp-seed-critical.cjs",
+    "bootcamp:seed:wave3": "node scripts/bootcamp-seed-wave3.cjs",
+    "bootcamp:seed:wave4": "node scripts/bootcamp-seed-wave4.cjs",
     "bootcamp:build": "node scripts/bootcamp-build.cjs",
     "bootcamp:create": "node scripts/bootcamp-create.cjs",
     "bootcamp:import": "node scripts/bootcamp-import.cjs",
     "models:mini": "node scripts/models-mini.cjs",
     "models:large": "node scripts/models-large.cjs",
+    "train:mini": "node scripts/train-mini.cjs",
+    "ollama:golden": "node scripts/ollama-golden.cjs",
     "tc:export:manifest": "node scripts/tc-export-manifest.cjs",
     "tc:ship": "node scripts/tc-ship-e2e.cjs",
     "tc:ship:verify": "node scripts/tc-ship-verify.cjs",

@@ -22,6 +22,14 @@ config/bootcamp.local.json
 training/bootcamp/builds/
 training/bootcamp/logs/
 dist-store/ollama-benchmark.json
+dist-store/ollama-golden.json
+dist-store/ollama-workflow-stress.json
+# Internal training notes (local only — not for public repo)
+docs/TRAINING_BACKLOG.md
+docs/internal/
+# Derived review splits of compiler.jsonl (regenerate via seed scripts)
+training/bootcamp/datasets/medium/patches.jsonl
+training/bootcamp/datasets/medium/suggests.jsonl
 .DS_Store
 Thumbs.db
 *.log

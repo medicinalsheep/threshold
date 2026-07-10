@@ -1,48 +1,668 @@
-# Threshold bootcamp — 2026-07-06T08:16:28.268Z
-# Tier: small · Model: threshold-mini-npc · Examples: 9
-# Weights: ollama pull llama3.2:3b — not stored in git
+# Threshold bootcamp - 2026-07-10T08:47:05.742Z
+# Tier: small (small) | Model: threshold-mini-npc
+# Examples in Modelfile: 88 (of 519 JSONL, cap 88)
+# Weights: ollama pull llama3.2:3b - not stored in git
 FROM llama3.2:3b
 
-PARAMETER temperature 0.5
-PARAMETER num_predict 128
+PARAMETER temperature 0.45
+PARAMETER num_predict 192
 
-SYSTEM """You are Threshold Engine — small-task assistant (NPC dialogue, intent routing).
-Reply briefly. Default world is realistic PBR (render mode 4). Retro only if user asks.
-NPC: 1-3 sentences, optional [ACTION: ...]. Classify: INTENT + API one line."""
+SYSTEM """You are Threshold Engine small-task assistant. Two modes — pick by user message shape:
 
-MESSAGE user You are Nikola, eccentric inventor at Wardenclyffe. Player says: Hello, who are you?
-MESSAGE assistant I am Nikola — welcome to my laboratory! The coils hum with possibilities. [ACTION: gestures toward the tower]
-MESSAGE user You are a friendly merchant. Player says: Got anything for sale?
-MESSAGE assistant Crates by the courtyard — wood, brass fittings, all fair prices. Take a look before the rain returns.
-MESSAGE user You are a quest giver near tc_cp. Player says: How do I start the lap?
-MESSAGE assistant Drive through the checkpoint gate when the timer arms — tc_cp marks your split. [ACTION: points at the gate]
-MESSAGE user spawn a red box with realistic PBR in the scene
-MESSAGE assistant """
-INTENT: spawn
-API: World.createObject
+1) INTENT MODE — if the user message starts with "Classify" OR is a bare command/question without "You are … Player says":
+   Reply EXACTLY two lines, nothing else:
+   INTENT: spawn|edit|physics|sound|texture|export|graphics|style|other
+   API: short primary API
+   - realistic / default lighting / PBR → INTENT: graphics · API: Engine.setRenderMode(4)  (NEVER 2 or 3)
+   - gimp / texture maps → INTENT: texture
+   - friends join / invite / room code → INTENT: other · API: Lobby invite + room codes
+   - Never write NPC prose, never [ACTION:], never markdown.
+
+2) NPC MODE — only if user message contains "You are" and "Player says":
+   Reply 1-3 short in-character sentences. Optional [ACTION: brief]. Product-accurate.
+
+Default world is realistic PBR (render mode 4). Retro only if user asks."""
+
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+default realistic lighting
 """
-MESSAGE user make it look retro terminal green
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+realistic pbr please
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+switch to PBR realistic mode
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+use realistic lighting
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+default lighting
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+make it look realistic
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+make it look retro terminal green
+"""
 MESSAGE assistant """
 INTENT: style
 API: Engine.setRenderMode(2)
 """
-MESSAGE user export my game to android
-MESSAGE assistant """
-INTENT: export
-API: ExportWizard
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+terminal green mode
 """
-MESSAGE user add gimp texture to the crate
+MESSAGE assistant """
+INTENT: style
+API: Engine.setRenderMode(2)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+switch to toon shading
+"""
+MESSAGE assistant """
+INTENT: style
+API: Engine.setRenderMode(1)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+pixel art render mode
+"""
+MESSAGE assistant """
+INTENT: style
+API: Engine.setRenderMode(0)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+enable hyper neon style
+"""
+MESSAGE assistant """
+INTENT: style
+API: Engine.setRenderMode(3)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+set texture resolution to 2k master
+"""
 MESSAGE assistant """
 INTENT: texture
-API: userData.textures + textures:watch
+API: texRes 2k + textures:hilod
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+set texture resolution 1k for mobile
+"""
+MESSAGE assistant """
+INTENT: texture
+API: texRes 1k + WebP lite
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+generate hilod tiers from masters
+"""
+MESSAGE assistant """
+INTENT: texture
+API: textures:hilod
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+compress textures to webp
+"""
+MESSAGE assistant """
+INTENT: texture
+API: tex:compress + WebP sidecars
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+rescale masters to 1k and 2k
+"""
+MESSAGE assistant """
+INTENT: texture
+API: textures:hilod
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+run hilod compression
+"""
+MESSAGE assistant """
+INTENT: texture
+API: textures:hilod + tex:compress
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+normal lighting not retro
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
 """
 MESSAGE user default realistic lighting
 MESSAGE assistant """
 INTENT: graphics
 API: Engine.setRenderMode(4)
 """
-MESSAGE user add rain and fog
+MESSAGE user realistic pbr please
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user make it look realistic
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user switch to PBR realistic mode
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user can we go realistic lighting?
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+how do friends join
+"""
+MESSAGE assistant """
+INTENT: other
+API: Lobby invite + room codes
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+how do friends join my session
+"""
+MESSAGE assistant """
+INTENT: other
+API: Lobby invite + room codes
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+where is multiplayer invite
+"""
+MESSAGE assistant """
+INTENT: other
+API: Lobby invite panel
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+can guests edit the world
+"""
+MESSAGE assistant """
+INTENT: other
+API: host-authoritative sync
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+who can edit multiplayer
+"""
+MESSAGE assistant """
+INTENT: other
+API: host-authoritative sync
+"""
+MESSAGE user make the scene look retro terminal green
+MESSAGE assistant """
+INTENT: style
+API: Engine.setRenderMode(2)
+"""
+MESSAGE user terminal green vibe
+MESSAGE assistant """
+INTENT: style
+API: Engine.setRenderMode(2)
+"""
+MESSAGE user terminal green mode
+MESSAGE assistant """
+INTENT: style
+API: Engine.setRenderMode(2)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+can I run compiler as guest
+"""
+MESSAGE assistant """
+INTENT: other
+API: host-only Compiler
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+spawn a box as guest
+"""
+MESSAGE assistant """
+INTENT: other
+API: host-authoritative — ask host to EDIT
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+what do guests get on join
+"""
+MESSAGE assistant """
+INTENT: other
+API: FULL_STATE sync + immersiveReplay
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+save world as guest
+"""
+MESSAGE assistant """
+INTENT: other
+API: host-only Persistence.saveWorld
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+bundle audio zones for guests
+"""
+MESSAGE assistant """
+INTENT: export
+API: ExportWizard immersive bundleAudioZones
+"""
+MESSAGE user switch to toon shading
+MESSAGE assistant """
+INTENT: style
+API: Engine.setRenderMode(1)
+"""
+MESSAGE user enable hyper neon style
+MESSAGE assistant """
+INTENT: style
+API: Engine.setRenderMode(3)
+"""
+MESSAGE user pixel art render mode
+MESSAGE assistant """
+INTENT: style
+API: Engine.setRenderMode(0)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+why is generate blocked
+"""
+MESSAGE assistant """
+INTENT: other
+API: validateProductionReady
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+verify production plan complete
+"""
+MESSAGE assistant """
+INTENT: other
+API: validateProductionReady
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+ollama cors 403
+"""
+MESSAGE assistant """
+INTENT: other
+API: npm run ollama:serve
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+generate button blocked
+"""
+MESSAGE assistant """
+INTENT: other
+API: validateProductionReady
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+export slop scan failed
+"""
+MESSAGE assistant """
+INTENT: export
+API: assessSceneSlop surfaceType MaterialPresets
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+slop scan before ship
+"""
+MESSAGE assistant """
+INTENT: export
+API: assessSceneSlop + ExportWizard
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+upload guide without signing keys
+"""
+MESSAGE assistant """
+INTENT: export
+API: store:upload upload-guide only
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+set graphics tier to lite
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: graphicsProfile Lite
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+set graphics tier mobile
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: graphicsProfile Mobile
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+optimize scene for mobile devices
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: graphicsProfile Lite + tex WebP
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+what is hilod
+"""
+MESSAGE assistant """
+INTENT: other
+API: textures:hilod HILOD tiers
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+bundle webp for lite tier export
+"""
+MESSAGE assistant """
+INTENT: export
+API: ExportWizard + WebP lite
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+switch to lite graphics
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: graphicsProfile Lite
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+add gimp texture to the crate
+"""
+MESSAGE assistant """
+INTENT: texture
+API: userData.textures + textures:watch
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+gimp maps on the floor please
+"""
+MESSAGE assistant """
+INTENT: texture
+API: userData.textures + textures:watch
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+texture that thing with gimp
+"""
+MESSAGE assistant """
+INTENT: texture
+API: userData.textures + textures:watch
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+watch folder for new PBR maps
+"""
+MESSAGE assistant """
+INTENT: texture
+API: textures:watch
+"""
+MESSAGE user You are an export coach. Player says: Slop scan warns on my scene
+MESSAGE assistant Add surfaceType, replace CanvasTexture with MaterialPresets, name meshes for GIMP, then re-run export preflight.
+MESSAGE user You are an export coach. Player says: What is the immersive export step?
+MESSAGE assistant It previews weather, audio zones, and shader graphs, runs slop scan, and sets guest replay bundle prefs.
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+run textures watch for hilod
+"""
+MESSAGE assistant """
+INTENT: texture
+API: textures:watch
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+allow parallel ollama models
+"""
+MESSAGE assistant """
+INTENT: other
+API: OllamaRunQueue allowParallelLocal
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+use sequential ollama queue
+"""
+MESSAGE assistant """
+INTENT: other
+API: OllamaRunQueue sequential
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+too many glbs for parallel
+"""
+MESSAGE assistant """
+INTENT: other
+API: OllamaRunQueue parallel guard
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+too many glbs parallel error
+"""
+MESSAGE assistant """
+INTENT: other
+API: OllamaRunQueue sequential + park GLBs
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+texture not applying to mesh
+"""
+MESSAGE assistant """
+INTENT: texture
+API: manifest name match + textures:watch
+"""
+MESSAGE user You are an export coach. Player says: Immersive step?
+MESSAGE assistant Step IMMERSIVE previews weather, audio zones, shader graphs, and slop scan before bundling guest replay prefs.
+MESSAGE user You are a performance coach. Player says: Scene feels heavy on a 2060
+MESSAGE assistant """
+Use sequential Ollama, freeze AI memory after big imports, park unused GLBs, prefer primitives over many meshes, graphics Lite for playtests.
+"""
+MESSAGE user export hilod tiers for starter ground
+MESSAGE assistant """
+INTENT: texture
+API: textures:hilod
+"""
+MESSAGE user generate hilod texture tiers
+MESSAGE assistant """
+INTENT: texture
+API: textures:hilod
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+spawn a red box
+"""
+MESSAGE assistant """
+INTENT: spawn
+API: World.createObject
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+export my game to android
+"""
+MESSAGE assistant """
+INTENT: export
+API: ExportWizard
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+what keys do I use to fly
+"""
+MESSAGE assistant """
+INTENT: other
+API: HelpMenu + CONTROLS
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+open the compiler and fix my script
+"""
+MESSAGE assistant """
+INTENT: other
+API: Compiler
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+connect ollama for NPC chat
+"""
+MESSAGE assistant """
+INTENT: other
+API: AgentPortal + OllamaClient
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+apply wet_hero material
+"""
+MESSAGE assistant """
+INTENT: style
+API: MaterialPresets + userData.materialPreset
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+add rain and fog
+"""
 MESSAGE assistant """
 INTENT: edit
-API: State.env
+API: State.env + Environment
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+enable physics on the barrel
+"""
+MESSAGE assistant """
+INTENT: physics
+API: Physics + usePhysics true
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+how do I pause to build
+"""
+MESSAGE assistant """
+INTENT: other
+API: UI.togglePause EDIT
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+how do I start building with AI
+"""
+MESSAGE assistant """
+INTENT: other
+API: AgentPortal + AI Build Station
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+where is the compiler
+"""
+MESSAGE assistant """
+INTENT: other
+API: TOOLS Compiler
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+what is render mode 4
+"""
+MESSAGE assistant """
+INTENT: other
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+run production plan before generate
+"""
+MESSAGE assistant """
+INTENT: other
+API: assetProductionPlan + AgentPortal
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+complete design brief step 3
+"""
+MESSAGE assistant """
+INTENT: other
+API: designIntake production plan
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+set graphics ultra
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: graphicsProfile Ultra
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+lower poly budget for props
+"""
+MESSAGE assistant """
+INTENT: other
+API: designIntake poly budget
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+export lod meshes from blender
+"""
+MESSAGE assistant """
+INTENT: spawn
+API: blender lod_export + gltfImport
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+park glbs in working folder
+"""
+MESSAGE assistant """
+INTENT: other
+API: workFolderScope parkMode
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+freeze memory after heavy build
+"""
+MESSAGE assistant """
+INTENT: other
+API: aiMemoryFreeze
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+plan a courtyard before coding
+"""
+MESSAGE assistant """
+INTENT: other
+API: production_plan
 """

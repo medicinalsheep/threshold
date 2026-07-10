@@ -61,6 +61,7 @@
     "dev_patch": { "tier": "medium", "label": "Fix compiler snippet" },
     "dev_suggest": { "tier": "medium", "label": "Dev agent suggest" },
     "prompt_snippet": { "tier": "medium", "label": "PromptGen partial" },
+    "production_plan": { "tier": "medium", "label": "Asset production plan (pre-codegen)" },
     "scene_script": { "tier": "large", "label": "Full scene generation" },
     "prompter_generate": { "tier": "large", "label": "PromptGen run" }
   },

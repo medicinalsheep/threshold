@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.12.12 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.12.13 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -150,8 +150,8 @@ UI reference: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Controls: [CONTROLS.md](CO
 | Mouse mode without Third Eye highlights | UI-only pointer mode for PLAY |
 | `intent_classify` router | ✅ v10.12.7 — `intentRouter.js` + game chat routing |
 | Store upload automation | Signing keys remain local; upload manual |
-| Training dataset growth | ✅ expanded classify/npc/compiler/scenes (2026-07-10); keep growing from Compiler exports |
-| Local Ollama tier picks (2060) | ✅ `ollama:benchmark --all` + `laptop2060Defaults` in agent-tasks; client `think:false` + num_ctx |
+| Training dataset growth | ✅ waves 1–4 + `train:mini` + `ollama:golden` (10.12.13); grow via Compiler EXPORT TRAINING PAIR |
+| Local Ollama tier picks (2060) | ✅ `ollama:benchmark --all` + `laptop2060Defaults`; client `think:false` + num_ctx |
 | macOS notarization | Planned |
 | AWS relay polish | ✅ v10.12.7 — Docker/PM2/nginx + relay:verify |
 | Trellis/Veo-class models | Listed in `models-registry.json` |

@@ -1,12 +1,21 @@
 # Changelog
 
-## 10.12.12 — Local Ollama fit + training growth
+## 10.12.13 — Mini agents: train stack, plans, safety
 
-- **Training** — classify 15→25, npc +5, compiler +4, scenes +3 JSONL examples for bootcamp mini agents
-- **Benchmark** — `npm run ollama:benchmark -- --all` tests every installed model; tok/s, think-strip, `num_ctx` (default 4096)
-- **2060 laptop results** — `llama3.2:3B` best interactive (100% probes, ~70 tok/s); `qwen2.5:latest` best large; `qwen3:4b` poor for code (CoT); `gemma4` quality OK but heavy
-- **agent-tasks** — preferred model lists + `laptop2060Defaults`; community models in `models-registry.json`
-- **OllamaClient** — `num_ctx` default 4096, auto `think: false` on reasoning tags, strip CoT from replies
+- **Bootcamp** — expanded JSONL (intent/NPC/compiler/scenes) + seed waves; `npm run train:mini`
+- **Mini models** — `threshold-mini-npc` (llama3.2:3b), `threshold-mini-dev` (`qwen2.5-coder:1.5b` instruct)
+- **Task `production_plan`** — 11-step asset pipeline text before codegen
+- **Quality guards** — intent format repairs; render-mode map; `finalizeAgentCode` anti-slop (`clearWorld`, type-first, THREE.Scene)
+- **Perf / HILOD** — plan + code metadata for texRes, WebP/Lite, sequential Ollama defaults
+- **Safety / MP** — host-authoritative coaches; recovery (CORS, GENERATE gate, freeze)
+- **Tooling** — `ollama:golden` local regression; `bootcamp:seed:wave2|3|4|critical`
+- **Docs** — [BOOTCAMP.md](BOOTCAMP.md), [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md)
+
+## 10.12.12 — Local Ollama fit + benchmarks
+
+- **Benchmark** — `ollama:benchmark -- --all` (tok/s, num_ctx 4096)
+- **2060 defaults** — `laptop2060Defaults` in agent-tasks; OllamaClient `think:false` + CoT strip
+- **Training** — initial JSONL growth + stress harness
 
 ## 10.12.9 — Slab concrete deck + water VFX pass
 

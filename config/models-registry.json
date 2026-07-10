@@ -39,7 +39,7 @@
       "id": "threshold-mini-dev",
       "tier": "medium",
       "label": "Compiler patches (mini)",
-      "basePull": "qwen2.5-coder:1.5b-base",
+      "basePull": "qwen2.5-coder:1.5b",
       "baseSizeGb": 0.99,
       "modelfile": "training/bootcamp/modelfiles/threshold-mini-dev.Modelfile",
       "datasets": ["training/bootcamp/datasets/medium/compiler.jsonl"],
