@@ -1,4 +1,10 @@
-# Changelog
+## 10.12.20 — Generation reasoning (intensity + MOD policy)
+
+- **generation-policy.json** — minimal → maximal intensity budgets (props, NPCs, weather, tex/poly)
+- **MOD reasoning** — archetypes (operator, explorer, scientist…): **required slots always**; optional by intensity + user language
+- **Agent portal / production plan / scene prompts** — inject reasoning; ready JSON gets `intensity`, `appearance.mods`, budgets
+- **Auto-apply loadout** — character ready signal applies body/hair/mods to player SKIN
+- **UX rule** — generate only what the brief needs; skip weather/atmosphere/fashion when irrelevant
 
 ## 10.12.19 — Full MOD gear system
 

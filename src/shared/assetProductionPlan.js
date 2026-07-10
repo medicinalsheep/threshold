@@ -1,15 +1,23 @@
 /**
  * Asset production plan — ordered pipeline, review gates, and agent prompt engineering.
  * Ensures interior/exterior, weather variants, collision, and texture workflow align before codegen.
+ * Integrates generationPolicy: intensity budgets + MOD required/optional reasoning.
  */
+
+import {
+    buildGenerationReasoningPrompt,
+    planFeatureBudget,
+    planCharacterMods,
+    enrichReadyContext,
+} from './generationPolicy.js';
 
 /** Canonical build order — agents must follow this sequence */
 export const PRODUCTION_PIPELINE = [
     {
         id: 'scope',
         order: 1,
-        label: 'Scope & placement',
-        agentFocus: 'Confirm interior vs exterior, scale, and whether asset is hero or dressing.',
+        label: 'Scope & intensity',
+        agentFocus: 'Intensity minimal|focused|rich|maximal from user need; interior vs exterior; hero vs dressing. Do not overbuild.',
     },
     {
         id: 'collision',
@@ -54,20 +62,26 @@ export const PRODUCTION_PIPELINE = [
         agentFocus: 'MaterialPresets.applyMaterialPreset — no CanvasTexture/procedural slop; match GIMP maps.',
     },
     {
-        id: 'interact',
+        id: 'appearance',
         order: 9,
+        label: 'Character MOD / appearance',
+        agentFocus: 'If character/NPC: required MOD slots for archetype; optional slots by intensity only; bodyId/hairId/mods[] from catalog.',
+    },
+    {
+        id: 'interact',
+        order: 10,
         label: 'Interact & audio',
-        agentFocus: 'interactHint, soundTrigger, soundClipId, audioZone; F-key radius if needed.',
+        agentFocus: 'Only if needed: interactHint, soundTrigger, soundClipId, audioZone; F-key radius.',
     },
     {
         id: 'codegen',
-        order: 10,
+        order: 11,
         label: 'Compiler script',
-        agentFocus: 'IIFE extending grid; userData wired; UI.status on success.',
+        agentFocus: 'IIFE extending grid; userData wired; respect prop/NPC budgets; UI.status on success.',
     },
     {
         id: 'verify',
-        order: 11,
+        order: 12,
         label: 'PLAY verify',
         agentFocus: 'Test walk, weather ON, graphics Lite + Realistic; export preflight slop scan.',
     },
@@ -226,19 +240,43 @@ export function buildProductionPlan(brief = {}) {
             return ['scope', 'textures', 'hilod', 'weather', 'verify'].includes(step.id);
         }
         if (type === 'animation') {
-            return !['textures', 'hilod'].includes(step.id);
+            return !['textures', 'hilod', 'appearance'].includes(step.id);
+        }
+        if (type === 'character') {
+            return !['weather', 'atmosphere'].includes(step.id) || step.id === 'scope';
+        }
+        if (type !== 'character' && type !== 'world') {
+            return step.id !== 'appearance';
         }
         return true;
     });
 
+    const budget = planFeatureBudget({
+        title: a.title,
+        summary: a.description || a.summary,
+        placement: prod.placement,
+        message: prod.notes,
+    }, type);
+
+    const appearancePlan = (type === 'character' || a.appearance)
+        ? planCharacterMods({
+            title: a.title,
+            summary: a.description || a.summary,
+            message: prod.notes,
+            ...(a.appearance || {}),
+        }, { intensity: budget.intensity })
+        : null;
+
     return {
         type,
         title: a.title || 'Untitled',
+        intensity: budget.intensity,
+        intensityLabel: budget.intensityLabel,
         placement: prod.placement,
         placementLabel: placement.label,
         weatherExposure: prod.weatherExposure,
         weatherExposureLabel: weatherExposure.label,
-        weatherVariants: prod.weatherVariants || [],
+        weatherVariants: prod.weatherVariants || budget.weatherVariants || [],
         surfaceType: prod.surfaceType || 'concrete',
         collision: prod.collision,
         collisionLabel: collision.label,
@@ -252,13 +290,19 @@ export function buildProductionPlan(brief = {}) {
         atmospherePreset: prod.atmospherePreset || 'day_clear',
         shaderPreset: prod.shaderPreset || 'pbr_default',
         audioZone: prod.audioZone || false,
-        texRes: a.texRes || '2k',
+        texRes: a.texRes || budget.texRes || '2k',
         textureWorkflow: a.texture || 'gimp',
-        poly: a.poly || 'medium',
+        poly: a.poly || budget.poly || 'medium',
         style: a.style || 'realistic',
         pipeline: steps,
         notes: prod.notes || '',
         capabilities: IMMERSIVE_CAPABILITIES,
+        generationBudget: {
+            maxProps: budget.maxProps,
+            maxNpcs: budget.maxNpcs,
+            maxAudioClips: budget.maxAudioClips,
+        },
+        appearance: appearancePlan,
     };
 }
 
@@ -294,6 +338,12 @@ export function validateProductionReady(ctx = {}) {
     const isExterior = ctx.placement === 'exterior' || ctx.placement === 'transitional';
     if (isExterior && ctx.weatherExposure === 'full' && !(ctx.weatherVariants || []).length) {
         warnings.push('Exterior full exposure but no weather variants — add wet at minimum.');
+    }
+    if ((ctx.taskType === 'character' || ctx.type === 'character') && !ctx.appearance?.mods?.length) {
+        warnings.push('Character has no MOD loadout — required slots may be empty; policy will fill from archetype if possible.');
+    }
+    if (ctx.intensity === 'maximal' && (ctx.taskType === 'prop' || ctx.type === 'prop')) {
+        warnings.push('Maximal intensity on a single prop — consider focused intensity to avoid overbuilding.');
     }
 
     return {
@@ -378,19 +428,28 @@ export function formatPipelineChecklist(plan) {
 }
 
 export function buildProductionReviewPrompt(plan) {
+    const budget = plan.generationBudget || {};
+    const app = plan.appearance;
     return `
 ASSET PRODUCTION PLAN — follow pipeline order strictly:
 ${plan.pipeline.map((s) => `${s.order}. ${s.label}: ${s.agentFocus}`).join('\n')}
 
+INTENSITY: ${plan.intensity || 'focused'} (${plan.intensityLabel || ''}) — do not exceed budgets
+BUDGETS: ≤${budget.maxProps ?? '?'} props · ≤${budget.maxNpcs ?? '?'} NPCs · audio clips ≤${budget.maxAudioClips ?? '?'}
 PLACEMENT: ${plan.placementLabel}
-WEATHER: ${plan.weatherExposureLabel}${plan.needsWeather ? ` · variants: ${plan.weatherVariants.join(', ') || 'wet'}` : ' · sheltered / N/A'}
+WEATHER: ${plan.weatherExposureLabel}${plan.needsWeather ? ` · variants: ${(plan.weatherVariants || []).join(', ') || 'wet'}` : ' · sheltered / N/A'}
 SURFACE: ${plan.surfaceType} · COLLISION: ${plan.collisionLabel}
-TEXTURES: ${plan.textureWorkflow} @ ${plan.texRes} master · style ${plan.style}
+TEXTURES: ${plan.textureWorkflow} @ ${plan.texRes} master · style ${plan.style} · poly ${plan.poly}
 ${plan.sheltered ? 'INTERIOR/SHELTERED: set userData.zoneSheltered = true' : ''}
 ${plan.wetGlass ? 'GLASS: userData.wetGlass = true on glass meshes' : ''}
 ${plan.interact ? 'INTERACT: userData.interactHint + interactRadius' : ''}
 ATMOSPHERE: ${plan.atmospherePreset} · MATERIAL PRESET: ${plan.shaderPreset}
 ${plan.audioZone ? 'AUDIO: userData.audioZone for ambient reverb zone' : ''}
+${app ? `CHARACTER APPEARANCE: bodyId=${app.bodyId} hairId=${app.hairId}
+  REQUIRED mods: ${(app.requiredMods || []).join(', ') || '—'}
+  OPTIONAL mods: ${(app.optionalMods || []).join(', ') || '—'}
+  RESOLVED loadout: ${(app.mods || []).join(', ') || 'bare'}
+  (Use only catalog mod ids; exclusive slots already resolved.)` : ''}
 ${plan.notes ? `NOTES: ${plan.notes}` : ''}
 
 ${ENGINE_TEXTURE_RULES}
@@ -405,22 +464,31 @@ ${ENGINE_COLLISION_RULES}
 `.trim();
 }
 
-export function buildAgentPortalSystemPrompt() {
-    return `You are Threshold Build Assistant — quality-first asset director for a blank 3D PBR grid.
+export function buildAgentPortalSystemPrompt(sessionBrief = {}) {
+    const reasoning = buildGenerationReasoningPrompt(sessionBrief, sessionBrief.taskType || 'prop');
 
-INTAKE ORDER (one question at a time until ready):
+    return `You are Threshold Build Assistant — quality-first asset director for immersive PBR experiences.
+
+CORE UX RULES:
+- Match **intensity** to the user: "just a crate" → minimal; "tactical operator loadout" → focused character; "stormy outpost" → rich.
+- Generate **only what is needed**. Skip weather for pure characters; skip MOD fashion for a single prop; skip atmosphere for texture-only.
+- One clear question at a time. Never re-ask confirmed fields.
+- Prefer catalog presets and known APIs — no fake engines, no CanvasTexture slop.
+
+INTAKE ORDER (skip steps already answered in chat):
 1. Asset type + title (world, prop, character, texture, sound)
-2. INTERIOR or EXTERIOR? (sheltered vs weather-exposed)
-3. Weather exposure: full / partial / sheltered — need wet, dust, snow, or wet-glass variants?
-4. surfaceType for footsteps + rain wetness (concrete, wood, metal, glass, gravel, grass…)
-5. Collision: static platform, dynamic prop, trigger volume, or visual-only
-6. Texture workflow: GIMP 2K PBR maps OR Blender GLB — poly budget + export targets
-7. Interact/audio hooks if any
+2. Intensity if ambiguous (minimal / focused / rich) — or infer from language
+3. INTERIOR or EXTERIOR? (characters: usually N/A weather)
+4. Weather only if exterior world/prop: full / partial / sheltered + wet|dust|snow as needed
+5. surfaceType + collision (skip for pure character appearance)
+6. Texture/poly workflow for hero meshes
+7. Character only: role/archetype → REQUIRED MOD slots + optional extras
+8. Interact/audio only if the brief needs them
 
-PIPELINE ORDER (never skip):
-scope → collision → mesh → textures (2K master) → HILOD+WebP → weather → atmosphere → material presets → interact/audio → Compiler IIFE → PLAY verify
+PIPELINE:
+scope/intensity → collision → mesh → textures → HILOD → weather (if needed) → atmosphere (if needed) → appearance/MODs (if character) → interact → Compiler IIFE → PLAY verify
 
-Do NOT emit ready JSON until placement, weather exposure, surfaceType, and collision are confirmed.
+${reasoning}
 
 ${ENGINE_TEXTURE_RULES}
 
@@ -432,19 +500,23 @@ ${ENGINE_SHADER_RULES}
 
 ${ENGINE_COLLISION_RULES}
 
-Ask ONE clear question at a time. Keep replies under 3 sentences.
 When ready, respond ONLY with JSON (no markdown):
-{"ready":true,"taskType":"world|character|prop|animation|texture|sound","title":"short name","summary":"what to build","style":"realistic PBR","textureRes":"1k|2k|4k","polyBudget":"low|medium|high","workflow":"gimp|blender|both","placement":"interior|exterior|transitional","weatherExposure":"full|partial|sheltered|none","weatherVariants":["wet"],"surfaceType":"concrete","collision":"static|dynamic|trigger|none","sheltered":false,"atmospherePreset":"day_clear","shaderPreset":"pbr_default"}
+{"ready":true,"taskType":"world|character|prop|animation|texture|sound","title":"short name","summary":"what to build","intensity":"minimal|focused|rich|maximal","style":"realistic PBR","textureRes":"1k|2k|4k","polyBudget":"low|medium|high","workflow":"gimp|blender|both","placement":"interior|exterior|transitional|floating","weatherExposure":"full|partial|sheltered|none","weatherVariants":["wet"],"surfaceType":"concrete","collision":"static|dynamic|trigger|none","sheltered":false,"atmospherePreset":"day_clear","shaderPreset":"pbr_default","appearance":{"bodyId":"male_default|female_default","hairId":"hair_short_m|hair_long_f|none","mods":["catalog_mod_ids"],"archetype":"operator|explorer|scientist|..."}}
+- appearance required when taskType is character (or NPC loadout). mods: REQUIRED slots filled; OPTIONAL only if intensity ≥ focused and brief supports them.
+- Omit weatherVariants / atmosphere when not needed.
 Otherwise respond with plain text — a single focused question.`;
 }
 
-export function buildDesignAgentSystemPrompt() {
+export function buildDesignAgentSystemPrompt(brief = {}) {
+    const reasoning = buildGenerationReasoningPrompt(brief.answers || brief, brief.type || 'world');
     return `You are Threshold design agent. Read the DESIGN BRIEF and ASSET PRODUCTION PLAN.
-Follow pipeline order: scope → collision → mesh → textures → HILOD → weather → interact → codegen → verify.
-Honor placement (interior/exterior), weather variants, surfaceType, collision, GIMP object names, and poly budget.
+Follow pipeline: scope/intensity → collision → mesh → textures → HILOD → weather (if needed) → appearance/MODs (characters) → interact → codegen → verify.
+Honor budgets: do not spawn more props/NPCs than intensity allows. Required MOD slots always; optional sparingly.
 If critical details missing, respond ONLY with JSON:
 {"intake_questions":[{"id":"...","label":"...","type":"text|select|number|textarea","options":["..."],"required":true}]}
 Otherwise output ONLY executable JavaScript IIFE for Compiler extending the blank grid.
+
+${reasoning}
 
 ${ENGINE_TEXTURE_RULES}
 
@@ -482,13 +554,26 @@ export function buildCompilerRequest(ctx, chatHistory = []) {
         },
     });
 
+    const app = ctx.appearance || plan.appearance;
+    const reasoning = buildGenerationReasoningPrompt({
+        title: ctx.title,
+        summary: ctx.summary,
+        placement: ctx.placement,
+        message: ctx.summary,
+        ...(app || {}),
+    }, ctx.taskType || 'world');
+
     return `BUILD REQUEST
 Type: ${ctx.taskType || 'world'}
 Title: ${ctx.title || 'Untitled'}
 Summary: ${ctx.summary || ''}
+Intensity: ${ctx.intensity || plan.intensity || 'focused'}
 Style: ${ctx.style || 'realistic PBR default'}
-Texture: ${ctx.workflow || 'gimp'} @ ${ctx.textureRes || '2k'}
-Poly: ${ctx.polyBudget || 'medium'}
+Texture: ${ctx.workflow || 'gimp'} @ ${ctx.textureRes || plan.texRes || '2k'}
+Poly: ${ctx.polyBudget || plan.poly || 'medium'}
+${app ? `Appearance: bodyId=${app.bodyId} hairId=${app.hairId} mods=[${(app.mods || []).join(', ')}]` : ''}
+
+${reasoning}
 
 ${buildProductionReviewPrompt(plan)}
 
@@ -496,7 +581,8 @@ Conversation:
 ${chatHistory.map((m) => `${m.role}: ${m.text}`).join('\n')}
 
 Output ONLY executable Threshold JavaScript IIFE for Compiler. Extend the blank grid. No World.clearWorld().
-Wire userData.surfaceType, collision, and weather flags per plan BEFORE UI.status success.`;
+Respect prop/NPC budgets. Wire userData.surfaceType, collision, and weather flags per plan BEFORE UI.status success.
+For characters: do not invent gear — use the resolved MOD list when setting NPC/player appearance metadata.`;
 }
 
 window.AssetProductionPlan = {
@@ -514,4 +600,5 @@ window.AssetProductionPlan = {
     validateProductionReady,
     validateDesignBrief,
     assessSceneSlop,
+    enrichReadyContext,
 };

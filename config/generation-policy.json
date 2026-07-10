@@ -1,0 +1,160 @@
+{
+  "format": "threshold-generation-policy",
+  "version": 1,
+  "note": "Quality-first generation: only as much content as the brief needs; required slots always; optional filled by intensity.",
+  "intensities": {
+    "minimal": {
+      "label": "Minimal",
+      "when": "tiny fix, single prop, short reply, or user asked simple/quick",
+      "optionalSlotFill": 0.15,
+      "maxProps": 3,
+      "maxNpcs": 0,
+      "maxAudioClips": 0,
+      "texResDefault": "1k",
+      "polyDefault": "low",
+      "weatherVariantsMax": 1,
+      "atmosphere": "keep_current",
+      "tokenBudgetHint": "short"
+    },
+    "focused": {
+      "label": "Focused",
+      "when": "clear single feature or character with a job to do",
+      "optionalSlotFill": 0.4,
+      "maxProps": 8,
+      "maxNpcs": 1,
+      "maxAudioClips": 2,
+      "texResDefault": "2k",
+      "polyDefault": "medium",
+      "weatherVariantsMax": 2,
+      "atmosphere": "light_tune",
+      "tokenBudgetHint": "medium"
+    },
+    "rich": {
+      "label": "Rich immersive",
+      "when": "area, outpost, multi-prop scene, named character kit",
+      "optionalSlotFill": 0.65,
+      "maxProps": 18,
+      "maxNpcs": 3,
+      "maxAudioClips": 4,
+      "texResDefault": "2k",
+      "polyDefault": "medium",
+      "weatherVariantsMax": 3,
+      "atmosphere": "set_preset",
+      "tokenBudgetHint": "large"
+    },
+    "maximal": {
+      "label": "Hero / showcase",
+      "when": "user wants full world, demo, or maximum immersion",
+      "optionalSlotFill": 0.85,
+      "maxProps": 32,
+      "maxNpcs": 6,
+      "maxAudioClips": 8,
+      "texResDefault": "2k",
+      "polyDefault": "high",
+      "weatherVariantsMax": 4,
+      "atmosphere": "full",
+      "tokenBudgetHint": "large"
+    }
+  },
+  "characterArchetypes": {
+    "civilian": {
+      "label": "Civilian",
+      "requiredSlots": [],
+      "preferredSlots": ["outer", "feet", "accessory"],
+      "preset": "street",
+      "keywords": ["civilian", "citizen", "casual", "street", "tourist", "visitor"]
+    },
+    "operator": {
+      "label": "Tactical operator",
+      "requiredSlots": ["headwear", "torso", "feet"],
+      "preferredSlots": ["belt", "hands", "face", "backpack", "accessory"],
+      "preset": "operator",
+      "keywords": ["operator", "soldier", "tactical", "military", "guard", "security", "spec ops", "trooper"]
+    },
+    "explorer": {
+      "label": "Field explorer",
+      "requiredSlots": ["outer", "feet", "backpack"],
+      "preferredSlots": ["headwear", "belt", "legs"],
+      "preset": "explorer",
+      "keywords": ["explorer", "scout", "hiker", "field", "survival", "ranger", "trek"]
+    },
+    "scientist": {
+      "label": "Scientist / lab",
+      "requiredSlots": ["outer"],
+      "preferredSlots": ["face", "neck", "feet", "prop_l", "prop_r"],
+      "preset": "scientist",
+      "keywords": ["scientist", "lab", "researcher", "doctor", "medic", "bio", "chemist"]
+    },
+    "engineer": {
+      "label": "Engineer / creator",
+      "requiredSlots": ["hands", "belt"],
+      "preferredSlots": ["face", "torso", "prop_r", "prop_l", "outer"],
+      "preset": "creator",
+      "keywords": ["engineer", "mechanic", "builder", "creator", "tech", "welder", "worker"]
+    },
+    "spacer": {
+      "label": "Sci-fi spacer",
+      "requiredSlots": ["headwear", "outer"],
+      "preferredSlots": ["face", "neck", "backpack", "accessory"],
+      "preset": "spacer",
+      "keywords": ["space", "spacer", "astronaut", "sci-fi", "scifi", "cyber", "future", "pilot"]
+    },
+    "fantasy": {
+      "label": "Fantasy / RP",
+      "requiredSlots": [],
+      "preferredSlots": ["outer", "headwear", "prop_r", "belt", "accessory"],
+      "preset": "wanderer",
+      "keywords": ["fantasy", "mage", "knight", "rpg", "rp", "wizard", "warrior", "elf", "quest"]
+    },
+    "media": {
+      "label": "Media / press",
+      "requiredSlots": ["torso"],
+      "preferredSlots": ["prop_r", "accessory", "outer"],
+      "preset": null,
+      "keywords": ["press", "reporter", "camera", "media", "journalist", "film"]
+    }
+  },
+  "featureRules": {
+    "weather": {
+      "requiredIf": "exterior_full_exposure",
+      "defaultRequired": ["wet"],
+      "optional": ["dust", "snow", "wet_glass"],
+      "skipIf": ["interior", "sheltered", "character_only", "sound_only"]
+    },
+    "atmosphere": {
+      "requiredIf": "world_or_area",
+      "skipIf": ["single_prop", "texture_only", "minimal"]
+    },
+    "interact": {
+      "requiredIf": "user_asked_interact_or_terminal",
+      "default": false
+    },
+    "audio": {
+      "requiredIf": "user_asked_sound_or_zone",
+      "maxByIntensity": true
+    },
+    "lod": {
+      "requiredIf": "character_or_hero_mesh",
+      "alwaysForPlayerBodies": true
+    },
+    "mods": {
+      "requiredSlotsByArchetype": true,
+      "neverOverfillExclusive": true,
+      "preferCatalogPresets": true
+    },
+    "poly": {
+      "hero": "medium_or_high",
+      "dressing": "low",
+      "neverBatchDynamics": true
+    }
+  },
+  "uxPrinciples": [
+    "Ask only what is still unknown — never re-ask confirmed placement/weather/collision.",
+    "Prefer one focused deliverable over dumping unrelated systems.",
+    "Match intensity to user language: 'just a box' → minimal; 'outpost at dusk' → rich.",
+    "Required MOD slots define character identity; optional slots add immersion only when budget allows.",
+    "Default realistic PBR mode 4; retro modes only when explicitly requested.",
+    "PLAY-testable output: locked floors, surfaceType, pause-guard IIFE.",
+    "Ship quality: 2K hero maps, no CanvasTexture slop, sequential Ollama for heavy local runs."
+  ]
+}

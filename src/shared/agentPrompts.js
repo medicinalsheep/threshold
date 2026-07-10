@@ -75,23 +75,33 @@ ${getSceneContextBrief()}`;
         }
 
         case 'production_plan': {
+            const brief = payload.brief || payload.idea || payload.message || 'generic hero prop';
+            let reasoning = '';
+            try {
+                reasoning = window.GenerationPolicy?.buildGenerationReasoningPrompt?.(
+                    { idea: brief, message: brief },
+                    payload.taskType || 'prop'
+                ) || '';
+            } catch { /* optional */ }
             const system = `You are Threshold production planner (medium). Output a compact PLAN only — not JavaScript.
+Match intensity to the brief (minimal → few lines; rich → full pipeline). Skip irrelevant steps.
 Use this structure:
 PLAN: <title>
-1. scope — placement (interior|exterior|transitional|floating)
-2. collision — static|dynamic|visual · surfaceType
-3. mesh — primitive/GLB · poly low|medium|high · LOD if large
-4. textures — gimp|blender master @ 1k|2k (name = manifest slot)
-5. hilod — textures:hilod / textures:watch → _1k/_2k + WebP for Lite/Mobile
-6. weather — wet|dust|snow|wet_glass|sheltered
-7. atmosphere — time/fog · audioZone
-8. shaders — MaterialPresets id (no CanvasTexture slop)
-9. interact — F hints / sfx if needed
-10. codegen — pause-guard IIFE · World.createObject(type,name,color,physics)
-11. verify — PLAY · weather · graphics Lite+Realistic
-PERF: graphicsTier · ollamaQueue sequential|parallel · freeze after heavy GLB
-Never invent fake APIs. Default realistic mode 4.`;
-            const brief = payload.brief || payload.idea || payload.message || 'generic hero prop';
+INTENSITY: minimal|focused|rich|maximal
+1. scope — placement + hero vs dressing
+2. collision — static|dynamic|visual · surfaceType (skip if N/A)
+3. mesh — primitive/GLB · poly · LOD if character/hero
+4. textures — gimp|blender @ 1k|2k only as needed
+5. hilod — only if textures
+6. weather — only exterior; wet required when full exposure; dust/snow only if brief needs
+7. atmosphere — only worlds/areas
+8. appearance — characters: REQUIRED mods + optional by intensity (catalog ids only)
+9. interact/audio — only if asked
+10. codegen — pause-guard IIFE
+11. verify — PLAY checks that matter
+PERF: Lite/2060 safe counts · sequential Ollama for heavy local
+Never invent fake APIs. Default realistic mode 4.
+${reasoning}`;
             return {
                 system,
                 user: `Write a Threshold production plan for:\n${brief}`,
@@ -100,20 +110,30 @@ Never invent fake APIs. Default realistic mode 4.`;
 
         case 'scene_script':
         case 'prompter_generate': {
+            const idea = payload.idea || 'extend current scene';
+            let reasoning = '';
+            try {
+                reasoning = window.GenerationPolicy?.buildGenerationReasoningPrompt?.(
+                    { idea, message: idea, ...(payload.appearance || {}) },
+                    payload.taskType || 'world'
+                ) || '';
+            } catch { /* optional */ }
             const system = payload.systemOverride || `You are Threshold Engine architect (large task). Generate a complete playable script.
 Return ONLY executable JavaScript wrapped in an IIFE with try/catch inside.
 Extend the live scene — do NOT call World.clearWorld() unless asked.
 Always call Engine.setRenderMode(4) once for realistic/default scenes — NEVER 2 or 3 unless the user explicitly asked for retro/terminal/toon/hyper.
 Guard world edits: if (!State.isPaused) { UI.status('Pause (EDIT)'); return; }
 World.createObject(type, name, colorHex, usePhysics) — type first.
-Performance: respect poly budget; prefer few meshes; locked static floors; set userData.texRes/hilod/polyBudget when relevant.
+Performance: respect intensity budgets (props/NPCs); prefer few meshes; locked static floors; set userData.texRes/hilod/polyBudget when relevant.
 Do not spawn huge batches of dynamics (keep playable on Lite/2060). Sequential Ollama is default for heavy scenes.
+Characters/NPCs: set userData.appearance = { bodyId, hairId, mods[] } using catalog mod ids; fill required archetype slots; omit optional fashion if intensity is minimal.
+
+${reasoning}
 
 ${getSceneApiPrompt()}
 
 ${getSceneContext()}
 ${getSoundContext()}`;
-            const idea = payload.idea || 'extend current scene';
             return {
                 system,
                 user: payload.userOverride || `Generate a Threshold Engine script for:\n${idea}\n\nReturn ONLY the IIFE — no markdown, no explanation.`,

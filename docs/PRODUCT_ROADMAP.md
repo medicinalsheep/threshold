@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → local GIMP/Blender art → tiered AI agents (Ollama + Grok).
 
-**Current version:** **10.12.19**
+**Current version:** **10.12.20**
 
 **Forward plan:** [ROADMAP.md](ROADMAP.md) · **Snapshot:** [CAPABILITIES.md](CAPABILITIES.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 

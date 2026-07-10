@@ -15,6 +15,7 @@ import { TIER_GUIDE, tierOptionsHtml, renderTierGuideHtml } from './agentModelGu
 import { BuildJob } from './buildJob.js';
 import { getSceneApiPrompt } from './sceneApiPrompt.js';
 import { buildAgentPortalSystemPrompt, buildCompilerRequest, validateProductionReady } from './assetProductionPlan.js';
+import { enrichReadyContext, applyAppearancePlan } from './generationPolicy.js';
 import { assessTierPrefs, renderMatrixHtml, buildModelMatrix, countDistinctLocalModels, getDeviceProfile } from './modelCapability.js';
 import { OllamaRunQueue } from './ollamaRunQueue.js';
 import { WorkFolderScope } from './workFolderScope.js';
@@ -105,8 +106,18 @@ function hostingContext() {
     return { onPages, onLocal, host };
 }
 
-function buildChatSystem() {
-    return buildAgentPortalSystemPrompt();
+function buildChatSystem(session = {}) {
+    const hist = session.chatHistory || [];
+    const lastUser = [...hist].reverse().find((m) => m.role === 'user')?.text || '';
+    const ctx = session.buildContext || {};
+    return buildAgentPortalSystemPrompt({
+        message: lastUser,
+        title: ctx.title,
+        summary: ctx.summary,
+        taskType: ctx.taskType,
+        placement: ctx.placement,
+        idea: lastUser,
+    });
 }
 
 function parseReadySignal(text) {
@@ -785,23 +796,41 @@ export const AgentPortal = {
             const transcript = history.map((m) => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.text}`).join('\n');
             const result = await AgentRouter.runTask('npc_chat', {
                 message: text,
-                systemOverride: buildChatSystem(),
+                systemOverride: buildChatSystem(this._session),
                 context: transcript,
             });
 
             const reply = result.text || '';
-            const ready = parseReadySignal(reply);
+            let ready = parseReadySignal(reply);
+            if (ready) {
+                ready = enrichReadyContext(ready, text);
+            }
             const pipelineHint = creativePipelineHint(text, this._probe || this._session.lastProbe);
 
             if (ready) {
+                // Character / loadout: apply reasoned MOD plan to player skin
+                if (ready.appearance && (ready.taskType === 'character' || ready.appearance.mods?.length)) {
+                    try {
+                        await applyAppearancePlan(ready.appearance, { applyToPlayer: true });
+                        window.UI?.status?.(`Loadout applied · ${ready.intensity || 'focused'} · ${(ready.appearance.mods || []).length} mods`);
+                    } catch (e) {
+                        console.warn('[portal] appearance apply', e.message || e);
+                    }
+                }
+                const modLine = ready.appearance?.mods?.length
+                    ? `\nLoadout (${ready.appearance.archetype || 'custom'} · ${ready.intensity || 'focused'}): ${ready.appearance.mods.join(', ')}`
+                    : '';
+                const budgetLine = ready.generationBudget
+                    ? `\nBudget: ≤${ready.generationBudget.maxProps} props · intensity ${ready.intensity || 'focused'}`
+                    : '';
                 history.push({
                     role: 'assistant',
-                    text: `Ready to build: ${ready.title || ready.taskType}\n${ready.summary || ''}${pipelineHint}`,
+                    text: `Ready to build: ${ready.title || ready.taskType}\n${ready.summary || ''}${modLine}${budgetLine}${pipelineHint}`,
                     meta: `${result.provider}/${result.model} · ${result.ms}ms`,
                 });
                 this._session = saveSession({
                     chatHistory: history,
-                    buildContext: ready,
+                    buildContext: { ...ready, ready: true },
                 });
                 document.getElementById('agent-portal-generate')?.style && (document.getElementById('agent-portal-generate').style.display = 'inline-block');
             } else if (looksLikeCode(reply)) {
