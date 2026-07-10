@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.12.22 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.12.23 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 

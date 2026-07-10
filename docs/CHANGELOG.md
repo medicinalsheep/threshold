@@ -1,3 +1,10 @@
+## 10.12.23 — Sign in with X (OAuth 2.0 PKCE)
+
+- **XAuth** — official X OAuth 2.0 + PKCE (SPA); lobby + nav + portal **Sign in with X**
+- Stores X user `@handle` / avatar / tokens locally; optional `offline.access` refresh
+- Config: `VITE_X_CLIENT_ID` (+ callback URLs in developer.x.com)
+- **Note:** X identity ≠ SuperGrok/xAI API — Grok still uses `console.x.ai` key
+
 ## 10.12.22 — Grok / SuperGrok-class API hooks
 
 - **GrokClient** — official `api.x.ai` chat + Imagine hooks; models from `config/grok-models.json` (4.5, 4.3, 4.20, build, imagine)

@@ -1,4 +1,5 @@
 import { IS_GROK_EDITION } from '../config.js';
+import { XAuth } from './xAuth.js';
 
 const SESSION_KEY = 'threshold_xai_key';
 const LOCAL_KEY = 'threshold_xai_key_persistent';
@@ -34,10 +35,6 @@ export const Auth = {
             localStorage.removeItem(REMEMBER_FLAG);
             localStorage.removeItem(LOCAL_KEY);
         }
-        // hydrate session from persistent if only local was set
-        if (!sessionStorage.getItem(SESSION_KEY) && this.isRemembered()) {
-            sessionStorage.setItem(SESSION_KEY, localStorage.getItem(LOCAL_KEY));
-        }
         return true;
     },
 
@@ -56,8 +53,29 @@ export const Auth = {
     },
 };
 
-export function initAuth() {
+window.Auth = Auth;
+
+export async function initAuth() {
     Auth.hydrate();
+
+    // X OAuth callback (may throw — show status, don't block boot)
+    try {
+        const session = await XAuth.handleRedirectCallback();
+        if (session?.user) {
+            // Prefer X handle as lobby name
+            try {
+                localStorage.setItem('threshold_player_name', session.user.username || session.user.name);
+            } catch { /* ignore */ }
+            window.UI?.status?.(`Signed in as @${session.user.username}`);
+        }
+    } catch (e) {
+        console.warn('[auth] X callback', e.message || e);
+        window.UI?.status?.(e.message || 'X sign-in failed');
+    }
+
+    await XAuth.refreshIfNeeded();
+    XAuth.bindUi();
+    XAuth.syncUi();
 
     const overlay = document.getElementById('auth-overlay');
     const form = document.getElementById('auth-form');
@@ -70,55 +88,55 @@ export function initAuth() {
         editionBadge.classList.toggle('grok', IS_GROK_EDITION);
     }
 
-    if (!IS_GROK_EDITION) {
-        overlay?.remove();
-        // Keep logout hidden on web unless key present
-        if (logoutBtn) {
-            logoutBtn.style.display = Auth.isLoggedIn() ? 'inline-block' : 'none';
-            logoutBtn.addEventListener('click', () => {
-                Auth.logout();
-                logoutBtn.style.display = 'none';
-                window.AgentStatus?.refresh?.();
-                window.AgentPortal?.runDetect?.();
-            });
-        }
-        return;
-    }
-
-    const showOverlay = () => {
-        if (overlay) overlay.style.display = 'flex';
+    const syncLogoutBtn = () => {
+        if (!logoutBtn) return;
+        const xUser = XAuth.getUser();
+        const hasXai = Auth.isLoggedIn();
+        logoutBtn.style.display = (xUser || hasXai) ? 'inline-block' : 'none';
+        if (xUser) logoutBtn.textContent = 'SIGN OUT';
+        else if (hasXai) logoutBtn.textContent = 'CLEAR KEY';
+        else logoutBtn.textContent = 'LOGOUT';
     };
-
-    const hideOverlay = () => {
-        if (overlay) overlay.style.display = 'none';
-    };
-
-    const syncAuthUi = () => {
-        if (Auth.isLoggedIn()) {
-            hideOverlay();
-            if (logoutBtn) logoutBtn.style.display = 'inline-block';
-        } else {
-            showOverlay();
-            if (logoutBtn) logoutBtn.style.display = 'none';
-        }
-    };
-
-    form?.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const remember = document.getElementById('auth-remember-key')?.checked === true;
-        if (Auth.login(input?.value || '', { remember })) {
-            syncAuthUi();
-            if (input) input.value = '';
-            window.AgentStatus?.refresh?.();
-            window.AgentReconnectChip?.refresh?.();
-            window.AgentPortal?.startIfNeeded?.();
-        }
-    });
 
     logoutBtn?.addEventListener('click', () => {
+        XAuth.logout();
         Auth.logout();
-        syncAuthUi();
+        syncLogoutBtn();
+        window.AgentStatus?.refresh?.();
+        window.AgentPortal?.runDetect?.();
+        window.UI?.status?.('Signed out');
     });
 
-    syncAuthUi();
+    // Grok edition: keep API-key overlay when no xAI key
+    if (IS_GROK_EDITION) {
+        const showOverlay = () => { if (overlay) overlay.style.display = 'flex'; };
+        const hideOverlay = () => { if (overlay) overlay.style.display = 'none'; };
+
+        const syncAuthUi = () => {
+            if (Auth.isLoggedIn()) hideOverlay();
+            else showOverlay();
+            syncLogoutBtn();
+            XAuth.syncUi();
+        };
+
+        form?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const remember = document.getElementById('auth-remember-key')?.checked === true;
+            if (Auth.login(input?.value || '', { remember })) {
+                syncAuthUi();
+                if (input) input.value = '';
+                window.AgentStatus?.refresh?.();
+                window.AgentReconnectChip?.refresh?.();
+                window.AgentPortal?.startIfNeeded?.();
+            }
+        });
+
+        syncAuthUi();
+    } else {
+        overlay?.remove();
+        syncLogoutBtn();
+    }
+
+    window.addEventListener('x-auth-change', syncLogoutBtn);
+    window.addEventListener('grok-config-change', syncLogoutBtn);
 }
