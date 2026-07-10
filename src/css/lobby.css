@@ -175,26 +175,134 @@
     flex-direction: column;
     justify-content: flex-start;
     padding: clamp(14px, 2.5vw, 24px) clamp(16px, 3vw, 28px);
+    overflow-x: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     max-height: min(94vh, 720px);
+    min-height: 0;
+    overscroll-behavior: contain;
 }
 
 .lobby-session-form {
     display: flex;
     flex-direction: column;
     gap: 0;
+    min-height: 0;
+}
+
+.lobby-primary-zone {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 4px 0 14px;
+    padding: 12px;
+    border: 1px solid rgba(57, 255, 20, 0.28);
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(57, 255, 20, 0.08) 0%, rgba(0, 0, 0, 0.2) 100%);
+}
+
+.lobby-primary-zone .lobby-mode-row {
+    margin: 0;
+}
+
+.lobby-primary-zone .lobby-mode-hint {
+    margin: 0;
+    text-align: center;
+}
+
+.lobby-btn-enter {
+    font-size: 0.95rem !important;
+    letter-spacing: 0.08em !important;
+    padding: 14px 16px !important;
+    min-height: 48px;
+}
+
+.lobby-multi-zone {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0 0 12px;
+    padding: 0 0 4px;
+}
+
+.lobby-section-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    color: #777;
+    font-weight: 700;
+}
+
+.lobby-btn-host {
+    background: transparent !important;
+    color: var(--accent-color) !important;
+    border: 1px solid var(--accent-color) !important;
+}
+
+.lobby-btn-host:hover {
+    background: rgba(57, 255, 20, 0.1) !important;
 }
 
 .lobby-quick-row {
     display: grid;
-    grid-template-columns: 1.4fr 0.8fr 1fr;
-    gap: 8px;
-    margin: 4px 0 12px;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    margin: 2px 0 0;
 }
 
 .lobby-quick-row .lobby-btn {
     margin-bottom: 0;
+    font-size: 0.68rem !important;
+    padding: 10px 6px !important;
+}
+
+.lobby-quick-secondary {
+    opacity: 0.95;
+}
+
+.lobby-options-wrap {
+    margin: 4px 0 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 0 10px 4px;
+    text-align: left;
+}
+
+.lobby-options-wrap > summary {
+    cursor: pointer;
+    color: #999;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    padding: 10px 0;
+    list-style: none;
+}
+
+.lobby-options-wrap > summary::-webkit-details-marker {
+    display: none;
+}
+
+.lobby-options-wrap[open] > summary {
+    color: var(--accent-color);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 8px;
+}
+
+.lobby-options-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 8px;
+}
+
+.lobby-passcode-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.68rem;
+    color: #888;
+}
+
+.lobby-passcode-row .lobby-input {
+    margin-bottom: 0 !important;
 }
 
 .lobby-actions-head {
@@ -433,13 +541,19 @@ body.light-mode .lobby-logo-light {
 }
 
 .lobby-share-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 8px;
-    margin-top: 10px;
+    margin-top: 12px;
 }
 
 .lobby-share-actions .lobby-btn-primary {
+    margin-bottom: 0;
+    order: -1;
+    min-height: 48px;
+}
+
+.lobby-share-actions .lobby-btn {
     margin-bottom: 0;
 }
 
@@ -588,23 +702,14 @@ body.light-mode .lobby-logo-light {
     min-height: 2.2em;
 }
 
-.lobby-quick-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin: 10px 0 8px;
-}
-
-.lobby-quick-row .lobby-btn {
-    padding: 11px 6px !important;
-    font-size: 0.72rem !important;
-}
-
-#lobby-status {
-    font-size: 0.75rem;
+#lobby-status,
+.lobby-status {
+    font-size: 0.74rem;
     color: #888;
     margin-top: 10px;
-    min-height: 1.2em;
+    min-height: 1.35em;
+    line-height: 1.4;
+    word-break: break-word;
 }
 
 .lobby-steps-wrap {
@@ -798,13 +903,35 @@ body.light-mode .lobby-logo-light {
         margin-bottom: 6px;
     }
 
+    .lobby-primary-zone {
+        padding: 12px 10px;
+    }
+
+    .lobby-btn-enter {
+        min-height: 52px;
+        font-size: 1rem !important;
+    }
+
     .lobby-quick-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
         gap: 6px;
     }
 
+    .lobby-quick-row .lobby-export-play {
+        grid-column: 1 / -1;
+    }
+
     .lobby-quick-row .lobby-btn {
-        font-size: 0.78rem !important;
+        font-size: 0.72rem !important;
+    }
+
+    .lobby-name-row {
+        flex-direction: column;
+    }
+
+    .lobby-name-source {
+        max-width: none;
+        flex: 1 1 auto;
     }
 }
 

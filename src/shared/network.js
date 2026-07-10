@@ -57,6 +57,20 @@ export const Network = {
         Session.updateUi();
 
         return new Promise((resolve, reject) => {
+            let settled = false;
+            const finish = (fn, arg) => {
+                if (settled) return;
+                settled = true;
+                clearTimeout(timeoutId);
+                fn(arg);
+            };
+
+            // PeerJS cloud can hang with no open/error — never block the lobby forever
+            const timeoutId = setTimeout(() => {
+                try { this.peer?.destroy?.(); } catch { /* ignore */ }
+                finish(reject, new Error('Host start timed out — try ENTER solo, or check network / peer server'));
+            }, 12000);
+
             this.peer = new Peer(roomId, getPeerOptions());
             this._wirePeerVoip(this.peer);
 
@@ -65,17 +79,17 @@ export const Network = {
                 import('./steamBridge.js').then(({ SteamBridge }) => {
                     SteamBridge.unlock('MULTIPLAYER_HOST');
                 }).catch(() => {});
-                resolve(roomId);
+                finish(resolve, roomId);
             });
 
             this.peer.on('error', (err) => {
                 console.error('Peer error:', err);
                 if (err.type === 'unavailable-id') {
-                    reject(new Error('Room ID taken — refresh the page or use Solo Play'));
-                } else if (err.type === 'network' || err.type === 'server-error') {
-                    reject(new Error('Peer server unreachable — check connection or try Solo Play'));
+                    finish(reject, new Error('Room ID taken — refresh the page or use Solo Play'));
+                } else if (err.type === 'network' || err.type === 'server-error' || err.type === 'socket-error') {
+                    finish(reject, new Error('Peer server unreachable — use ENTER for solo, or retry CREATE'));
                 } else {
-                    reject(new Error(err.message || err.type || 'Peer connection failed'));
+                    finish(reject, new Error(err.message || err.type || 'Peer connection failed'));
                 }
             });
 

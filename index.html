@@ -17,7 +17,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.12.27" />
+    <meta name="threshold-version" content="10.12.28" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD SUITE</title>
 </head>
@@ -57,124 +57,131 @@
                 </aside>
                 <main class="lobby-actions-panel">
                     <div id="lobby-session-form" class="lobby-session-form">
-                    <div class="lobby-actions-head">
-                        <span class="lobby-actions-label">SESSION</span>
-                        <span class="lobby-actions-sub">Host or join · solo · spectate</span>
-                    </div>
-                    <div class="lobby-name-block">
-                        <label class="lobby-share-label" for="lobby-name">Display name</label>
-                        <div class="lobby-name-row">
-                            <select id="lobby-name-source" class="lobby-input lobby-name-source" title="Use custom text or X profile">
-                                <option value="custom">Custom</option>
-                                <option value="x_username">X @handle</option>
-                                <option value="x_name">X name</option>
-                            </select>
-                            <input type="text" id="lobby-name" class="lobby-input" placeholder="Your name" maxlength="24" autocomplete="nickname">
+                        <div class="lobby-actions-head">
+                            <span class="lobby-actions-label">PLAY</span>
+                            <span class="lobby-actions-sub">No account required</span>
                         </div>
-                        <p id="lobby-name-hint" class="lobby-voip-hint">Custom, or X profile when signed in.</p>
-                    </div>
 
-                    <div class="lobby-mode-row" role="group" aria-label="Start mode">
-                        <span class="lobby-mode-label">START IN</span>
-                        <button type="button" id="lobby-mode-play" class="lobby-mode-btn active" data-mode="play">PLAY</button>
-                        <button type="button" id="lobby-mode-build" class="lobby-mode-btn" data-mode="build">BUILD</button>
-                    </div>
-                    <p class="lobby-mode-hint">PLAY = physics · BUILD = edit world</p>
-
-                    <div class="lobby-quick-row">
-                        <button id="lobby-solo" class="lobby-btn lobby-btn-primary">ENTER →</button>
-                        <button id="lobby-tc" class="lobby-btn lobby-btn-ghost" title="TC Circuit demo">TC →</button>
-                        <button id="lobby-spectate" class="lobby-btn lobby-btn-spectate">SPECTATE</button>
-                    </div>
-
-                    <button id="lobby-create" class="lobby-btn lobby-btn-primary">CREATE SESSION</button>
-                    <div class="lobby-join-row">
-                        <input type="text" id="lobby-join-code" class="lobby-input" placeholder="Room code (e.g. BOB3-KEY12-X7K2)" maxlength="24" autocomplete="off" spellcheck="false">
-                        <button id="lobby-join" class="lobby-btn lobby-btn-join">JOIN</button>
-                    </div>
-                    <input type="password" id="lobby-join-passcode" class="lobby-input" placeholder="Passcode (if host set one)" maxlength="32" autocomplete="off" spellcheck="false">
-                    <p class="lobby-join-hint">Invite link or room code · multiplayer optional</p>
-
-                    <button id="lobby-play-last-export" class="lobby-btn lobby-btn-ghost lobby-export-play" type="button" title="Open last EXPORT &amp; PLAY tab">▶ PLAY LAST EXPORT</button>
-
-                    <details class="lobby-passcode-wrap">
-                        <summary>Host passcode (optional)</summary>
-                        <label class="lobby-passcode-row">Require passcode to join
-                            <input type="password" id="lobby-host-passcode" class="lobby-input" placeholder="Leave blank for open session" maxlength="32" autocomplete="new-password" spellcheck="false">
-                        </label>
-                    </details>
-
-                    <details class="lobby-voip-wrap">
-                        <summary>Voice (optional)</summary>
-                        <div class="lobby-voip-grid">
-                            <label class="lobby-voip-row"><input type="checkbox" id="lobby-voip-enabled" checked> Enable voice</label>
-                            <label class="lobby-voip-row">Mode
-                                <select id="lobby-voip-mode" class="lobby-input lobby-voip-select">
-                                    <option value="webrtc" selected>In-game proximity (WebRTC)</option>
-                                    <option value="hybrid">In-game + Discord link</option>
-                                    <option value="discord">Discord only (external app)</option>
-                                    <option value="off">Off</option>
+                        <div class="lobby-name-block">
+                            <label class="lobby-share-label" for="lobby-name">Display name</label>
+                            <div class="lobby-name-row">
+                                <select id="lobby-name-source" class="lobby-input lobby-name-source" title="Use custom text or X profile">
+                                    <option value="custom">Custom</option>
+                                    <option value="x_username">X @handle</option>
+                                    <option value="x_name">X name</option>
                                 </select>
-                            </label>
-                            <label class="lobby-voip-row lobby-voip-webrtc-only">Transmit
-                                <select id="lobby-voip-transmission" class="lobby-input lobby-voip-select">
-                                    <option value="ptt" selected>Push-to-talk (V) — recommended</option>
-                                    <option value="open">Open mic (proximity gated)</option>
-                                </select>
-                            </label>
-                            <label class="lobby-voip-row lobby-voip-webrtc-only"><input type="checkbox" id="lobby-voip-proximity" checked> Proximity falloff</label>
-                            <label class="lobby-voip-row lobby-voip-discord-only">Discord invite
-                                <input type="text" id="lobby-voip-discord" class="lobby-input" placeholder="https://discord.gg/…">
-                            </label>
-                            <label class="lobby-voip-row"><input type="checkbox" id="lobby-voip-spec-hear"> Spectators hear voice</label>
-                            <p class="lobby-voip-hint">Mic is requested after the session starts — it will not block CREATE.</p>
-                        </div>
-                    </details>
-
-                    <label class="lobby-template-row">
-                        <span class="lobby-template-label">STARTER WORLD</span>
-                        <select id="lobby-template" class="lobby-input lobby-template-select" title="Template loaded on solo / host">
-                            <option value="grid">Blank Grid</option>
-                        </select>
-                    </label>
-                    <p id="lobby-template-desc" class="lobby-template-desc">Empty grid — add assets when ready</p>
-
-                    <details class="lobby-accounts" id="lobby-accounts">
-                        <summary>Accounts — X &amp; Grok (optional)</summary>
-                        <p class="lobby-voip-hint" style="margin:8px 0;">X = identity · Grok = AI generation · neither required to play</p>
-                        <div class="lobby-accounts-row">
-                            <div class="lobby-account-card">
-                                <span class="lobby-account-title">𝕏 X</span>
-                                <button type="button" class="lobby-btn lobby-btn-x" data-x-auth-login>
-                                    <span class="lobby-x-mark" aria-hidden="true">𝕏</span> Sign in with X
-                                </button>
-                                <div class="lobby-x-user" hidden>
-                                    <img data-x-auth-avatar alt="" width="28" height="28" hidden>
-                                    <span data-x-auth-user hidden></span>
-                                    <button type="button" class="lobby-btn lobby-btn-ghost btn-sm" data-x-auth-logout>Sign out</button>
-                                </div>
-                                <p class="lobby-voip-hint" data-x-auth-configured>Needs <code>VITE_X_CLIENT_ID</code></p>
+                                <input type="text" id="lobby-name" class="lobby-input" placeholder="Your name" maxlength="24" autocomplete="nickname">
                             </div>
-                            <div class="lobby-account-card">
-                                <span class="lobby-account-title">Grok</span>
-                                <button type="button" class="lobby-btn lobby-btn-grok" data-grok-auth-open data-grok-disconnected>
-                                    Connect Grok API
-                                </button>
-                                <div class="lobby-grok-user" data-grok-connected hidden>
-                                    <span data-grok-auth-status class="grok-auth-chip">Grok ✓</span>
-                                    <button type="button" class="lobby-btn lobby-btn-ghost btn-sm" data-grok-auth-open>Manage</button>
-                                </div>
-                                <p class="lobby-voip-hint">Key from <a href="https://console.x.ai" target="_blank" rel="noopener">console.x.ai</a></p>
+                            <p id="lobby-name-hint" class="lobby-voip-hint">Optional — shown in multiplayer.</p>
+                        </div>
+
+                        <div class="lobby-primary-zone">
+                            <div class="lobby-mode-row" role="group" aria-label="Start mode">
+                                <span class="lobby-mode-label">START IN</span>
+                                <button type="button" id="lobby-mode-play" class="lobby-mode-btn active" data-mode="play">PLAY</button>
+                                <button type="button" id="lobby-mode-build" class="lobby-mode-btn" data-mode="build">BUILD</button>
+                            </div>
+                            <button id="lobby-solo" class="lobby-btn lobby-btn-primary lobby-btn-enter" type="button">ENTER →</button>
+                            <p class="lobby-mode-hint">Solo · no network · start immediately</p>
+                        </div>
+
+                        <div class="lobby-multi-zone">
+                            <span class="lobby-section-label">MULTIPLAYER</span>
+                            <button id="lobby-create" class="lobby-btn lobby-btn-host" type="button">CREATE SESSION</button>
+                            <div class="lobby-join-row">
+                                <input type="text" id="lobby-join-code" class="lobby-input" placeholder="Room code" maxlength="24" autocomplete="off" spellcheck="false">
+                                <button id="lobby-join" class="lobby-btn lobby-btn-join" type="button">JOIN</button>
+                            </div>
+                            <div class="lobby-quick-row lobby-quick-secondary">
+                                <button id="lobby-spectate" class="lobby-btn lobby-btn-spectate" type="button">SPECTATE</button>
+                                <button id="lobby-tc" class="lobby-btn lobby-btn-ghost" type="button" title="TC Circuit demo">TC DEMO</button>
+                                <button id="lobby-play-last-export" class="lobby-btn lobby-btn-ghost lobby-export-play" type="button" title="Open last EXPORT &amp; PLAY tab">LAST EXPORT</button>
                             </div>
                         </div>
-                    </details>
+
+                        <details class="lobby-options-wrap">
+                            <summary>More options</summary>
+                            <div class="lobby-options-body">
+                                <label class="lobby-passcode-row">Join passcode
+                                    <input type="password" id="lobby-join-passcode" class="lobby-input" placeholder="If host set one" maxlength="32" autocomplete="off" spellcheck="false">
+                                </label>
+                                <label class="lobby-passcode-row">Host passcode (optional)
+                                    <input type="password" id="lobby-host-passcode" class="lobby-input" placeholder="Leave blank for open session" maxlength="32" autocomplete="new-password" spellcheck="false">
+                                </label>
+                                <label class="lobby-template-row">
+                                    <span class="lobby-template-label">STARTER WORLD</span>
+                                    <select id="lobby-template" class="lobby-input lobby-template-select" title="Template loaded on solo / host">
+                                        <option value="grid">Blank Grid</option>
+                                    </select>
+                                </label>
+                                <p id="lobby-template-desc" class="lobby-template-desc">Empty grid — add assets when ready</p>
+
+                                <details class="lobby-voip-wrap">
+                                    <summary>Voice</summary>
+                                    <div class="lobby-voip-grid">
+                                        <label class="lobby-voip-row"><input type="checkbox" id="lobby-voip-enabled" checked> Enable voice</label>
+                                        <label class="lobby-voip-row">Mode
+                                            <select id="lobby-voip-mode" class="lobby-input lobby-voip-select">
+                                                <option value="webrtc" selected>In-game proximity (WebRTC)</option>
+                                                <option value="hybrid">In-game + Discord link</option>
+                                                <option value="discord">Discord only (external app)</option>
+                                                <option value="off">Off</option>
+                                            </select>
+                                        </label>
+                                        <label class="lobby-voip-row lobby-voip-webrtc-only">Transmit
+                                            <select id="lobby-voip-transmission" class="lobby-input lobby-voip-select">
+                                                <option value="ptt" selected>Push-to-talk (V) — recommended</option>
+                                                <option value="open">Open mic (proximity gated)</option>
+                                            </select>
+                                        </label>
+                                        <label class="lobby-voip-row lobby-voip-webrtc-only"><input type="checkbox" id="lobby-voip-proximity" checked> Proximity falloff</label>
+                                        <label class="lobby-voip-row lobby-voip-discord-only">Discord invite
+                                            <input type="text" id="lobby-voip-discord" class="lobby-input" placeholder="https://discord.gg/…">
+                                        </label>
+                                        <label class="lobby-voip-row"><input type="checkbox" id="lobby-voip-spec-hear"> Spectators hear voice</label>
+                                        <p class="lobby-voip-hint">Mic is requested after the session starts — never blocks CREATE.</p>
+                                    </div>
+                                </details>
+
+                                <details class="lobby-accounts" id="lobby-accounts">
+                                    <summary>Accounts — X &amp; Grok</summary>
+                                    <p class="lobby-voip-hint" style="margin:8px 0;">Optional. X = identity · Grok = AI · neither required to play.</p>
+                                    <div class="lobby-accounts-row">
+                                        <div class="lobby-account-card">
+                                            <span class="lobby-account-title">𝕏 X</span>
+                                            <button type="button" class="lobby-btn lobby-btn-x" data-x-auth-login>
+                                                <span class="lobby-x-mark" aria-hidden="true">𝕏</span> Sign in with X
+                                            </button>
+                                            <div class="lobby-x-user" hidden>
+                                                <img data-x-auth-avatar alt="" width="28" height="28" hidden>
+                                                <span data-x-auth-user hidden></span>
+                                                <button type="button" class="lobby-btn lobby-btn-ghost btn-sm" data-x-auth-logout>Sign out</button>
+                                            </div>
+                                            <p class="lobby-voip-hint" data-x-auth-configured>Needs <code>VITE_X_CLIENT_ID</code></p>
+                                        </div>
+                                        <div class="lobby-account-card">
+                                            <span class="lobby-account-title">Grok</span>
+                                            <button type="button" class="lobby-btn lobby-btn-grok" data-grok-auth-open data-grok-disconnected>
+                                                Connect Grok API
+                                            </button>
+                                            <div class="lobby-grok-user" data-grok-connected hidden>
+                                                <span data-grok-auth-status class="grok-auth-chip">Grok ✓</span>
+                                                <button type="button" class="lobby-btn lobby-btn-ghost btn-sm" data-grok-auth-open>Manage</button>
+                                            </div>
+                                            <p class="lobby-voip-hint">Key from <a href="https://console.x.ai" target="_blank" rel="noopener">console.x.ai</a></p>
+                                        </div>
+                                    </div>
+                                </details>
+                            </div>
+                        </details>
                     </div>
+
                     <div id="lobby-share-panel" class="lobby-share-panel hidden" aria-live="polite">
                         <div class="lobby-actions-head">
-                            <span class="lobby-actions-label">INVITE</span>
-                            <span class="lobby-actions-sub">Share before friends join</span>
+                            <span class="lobby-actions-label">HOST LIVE</span>
+                            <span class="lobby-actions-sub">Share then enter</span>
                         </div>
-                        <p id="lobby-share-status" class="lobby-share-status">Session live — copy code or link below</p>
+                        <p id="lobby-share-status" class="lobby-share-status">Session live — copy code or link, then enter</p>
                         <label class="lobby-share-label" for="lobby-share-code">Room code</label>
                         <div class="lobby-share-code-row">
                             <input type="text" id="lobby-share-code" class="lobby-input lobby-share-code" readonly spellcheck="false">
@@ -184,19 +191,12 @@
                         <input type="text" id="lobby-share-link" class="lobby-input" readonly spellcheck="false">
                         <div class="lobby-share-actions">
                             <button type="button" id="lobby-copy-link" class="lobby-btn lobby-btn-ghost">COPY LINK</button>
-                            <button type="button" id="lobby-enter-session" class="lobby-btn lobby-btn-primary">ENTER SESSION →</button>
+                            <button type="button" id="lobby-enter-session" class="lobby-btn lobby-btn-primary lobby-btn-enter">ENTER SESSION →</button>
                         </div>
                         <p id="lobby-share-pass-hint" class="lobby-voip-hint hidden">Passcode required — tell guests the code you set at CREATE.</p>
                     </div>
-                    <details class="lobby-steps-wrap">
-                        <summary>Quick tips</summary>
-                        <div class="lobby-steps">
-                            <div class="lobby-step"><span class="lobby-step-num">1</span> Set voice (host) · choose <strong>PLAY</strong> or <strong>BUILD</strong></div>
-                            <div class="lobby-step"><span class="lobby-step-num">2</span> <strong>CREATE SESSION</strong> or <strong>ENTER</strong> for solo on blank grid</div>
-                            <div class="lobby-step"><span class="lobby-step-num">3</span> In-engine <strong>SETUP</strong> — Grok, Ollama, design brief (optional)</div>
-                        </div>
-                    </details>
-                    <div id="lobby-status"></div>
+
+                    <div id="lobby-status" class="lobby-status" role="status"></div>
                 </main>
             </div>
         </div>
@@ -250,7 +250,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.12.27</span><span class="edition-badge" id="edition-badge">WEB</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.12.28</span><span class="edition-badge" id="edition-badge">WEB</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>

@@ -175,9 +175,12 @@ export function initLobby(onReady) {
     };
 
     document.getElementById('lobby-create')?.addEventListener('click', async () => {
-        setStatus('Creating session...');
+        setStatus('Creating multiplayer session…');
         const btn = document.getElementById('lobby-create');
-        if (btn) btn.disabled = true;
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'CONNECTING…';
+        }
         try {
             Session.init();
             applyDisplayName();
@@ -190,9 +193,11 @@ export function initLobby(onReady) {
                     await Network.startHost(roomId, { voipConfig, passcode });
                     break;
                 } catch (e) {
-                    if (!String(e?.message || '').includes('Room ID taken') || attempts >= 3) throw e;
+                    const taken = String(e?.message || '').includes('Room ID taken');
+                    if (!taken || attempts >= 3) throw e;
                     roomId = generateHostRoomId(Session.playerName, Session.playerKey);
                     attempts += 1;
+                    setStatus(`Room taken — retrying (${attempts + 1}/4)…`);
                 }
             }
             // Never block session start on mic permission / VoIP
@@ -208,21 +213,32 @@ export function initLobby(onReady) {
             setSelectedTemplateId('grid');
             persistLobbyMode();
             showLobbySharePanel(Network.roomId, passcode);
-            setStatus(`Session live — ${summarizeVoipConfig(voipConfig)} · share invite below`);
+            setStatus(`Host live — ${summarizeVoipConfig(voipConfig)} · copy invite, then ENTER SESSION`);
+            // Focus primary enter so multiplayer hosts aren't stuck on the share panel
+            requestAnimationFrame(() => {
+                document.getElementById('lobby-enter-session')?.focus?.();
+            });
         } catch (e) {
             console.error('[lobby] create session', e);
-            setStatus(e?.message || String(e) || 'Failed to create session', true);
+            setStatus(e?.message || String(e) || 'Failed to create session — try ENTER for solo', true);
+            hideLobbySharePanel();
         } finally {
-            if (btn) btn.disabled = false;
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'CREATE SESSION';
+            }
         }
     });
 
     document.getElementById('lobby-join')?.addEventListener('click', async () => {
         const code = normalizeRoomCode(joinInput?.value);
         if (!code) { setStatus('Enter a room code', true); return; }
-        setStatus('Joining...');
+        setStatus('Joining…');
         const btn = document.getElementById('lobby-join');
-        if (btn) btn.disabled = true;
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = '…';
+        }
         try {
             Session.init();
             applyDisplayName();
@@ -234,34 +250,51 @@ export function initLobby(onReady) {
             console.error('[lobby] join', e);
             setStatus(e?.message || 'Could not join — check code & host is online', true);
         } finally {
-            if (btn) btn.disabled = false;
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'JOIN';
+            }
         }
     });
 
     document.getElementById('lobby-solo')?.addEventListener('click', () => {
-        Session.init();
-        applyDisplayName();
-        enterSoloBuild();
-        Network.startSolo();
-        enterApp();
+        const btn = document.getElementById('lobby-solo');
+        if (btn) btn.disabled = true;
+        try {
+            setStatus('Starting solo…');
+            Session.init();
+            applyDisplayName();
+            enterSoloBuild();
+            Network.startSolo();
+            enterApp();
+        } catch (e) {
+            console.error('[lobby] solo enter', e);
+            setStatus(e?.message || 'Could not start solo session', true);
+            if (btn) btn.disabled = false;
+        }
     });
 
     document.getElementById('lobby-tc')?.addEventListener('click', () => {
-        Session.init();
-        applyDisplayName();
-        setSelectedTemplateId('tc-circuit');
-        const sel = document.getElementById('lobby-template');
-        if (sel) sel.value = 'tc-circuit';
-        persistLobbyMode();
-        Network.startSolo();
-        setStatus('TC Circuit template loading…');
-        enterApp();
+        try {
+            setStatus('TC Circuit loading…');
+            Session.init();
+            applyDisplayName();
+            setSelectedTemplateId('tc-circuit');
+            const sel = document.getElementById('lobby-template');
+            if (sel) sel.value = 'tc-circuit';
+            persistLobbyMode();
+            Network.startSolo();
+            enterApp();
+        } catch (e) {
+            console.error('[lobby] tc enter', e);
+            setStatus(e?.message || 'Could not start TC Circuit', true);
+        }
     });
 
     document.getElementById('lobby-spectate')?.addEventListener('click', async () => {
         const code = normalizeRoomCode(joinInput?.value);
         if (!code) { setStatus('Enter a room code to spectate', true); return; }
-        setStatus('Joining as spectator...');
+        setStatus('Joining as spectator…');
         try {
             Session.init();
             applyDisplayName();
@@ -271,7 +304,7 @@ export function initLobby(onReady) {
             window.Spectate?.setFollowHost?.(true);
             document.querySelector('[data-target="view-spectate"]')?.click();
         } catch (e) {
-            setStatus(e.message || 'Could not spectate — check code & host', true);
+            setStatus(e?.message || 'Could not spectate — check code & host', true);
         }
     });
 

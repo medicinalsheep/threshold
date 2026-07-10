@@ -1,3 +1,11 @@
+## 10.12.28 — Session start reliability + lobby UI rebuild
+
+- **Host timeout** — CREATE no longer hangs forever if PeerJS never opens (12s + clear error)
+- Solo/join/create handlers hardened with try/catch + button busy state
+- Lobby UI rebuilt after auth clutter: big **ENTER** primary zone · multiplayer secondary · More options (passcode/voice/accounts) collapsed
+- Share panel: **ENTER SESSION** is the primary action after CREATE
+- Fixed Grok clear-key using bare `Auth` in module scope
+
 ## 10.12.27 — Lobby session start fix + layout cleanup
 
 - **CREATE SESSION** no longer waits on mic/VoIP (was blocking on getUserMedia)

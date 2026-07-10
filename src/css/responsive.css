@@ -579,7 +579,7 @@
 }
 
 .lobby-name-block {
-    margin: 0 0 10px;
+    margin: 0 0 12px;
 }
 
 .lobby-name-row {
@@ -589,15 +589,20 @@
 }
 
 .lobby-name-source {
-    flex: 0 0 min(38%, 132px);
-    max-width: 140px;
+    flex: 0 0 min(36%, 120px);
+    max-width: 128px;
     margin-bottom: 0 !important;
+    font-size: 0.72rem !important;
 }
 
 .lobby-name-row #lobby-name {
     flex: 1;
     min-width: 0;
     margin-bottom: 0 !important;
+}
+
+.lobby-name-block .lobby-voip-hint {
+    margin-top: 6px;
 }
 
 .lobby-name-from-x {

@@ -24,7 +24,7 @@ export const GrokAuthUi = {
         document.getElementById('grok-auth-save')?.addEventListener('click', () => this.saveFromModal());
         document.getElementById('grok-auth-test')?.addEventListener('click', () => void this.testFromModal());
         document.getElementById('grok-auth-clear')?.addEventListener('click', () => {
-            Auth.logout();
+            auth()?.logout?.();
             this.syncUi();
             window.AgentPortal?.runDetect?.();
             window.UI?.status?.('Grok key cleared');
