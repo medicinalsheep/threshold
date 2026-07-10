@@ -3,7 +3,7 @@ const STORAGE_KB_USER = 'threshold_bindings_user';
 const STORAGE_GP_HOST = 'threshold_gamepad_host';
 const STORAGE_GP_USER = 'threshold_gamepad_user';
 const STORAGE_BINDINGS_SCHEMA = 'threshold_bindings_schema';
-const BINDINGS_SCHEMA = 3;
+const BINDINGS_SCHEMA = 4;
 
 /** Action control map — groups match KEYS menu sections */
 export const CONTROL_ACTIONS = {
@@ -32,7 +32,8 @@ export const CONTROL_ACTIONS = {
     emote: { label: 'Emote / Hands Up', group: 'social' },
     voipPtt: { label: 'Voice Push-to-Talk (hold)', group: 'social' },
     toggleView: { label: 'Toggle FPS / TPS', group: 'camera' },
-    thirdEye: { label: 'Third Eye / Interact', group: 'camera' },
+    thirdEye: { label: 'Third Eye (highlights)', group: 'camera' },
+    uiMouse: { label: 'UI mouse mode (PLAY, no highlights)', group: 'camera' },
     flashlight: { label: 'Flashlight', group: 'camera' },
     lookBehind: { label: 'Look Behind (tap)', group: 'camera' },
     horn: { label: 'Horn', group: 'vehicle' },
@@ -111,6 +112,7 @@ const DEFAULT_HOST_KEYBOARD = {
     voipPtt: ['KeyN'],
     toggleView: ['KeyV'],
     thirdEye: ['KeyF'],
+    uiMouse: ['KeyM'],
     flashlight: ['KeyL'],
     lookBehind: ['KeyO'],
     horn: ['KeyH'],
@@ -138,7 +140,7 @@ const KEY_LABELS = {
 const GAMEPAD_DEADZONE = 0.18;
 const EDGE_ACTIONS = new Set([
     'toggleMode', 'interact', 'bindingsMenu', 'cameraReset', 'pause', 'fire',
-    'toggleView', 'thirdEye', 'reload', 'melee', 'holster', 'emote', 'enterVehicle',
+    'toggleView', 'thirdEye', 'uiMouse', 'reload', 'melee', 'holster', 'emote', 'enterVehicle',
     'flashlight', 'lookBehind', 'horn', 'sessionPanel',
 ]);
 
@@ -569,7 +571,7 @@ export const Controls = {
             const lock = window.Engine?._lookPointerLocked ? ' · aim' : ' · click to aim';
             const peek = window.ThirdEye?.isPointerFree?.() ? ' · mouse free' : '';
             const alt = document.body.classList.contains('ui-immersive') ? ' · Alt peek' : '';
-            return `${profile}${admin}: ${view} · LMB aim · RMB shoot · F third eye · Alt peek${lock}${peek}${alt}${pad}${touch}`;
+            return `${profile}${admin}: ${view} · LMB aim · RMB shoot · F third eye · M UI mouse · Alt peek${lock}${peek}${alt}${pad}${touch}`;
         }
         return `${profile}${admin}: fly · Y walk · R-stick cam${pad}${touch}`;
     },

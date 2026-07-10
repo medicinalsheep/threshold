@@ -1,5 +1,12 @@
 # Changelog
 
+## 10.12.14 — UI mouse mode (PLAY)
+
+- **UI mouse** — **M** toggles free cursor in PLAY without Third Eye green highlights (click hubs/panels)
+- **Alt hold** — temporary UI mouse peek only (no awareness scan); optional fullscreen still in SETUP
+- **Third Eye (F)** — still enables interactable highlights when not using F to interact
+- **Bindings schema v4** — `uiMouse` action; defaults in KEYS menu
+
 ## 10.12.13 — Mini agents: train stack, plans, safety
 
 - **Bootcamp** — expanded JSONL (intent/NPC/compiler/scenes) + seed waves; `npm run train:mini`

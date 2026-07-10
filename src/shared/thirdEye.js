@@ -1,4 +1,8 @@
-/** Awareness overlay — highlights interactables / NPCs; green circle HUD when active */
+/** Awareness overlay + UI mouse mode
+ * - Third Eye (F): free mouse + green interactable highlights
+ * - UI mouse (M): free mouse only — click hubs/UI without highlight scan
+ * - Alt hold: temporary UI mouse peek (no highlights)
+ */
 
 import { ViewPrefs } from './viewPrefs.js';
 
@@ -27,8 +31,12 @@ function isTarget(obj) {
 }
 
 export const ThirdEye = {
+    /** Awareness mode — highlights interactables */
     active: false,
+    /** Sticky UI-only pointer mode — no highlights */
+    uiMouseMode: false,
     _indicator: null,
+    _uiMouseIndicator: null,
     _crosshair: null,
     _saved: new Map(),
     _lastScan: 0,
@@ -40,9 +48,11 @@ export const ThirdEye = {
 
     init() {
         this._indicator = document.getElementById('third-eye-indicator');
+        this._uiMouseIndicator = document.getElementById('ui-mouse-indicator');
         this._crosshair = document.getElementById('fps-crosshair');
         this._wireAltPeek();
         this._bindFullscreenPref();
+        this.updateHud();
     },
 
     _peekPrefs() {
@@ -75,9 +85,13 @@ export const ThirdEye = {
             if (immersive) e.preventDefault();
 
             this._altPeek = true;
-            if (!this.active) {
+            // Alt = temporary UI mouse only (no Third Eye highlights)
+            if (!this.uiMouseMode && !this.active) {
                 this._altTriggered = true;
-                this._enablePeek({ fromAlt: true });
+                this._enterUiPointer({ fromAlt: true, sticky: false });
+            } else {
+                window.Engine?._releaseLookLock?.();
+                this.updateHud();
             }
         });
 
@@ -86,8 +100,11 @@ export const ThirdEye = {
             if (!this._altPeek) return;
             this._altPeek = false;
             if (this._altTriggered) {
-                this._disablePeek({ fromAlt: true });
+                this._exitUiPointer({ fromAlt: true });
                 this._altTriggered = false;
+            } else {
+                this._exitFullscreenPeek();
+                this.updateHud();
             }
         });
 
@@ -95,7 +112,7 @@ export const ThirdEye = {
             if (!this._altPeek) return;
             this._altPeek = false;
             if (this._altTriggered) {
-                this._disablePeek({ fromAlt: true });
+                this._exitUiPointer({ fromAlt: true });
                 this._altTriggered = false;
             } else {
                 this._exitFullscreenPeek();
@@ -110,8 +127,14 @@ export const ThirdEye = {
         return true;
     },
 
+    /** Free mouse for UI — Third Eye, sticky UI mouse, or Alt peek */
     isPointerFree() {
-        return this.active || this._altPeek;
+        return this.active || this.uiMouseMode || this._altPeek;
+    },
+
+    /** True when awareness highlights are on */
+    isAwarenessActive() {
+        return this.active;
     },
 
     async _tryFullscreenPeek() {
@@ -133,43 +156,108 @@ export const ThirdEye = {
         this._enteredFullscreen = false;
     },
 
-    _enablePeek({ fromAlt = false } = {}) {
+    _syncBodyClasses() {
+        document.body.classList.toggle('third-eye-active', this.active);
+        document.body.classList.toggle('ui-mouse-mode', this.uiMouseMode || (this._altPeek && !this.active));
+        document.body.classList.toggle('third-eye-alt-peek', this._altPeek);
+        document.body.classList.toggle('pointer-free-play', this.isPointerFree());
+    },
+
+    /** UI pointer free without highlight scan */
+    _enterUiPointer({ fromAlt = false, sticky = false } = {}) {
         if (fromAlt) void this._tryFullscreenPeek();
         window.Engine?._releaseLookLock?.();
-        if (!this.active) {
-            this.active = true;
-            window.StarterSfx?.playStarterSfx?.('starter_terminal_chirp', fromAlt ? 0.12 : 0.28);
-            this._scan();
-        }
+        if (sticky) this.uiMouseMode = true;
+        this._syncBodyClasses();
         this.updateHud();
-        document.body.classList.toggle('third-eye-active', this.active);
-        document.body.classList.toggle('third-eye-alt-peek', fromAlt || this._altPeek);
         if (fromAlt) {
-            window.UI?.status?.('Alt — Third Eye peek (release Alt to aim)');
+            window.UI?.status?.('Alt — UI mouse (release Alt to aim)');
         }
     },
 
-    _disablePeek({ fromAlt = false } = {}) {
-        if (!fromAlt || this._altTriggered) {
-            this.active = false;
-            this._clearHighlights();
-            document.body.classList.remove('third-eye-active', 'third-eye-alt-peek');
+    _exitUiPointer({ fromAlt = false } = {}) {
+        if (fromAlt) {
+            // Don't clear sticky uiMouseMode on Alt release
+            this._exitFullscreenPeek();
+            this._syncBodyClasses();
             this.updateHud();
-            if (fromAlt) {
-                this._exitFullscreenPeek();
-                window.UI?.status?.('Third Eye peek off — LMB aim');
+            if (!this.uiMouseMode && !this.active) {
+                window.UI?.status?.('UI mouse peek off — LMB aim');
             }
+            return;
         }
+        this.uiMouseMode = false;
+        this._syncBodyClasses();
+        this.updateHud();
+    },
+
+    toggleUiMouse() {
+        if (this._altPeek) return this.uiMouseMode;
+        if (this.uiMouseMode) {
+            this.uiMouseMode = false;
+            // If Third Eye was not on, restore aim lock path
+            this._syncBodyClasses();
+            this.updateHud();
+            window.UI?.status?.('UI mouse — off · click canvas to aim');
+        } else {
+            // Sticky free mouse without awareness highlights
+            if (this.active) {
+                this._disableAwareness({});
+            }
+            this.uiMouseMode = true;
+            window.Engine?._releaseLookLock?.();
+            this._syncBodyClasses();
+            this.updateHud();
+            window.UI?.status?.('UI mouse — click hubs & panels · M to aim again');
+        }
+        return this.uiMouseMode;
+    },
+
+    _enableAwareness({ fromAlt = false } = {}) {
+        // fromAlt no longer enables awareness — kept for API compatibility
+        if (fromAlt) {
+            this._enterUiPointer({ fromAlt: true, sticky: false });
+            return;
+        }
+        window.Engine?._releaseLookLock?.();
+        // Turning on awareness can coexist with ui mouse; prefer exclusive clarity
+        if (this.uiMouseMode) {
+            this.uiMouseMode = false;
+        }
+        if (!this.active) {
+            this.active = true;
+            window.StarterSfx?.playStarterSfx?.('starter_terminal_chirp', 0.28);
+            this._scan();
+        }
+        this._syncBodyClasses();
+        this.updateHud();
+    },
+
+    _disableAwareness({ fromAlt = false } = {}) {
+        if (fromAlt) return;
+        this.active = false;
+        this._clearHighlights();
+        this._syncBodyClasses();
+        this.updateHud();
+    },
+
+    /** @deprecated use awareness enable — kept for callers */
+    _enablePeek(opts = {}) {
+        this._enableAwareness(opts);
+    },
+
+    _disablePeek(opts = {}) {
+        this._disableAwareness(opts);
     },
 
     toggle() {
         if (this._altPeek) return this.active;
         if (this.active) {
-            this._disablePeek({});
+            this._disableAwareness({});
             window.UI?.status?.('Third Eye — off');
         } else {
-            this._enablePeek({});
-            window.UI?.status?.('Third Eye — click UI & props · F to interact');
+            this._enableAwareness({});
+            window.UI?.status?.('Third Eye — highlights on · click UI & props · F interact');
         }
         return this.active;
     },
@@ -180,12 +268,18 @@ export const ThirdEye = {
         const peek = this.isPointerFree();
         this._crosshair?.classList.toggle('visible', fps && !peek);
         this._indicator?.classList.toggle('visible', this.active);
+        this._uiMouseIndicator?.classList.toggle(
+            'visible',
+            (this.uiMouseMode || this._altPeek) && !this.active,
+        );
         if (this._indicator && this.active) {
-            const lockNote = this._lockCount
-                ? ` · ${this._lockCount} locked`
-                : '';
-            const altNote = this._altPeek ? ' · Alt peek' : '';
-            this._indicator.title = `Third Eye active${lockNote}${altNote}`;
+            const lockNote = this._lockCount ? ` · ${this._lockCount} locked` : '';
+            this._indicator.title = `Third Eye active${lockNote}`;
+        }
+        if (this._uiMouseIndicator) {
+            this._uiMouseIndicator.title = this._altPeek
+                ? 'UI mouse (Alt peek)'
+                : 'UI mouse mode — no highlights';
         }
     },
 
@@ -238,9 +332,7 @@ export const ThirdEye = {
             this._applyHighlight(obj, locked);
             obj.traverse?.((c) => {
                 if (c.isMesh && c.material?.emissive) {
-                    c.material.emissiveIntensity = locked
-                        ? pulse + 0.08
-                        : pulse;
+                    c.material.emissiveIntensity = locked ? pulse + 0.08 : pulse;
                 }
             });
         });

@@ -2,7 +2,7 @@
 
 **Version:** 10.7+ · Rebind in toolbar → **KEYS** (or corner hub → TOOLS in EDIT)
 
-Default layout: **LMB aim (hold)** · **RMB shoot** · **F interact / Third Eye** · **E vehicle** · **T chat** · **Alt peek** (Third Eye hold in fullscreen).
+Default layout: **LMB aim (hold)** · **RMB shoot** · **F interact / Third Eye** · **M UI mouse** · **E vehicle** · **T chat** · **Alt** hold = temporary UI mouse.
 
 See [UI_AND_AGENTS.md](UI_AND_AGENTS.md) for touch layout, UNLOCK UI edit, and agent freeze workflow.
 
@@ -28,13 +28,22 @@ See [UI_AND_AGENTS.md](UI_AND_AGENTS.md) for touch layout, UNLOCK UI edit, and a
 | Flashlight | L | — |
 | Look behind | O | — |
 | FPS / TPS | V | D-pad Down |
-| Third Eye | F toggle · **Alt hold** peek (PLAY) | D-pad Up |
+| Third Eye (highlights) | F toggle (when not interacting) | D-pad Up |
+| UI mouse (no highlights) | **M** toggle · **Alt hold** peek (PLAY) | — |
 | Voice PTT | N (hold) | — |
 | Walk / fly toggle | Y | Y / Triangle |
 | Session panel | Tab | — |
 | Keys menu | ` | — |
 
-**Mouse:** click canvas in PLAY to capture pointer (look). **Esc** releases. With **Third Eye** or **Alt peek** active, mouse stays free for clicking UI/props — no ADS until peek ends.
+**Mouse:** click canvas in PLAY to capture pointer (look). **Esc** releases.
+
+| Mode | Key | Pointer | Highlights |
+|------|-----|---------|------------|
+| Aim (default) | click canvas | Locked (look) | Off |
+| **UI mouse** | **M** / **Alt** hold | Free — hubs, panels, props | **Off** |
+| **Third Eye** | **F** (no interact target) | Free | **On** (green / locked orange) |
+
+No ADS while any free-pointer mode is active.
 
 **Touch:** corner hub **TOUCH** · full controller buttons · arrange via hub **UNLOCK** · **+ BTN** for custom actions.
 

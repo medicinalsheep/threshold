@@ -398,7 +398,7 @@ export const Engine = {
 
         if (e.pointerType === 'mouse' || e.pointerType === 'pen') {
             const playWalk = this._isWalkPlayLook();
-            const pointerFree = ThirdEye.isPointerFree?.() || ThirdEye.active;
+            const pointerFree = ThirdEye.isPointerFree?.();
 
             if (playWalk && pointerFree) {
                 if (e.button === 0) {
@@ -510,6 +510,9 @@ export const Engine = {
         if (Controls.consumeJustPressed('pause') && Controls.canUse('pause')) UI.togglePause();
         if (Controls.consumeJustPressed('bindingsMenu')) UI.openBindingsModal?.();
         if (Controls.consumeJustPressed('sessionPanel')) UI.openHostPanel?.();
+        if (Controls.consumeJustPressed('uiMouse')) {
+            ThirdEye.toggleUiMouse?.();
+        }
         if (Controls.consumeJustPressed('interact') || Controls.consumeJustPressed('thirdEye')) {
             if (!window.WorldInteract?.tryInteract?.()) {
                 ThirdEye.toggle();

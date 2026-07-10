@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.12.13 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.12.14 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -147,7 +147,7 @@ UI reference: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Controls: [CONTROLS.md](CO
 | GIMP hero pass | Hand-painted 2K overrides for grid + AI station (procedural seed ships in 10.11.2) |
 | Doc version sync | `README.md`, `CAPABILITIES.md`, `GETTING_STARTED.md` still drift from live version |
 | `controls:verify` / `store:verify` | Not re-run since 10.8.x |
-| Mouse mode without Third Eye highlights | UI-only pointer mode for PLAY |
+| Mouse mode without Third Eye highlights | ✅ v10.12.14 — **M** UI mouse + Alt peek (no highlights); F = Third Eye awareness |
 | `intent_classify` router | ✅ v10.12.7 — `intentRouter.js` + game chat routing |
 | Store upload automation | Signing keys remain local; upload manual |
 | Training dataset growth | ✅ waves 1–4 + `train:mini` + `ollama:golden` (10.12.13); grow via Compiler EXPORT TRAINING PAIR |

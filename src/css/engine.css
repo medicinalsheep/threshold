@@ -1752,12 +1752,31 @@ body.third-eye-active #ui-layer button,
 body.third-eye-active #ui-layer input,
 body.third-eye-active #ui-layer select,
 body.third-eye-active #ui-layer textarea,
-body.third-eye-active #ui-layer a {
+body.third-eye-active #ui-layer a,
+body.ui-mouse-mode #proximity-panel,
+body.ui-mouse-mode #ui-layer .panel,
+body.ui-mouse-mode #ui-layer button,
+body.ui-mouse-mode #ui-layer input,
+body.ui-mouse-mode #ui-layer select,
+body.ui-mouse-mode #ui-layer textarea,
+body.ui-mouse-mode #ui-layer a,
+body.pointer-free-play #proximity-panel,
+body.pointer-free-play #ui-layer .panel,
+body.pointer-free-play #ui-layer button,
+body.pointer-free-play #ui-layer input,
+body.pointer-free-play #ui-layer select,
+body.pointer-free-play #ui-layer textarea,
+body.pointer-free-play #ui-layer a {
     pointer-events: auto;
 }
 
 body.third-eye-active #canvas-container canvas {
     cursor: crosshair;
+}
+
+body.ui-mouse-mode #canvas-container canvas,
+body.pointer-free-play:not(.third-eye-active) #canvas-container canvas {
+    cursor: default;
 }
 
 .fps-crosshair {
@@ -1813,6 +1832,28 @@ body.third-eye-active #canvas-container canvas {
 @keyframes third-eye-pulse {
     0%, 100% { transform: scale(1); box-shadow: 0 0 8px rgba(42, 204, 68, 0.4); }
     50% { transform: scale(1.08); box-shadow: 0 0 14px rgba(42, 204, 68, 0.65); }
+}
+
+/* UI mouse mode — free cursor without awareness ring */
+.ui-mouse-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    margin: -20px 0 0 -5px;
+    border-radius: 2px;
+    border: 2px solid rgba(120, 170, 255, 0.9);
+    background: rgba(80, 130, 220, 0.25);
+    box-shadow: 0 0 8px rgba(100, 150, 255, 0.4);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 7;
+    transition: opacity 0.18s ease;
+}
+
+.ui-mouse-indicator.visible {
+    opacity: 1;
 }
 
 .engine-graphics-prompt {

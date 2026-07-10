@@ -69,6 +69,18 @@ if (controlsMd.includes('LMB') && controlsMd.includes('RMB') && !controlsMd.incl
     fail('CONTROLS.md content check failed');
 }
 
+if (controlsSrc.includes("uiMouse:") && controlsSrc.includes("uiMouse: ['KeyM']")) {
+    ok('uiMouse mode binds to KeyM');
+} else {
+    fail('uiMouse binding missing or not KeyM');
+}
+
+if (controlsMd.includes('UI mouse') || controlsMd.includes('UI mouse mode')) {
+    ok('CONTROLS.md documents UI mouse mode');
+} else {
+    fail('CONTROLS.md missing UI mouse mode');
+}
+
 const playerSrc = read('src/engine/player.js');
 if (!playerSrc.includes('FiveM')) {
     ok('player.js spawn hint is neutral');
