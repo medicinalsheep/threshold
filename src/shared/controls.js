@@ -255,7 +255,8 @@ export const Controls = {
     _rebind: null,
     _rebindGamepad: null,
     _sprintToggle: false,
-    _holstered: false,
+    /** Start holstered so combat touch pads stay off until player draws */
+    _holstered: true,
 
     init() {
         window.addEventListener('gamepadconnected', (e) => {

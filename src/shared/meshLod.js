@@ -96,6 +96,7 @@ export const MeshLod = {
         });
         root.userData.lodActive = idx;
     },
+    // AvatarLod may wrap setActiveLevel after load for hair/mod rebind
 
     async initChain(container, lod0Scene, lodEntries = [], options = {}) {
         if (!lodEntries.length || lodEntries.length < 2) {

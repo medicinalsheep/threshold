@@ -21,6 +21,8 @@ export const DEFAULT_PROFILE = {
     version: APPEARANCE_VERSION,
     bodyId: 'male_default',
     hairId: 'hair_short_m',
+    /** Modular gear stack (avatar MOD layer) — ids from avatar-manifest.mods */
+    mods: [],
     colors: { ...DEFAULT_COLORS },
     textures: {
         skin: 'starter_skin_medium',
@@ -41,11 +43,21 @@ function hexToNum(hex) {
 }
 
 export function normalizeProfile(raw = {}) {
-    const base = { ...DEFAULT_PROFILE, colors: { ...DEFAULT_COLORS }, textures: { ...DEFAULT_PROFILE.textures }, props: { torso: null, head: null } };
+    const base = {
+        ...DEFAULT_PROFILE,
+        colors: { ...DEFAULT_COLORS },
+        textures: { ...DEFAULT_PROFILE.textures },
+        props: { torso: null, head: null },
+        mods: [],
+    };
     if (!raw || typeof raw !== 'object') return base;
+    const mods = Array.isArray(raw.mods)
+        ? [...new Set(raw.mods.filter(Boolean))]
+        : [];
     return {
         ...base,
         ...raw,
+        mods,
         colors: { ...DEFAULT_COLORS, ...(raw.colors || {}) },
         textures: { ...DEFAULT_PROFILE.textures, ...(raw.textures || {}) },
         props: { torso: null, head: null, ...(raw.props || {}) },
@@ -109,6 +121,7 @@ export function profileForNetwork(profile) {
     return {
         bodyId: p.bodyId,
         hairId: p.hairId,
+        mods: [...(p.mods || [])],
         colors: { ...p.colors },
         textures: {
             skin: resolveSkinSlug(p),
@@ -123,11 +136,18 @@ export function profileForNetwork(profile) {
     };
 }
 
+export function modsFromUi() {
+    const root = document.getElementById('skin-mod-list');
+    if (!root) return [];
+    return [...root.querySelectorAll('input[data-mod-id]:checked')].map((el) => el.dataset.modId);
+}
+
 export function profileFromUi(base = {}) {
     const p = normalizeProfile(base);
     const pick = (id, fallback) => document.getElementById(id)?.value ?? fallback;
     p.bodyId = pick('skin-body-preset', p.bodyId);
     p.hairId = pick('skin-hair-preset', p.hairId);
+    p.mods = modsFromUi();
     p.colors = colorsFromUi();
     p.textures = texturesFromUi();
     p.roughness = parseFloat(pick('skin-rough', String(p.roughness ?? 0.72)));
@@ -162,6 +182,13 @@ export function syncUiFromProfile(profile) {
     const hairSel = document.getElementById('skin-hair-preset');
     if (bodySel) bodySel.value = p.bodyId;
     if (hairSel) hairSel.value = p.hairId;
+    const modRoot = document.getElementById('skin-mod-list');
+    if (modRoot) {
+        const set = new Set(p.mods || []);
+        modRoot.querySelectorAll('input[data-mod-id]').forEach((el) => {
+            el.checked = set.has(el.dataset.modId);
+        });
+    }
     const toneSel = document.getElementById('skin-tone-preset');
     if (toneSel) toneSel.value = resolveSkinSlug(p);
     const imp = document.getElementById('skin-body-import');
@@ -188,6 +215,7 @@ window.AppearanceProfile = {
     resolveSkinSlug,
     colorsFromUi,
     texturesFromUi,
+    modsFromUi,
     profileFromUi,
     syncUiFromProfile,
 };

@@ -45,6 +45,8 @@ import '../shared/appearanceStore.js';
 import '../shared/hairSlot.js';
 import '../shared/avatarComposer.js';
 import '../shared/avatarTex.js';
+import '../shared/avatarLod.js';
+import '../shared/avatarMod.js';
 import '../shared/appearanceExport.js';
 import '../shared/avatarLoader.js';
 import '../shared/ambientAudio.js';

@@ -4,12 +4,24 @@ import { AssetBundle } from './assetBundle.js';
 import { GltfImport } from './gltfImport.js';
 import { AvatarManifest } from './avatarManifest.js';
 
+function isVisibleChain(obj) {
+    let p = obj;
+    while (p) {
+        if (p.visible === false) return false;
+        p = p.parent;
+    }
+    return true;
+}
+
 function findAttachPoint(root, names = []) {
     let hit = null;
+    let fallback = null;
     root.traverse((c) => {
-        if (!hit && names.includes(c.name)) hit = c;
+        if (!names.includes(c.name)) return;
+        if (!fallback) fallback = c;
+        if (!hit && isVisibleChain(c)) hit = c;
     });
-    return hit || root;
+    return hit || fallback || root;
 }
 
 function disposeHair(node) {

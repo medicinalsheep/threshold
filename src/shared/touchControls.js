@@ -33,6 +33,9 @@ export const STANDARD_TOUCH_BUTTONS = [
 /** Always on when touch UI is enabled — move / look + essentials */
 export const CORE_TOUCH_IDS = ['jump', 'sprint', 'interact', 'pause'];
 
+/** Shown while weapon is drawn (unholstered). Holster stays available to put away. */
+export const COMBAT_TOUCH_IDS = ['fire', 'aim', 'reload', 'melee', 'holster'];
+
 /**
  * Coordinates: bottom-left origin unless anchor 'br'/'tr' (x negative = left from right edge).
  */
@@ -139,6 +142,34 @@ export const TouchControls = {
         if (on) this._contextVisible.add(id);
         else this._contextVisible.delete(id);
         if (was !== on) this._renderLayout();
+    },
+
+    /** Batch context visibility — single re-render. */
+    setContextBatch(map) {
+        let dirty = false;
+        Object.entries(map || {}).forEach(([id, on]) => {
+            const was = this._contextVisible.has(id);
+            if (on) this._contextVisible.add(id);
+            else this._contextVisible.delete(id);
+            if (was !== !!on) dirty = true;
+        });
+        if (dirty) this._renderLayout();
+    },
+
+    /**
+     * Combat cluster: full pad when weapon ready; holster-only when put away
+     * so player can draw again without + BTN permanently enabling fire.
+     */
+    syncCombatContext(weaponReady) {
+        const ready = !!weaponReady;
+        const batch = {};
+        COMBAT_TOUCH_IDS.forEach((id) => {
+            if (id === 'holster') batch[id] = true;
+            else batch[id] = ready;
+        });
+        this.setContextBatch(batch);
+        const root = document.getElementById('touch-controls');
+        root?.classList.toggle('touch-combat-ready', ready);
     },
 
     _syncEditMode() {

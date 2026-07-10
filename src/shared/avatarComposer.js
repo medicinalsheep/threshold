@@ -10,6 +10,8 @@ import {
     profileToMeshOpts,
 } from './appearanceProfile.js';
 import { AvatarTex } from './avatarTex.js';
+import { AvatarLod } from './avatarLod.js';
+import { AvatarMod } from './avatarMod.js';
 
 function hexToNum(hex) {
     if (typeof hex === 'number') return hex;
@@ -83,6 +85,12 @@ export const AvatarComposer = {
         try {
             await HumanMesh.loadGltf(group, url, { heightM: body.heightM });
             group.userData.avatarGlb = body.file;
+            // Distance LOD chain (lod1/lod2 GLBs) when manifest lists tiers
+            try {
+                await AvatarLod.setup(group, body);
+            } catch (lodErr) {
+                console.warn('[avatar-composer] lod', lodErr.message || lodErr);
+            }
         } catch (e) {
             console.warn('[avatar-composer] body GLB fallback', body.file, e.message || e);
             const meshOpts = profileToMeshOpts(profile);
@@ -114,6 +122,12 @@ export const AvatarComposer = {
             } catch (e) {
                 console.warn('[avatar-composer] hair attach', profile.hairId, e.message || e);
             }
+        }
+
+        try {
+            await AvatarMod.apply(group, profile);
+        } catch (e) {
+            console.warn('[avatar-composer] mods', e.message || e);
         }
 
         try {

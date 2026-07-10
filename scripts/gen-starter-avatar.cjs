@@ -21,10 +21,12 @@ const ROOT = path.join(__dirname, '..');
 const IMPORT = path.join(ROOT, 'import');
 const PUB = path.join(ROOT, 'public', 'bundle', 'import');
 
-/** Radial segments for limbs / torso rings — moderate poly (~3–6k tris/body). */
-const SEG = 12;
-const HEAD_W = 24;
-const HEAD_H = 20;
+/** Detail tiers → LOD0 high · LOD1 mid · LOD2 low */
+function detailParams(detail = 'high') {
+    if (detail === 'low') return { seg: 6, headW: 10, headH: 8, face: false, bust: false };
+    if (detail === 'mid') return { seg: 8, headW: 14, headH: 12, face: true, bust: true };
+    return { seg: 12, headW: 24, headH: 20, face: true, bust: true };
+}
 
 function mat(c, o = {}) {
     return new THREE.MeshStandardMaterial({
@@ -116,10 +118,15 @@ const FORMS = {
     },
 };
 
-function buildBody(cols, formKey = 'male') {
+function buildBody(cols, formKey = 'male', detail = 'high') {
     const f = FORMS[formKey] || FORMS.male;
+    const d = detailParams(detail);
+    const SEG = d.seg;
+    const HEAD_W = d.headW;
+    const HEAD_H = d.headH;
     const root = new THREE.Group();
     root.name = f.rootName;
+    root.userData.detail = detail;
 
     const matSkin = mat(cols.skin, { r: 0.62 });
     const matShirt = mat(cols.shirt, { r: 0.78 });
@@ -161,8 +168,8 @@ function buildBody(cols, formKey = 'male') {
 
     torsoGroup.add(waist, chest);
 
-    if (f.bust > 0) {
-        const bustL = new THREE.Mesh(new THREE.SphereGeometry(f.bust, 10, 8), matShirt);
+    if (f.bust > 0 && d.bust) {
+        const bustL = new THREE.Mesh(new THREE.SphereGeometry(f.bust, Math.max(6, SEG - 2), 8), matShirt);
         bustL.position.set(-f.chestW * 0.18, f.torsoH * 0.12, f.chestD * 0.38);
         bustL.scale.set(1, 0.85, 0.75);
         bustL.name = 'torso_bust_l';
@@ -209,33 +216,35 @@ function buildBody(cols, formKey = 'male') {
     head.name = 'head';
     root.add(head);
 
-    // Ears
-    const earGeo = new THREE.SphereGeometry(f.headR * 0.22, 8, 6);
-    const earL = new THREE.Mesh(earGeo, matSkin);
-    earL.position.set(-f.headR * 0.92, head.position.y, 0);
-    earL.scale.set(0.45, 1, 0.7);
-    earL.name = 'ear_l';
-    const earR = earL.clone();
-    earR.position.x = -earL.position.x;
-    earR.name = 'ear_r';
-    root.add(earL, earR);
+    if (d.face) {
+        // Ears
+        const earGeo = new THREE.SphereGeometry(f.headR * 0.22, 8, 6);
+        const earL = new THREE.Mesh(earGeo, matSkin);
+        earL.position.set(-f.headR * 0.92, head.position.y, 0);
+        earL.scale.set(0.45, 1, 0.7);
+        earL.name = 'ear_l';
+        const earR = earL.clone();
+        earR.position.x = -earL.position.x;
+        earR.name = 'ear_r';
+        root.add(earL, earR);
 
-    // Eyes
-    const eyeGeo = new THREE.SphereGeometry(0.022, 8, 8);
-    const eyeL = new THREE.Mesh(eyeGeo, matEye);
-    eyeL.position.set(-0.055, head.position.y + 0.02, f.headR * 0.82);
-    eyeL.name = 'eye_l';
-    const eyeR = eyeL.clone();
-    eyeR.position.x = 0.055;
-    eyeR.name = 'eye_r';
-    root.add(eyeL, eyeR);
+        // Eyes
+        const eyeGeo = new THREE.SphereGeometry(0.022, 8, 8);
+        const eyeL = new THREE.Mesh(eyeGeo, matEye);
+        eyeL.position.set(-0.055, head.position.y + 0.02, f.headR * 0.82);
+        eyeL.name = 'eye_l';
+        const eyeR = eyeL.clone();
+        eyeR.position.x = 0.055;
+        eyeR.name = 'eye_r';
+        root.add(eyeL, eyeR);
 
-    // Nose hint
-    const nose = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 6), matSkin);
-    nose.position.set(0, head.position.y - 0.01, f.headR * 0.88);
-    nose.scale.set(0.7, 0.9, 1.1);
-    nose.name = 'nose';
-    root.add(nose);
+        // Nose hint
+        const nose = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 6), matSkin);
+        nose.position.set(0, head.position.y - 0.01, f.headR * 0.88);
+        nose.scale.set(0.7, 0.9, 1.1);
+        nose.name = 'nose';
+        root.add(nose);
+    }
 
     // Hair anchor (HairSlot)
     const hairAnchor = new THREE.Group();
@@ -458,15 +467,28 @@ const HAIR = [
     { file: 'hair_bun_f.glb', build: buildHairBun, cols: { hair: 0x4a3828 } },
 ];
 
+const LOD_TIERS = [
+    { detail: 'high', suffix: '' },
+    { detail: 'mid', suffix: '_lod1' },
+    { detail: 'low', suffix: '_lod2' },
+];
+
 async function main() {
     for (const spec of AVATARS) {
-        const { root, legL, legR, armL, armR } = buildBody(spec.cols, spec.form);
-        const clip = walkClip(legL, legR, armL, armR);
-        const out = path.join(IMPORT, spec.file);
-        await exportGlb(root, clip, out);
-        const kb = (fs.statSync(out).size / 1024).toFixed(1);
-        const tris = countTris(root);
-        console.log(`[gen-starter-avatar] ${spec.file} (${spec.form}) ${kb} KB · ~${tris} tris + walk`);
+        // LOD chain only for player bodies (manifest male/female defaults)
+        const wantLods = /starter_avatar(_female)?\.glb$/i.test(spec.file);
+        const tiers = wantLods ? LOD_TIERS : [LOD_TIERS[0]];
+        for (const lod of tiers) {
+            const { root, legL, legR, armL, armR } = buildBody(spec.cols, spec.form, lod.detail);
+            const clip = walkClip(legL, legR, armL, armR);
+            const base = spec.file.replace(/\.glb$/i, '');
+            const file = lod.suffix ? `${base}${lod.suffix}.glb` : spec.file;
+            const out = path.join(IMPORT, file);
+            await exportGlb(root, clip, out);
+            const kb = (fs.statSync(out).size / 1024).toFixed(1);
+            const tris = countTris(root);
+            console.log(`[gen-starter-avatar] ${file} (${spec.form}/${lod.detail}) ${kb} KB · ~${tris} tris`);
+        }
     }
     for (const spec of HAIR) {
         const root = spec.build(spec.cols);
@@ -475,7 +497,7 @@ async function main() {
         const kb = (fs.statSync(out).size / 1024).toFixed(1);
         console.log(`[gen-starter-avatar] ${spec.file} (${kb} KB)`);
     }
-    console.log('[gen-starter-avatar] done — import/ + public/bundle/import/');
+    console.log('[gen-starter-avatar] done — import/ + public/bundle/import/ (+ LOD1/2 for M/F)');
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

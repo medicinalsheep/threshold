@@ -4,7 +4,11 @@
   "description": "Default character GLBs, hair, skin/fabric PBR — fork-friendly pack",
   "bodyGlbs": [
     "starter_avatar.glb",
+    "starter_avatar_lod1.glb",
+    "starter_avatar_lod2.glb",
     "starter_avatar_female.glb",
+    "starter_avatar_female_lod1.glb",
+    "starter_avatar_female_lod2.glb",
     "starter_npc_guard.glb",
     "starter_npc_mech.glb"
   ],

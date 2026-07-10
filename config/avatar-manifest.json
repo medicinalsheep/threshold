@@ -1,6 +1,6 @@
 {
   "format": "threshold-avatar-manifest",
-  "version": 2,
+  "version": 3,
   "defaultHeightM": 1.75,
   "preferredRoot": "StarterAvatar",
   "animationClips": ["walk", "Walk", "locomotion", "idle", "Idle"],
@@ -8,8 +8,12 @@
   "fpsHideParts": ["head", "hairCap", "neck"],
   "attachPoints": {
     "hair": ["hair_anchor", "head"],
-    "torso_prop": ["prop_torso", "torso"],
-    "head_prop": ["prop_head", "head"]
+    "torso_prop": ["torso", "prop_torso", "shoulders"],
+    "head_prop": ["head", "prop_head", "hair_anchor"]
+  },
+  "lodDefaults": {
+    "distances": [0, 10, 22],
+    "note": "Avatar mesh LOD (m) — closer than world MeshLod defaults for faces"
   },
   "bodies": {
     "male_default": {
@@ -17,14 +21,52 @@
       "heightM": 1.75,
       "label": "Male formed",
       "form": "male",
-      "fallback": { "torsoScale": [1.06, 1.02, 0.98], "hipScale": [1, 1, 1] }
+      "fallback": { "torsoScale": [1.06, 1.02, 0.98], "hipScale": [1, 1, 1] },
+      "lods": [
+        { "level": 0, "file": "starter_avatar.glb", "distance": 0 },
+        { "level": 1, "file": "starter_avatar_lod1.glb", "distance": 10 },
+        { "level": 2, "file": "starter_avatar_lod2.glb", "distance": 22 }
+      ]
     },
     "female_default": {
       "glb": "starter_avatar_female.glb",
       "heightM": 1.65,
       "label": "Female formed",
       "form": "female",
-      "fallback": { "torsoScale": [0.9, 0.98, 0.88], "hipScale": [1.1, 1, 1.06] }
+      "fallback": { "torsoScale": [0.9, 0.98, 0.88], "hipScale": [1.1, 1, 1.06] },
+      "lods": [
+        { "level": 0, "file": "starter_avatar_female.glb", "distance": 0 },
+        { "level": 1, "file": "starter_avatar_female_lod1.glb", "distance": 10 },
+        { "level": 2, "file": "starter_avatar_female_lod2.glb", "distance": 22 }
+      ]
+    }
+  },
+  "mods": {
+    "jacket_field": {
+      "label": "Field jacket",
+      "attach": "torso",
+      "procedural": "jacket_field",
+      "note": "Creator MOD layer — stackable gear"
+    },
+    "vest_tactical": {
+      "label": "Tactical vest",
+      "attach": "torso",
+      "procedural": "vest_tactical"
+    },
+    "pack_field": {
+      "label": "Field pack",
+      "attach": "torso",
+      "procedural": "pack_field"
+    },
+    "hat_cap": {
+      "label": "Cap",
+      "attach": "head",
+      "procedural": "hat_cap"
+    },
+    "goggles_tech": {
+      "label": "Tech goggles",
+      "attach": "head",
+      "procedural": "goggles_tech"
     }
   },
   "hair": {

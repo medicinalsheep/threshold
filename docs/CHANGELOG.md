@@ -1,5 +1,12 @@
 # Changelog
 
+## 10.12.18 — Combat touch + avatar LOD + MOD layer
+
+- **Combat touch** — fire/ADS/reload/melee appear when weapon drawn; holster always reachable; start holstered for lean pad
+- **Avatar LOD** — male/female LOD0/1/2 (~2.3k → 1.6k → 0.9k tris); distance switch via MeshLod; hair/mods rebind on level change
+- **MOD layer** — stackable gear (jacket, vest, pack, cap, goggles) in SKIN; `profile.mods[]` networked; procedural builders
+- **Manifest v3** — `bodies.*.lods` + `mods` catalog
+
 ## 10.12.17 — Lean touch, formed avatars, proximity chip
 
 - **Touch layout v4** — core only (sticks + JMP/RUN/F/II); combat/utility add via **+ BTN** (unlock); double-tap hide/show; VEH context when TC vehicle present

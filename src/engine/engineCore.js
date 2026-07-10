@@ -506,12 +506,14 @@ export const Engine = {
 
         Controls.pollGamepad();
         Controls.applyCameraStick();
-        // Situational touch: VEH only when a vehicle exists or already driving
+        // Situational touch: vehicle + combat (unholstered)
         if (window.TouchControls?.enabled) {
             const vehReady = State.controlMode === 'vehicle'
                 || !!window.TcDrive?.active
                 || State.objects.some((o) => o.userData?.id === 'tc_run' || o.userData?.id === 'tc_haul');
             window.TouchControls.setContextVisible?.('enterVehicle', vehReady);
+            const weaponReady = !Controls.isHolstered?.();
+            window.TouchControls.syncCombatContext?.(weaponReady);
         }
         if (Controls.consumeJustPressed('toggleMode')) UI.toggleControlMode();
         if (Controls.consumeJustPressed('pause') && Controls.canUse('pause')) UI.togglePause();

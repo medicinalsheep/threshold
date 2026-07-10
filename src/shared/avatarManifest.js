@@ -25,19 +25,53 @@ export const AvatarManifest = {
         return manifest.hair?.[hairId] || null;
     },
 
+    mods() {
+        return manifest.mods || {};
+    },
+
+    mod(modId) {
+        return this.mods()[modId] || null;
+    },
+
+    modList() {
+        return Object.entries(this.mods()).map(([id, spec]) => ({ id, ...spec }));
+    },
+
     resolveBodyGlb(profile, roleId = null) {
         const p = profile || {};
         if (p.customBodyImport) {
             const file = String(p.customBodyImport).replace(/^import\//, '');
             const body = this.body(p.bodyId || 'male_default');
-            return { file, heightM: body?.heightM ?? manifest.defaultHeightM };
+            return {
+                file,
+                heightM: body?.heightM ?? manifest.defaultHeightM,
+                lods: body?.lods || null,
+                id: body?.id || p.bodyId,
+                bodyId: p.bodyId,
+            };
         }
-        if (p.customBodyGlb) return { file: p.customBodyGlb, heightM: manifest.defaultHeightM };
+        if (p.customBodyGlb) {
+            return { file: p.customBodyGlb, heightM: manifest.defaultHeightM, lods: null };
+        }
         const role = roleId ? this.role(roleId) : null;
-        if (role?.glb) return { file: role.glb, heightM: role.heightM ?? manifest.defaultHeightM };
+        if (role?.glb) {
+            return {
+                file: role.glb,
+                heightM: role.heightM ?? manifest.defaultHeightM,
+                lods: role.lods || null,
+            };
+        }
         const body = this.body(p.bodyId || 'male_default');
-        if (!body) return { file: 'starter_avatar.glb', heightM: 1.75 };
-        return { file: body.glb, heightM: body.heightM ?? manifest.defaultHeightM };
+        if (!body) return { file: 'starter_avatar.glb', heightM: 1.75, lods: null };
+        return {
+            file: body.glb,
+            heightM: body.heightM ?? manifest.defaultHeightM,
+            lods: body.lods || null,
+            form: body.form,
+            id: p.bodyId,
+            bodyId: p.bodyId,
+            glb: body.glb,
+        };
     },
 
     resolveHairGlb(profile) {
