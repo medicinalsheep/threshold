@@ -20,7 +20,9 @@ export const Session = {
         const stored = sessionStorage.getItem('threshold_player_key');
         this.playerKey = stored || generatePlayerKey();
         sessionStorage.setItem('threshold_player_key', this.playerKey);
-        this.playerName = localStorage.getItem('threshold_player_name') || `Player-${this.playerKey}`;
+        this.playerName = window.DisplayName?.resolve?.()
+            || localStorage.getItem('threshold_player_name')
+            || `Player-${this.playerKey}`;
         this.autoCodingPause = localStorage.getItem('threshold_auto_coding_pause') !== 'false';
         this.syncFromHostState();
         window.addEventListener('storage', (e) => {

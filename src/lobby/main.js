@@ -126,10 +126,9 @@ export function initLobby(onReady) {
         joinInput.value = normalizeRoomCode(urlRoom);
     }
 
-    const savedName = localStorage.getItem('threshold_player_name');
-    if (savedName && document.getElementById('lobby-name')) {
-        document.getElementById('lobby-name').value = savedName;
-    }
+    // Display name: custom and/or X profile (handle / name)
+    window.DisplayName?.bindUi?.();
+    window.DisplayName?.syncUi?.();
 
     const setStatus = (msg, isError = false) => {
         if (statusEl) {
@@ -159,11 +158,9 @@ export function initLobby(onReady) {
         setStatus('Creating session...');
         try {
             Session.init();
-            const name = document.getElementById('lobby-name')?.value?.trim();
-            if (name) {
-                Session.playerName = name;
-                localStorage.setItem('threshold_player_name', name);
-            }
+            Session.playerName = window.DisplayName?.commitFromLobby?.()
+                || document.getElementById('lobby-name')?.value?.trim()
+                || Session.playerName;
             const voipConfig = readLobbyVoipConfig();
             const passcode = normalizePasscode(document.getElementById('lobby-host-passcode')?.value);
             let roomId = generateHostRoomId(Session.playerName, Session.playerKey);
@@ -196,11 +193,9 @@ export function initLobby(onReady) {
         setStatus('Joining...');
         try {
             Session.init();
-            const name = document.getElementById('lobby-name')?.value?.trim();
-            if (name) {
-                Session.playerName = name;
-                localStorage.setItem('threshold_player_name', name);
-            }
+            Session.playerName = window.DisplayName?.commitFromLobby?.()
+                || document.getElementById('lobby-name')?.value?.trim()
+                || Session.playerName;
             const passcode = normalizePasscode(document.getElementById('lobby-join-passcode')?.value);
             await Network.joinRoom(code, { passcode });
             persistLobbyMode();
@@ -210,13 +205,15 @@ export function initLobby(onReady) {
         }
     });
 
+    const applyDisplayName = () => {
+        Session.playerName = window.DisplayName?.commitFromLobby?.()
+            || document.getElementById('lobby-name')?.value?.trim()
+            || Session.playerName;
+    };
+
     document.getElementById('lobby-solo')?.addEventListener('click', () => {
         Session.init();
-        const name = document.getElementById('lobby-name')?.value?.trim();
-        if (name) {
-            Session.playerName = name;
-            localStorage.setItem('threshold_player_name', name);
-        }
+        applyDisplayName();
         enterSoloBuild();
         Network.startSolo();
         enterApp();
@@ -224,11 +221,7 @@ export function initLobby(onReady) {
 
     document.getElementById('lobby-tc')?.addEventListener('click', () => {
         Session.init();
-        const name = document.getElementById('lobby-name')?.value?.trim();
-        if (name) {
-            Session.playerName = name;
-            localStorage.setItem('threshold_player_name', name);
-        }
+        applyDisplayName();
         setSelectedTemplateId('tc-circuit');
         const sel = document.getElementById('lobby-template');
         if (sel) sel.value = 'tc-circuit';
@@ -244,11 +237,7 @@ export function initLobby(onReady) {
         setStatus('Joining as spectator...');
         try {
             Session.init();
-            const name = document.getElementById('lobby-name')?.value?.trim();
-            if (name) {
-                Session.playerName = name;
-                localStorage.setItem('threshold_player_name', name);
-            }
+            applyDisplayName();
             const passcode = normalizePasscode(document.getElementById('lobby-join-passcode')?.value);
             await Network.spectateRoom(code, { passcode });
             enterApp();
@@ -268,11 +257,7 @@ export function initLobby(onReady) {
     const autoplay = urlParams.get('autoplay') === '1';
     if (worldCode && autoplay) {
         Session.init();
-        const name = document.getElementById('lobby-name')?.value?.trim();
-        if (name) {
-            Session.playerName = name;
-            localStorage.setItem('threshold_player_name', name);
-        }
+        applyDisplayName();
         enterSoloBuild();
         Network.startSolo();
         setStatus(`Loading world ${worldCode.toUpperCase()}…`);

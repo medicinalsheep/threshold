@@ -578,6 +578,32 @@
     white-space: nowrap;
 }
 
+.lobby-name-block {
+    margin: 0 0 10px;
+}
+
+.lobby-name-row {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+}
+
+.lobby-name-source {
+    flex: 0 0 min(42%, 148px);
+    max-width: 160px;
+}
+
+.lobby-name-row #lobby-name {
+    flex: 1;
+    min-width: 0;
+}
+
+.lobby-name-from-x {
+    opacity: 0.9;
+    border-style: dashed !important;
+    color: var(--accent-color);
+}
+
 .lobby-x-auth {
     margin: 0 0 12px;
     display: flex;

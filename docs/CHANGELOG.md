@@ -1,3 +1,10 @@
+## 10.12.25 — Display name: custom or X profile
+
+- Lobby **Display name** source: Custom · X handle (@) · X profile name
+- X options enable when signed in; input becomes read-only when using X
+- Does not overwrite custom names on login unless still default `Player*`
+- Session/multiplayer uses resolved name via `DisplayName`
+
 ## 10.12.24 — X feed panel + create post
 
 - **Nav 𝕏 button** — opens side panel with feed + compose

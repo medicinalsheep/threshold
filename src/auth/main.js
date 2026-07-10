@@ -1,6 +1,7 @@
 import { IS_GROK_EDITION } from '../config.js';
 import { XAuth } from './xAuth.js';
 import { XFeed } from './xFeed.js';
+import { DisplayName } from './displayName.js';
 
 const SESSION_KEY = 'threshold_xai_key';
 const LOCAL_KEY = 'threshold_xai_key_persistent';
@@ -63,10 +64,14 @@ export async function initAuth() {
     try {
         const session = await XAuth.handleRedirectCallback();
         if (session?.user) {
-            // Prefer X handle as lobby name
-            try {
-                localStorage.setItem('threshold_player_name', session.user.username || session.user.name);
-            } catch { /* ignore */ }
+            // Only auto-switch to X handle if user hasn't set a custom name
+            const src = DisplayName.getSource();
+            const custom = DisplayName.getCustom();
+            if (src === 'custom' && (!custom || /^Player/i.test(custom))) {
+                DisplayName.setSource('x_username');
+            } else {
+                DisplayName.applyResolvedToStorage();
+            }
             window.UI?.status?.(`Signed in as @${session.user.username}`);
         }
     } catch (e) {
@@ -77,6 +82,7 @@ export async function initAuth() {
     await XAuth.refreshIfNeeded();
     XAuth.bindUi();
     XAuth.syncUi();
+    DisplayName.bindUi();
     XFeed.init();
 
     const overlay = document.getElementById('auth-overlay');

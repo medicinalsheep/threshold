@@ -17,7 +17,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.12.24" />
+    <meta name="threshold-version" content="10.12.25" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD SUITE</title>
 </head>
@@ -61,7 +61,18 @@
                         <span class="lobby-actions-label">SESSION</span>
                         <span class="lobby-actions-sub">Host or join · solo · spectate</span>
                     </div>
-                    <input type="text" id="lobby-name" class="lobby-input" placeholder="Your name" maxlength="20" autocomplete="nickname">
+                    <div class="lobby-name-block">
+                        <label class="lobby-share-label" for="lobby-name-source">Display name</label>
+                        <div class="lobby-name-row">
+                            <select id="lobby-name-source" class="lobby-input lobby-name-source" title="Use custom text or X profile">
+                                <option value="custom">Custom</option>
+                                <option value="x_username">X handle (@…)</option>
+                                <option value="x_name">X profile name</option>
+                            </select>
+                            <input type="text" id="lobby-name" class="lobby-input" placeholder="Your name" maxlength="24" autocomplete="nickname">
+                        </div>
+                        <p id="lobby-name-hint" class="lobby-voip-hint">Custom name, or use your X @handle / profile name when signed in.</p>
+                    </div>
                     <button id="lobby-create" class="lobby-btn lobby-btn-primary">CREATE SESSION</button>
                     <div class="lobby-join-row">
                         <input type="text" id="lobby-join-code" class="lobby-input" placeholder="Room code (e.g. BOB3-KEY12-X7K2)" maxlength="24" autocomplete="off" spellcheck="false">
@@ -187,7 +198,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.12.24</span><span class="edition-badge" id="edition-badge">WEB</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.12.25</span><span class="edition-badge" id="edition-badge">WEB</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
