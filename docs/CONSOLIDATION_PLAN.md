@@ -34,7 +34,7 @@ Action plan from project review. Execute in order; each phase should pass `npm r
 
 **Goal:** One source of truth for shipped version.
 
-- [x] Source of truth: `src/config.js` → `VERSION` (currently **10.12.25**)
+- [x] Source of truth: `src/config.js` → `VERSION` (currently **10.12.26**)
 - [x] `npm run version:sync` — patches `package.json`, `package-lock.json`, README + doc headers
 - [x] `npm run version:sync:check` — CI drift gate (exit 1 if headers stale)
 

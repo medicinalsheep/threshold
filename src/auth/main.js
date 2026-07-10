@@ -2,6 +2,7 @@ import { IS_GROK_EDITION } from '../config.js';
 import { XAuth } from './xAuth.js';
 import { XFeed } from './xFeed.js';
 import { DisplayName } from './displayName.js';
+import { GrokAuthUi } from './grokAuthUi.js';
 
 const SESSION_KEY = 'threshold_xai_key';
 const LOCAL_KEY = 'threshold_xai_key_persistent';
@@ -84,6 +85,7 @@ export async function initAuth() {
     XAuth.syncUi();
     DisplayName.bindUi();
     XFeed.init();
+    GrokAuthUi.init();
 
     const overlay = document.getElementById('auth-overlay');
     const form = document.getElementById('auth-form');
@@ -101,18 +103,22 @@ export async function initAuth() {
         const xUser = XAuth.getUser();
         const hasXai = Auth.isLoggedIn();
         logoutBtn.style.display = (xUser || hasXai) ? 'inline-block' : 'none';
-        if (xUser) logoutBtn.textContent = 'SIGN OUT';
-        else if (hasXai) logoutBtn.textContent = 'CLEAR KEY';
+        if (xUser && hasXai) logoutBtn.textContent = 'SIGN OUT';
+        else if (xUser) logoutBtn.textContent = 'SIGN OUT X';
+        else if (hasXai) logoutBtn.textContent = 'CLEAR GROK';
         else logoutBtn.textContent = 'LOGOUT';
+        GrokAuthUi.syncUi();
     };
 
     logoutBtn?.addEventListener('click', () => {
+        // Clear both account types (user can re-add either)
         XAuth.logout();
         Auth.logout();
         syncLogoutBtn();
+        GrokAuthUi.syncUi();
         window.AgentStatus?.refresh?.();
         window.AgentPortal?.runDetect?.();
-        window.UI?.status?.('Signed out');
+        window.UI?.status?.('Signed out (X + Grok key cleared)');
     });
 
     // Grok edition: keep API-key overlay when no xAI key

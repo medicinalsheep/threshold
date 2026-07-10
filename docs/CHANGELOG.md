@@ -1,3 +1,9 @@
+## 10.12.26 — Dual auth: X + Grok side by side
+
+- Lobby **Accounts**: X identity card + Grok API card (both optional for play)
+- Nav **Grok** button → key modal (save / test / model / remember / clear)
+- Clarifies: X ≠ Grok; SuperGrok tab still not used for API
+
 ## 10.12.25 — Display name: custom or X profile
 
 - Lobby **Display name** source: Custom · X handle (@) · X profile name

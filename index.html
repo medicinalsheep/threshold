@@ -17,7 +17,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.12.25" />
+    <meta name="threshold-version" content="10.12.26" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD SUITE</title>
 </head>
@@ -126,16 +126,34 @@
                         </select>
                     </label>
                     <p id="lobby-template-desc" class="lobby-template-desc">Empty grid — add your own assets when ready</p>
-                    <div class="lobby-x-auth" id="lobby-x-auth">
-                        <button type="button" class="lobby-btn lobby-btn-x" data-x-auth-login>
-                            <span class="lobby-x-mark" aria-hidden="true">𝕏</span> Sign in with X
-                        </button>
-                        <div class="lobby-x-user" hidden>
-                            <img data-x-auth-avatar alt="" width="28" height="28" hidden>
-                            <span data-x-auth-user hidden></span>
-                            <button type="button" class="lobby-btn lobby-btn-ghost btn-sm" data-x-auth-logout>Sign out</button>
+                    <div class="lobby-accounts" id="lobby-accounts">
+                        <span class="lobby-share-label">Accounts (optional)</span>
+                        <p class="lobby-voip-hint" style="margin:0 0 8px;">Two separate logins: <strong>X</strong> = identity · <strong>Grok</strong> = AI generation</p>
+                        <div class="lobby-accounts-row">
+                            <div class="lobby-account-card">
+                                <span class="lobby-account-title">𝕏 X</span>
+                                <button type="button" class="lobby-btn lobby-btn-x" data-x-auth-login>
+                                    <span class="lobby-x-mark" aria-hidden="true">𝕏</span> Sign in with X
+                                </button>
+                                <div class="lobby-x-user" hidden>
+                                    <img data-x-auth-avatar alt="" width="28" height="28" hidden>
+                                    <span data-x-auth-user hidden></span>
+                                    <button type="button" class="lobby-btn lobby-btn-ghost btn-sm" data-x-auth-logout>Sign out</button>
+                                </div>
+                                <p class="lobby-voip-hint" data-x-auth-configured>Needs <code>VITE_X_CLIENT_ID</code></p>
+                            </div>
+                            <div class="lobby-account-card">
+                                <span class="lobby-account-title">Grok</span>
+                                <button type="button" class="lobby-btn lobby-btn-grok" data-grok-auth-open data-grok-disconnected>
+                                    Connect Grok API
+                                </button>
+                                <div class="lobby-grok-user" data-grok-connected hidden>
+                                    <span data-grok-auth-status class="grok-auth-chip">Grok ✓</span>
+                                    <button type="button" class="lobby-btn lobby-btn-ghost btn-sm" data-grok-auth-open>Manage</button>
+                                </div>
+                                <p class="lobby-voip-hint">Key from <a href="https://console.x.ai" target="_blank" rel="noopener">console.x.ai</a></p>
+                            </div>
                         </div>
-                        <p class="lobby-voip-hint" data-x-auth-configured>X sign-in optional — set <code>VITE_X_CLIENT_ID</code> in env to enable.</p>
                     </div>
                     <div class="lobby-quick-row">
                         <button id="lobby-solo" class="lobby-btn lobby-btn-primary">ENTER →</button>
@@ -177,28 +195,55 @@
         </div>
     </div>
 
-    <!-- AUTH OVERLAY (Grok edition — xAI key; X login is separate) -->
+    <!-- AUTH OVERLAY (Grok edition — both X + Grok) -->
     <div id="auth-overlay">
         <div id="auth-card" class="panel">
-            <h2>THRESHOLD GROK EDITION</h2>
-            <p>Sign in with <strong>X</strong> for your Threshold identity, and paste an <strong>xAI API key</strong> for Grok generation (console.x.ai).</p>
+            <h2>THRESHOLD ACCOUNTS</h2>
+            <p><strong>X</strong> = who you are · <strong>Grok</strong> = AI generation. Both optional for play; Grok key needed for cloud agents.</p>
             <button type="button" class="btn-x-login" data-x-auth-login>Sign in with X</button>
             <p class="insert-hint" data-x-auth-configured style="margin:8px 0;">X login needs <code>VITE_X_CLIENT_ID</code> (developer.x.com SPA app).</p>
             <form id="auth-form">
-                <label class="insert-hint">xAI API key (Grok)</label>
+                <label class="insert-hint">Grok / xAI API key</label>
                 <input type="password" id="auth-api-key" placeholder="xai-..." autocomplete="off" required>
                 <label class="insert-hint" style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
                     <input type="checkbox" id="auth-remember-key"> Remember on this device
                 </label>
-                <button type="submit">SAVE KEY &amp; CONTINUE</button>
+                <button type="submit">SAVE GROK KEY &amp; CONTINUE</button>
             </form>
-            <p style="margin-top:12px; font-size:0.7rem;">Keys: <a href="https://console.x.ai" target="_blank" rel="noopener" style="color:var(--accent-color);">console.x.ai</a> · X app: <a href="https://developer.x.com" target="_blank" rel="noopener" style="color:var(--accent-color);">developer.x.com</a></p>
+            <p style="margin-top:12px; font-size:0.7rem;"><a href="https://console.x.ai" target="_blank" rel="noopener" style="color:var(--accent-color);">console.x.ai</a> · <a href="https://developer.x.com" target="_blank" rel="noopener" style="color:var(--accent-color);">developer.x.com</a></p>
+        </div>
+    </div>
+
+    <!-- Grok API key modal (web + grok edition) -->
+    <div id="grok-auth-backdrop" class="grok-auth-backdrop" role="dialog" aria-labelledby="grok-auth-title" aria-modal="true">
+        <div class="grok-auth-panel panel">
+            <div class="x-feed-header">
+                <h2 id="grok-auth-title">Grok API</h2>
+                <button type="button" id="grok-auth-close" class="btn-sm">✕</button>
+            </div>
+            <div class="grok-auth-body">
+                <p class="insert-hint">Uses official <strong>api.x.ai</strong> (same models as SuperGrok). Not your SuperGrok browser tab.</p>
+                <label class="insert-hint" for="grok-auth-key">API key</label>
+                <input type="password" id="grok-auth-key" class="insert-input" placeholder="xai-…" autocomplete="off" style="width:100%;margin-bottom:8px;">
+                <label class="insert-hint" style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+                    <input type="checkbox" id="grok-auth-remember"> Remember on this device
+                </label>
+                <label class="insert-hint" for="grok-auth-model">Model</label>
+                <select id="grok-auth-model" class="insert-input" style="width:100%;margin-bottom:10px;"></select>
+                <div class="prop-row" style="gap:8px;flex-wrap:wrap;">
+                    <button type="button" id="grok-auth-save">SAVE</button>
+                    <button type="button" id="grok-auth-test" class="btn-sm">TEST</button>
+                    <button type="button" id="grok-auth-clear" class="btn-sm">CLEAR KEY</button>
+                </div>
+                <p id="grok-auth-status" class="insert-hint" style="margin-top:10px;"></p>
+                <p class="insert-hint" style="margin-top:8px;"><a href="https://console.x.ai" target="_blank" rel="noopener">Get a key → console.x.ai</a></p>
+            </div>
         </div>
     </div>
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.12.25</span><span class="edition-badge" id="edition-badge">WEB</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.12.26</span><span class="edition-badge" id="edition-badge">WEB</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
@@ -215,6 +260,7 @@
             </span>
             <button type="button" class="nav-x-btn" data-x-menu-open title="X feed &amp; post" aria-label="X menu">𝕏</button>
             <button type="button" class="btn-sm" data-x-auth-login title="Sign in with X">Sign in X</button>
+            <button type="button" class="btn-sm nav-grok-btn" data-grok-auth-open data-grok-auth-status title="Grok API key">Grok</button>
             <button id="auth-logout-btn">LOGOUT</button>
             <button id="global-theme-btn">THEME</button>
         </div>
