@@ -8,7 +8,7 @@ const path = require('path');
 const { writePng, fillRgba, scaleRgba } = require('./tc-png.cjs');
 const { exportSlot, slotFn, mergeTcEntries, loadManifest, GIMP_MANIFEST, TC_LIC, REALISM } = require('./tc-gen-tex.cjs');
 const { HILOD_OUTPUT_TIERS, MASTER_PX } = require('./texture-tier-utils.cjs');
-const { spawn } = require('child_process');
+const { execFileSync } = require('child_process');
 
 const ROOT = path.join(__dirname, '..');
 const TEX = path.join(ROOT, 'textures');
@@ -73,8 +73,24 @@ async function main() {
             fileCount += files.length;
             const compressOne = path.join(__dirname, 'compress-one.cjs');
             for (const f of files) {
-                fs.copyFileSync(path.join(TEX, f), path.join(PUB, f));
-                spawn(process.execPath, [compressOne, path.join(TEX, f)], { stdio: 'ignore', cwd: ROOT }).unref();
+                const srcPng = path.join(TEX, f);
+                fs.copyFileSync(srcPng, path.join(PUB, f));
+                // Await WebP so Pages deploy never ships fresh PNGs with stale/missing WebP
+                // (runtime prefers WebP — stale sidecars look like "textures not loading").
+                try {
+                    execFileSync(process.execPath, [compressOne, srcPng], {
+                        cwd: ROOT,
+                        stdio: 'pipe',
+                        timeout: 120000,
+                    });
+                    const webpName = f.replace(/\.png$/i, '.webp');
+                    const webpSrc = path.join(TEX, webpName);
+                    if (fs.existsSync(webpSrc)) {
+                        fs.copyFileSync(webpSrc, path.join(PUB, webpName));
+                    }
+                } catch (e) {
+                    console.warn(`[gen-default-tex] webp skip ${f}:`, e.message || e);
+                }
             }
             console.log(`[gen-default-tex] ${asset.slug}_${slot} @ ${masterPx}px + ${entry.variants.length} tier(s)`);
         }

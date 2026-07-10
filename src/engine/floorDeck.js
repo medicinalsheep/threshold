@@ -218,10 +218,14 @@ export async function wireDeckTextures(textureTarget) {
 
     let manifest;
     try {
-        const res = await fetch(AssetBundle.getUrl(MANIFEST_PATH));
-        if (!res.ok) return { maps: 0, err: 'no manifest' };
-        manifest = TextureManifest.parse(await res.json());
+        const blob = await AssetBundle.fetchBlob(MANIFEST_PATH, { retries: 2 });
+        if (!blob) {
+            console.warn('[floor-deck] manifest missing', AssetBundle.getUrl(MANIFEST_PATH));
+            return { maps: 0, err: 'no manifest' };
+        }
+        manifest = TextureManifest.parse(await blob.text());
     } catch (e) {
+        console.warn('[floor-deck] manifest', e);
         return { maps: 0, err: e.message };
     }
 

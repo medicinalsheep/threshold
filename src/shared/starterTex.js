@@ -59,10 +59,15 @@ export async function wireStarterTextures() {
 
     let manifest;
     try {
-        const res = await fetch(AssetBundle.getUrl(MAN));
-        if (!res.ok) return { n: 0, err: 'no manifest' };
-        manifest = TextureManifest.parse(await res.json());
+        const blob = await AssetBundle.fetchBlob(MAN, { retries: 2 });
+        if (!blob) {
+            console.warn('[starter-tex] manifest missing at', AssetBundle.getUrl(MAN));
+            return { n: 0, err: 'no manifest' };
+        }
+        const text = await blob.text();
+        manifest = TextureManifest.parse(text);
     } catch (e) {
+        console.warn('[starter-tex] manifest', e);
         return { n: 0, err: e.message };
     }
 

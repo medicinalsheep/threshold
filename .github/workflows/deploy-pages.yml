@@ -27,10 +27,20 @@ jobs:
 
       - run: npm ci
       - run: npm run version:sync:check
+      # Regenerate hero defaults + matching WebP sidecars into public/bundle/textures
       - run: npm run textures:gen:default
       - run: npm run build
         env:
           VITE_BASE_PATH: /${{ github.event.repository.name }}/
+      # Ensure dist-pages/bundle mirrors textures/import (manifest + PNGs + WebP)
+      - run: npm run bundle:assets
+      - name: Verify starter textures in dist
+        run: |
+          test -f dist-pages/bundle/textures/threshold_manifest.json
+          test -f dist-pages/bundle/textures/starter_ground_albedo_1k.png
+          test -f dist-pages/bundle/textures/starter_ground_albedo_1k.webp
+          test -f dist-pages/bundle/textures/starter_skin_light_albedo.png
+          echo "texture bundle OK ($(find dist-pages/bundle/textures -type f | wc -l) files)"
       - run: node scripts/portal-ui-verify.cjs
       - run: npm run controls:verify
       - run: node scripts/tc-drive-verify.cjs

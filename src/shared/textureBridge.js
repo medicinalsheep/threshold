@@ -149,7 +149,27 @@ export const TextureBridge = {
             });
         }
 
-        throw new Error('Load from disk requires Threshold desktop (Electron) build or bundled assets');
+        // Last-chance: try sibling tier names (master missing → _1k) for Pages/CDN gaps
+        const base = name.replace(/\.(png|jpe?g|webp|ktx2)$/i, '');
+        const dir = resolvedPath.replace(/\\/g, '/').replace(/\/[^/]+$/, '');
+        const fallbacks = ['_1k', '_2k', ''].flatMap((suf) => {
+            const stem = base.replace(/_([1248]k|512)$/i, '');
+            const file = suf ? `${stem}${suf}.png` : `${stem}.png`;
+            return dir ? `${dir}/${file}` : file;
+        });
+        for (const alt of [...new Set(fallbacks)]) {
+            if (alt === resolvedPath) continue;
+            const altFile = await AssetBundle.loadFile(alt, alt.split('/').pop());
+            if (altFile) {
+                return TextureLibrary.saveFromFile(altFile, {
+                    name: altFile.name,
+                    sourcePath: alt,
+                });
+            }
+        }
+
+        const tried = AssetBundle.urlCandidates?.(resolvedPath)?.[0] || resolvedPath;
+        throw new Error(`Texture not found in bundle: ${name} (${tried})`);
     },
 
     async applyPathToObject(obj, slot, filePath) {

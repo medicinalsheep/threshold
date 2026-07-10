@@ -1,3 +1,9 @@
+## 10.12.30 — Texture load reliability (Pages / bundle)
+
+- **AssetBundle** — uses Vite `BASE_URL`, multi-URL fallbacks, retries on 429/5xx, WebP→PNG fallback
+- **CI** — `textures:gen:default` awaits WebP + copies to `public/bundle`; deploy runs `bundle:assets` + file smoke checks
+- Clearer errors when a map is missing from the GitHub Pages bundle
+
 ## 10.12.29 — Secondary keybinds (keyboard + mouse)
 
 - **KEYS** menu: every action has **primary** + optional **+ 2nd** slot (mouse or key)
