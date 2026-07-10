@@ -17,7 +17,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.12.23" />
+    <meta name="threshold-version" content="10.12.24" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD SUITE</title>
 </head>
@@ -187,7 +187,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.12.23</span><span class="edition-badge" id="edition-badge">WEB</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.12.24</span><span class="edition-badge" id="edition-badge">WEB</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
@@ -202,13 +202,45 @@
                 <img data-x-auth-avatar alt="" width="22" height="22" hidden>
                 <span data-x-auth-user hidden></span>
             </span>
-            <button type="button" class="btn-sm" data-x-auth-login title="Sign in with X">X</button>
+            <button type="button" class="nav-x-btn" data-x-menu-open title="X feed &amp; post" aria-label="X menu">𝕏</button>
+            <button type="button" class="btn-sm" data-x-auth-login title="Sign in with X">Sign in X</button>
             <button id="auth-logout-btn">LOGOUT</button>
             <button id="global-theme-btn">THEME</button>
         </div>
     </nav>
     <button id="nav-restore-btn" class="nav-restore-btn" type="button" aria-label="Show top menu" title="Show top menu">▼ MENU</button>
     <button id="btn-exit-immersive" class="btn-exit-immersive" type="button" hidden aria-label="Exit fullscreen" title="Exit fullscreen">✕ EXIT</button>
+
+    <!-- X feed + compose -->
+    <div id="x-feed-backdrop" class="x-feed-backdrop" role="dialog" aria-labelledby="x-feed-title" aria-modal="true">
+        <div class="x-feed-panel panel">
+            <div class="x-feed-header">
+                <h2 id="x-feed-title">X</h2>
+                <div class="x-feed-header-actions">
+                    <button type="button" id="x-feed-refresh" class="btn-sm" title="Refresh feed">↻</button>
+                    <button type="button" id="x-feed-close" class="btn-sm" title="Close">✕</button>
+                </div>
+            </div>
+            <div id="x-feed-guest" class="x-feed-guest">
+                <p class="insert-hint">Sign in with X to see your feed and post.</p>
+                <button type="button" id="x-feed-login" class="btn-x-login">Sign in with X</button>
+                <p class="insert-hint" data-x-auth-configured>Set <code>VITE_X_CLIENT_ID</code> and enable OAuth 2.0 scopes: <code>tweet.read</code> <code>tweet.write</code> <code>users.read</code> <code>offline.access</code>.</p>
+            </div>
+            <div id="x-feed-main" class="x-feed-main" hidden>
+                <div class="x-compose">
+                    <label class="insert-hint" for="x-post-text">Create post</label>
+                    <textarea id="x-post-text" class="insert-input x-post-text" rows="3" maxlength="400" placeholder="What's happening?"></textarea>
+                    <div class="x-compose-row">
+                        <span id="x-post-count" class="x-post-count">0/280</span>
+                        <button type="button" id="x-post-submit" class="lobby-btn lobby-btn-primary btn-sm" disabled>Post</button>
+                    </div>
+                </div>
+                <p id="x-feed-notice" class="insert-hint x-feed-notice" hidden></p>
+                <p id="x-feed-status" class="insert-hint x-feed-status"></p>
+                <div id="x-feed-list" class="x-feed-list"></div>
+            </div>
+        </div>
+    </div>
 
     <!-- VIEW: ENGINE -->
     <div id="view-engine" class="view-section active">

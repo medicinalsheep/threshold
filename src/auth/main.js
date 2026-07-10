@@ -1,5 +1,6 @@
 import { IS_GROK_EDITION } from '../config.js';
 import { XAuth } from './xAuth.js';
+import { XFeed } from './xFeed.js';
 
 const SESSION_KEY = 'threshold_xai_key';
 const LOCAL_KEY = 'threshold_xai_key_persistent';
@@ -76,6 +77,7 @@ export async function initAuth() {
     await XAuth.refreshIfNeeded();
     XAuth.bindUi();
     XAuth.syncUi();
+    XFeed.init();
 
     const overlay = document.getElementById('auth-overlay');
     const form = document.getElementById('auth-form');

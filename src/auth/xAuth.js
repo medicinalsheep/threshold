@@ -13,12 +13,13 @@
  * or xAI API keys — those still use console.x.ai for Grok generation.
  */
 
-const STORAGE = 'threshold_x_session_v1';
+const STORAGE = 'threshold_x_session_v2';
 const PKCE_KEY = 'threshold_x_pkce';
 const AUTH_URL = 'https://x.com/i/oauth2/authorize';
 const TOKEN_URL = 'https://api.twitter.com/2/oauth2/token';
 const ME_URL = 'https://api.twitter.com/2/users/me';
-const SCOPES = ['tweet.read', 'users.read', 'offline.access'].join(' ');
+/** tweet.write required for Compose Post; re-login if you signed in before v2 */
+const SCOPES = ['tweet.read', 'tweet.write', 'users.read', 'offline.access'].join(' ');
 
 function clientId() {
     return (import.meta.env.VITE_X_CLIENT_ID || '').trim();
@@ -152,6 +153,99 @@ export const XAuth = {
         return loadSession()?.accessToken || null;
     },
 
+    async _authFetch(url, options = {}) {
+        await this.refreshIfNeeded();
+        const token = this.getAccessToken();
+        if (!token) throw new Error('Sign in with X first');
+        const res = await fetch(url, {
+            ...options,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+                ...(options.headers || {}),
+            },
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            const msg = data.detail || data.title || data.error_description
+                || data.errors?.[0]?.message
+                || `X API ${res.status}`;
+            const err = new Error(msg);
+            err.status = res.status;
+            err.data = data;
+            throw err;
+        }
+        return data;
+    },
+
+    /**
+     * Home-ish feed: reverse chronological timeline, fallback to own tweets.
+     * @returns {Promise<{tweets: object[], source: string, meta?: object}>}
+     */
+    async fetchFeed(maxResults = 20) {
+        const user = this.getUser();
+        if (!user?.id) throw new Error('Sign in with X first');
+        const n = Math.min(100, Math.max(5, maxResults));
+
+        try {
+            const q = new URLSearchParams({
+                max_results: String(n),
+                expansions: 'author_id',
+                'tweet.fields': 'created_at,public_metrics,entities,lang',
+                'user.fields': 'name,username,profile_image_url',
+            });
+            const data = await this._authFetch(
+                `https://api.twitter.com/2/users/${user.id}/timelines/reverse_chronological?${q}`
+            );
+            return {
+                tweets: hydrateTweets(data),
+                source: 'home',
+                meta: data.meta,
+            };
+        } catch (e) {
+            // Free tier / app permissions often block reverse_chronological
+            if (e.status === 403 || e.status === 400 || /not available|forbidden|access/i.test(e.message)) {
+                const q = new URLSearchParams({
+                    max_results: String(n),
+                    exclude: 'replies',
+                    'tweet.fields': 'created_at,public_metrics,entities,lang',
+                    'user.fields': 'name,username,profile_image_url',
+                });
+                const data = await this._authFetch(
+                    `https://api.twitter.com/2/users/${user.id}/tweets?${q}`
+                );
+                // inject self as author for hydrate
+                data.includes = {
+                    users: [{
+                        id: user.id,
+                        name: user.name,
+                        username: user.username,
+                        profile_image_url: user.profileImageUrl,
+                    }],
+                };
+                return {
+                    tweets: hydrateTweets(data),
+                    source: 'me',
+                    meta: data.meta,
+                    notice: 'Home timeline unavailable on this X app tier — showing your posts.',
+                };
+            }
+            throw e;
+        }
+    },
+
+    /** Post a tweet (needs tweet.write scope — re-login after upgrade) */
+    async createPost(text) {
+        const body = String(text || '').trim();
+        if (!body) throw new Error('Write something first');
+        if (body.length > 280) throw new Error(`Too long (${body.length}/280)`);
+        const data = await this._authFetch('https://api.twitter.com/2/tweets', {
+            method: 'POST',
+            body: JSON.stringify({ text: body }),
+        });
+        return data.data || data;
+    },
+
     /** Start OAuth redirect (PKCE) */
     async login() {
         if (!this.isConfigured()) {
@@ -273,6 +367,10 @@ export const XAuth = {
         document.querySelectorAll('[data-x-auth-logout]').forEach((btn) => {
             btn.hidden = !user;
         });
+        document.querySelectorAll('[data-x-menu-open]').forEach((btn) => {
+            btn.hidden = !configured;
+            btn.classList.toggle('x-menu-signed-in', !!user);
+        });
         document.querySelectorAll('[data-x-auth-user]').forEach((el) => {
             if (!user) {
                 el.hidden = true;
@@ -345,5 +443,29 @@ export const XAuth = {
         window.addEventListener('x-auth-change', () => this.syncUi());
     },
 };
+
+function hydrateTweets(data) {
+    const users = new Map((data.includes?.users || []).map((u) => [u.id, u]));
+    return (data.data || []).map((t) => {
+        const author = users.get(t.author_id) || null;
+        return {
+            id: t.id,
+            text: t.text,
+            createdAt: t.created_at,
+            metrics: t.public_metrics || {},
+            author: author
+                ? {
+                    id: author.id,
+                    name: author.name,
+                    username: author.username,
+                    profileImageUrl: author.profile_image_url,
+                }
+                : null,
+            url: author?.username
+                ? `https://x.com/${author.username}/status/${t.id}`
+                : `https://x.com/i/web/status/${t.id}`,
+        };
+    });
+}
 
 window.XAuth = XAuth;

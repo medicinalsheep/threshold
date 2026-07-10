@@ -1,3 +1,10 @@
+## 10.12.24 — X feed panel + create post
+
+- **Nav 𝕏 button** — opens side panel with feed + compose
+- **Create post** — `POST /2/tweets` (needs `tweet.write`; re-sign-in after scope upgrade)
+- **Feed** — home reverse-chronological when allowed; falls back to your posts on free/limited apps
+- OAuth scopes now include `tweet.write` (session storage v2)
+
 ## 10.12.23 — Sign in with X (OAuth 2.0 PKCE)
 
 - **XAuth** — official X OAuth 2.0 + PKCE (SPA); lobby + nav + portal **Sign in with X**
