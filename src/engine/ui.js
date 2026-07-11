@@ -381,9 +381,11 @@ export const UI = {
         if (!el || !obj) return;
         const on = !!(obj.userData?.negativeLOD || obj.userData?.negativeLod);
         const stats = NegativeLod.getStats?.() || {};
+        const vis = obj.userData?._visClass || '—';
+        const vstats = window.VisibilitySystem?.getStats?.() || {};
         el.textContent = on
-            ? `Negative LOD on · far unlit (~${obj.userData.negativeLodDistance || 40}m) · scene flat ${stats.flat ?? '—'}/${stats.registered ?? '—'}`
-            : 'Negative LOD off — enable for far-field unlit (no PBR)';
+            ? `Neg LOD on · vis ${vis} · far unlit (~${obj.userData.negativeLodDistance || 40}m) · flat ${stats.flat ?? '—'}/${stats.registered ?? '—'} · A${vstats.A ?? 0}/B${vstats.B ?? 0}/C${vstats.C ?? 0}/D${vstats.D ?? 0}/E${vstats.E ?? 0}`
+            : `Negative LOD off · vis ${vis} — enable for far-field unlit (no PBR)`;
     },
     syncTextureInspector: async function (obj) {
         const status = document.getElementById('insp-texture-status');

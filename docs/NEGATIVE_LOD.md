@@ -672,8 +672,8 @@ else auto matrix above
 | Phase | Scope | Status |
 |-------|--------|--------|
 | **A–B** | On-screen negativeLOD, pool, inspector, serialize | **Done (10.13.0)** |
-| **E0** | `VisibilitySystem`: frustum + dist → `_visClass` | Next |
-| **E1** | Gate MeshLod / TextureHilod / idle / spin on class | After E0 |
+| **E0** | `VisibilitySystem`: frustum + dist → `_visClass` | **Done (10.13.1)** |
+| **E1** | Gate MeshLod / TextureHilod / idle / spin on class | **Next** |
 | **E2** | Off-screen far: shadow off + optional Cannon sleep | After E1 |
 | **E3** | Weather/shader registry only visits on-screen | Later |
 | **E4** | Spatial buckets if needed | Later |

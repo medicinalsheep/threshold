@@ -1,3 +1,11 @@
+## 10.13.1 — VisibilitySystem E0 (frustum × distance)
+
+- **`VisibilitySystem`** — per-object `userData._visClass` **A–E** (focus / on-near / on-far / off-near / off-far)
+- Frustum test with margin + frame hysteresis · budgeted scan
+- Runs before MeshLod / TextureHilod / NegativeLod
+- **NegativeLod** freezes mat swaps on **D/E**; **C** → flat, **A/B** → full
+- Config: `config/visibility.json` · helpers for E1 (`shouldProcessLod`, `shouldProcessHeavy`, `shouldSleep`)
+
 ## 10.13.0 — Negative LOD (shader LOD) Phase A+B
 
 - **`userData.negativeLOD`** — far from camera → pooled unlit `MeshBasicMaterial` (no PBR/lights); near restores full material

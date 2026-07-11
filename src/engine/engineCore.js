@@ -24,6 +24,7 @@ import { GraphicsProfile } from '../shared/graphicsProfile.js';
 import { MeshLod } from '../shared/meshLod.js';
 import { TextureHilod } from '../shared/textureHilod.js';
 import { NegativeLod } from '../shared/negativeLod.js';
+import { VisibilitySystem } from '../shared/visibilitySystem.js';
 import { Cinematic } from '../shared/cinematic.js';
 import { AgentHub } from '../shared/agentHub.js';
 
@@ -631,6 +632,8 @@ export const Engine = {
         });
 
         AgentHub.tick(dt);
+        // E0: classify frustum×distance once; consumers read userData._visClass
+        VisibilitySystem.update(this.camera);
         MeshLod.update(this.camera);
         TextureHilod.update(this.camera);
         NegativeLod.update(this.camera);

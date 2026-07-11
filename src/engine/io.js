@@ -12,6 +12,9 @@ function pickSerializableUserData(ud = {}) {
     delete out._negativeLodFullMat;
     delete out._negativeLodFlatMat;
     delete out._visClass;
+    delete out._visClassPrev;
+    delete out._visDist;
+    delete out._visOnScreen;
     return out;
 }
 

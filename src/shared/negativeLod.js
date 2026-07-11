@@ -392,8 +392,21 @@ export const NegativeLod = {
             }
 
             _stats.scanned += 1;
+
+            // E0: off-screen (D/E) — freeze materials, no swap work
+            const vis = obj.userData?._visClass;
+            if (vis === 'D' || vis === 'E') {
+                const meshes = getMeshes(obj);
+                const st = meshes[0] ? (runtime.get(meshes[0])?.state || 'full') : 'full';
+                if (st === 'flat') flatCount += 1;
+                else fullCount += 1;
+                continue;
+            }
+
             obj.getWorldPosition(_objPos);
-            const dist = _camPos.distanceTo(_objPos);
+            const dist = Number.isFinite(obj.userData?._visDist)
+                ? obj.userData._visDist
+                : _camPos.distanceTo(_objPos);
             const threshold = distanceThreshold(obj);
             const h = hysteresisOf(obj);
             const mode = modeOf(obj);
@@ -403,8 +416,12 @@ export const NegativeLod = {
                 wantFlat = false;
             } else if (mode === 'force-flat') {
                 wantFlat = true;
+            } else if (vis === 'A' || vis === 'B') {
+                wantFlat = false; // on-screen near / focus → full PBR
+            } else if (vis === 'C') {
+                wantFlat = true; // on-screen far → flat unlit
             } else {
-                // Infer state from first mesh
+                // Vis not ready yet — distance hysteresis
                 const meshes = getMeshes(obj);
                 const sample = meshes[0];
                 const cur = sample ? (runtime.get(sample)?.state || 'full') : 'full';

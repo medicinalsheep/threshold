@@ -1,0 +1,24 @@
+{
+  "format": "threshold-visibility",
+  "version": 1,
+  "enabled": true,
+  "nearDistance": 40,
+  "farDistance": 60,
+  "frustumMargin": 0.08,
+  "frameHysteresis": 6,
+  "maxUpdatesPerFrame": 96,
+  "focusFlags": [
+    "isPlayer",
+    "isHero",
+    "alwaysProcess",
+    "negativeLodExempt"
+  ],
+  "classes": {
+    "A": "focus — full process",
+    "B": "on-screen near — full PBR",
+    "C": "on-screen far — negativeLOD flat candidate",
+    "D": "off-screen near — light JS",
+    "E": "off-screen far — max skip"
+  },
+  "note": "E0 VisibilitySystem — camera-local; do not network _visClass"
+}

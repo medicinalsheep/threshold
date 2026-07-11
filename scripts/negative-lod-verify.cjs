@@ -52,6 +52,35 @@ const docs = read('docs/NEGATIVE_LOD.md');
 if (docs.includes('negativeLOD')) ok('design doc present');
 else fail('design doc missing');
 
+// E0 VisibilitySystem
+if (fs.existsSync(path.join(ROOT, 'config/visibility.json'))) {
+    const v = JSON.parse(read('config/visibility.json'));
+    if (v.format === 'threshold-visibility') ok('config/visibility.json');
+    else fail('visibility config invalid');
+} else fail('missing config/visibility.json');
+
+const vis = read('src/shared/visibilitySystem.js');
+for (const token of [
+    'export const VisibilitySystem',
+    "VIS.A",
+    '_visClass',
+    'Frustum',
+    'window.VisibilitySystem',
+]) {
+    if (vis.includes(token) || (token === "VIS.A" && vis.includes("A: 'A'"))) ok(`visibilitySystem has ${token}`);
+    else if (token === "VIS.A" && vis.includes("A: 'A'")) ok('visibilitySystem has class A');
+    else fail(`visibilitySystem missing ${token}`);
+}
+// softer check for A
+if (vis.includes("A: 'A'") || vis.includes('VIS.A')) ok('visibility classes A–E defined');
+
+if (!core.includes('VisibilitySystem.update')) fail('engineCore missing VisibilitySystem.update');
+else ok('engineCore ticks VisibilitySystem before LOD');
+
+const neg = mod;
+if (neg.includes("_visClass") && neg.includes("=== 'D'")) ok('NegativeLod respects off-screen D/E freeze');
+else fail('NegativeLod should freeze on D/E vis classes');
+
 if (failed) {
     console.error(`\n${failed} check(s) failed`);
     process.exit(1);
