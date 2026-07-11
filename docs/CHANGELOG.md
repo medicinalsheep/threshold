@@ -1,3 +1,9 @@
+## Multiplayer join errors + docs
+
+- Clearer guest errors: peer-unavailable, network, WebRTC incompatible
+- [MULTIPLAYER.md](MULTIPLAYER.md) — room format, PeerJS cloud defaults, join checklist
+- Restored accidental local texture dirty tree (not shipped)
+
 ## Extension — Threshold Bridge (Chrome)
 
 - **`extension/threshold-chrome`** — MV3 extension: run local **threshold-mini-mobile** (Ollama) → optional **Send to Grok tab** (fills open grok.x.ai composer; you still hit send)

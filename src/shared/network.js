@@ -165,13 +165,28 @@ export const Network = {
                 conn.on('close', () => this._onHostLost());
                 conn.on('error', (err) => {
                     this._clearJoinPending();
-                    reject(err);
+                    reject(new Error(err?.message || err?.type || 'Connection to host failed'));
                 });
             });
 
             this.peer.on('error', (err) => {
                 this._clearJoinPending();
-                reject(err);
+                const t = err?.type || '';
+                if (t === 'peer-unavailable') {
+                    reject(new Error(
+                        `Room ${roomId} not found — host offline, wrong code, or host tab closed. Host must keep Threshold open after CREATE.`,
+                    ));
+                    return;
+                }
+                if (t === 'network' || t === 'server-error' || t === 'socket-error') {
+                    reject(new Error('Peer server unreachable — check network or try again'));
+                    return;
+                }
+                if (t === 'browser-incompatible') {
+                    reject(new Error('Browser lacks WebRTC — try Chrome/Edge'));
+                    return;
+                }
+                reject(new Error(err?.message || t || 'Peer connection failed'));
             });
         });
     },
