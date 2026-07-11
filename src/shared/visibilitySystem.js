@@ -17,6 +17,7 @@ export const VIS = {
     E: 'E',
 };
 
+const sleepCfg = visCfg.sleep || {};
 const cfg = {
     enabled: visCfg.enabled !== false,
     nearDistance: Number(visCfg.nearDistance) || Number(negCfg.defaultDistance) || 40,
@@ -25,6 +26,16 @@ const cfg = {
     frameHysteresis: Math.max(1, Number(visCfg.frameHysteresis) || 6),
     maxUpdatesPerFrame: Number(visCfg.maxUpdatesPerFrame) || 96,
     focusFlags: Array.isArray(visCfg.focusFlags) ? visCfg.focusFlags : ['isPlayer', 'alwaysProcess'],
+    sleep: {
+        enabled: sleepCfg.enabled !== false,
+        disableShadowOnD: sleepCfg.disableShadowOnD !== false,
+        disableShadowOnE: sleepCfg.disableShadowOnE !== false,
+        physicsSleepOnE: sleepCfg.physicsSleepOnE !== false,
+        physicsSleepOnD: !!sleepCfg.physicsSleepOnD,
+        neverSleepFlags: Array.isArray(sleepCfg.neverSleepFlags)
+            ? sleepCfg.neverSleepFlags
+            : ['isPlayer', 'alwaysProcess', 'isProjectile'],
+    },
 };
 
 const _camPos = new THREE.Vector3();
@@ -38,9 +49,16 @@ const _size = new THREE.Vector3();
 /** @type {WeakMap<THREE.Object3D, { pending: string|null, frames: number, radius: number }>} */
 const hysteresis = new WeakMap();
 
+/**
+ * E2 runtime stash (not serialized)
+ * @type {WeakMap<THREE.Object3D, { shadows: Map<string, boolean>, physicsAsleep: boolean }>}
+ */
+const sleepState = new WeakMap();
+
 let _stats = {
     A: 0, B: 0, C: 0, D: 0, E: 0,
     scanned: 0, changed: 0, total: 0,
+    shadowsDimmed: 0, physicsAsleep: 0,
 };
 let _scanOffset = 0;
 let _frame = 0;
@@ -143,12 +161,148 @@ function applyClass(obj, next) {
     const prev = obj.userData?._visClass;
     if (!obj.userData) obj.userData = {};
     obj.userData._visClass = next;
-    obj.userData._visDist = obj.userData._visDist; // set by update
     if (prev !== next) {
         obj.userData._visClassPrev = prev || null;
+        applySleepPolicies(obj, prev || null, next);
         return true;
     }
     return false;
+}
+
+function neverSleep(obj) {
+    const ud = obj?.userData || {};
+    if (ud.culledSleep === false || ud.noCulledSleep) return true;
+    for (const f of cfg.sleep.neverSleepFlags) {
+        if (ud[f]) return true;
+    }
+    if (ud.isPlayer || ud.alwaysProcess) return true;
+    const sel = window.State?.selectedObject;
+    if (sel && (sel === obj || isDescendant(sel, obj) || isDescendant(obj, sel))) return true;
+    if (window.TcDrive?.active && (ud.isDriven || ud.driverKey)) return true;
+    return false;
+}
+
+function findPhysicsBody(obj) {
+    const list = window.State?.physicsObjects;
+    if (!list?.length || !obj) return null;
+    const hit = list.find((p) => p.mesh === obj);
+    if (hit?.body) return hit.body;
+    // parent/child: mesh might be root with body on root
+    for (const p of list) {
+        if (!p?.mesh || !p.body) continue;
+        if (p.mesh === obj || isDescendant(obj, p.mesh) || isDescendant(p.mesh, obj)) return p.body;
+    }
+    return null;
+}
+
+function stashAndDisableShadows(obj) {
+    let st = sleepState.get(obj);
+    if (!st) st = { shadows: new Map(), physicsAsleep: false };
+    if (st.shadows.size > 0) {
+        // already dimmed — ensure still off
+        obj.traverse?.((c) => {
+            if (c.isMesh) c.castShadow = false;
+        });
+        if (obj.isMesh) obj.castShadow = false;
+        sleepState.set(obj, st);
+        return;
+    }
+    const apply = (mesh) => {
+        if (!mesh?.isMesh) return;
+        st.shadows.set(mesh.uuid, !!mesh.castShadow);
+        mesh.castShadow = false;
+    };
+    if (obj.isMesh) apply(obj);
+    obj.traverse?.((c) => apply(c));
+    sleepState.set(obj, st);
+}
+
+function restoreShadows(obj) {
+    const st = sleepState.get(obj);
+    if (!st?.shadows?.size) return;
+    const restore = (mesh) => {
+        if (!mesh?.isMesh) return;
+        if (st.shadows.has(mesh.uuid)) {
+            mesh.castShadow = st.shadows.get(mesh.uuid);
+        }
+    };
+    if (obj.isMesh) restore(obj);
+    obj.traverse?.((c) => restore(c));
+    st.shadows.clear();
+    sleepState.set(obj, st);
+}
+
+function sleepPhysics(obj) {
+    if (neverSleep(obj)) return;
+    if (obj.userData?.culledSleep === false) return;
+    const body = findPhysicsBody(obj);
+    if (!body || body.mass <= 0) return; // static already cheap
+    try {
+        if (typeof body.sleep === 'function') body.sleep();
+        else {
+            body.sleepState = 2; // Cannon SLEEPY/SLEEPING
+            body.velocity.setZero?.();
+            body.angularVelocity?.setZero?.();
+        }
+        let st = sleepState.get(obj) || { shadows: new Map(), physicsAsleep: false };
+        st.physicsAsleep = true;
+        sleepState.set(obj, st);
+        if (obj.userData) obj.userData._visPhysicsSleep = true;
+    } catch {
+        /* ignore */
+    }
+}
+
+function wakePhysics(obj) {
+    const st = sleepState.get(obj);
+    const body = findPhysicsBody(obj);
+    if (body && typeof body.wakeUp === 'function') {
+        try { body.wakeUp(); } catch { /* ignore */ }
+    }
+    if (st) {
+        st.physicsAsleep = false;
+        sleepState.set(obj, st);
+    }
+    if (obj.userData) delete obj.userData._visPhysicsSleep;
+}
+
+/**
+ * E2 — apply shadow dim + physics sleep only on class transitions.
+ */
+function applySleepPolicies(obj, _prev, next) {
+    if (!cfg.sleep.enabled || !obj) return;
+
+    // Focus / player / selected: never dim or sleep
+    if (neverSleep(obj) || next === VIS.A) {
+        restoreShadows(obj);
+        wakePhysics(obj);
+        return;
+    }
+
+    const wantShadowOff =
+        (next === VIS.E && cfg.sleep.disableShadowOnE)
+        || (next === VIS.D && cfg.sleep.disableShadowOnD);
+
+    const wantPhysicsSleep =
+        (next === VIS.E && cfg.sleep.physicsSleepOnE)
+        || (next === VIS.D && cfg.sleep.physicsSleepOnD);
+
+    if (wantShadowOff) stashAndDisableShadows(obj);
+    else restoreShadows(obj);
+
+    if (wantPhysicsSleep) sleepPhysics(obj);
+    else wakePhysics(obj);
+}
+
+function recountSleepStats(objects) {
+    let shadowsDimmed = 0;
+    let physicsAsleep = 0;
+    for (const obj of objects || []) {
+        const st = sleepState.get(obj);
+        if (st?.shadows?.size) shadowsDimmed += 1;
+        if (st?.physicsAsleep || obj.userData?._visPhysicsSleep) physicsAsleep += 1;
+    }
+    return { shadowsDimmed, physicsAsleep };
 }
 
 /**
@@ -296,12 +450,29 @@ export const VisibilitySystem = {
             if (c && counts[c] != null) counts[c] += 1;
         }
 
+        const sleepStats = recountSleepStats(objects);
         _stats = {
             ...counts,
             scanned,
             changed,
             total: n,
+            ...sleepStats,
         };
+    },
+
+    /** Force re-apply sleep policy (e.g. after selection change) */
+    refreshSleep(obj) {
+        if (!obj) return;
+        const c = obj.userData?._visClass;
+        if (c) applySleepPolicies(obj, c, c);
+    },
+
+    wakeAll() {
+        const objects = window.State?.objects || [];
+        for (const obj of objects) {
+            restoreShadows(obj);
+            wakePhysics(obj);
+        }
     },
 
     /** Invalidate cached radius (after scale/geometry change) */

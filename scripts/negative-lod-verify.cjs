@@ -97,6 +97,16 @@ const patrol = read('src/shared/npcPatrol.js');
 if (patrol.includes('shouldProcessLod')) ok('NpcPatrol anim gated (sim continues)');
 else fail('NpcPatrol missing vis gate');
 
+// E2 sleep / shadow
+if (vis.includes('applySleepPolicies') || vis.includes('stashAndDisableShadows')) {
+    ok('VisibilitySystem E2 shadow/sleep policies');
+} else fail('E2 sleep policies missing');
+if (vis.includes('sleepPhysics') && vis.includes('wakePhysics')) ok('E2 physics sleep/wake');
+else fail('E2 physics sleep helpers missing');
+const vcfg = JSON.parse(read('config/visibility.json'));
+if (vcfg.sleep?.physicsSleepOnE) ok('config sleep.physicsSleepOnE');
+else fail('visibility.json missing sleep block');
+
 if (failed) {
     console.error(`\n${failed} check(s) failed`);
     process.exit(1);

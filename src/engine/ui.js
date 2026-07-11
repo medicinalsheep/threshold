@@ -316,7 +316,11 @@ export const UI = {
     },
     selectObject: function (obj) {
         if (State.selectedObject === obj) return;
+        const prev = State.selectedObject;
         State.selectedObject = obj;
+        // E2: selection is focus — wake shadows/physics for selected; re-eval previous
+        window.VisibilitySystem?.refreshSleep?.(prev);
+        window.VisibilitySystem?.refreshSleep?.(obj);
         if (obj.userData?.isPlayer) {
             if (SimMode.isPlay()) SceneDock.openTab('skin');
             else SceneDock.closeTab();
@@ -335,7 +339,9 @@ export const UI = {
         else Engine.transformControl.detach();
     },
     deselectObject: function () {
+        const prev = State.selectedObject;
         State.selectedObject = null;
+        window.VisibilitySystem?.refreshSleep?.(prev);
         Engine.transformControl.detach();
         if (SimMode.isPlay() && SimMode.canEditPlayerSkin()) {
             SceneDock.openTab('skin');
@@ -383,9 +389,10 @@ export const UI = {
         const stats = NegativeLod.getStats?.() || {};
         const vis = obj.userData?._visClass || '—';
         const vstats = window.VisibilitySystem?.getStats?.() || {};
+        const sleep = obj.userData?._visPhysicsSleep ? ' · phys sleep' : '';
         el.textContent = on
-            ? `Neg LOD on · vis ${vis} · far unlit (~${obj.userData.negativeLodDistance || 40}m) · flat ${stats.flat ?? '—'}/${stats.registered ?? '—'} · A${vstats.A ?? 0}/B${vstats.B ?? 0}/C${vstats.C ?? 0}/D${vstats.D ?? 0}/E${vstats.E ?? 0}`
-            : `Negative LOD off · vis ${vis} — enable for far-field unlit (no PBR)`;
+            ? `Neg LOD on · vis ${vis}${sleep} · far unlit (~${obj.userData.negativeLodDistance || 40}m) · flat ${stats.flat ?? '—'}/${stats.registered ?? '—'} · A${vstats.A ?? 0}/B${vstats.B ?? 0}/C${vstats.C ?? 0}/D${vstats.D ?? 0}/E${vstats.E ?? 0} · sh${vstats.shadowsDimmed ?? 0}/ps${vstats.physicsAsleep ?? 0}`
+            : `Negative LOD off · vis ${vis}${sleep} · A${vstats.A ?? 0}/B${vstats.B ?? 0}/C${vstats.C ?? 0}/D${vstats.D ?? 0}/E${vstats.E ?? 0}`;
     },
     syncTextureInspector: async function (obj) {
         const status = document.getElementById('insp-texture-status');

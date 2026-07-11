@@ -15,6 +15,7 @@ function pickSerializableUserData(ud = {}) {
     delete out._visClassPrev;
     delete out._visDist;
     delete out._visOnScreen;
+    delete out._visPhysicsSleep;
     return out;
 }
 

@@ -674,18 +674,16 @@ else auto matrix above
 | **A–B** | On-screen negativeLOD, pool, inspector, serialize | **Done (10.13.0)** |
 | **E0** | `VisibilitySystem`: frustum + dist → `_visClass` | **Done (10.13.1)** |
 | **E1** | Gate MeshLod / TextureHilod / idle / spin / NPC anim | **Done (10.13.2)** |
-| **E2** | Off-screen far: shadow off + optional Cannon sleep | **Next** |
-| **E3** | Weather/shader registry only visits on-screen | Later |
+| **E2** | Off-screen far: shadow off + optional Cannon sleep | **Done (10.13.3)** |
+| **E3** | Weather/shader registry only visits on-screen | **Next** |
 | **E4** | Spatial buckets if needed | Later |
 
-### Follow-on outline (E2 → E4+)
+### Follow-on outline (E3 → E4+)
 
-**E2 — Sleep / shadow elimination** (next)
-- On class **E** (and optionally long-term **D**): force `castShadow = false` (stash/restore like Neg LOD)
-- Static or far dynamics: Cannon `body.sleep()` when `userData.culledSleep !== false` and not `alwaysProcess`
-- Never sleep: player, selected, projectiles, driven vehicles, host-critical sim
-- API: `VisibilitySystem.applySleepPolicies(obj)` on class transition only (not every frame)
-- Measure: shadow-caster count + physics active bodies
+**E2 — Sleep / shadow elimination** ✅
+- Class **D/E**: stash & disable `castShadow`; restore on A/B/C
+- Class **E**: Cannon sleep for dynamic bodies (`culledSleep !== false`)
+- Never sleep flags + selection wake · transition-only policies
 
 **E3 — Weather / shader / env walks**
 - Maintain registries of weather-affected / shader-graph meshes at attach time

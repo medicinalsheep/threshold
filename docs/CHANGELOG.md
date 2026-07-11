@@ -1,3 +1,11 @@
+## 10.13.3 — Visibility sleep E2 (shadows + physics)
+
+- On class **D/E**: stash & disable `castShadow` (restore when back on-screen)
+- On class **E**: Cannon `body.sleep()` for dynamic bodies (opt-out `culledSleep: false`)
+- Never sleep: player, hero, selected, projectiles, driven vehicles, `alwaysProcess`
+- Policies run on **class transition only** · stats `shadowsDimmed` / `physicsAsleep`
+- Selection refresh wakes object · `VisibilitySystem.wakeAll()` / `refreshSleep(obj)`
+
 ## 10.13.2 — Visibility gates E1 (skip off-screen work)
 
 - **MeshLod** — skip D/E (off-screen); reuse `_visDist` when present

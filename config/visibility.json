@@ -13,6 +13,22 @@
     "alwaysProcess",
     "negativeLodExempt"
   ],
+  "sleep": {
+    "enabled": true,
+    "disableShadowOnD": true,
+    "disableShadowOnE": true,
+    "physicsSleepOnE": true,
+    "physicsSleepOnD": false,
+    "neverSleepFlags": [
+      "isPlayer",
+      "isHero",
+      "alwaysProcess",
+      "isProjectile",
+      "isDriven",
+      "negativeLodExempt",
+      "noCulledSleep"
+    ]
+  },
   "classes": {
     "A": "focus — full process",
     "B": "on-screen near — full PBR",
@@ -20,5 +36,5 @@
     "D": "off-screen near — light JS",
     "E": "off-screen far — max skip"
   },
-  "note": "E0 VisibilitySystem — camera-local; do not network _visClass"
+  "note": "E0 classify + E2 sleep/shadow on class transition — camera-local; do not network _visClass"
 }
