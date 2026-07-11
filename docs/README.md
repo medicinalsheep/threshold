@@ -1,6 +1,6 @@
 # Threshold documentation index
 
-**Version:** 10.13.4 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.13.5 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Full scope map — quality-first blank grid, optional TC reference editions, and where to read more.
 
@@ -62,7 +62,7 @@ flowchart TB
 | Play immediately | [README.md](../README.md) Quick start | Live URL → **ENTER →** |
 | Clone & develop | [GETTING_STARTED.md](GETTING_STARTED.md) | `npm install` → `npm run quickstart` |
 | Streamlined dev path | [STREAMLINED_DEV.md](STREAMLINED_DEV.md) | Portal → SETUP → EXPORT |
-| X / Grok accounts | [AUTH.md](AUTH.md) | Optional — not required to play |
+| Grok API key (optional) | [AUTH.md](AUTH.md) | Not required to play |
 | Agent tiers & benchmarks | [AGENT_ROUTING.md](AGENT_ROUTING.md) | `ollama:benchmark` · SMART DEV |
 | UI layout + agents | [UI_AND_AGENTS.md](UI_AND_AGENTS.md) | Portal · freeze · touch · UNLOCK |
 | Train mini agents | [BOOTCAMP.md](BOOTCAMP.md) · [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) | `npm run train:mini -- --no-seed` · `ollama:golden` |
@@ -100,7 +100,8 @@ npm run build                   # GitHub Pages → dist-pages/
 | Doc | Topic |
 |-----|-------|
 | [GETTING_STARTED.md](GETTING_STARTED.md) | Lobby → ship linear path |
-| [AUTH.md](AUTH.md) | Optional X OAuth + Grok API key |
+| [AUTH.md](AUTH.md) | Optional Grok API key (no X OAuth) |
+| [PERF_NEXT.md](PERF_NEXT.md) | Neg LOD tier auto, multi-mat, floor, measure harness |
 | [MULTIPLAYER.md](MULTIPLAYER.md) | Room codes, PeerJS, join troubleshooting |
 | [NEGATIVE_LOD.md](NEGATIVE_LOD.md) | Design: far-field unlit shader LOD (`negativeLOD`) |
 | [../extension/threshold-chrome/README.md](../extension/threshold-chrome/README.md) | Chrome: local mini → Grok tab paste |

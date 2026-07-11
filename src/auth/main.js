@@ -1,6 +1,4 @@
 import { IS_GROK_EDITION } from '../config.js';
-import { XAuth } from './xAuth.js';
-import { XFeed } from './xFeed.js';
 import { DisplayName } from './displayName.js';
 import { GrokAuthUi } from './grokAuthUi.js';
 
@@ -61,30 +59,17 @@ window.Auth = Auth;
 export async function initAuth() {
     Auth.hydrate();
 
-    // X OAuth callback (may throw — show status, don't block boot)
+    // Clear legacy X OAuth session if present
     try {
-        const session = await XAuth.handleRedirectCallback();
-        if (session?.user) {
-            // Only auto-switch to X handle if user hasn't set a custom name
-            const src = DisplayName.getSource();
-            const custom = DisplayName.getCustom();
-            if (src === 'custom' && (!custom || /^Player/i.test(custom))) {
-                DisplayName.setSource('x_username');
-            } else {
-                DisplayName.applyResolvedToStorage();
-            }
-            window.UI?.status?.(`Signed in as @${session.user.username}`);
+        localStorage.removeItem('threshold_x_session_v2');
+        localStorage.removeItem('threshold_x_session');
+        sessionStorage.removeItem('threshold_x_pkce');
+        if ((localStorage.getItem('threshold_name_source') || '').startsWith('x_')) {
+            localStorage.setItem('threshold_name_source', 'custom');
         }
-    } catch (e) {
-        console.warn('[auth] X callback', e.message || e);
-        window.UI?.status?.(e.message || 'X sign-in failed');
-    }
+    } catch { /* ignore */ }
 
-    await XAuth.refreshIfNeeded();
-    XAuth.bindUi();
-    XAuth.syncUi();
     DisplayName.bindUi();
-    XFeed.init();
     GrokAuthUi.init();
 
     const overlay = document.getElementById('auth-overlay');
@@ -100,25 +85,19 @@ export async function initAuth() {
 
     const syncLogoutBtn = () => {
         if (!logoutBtn) return;
-        const xUser = XAuth.getUser();
         const hasXai = Auth.isLoggedIn();
-        logoutBtn.style.display = (xUser || hasXai) ? 'inline-block' : 'none';
-        if (xUser && hasXai) logoutBtn.textContent = 'SIGN OUT';
-        else if (xUser) logoutBtn.textContent = 'SIGN OUT X';
-        else if (hasXai) logoutBtn.textContent = 'CLEAR GROK';
-        else logoutBtn.textContent = 'LOGOUT';
+        logoutBtn.style.display = hasXai ? 'inline-block' : 'none';
+        logoutBtn.textContent = hasXai ? 'CLEAR GROK' : 'LOGOUT';
         GrokAuthUi.syncUi();
     };
 
     logoutBtn?.addEventListener('click', () => {
-        // Clear both account types (user can re-add either)
-        XAuth.logout();
         Auth.logout();
         syncLogoutBtn();
         GrokAuthUi.syncUi();
         window.AgentStatus?.refresh?.();
         window.AgentPortal?.runDetect?.();
-        window.UI?.status?.('Signed out (X + Grok key cleared)');
+        window.UI?.status?.('Grok key cleared');
     });
 
     // Grok edition: keep API-key overlay when no xAI key
@@ -130,7 +109,6 @@ export async function initAuth() {
             if (Auth.isLoggedIn()) hideOverlay();
             else showOverlay();
             syncLogoutBtn();
-            XAuth.syncUi();
         };
 
         form?.addEventListener('submit', (e) => {
@@ -151,6 +129,5 @@ export async function initAuth() {
         syncLogoutBtn();
     }
 
-    window.addEventListener('x-auth-change', syncLogoutBtn);
     window.addEventListener('grok-config-change', syncLogoutBtn);
 }

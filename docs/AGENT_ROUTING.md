@@ -3,7 +3,7 @@
 Threshold routes **tasks** to **small / medium / large** models — fast local LLMs for chat and patches, Grok or 7B/8B Ollama for full scene scripts.
 
 **UI:** Agent Portal on ENTER + **SETUP** tab in scene dock (not a separate AI tab).  
-**Grok keys:** [console.x.ai](https://console.x.ai) — see [AUTH.md](AUTH.md) (X identity is separate from Grok).
+**Grok keys:** [console.x.ai](https://console.x.ai) — see [AUTH.md](AUTH.md).
 
 See [UI_AND_AGENTS.md](UI_AND_AGENTS.md) for freeze, working folder, sequential queue, and lobby.
 

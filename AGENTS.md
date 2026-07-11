@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), tiered local/cloud agents, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **10.13.4**)
+**Version:** `src/config.js` → `VERSION` (currently **10.13.5**)
 
 **Doc index:** [docs/README.md](docs/README.md) — full scope map
 
@@ -13,7 +13,7 @@ Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blen
 | Area | Path |
 |------|------|
 | Lobby | `src/lobby/` — ENTER solo primary; CREATE/JOIN multiplayer |
-| Auth (optional) | `src/auth/` — `Auth` (xAI key), `XAuth`/`XFeed`, `DisplayName`, `GrokAuthUi` |
+| Auth (optional) | `src/auth/` — `Auth` (xAI key), `DisplayName`, `GrokAuthUi` (no X OAuth) |
 | Engine bootstrap | `src/engine/main.js` — `initEngine()`, window globals |
 | Engine core | `src/engine/engineCore.js` — scene, render loop, input |
 | Engine UI | `src/engine/ui.js` — inspector, insert, bindings, agents |
@@ -84,7 +84,7 @@ npm run ollama:verify           # local LLM smoke
 npm run ollama:benchmark        # rank models → dist-store/ollama-benchmark.json
 ```
 
-Copy `.env.local.example` → `.env.local` for `VITE_OLLAMA_URL`, optional `VITE_OLLAMA_TIER_*`, `VITE_X_CLIENT_ID` (X OAuth), and xAI model overrides. Dual accounts: [docs/AUTH.md](docs/AUTH.md).
+Copy `.env.local.example` → `.env.local` for `VITE_OLLAMA_URL`, optional `VITE_OLLAMA_TIER_*`, and xAI model overrides. Grok key is optional (UI): [docs/AUTH.md](docs/AUTH.md).
 
 ### Training bootcamp
 
@@ -156,7 +156,8 @@ Live manifest: `textures/threshold_manifest.json` (not `old/plugins/...` sample)
 | [docs/README.md](docs/README.md) | **Full scope index** |
 | [README.md](README.md) | Quick start + capabilities |
 | [docs/STREAMLINED_DEV.md](docs/STREAMLINED_DEV.md) | Lobby → agents → export path |
-| [docs/AUTH.md](docs/AUTH.md) | Optional X OAuth + Grok API key |
+| [docs/AUTH.md](docs/AUTH.md) | Optional Grok API key |
+| [docs/PERF_NEXT.md](docs/PERF_NEXT.md) | Perf follow-ons (Neg LOD tier, harness, …) |
 | [docs/AGENT_ROUTING.md](docs/AGENT_ROUTING.md) | Tiered router, benchmarks, providers |
 | [docs/MODEL_DISTRIBUTION.md](docs/MODEL_DISTRIBUTION.md) | GitHub vs local weights policy |
 | [docs/BOOTCAMP.md](docs/BOOTCAMP.md) | Training bootcamp quick start |
@@ -168,7 +169,7 @@ Live manifest: `textures/threshold_manifest.json` (not `old/plugins/...` sample)
 | [docs/EXPORT_WALKTHROUGH.md](docs/EXPORT_WALKTHROUGH.md) | 9-step export wizard |
 | [docs/THRESHOLD_CHILD_ASSETS.md](docs/THRESHOLD_CHILD_ASSETS.md) | TC original-asset policy |
 | [docs/REFERENCE_EDITIONS.md](docs/REFERENCE_EDITIONS.md) | TC edition registry |
-| [docs/UI_AND_AGENTS.md](docs/UI_AND_AGENTS.md) | Lobby, hubs, freeze, touch, dual auth |
+| [docs/UI_AND_AGENTS.md](docs/UI_AND_AGENTS.md) | Lobby, hubs, freeze, touch |
 | [docs/CAPABILITIES.md](docs/CAPABILITIES.md) | Shipped snapshot |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | v10.8+ forward plan |
 | [docs/CHANGELOG.md](docs/CHANGELOG.md) | Version history |

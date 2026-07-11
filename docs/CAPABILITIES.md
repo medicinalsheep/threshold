@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.13)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.4
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.5
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -18,7 +18,7 @@ Single progress snapshot — what ships today, how the pieces connect, and what 
 | Agent Portal on ENTER | `agentPortal.js` — Grok/Ollama/X auto-detect |
 | Corner hub UI | `hubLayout.js` — PLAY/EDIT, TOOLS, SCENE menus |
 | Room codes + passcode | `roomCode.js`, `hostPasscode.js` |
-| Dual accounts (optional) | X OAuth + Grok API key — [AUTH.md](AUTH.md) |
+| Grok API (optional) | BYO key — [AUTH.md](AUTH.md) |
 | Short hub tour | `walkthrough.js` — ~3 steps |
 
 ---
@@ -87,7 +87,7 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | VOIP proximity + PTT | `voip.js` — mic after start; PTT default **N** |
 | Spectate mode | `spectate/main.js` |
 | xAI keys per tab | `sessionStorage` — not synced to guests |
-| X identity (optional) | `xAuth.js` — not required for play |
+
 
 ---
 

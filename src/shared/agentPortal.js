@@ -238,16 +238,6 @@ export const AgentPortal = {
         const rem = document.getElementById('agent-portal-xai-remember');
         if (rem) rem.checked = Auth.isRemembered?.() === true;
 
-        window.addEventListener('x-auth-change', () => {
-            // Refresh detect row when X signs in/out while portal is open
-            if (this._modal?.classList.contains('open') || document.body.classList.contains('agent-portal-open')) {
-                void this.runDetect();
-            } else if (this._probe) {
-                this._probe.xAuth = this._xStatus();
-                this.renderDetect(this._probe);
-            }
-        });
-
         this._modal?.addEventListener('click', (e) => {
             if (e.target === this._modal && !this._busy && !this._pulling) this.hide();
             const pullBtn = e.target.closest?.('[data-ollama-pull]');
@@ -297,47 +287,6 @@ export const AgentPortal = {
         }
     },
 
-    _xStatus() {
-        const X = window.XAuth;
-        if (!X) {
-            return { ok: false, configured: false, detail: 'X auth not loaded' };
-        }
-        if (!X.isConfigured?.()) {
-            return {
-                ok: false,
-                configured: false,
-                detail: 'Set VITE_X_CLIENT_ID to enable Sign in with X',
-            };
-        }
-        const user = X.getUser?.();
-        if (user?.username) {
-            const missing = X.missingScopes?.() || [];
-            const canPost = X.canPost?.() !== false && !missing.includes('tweet.write');
-            let detail = `Connected as @${user.username}${user.name ? ` · ${user.name}` : ''}`;
-            if (missing.length) {
-                detail += ` · re-sign-in needed for: ${missing.join(', ')}`;
-            } else if (canPost) {
-                detail += ' · tweet.write ✓';
-            }
-            return {
-                ok: !missing.length,
-                configured: true,
-                username: user.username,
-                name: user.name || user.username,
-                canPost,
-                missingScopes: missing,
-                detail,
-                // still "connected" for identity even if scopes incomplete
-                signedIn: true,
-            };
-        }
-        return {
-            ok: false,
-            configured: true,
-            detail: 'Not signed in — use Sign in with X above (identity, feed, posts)',
-        };
-    },
-
     async probe() {
         Auth.hydrate?.();
         const grokKey = Auth.isLoggedIn();
@@ -368,15 +317,12 @@ export const AgentPortal = {
             watchHealth = false;
         }
 
-        const xAuth = this._xStatus();
-
         const probe = {
             grokBuild,
             grokEdition: IS_GROK_EDITION,
             grokKey,
             grokApi,
             grokModel: GrokClient.getChatModel?.() || 'grok-4.5',
-            xAuth,
             ollama,
             watchHealth,
             at: Date.now(),
@@ -428,30 +374,11 @@ export const AgentPortal = {
             ? { state: 'ok', label: 'Ollama (your models)', detail: ollamaDetail }
             : { state: 'off', label: 'Ollama (your models)', detail: ollamaDetail };
 
-        const x = probe.xAuth || this._xStatus();
-        const xLine = x.signedIn || x.ok
-            ? {
-                state: x.ok ? 'ok' : 'warn',
-                label: 'X (identity)',
-                detail: x.detail || `Connected as @${x.username}`,
-            }
-            : x.configured
-                ? {
-                    state: 'warn',
-                    label: 'X (identity)',
-                    detail: x.detail || 'Not signed in — Sign in with X for handle, feed & posts',
-                }
-                : {
-                    state: 'off',
-                    label: 'X (identity)',
-                    detail: x.detail || 'Optional — set VITE_X_CLIENT_ID to enable',
-                };
-
         const watchLine = probe.watchHealth
             ? { state: 'ok', label: 'Creative watch', detail: 'GIMP/Blender hot-reload relay up' }
             : { state: 'off', label: 'Creative watch', detail: 'Optional — npm run textures:watch' };
 
-        const rows = [xLine, grokLine, ollamaLine, watchLine];
+        const rows = [grokLine, ollamaLine, watchLine];
         const ollamaHowTo = !probe.ollama?.ok ? `
             <div class="agent-portal-ollama-howto insert-hint">
                 <strong>Use Ollama (desktop / laptop):</strong>

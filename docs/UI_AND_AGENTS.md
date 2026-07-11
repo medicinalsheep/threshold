@@ -22,18 +22,15 @@ After CREATE: share panel → copy code/link → **ENTER SESSION →**.
 
 ---
 
-## Dual accounts (optional)
+## Optional Grok key
 
-| Account | Purpose | How |
-|---------|---------|-----|
-| **X** | Identity, feed, posts | OAuth 2.0 PKCE · `VITE_X_CLIENT_ID` · developer.x.com SPA |
-| **Grok / xAI** | Cloud AI generation | API key from [console.x.ai](https://console.x.ai) — **not** SuperGrok browser tab |
+| | |
+|--|--|
+| **Grok / xAI** | Cloud AI — key from [console.x.ai](https://console.x.ai) (not SuperGrok tab) |
+| **Where** | Lobby → More options → Grok, nav **Grok**, Agent Portal |
+| **X OAuth** | **Removed** — no Sign in with X / feed / post |
 
-- Lobby **More options → Accounts**, nav chips, or Agent Portal
-- X scopes: `tweet.read` `tweet.write` `users.read` `offline.access` (re-sign-in after scope upgrades)
-- Grok key: tab session by default; optional “remember on this device”
-
-See [GETTING_STARTED.md](GETTING_STARTED.md) · env: `.env.local.example`
+See [AUTH.md](AUTH.md).
 
 ---
 
@@ -41,7 +38,7 @@ See [GETTING_STARTED.md](GETTING_STARTED.md) · env: `.env.local.example`
 
 | Feature | Where | Notes |
 |---------|-------|-------|
-| Auto-detect Grok + Ollama + X | Agent Portal on enter | Connect → tier picks → build chat |
+| Auto-detect Grok + Ollama | Agent Portal on enter | Connect → tier picks → build chat |
 | Model tiers | small / medium / large | Chat · patches · full world scripts |
 | Capability matrix | SETUP + Portal | Red ✗ · yellow ⚠ · green ● per model×tier |
 | Sequential local runs | SETUP checkbox | Default: one Ollama model at a time |

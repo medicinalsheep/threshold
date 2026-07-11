@@ -1,5 +1,5 @@
 /**
- * Grok (xAI) auth UI — first-class alongside X OAuth.
+ * Grok (xAI) auth UI — optional cloud AI key.
  * Uses Auth (API key) + GrokClient probe; does not use SuperGrok browser session.
  */
 

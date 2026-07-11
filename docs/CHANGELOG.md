@@ -1,3 +1,10 @@
+## 10.13.5 — Remove X OAuth; perf next plan
+
+- **Removed** X OAuth (`xAuth.js`, `xFeed.js`), Sign in with X, feed/post UI, X name sources
+- Lobby/nav/portal: **Grok key only** (+ custom display name)
+- Clears legacy `threshold_x_session*` on boot
+- Plan: [PERF_NEXT.md](PERF_NEXT.md) — tier auto Neg LOD, multi-mat, floor deck, measure harness
+
 ## 10.13.4 — Visibility env gates E3 (weather / shaders / audio)
 
 - **Weather** wet/dust/snow mat applies only when `shouldProcessEnv` (A/B/C)

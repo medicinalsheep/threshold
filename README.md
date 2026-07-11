@@ -2,7 +2,7 @@
 
 **Collaborative 3D game lab** — host a session, connect an AI agent, build in the browser, play with friends, export real packages.
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.4
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.5
 
 ---
 
@@ -34,7 +34,7 @@ Threshold is for people who want to **go from idea → playable 3D scene → shi
 ```
 
 Multiplayer: **CREATE SESSION** → copy invite → **ENTER SESSION**. Friends **JOIN** with room code.  
-Optional: **X** sign-in (identity/feed) and **Grok** API key (cloud AI) — see [docs/AUTH.md](docs/AUTH.md).
+Optional: **Grok** API key for cloud AI — [docs/AUTH.md](docs/AUTH.md). Local Ollama needs no account.
 
 ---
 
@@ -89,11 +89,10 @@ Visitors use **their** models — nothing is bundled on GitHub except small Mode
 |----------|-----|----------------|-------|
 | **Grok / xAI** | API key from [console.x.ai](https://console.x.ai) (not SuperGrok tab) | ✅ | ✅ |
 | **Ollama** | `npm run ollama:serve` on **this** device (CORS/PNA for Pages) | ✅ | ❌ on phone |
-| **X (optional)** | Sign in with X — identity, feed, posts (`VITE_X_CLIENT_ID`) | ✅ | ✅ |
 | **Threshold mini models** | `ollama pull medicinalsheep/threshold-mini-npc` or `npm run models:mini` | ✅ | codegen → Grok |
 | GIMP/Blender watch | `npm run textures:watch` | ✅ local dev only | ❌ |
 
-Keys and GGUF weights never go to GitHub. Full dual-auth setup: [docs/AUTH.md](docs/AUTH.md).
+Keys and GGUF weights never go to GitHub. [docs/AUTH.md](docs/AUTH.md).
 
 ---
 
