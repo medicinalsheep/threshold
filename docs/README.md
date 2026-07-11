@@ -102,6 +102,7 @@ npm run build                   # GitHub Pages → dist-pages/
 | [GETTING_STARTED.md](GETTING_STARTED.md) | Lobby → ship linear path |
 | [AUTH.md](AUTH.md) | Optional X OAuth + Grok API key |
 | [MULTIPLAYER.md](MULTIPLAYER.md) | Room codes, PeerJS, join troubleshooting |
+| [NEGATIVE_LOD.md](NEGATIVE_LOD.md) | Design: far-field unlit shader LOD (`negativeLOD`) |
 | [../extension/threshold-chrome/README.md](../extension/threshold-chrome/README.md) | Chrome: local mini → Grok tab paste |
 | [ROADMAP.md](ROADMAP.md) | v10.8+ forward plan |
 | [PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md) | Vision + pillars |
