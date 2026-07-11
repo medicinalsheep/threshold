@@ -479,4 +479,228 @@ obj.userData.negativeLodDistance = 45;
 
 ---
 
-*End of design. Next step when approved: implement Phase A+B in the Threshold engine.*
+---
+
+## 18. Off-screen elimination (not on camera)
+
+**Yes — we should plan this.** Three.js already **skips drawing** frustum-culled meshes, but Threshold still runs **JS systems** on every `State.objects` entry every frame (`MeshLod`, `TextureHilod`, idle anim, spin, weather hooks, etc.). Off-screen work is pure waste when the result is not visible and not needed for gameplay.
+
+### 18.1 Visibility classes (interest tiers)
+
+Compute once per object per frame (or amortized), store on `userData._vis`:
+
+| Class | Definition | Policy |
+|-------|------------|--------|
+| **A — Focus** | Selected, player, driven vehicle, interact target | Full everything |
+| **B — On-screen near** | In frustum + dist < negativeLodDistance | Full PBR (+ mesh/tex LOD) |
+| **C — On-screen far** | In frustum + dist ≥ threshold | **negativeLOD flat** |
+| **D — Off-screen near** | Outside frustum, dist < sleepDist | No draw (Three); light JS (physics if dynamic) |
+| **E — Off-screen far / culled** | Outside frustum + far, or always-out | **Max elimination** |
+
+```
+on-screen? ──no──► off-screen branch
+    │                    │
+    yes                  ├─ near → keep physics if dynamic; skip mat swaps / HILOD / idle
+    │                    └─ far  → sleep physics; skip almost all per-object ticks
+    │
+    ├─ near → full PBR
+    └─ far  → negativeLOD flat
+```
+
+### 18.2 Frustum test (efficient)
+
+```js
+// Once per frame in NegativeLod.update or VisibilitySystem.update
+_projScreenMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+_frustum.setFromProjectionMatrix(_projScreenMatrix);
+
+// Prefer bounding sphere (cheap):
+sphere.center.copy(obj world pos); sphere.radius = ud._bsRadius || estimate;
+inView = _frustum.intersectsSphere(sphere);
+```
+
+- Cache `_bsRadius` on register / geometry change  
+- Hysteresis: require **N frames** off-screen before demoting to E (avoid edge flicker)  
+- Optional margin: expand frustum slightly so objects entering view aren’t one frame late  
+
+**Module:** either fold into `negativeLod.js` as `Visibility` helpers, or `src/shared/visibilitySystem.js` that **feeds** NegativeLod / MeshLod / others.
+
+### 18.3 What to skip when off-screen
+
+| System | Off-screen near (D) | Off-screen far (E) |
+|--------|---------------------|---------------------|
+| **GPU draw** | Already culled by Three | Same |
+| **negativeLOD mat swap** | Optional stay flat or freeze last state | Freeze; no further swaps |
+| **MeshLod.update** | Skip or 5–10 Hz | Skip |
+| **TextureHilod.update** | Skip | Skip |
+| **HumanMesh.updateIdle** | Skip | Skip |
+| **userData.isRotating spin** | Skip | Skip |
+| **Shader graphs / weather mat pass** | Skip | Skip |
+| **castShadow** | Can disable | Disable |
+| **Physics body** | Keep if dynamic gameplay | **Sleep** / low freq if static or far |
+| **NPC patrol** | Slow tick | Pause until on-screen |
+| **Audio spatialize** | Attenuate / pause if inaudible | Pause |
+| **Network remote avatar anim** | Low-rate pose | Snapshot only |
+
+### 18.4 Properties (extend negative LOD flags)
+
+```js
+userData.negativeLOD = true;
+userData.culledSleep = true;           // allow off-screen far sleep (default true if negativeLOD)
+userData.alwaysProcess = false;        // force A-class (player, important triggers)
+userData.offscreenSleepDistance = 60;  // meters; default from config
+```
+
+Config additions:
+
+```json
+{
+  "offscreen": {
+    "enabled": true,
+    "frameHysteresis": 8,
+    "sleepDistance": 60,
+    "skipLodWhenOffscreen": true,
+    "sleepPhysicsWhenFar": true,
+    "frustumMargin": 0.05
+  }
+}
+```
+
+---
+
+## 19. Elimination by “known linear” / deterministic skip
+
+**Principle:** If a computation’s output **cannot change what the user sees, hears, or simulates this frame**, do not run it. Prefer **branch on known invariants** over always-on loops.
+
+### 19.1 Categories of skippable work in Threshold
+
+| Domain | Linear / known-skip condition | Elimination |
+|--------|------------------------------|-------------|
+| **Render materials** | Off-screen OR far + negativeLOD | Unlit / no swap / no HILOD |
+| **Mesh LOD** | Off-screen OR single-level chain | Skip `MeshLod.update` entry |
+| **Texture HILOD** | Off-screen OR flat unlit without map | Skip `TextureHilod` |
+| **Idle / spin anim** | Off-screen OR paused OR EDIT freeze | Skip per-object anim loops |
+| **Shadow map casters** | Off-screen far OR flat | `castShadow = false` |
+| **Physics** | Static body + never moved | Already cheap; **sleep** dynamic far-offscreen |
+| **Physics island** | Body sleeping + no contact | Cannon sleep (ensure enabled) |
+| **Water / env** | No water meshes / not in view | Early-out `updateWater` |
+| **Weather full-scene mat walk** | No active weather or only on-screen list | Iterate **registry of weather-affected** only |
+| **VOIP / audio** | Listener far + source silent | Don’t spatialize; don’t decode |
+| **Agent hub tick** | No agents / queue empty | Early return (already mostly true) |
+| **Third Eye** | Mode off | No highlight passes |
+| **Sync broadcast** | No dirty objects | Already scheduled; tighten dirty flags |
+| **Remote players** | Off-screen + far | Lower interp rate; hide mesh |
+| **Compiler / AI** | Not running | No freeze path |
+| **UI hint strings** | Throttle | Update every N frames (already partial) |
+
+### 19.2 “Linear” pipelines worth short-circuiting
+
+These are **predictable multi-step costs** where early exit is free:
+
+1. **LOD stack** — if off-screen → skip mesh + tex + negative evaluation beyond “class E” stamp  
+2. **PBR apply** — if flat → never re-run `finishMaterial` / env intensity  
+3. **GLTF traverse** — cache mesh lists at load; never re-traverse full tree per frame  
+4. **Shadow list** — maintain `shadowCasters[]` active set; remove when E-class  
+5. **Postprocess** — if no bloom targets / no damage FX, skip composer passes (graphics tier already partial)  
+6. **MP FULL_STATE** — guests only apply delta when version changes (existing pattern; ensure dirty bits)
+
+### 19.3 Proposed `VisibilitySystem` (single owner)
+
+```text
+VisibilitySystem.update(camera):
+  for obj in registry (or dirty spatial set):
+    dist = ...
+    inFrustum = ...
+    class = classify(dist, inFrustum, flags)
+    if class != obj.userData._visClass:
+      obj.userData._visClass = class
+      applyClassTransition(obj, class)  // shadows, sleep, force mat mode
+
+NegativeLod.update: only classes B/C (on-screen)
+MeshLod.update: only A/B/C (and maybe D at low rate)
+TextureHilod.update: only A/B
+Anim/spin: only A/B/C
+```
+
+One classification → many systems read `_visClass` — **no repeated frustum math**.
+
+### 19.4 Spatial acceleration (later phase)
+
+When object counts > ~200:
+
+- Grid or bucket by world cell  
+- Only test objects in cells near camera + all dynamic  
+- Static world: reclassify on camera cell change, not every object every frame  
+
+### 19.5 Correctness rules (do not skip)
+
+Never eliminate solely for performance when:
+
+- **Gameplay collision** still needed (projectiles, interact volumes) — use physics layers / larger cheap colliders  
+- **Audio one-shots** that must fire on timers  
+- **Network authority** simulation on host for gameplay-critical actors  
+- **Selected object** in EDIT  
+
+Use `alwaysProcess` / class **A** for those.
+
+---
+
+## 20. Combined state machine (distance × screen)
+
+```
+                 on-screen                off-screen
+              ┌─────────────┐          ┌──────────────┐
+near          │ FULL PBR    │          │ LIGHT JS     │
+              │ mesh/tex LOD│          │ physics ok   │
+              │ anim on     │          │ no HILOD     │
+              └─────────────┘          └──────────────┘
+far           │ FLAT unlit  │          │ SLEEP        │
+              │ negativeLOD │          │ no lod/anim  │
+              │ no shadows  │          │ physics sleep│
+              └─────────────┘          └──────────────┘
+```
+
+**Priority of policies:**  
+`force-full` / selection → A  
+else `force-flat` → flat if on-screen else sleep  
+else auto matrix above  
+
+---
+
+## 21. Implementation plan add-on (phases)
+
+| Phase | Scope |
+|-------|--------|
+| **A–B** | On-screen negativeLOD only (original plan) |
+| **E0** | `VisibilitySystem`: frustum + dist → `_visClass` |
+| **E1** | Gate MeshLod / TextureHilod / idle / spin on class |
+| **E2** | Off-screen far: shadow off + optional Cannon sleep |
+| **E3** | Weather/shader registry only visits on-screen |
+| **E4** | Spatial buckets if needed |
+
+**Effort:** E0–E1 are high leverage, small code, low risk. Do **with or right after** Phase B.
+
+---
+
+## 22. Expected extra gains (off-screen + linear skip)
+
+| Scene | Extra beyond far-flat alone |
+|-------|-----------------------------|
+| Dense props, camera looking at one corner | Large CPU win (skip HILOD/anim on majority) |
+| Open field, everything in view | Mostly GPU win from flat only |
+| MP many remote avatars behind you | Big: freeze remote anim/interp |
+
+---
+
+## 23. Downsides of off-screen elimination
+
+| Risk | Mitigation |
+|------|------------|
+| Pop-in when turning camera | Frustum margin + 1–2 frame delay before full restore |
+| Physics tunnel if slept colliders | Don’t sleep dynamics with active gameplay tags |
+| Host sim vs guest view mismatch | Host keeps sim class A for critical; visual-only sleep on clients |
+| Debugging “why didn’t X update?” | Stats: counts per class; `alwaysProcess` debug flag |
+
+---
+
+*End of design. Next step when approved: implement Phase A+B (on-screen flat), then E0–E1 (visibility gate) as the high-ROI elimination layer.*
