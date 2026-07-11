@@ -208,7 +208,10 @@ export const TextureHilod = {
         if (!shouldRunUpdate(camera)) return;
 
         const tasks = [];
+        const Vis = window.VisibilitySystem;
         for (const o of State.objects) {
+            // E1: HILOD only for focus + on-screen near (A/B); skip far/off-screen
+            if (Vis && !Vis.shouldProcessHeavy(o)) continue;
             const avatarMeshes = o?.userData?.avatarTexMeshes;
             if (avatarMeshes?.length) {
                 avatarMeshes.forEach((m) => {

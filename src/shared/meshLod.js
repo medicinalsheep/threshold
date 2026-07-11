@@ -143,12 +143,17 @@ export const MeshLod = {
         const State = window.State;
         if (!camera || !State?.objects) return;
         camera.getWorldPosition(_camPos);
+        const Vis = window.VisibilitySystem;
 
         for (const obj of State.objects) {
             const scenes = obj.userData?._lodScenes;
             if (!scenes || scenes.length < 2) continue;
+            // E1: skip off-screen (D/E) mesh LOD evaluation
+            if (Vis && !Vis.shouldProcessLod(obj)) continue;
             obj.getWorldPosition(_objPos);
-            const dist = _camPos.distanceTo(_objPos);
+            const dist = Number.isFinite(obj.userData?._visDist)
+                ? obj.userData._visDist
+                : _camPos.distanceTo(_objPos);
             const distances = this.distancesFor(obj.userData);
             const level = this.pickLevel(dist, distances);
             if (level !== obj.userData.lodActive) {

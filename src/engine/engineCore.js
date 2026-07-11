@@ -623,17 +623,20 @@ export const Engine = {
             window.TeslaIntroCaptions?._hide?.();
         }
 
+        AgentHub.tick(dt);
+        // E0: classify once; E1 gates below read userData._visClass
+        VisibilitySystem.update(this.camera);
+
         window.NpcPatrol?.tick?.(dt);
+        // E1: idle anim only on-screen (A/B/C)
         State.objects.forEach((obj) => {
             if (obj.userData?.patrolId) return;
+            if (VisibilitySystem.shouldProcessLod && !VisibilitySystem.shouldProcessLod(obj)) return;
             if (obj.userData?.isHuman && !obj.userData?.isPlayer && !obj.userData?.isGltf) {
                 HumanMesh.updateIdle(obj, time * 0.001, dt);
             }
         });
 
-        AgentHub.tick(dt);
-        // E0: classify frustum×distance once; consumers read userData._visClass
-        VisibilitySystem.update(this.camera);
         MeshLod.update(this.camera);
         TextureHilod.update(this.camera);
         NegativeLod.update(this.camera);
@@ -641,10 +644,12 @@ export const Engine = {
         window.TcGateFx?.tick?.();
 
         if (this.controls.enabled && !State.introPlaying) this.controls.update();
-        // Visual Rotation (Only for non-physics objects or purely visual effect)
+        // E1: spin only when visually processed (on-screen)
         if (!State.isPaused) {
-            State.objects.forEach(obj => {
-                if (obj.userData.isRotating && !obj.userData.locked && !obj.userData.hasPhysics) obj.rotation.y += 0.02;
+            State.objects.forEach((obj) => {
+                if (!obj.userData.isRotating || obj.userData.locked || obj.userData.hasPhysics) return;
+                if (VisibilitySystem.shouldProcessLod && !VisibilitySystem.shouldProcessLod(obj)) return;
+                obj.rotation.y += 0.02;
             });
         }
         // Recorder frame request (for smooth video)

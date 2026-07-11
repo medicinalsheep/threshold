@@ -81,6 +81,22 @@ const neg = mod;
 if (neg.includes("_visClass") && neg.includes("=== 'D'")) ok('NegativeLod respects off-screen D/E freeze');
 else fail('NegativeLod should freeze on D/E vis classes');
 
+// E1 gates
+const meshLod = read('src/shared/meshLod.js');
+if (meshLod.includes('shouldProcessLod')) ok('MeshLod gated by shouldProcessLod');
+else fail('MeshLod missing visibility gate');
+
+const texHilod = read('src/shared/textureHilod.js');
+if (texHilod.includes('shouldProcessHeavy')) ok('TextureHilod gated by shouldProcessHeavy');
+else fail('TextureHilod missing visibility gate');
+
+if (core.includes('shouldProcessLod(obj)')) ok('engineCore idle/spin gated');
+else fail('engineCore missing idle/spin vis gate');
+
+const patrol = read('src/shared/npcPatrol.js');
+if (patrol.includes('shouldProcessLod')) ok('NpcPatrol anim gated (sim continues)');
+else fail('NpcPatrol missing vis gate');
+
 if (failed) {
     console.error(`\n${failed} check(s) failed`);
     process.exit(1);

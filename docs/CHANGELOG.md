@@ -1,3 +1,11 @@
+## 10.13.2 — Visibility gates E1 (skip off-screen work)
+
+- **MeshLod** — skip D/E (off-screen); reuse `_visDist` when present
+- **TextureHilod** — only A/B (focus + on-screen near); skip far/off-screen HILOD
+- **Idle / spin** — only when `shouldProcessLod` (A/B/C)
+- **NpcPatrol** — position sim always; walk/idle **anim** skipped off-screen
+- Tick order: Visibility → patrol/idle → MeshLod → HILOD → NegativeLod
+
 ## 10.13.1 — VisibilitySystem E0 (frustum × distance)
 
 - **`VisibilitySystem`** — per-object `userData._visClass` **A–E** (focus / on-near / on-far / off-near / off-far)

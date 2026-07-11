@@ -20,13 +20,16 @@ export const NpcPatrol = {
         const State = window.State;
         if (State?.isPaused || State?.cutscenePlaying) return;
 
+        const Vis = window.VisibilitySystem;
         this.routes.forEach((route) => {
             const { npc, points, speed } = route;
             if (!npc?.parent) return;
+            // E1: keep sim motion; skip skeletal anim when off-screen (D/E)
+            const anim = !Vis || Vis.shouldProcessLod(npc);
 
             if (route.wait > 0) {
                 route.wait -= dt;
-                window.HumanMesh?.updateIdle?.(npc, performance.now() * 0.001, dt);
+                if (anim) window.HumanMesh?.updateIdle?.(npc, performance.now() * 0.001, dt);
                 return;
             }
 
@@ -40,7 +43,7 @@ export const NpcPatrol = {
             if (dist < 0.18) {
                 route.idx = (route.idx + 1) % points.length;
                 route.wait = 1.4 + Math.random() * 1.8;
-                window.HumanMesh?.updateIdle?.(npc, performance.now() * 0.001, dt);
+                if (anim) window.HumanMesh?.updateIdle?.(npc, performance.now() * 0.001, dt);
                 return;
             }
 
@@ -48,7 +51,7 @@ export const NpcPatrol = {
             npc.position.x += (dx / dist) * step;
             npc.position.z += (dz / dist) * step;
             npc.rotation.y = Math.atan2(dx, dz);
-            window.HumanMesh?.updateWalk?.(npc, speed, dt, false);
+            if (anim) window.HumanMesh?.updateWalk?.(npc, speed, dt, false);
         });
     },
 };

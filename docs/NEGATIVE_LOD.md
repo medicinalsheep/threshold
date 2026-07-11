@@ -673,34 +673,38 @@ else auto matrix above
 |-------|--------|--------|
 | **A–B** | On-screen negativeLOD, pool, inspector, serialize | **Done (10.13.0)** |
 | **E0** | `VisibilitySystem`: frustum + dist → `_visClass` | **Done (10.13.1)** |
-| **E1** | Gate MeshLod / TextureHilod / idle / spin on class | **Next** |
-| **E2** | Off-screen far: shadow off + optional Cannon sleep | After E1 |
+| **E1** | Gate MeshLod / TextureHilod / idle / spin / NPC anim | **Done (10.13.2)** |
+| **E2** | Off-screen far: shadow off + optional Cannon sleep | **Next** |
 | **E3** | Weather/shader registry only visits on-screen | Later |
 | **E4** | Spatial buckets if needed | Later |
 
-**Effort:** E0–E1 are high leverage, small code, low risk. Do next after A+B.
+### Follow-on outline (E2 → E4+)
 
-### Follow-on outline (E0 → E2+)
+**E2 — Sleep / shadow elimination** (next)
+- On class **E** (and optionally long-term **D**): force `castShadow = false` (stash/restore like Neg LOD)
+- Static or far dynamics: Cannon `body.sleep()` when `userData.culledSleep !== false` and not `alwaysProcess`
+- Never sleep: player, selected, projectiles, driven vehicles, host-critical sim
+- API: `VisibilitySystem.applySleepPolicies(obj)` on class transition only (not every frame)
+- Measure: shadow-caster count + physics active bodies
 
-**E0 — VisibilitySystem** (`src/shared/visibilitySystem.js`)
-- One frustum + distance pass per frame (or amortized)
-- Write `userData._visClass` ∈ `A|B|C|D|E` (focus / on-near / on-far / off-near / off-far)
-- Frustum margin + N-frame hysteresis
-- NegativeLod reads class: only B/C need distance mat logic; D/E freeze last state
+**E3 — Weather / shader / env walks**
+- Maintain registries of weather-affected / shader-graph meshes at attach time
+- Tick only A/B/C (or A/B for heavy graphs)
+- `Environment.updateWater` early-out if no water or water off-screen
+- VOIP spatialize: skip sources with class E and silent
 
-**E1 — Gate existing ticks**
-- `MeshLod.update` / `TextureHilod.update`: skip D/E (optional slow tick D)
-- `HumanMesh.updateIdle` + `isRotating` loop: A/B/C only
-- Wire from `engineCore` after `VisibilitySystem.update`
+**E4 — Spatial acceleration**
+- When `State.objects.length > ~200`, bucket by world cell
+- Only reclassify cells near camera + all dynamics each frame
+- Full sweep every N frames as fallback
 
-**E2 — Sleep**
-- E-class: `castShadow=false`, Cannon body sleep if `culledSleep` and not gameplay-critical
-- Never sleep player / projectiles / `alwaysProcess`
-
-**E3–E4** — Weather registry + spatial grid (see §19)
+**E5+ (optional)**
+- Remote player avatar: low-rate pose when D/E
+- Postprocess: skip bloom if no emissive on-screen (graphics tier)
+- Dirty-bit MP: already partial — tighten for off-screen remotes
 
 ```text
-A+B (done) → E0 → E1 → E2 → (measure) → E3/E4 if object counts demand it
+A+B → E0 → E1 (done) → E2 → measure → E3 → E4 if scale needs it
 ```
 
 ---
