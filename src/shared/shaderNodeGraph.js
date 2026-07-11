@@ -228,9 +228,12 @@ export const ShaderNodeGraph = {
         if (window.State?.isPaused) return;
         const now = performance.now() * 0.001;
         const rain = window.WeatherSystem?.getIntensity?.() ?? 0;
+        const Vis = window.VisibilitySystem;
         this._targets = this._targets.filter((m) => m.parent);
 
         this._targets.forEach((mesh) => {
+            // E3: skip off-screen graph uniform updates
+            if (Vis?.shouldProcessEnv && !Vis.shouldProcessEnv(mesh)) return;
             const uniforms = mesh.userData?._shaderUniforms;
             if (!uniforms) return;
             if (uniforms.uTime) uniforms.uTime.value = now;

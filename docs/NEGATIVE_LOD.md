@@ -675,8 +675,8 @@ else auto matrix above
 | **E0** | `VisibilitySystem`: frustum + dist → `_visClass` | **Done (10.13.1)** |
 | **E1** | Gate MeshLod / TextureHilod / idle / spin / NPC anim | **Done (10.13.2)** |
 | **E2** | Off-screen far: shadow off + optional Cannon sleep | **Done (10.13.3)** |
-| **E3** | Weather/shader registry only visits on-screen | **Next** |
-| **E4** | Spatial buckets if needed | Later |
+| **E3** | Weather/shader/audio env gates | **Done (10.13.4)** |
+| **E4** | Spatial buckets if needed | **Next** (if object counts demand) |
 
 ### Follow-on outline (E3 → E4+)
 
@@ -685,11 +685,11 @@ else auto matrix above
 - Class **E**: Cannon sleep for dynamic bodies (`culledSleep !== false`)
 - Never sleep flags + selection wake · transition-only policies
 
-**E3 — Weather / shader / env walks**
-- Maintain registries of weather-affected / shader-graph meshes at attach time
-- Tick only A/B/C (or A/B for heavy graphs)
-- `Environment.updateWater` early-out if no water or water off-screen
-- VOIP spatialize: skip sources with class E and silent
+**E3 — Weather / shader / env walks** ✅
+- Wet/dust/snow apply only `shouldProcessEnv` (A/B/C via parent walk)
+- ShaderRegistry + ShaderNodeGraph tick skip off-screen
+- Audio zones: no spin-up off-screen; fade volume to 0
+- VOIP: deafened early-out + skip redundant gain writes
 
 **E4 — Spatial acceleration**
 - When `State.objects.length > ~200`, bucket by world cell

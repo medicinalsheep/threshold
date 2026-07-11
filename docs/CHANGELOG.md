@@ -1,3 +1,11 @@
+## 10.13.4 — Visibility env gates E3 (weather / shaders / audio)
+
+- **Weather** wet/dust/snow mat applies only when `shouldProcessEnv` (A/B/C)
+- **ShaderRegistry** / **ShaderNodeGraph** tick skip off-screen targets
+- **AudioZoneSystem** — no new handles for off-screen zones; fade existing to 0
+- **VOIP** proximity — skip redundant gain writes; early-out when deafened
+- `VisibilitySystem.shouldProcessEnv` / `resolveClass` (parent walk)
+
 ## 10.13.3 — Visibility sleep E2 (shadows + physics)
 
 - On class **D/E**: stash & disable `castShadow` (restore when back on-screen)

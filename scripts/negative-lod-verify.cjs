@@ -107,6 +107,22 @@ const vcfg = JSON.parse(read('config/visibility.json'));
 if (vcfg.sleep?.physicsSleepOnE) ok('config sleep.physicsSleepOnE');
 else fail('visibility.json missing sleep block');
 
+// E3 env gates
+if (vis.includes('shouldProcessEnv') && vis.includes('resolveClass')) ok('shouldProcessEnv/resolveClass');
+else fail('E3 shouldProcessEnv missing');
+const weather = read('src/shared/weatherSystem.js');
+if (weather.includes('envVisOk') || weather.includes('shouldProcessEnv')) ok('weather gated by env vis');
+else fail('weather missing env vis gate');
+const sreg = read('src/shared/shaderRegistry.js');
+if (sreg.includes('shouldProcessEnv')) ok('ShaderRegistry env gate');
+else fail('ShaderRegistry missing env gate');
+const sgraph = read('src/shared/shaderNodeGraph.js');
+if (sgraph.includes('shouldProcessEnv')) ok('ShaderNodeGraph env gate');
+else fail('ShaderNodeGraph missing env gate');
+const az = read('src/shared/audioZoneSystem.js');
+if (az.includes('shouldProcessEnv')) ok('AudioZoneSystem env gate');
+else fail('AudioZoneSystem missing env gate');
+
 if (failed) {
     console.error(`\n${failed} check(s) failed`);
     process.exit(1);

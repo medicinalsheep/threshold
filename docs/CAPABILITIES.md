@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.13)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.3
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.4
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -51,6 +51,7 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | Visibility classes A–E | `visibilitySystem.js` — frustum×distance; feeds Neg LOD (E0) |
 | Vis gates (E1) | MeshLod / HILOD / idle / spin / NPC anim skip off-screen |
 | Vis sleep (E2) | D/E shadow dim · E physics sleep · selection wake |
+| Vis env (E3) | Weather/shader/audio zone skip off-screen |
 
 [CONTROLS.md](CONTROLS.md)
 

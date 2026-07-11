@@ -30,6 +30,13 @@ function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/** E3: skip off-screen wet/dust/snow mat writes */
+function envVisOk(mesh) {
+    const Vis = window.VisibilitySystem;
+    if (!Vis?.shouldProcessEnv) return true;
+    return Vis.shouldProcessEnv(mesh);
+}
+
 export const WeatherSystem = {
     _active: false,
     _intensity: 0,
@@ -314,6 +321,7 @@ export const WeatherSystem = {
     _applyDust(dryFactor = 1) {
         const dustAmt = Math.max(0, 1 - this._intensity) * dryFactor;
         this._dustTargets.forEach((mesh) => {
+            if (!envVisOk(mesh)) return;
             const exposure = Math.max(0, Math.min(1, mesh.userData?.dustExposure ?? 0.5));
             const t = dustAmt * exposure;
             const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
@@ -330,6 +338,7 @@ export const WeatherSystem = {
     _applySnow() {
         const snowBase = Math.max(0, 0.35 - this._intensity * 0.5);
         this._snowTargets.forEach((mesh) => {
+            if (!envVisOk(mesh)) return;
             const cap = Math.max(0, Math.min(1, mesh.userData?.snowCap ?? 0.5));
             const t = snowBase * cap;
             const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
@@ -351,6 +360,7 @@ export const WeatherSystem = {
         this._applyDust();
         this._applySnow();
         (this._wetGlassTargets || []).forEach((mesh) => {
+            if (!envVisOk(mesh)) return;
             const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
             mats.forEach((m) => {
                 if (!m || m.userData?._dryRoughness == null) return;
@@ -364,6 +374,7 @@ export const WeatherSystem = {
             });
         });
         this._wetTargets.forEach((mesh) => {
+            if (!envVisOk(mesh)) return;
             const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
             mats.forEach((m) => {
                 if (!m || m.userData?._dryRoughness == null) return;

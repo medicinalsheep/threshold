@@ -154,6 +154,16 @@ export const AudioZoneSystem = {
 
         this._zones.forEach((zone) => {
             if (zone.mesh?.position) zone.pos = zone.mesh.position;
+            // E3: off-screen far zone mesh — don't spin up handles; fade existing to 0
+            const Vis = window.VisibilitySystem;
+            if (zone.mesh && Vis?.shouldProcessEnv && !Vis.shouldProcessEnv(zone.mesh)) {
+                const handle = this._handles.get(zone.id);
+                if (handle?.setVolume) {
+                    const cur = handle.gain?.gain?.value ?? 1;
+                    if (cur > 0.02) handle.setVolume(0);
+                }
+                return;
+            }
             const handle = this._handles.get(zone.id);
             if (!handle) {
                 void this._ensureHandle(zone);

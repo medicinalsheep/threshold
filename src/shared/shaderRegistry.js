@@ -201,8 +201,11 @@ export const ShaderRegistry = {
             now: performance.now(),
             rainIntensity: window.WeatherSystem?.getIntensity?.() ?? 0,
         };
+        const Vis = window.VisibilitySystem;
         this._targets = this._targets.filter((mesh) => mesh.parent);
         this._targets.forEach((mesh) => {
+            // E3: skip off-screen shader hook ticks
+            if (Vis?.shouldProcessEnv && !Vis.shouldProcessEnv(mesh)) return;
             const hook = getShaderHook(mesh.userData?.shaderHook);
             hook?.tick?.(mesh, ctx);
         });

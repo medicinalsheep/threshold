@@ -388,6 +388,28 @@ export const VisibilitySystem = {
         return this.getClass(obj) === VIS.E;
     },
 
+    /**
+     * Resolve vis class walking up parents (child meshes inherit root classification).
+     * E3: weather / shader / env use this.
+     */
+    resolveClass(node) {
+        let o = node;
+        while (o) {
+            const c = o.userData?._visClass;
+            if (c) return c;
+            o = o.parent;
+        }
+        return null;
+    },
+
+    /** A/B/C — worth per-mesh env/shader work this frame */
+    shouldProcessEnv(node) {
+        if (!masterEnabled()) return true;
+        const c = this.resolveClass(node);
+        if (!c) return true; // not classified yet
+        return c === VIS.A || c === VIS.B || c === VIS.C;
+    },
+
     getStats() {
         return { ..._stats, frame: _frame };
     },

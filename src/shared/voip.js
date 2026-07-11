@@ -319,16 +319,31 @@ export const Voip = {
 
     _updateProximity() {
         if (!voipUsesWebRtc(this.config)) return;
-        const selfKey = (window.Session?.playerKey || '').toUpperCase();
+        if (this.deafened) {
+            this.calls.forEach((entry) => {
+                if (entry.gain) entry.gain.gain.value = 0;
+            });
+            return;
+        }
         const local = this.getLocalPosition();
+        const max = this.config.maxDistance || 24;
+        const min = this.config.minVolume ?? 0.08;
         this.calls.forEach((entry, key) => {
             const remote = this.playerPositions.get(key) || entry.meta?.position;
             if (!remote) {
-                entry.gain.gain.value = this.config.proximity ? this.config.minVolume : 1;
+                const g = this.config.proximity ? min : 1;
+                if (Math.abs((entry.gain?.gain?.value ?? 0) - g) > 0.01) entry.gain.gain.value = g;
                 return;
             }
             const dist = this._distance(local, remote);
-            entry.gain.gain.value = this._gainForDistance(dist);
+            // E3: already fully attenuated and still out of range — skip write
+            if (this.config.proximity && dist >= max && (entry.gain?.gain?.value ?? 1) <= min + 0.005) {
+                return;
+            }
+            const g = this._gainForDistance(dist);
+            if (Math.abs((entry.gain?.gain?.value ?? 0) - g) > 0.008) {
+                entry.gain.gain.value = g;
+            }
         });
     },
 
