@@ -21,6 +21,7 @@ import { SoundPrompt } from '../shared/soundPrompt.js';
 import { TextureLibrary } from '../shared/textureLibrary.js';
 import { TextureBridge } from '../shared/textureBridge.js';
 import { GltfImport } from '../shared/gltfImport.js';
+import { NegativeLod } from '../shared/negativeLod.js';
 import { ThresholdShell } from '../shared/thresholdShell.js';
 import { CreativeWatch } from '../shared/creativeWatch.js';
 import { ThirdEye } from '../shared/thirdEye.js';
@@ -121,6 +122,7 @@ export const UI = {
             tab.addEventListener('click', () => UI.switchInspTab(tab.dataset.inspTab));
         });
         ['insp-name', 'insp-color', 'insp-rough', 'insp-metal', 'insp-emissive', 'insp-emissive-int',
+            'insp-negative-lod', 'insp-negative-lod-dist',
             'insp-physics', 'insp-mass', 'insp-friction', 'insp-restitution', 'insp-sound-freq', 'insp-sound-type',
             'insp-sound-mode', 'insp-sound-clip', 'insp-sound-trigger',
             'insp-interact-hint'
@@ -365,9 +367,23 @@ export const UI = {
         document.getElementById('insp-sound-type').value = obj.userData.soundType || 'sine';
         document.getElementById('insp-sound-mode').value = obj.userData.soundMode || 'tone';
         document.getElementById('insp-sound-trigger').value = obj.userData.soundTrigger || 'collision';
+        const negEl = document.getElementById('insp-negative-lod');
+        const negDist = document.getElementById('insp-negative-lod-dist');
+        if (negEl) negEl.checked = !!(obj.userData.negativeLOD || obj.userData.negativeLod);
+        if (negDist) negDist.value = obj.userData.negativeLodDistance ?? 40;
+        this.syncNegativeLodStatus(obj);
         this.populateSoundClipSelect(obj.userData.soundClipId || '');
         this.syncSoundInspectorMode();
         this.syncTextureInspector(obj);
+    },
+    syncNegativeLodStatus: function (obj) {
+        const el = document.getElementById('insp-negative-lod-status');
+        if (!el || !obj) return;
+        const on = !!(obj.userData?.negativeLOD || obj.userData?.negativeLod);
+        const stats = NegativeLod.getStats?.() || {};
+        el.textContent = on
+            ? `Negative LOD on · far unlit (~${obj.userData.negativeLodDistance || 40}m) · scene flat ${stats.flat ?? '—'}/${stats.registered ?? '—'}`
+            : 'Negative LOD off — enable for far-field unlit (no PBR)';
     },
     syncTextureInspector: async function (obj) {
         const status = document.getElementById('insp-texture-status');
@@ -448,11 +464,15 @@ export const UI = {
         const interactHint = document.getElementById('insp-interact-hint').value.trim();
         if (interactHint) obj.userData.interactHint = interactHint;
         else delete obj.userData.interactHint;
+        // Edit full PBR mats — never write into pooled flat materials
+        if (obj.userData?.negativeLOD || obj.userData?.negativeLod) {
+            NegativeLod.ensureFullForEdit(obj);
+        }
         const mat = obj.material;
         if (mat) {
             mat.color.set(document.getElementById('insp-color').value);
-            mat.roughness = parseFloat(document.getElementById('insp-rough').value);
-            mat.metalness = parseFloat(document.getElementById('insp-metal').value);
+            if ('roughness' in mat) mat.roughness = parseFloat(document.getElementById('insp-rough').value);
+            if ('metalness' in mat) mat.metalness = parseFloat(document.getElementById('insp-metal').value);
             if (!mat.emissive) mat.emissive = new THREE.Color();
             mat.emissive.set(document.getElementById('insp-emissive').value);
             mat.emissiveIntensity = parseFloat(document.getElementById('insp-emissive-int').value);
@@ -467,6 +487,18 @@ export const UI = {
         obj.userData.soundMode = document.getElementById('insp-sound-mode').value;
         obj.userData.soundTrigger = document.getElementById('insp-sound-trigger').value;
         obj.userData.soundClipId = document.getElementById('insp-sound-clip').value || null;
+        const negOn = document.getElementById('insp-negative-lod')?.checked === true;
+        const negDist = parseFloat(document.getElementById('insp-negative-lod-dist')?.value);
+        if (negOn) {
+            obj.userData.negativeLOD = true;
+            if (Number.isFinite(negDist) && negDist > 0) obj.userData.negativeLodDistance = negDist;
+            NegativeLod.enableObject(obj, {
+                distance: Number.isFinite(negDist) ? negDist : undefined,
+            });
+        } else {
+            NegativeLod.disableObject(obj, { clearFlag: true });
+        }
+        this.syncNegativeLodStatus(obj);
         UI.syncObjectPhysics(obj, wantPhys);
     },
     syncObjectPhysics: function (obj, enabled) {

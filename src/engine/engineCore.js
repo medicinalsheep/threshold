@@ -23,6 +23,7 @@ import { getRenderMode } from '../shared/renderModes.js';
 import { GraphicsProfile } from '../shared/graphicsProfile.js';
 import { MeshLod } from '../shared/meshLod.js';
 import { TextureHilod } from '../shared/textureHilod.js';
+import { NegativeLod } from '../shared/negativeLod.js';
 import { Cinematic } from '../shared/cinematic.js';
 import { AgentHub } from '../shared/agentHub.js';
 
@@ -632,6 +633,7 @@ export const Engine = {
         AgentHub.tick(dt);
         MeshLod.update(this.camera);
         TextureHilod.update(this.camera);
+        NegativeLod.update(this.camera);
         Cinematic.tick();
         window.TcGateFx?.tick?.();
 

@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "10.12.30",
+  "version": "10.13.0",
   "type": "module",
   "engines": {
     "node": ">=22.0.0"
@@ -74,6 +74,7 @@
     "tc:gen:vid": "node scripts/tc-gen-vid.cjs",
     "tc:verify": "node scripts/tc-verify.cjs",
     "controls:verify": "node scripts/controls-verify.cjs",
+    "negative-lod:verify": "node scripts/negative-lod-verify.cjs",
     "store:verify": "node scripts/store-verify.cjs",
     "store:upload": "node scripts/store-upload.cjs",
     "intent:verify": "node scripts/intent-router-verify.cjs",

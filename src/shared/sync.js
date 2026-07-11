@@ -194,6 +194,7 @@ export const Sync = {
             if (gltfSnapshots.length) {
                 await window.GltfImport?.spawnSnapshots?.(gltfSnapshots);
             }
+            window.NegativeLod?.rescan?.(State.objects);
 
             const graphicsState = state.graphics || state.world?.graphics;
             if (graphicsState?.tier || graphicsState?.renderMode != null) {

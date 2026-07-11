@@ -2,14 +2,26 @@ import { State } from './state.js';
 import { World } from './world.js';
 import { TextureBridge } from '../shared/textureBridge.js';
 import { GltfImport } from '../shared/gltfImport.js';
+import { NegativeLod } from '../shared/negativeLod.js';
 import { UI } from './ui.js';
+
+function pickSerializableUserData(ud = {}) {
+    const out = { ...ud };
+    // Runtime-only keys must never persist (WeakMap holds swap state)
+    delete out._negativeLodState;
+    delete out._negativeLodFullMat;
+    delete out._negativeLodFlatMat;
+    delete out._visClass;
+    return out;
+}
 
 export const IO = {
     exportScene: function () {
         const data = State.objects.map(o => ({
             type: o.userData.type, name: o.userData.name,
             pos: o.position, rot: o.rotation, scl: o.scale,
-            userData: o.userData, color: o.material?.color?.getHex?.() ?? 0xffffff,
+            userData: pickSerializableUserData(o.userData),
+            color: o.material?.color?.getHex?.() ?? 0xffffff,
         }));
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
@@ -47,6 +59,7 @@ export const IO = {
                 });
                 TextureBridge.rehydrateScene();
                 if (gltfSnapshots.length) GltfImport.spawnSnapshots(gltfSnapshots);
+                NegativeLod.rescan(State.objects);
                 UI.status("Scene Loaded");
             } catch (err) { UI.status("Error Loading"); }
         };

@@ -1,3 +1,11 @@
+## 10.13.0 — Negative LOD (shader LOD) Phase A+B
+
+- **`userData.negativeLOD`** — far from camera → pooled unlit `MeshBasicMaterial` (no PBR/lights); near restores full material
+- Config `config/negative-lod.json` · module `src/shared/negativeLod.js` · tick after MeshLod/TextureHilod
+- Inspector: **Neg LOD** + distance · scene/MP flags persist · selection forces full PBR
+- Design + off-screen follow-on: [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
+- Verify: `node scripts/negative-lod-verify.cjs`
+
 ## Multiplayer join errors + docs
 
 - Clearer guest errors: peer-unavailable, network, WebRTC incompatible

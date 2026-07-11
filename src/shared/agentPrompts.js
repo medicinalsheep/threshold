@@ -90,7 +90,7 @@ PLAN: <title>
 INTENSITY: minimal|focused|rich|maximal
 1. scope — placement + hero vs dressing
 2. collision — static|dynamic|visual · surfaceType (skip if N/A)
-3. mesh — primitive/GLB · poly · LOD if character/hero
+3. mesh — primitive/GLB · poly · LOD if character/hero · set userData.negativeLOD=true on far/background props (far unlit shader LOD)
 4. textures — gimp|blender @ 1k|2k only as needed
 5. hilod — only if textures
 6. weather — only exterior; wet required when full exposure; dust/snow only if brief needs

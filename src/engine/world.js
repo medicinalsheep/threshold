@@ -13,6 +13,7 @@ import { HumanMesh } from './humanMesh.js';
 import { GltfImport } from '../shared/gltfImport.js';
 import { TextureBridge } from '../shared/textureBridge.js';
 import { Cinematic } from '../shared/cinematic.js';
+import { NegativeLod } from '../shared/negativeLod.js';
 
 export const World = {
     _requireEditWorld(action = 'modify the world') {
@@ -44,6 +45,7 @@ export const World = {
         mesh.userData = { id: Date.now().toString(36), name: name || type, type: type, locked: false, isRotating: false, hasPhysics: usePhysics };
         Engine.scene.add(mesh);
         State.objects.push(mesh);
+        NegativeLod.syncObject(mesh);
         window.dispatchEvent(new CustomEvent('threshold:object-added', { detail: { mesh } }));
         if (usePhysics) {
             const body = Physics.addBody(mesh, type);
@@ -70,6 +72,7 @@ export const World = {
         mesh.userData = { id: Date.now().toString(36), name: name || 'custom', type: 'custom', locked: false, isRotating: false, hasPhysics: usePhysics };
         Engine.scene.add(mesh);
         State.objects.push(mesh);
+        NegativeLod.syncObject(mesh);
         window.dispatchEvent(new CustomEvent('threshold:object-added', { detail: { mesh } }));
         if (usePhysics) {
             // Auto-detect best physics shape

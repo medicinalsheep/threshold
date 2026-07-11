@@ -1,0 +1,21 @@
+{
+  "format": "threshold-negative-lod",
+  "version": 1,
+  "enabled": true,
+  "defaultDistance": 40,
+  "hysteresis": 4,
+  "maxUpdatesPerFrame": 48,
+  "fadeStart": 0.85,
+  "fadeEnd": 1.15,
+  "preserveMapDefault": false,
+  "disableCastShadowWhenFlat": true,
+  "forceFullWhenSelected": true,
+  "excludeFlags": [
+    "isPlayer",
+    "isFloor",
+    "negativeLodExempt",
+    "isHero",
+    "lockedFloor"
+  ],
+  "note": "Shader LOD: far objects use unlit MeshBasicMaterial. Complements MeshLod + TextureHilod."
+}

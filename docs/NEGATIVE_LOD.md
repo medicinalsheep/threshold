@@ -1,8 +1,8 @@
 # Negative LOD — Design & Implementation Plan
 
-**Status:** Design approved for implementation (not yet coded)  
+**Status:** Phase **A+B implemented** (10.13.0) · E0–E2+ planned below  
 **Target version:** 10.13.x  
-**Live engine version:** 10.12.30+  
+**Live engine version:** 10.13.0+  
 **Related:** `meshLod.js`, `textureHilod.js`, `lodConfig.js`, `config/lod-distances.json`, `engineCore.js` animate tick
 
 ---
@@ -669,16 +669,39 @@ else auto matrix above
 
 ## 21. Implementation plan add-on (phases)
 
-| Phase | Scope |
-|-------|--------|
-| **A–B** | On-screen negativeLOD only (original plan) |
-| **E0** | `VisibilitySystem`: frustum + dist → `_visClass` |
-| **E1** | Gate MeshLod / TextureHilod / idle / spin on class |
-| **E2** | Off-screen far: shadow off + optional Cannon sleep |
-| **E3** | Weather/shader registry only visits on-screen |
-| **E4** | Spatial buckets if needed |
+| Phase | Scope | Status |
+|-------|--------|--------|
+| **A–B** | On-screen negativeLOD, pool, inspector, serialize | **Done (10.13.0)** |
+| **E0** | `VisibilitySystem`: frustum + dist → `_visClass` | Next |
+| **E1** | Gate MeshLod / TextureHilod / idle / spin on class | After E0 |
+| **E2** | Off-screen far: shadow off + optional Cannon sleep | After E1 |
+| **E3** | Weather/shader registry only visits on-screen | Later |
+| **E4** | Spatial buckets if needed | Later |
 
-**Effort:** E0–E1 are high leverage, small code, low risk. Do **with or right after** Phase B.
+**Effort:** E0–E1 are high leverage, small code, low risk. Do next after A+B.
+
+### Follow-on outline (E0 → E2+)
+
+**E0 — VisibilitySystem** (`src/shared/visibilitySystem.js`)
+- One frustum + distance pass per frame (or amortized)
+- Write `userData._visClass` ∈ `A|B|C|D|E` (focus / on-near / on-far / off-near / off-far)
+- Frustum margin + N-frame hysteresis
+- NegativeLod reads class: only B/C need distance mat logic; D/E freeze last state
+
+**E1 — Gate existing ticks**
+- `MeshLod.update` / `TextureHilod.update`: skip D/E (optional slow tick D)
+- `HumanMesh.updateIdle` + `isRotating` loop: A/B/C only
+- Wire from `engineCore` after `VisibilitySystem.update`
+
+**E2 — Sleep**
+- E-class: `castShadow=false`, Cannon body sleep if `culledSleep` and not gameplay-critical
+- Never sleep player / projectiles / `alwaysProcess`
+
+**E3–E4** — Weather registry + spatial grid (see §19)
+
+```text
+A+B (done) → E0 → E1 → E2 → (measure) → E3/E4 if object counts demand it
+```
 
 ---
 
