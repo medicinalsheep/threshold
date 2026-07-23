@@ -226,8 +226,16 @@ export const GraphicsProfile = {
 
         window.TextureHilod?.refreshAll?.();
 
+        // Neg LOD: auto-flag background props on Lite/Mobile (config/negative-lod.json)
+        let negNote = '';
+        try {
+            const pol = window.NegativeLod?.applyTierPolicy?.(tierId);
+            if (pol?.enabled > 0) negNote = ` · NegLOD auto +${pol.enabled}`;
+            else if (pol?.stripped > 0) negNote = ` · NegLOD auto cleared ${pol.stripped}`;
+        } catch { /* optional */ }
+
         if (!options.silent) {
-            window.UI?.status?.(`Graphics: ${preset.label} — ${preset.description.split(' — ')[0]}`);
+            window.UI?.status?.(`Graphics: ${preset.label} — ${preset.description.split(' — ')[0]}${negNote}`);
         }
         return true;
     },

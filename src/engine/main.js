@@ -55,6 +55,7 @@ import '../shared/ambientAudio.js';
 import '../shared/weatherSystem.js';
 import '../shared/recordedAmbient.js';
 import '../shared/creatorHud.js';
+import '../shared/perfHarness.js';
 import '../shared/starterMaterials.js';
 import '../shared/starterAnim.js';
 import '../shared/guidedSession.js';
@@ -131,6 +132,7 @@ export function initEngine() {
     Environment.init();
     UI.init();
     window.initCreatorHud?.();
+    window.initPerfHarness?.();
     window.GuidedSession?.init?.();
     window.IntroSkip?.init?.();
     window.ActionHints?.init?.();
@@ -170,6 +172,10 @@ export function initEngine() {
             if (tpl && tpl !== 'grid') {
                 window.UI?.status?.(`Template: ${window.StarterTemplates?.STARTER_TEMPLATES?.[tpl]?.name || tpl}`);
             }
+            // After starter props exist: Neg LOD auto for Lite/Mobile tiers
+            try {
+                window.NegativeLod?.applyTierPolicy?.(window.State?.graphicsTier);
+            } catch { /* optional */ }
             window.SessionUi?.onSessionStart?.();
             window.DesignIntake?.init?.();
             window.AgentPortal?.init?.();

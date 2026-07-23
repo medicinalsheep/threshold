@@ -56,9 +56,11 @@ Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [MULTIPLA
 ## Shipped perf (do not re-invent)
 
 - **Neg LOD A+B** — far unlit / flat materials (`userData.negativeLOD`)
+- **Neg LOD tier auto** — Lite/Mobile graphics auto-flags eligible props (`applyTierPolicy`)
 - **Visibility E0–E3** — frustum × distance classes; skip off-screen LOD/anim; sleep shadows/physics; env gates
+- **Perf harness** — SETUP → PERF · `PerfHarness.measure()` · JSON export
 
-Next (order): measure harness → tier auto Neg LOD → multi-mat/skinned → floor path B → E4 only if classify CPU is hot. Details: [PERF_NEXT.md](PERF_NEXT.md).
+Next: multi-mat/skinned → floor path B → E4 only if classify CPU is hot. Details: [PERF_NEXT.md](PERF_NEXT.md).
 
 ---
 

@@ -1,13 +1,13 @@
 # Performance next steps (after Neg LOD A–E3)
 
-**Status:** Planning · **Engine:** 10.13.x visibility + negative LOD stack live  
+**Status:** Partial ship · **Engine:** 10.13.8+  
 **Related:** [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
 
-X OAuth is **removed** from the product. Remaining perf polish:
+X OAuth is **removed**. Shipped: tier auto Neg LOD + in-engine measure harness. Remaining: multi-mat, floor, E4.
 
 ---
 
-## 1. Neg LOD auto-enable by graphics tier
+## 1. Neg LOD auto-enable by graphics tier — **SHIPPED 10.13.8**
 
 ### Goal
 On **compatibility / balanced** (and optionally mobile detect), automatically set `userData.negativeLOD = true` on eligible background objects so authors don’t have to click every prop.
@@ -41,8 +41,13 @@ NegativeLod.applyTierPolicy(tier, objects) {
 
 Distance by tier: compatibility 28m · balanced 40m · realistic/ultra opt-in only or longer 55m.
 
+### Shipped
+- `config/negative-lod.json` → `autoEnableTiers`, `autoEnableMinObjects`, `distanceByTier`
+- `NegativeLod.applyTierPolicy(tier)` · `maybeAutoEnable(obj)` · source `tier-auto` vs `user` / `negativeLodForcedOff`
+- Hooks: `GraphicsProfile.apply`, scene load, template bootstrap, `World.createObject`
+
 ### Effort
-**S** (~0.5–1 day) · low risk · high ROI for mobile demos.
+**S** — done.
 
 ---
 
@@ -90,13 +95,13 @@ Distance by tier: compatibility 28m · balanced 40m · realistic/ultra opt-in on
 
 ---
 
-## 4. Measure harness
+## 4. Measure harness — **SHIPPED 10.13.8** (in-engine)
 
 ### Goal
 Repeatable before/after numbers for Neg LOD + visibility (not subjective “feels faster”).
 
 ### Deliverable
-`scripts/perf-harness.cjs` **or** in-engine **SETUP → PERF** panel:
+In-engine **SETUP → PERF — measure harness** + `window.PerfHarness` · HUD shows last sample:
 
 | Metric | How |
 |--------|-----|
@@ -107,25 +112,31 @@ Repeatable before/after numbers for Neg LOD + visibility (not subjective “feel
 | Draw calls / triangles | `renderer.info.render` |
 | Scenario | Flag: empty grid · 200 cubes NegLOD · 200 cubes off |
 
-### CLI (headless limited)
+### Shipped
+- `src/shared/perfHarness.js` — `measure(ms)`, `snapshot()`, `downloadLast()`
+- SETUP panel: RUN SAMPLE · SNAPSHOT · DOWNLOAD JSON
+- Creator PERF HUD: FPS + neg flat/reg + vis A/C/E + last sample p95
+
+### CLI (headless) — still open
 Puppeteer against `vite preview` + scripted camera orbit; write `dist-store/perf-*.json`.
 
 ### Effort
-**M** (~1–2 days) for in-engine panel + JSON export; **M+** for CI headless.
+In-engine **done**. CI headless **M+** later.
 
 ### Success bar
-Document: “200 cubes, orbit, mobile tier: p95 frame time −X% with stack on vs off.”
+Document: “200 cubes, orbit, mobile tier: p95 frame time −X% with stack on vs off.” (run SETUP → PERF after spawn)
 
 ---
 
 ## Suggested order
 
 ```text
-1. Auto-enable by tier     (fast win, uses existing flag)
-2. Measure harness         (prove wins before more systems)
+1. Auto-enable by tier     ✅
+2. Measure harness         ✅ (in-engine)
 3. Multi-mat / skinned     (correctness)
 4. Floor deck B            (if floor shows in profiles)
 5. E4 spatial buckets      (only if classify CPU shows hot)
+6. Optional CI headless    (after manual baselines exist)
 ```
 
 ---
@@ -137,8 +148,9 @@ Document: “200 cubes, orbit, mobile tier: p95 frame time −X% with stack on v
 | Neg LOD A+B | ✅ |
 | Vis E0–E3 | ✅ |
 | X OAuth | ❌ removed |
-| Tier auto-enable | Plan only |
+| Tier auto-enable | ✅ 10.13.8 |
+| Measure harness (in-engine) | ✅ 10.13.8 |
 | Multi-mat / skinned | Plan only |
 | Floor instanced | Plan only |
-| Measure harness | Plan only |
 | E4 spatial | Plan only (scale) |
+| CI headless harness | Plan only |

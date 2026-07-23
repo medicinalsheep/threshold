@@ -503,9 +503,10 @@ export const UI = {
             if (Number.isFinite(negDist) && negDist > 0) obj.userData.negativeLodDistance = negDist;
             NegativeLod.enableObject(obj, {
                 distance: Number.isFinite(negDist) ? negDist : undefined,
+                source: 'user',
             });
         } else {
-            NegativeLod.disableObject(obj, { clearFlag: true });
+            NegativeLod.disableObject(obj, { clearFlag: true, forceOff: true });
         }
         this.syncNegativeLodStatus(obj);
         UI.syncObjectPhysics(obj, wantPhys);

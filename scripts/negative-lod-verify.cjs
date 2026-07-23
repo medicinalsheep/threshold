@@ -30,11 +30,30 @@ for (const token of [
     'update(camera',
     'MeshBasicMaterial',
     'hysteresis',
+    'applyTierPolicy',
+    'maybeAutoEnable',
     'window.NegativeLod',
 ]) {
     if (mod.includes(token)) ok(`negativeLod.js has ${token.slice(0, 40)}`);
     else fail(`negativeLod.js missing ${token}`);
 }
+
+const cfgAuto = JSON.parse(read('config/negative-lod.json'));
+if (Array.isArray(cfgAuto.autoEnableTiers) && cfgAuto.autoEnableTiers.includes('compatibility')) {
+    ok('autoEnableTiers includes compatibility');
+} else fail('autoEnableTiers missing compatibility');
+if (cfgAuto.distanceByTier?.balanced > 0) ok('distanceByTier.balanced');
+else fail('distanceByTier.balanced missing');
+
+const perf = read('src/shared/perfHarness.js');
+if (perf.includes('export const PerfHarness') && perf.includes('measure(')) ok('perfHarness.js present');
+else fail('perfHarness.js missing');
+const mainJs = read('src/engine/main.js');
+if (mainJs.includes('perfHarness') && mainJs.includes('applyTierPolicy')) ok('main wires perf + tier policy');
+else fail('main missing perf/tier hooks');
+const gp = read('src/shared/graphicsProfile.js');
+if (gp.includes('applyTierPolicy')) ok('graphicsProfile calls applyTierPolicy');
+else fail('graphicsProfile missing applyTierPolicy');
 
 const core = read('src/engine/engineCore.js');
 if (core.includes('NegativeLod.update')) ok('engineCore ticks NegativeLod');

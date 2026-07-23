@@ -1,6 +1,6 @@
 {
   "format": "threshold-negative-lod",
-  "version": 1,
+  "version": 2,
   "enabled": true,
   "defaultDistance": 40,
   "hysteresis": 4,
@@ -10,6 +10,14 @@
   "preserveMapDefault": false,
   "disableCastShadowWhenFlat": true,
   "forceFullWhenSelected": true,
+  "autoEnableTiers": ["compatibility", "balanced"],
+  "autoEnableMinObjects": 6,
+  "distanceByTier": {
+    "compatibility": 28,
+    "balanced": 40,
+    "realistic": 55,
+    "ultra": 55
+  },
   "excludeFlags": [
     "isPlayer",
     "isFloor",
@@ -17,5 +25,5 @@
     "isHero",
     "lockedFloor"
   ],
-  "note": "Shader LOD: far objects use unlit MeshBasicMaterial. Complements MeshLod + TextureHilod."
+  "note": "Shader LOD: far objects use unlit MeshBasicMaterial. autoEnableTiers applies on Lite/Mobile graphics without hand-flagging every prop."
 }

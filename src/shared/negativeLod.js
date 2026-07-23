@@ -18,6 +18,14 @@ const cfg = {
     disableCastShadowWhenFlat: cfgJson.disableCastShadowWhenFlat !== false,
     forceFullWhenSelected: cfgJson.forceFullWhenSelected !== false,
     excludeFlags: Array.isArray(cfgJson.excludeFlags) ? cfgJson.excludeFlags : [],
+    /** Graphics tiers that auto-flag eligible props (Lite / Mobile). */
+    autoEnableTiers: Array.isArray(cfgJson.autoEnableTiers)
+        ? cfgJson.autoEnableTiers
+        : ['compatibility', 'balanced'],
+    autoEnableMinObjects: Number(cfgJson.autoEnableMinObjects) || 6,
+    distanceByTier: cfgJson.distanceByTier && typeof cfgJson.distanceByTier === 'object'
+        ? cfgJson.distanceByTier
+        : { compatibility: 28, balanced: 40, realistic: 55, ultra: 55 },
 };
 
 const _camPos = new THREE.Vector3();
@@ -49,7 +57,30 @@ function isExcluded(obj) {
         if (ud[f]) return true;
     }
     if (ud.isPlayer) return true;
+    if (ud.isVehicle || ud.vehicleId || ud.drivenVehicle) return true;
+    if (ud.isGltfHero || ud.gltfLodChain) return true;
     return false;
+}
+
+function distanceForTier(tier) {
+    const map = cfg.distanceByTier || {};
+    const d = Number(map[tier]);
+    return Number.isFinite(d) && d > 0 ? d : cfg.defaultDistance;
+}
+
+/** Eligible for graphics-tier auto Neg LOD (not user-owned / excluded). */
+function isAutoEligible(obj) {
+    if (!obj || isExcluded(obj)) return false;
+    const ud = obj.userData || {};
+    if (ud.negativeLodForcedOff || ud.negativeLOD === false || ud.negativeLod === false) return false;
+    // User / scene-authored flag — leave alone (except re-tune distance only if tier-auto)
+    if (ud.negativeLodSource === 'user' || ud.negativeLodManual) return false;
+    if ((ud.negativeLOD === true || ud.negativeLod === true) && ud.negativeLodSource !== 'tier-auto') {
+        return false;
+    }
+    const sel = window.State?.selectedObject;
+    if (sel && (sel === obj || isDescendant(sel, obj) || isDescendant(obj, sel))) return false;
+    return true;
 }
 
 function wantsNegative(obj) {
@@ -294,26 +325,85 @@ export const NegativeLod = {
         if (!obj) return;
         obj.userData = obj.userData || {};
         obj.userData.negativeLOD = true;
+        delete obj.userData.negativeLodForcedOff;
         if (opts.distance != null) obj.userData.negativeLodDistance = opts.distance;
         if (opts.fade != null) obj.userData.negativeLodFade = opts.fade;
         if (opts.preserveMap != null) obj.userData.negativeLodPreserveMap = opts.preserveMap;
         obj.userData.negativeLodMode = opts.mode || obj.userData.negativeLodMode || 'auto';
+        if (opts.source) obj.userData.negativeLodSource = opts.source;
         this.syncObject(obj);
     },
 
-    disableObject(obj, { clearFlag = true } = {}) {
+    disableObject(obj, { clearFlag = true, forceOff = false } = {}) {
         if (!obj) return;
         applyStateToMeshes(obj, false, 0, 1);
         getMeshes(obj).forEach((m) => enterFull(m));
         if (clearFlag && obj.userData) {
             delete obj.userData.negativeLOD;
             delete obj.userData.negativeLod;
+            delete obj.userData.negativeLodSource;
+            if (forceOff) obj.userData.negativeLodForcedOff = true;
+            else delete obj.userData.negativeLodForcedOff;
         }
         registry.delete(obj);
         getMeshes(obj).forEach((m) => {
             enterFull(m);
             registry.delete(m);
         });
+    },
+
+    /**
+     * Auto-enable Neg LOD on eligible objects for Lite/Mobile tiers.
+     * Strips prior tier-auto flags when tier is outside autoEnableTiers.
+     * @param {string} [tier] graphics tier id
+     * @param {THREE.Object3D[]} [objects]
+     * @returns {{ enabled: number, stripped: number, skipped?: string, tier: string }}
+     */
+    applyTierPolicy(tier, objects) {
+        const State = window.State;
+        const tierId = tier || State?.graphicsTier || 'realistic';
+        const list = objects || State?.objects || [];
+        const autoTiers = cfg.autoEnableTiers || [];
+        const min = cfg.autoEnableMinObjects || 6;
+        const dist = distanceForTier(tierId);
+        let enabled = 0;
+        let stripped = 0;
+
+        if (!autoTiers.includes(tierId)) {
+            for (const obj of list) {
+                if (obj?.userData?.negativeLodSource === 'tier-auto') {
+                    this.disableObject(obj, { clearFlag: true });
+                    stripped += 1;
+                }
+            }
+            return { enabled: 0, stripped, tier: tierId, active: false };
+        }
+
+        if (list.length < min) {
+            return { enabled: 0, stripped: 0, tier: tierId, skipped: 'min-objects', min, active: true };
+        }
+
+        for (const obj of list) {
+            if (!isAutoEligible(obj)) continue;
+            this.enableObject(obj, { distance: dist, source: 'tier-auto' });
+            enabled += 1;
+        }
+        return { enabled, stripped, tier: tierId, distance: dist, active: true };
+    },
+
+    /** Single-object path after spawn when current tier is auto. */
+    maybeAutoEnable(obj) {
+        const tierId = window.State?.graphicsTier || 'realistic';
+        if (!(cfg.autoEnableTiers || []).includes(tierId)) return false;
+        if (!isAutoEligible(obj)) return false;
+        const n = window.State?.objects?.length ?? 0;
+        if (n < (cfg.autoEnableMinObjects || 6) && n < 1) return false;
+        // Allow early auto on first props once scene has any objects
+        if (n < (cfg.autoEnableMinObjects || 6)) {
+            // still enable this prop so dense scenes build up; policy re-run after load sets the rest
+        }
+        this.enableObject(obj, { distance: distanceForTier(tierId), source: 'tier-auto' });
+        return true;
     },
 
     setMode(obj, mode) {

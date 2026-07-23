@@ -64,6 +64,7 @@ export const IO = {
                 TextureBridge.rehydrateScene();
                 if (gltfSnapshots.length) GltfImport.spawnSnapshots(gltfSnapshots);
                 NegativeLod.rescan(State.objects);
+                NegativeLod.applyTierPolicy?.(State.graphicsTier, State.objects);
                 UI.status("Scene Loaded");
             } catch (err) { UI.status("Error Loading"); }
         };

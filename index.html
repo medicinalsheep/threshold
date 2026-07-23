@@ -17,7 +17,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.13.7" />
+    <meta name="threshold-version" content="10.13.8" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD SUITE</title>
 </head>
@@ -227,7 +227,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.13.7</span><span class="edition-badge" id="edition-badge">WEB</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.13.8</span><span class="edition-badge" id="edition-badge">WEB</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
@@ -799,6 +799,20 @@
                 <div id="agent-benchmark-results" class="agent-benchmark-results"></div>
                 <label class="insert-hint">Legacy default Ollama model</label>
                 <select id="agent-ollama-model" class="insert-input" style="margin-bottom:6px;"><option value="">— probe on refresh —</option></select>
+                </details>
+                <details class="setup-advanced-wrap">
+                    <summary>PERF — measure harness</summary>
+                <p class="insert-hint" style="margin:0 0 6px;">Sample frame times + Neg LOD + Visibility + draw calls. Use before/after graphics tier or dense scenes. Live HUD: top PERF chip or <kbd>`</kbd>.</p>
+                <div class="prop-row" style="margin-bottom:6px;">
+                    <label style="min-width:52px;">Seconds</label>
+                    <input type="number" id="perf-harness-seconds" class="insert-input" value="5" min="1" max="30" step="1" style="width:4em;">
+                    <button type="button" id="perf-harness-run" style="flex:1;">RUN SAMPLE</button>
+                </div>
+                <div class="prop-row" style="margin-bottom:6px;">
+                    <button type="button" id="perf-harness-snapshot" class="btn-sm" style="flex:1;">SNAPSHOT NOW</button>
+                    <button type="button" id="perf-harness-download" class="btn-sm" style="flex:1;">DOWNLOAD JSON</button>
+                </div>
+                <pre id="perf-harness-results" class="insert-hint" style="white-space:pre-wrap;margin:0 0 8px;max-height:10em;overflow:auto;font-size:11px;"></pre>
                 </details>
                 <details class="setup-advanced-wrap">
                     <summary>Creative pipeline — GIMP, Blender, export</summary>

@@ -46,6 +46,7 @@ export const World = {
         Engine.scene.add(mesh);
         State.objects.push(mesh);
         NegativeLod.syncObject(mesh);
+        NegativeLod.maybeAutoEnable?.(mesh);
         window.dispatchEvent(new CustomEvent('threshold:object-added', { detail: { mesh } }));
         if (usePhysics) {
             const body = Physics.addBody(mesh, type);
@@ -73,6 +74,7 @@ export const World = {
         Engine.scene.add(mesh);
         State.objects.push(mesh);
         NegativeLod.syncObject(mesh);
+        NegativeLod.maybeAutoEnable?.(mesh);
         window.dispatchEvent(new CustomEvent('threshold:object-added', { detail: { mesh } }));
         if (usePhysics) {
             // Auto-detect best physics shape

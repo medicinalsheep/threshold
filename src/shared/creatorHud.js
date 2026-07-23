@@ -89,16 +89,28 @@ export const CreatorHud = {
         const tier = State?.graphicsTier || 'realistic';
         const mode = State?.renderMode ?? 4;
         const s = this._sceneStats();
+        const neg = window.NegativeLod?.getStats?.() || {};
+        const vis = window.VisibilitySystem?.getStats?.() || {};
+        const last = window.PerfHarness?.lastResult;
+        const sampleBit = last?.fpsAvg
+            ? `sample ${last.fpsAvg}fps p95 ${last.frameMs?.p95 ?? '—'}ms`
+            : null;
         this._perfEl.textContent = [
             `FPS ${this._fps}`,
-            `bodies ${s.bodies}`,
+            sampleBit,
             `objs ${s.objects}`,
-            `mesh ${s.meshes}`,
             `draw ${s.draws}`,
+            `neg ${neg.flat ?? 0}/${neg.registered ?? 0}`,
+            `vis A${vis.A ?? 0}/C${vis.C ?? 0}/E${vis.E ?? 0}`,
             `tier ${tier}`,
             mode === 4 ? 'pbr' : `retro${mode}`,
+        ].filter(Boolean).join(' · ');
+        this._perfEl.title = [
+            `${s.tris.toLocaleString()} triangles`,
+            `bodies ${s.bodies} · mesh ${s.meshes}`,
+            `NegLOD flat/reg · Vis A–E (sh${vis.shadowsDimmed ?? 0}/ps${vis.physicsAsleep ?? 0})`,
+            '` toggles HUD · SETUP → PERF for 5s sample + JSON',
         ].join(' · ');
-        this._perfEl.title = `${s.tris.toLocaleString()} triangles · \` toggles HUD`;
     },
 
     updateSync() {

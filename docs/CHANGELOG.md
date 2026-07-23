@@ -1,3 +1,10 @@
+## 10.13.8 — Neg LOD tier auto + measure harness
+
+- **Neg LOD auto** on graphics **Lite/Mobile** (`compatibility` / `balanced`): `NegativeLod.applyTierPolicy` · config `autoEnableTiers` / `distanceByTier` · source `tier-auto` vs user / force-off
+- Hooks: graphics tier apply, template bootstrap, scene load, `World.createObject`
+- **PerfHarness** — SETUP → PERF sample (FPS avg / 1% low / p50–p99) + NegLOD + Vis + draw; DOWNLOAD JSON; HUD shows last sample
+- Docs: [PERF_NEXT.md](PERF_NEXT.md) status update
+
 ## 10.13.7 — Ollama Pages: no raw :11434 probe
 
 - **OllamaClient** on GitHub Pages only probes `http://127.0.0.1:11435` (CORS proxy) — never falls through to `:11434`, which spammed console CORS 403s
