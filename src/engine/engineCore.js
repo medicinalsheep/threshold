@@ -71,7 +71,12 @@ export const Engine = {
         this.groundPlane.rotation.x = -Math.PI / 2;
         this.groundPlane.position.y = 0.06;
         this.groundPlane.receiveShadow = true;
-        this.groundPlane.userData = { id: 'engine_ground', isFloor: true, surfaceType: 'concrete' };
+        this.groundPlane.userData = {
+            id: 'engine_ground',
+            isFloor: true,
+            negativeLodFloor: true,
+            surfaceType: 'concrete',
+        };
         this.scene.add(this.groundPlane);
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableDamping = true;

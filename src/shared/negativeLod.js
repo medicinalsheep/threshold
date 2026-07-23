@@ -26,6 +26,14 @@ const cfg = {
     distanceByTier: cfgJson.distanceByTier && typeof cfgJson.distanceByTier === 'object'
         ? cfgJson.distanceByTier
         : { compatibility: 28, balanced: 40, realistic: 55, ultra: 55 },
+    floor: {
+        enabled: cfgJson.floor?.enabled !== false,
+        autoTiersOnly: cfgJson.floor?.autoTiersOnly !== false,
+        cameraHeight: Number(cfgJson.floor?.cameraHeight) || 12,
+        distance: Number(cfgJson.floor?.distance) || 45,
+        hysteresis: Number(cfgJson.floor?.hysteresis) || 2,
+        preserveMap: cfgJson.floor?.preserveMap !== false,
+    },
 };
 
 const _camPos = new THREE.Vector3();
@@ -122,31 +130,72 @@ function fadeEnabled(obj) {
     return obj.userData?.negativeLodFade !== false;
 }
 
+function isRenderableMesh(obj) {
+    return !!(obj && (obj.isMesh || obj.isSkinnedMesh || obj.isInstancedMesh) && obj.material);
+}
+
 function getMeshes(root) {
     const out = [];
     if (!root) return out;
-    if (root.isMesh && root.material) {
+    if (isRenderableMesh(root)) {
         out.push(root);
         return out;
     }
     root.traverse?.((c) => {
-        if (c.isMesh && c.material) out.push(c);
+        if (isRenderableMesh(c)) out.push(c);
     });
     return out;
 }
 
-function colorKey(mat) {
-    const hex = mat?.color?.getHex?.() ?? 0xffffff;
-    const mapId = preserveMapActive(mat) ? (mat.map?.uuid || 'nomap') : 'nomap';
-    return `${hex.toString(16)}_${mapId}`;
+function matSlots(material) {
+    if (!material) return [];
+    return Array.isArray(material) ? material : [material];
+}
+
+function isFlattable(mat) {
+    if (!mat) return false;
+    if (mat.userData?.shaderGraph || mat.userData?.noNegativeLod) return false;
+    if (mat.isShaderMaterial
+        && !mat.isMeshStandardMaterial
+        && !mat.isMeshPhysicalMaterial
+        && !mat.isMeshBasicMaterial
+        && !mat.isMeshLambertMaterial
+        && !mat.isMeshPhongMaterial) {
+        return false;
+    }
+    return true;
+}
+
+/** Clone shared materials so siblings do not share a thrashing full-mat ref. */
+function ensureOwnedMaterials(mesh) {
+    const shared = (m) => !!(m?.userData?.shared || m?.userData?._shared || m?.userData?.negativeLodClone);
+    if (!mesh?.material) return;
+    if (Array.isArray(mesh.material)) {
+        let changed = false;
+        const next = mesh.material.map((m) => {
+            if (!m || !shared(m) || m.userData?._negativeLodCloned) return m;
+            const c = m.clone();
+            c.userData = { ...(m.userData || {}), _negativeLodCloned: true };
+            changed = true;
+            return c;
+        });
+        if (changed) mesh.material = next;
+        return;
+    }
+    const m = mesh.material;
+    if (m && shared(m) && !m.userData?._negativeLodCloned) {
+        const c = m.clone();
+        c.userData = { ...(m.userData || {}), _negativeLodCloned: true };
+        mesh.material = c;
+    }
 }
 
 function preserveMapActive(mat) {
     return !!(mat?.map);
 }
 
-function acquireFlat(fullMat, obj) {
-    const useMap = preserveMap(obj) && fullMat?.map;
+function acquireFlat(fullMat, obj, forcePreserveMap) {
+    const useMap = (forcePreserveMap || preserveMap(obj)) && fullMat?.map;
     const hex = fullMat?.color?.getHex?.() ?? 0xffffff;
     const key = `${hex.toString(16)}_${useMap ? fullMat.map.uuid : 'nomap'}`;
     let entry = flatPool.get(key);
@@ -158,9 +207,6 @@ function acquireFlat(fullMat, obj) {
             opacity: 1,
             toneMapped: true,
         });
-        if (useMap && THREE.SRGBColorSpace && mat.map) {
-            // keep map colorSpace as-is
-        }
         entry = { mat, refs: 0 };
         flatPool.set(key, entry);
     }
@@ -180,6 +226,15 @@ function releaseFlat(key) {
     }
 }
 
+function releaseRtKeys(rt) {
+    if (Array.isArray(rt.poolKeys)) {
+        for (const k of rt.poolKeys) releaseFlat(k);
+        rt.poolKeys = null;
+    }
+    releaseFlat(rt.poolKey);
+    rt.poolKey = null;
+}
+
 function getRt(obj) {
     let rt = runtime.get(obj);
     if (!rt) {
@@ -189,6 +244,7 @@ function getRt(obj) {
             castShadow: !!obj.castShadow,
             receiveShadow: !!obj.receiveShadow,
             poolKey: null,
+            poolKeys: null,
         };
         runtime.set(obj, rt);
     }
@@ -196,7 +252,7 @@ function getRt(obj) {
 }
 
 function applyOpacity(flatMat, dist, threshold, obj) {
-    if (!fadeEnabled(obj) || !flatMat) return;
+    if (!fadeEnabled(obj) || !flatMat?.isMeshBasicMaterial) return;
     const start = threshold * cfg.fadeStart;
     const end = threshold * cfg.fadeEnd;
     let opacity = 1;
@@ -211,40 +267,52 @@ function applyOpacity(flatMat, dist, threshold, obj) {
     flatMat.needsUpdate = true;
 }
 
-function enterFlat(mesh, objRoot) {
-    if (!mesh?.material || Array.isArray(mesh.material)) {
-        // multi-material: skip v1 or handle first slot only
-        if (Array.isArray(mesh.material) && mesh.material[0]) {
-            // treat as single by operating on array — store array
-        } else return false;
-    }
+function applyOpacityToMesh(mesh, dist, threshold, objRoot) {
+    const slots = matSlots(mesh.material);
+    for (const m of slots) applyOpacity(m, dist, threshold, objRoot);
+}
+
+/**
+ * Multi-mat 1:1 flat slots · shared-mat clone · SkinnedMesh / InstancedMesh safe.
+ * Never disposes skeleton or bone data.
+ */
+function enterFlat(mesh, objRoot, opts = {}) {
+    if (!isRenderableMesh(mesh)) return false;
+    // Skinned: allow; skeleton stays on mesh. Never dispose geometry/skeleton.
+    if (mesh.isSkinnedMesh && mesh.userData?.negativeLodNoSkin) return false;
+
     const rt = getRt(mesh);
     if (rt.state === 'flat') return false;
 
-    const full = mesh.material;
-    // Don't flatten exotic custom materials aggressively
-    if (full?.userData?.shaderGraph || full?.userData?.noNegativeLod) return false;
-    if (full?.isShaderMaterial && !full.isMeshStandardMaterial && !full.isMeshPhysicalMaterial && !full.isMeshBasicMaterial) {
-        if (!full.isMeshLambertMaterial && !full.isMeshPhongMaterial) return false;
-    }
+    ensureOwnedMaterials(mesh);
 
-    rt.fullMat = full;
+    const wasArray = Array.isArray(mesh.material);
+    const slots = matSlots(mesh.material);
+    if (!slots.length || !slots.some(isFlattable)) return false;
+
+    // Stash full materials (array copy so restore is 1:1)
+    rt.fullMat = wasArray ? slots.slice() : slots[0];
     rt.castShadow = mesh.castShadow;
     rt.receiveShadow = mesh.receiveShadow;
+    rt.poolKeys = [];
+    rt.poolKey = null;
 
-    const { mat: flat, key } = acquireFlat(
-        Array.isArray(full) ? full[0] : full,
-        objRoot || mesh,
-    );
-    rt.poolKey = key;
-
-    if (Array.isArray(full)) {
-        mesh.material = full.map(() => flat);
-    } else {
-        mesh.material = flat;
+    const forceMap = !!opts.preserveMap;
+    const flats = [];
+    for (const full of slots) {
+        if (!isFlattable(full)) {
+            flats.push(full);
+            rt.poolKeys.push(null);
+            continue;
+        }
+        const { mat: flat, key } = acquireFlat(full, objRoot || mesh, forceMap);
+        flats.push(flat);
+        rt.poolKeys.push(key);
     }
 
-    if (cfg.disableCastShadowWhenFlat) {
+    mesh.material = wasArray ? flats : flats[0];
+
+    if (cfg.disableCastShadowWhenFlat && !mesh.isInstancedMesh) {
         mesh.castShadow = false;
     }
     rt.state = 'flat';
@@ -253,32 +321,103 @@ function enterFlat(mesh, objRoot) {
 
 function enterFull(mesh) {
     const rt = runtime.get(mesh);
-    if (!rt || rt.state !== 'flat' || !rt.fullMat) return false;
+    if (!rt || rt.state !== 'flat' || rt.fullMat == null) return false;
 
     mesh.material = rt.fullMat;
     mesh.castShadow = rt.castShadow;
     mesh.receiveShadow = rt.receiveShadow;
-    releaseFlat(rt.poolKey);
-    rt.poolKey = null;
+    releaseRtKeys(rt);
     rt.fullMat = null;
     rt.state = 'full';
     return true;
 }
 
-function applyStateToMeshes(root, wantFlat, dist, threshold) {
+function applyStateToMeshes(root, wantFlat, dist, threshold, opts = {}) {
     const meshes = getMeshes(root);
     let switches = 0;
     for (const mesh of meshes) {
         if (wantFlat) {
-            if (enterFlat(mesh, root)) switches += 1;
+            if (enterFlat(mesh, root, opts)) switches += 1;
             const rt = runtime.get(mesh);
-            if (rt?.state === 'flat' && mesh.material) {
-                const flat = Array.isArray(mesh.material) ? mesh.material[0] : mesh.material;
-                if (flat?.isMeshBasicMaterial) applyOpacity(flat, dist, threshold, root);
-            }
+            if (rt?.state === 'flat') applyOpacityToMesh(mesh, dist, threshold, root);
         } else if (enterFull(mesh)) {
             switches += 1;
         }
+    }
+    return switches;
+}
+
+function floorTierAllows() {
+    if (!cfg.floor?.enabled) return false;
+    if (!cfg.floor.autoTiersOnly) return true;
+    const tier = window.State?.graphicsTier || 'realistic';
+    return (cfg.autoEnableTiers || []).includes(tier);
+}
+
+/** Ground plane + instanced deck slabs (path B). */
+function collectFloorTargets() {
+    const out = new Set();
+    const add = (o) => {
+        if (!o) return;
+        if (isRenderableMesh(o)) out.add(o);
+        else getMeshes(o).forEach((m) => out.add(m));
+    };
+    add(window.Engine?.groundPlane);
+    const fg = window.Environment?.floorGroup;
+    if (fg) {
+        fg.traverse((c) => {
+            if (isRenderableMesh(c) && (c.userData?.isFloor || c.userData?.negativeLodFloor || c.isInstancedMesh)) {
+                out.add(c);
+            }
+        });
+    }
+    for (const o of window.State?.objects || []) {
+        if (o?.userData?.isFloor || o?.userData?.negativeLodFloor) add(o);
+    }
+    return [...out];
+}
+
+/**
+ * Floor path B: one shared mat → Basic when camera high or far from origin.
+ * Whole slab deck pops together (acceptable).
+ */
+function updateFloorTargets(camera) {
+    if (!cfg.floor?.enabled || !floorTierAllows()) {
+        // Restore full if we left floors flat from a previous tier
+        for (const mesh of collectFloorTargets()) {
+            const rt = runtime.get(mesh);
+            if (rt?.state === 'flat') enterFull(mesh);
+        }
+        return 0;
+    }
+
+    camera.getWorldPosition(_camPos);
+    const heightThr = cfg.floor.cameraHeight;
+    const distThr = cfg.floor.distance;
+    const h = cfg.floor.hysteresis;
+    let switches = 0;
+
+    for (const mesh of collectFloorTargets()) {
+        if (!mesh.visible) continue;
+        mesh.getWorldPosition(_objPos);
+        const horiz = Math.hypot(_camPos.x - _objPos.x, _camPos.z - _objPos.z);
+        const height = _camPos.y;
+        const rt = runtime.get(mesh);
+        const cur = rt?.state || 'full';
+
+        let wantFlat = false;
+        if (cur === 'full') {
+            wantFlat = height >= heightThr + h || horiz >= distThr + h;
+        } else {
+            wantFlat = height > heightThr - h || horiz > distThr - h;
+        }
+
+        const metric = Math.max(height, horiz);
+        const thr = Math.max(heightThr, distThr);
+        const sw = applyStateToMeshes(mesh, wantFlat, metric, thr, {
+            preserveMap: cfg.floor.preserveMap,
+        });
+        switches += sw;
     }
     return switches;
 }
@@ -299,7 +438,10 @@ function isDescendant(a, b) {
     return false;
 }
 
-let _stats = { registered: 0, flat: 0, full: 0, switches: 0, scanned: 0 };
+let _stats = {
+    registered: 0, flat: 0, full: 0, switches: 0, scanned: 0,
+    floorFlat: 0, floorTargets: 0, multiMat: 0, skinned: 0,
+};
 let _scanOffset = 0;
 
 export const NegativeLod = {
@@ -461,11 +603,27 @@ export const NegativeLod = {
         let flatCount = 0;
         let fullCount = 0;
         let switches = 0;
+        let multiMat = 0;
+        let skinned = 0;
         const budget = cfg.maxUpdatesPerFrame;
 
+        // Floor path B always (even when prop registry empty)
+        const floorSw = updateFloorTargets(camera);
+        switches += floorSw;
+        const floors = collectFloorTargets();
+        let floorFlat = 0;
+        for (const m of floors) {
+            if (runtime.get(m)?.state === 'flat') floorFlat += 1;
+        }
+        _stats.floorTargets = floors.length;
+        _stats.floorFlat = floorFlat;
+
         if (!list.length) {
-            _stats.flat = 0;
+            _stats.flat = floorFlat;
             _stats.full = 0;
+            _stats.switches = switches;
+            _stats.multiMat = 0;
+            _stats.skinned = 0;
             return;
         }
 
@@ -475,6 +633,11 @@ export const NegativeLod = {
         for (let i = 0; i < n && switches < budget; i += 1) {
             const obj = list[(start + i) % n];
             if (!obj || obj.visible === false) continue;
+            // Floors use dedicated path B — never thrash them in the prop registry
+            if (obj.userData?.isFloor || obj.userData?.negativeLodFloor) {
+                registry.delete(obj);
+                continue;
+            }
             if (!wantsNegative(obj) || isExcluded(obj)) {
                 this.disableObject(obj, { clearFlag: false });
                 registry.delete(obj);
@@ -493,6 +656,14 @@ export const NegativeLod = {
                 continue;
             }
 
+            // Focus / selected / force-full always restores PBR (incl. skinned avatars)
+            if (shouldForceFull(obj)) {
+                const swFocus = applyStateToMeshes(obj, false, 0, 1);
+                switches += swFocus;
+                fullCount += 1;
+                continue;
+            }
+
             obj.getWorldPosition(_objPos);
             const dist = Number.isFinite(obj.userData?._visDist)
                 ? obj.userData._visDist
@@ -502,7 +673,7 @@ export const NegativeLod = {
             const mode = modeOf(obj);
 
             let wantFlat = false;
-            if (shouldForceFull(obj) || mode === 'force-full') {
+            if (mode === 'force-full') {
                 wantFlat = false;
             } else if (mode === 'force-flat') {
                 wantFlat = true;
@@ -523,14 +694,20 @@ export const NegativeLod = {
             switches += sw;
 
             const meshes = getMeshes(obj);
+            for (const m of meshes) {
+                if (Array.isArray(m.material) && m.material.length > 1) multiMat += 1;
+                if (m.isSkinnedMesh) skinned += 1;
+            }
             const st = meshes[0] ? (runtime.get(meshes[0])?.state || 'full') : 'full';
             if (st === 'flat') flatCount += 1;
             else fullCount += 1;
         }
         _scanOffset = (start + Math.min(n, budget)) % Math.max(1, n);
-        _stats.flat = flatCount;
+        _stats.flat = flatCount + floorFlat;
         _stats.full = fullCount;
         _stats.switches = switches;
+        _stats.multiMat = multiMat;
+        _stats.skinned = skinned;
     },
 
     getStats() {

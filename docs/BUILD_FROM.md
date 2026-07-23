@@ -57,10 +57,11 @@ Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [MULTIPLA
 
 - **Neg LOD A+B** — far unlit / flat materials (`userData.negativeLOD`)
 - **Neg LOD tier auto** — Lite/Mobile graphics auto-flags eligible props (`applyTierPolicy`)
+- **Neg LOD multi-mat / skinned / floor B** — 1:1 slot flats · shared clone · floor unlit when high/far
 - **Visibility E0–E3** — frustum × distance classes; skip off-screen LOD/anim; sleep shadows/physics; env gates
 - **Perf harness** — SETUP → PERF · `PerfHarness.measure()` · JSON export
 
-Next: multi-mat/skinned → floor path B → E4 only if classify CPU is hot. Details: [PERF_NEXT.md](PERF_NEXT.md).
+Next: E4 only if classify CPU is hot · mobile player surface · CI headless. Details: [PERF_NEXT.md](PERF_NEXT.md).
 
 ---
 

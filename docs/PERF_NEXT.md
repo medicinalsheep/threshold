@@ -51,47 +51,29 @@ Distance by tier: compatibility 28m · balanced 40m · realistic/ultra opt-in on
 
 ---
 
-## 2. Multi-material / skinned edge cases
-
-### Current limit
-`getMeshes` + first material path; multi-material arrays partially handled; skinned / shared mats may thrash pool or tint siblings.
-
-### Plan
+## 2. Multi-material / skinned edge cases — **SHIPPED 10.13.9**
 
 | Case | Approach |
 |------|----------|
-| **Multi-material mesh** | Stash full array; build flat array 1:1 (or one Basic per unique color) |
-| **Shared material** (`material.userData.shared` or refcount >1) | `material.clone()` on first enterFlat; mark `_negativeLodCloned` |
-| **SkinnedMesh** | Same as mesh; never dispose skeleton; force-full on focus |
-| **InstancedMesh** | Separate path (see §3) |
-
-### Tests
-- GLTF with 3 mats → far flat all slots  
-- Two meshes sharing one StandardMaterial → clone on flat  
-- Avatar skinned body with Neg LOD  
+| **Multi-material mesh** | Stash full array; flat 1:1 per slot (`poolKeys`) |
+| **Shared material** | `clone()` when `userData.shared` / `_shared` / `negativeLodClone` |
+| **SkinnedMesh** | Swap mats only; skeleton kept; force-full on selection |
+| **InstancedMesh** | Floor path B (§3) |
 
 ### Effort
-**M** (~1–2 days)
+**M** — done (in-engine).
 
 ---
 
-## 3. Instanced floor deck
+## 3. Instanced floor deck — **SHIPPED path B 10.13.9**
 
-### Current
-`floorDeck.js` uses `InstancedMesh` + one shared `MeshStandardMaterial`. Neg LOD registry treats roots in `State.objects` — floor may be `isFloor` **excluded** by design.
+| Option | Status |
+|--------|--------|
+| **A. Keep excluded** from prop registry | ✅ floors stay out of prop auto |
+| **B. Swap shared mat** when camera high/far | ✅ `updateFloorTargets` · Lite/Mobile |
+| **C. Split near/far instances** | Deferred (L) |
 
-### Options
-
-| Option | Pros | Cons |
-|--------|------|------|
-| **A. Keep excluded** | Floor always quality | No gain on huge slabs |
-| **B. Swap shared mat** | One mat → Basic when camera high/far | Whole floor pops together (OK) |
-| **C. Split near/far instances** | Best look | Hard — re-bucket instances |
-
-**Recommend B:** if camera height or distance to deck origin > threshold, `instanced.material = flatPool`; restore when near. Hook in `NegativeLod.update` for objects with `userData.isFloor && userData.negativeLodFloor`.
-
-### Effort
-**S–M** if B · **L** if C
+Config: `negative-lod.json` → `floor.cameraHeight` (12) · `floor.distance` (45) · `autoTiersOnly`.
 
 ---
 
@@ -133,10 +115,11 @@ Document: “200 cubes, orbit, mobile tier: p95 frame time −X% with stack on v
 ```text
 1. Auto-enable by tier     ✅
 2. Measure harness         ✅ (in-engine)
-3. Multi-mat / skinned     (correctness)
-4. Floor deck B            (if floor shows in profiles)
+3. Multi-mat / skinned     ✅
+4. Floor deck B            ✅
 5. E4 spatial buckets      (only if classify CPU shows hot)
 6. Optional CI headless    (after manual baselines exist)
+7. Player surface (mobile) (product — separate from PERF)
 ```
 
 ---
@@ -150,7 +133,8 @@ Document: “200 cubes, orbit, mobile tier: p95 frame time −X% with stack on v
 | X OAuth | ❌ removed |
 | Tier auto-enable | ✅ 10.13.8 |
 | Measure harness (in-engine) | ✅ 10.13.8 |
-| Multi-mat / skinned | Plan only |
-| Floor instanced | Plan only |
+| Multi-mat / skinned | ✅ 10.13.9 |
+| Floor path B | ✅ 10.13.9 |
 | E4 spatial | Plan only (scale) |
 | CI headless harness | Plan only |
+| Player surface (mobile) | Plan only |

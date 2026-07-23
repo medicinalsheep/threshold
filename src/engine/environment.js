@@ -40,6 +40,7 @@ export const Environment = {
         plane.userData.id = 'engine_ground';
         plane.userData.name = 'Starter Ground';
         plane.userData.isFloor = true;
+        plane.userData.negativeLodFloor = true; // path B: far/high camera → unlit
         plane.userData.surfaceType = 'concrete';
 
         if (!State.objects.includes(plane)) {

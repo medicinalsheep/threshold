@@ -44,6 +44,20 @@ if (Array.isArray(cfgAuto.autoEnableTiers) && cfgAuto.autoEnableTiers.includes('
 } else fail('autoEnableTiers missing compatibility');
 if (cfgAuto.distanceByTier?.balanced > 0) ok('distanceByTier.balanced');
 else fail('distanceByTier.balanced missing');
+if (cfgAuto.floor?.enabled && cfgAuto.floor.cameraHeight > 0) ok('floor path B config');
+else fail('floor config missing');
+
+for (const token of [
+    'ensureOwnedMaterials',
+    'matSlots',
+    'updateFloorTargets',
+    'collectFloorTargets',
+    'isSkinnedMesh',
+    'poolKeys',
+]) {
+    if (mod.includes(token)) ok(`multi-mat/floor has ${token}`);
+    else fail(`missing ${token}`);
+}
 
 const perf = read('src/shared/perfHarness.js');
 if (perf.includes('export const PerfHarness') && perf.includes('measure(')) ok('perfHarness.js present');

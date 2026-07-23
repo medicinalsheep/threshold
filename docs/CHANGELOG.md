@@ -1,3 +1,11 @@
+## 10.13.9 — Neg LOD multi-mat / skinned / floor path B
+
+- **Multi-material** — stash full array; flat 1:1 per slot (`poolKeys`)
+- **Shared materials** — clone on enter when `userData.shared` / `_shared` / `negativeLodClone`
+- **SkinnedMesh** — material swap only; skeleton untouched; force-full when selected
+- **Floor path B** — ground / instanced deck → unlit when camera high or far (Lite/Mobile); config `floor.*`
+- Stats: `floorFlat`, `multiMat`, `skinned` on `NegativeLod.getStats()`
+
 ## 10.13.8 — Neg LOD tier auto + measure harness
 
 - **Neg LOD auto** on graphics **Lite/Mobile** (`compatibility` / `balanced`): `NegativeLod.applyTierPolicy` · config `autoEnableTiers` / `distanceByTier` · source `tier-auto` vs user / force-off

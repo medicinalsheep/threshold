@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.13)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.8
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.9
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -47,7 +47,7 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | F interact | `worldInteract.js` |
 | TC circuit + drive | `tcCircuit.js`, `tcDrive.js` |
 | Graphics tiers | `graphicsProfile.js` — PBR default; retro opt-in |
-| Negative LOD (far unlit) | `negativeLod.js` — flag + **tier auto** on Lite/Mobile; [NEGATIVE_LOD.md](NEGATIVE_LOD.md) |
+| Negative LOD (far unlit) | `negativeLod.js` — tier auto · multi-mat/skinned · floor path B; [NEGATIVE_LOD.md](NEGATIVE_LOD.md) |
 | Perf measure | `perfHarness.js` — SETUP → PERF · HUD sample |
 | Visibility classes A–E | `visibilitySystem.js` — frustum×distance; feeds Neg LOD (E0) |
 | Vis gates (E1) | MeshLod / HILOD / idle / spin / NPC anim skip off-screen |

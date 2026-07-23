@@ -80,6 +80,7 @@ function buildInstancedSlabs(THREE, halfSize) {
         id: 'engine_floor_deck',
         name: TEXTURE_OBJECT_NAME,
         isFloor: true,
+        negativeLodFloor: true,
         surfaceType: 'concrete',
     };
 
@@ -197,6 +198,7 @@ export function createConcreteSlabDeck(halfSize = 24) {
         id: 'engine_floor_deck',
         name: TEXTURE_OBJECT_NAME,
         isFloor: true,
+        negativeLodFloor: true,
         surfaceType: 'concrete',
         locked: true,
         slabSize: SLAB_SIZE,

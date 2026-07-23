@@ -1,6 +1,6 @@
 {
   "format": "threshold-negative-lod",
-  "version": 2,
+  "version": 3,
   "enabled": true,
   "defaultDistance": 40,
   "hysteresis": 4,
@@ -18,6 +18,14 @@
     "realistic": 55,
     "ultra": 55
   },
+  "floor": {
+    "enabled": true,
+    "autoTiersOnly": true,
+    "cameraHeight": 12,
+    "distance": 45,
+    "hysteresis": 2,
+    "preserveMap": true
+  },
   "excludeFlags": [
     "isPlayer",
     "isFloor",
@@ -25,5 +33,5 @@
     "isHero",
     "lockedFloor"
   ],
-  "note": "Shader LOD: far objects use unlit MeshBasicMaterial. autoEnableTiers applies on Lite/Mobile graphics without hand-flagging every prop."
+  "note": "Shader LOD: far unlit. Multi-mat 1:1 + shared clone + skinned safe. Floor path B: ground/instanced swap when camera high/far on Lite/Mobile."
 }
