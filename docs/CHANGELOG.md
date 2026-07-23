@@ -1,3 +1,9 @@
+## 10.13.6 — Build-from spine; public truth
+
+- **[BUILD_FROM.md](BUILD_FROM.md)** — one-page outline (live link, six-step loop, agent do/don’t, Grok paste block)
+- GitHub repo **description** + **homepage** → live Pages URL
+- Doc truth: CAPABILITIES Portal = Grok/Ollama only; UI_AND_AGENTS lobby (no X); docs index / mermaid / dual-auth wording
+
 ## 10.13.5 — Remove X OAuth; perf next plan
 
 - **Removed** X OAuth (`xAuth.js`, `xFeed.js`), Sign in with X, feed/post UI, X name sources

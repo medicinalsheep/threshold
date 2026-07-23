@@ -34,7 +34,7 @@ Multiplayer is optional PeerJS. **No X or Grok account required** for local solo
 - Get a key at [console.x.ai](https://console.x.ai) — **not** SuperGrok browser tab.
 - Paste in SETUP, Portal, or nav **Grok** modal → SAVE.
 - Keys are **per-tab** by default; optional remember-on-device.
-- Full dual-auth notes: [AUTH.md](AUTH.md).
+- Optional Grok key: [AUTH.md](AUTH.md).
 
 ### Tiered models (small / medium / large)
 

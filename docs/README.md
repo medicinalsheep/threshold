@@ -1,10 +1,10 @@
 # Threshold documentation index
 
-**Version:** 10.13.5 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.13.6 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Full scope map — quality-first blank grid, optional TC reference editions, and where to read more.
 
-**Snapshot:** [CAPABILITIES.md](CAPABILITIES.md) · **Forward plan:** [ROADMAP.md](ROADMAP.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+**Start here (agents & forks):** [BUILD_FROM.md](BUILD_FROM.md) · **Snapshot:** [CAPABILITIES.md](CAPABILITIES.md) · **Forward plan:** [ROADMAP.md](ROADMAP.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
 ---
 
@@ -19,7 +19,7 @@ Legacy edition manifests (`threshold-child-*`) live in `old/reference-editions/`
 
 ---
 
-## Capability map (v10.12)
+## Capability map (v10.13)
 
 ```mermaid
 flowchart TB
@@ -27,7 +27,7 @@ flowchart TB
         LOBBY[ENTER solo / CREATE / JOIN]
         PORTAL[Agent Portal]
         HUBS[Corner hub UI]
-        AUTH[Optional X + Grok]
+        AUTH[Optional Grok key]
     end
     subgraph play [Play]
         TPS[TPS / FPS / ADS / UI mouse]
@@ -59,6 +59,7 @@ flowchart TB
 
 | I want to… | Read | Run |
 |------------|------|-----|
+| One-page outline (humans + agents) | [BUILD_FROM.md](BUILD_FROM.md) | Live URL or clone |
 | Play immediately | [README.md](../README.md) Quick start | Live URL → **ENTER →** |
 | Clone & develop | [GETTING_STARTED.md](GETTING_STARTED.md) | `npm install` → `npm run quickstart` |
 | Streamlined dev path | [STREAMLINED_DEV.md](STREAMLINED_DEV.md) | Portal → SETUP → EXPORT |
@@ -99,6 +100,7 @@ npm run build                   # GitHub Pages → dist-pages/
 
 | Doc | Topic |
 |-----|-------|
+| [BUILD_FROM.md](BUILD_FROM.md) | **One-page spine** — live link, loop, do/don’t |
 | [GETTING_STARTED.md](GETTING_STARTED.md) | Lobby → ship linear path |
 | [AUTH.md](AUTH.md) | Optional Grok API key (no X OAuth) |
 | [PERF_NEXT.md](PERF_NEXT.md) | Neg LOD tier auto, multi-mat, floor, measure harness |
@@ -113,7 +115,7 @@ npm run build                   # GitHub Pages → dist-pages/
 | [AGENT_ROUTING.md](AGENT_ROUTING.md) | Tiered agents + bootcamp |
 | [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) | GitHub vs local weights |
 | [CAPABILITIES.md](CAPABILITIES.md) | Progress snapshot |
-| [UI_AND_AGENTS.md](UI_AND_AGENTS.md) | Lobby, hubs, freeze, touch, dual auth |
+| [UI_AND_AGENTS.md](UI_AND_AGENTS.md) | Lobby, hubs, freeze, touch, optional Grok |
 | [STORE_VERIFY.md](STORE_VERIFY.md) | Store/native verify plan |
 | [GIMP_TEXTURES.md](GIMP_TEXTURES.md) | GIMP install, batch, live SYNC |
 | [BLENDER_AVATARS.md](BLENDER_AVATARS.md) | Rigged GLB export |

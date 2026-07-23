@@ -1,10 +1,10 @@
 # Threshold — Progress & Capabilities (v10.13)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.5
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.6
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
-**Forward plan:** [ROADMAP.md](ROADMAP.md) · **UI reference:** [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · **Accounts:** [AUTH.md](AUTH.md)
+**Build from:** [BUILD_FROM.md](BUILD_FROM.md) · **Forward plan:** [ROADMAP.md](ROADMAP.md) · **UI:** [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · **Accounts:** [AUTH.md](AUTH.md)
 
 ---
 
@@ -15,7 +15,7 @@ Single progress snapshot — what ships today, how the pieces connect, and what 
 | Blank grid spawn | `starterScene.js`, `starterTemplates.js` |
 | Lobby (ENTER primary) | `lobby/main.js` — solo **ENTER** · CREATE optional multiplayer |
 | Progressive UI unlock | Scene dock, Compiler, PromptGen opt-in |
-| Agent Portal on ENTER | `agentPortal.js` — Grok/Ollama/X auto-detect |
+| Agent Portal on ENTER | `agentPortal.js` — Grok/Ollama auto-detect |
 | Corner hub UI | `hubLayout.js` — PLAY/EDIT, TOOLS, SCENE menus |
 | Room codes + passcode | `roomCode.js`, `hostPasscode.js` |
 | Grok API (optional) | BYO key — [AUTH.md](AUTH.md) |

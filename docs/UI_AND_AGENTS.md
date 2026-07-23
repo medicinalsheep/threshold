@@ -1,8 +1,8 @@
-# UI layout, agents & local model memory (v10.12)
+# UI layout, agents & local model memory (v10.13)
 
-Quick reference for corner hubs, Agent Portal, dual accounts, and session lobby. Older docs may still say "SCENE → AI tab" — today everything lives under **SETUP** (scene dock) and **Agent Portal**.
+Quick reference for corner hubs, Agent Portal, optional Grok key, and session lobby. Older docs may still say "SCENE → AI tab" — today everything lives under **SETUP** (scene dock) and **Agent Portal**.
 
-**Live version:** see `src/config.js` → `VERSION`
+**Live version:** see `src/config.js` → `VERSION` · **Spine:** [BUILD_FROM.md](BUILD_FROM.md)
 
 ---
 
@@ -13,10 +13,10 @@ Quick reference for corner hubs, Agent Portal, dual accounts, and session lobby.
 | **ENTER →** | Solo primary path — blank grid, no PeerJS (starts BUILD) |
 | **CREATE SESSION** | Multiplayer host (12s Peer timeout if server hangs) |
 | **JOIN / SPECTATE** | Room code + optional passcode |
-| **More options** | Passcodes, starter world, voice, X & Grok accounts |
-| Display name | Custom or X @handle / X name when signed in |
+| **More options** | Passcodes, starter world, voice, optional Grok API key |
+| Display name | Custom name shown in multiplayer (no account required) |
 
-Neither X nor Grok is required to play. Voice mic is requested **after** the session starts (never blocks CREATE).
+Grok is optional. Voice mic is requested **after** the session starts (never blocks CREATE).
 
 After CREATE: share panel → copy code/link → **ENTER SESSION →**.
 
