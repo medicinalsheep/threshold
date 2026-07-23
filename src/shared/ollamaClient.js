@@ -46,12 +46,16 @@ function candidateBases() {
     const explicit = (import.meta.env.VITE_OLLAMA_URL || '').trim();
     if (explicit) return [explicit.replace(/\/$/, '')];
 
-    if (!forceDirect && isLocalPage()) {
+    if (forceDirect) return [DIRECT_URL];
+
+    if (isLocalPage()) {
         // Vite dev/preview same-origin proxy first, then PNA proxy, then raw
         return ['/ollama', PAGES_PROXY_URL, DIRECT_URL];
     }
-    // GitHub Pages / remote origin: prefer :11435 (CORS+PNA proxy), then raw :11434
-    return [PAGES_PROXY_URL, DIRECT_URL];
+    // GitHub Pages / remote HTTPS: ONLY the local CORS proxy.
+    // Never probe :11434 from a public origin — browsers log a hard CORS
+    // error even when JS catches the failure (looks like "serious" red noise).
+    return [PAGES_PROXY_URL];
 }
 
 function resolveBaseUrl() {
@@ -173,15 +177,19 @@ export const OllamaClient = {
         }
 
         const last = errors[errors.length - 1] || 'offline';
-        const anyPna = errors.some((e) => /blocked from this page|pna/i.test(e));
+        const anyPna = errors.some((e) => /blocked from this page|pna|CORS|11435/i.test(e));
+        const pagesNeedsProxy = isPagesHost() || (!isLocalPage() && typeof window !== 'undefined' && window.isSecureContext);
+        const offlineProxy = pagesNeedsProxy || bases.every((b) => String(b).includes('11435'));
         return {
             ok: false,
             models: [],
-            error: anyPna
-                ? 'Pages blocked raw Ollama — run npm run ollama:serve (proxy :11435), then RE-SCAN'
-                : last.replace(/^[^:]+:\s*/, ''),
-            corsBlocked: anyPna,
-            corsHelp: anyPna
+            error: offlineProxy
+                ? 'Ollama proxy not reachable — on this PC run: node scripts/ollama-cors-proxy.cjs (or npm run ollama:serve), keep it open, then RE-SCAN'
+                : anyPna
+                    ? 'Pages blocked raw Ollama — run npm run ollama:serve (proxy :11435), then RE-SCAN'
+                    : last.replace(/^[^:]+:\s*/, ''),
+            corsBlocked: anyPna || offlineProxy,
+            corsHelp: offlineProxy || anyPna
                 ? ollamaCorsHelp(403)
                 : `Tried: ${bases.join(', ')}. Keep "npm run ollama:serve" running, then RE-SCAN.`,
             tried: bases,

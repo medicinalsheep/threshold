@@ -1,3 +1,8 @@
+## 10.13.7 — Ollama Pages: no raw :11434 probe
+
+- **OllamaClient** on GitHub Pages only probes `http://127.0.0.1:11435` (CORS proxy) — never falls through to `:11434`, which spammed console CORS 403s
+- Clearer offline message when proxy isn’t running; keep `node scripts/ollama-cors-proxy.cjs` (or `npm run ollama:serve`) open while using local models
+
 ## 10.13.6 — Build-from spine; public truth
 
 - **[BUILD_FROM.md](BUILD_FROM.md)** — one-page outline (live link, six-step loop, agent do/don’t, Grok paste block)

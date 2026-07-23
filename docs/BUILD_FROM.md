@@ -94,7 +94,7 @@ npm run preview:pages       # smoke what visitors get
 npm run version:sync:check  # VERSION header drift gate
 ```
 
-Ollama for Pages + localhost CORS: `npm run ollama:serve` (not plain `ollama serve`).
+Ollama for **GitHub Pages**: keep a local proxy open — `node scripts/ollama-cors-proxy.cjs` or `npm run ollama:serve` (listens on **:11435**). Plain `ollama serve` alone on `:11434` will CORS-block the live site.
 
 ---
 
