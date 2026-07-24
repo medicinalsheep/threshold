@@ -1,6 +1,6 @@
 # Threshold documentation index
 
-**Version:** 10.13.21 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.14.0 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Full scope map — quality-first blank grid, optional TC reference editions, and where to read more.
 
@@ -135,6 +135,7 @@ npm run build                   # GitHub Pages → dist-pages/
 | [UI_AND_AGENTS.md](UI_AND_AGENTS.md) | Surfaces, lobby, hubs, freeze, touch, Grok |
 | [STORE_VERIFY.md](STORE_VERIFY.md) | Store/native verify plan |
 | [MATERIALS.md](MATERIALS.md) | Starter material library + examples |
+| [PHYSICS.md](PHYSICS.md) | Pad entry · mass/friction · joints · gravity |
 | [GIMP_TEXTURES.md](GIMP_TEXTURES.md) | GIMP install, batch, live SYNC |
 | [BLENDER_AVATARS.md](BLENDER_AVATARS.md) | Rigged GLB export |
 | [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) | 9-step export wizard |

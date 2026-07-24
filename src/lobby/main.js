@@ -61,9 +61,14 @@ function persistLobbyMode() {
     if (active) ViewPrefs.set('sessionMode', active);
 }
 
-/** Solo ENTER → defaults BUILD so insert/delete work without hunting the mode toggle. */
+/**
+ * Solo ENTER → PLAY walk-ready by default (physics live on pad).
+ * Lobby PLAY/BUILD buttons still override via setLobbyMode before click.
+ * Always use blank workspace template (grid), not TC.
+ */
 function enterSoloBuild() {
-    setLobbyMode('build');
+    const preferred = document.querySelector('.lobby-mode-btn.active')?.dataset?.mode;
+    setLobbyMode(preferred === 'build' ? 'build' : 'play');
     setSelectedTemplateId('grid');
     const sel = document.getElementById('lobby-template');
     if (sel) sel.value = 'grid';

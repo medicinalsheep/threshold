@@ -1,3 +1,13 @@
+## 10.14.0 — Workspace pad · physics foundation · starter kit
+
+- **ENTER → PLAY** walk-ready (lobby PLAY/BUILD still honored; default play)
+- **Workspace pad** — concrete slab deck + matching collider + soft atmosphere
+- **Starter kit** — crate, sphere, ramp, hinge gate on pad
+- **Physics truth** — mass/friction/restitution apply to bodies; collider from mesh bounds
+- **Joints** — `hingeBodies` / `lockBodies` / `pointBodies` · INSERT Physics Lab
+- **Gravity** — SCENE Gravity Y + reset · `Physics.setGravity`
+- Docs: [PHYSICS.md](PHYSICS.md) · `npm run physics:verify`
+
 ## 10.13.21 — Doc truth sweep (LOD stack + materials + perf)
 
 - Align spine with **10.13.18–20**: material library · Neg light bake · distances 100m / 18·48 HILOD · vis 100/145

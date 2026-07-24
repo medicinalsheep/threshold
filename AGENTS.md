@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), tiered local/cloud agents, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **10.13.21**)
+**Version:** `src/config.js` → `VERSION` (currently **10.14.0**)
 
 **Spine (start here):** [docs/BUILD_FROM.md](docs/BUILD_FROM.md) · **Doc index:** [docs/README.md](docs/README.md)
 
@@ -171,6 +171,7 @@ Live manifest: `textures/threshold_manifest.json` (not `old/plugins/...` sample)
 | [docs/BUILD_FROM.md](docs/BUILD_FROM.md) | **One-page spine** for agents & forks |
 | [docs/PERF_NEXT.md](docs/PERF_NEXT.md) | Perf stack complete (light-bake Neg · E0–E5 · harness) |
 | [docs/MATERIALS.md](docs/MATERIALS.md) | Starter material library + maps |
+| [docs/PHYSICS.md](docs/PHYSICS.md) | Workspace pad · mass/friction · joints · gravity |
 | [docs/NEGATIVE_LOD.md](docs/NEGATIVE_LOD.md) | Neg LOD + Vis E0–E5 stack order |
 | [docs/MAC_NOTARIZE.md](docs/MAC_NOTARIZE.md) | macOS sign + notary + staple |
 | [docs/STORE_RELEASE.md](docs/STORE_RELEASE.md) | Store prep / package / ship |

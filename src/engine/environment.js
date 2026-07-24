@@ -50,6 +50,43 @@ export const Environment = {
         window.StarterTex?.wireStarterTextures?.().catch(() => {});
     },
 
+    /**
+     * Polished workspace pad — instanced concrete slabs + curb + matching pad collider.
+     * Preferred default for ENTER (play/build).
+     */
+    useWorkspacePad: async function (halfSize = FLOOR_HALF) {
+        this.clearFloorDeck();
+        const plane = Engine.groundPlane;
+        if (plane) {
+            // Hide infinite dark plane under deck (physics plane remains as safety net)
+            plane.visible = false;
+            State.objects = State.objects.filter((o) => o !== plane);
+        }
+
+        try {
+            const { createConcreteSlabDeck, wireDeckTextures } = await import('./floorDeck.js');
+            const deck = createConcreteSlabDeck(halfSize);
+            this.floorGroup = deck.group;
+            this.floorTextureTarget = deck.textureTarget;
+            Engine.scene.add(deck.group);
+            if (!State.objects.includes(deck.group)) {
+                State.objects.push(deck.group);
+            }
+            // Path C target on instanced mesh
+            if (deck.instanced && !State.objects.includes(deck.instanced)) {
+                State.objects.push(deck.instanced);
+            }
+            await wireDeckTextures(deck.textureTarget);
+            window.Physics?.setPadCollider?.(halfSize, 0.06, 'concrete');
+            return deck;
+        } catch (e) {
+            console.warn('[Environment] workspace pad fallback', e);
+            this.useSimpleGround();
+            window.Physics?.setPadCollider?.(halfSize, 0.06, 'concrete');
+            return null;
+        }
+    },
+
     clearFloorDeck: function () {
         if (!this.floorGroup) return;
 
@@ -65,10 +102,17 @@ export const Environment = {
 
         Engine.scene.remove(this.floorGroup);
         State.objects = State.objects.filter(
-            (o) => o !== this.floorGroup && o.userData?.id !== 'engine_floor_deck',
+            (o) => o !== this.floorGroup
+                && o.userData?.id !== 'engine_floor_deck'
+                && o !== this.floorGroup,
         );
+        // Drop instanced deck meshes that were registered separately
+        State.objects = State.objects.filter((o) => !o?.userData?.floorPathC || o.parent);
         this.floorGroup = null;
         this.floorTextureTarget = null;
+
+        const plane = Engine.groundPlane;
+        if (plane) plane.visible = true;
     },
 
     bindUi: function () {

@@ -55,7 +55,9 @@ export const GuidedSession = {
         window.PlayerController?._syncWalkOrbit?.();
         window.Engine?._releaseLookLock?.();
 
-        const label = build ? 'BUILD — world editable, physics paused' : 'PLAY — simulation running';
+        const label = build
+            ? 'EDIT — place objects · physics paused · PLAY to simulate'
+            : 'PLAY — walk · push props · tap EDIT to build';
         window.UI?.status?.(label);
     },
 

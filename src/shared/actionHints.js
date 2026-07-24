@@ -5,18 +5,23 @@ import { ViewPrefs } from './viewPrefs.js';
 const HINTS = [
     {
         id: 'walk',
-        text: 'Explore the grid — tap AI (top-left) or SCENE → SETUP when ready to connect agents',
+        text: 'Walk the pad — push the crate · try the hinge gate · EDIT (top-left) to build',
         afterMs: 0,
     },
     {
+        id: 'physics',
+        text: 'EDIT → select prop → mass / friction · SCENE gravity · INSERT Physics Lab for more',
+        afterMs: 28000,
+    },
+    {
         id: 'promptgen',
-        text: 'TOOLS → Compiler or PromptGen to extend your scene',
-        afterMs: 42000,
+        text: 'TOOLS → Compiler or PromptGen · AI station (F) for agents',
+        afterMs: 52000,
     },
     {
         id: 'export',
         text: 'Ready to ship? TOOLS → Export & play or Export wizard',
-        afterMs: 95000,
+        afterMs: 100000,
     },
 ];
 

@@ -24,9 +24,15 @@ export const World = {
         return false;
     },
 
-    // Modified to allow Physics flag
-    createObject: function (type, name, color = 0xffffff, usePhysics = false) {
-        if (!this._requireEditWorld('add objects')) return null;
+    /**
+     * @param {boolean|object} [usePhysicsOrOpts] true/false or { physics, force, mass, friction, restitution, silent }
+     */
+    createObject: function (type, name, color = 0xffffff, usePhysicsOrOpts = false) {
+        const opts = typeof usePhysicsOrOpts === 'object' && usePhysicsOrOpts
+            ? usePhysicsOrOpts
+            : { physics: !!usePhysicsOrOpts };
+        const usePhysics = opts.physics ?? opts.usePhysics ?? !!usePhysicsOrOpts;
+        if (!opts.force && !this._requireEditWorld('add objects')) return null;
         let geo, mat = new THREE.MeshStandardMaterial({
             color: color,
             roughness: 0.52,
@@ -39,25 +45,37 @@ export const World = {
         else if (type === 'torus') geo = new THREE.TorusGeometry(0.6, 0.2, 16, 100);
         else return null;
         const mesh = new THREE.Mesh(geo, mat);
-        mesh.position.y = 5; // Start high to drop
+        mesh.position.y = opts.y != null ? opts.y : 5;
         mesh.castShadow = true;
         mesh.receiveShadow = true;
-        mesh.userData = { id: Date.now().toString(36), name: name || type, type: type, locked: false, isRotating: false, hasPhysics: usePhysics };
+        mesh.userData = {
+            id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+            name: name || type,
+            type: type,
+            locked: !!opts.locked,
+            isRotating: false,
+            hasPhysics: usePhysics,
+            mass: opts.mass ?? (usePhysics ? 1 : 0),
+            friction: opts.friction ?? 0.4,
+            restitution: opts.restitution ?? 0.1,
+        };
+        if (opts.tags) Object.assign(mesh.userData, opts.tags);
         Engine.scene.add(mesh);
         State.objects.push(mesh);
         NegativeLod.syncObject(mesh);
-        NegativeLod.maybeAutoEnable?.(mesh);
+        if (!opts.noAutoNeg) NegativeLod.maybeAutoEnable?.(mesh);
         window.VisibilitySystem?.invalidateSpatial?.();
         window.dispatchEvent(new CustomEvent('threshold:object-added', { detail: { mesh } }));
         if (usePhysics) {
             const body = Physics.addBody(mesh, type);
             State.physicsObjects.push({ mesh, body });
+            Physics.syncBodyFromUserData?.(mesh);
         }
-        AudioSys.playTone(300, 'sine');
+        if (!opts.silent) AudioSys.playTone(300, 'sine');
         return mesh;
     },
-    addCustom: function (geometry, material, name, usePhysics = false) {
-        if (!this._requireEditWorld('add objects')) return null;
+    addCustom: function (geometry, material, name, usePhysics = false, opts = {}) {
+        if (!opts.force && !this._requireEditWorld('add objects')) return null;
         // Ensure material reacts to Bloom in Hyper mode
         if (material) {
             material.emissiveIntensity = 0.12;
@@ -71,7 +89,17 @@ export const World = {
         mesh.position.y = 5;
         mesh.castShadow = true;
         mesh.receiveShadow = true;
-        mesh.userData = { id: Date.now().toString(36), name: name || 'custom', type: 'custom', locked: false, isRotating: false, hasPhysics: usePhysics };
+        mesh.userData = {
+            id: Date.now().toString(36),
+            name: name || 'custom',
+            type: 'custom',
+            locked: !!opts.locked,
+            isRotating: false,
+            hasPhysics: usePhysics,
+            mass: opts.mass ?? (usePhysics ? 1 : 0),
+            friction: opts.friction ?? 0.4,
+            restitution: opts.restitution ?? 0.1,
+        };
         Engine.scene.add(mesh);
         State.objects.push(mesh);
         NegativeLod.syncObject(mesh);
@@ -79,14 +107,31 @@ export const World = {
         window.VisibilitySystem?.invalidateSpatial?.();
         window.dispatchEvent(new CustomEvent('threshold:object-added', { detail: { mesh } }));
         if (usePhysics) {
-            // Auto-detect best physics shape
             let shapeType = 'box';
             if (geometry.type.toLowerCase().includes('sphere')) shapeType = 'sphere';
             const body = Physics.addBody(mesh, shapeType);
             State.physicsObjects.push({ mesh, body });
+            Physics.syncBodyFromUserData?.(mesh);
         }
-        AudioSys.playTone(400, 'sine');
+        if (!opts.silent) AudioSys.playTone(400, 'sine');
         return mesh;
+    },
+
+    /** Engineering helpers — agent / compiler friendly */
+    lockBodies(meshA, meshB, opts) {
+        return Physics.lockBodies?.(meshA, meshB, opts);
+    },
+    hingeBodies(meshA, meshB, pivotA, pivotB, axis, opts) {
+        return Physics.hingeBodies?.(meshA, meshB, pivotA, pivotB, axis, opts);
+    },
+    setGravity(x, y, z) {
+        return Physics.setGravity?.(x, y, z);
+    },
+    resetGravity() {
+        return Physics.resetGravity?.();
+    },
+    syncPhysics(mesh) {
+        return Physics.syncBodyFromUserData?.(mesh);
     },
     spawnAtCursor: function (type) {
         const mesh = this.createObject(type, type, Math.random() * 0xffffff, true);
@@ -199,10 +244,10 @@ export const World = {
     getCursorPos: function () {
         return { x: State.ctxTargetPos.x, y: State.ctxTargetPos.y, z: State.ctxTargetPos.z };
     },
-    deleteObject: function (obj) {
+    deleteObject: function (obj, opts = {}) {
         const root = Engine.resolveRegistryObject(obj) || obj;
         if (!root || root.userData?.isPlayer) return;
-        if (!SimMode.canEditObject(root)) {
+        if (!opts.force && !SimMode.canEditObject(root)) {
             UI.status(SimMode.isPlay()
                 ? 'PLAY mode — switch to EDIT to delete objects'
                 : 'Cannot delete — no edit permission');

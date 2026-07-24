@@ -179,7 +179,12 @@ export const GraphicsProfile = {
             Environment.setFog(State.env.fogDensity);
             State.env.waterEnabled = false;
             Environment.removeWater?.();
-            Environment.useSimpleGround?.();
+            // Keep polished workspace pad on default grid; simple plane for other templates
+            if (window.State?.templateId === 'grid' || window.State?.starterGridBuilt) {
+                Environment.useWorkspacePad?.();
+            } else {
+                Environment.useSimpleGround?.();
+            }
 
             if (State.env.atmosphereEnabled) {
                 if (!Environment.hemiLight && Engine?.scene) {

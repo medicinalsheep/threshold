@@ -1,34 +1,52 @@
-/** Blank grid — default entry. AI Build Station for agent portal. */
+/** Workspace pad — default ENTER environment. AI station + starter kit. */
 
 import { SITE } from './starterSiteLayout.js';
 import { spawnAiTerminal } from './aiTerminal.js';
+import { spawnStarterKit } from './starterKit.js';
+import { FLOOR_HALF } from '../engine/environment.js';
 
 export async function buildStarterGrid() {
     const Engine = window.Engine;
     const State = window.State;
-    const Physics = window.Physics;
-    const C = window.CANNON;
-    if (!Engine?.scene || !C || !State) return null;
+    if (!Engine?.scene || !State) return null;
 
-    if (State.starterGridBuilt) return State.objects.find((o) => o.userData?.id === 'engine_ground') || null;
+    if (State.starterGridBuilt) {
+        return State.objects.find((o) => o.userData?.id === 'engine_floor_deck'
+            || o.userData?.id === 'engine_ground') || null;
+    }
     State.starterGridBuilt = true;
 
-    window.Environment?.useSimpleGround?.();
-
-    if (Physics?.addStaticBox) {
-        Physics.addStaticBox(new C.Vec3(16, 0.03, 16), { x: 0, y: 0.03, z: 0 }, 'ground', 'concrete');
-    }
+    // Polished concrete pad + matching collider (not dark void plane alone)
+    await window.Environment?.useWorkspacePad?.(FLOOR_HALF);
 
     State.gridVisible = true;
     if (Engine.gridHelper) Engine.gridHelper.visible = true;
     const gridBtn = document.getElementById('btn-grid');
     if (gridBtn) gridBtn.textContent = 'ON';
 
+    // Soft daylight — readable pad + light-baked Neg LOD
     State.env.timeOfDay = 14;
-    State.env.fogDensity = 0.004;
-    State.env.atmosphereEnabled = false;
+    State.env.fogDensity = 0.01;
+    State.env.atmosphereEnabled = true;
     window.Environment?.setTimeOfDay?.(14);
-    window.Environment?.setFog?.(0.004);
+    window.Environment?.setFog?.(0.01);
+    const Env = window.Environment;
+    if (Env) {
+        if (!Env.hemiLight) {
+            const THREE = window.THREE;
+            if (THREE && Engine.scene) {
+                Env.hemiLight = new THREE.HemisphereLight(0x87ceeb, 0x1a2a12, 0.55);
+                Engine.scene.add(Env.hemiLight);
+            }
+        }
+        if (Env.hemiLight) Env.hemiLight.visible = true;
+        const btn = document.getElementById('env-atmo-toggle');
+        if (btn) {
+            btn.textContent = 'ON';
+            btn.classList.add('active');
+        }
+    }
+    window.NegativeLod?.notifyEnvChange?.();
 
     State.introPlaying = false;
     State.ctxTargetPos.set(0, 0, 0);
@@ -53,9 +71,16 @@ export async function buildStarterGrid() {
         });
     }
 
+    try {
+        await spawnStarterKit();
+    } catch (e) {
+        console.warn('[starter-grid] kit', e);
+    }
+
     window.StarterTex?.wireStarterTextures?.().catch(() => {});
 
-    return State.objects.find((o) => o.userData?.id === 'engine_ground') || null;
+    return State.objects.find((o) => o.userData?.id === 'engine_floor_deck'
+        || o.userData?.id === 'engine_ground') || null;
 }
 
 window.buildStarterGrid = buildStarterGrid;

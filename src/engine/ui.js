@@ -532,15 +532,15 @@ export const UI = {
             const body = obj.userData.type === 'gltf'
                 ? Physics.addBodyFromObject(obj, obj.userData.mass ?? 1)
                 : Physics.addBody(obj, obj.userData.type || 'cube');
-            body.mass = obj.userData.mass ?? 1;
             State.physicsObjects.push({ mesh: obj, body });
             obj.userData.hasPhysics = true;
+            Physics.syncBodyFromUserData?.(obj);
         } else if (!enabled && entry) {
             Physics.world.removeBody(entry.body);
             State.physicsObjects = State.physicsObjects.filter((p) => p.mesh !== obj);
             obj.userData.hasPhysics = false;
         } else if (entry?.body) {
-            entry.body.mass = obj.userData.mass ?? entry.body.mass;
+            Physics.syncBodyFromUserData?.(obj);
         }
     },
     testObjectSound: function () {

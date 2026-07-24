@@ -1,4 +1,4 @@
-# Getting started with Threshold (v10.13.21)
+# Getting started with Threshold (v10.14.0)
 
 One linear path from lobby to shipping — blank grid default, Agent Portal, tiered agents, and optional **TC** export practice.
 
@@ -15,8 +15,8 @@ Lobby → ENTER (solo) → play or build → EDIT or PLAY → Export → Package
 
 | Step | Where | What you learn |
 |------|--------|----------------|
-| 1 | **Lobby → ENTER →** | Solo primary — starts BUILD; no network needed |
-| 2 | Engine | Blank grid · short corner-hub tour |
+| 1 | **Lobby → ENTER →** | Solo primary — **PLAY** walk-ready on workspace pad |
+| 2 | Engine | Concrete pad · kit props · AI station · short hub tour |
 | 3 | **Surface** | Phones default **player** (clean play UI). Desktop **creator** for AI tools. `?surface=` |
 | 4 | **Agent Portal** (creator) | Describe what to build · Grok/Ollama auto-detect |
 | 5 | **EDIT** | TOOLS menu → insert, **MATERIAL LIBRARY EXAMPLES**, Compiler, PromptGen, textures |

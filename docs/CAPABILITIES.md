@@ -1,6 +1,6 @@
-# Threshold — Progress & Capabilities (v10.13)
+# Threshold — Progress & Capabilities (v10.14)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.21
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.14.0
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -48,6 +48,8 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | F interact | `worldInteract.js` |
 | TC circuit + drive | `tcCircuit.js`, `tcDrive.js` |
 | Graphics tiers | `graphicsProfile.js` — PBR default; retro opt-in |
+| Workspace pad + kit | Concrete deck · crate/sphere/ramp/hinge · ENTER PLAY; [PHYSICS.md](PHYSICS.md) |
+| Physics / joints | Mass·friction live · hinge/lock · gravity UI; `physics:verify` |
 | Negative LOD (far unlit) | ~100m · **light bake** · mesh/HILOD first · static auto · multi-mat · floor B/**C**; [NEGATIVE_LOD.md](NEGATIVE_LOD.md) |
 | E5 remotes / bloom | Far remote lerp · bloom skip Lite/no emissive |
 | Perf measure | `perfHarness.js` — SETUP → PERF · HUD · `npm run perf:harness` (CI) |

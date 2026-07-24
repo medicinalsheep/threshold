@@ -16,7 +16,7 @@ export async function bootstrapStarterScene() {
     scheduleTemplateSpawn(EXTERIOR_SPAWN, {
         skipIntro: true,
         spawnDelay: 80,
-        status: 'Blank grid — BUILD to place objects · CREATE SESSION to invite friends',
+        status: 'Workspace pad — walk · EDIT to build · push crate / hinge gate · AI station',
     });
 }
 

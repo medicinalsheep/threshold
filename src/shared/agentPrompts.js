@@ -59,7 +59,10 @@ Render mode: Engine.setRenderMode(4) for realistic/default/PBR. Modes 0-3 ONLY i
 Use userData.textures for GIMP PBR. Prefer MaterialPresets / MaterialLibrary over CanvasTexture.
 Apply: MaterialPresets.applyMaterialPreset(mesh, 'pbr_brick_aged') or await MaterialLibrary.applyWithMaps(mesh, id).
 Name mesh Mat Wood / Mat Brick / … to wire starter maps. Never CanvasTexture noise for hero surfaces.
-World.createObject(type, name, colorHex, usePhysics) — type first (cube|sphere|cone|torus).
+World.createObject(type, name, colorHex, usePhysics|{physics,force,mass,friction,restitution}) — type first.
+Physics: set mass/friction/restitution on userData then Physics.syncBodyFromUserData(mesh).
+Joints: Physics.hingeBodies(a,b,pivotA,pivotB,axis) · Physics.lockBodies(a,b) · World.setGravity(0,y,0).
+PLAY runs sim; EDIT pauses physics.
 ${getSceneContextBrief()}
 ${getSoundContext()}`;
             const user = payload.code

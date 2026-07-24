@@ -58,13 +58,14 @@ Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [UI_AND_A
 
 ## Shipped systems (do not re-invent)
 
-- **Neg LOD** — ~**100m** default (tiers 72–165) · **light-baked** unlit (not muddy dark) · tier auto · multi-mat/skinned · **floor B + path C** · mesh/HILOD first (**18/48m**) · [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
-- **Visibility E0–E4** — near **100** / sleep **145** · sleep/env · spatial buckets
-- **E5** — far remote lerp · bloom skip (Lite / no on-screen emissive)
-- **Materials** — presets + starter maps · INSERT library examples · [MATERIALS.md](MATERIALS.md)
+- **Workspace pad** — concrete deck + starter kit (crate/sphere/ramp/hinge) · ENTER → **PLAY** walk-ready · [PHYSICS.md](PHYSICS.md)
+- **Physics** — mass/friction/restitution live · hinges/locks · gravity UI · `npm run physics:verify`
+- **Neg LOD** — ~**100m** default · light-baked unlit · mesh/HILOD first (**18/48m**) · [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
+- **Visibility E0–E4** · **E5** remotes/bloom
+- **Materials** — presets + starter maps · INSERT library · [MATERIALS.md](MATERIALS.md)
 - **Surfaces** — player / creator / full (`?surface=`)
-- **Perf** — SETUP → PERF · `npm run perf:harness` / `perf:harness:compare` · `negative-lod:verify`
-- **Store** — `npm run store:ship` · mac notary hooks · signing stays local
+- **Perf** — SETUP → PERF · harness · `negative-lod:verify`
+- **Store** — `npm run store:ship` · mac notary hooks
 
 ### UI surfaces (same URL)
 
@@ -127,10 +128,10 @@ Ollama for **GitHub Pages**: keep a local proxy open — `node scripts/ollama-co
 Live: https://medicinalsheep.github.io/threshold/
 Repo: https://github.com/medicinalsheep/threshold
 Spine: docs/BUILD_FROM.md · CAPABILITIES.md · AGENTS.md · UI_AND_AGENTS.md
-Free core: ENTER solo, optional Grok + Ollama (creator surface), PeerJS CREATE/JOIN.
-No X OAuth. Surfaces: player | creator | full (?surface=). Mobile → player.
-Perf: Neg LOD light-bake ~100m · mesh/HILOD 18/48 · Vis E0–E4 · E5 · perf:harness.
-Materials: MATERIAL LIBRARY EXAMPLES · MATERIALS.md. No CanvasTexture spam.
+Free core: ENTER solo → PLAY on workspace pad (crate/hinge kit); EDIT to build.
+Optional Grok + Ollama (creator surface), PeerJS CREATE/JOIN. No X OAuth.
+Physics: mass/friction/joints · PHYSICS.md · physics:verify.
+Perf: Neg LOD ~100m · HILOD 18/48 · Vis E0–E4. Materials: MATERIALS.md.
 Ship: store:ship · MAC_NOTARIZE.md (signing local).
 Task: [your goal]
 ```

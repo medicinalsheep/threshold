@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.13.21 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.14.0 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -175,7 +175,13 @@ Accounts guide: [AUTH.md](AUTH.md) · Snapshot: [CAPABILITIES.md](CAPABILITIES.m
 | **10.13.20** | Neg LOD review fixes (map flats, shared pool, registry) |
 | **10.13.21** | Doc truth sweep (LOD stack + materials + perf) |
 
-Perf: [PERF_NEXT.md](PERF_NEXT.md) · Materials: [MATERIALS.md](MATERIALS.md) · Surfaces: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Ship: [STORE_RELEASE.md](STORE_RELEASE.md) · [MAC_NOTARIZE.md](MAC_NOTARIZE.md)
+## 10.14 — Workspace pad + physics foundation ✅
+
+| Slice | Focus |
+|-------|-------|
+| **10.14.0** | PLAY entry · slab pad · starter kit · mass/friction truth · hinges · gravity · Physics Lab |
+
+Perf: [PERF_NEXT.md](PERF_NEXT.md) · Physics: [PHYSICS.md](PHYSICS.md) · Materials: [MATERIALS.md](MATERIALS.md) · Surfaces: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Ship: [STORE_RELEASE.md](STORE_RELEASE.md)
 
 ---
 

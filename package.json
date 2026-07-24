@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "10.13.21",
+  "version": "10.14.0",
   "type": "module",
   "engines": {
     "node": ">=22.0.0"
@@ -78,6 +78,7 @@
     "tc:verify": "node scripts/tc-verify.cjs",
     "controls:verify": "node scripts/controls-verify.cjs",
     "negative-lod:verify": "node scripts/negative-lod-verify.cjs",
+    "physics:verify": "node scripts/physics-verify.cjs",
     "perf:verify": "node scripts/perf-harness-verify.cjs",
     "perf:harness": "node scripts/perf-harness.cjs",
     "perf:harness:compare": "node scripts/perf-harness.cjs --compare",
