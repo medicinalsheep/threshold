@@ -1,0 +1,96 @@
+/**
+ * Surface profiles — hide creator/dev chrome on player surface.
+ * body.surface-player | body.surface-creator | body.surface-full
+ */
+
+/* Creator-only chrome */
+body.surface-player [data-surface="creator"],
+body.surface-player [data-surface="full"] {
+    display: none !important;
+}
+
+/* Full-only (power tools) — hidden on plain creator */
+body.surface-creator [data-surface="full"] {
+    display: none !important;
+}
+
+/* Player surface: lobby stays simple */
+body.surface-player .lobby-mode-row {
+    /* keep PLAY/BUILD — BUILD still switches preference but tools stay gated until creator */
+}
+
+body.surface-player .lobby-quick-secondary {
+    flex-wrap: wrap;
+}
+
+body.surface-player #lobby-accounts,
+body.surface-player .lobby-export-play {
+    display: none !important;
+}
+
+/* Hide agent reconnect chip noise on play surface */
+body.surface-player #agent-reconnect-chip,
+body.surface-player #model-status-hud-float,
+body.surface-player .creator-perf-hud {
+    display: none !important;
+}
+
+/* Player: AI hub button becomes optional re-entry via surface toggle only */
+body.surface-player #hub-agent {
+    display: none !important;
+}
+
+/* Surface switcher chips */
+.surface-switcher {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    margin: 8px 0;
+}
+
+.surface-switcher .surface-chip {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid var(--border-color, #333);
+    background: transparent;
+    color: var(--text-color, #ccc);
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.surface-switcher .surface-chip.active {
+    border-color: var(--accent-color, #39ff14);
+    color: var(--accent-color, #39ff14);
+}
+
+#surface-profile-badge {
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    opacity: 0.75;
+    margin-left: 6px;
+    padding: 1px 6px;
+    border: 1px solid var(--border-color, #444);
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
+#surface-profile-badge[data-surface="player"] {
+    border-color: var(--accent-color, #39ff14);
+    color: var(--accent-color, #39ff14);
+}
+
+.surface-profile-hint {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin: 4px 0 8px;
+}
+
+/* Lobby player: surface row always visible (escape hatch) */
+.lobby-surface-row {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}

@@ -302,10 +302,19 @@ export const AgentPortal = {
         }
 
         let ollama = { ok: false, models: [], error: 'offline' };
-        try {
-            ollama = await OllamaClient.probe(3000);
-        } catch (e) {
-            ollama = { ok: false, models: [], error: e.message };
+        if (window.SurfaceProfile && !window.SurfaceProfile.allowsOllamaProbe()) {
+            ollama = {
+                ok: false,
+                models: [],
+                error: 'skipped — play surface',
+                skippedSurface: true,
+            };
+        } else {
+            try {
+                ollama = await OllamaClient.probe(3000);
+            } catch (e) {
+                ollama = { ok: false, models: [], error: e.message };
+            }
         }
 
         let watchHealth = false;
@@ -1102,6 +1111,11 @@ ${getSceneApiPrompt()}`;
     },
 
     openFromTerminal() {
+        // Play surface: offer creator tools instead of empty Ollama wall
+        if (window.SurfaceProfile?.isPlayer?.()) {
+            window.SurfaceProfile.set('creator');
+            window.UI?.status?.('Creator tools on — AI Build Station ready');
+        }
         window.SceneDock?.setFullyHidden?.(false, true);
         if (this._session.connected) {
             this.show({ step: 'build' });
@@ -1115,6 +1129,8 @@ ${getSceneApiPrompt()}`;
         if (this._session.connected && this._session.chatHistory?.length) return;
         if (this._session.dismissed) return;
         if (IS_GROK_EDITION && !Auth.isLoggedIn()) return;
+        // Play surface: no agent pulse / AI onboarding noise
+        if (window.SurfaceProfile && !window.SurfaceProfile.allowsAgentAuto()) return;
 
         setTimeout(() => {
             window.CornerHub?.pulseAgent?.();

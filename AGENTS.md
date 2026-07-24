@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), tiered local/cloud agents, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **10.13.10**)
+**Version:** `src/config.js` → `VERSION` (currently **10.13.11**)
 
 **Spine (start here):** [docs/BUILD_FROM.md](docs/BUILD_FROM.md) · **Doc index:** [docs/README.md](docs/README.md)
 
@@ -44,6 +44,7 @@ Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blen
 | Native | `electron/`, `capacitor.config.json`, `thresholdShell.js` |
 | Plugins | `plugins/threshold-gimp/`, `plugins/threshold-blender/` |
 | Chrome extension | `extension/threshold-chrome/` — Ollama mini → paste into open Grok tab |
+| UI surface | `src/shared/surfaceProfile.js` — player / creator / full |
 | Legacy archive | `old/` — pre-tc-* editions, R2 child-vehicle scripts |
 
 ---

@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.13)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.10
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.11
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -15,6 +15,7 @@ Single progress snapshot — what ships today, how the pieces connect, and what 
 | Blank grid spawn | `starterScene.js`, `starterTemplates.js` |
 | Lobby (ENTER primary) | `lobby/main.js` — solo **ENTER** · CREATE optional multiplayer |
 | Progressive UI unlock | Scene dock, Compiler, PromptGen opt-in |
+| Surface profiles | `surfaceProfile.js` — player / creator / full (`?surface=`) |
 | Agent Portal on ENTER | `agentPortal.js` — Grok/Ollama auto-detect |
 | Corner hub UI | `hubLayout.js` — PLAY/EDIT, TOOLS, SCENE menus |
 | Room codes + passcode | `roomCode.js`, `hostPasscode.js` |

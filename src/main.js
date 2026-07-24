@@ -6,10 +6,12 @@ import './css/responsive.css';
 import './css/corner-hub.css';
 import './css/lobby.css';
 import './css/spectate.css';
+import './css/surface.css';
 
 import { VERSION } from './config.js';
 import { initAuth } from './auth/main.js';
 import './shared/runtime.js';
+import { initSurfaceProfile } from './shared/surfaceProfile.js';
 import { initLobby } from './lobby/main.js';
 import { initSpectate } from './spectate/main.js';
 import { ViewPrefs } from './shared/viewPrefs.js';
@@ -23,6 +25,9 @@ console.log(`Starting Threshold Suite v${VERSION}...`);
 if (window.matchMedia('(pointer: coarse)').matches) {
     document.body.classList.add('touch-device');
 }
+
+// Surface profile before lobby/engine chrome (player vs creator vs full)
+initSurfaceProfile();
 
 const versionEl = document.getElementById('app-version');
 if (versionEl) versionEl.textContent = `v${VERSION}`;

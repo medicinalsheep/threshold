@@ -155,6 +155,19 @@ export const OllamaClient = {
     },
 
     async _probeOnce(timeoutMs) {
+        // Player surface: no localhost Ollama probes (avoids Pages CORS noise on phones)
+        if (window.SurfaceProfile && !window.SurfaceProfile.allowsOllamaProbe()) {
+            return {
+                ok: false,
+                models: [],
+                error: 'Ollama skipped on play surface — switch to Creator tools to use local models',
+                corsBlocked: false,
+                skippedSurface: true,
+                tried: [],
+                errors: [],
+            };
+        }
+
         const bases = candidateBases();
         const errors = [];
 

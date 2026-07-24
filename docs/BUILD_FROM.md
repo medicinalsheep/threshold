@@ -61,7 +61,17 @@ Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [MULTIPLA
 - **Visibility E0–E4** — frustum × distance · sleep/env gates · **spatial buckets** at scale
 - **Perf harness** — SETUP → PERF · `PerfHarness.measure()` · JSON export
 
-Next: mobile player surface · optional CI headless. Details: [PERF_NEXT.md](PERF_NEXT.md).
+### UI surfaces (same URL)
+
+| Profile | Who | Force |
+|---------|-----|--------|
+| **player** | Play / test / join — no Ollama/AI chrome | `?surface=player` |
+| **creator** | Build + agents (desktop default) | `?surface=creator` |
+| **full** | All tools | `?surface=full` |
+
+Mobile / coarse pointer defaults to **player**. Switch anytime in lobby or SETUP.
+
+Next: optional CI headless. Details: [PERF_NEXT.md](PERF_NEXT.md).
 
 ---
 
@@ -82,8 +92,8 @@ Next: mobile player surface · optional CI headless. Details: [PERF_NEXT.md](PER
 - Treat `old/` as active code  
 - Invent new auth providers without updating AUTH.md  
 - Default retro shaders or procedural texture spam  
-- Expand E4 / floor / multi-mat without measure numbers from PERF_NEXT  
 - Force-push or change product direction without human confirm  
+- Re-probe Ollama on player surface / re-add X OAuth
 
 ---
 

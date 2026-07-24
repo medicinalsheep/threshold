@@ -24,6 +24,7 @@ function initLobbyModePicker() {
     const urlParams = new URLSearchParams(window.location.search);
     const urlMode = urlParams.get('mode');
     let saved = ViewPrefs.get('sessionMode', 'play');
+    // mode=play|build = session; mode=player|creator|full = surface (handled by SurfaceProfile)
     if (urlMode === 'build' || urlMode === 'play') {
         saved = urlMode;
         ViewPrefs.set('sessionMode', saved);
@@ -33,10 +34,18 @@ function initLobbyModePicker() {
             btn.classList.toggle('active', btn.dataset.mode === mode);
         });
         ViewPrefs.set('sessionMode', mode);
+        // BUILD preference nudges creator surface (unless URL forced surface)
+        if (mode === 'build' && window.SurfaceProfile && !window.SurfaceProfile._fromQuery) {
+            if (window.SurfaceProfile.isPlayer()) {
+                window.SurfaceProfile.set('creator');
+            }
+        }
     };
     setActive(saved === 'build' ? 'build' : 'play');
     document.getElementById('lobby-mode-play')?.addEventListener('click', () => setActive('play'));
     document.getElementById('lobby-mode-build')?.addEventListener('click', () => setActive('build'));
+    // Re-bind surface chips after lobby DOM is live
+    window.SurfaceProfile?.bindUi?.();
 }
 
 function setLobbyMode(mode) {

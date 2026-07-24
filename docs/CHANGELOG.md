@@ -1,3 +1,12 @@
+## 10.13.11 — Player / creator surface profiles
+
+- **`SurfaceProfile`** — `player` | `creator` | `full` (body classes + `data-surface`)
+- **Defaults:** mobile / coarse / narrow → **player**; desktop → **creator**
+- **URL:** `?surface=player|creator|full` (preferred) · lobby `?mode=play|build` unchanged
+- **Player surface:** hides AI/Ollama/SETUP/Compiler/export chrome; **no Ollama probe** (no Pages CORS noise)
+- Escape hatch: lobby Play/Creator chips · SCENE → “Creator tools…” · SETUP switcher
+- Lobby BUILD mode nudges creator surface
+
 ## 10.13.10 — Visibility E4 spatial buckets
 
 - **E4** — when `objects.length ≥ spatial.minObjects` (default 120), classify **camera cell ring** + **dynamics** most frames

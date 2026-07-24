@@ -17,7 +17,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.13.10" />
+    <meta name="threshold-version" content="10.13.11" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD SUITE</title>
 </head>
@@ -87,9 +87,18 @@
                             </div>
                             <div class="lobby-quick-row lobby-quick-secondary">
                                 <button id="lobby-spectate" class="lobby-btn lobby-btn-spectate" type="button">SPECTATE</button>
-                                <button id="lobby-tc" class="lobby-btn lobby-btn-ghost" type="button" title="TC Circuit demo">TC DEMO</button>
-                                <button id="lobby-play-last-export" class="lobby-btn lobby-btn-ghost lobby-export-play" type="button" title="Open last EXPORT &amp; PLAY tab">LAST EXPORT</button>
+                                <button id="lobby-tc" class="lobby-btn lobby-btn-ghost" type="button" title="TC Circuit demo" data-surface="creator">TC DEMO</button>
+                                <button id="lobby-play-last-export" class="lobby-btn lobby-btn-ghost lobby-export-play" type="button" title="Open last EXPORT &amp; PLAY tab" data-surface="creator">LAST EXPORT</button>
                             </div>
+                        </div>
+
+                        <div class="lobby-surface-row" aria-label="UI surface">
+                            <div class="surface-switcher">
+                                <button type="button" class="surface-chip" data-surface-set="player" title="Play / test — hide AI &amp; build tools">Play</button>
+                                <button type="button" class="surface-chip" data-surface-set="creator" title="Build + AI tools">Creator</button>
+                                <button type="button" class="surface-chip" data-surface-set="full" title="All tools">Full</button>
+                            </div>
+                            <p id="surface-profile-hint" class="surface-profile-hint lobby-voip-hint"></p>
                         </div>
 
                         <details class="lobby-options-wrap">
@@ -136,7 +145,7 @@
                                     </div>
                                 </details>
 
-                                <details class="lobby-accounts" id="lobby-accounts">
+                                <details class="lobby-accounts" id="lobby-accounts" data-surface="creator">
                                     <summary>Grok API (optional)</summary>
                                     <p class="lobby-voip-hint" style="margin:8px 0;">Cloud AI only — not required to play. Local Ollama is separate.</p>
                                     <div class="lobby-account-card">
@@ -227,7 +236,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.13.10</span><span class="edition-badge" id="edition-badge">WEB</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.13.11</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" title="UI surface">CREATE</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
@@ -439,20 +448,20 @@
                 <div class="corner-hub corner-hub-tr hub-edit-only" data-hub="tools">
                     <button type="button" id="hub-tools-toggle" class="corner-hub-toggle" title="Build tools menu">TOOLS</button>
                     <div class="corner-hub-menu" id="hub-tools-menu">
-                        <button type="button" data-hub-action="setup">SETUP · Agents</button>
-                        <button type="button" data-hub-action="compiler">Compiler</button>
-                        <button type="button" data-hub-action="prompter">PromptGen</button>
+                        <button type="button" data-hub-action="setup" data-surface="creator">SETUP · Agents</button>
+                        <button type="button" data-hub-action="compiler" data-surface="creator">Compiler</button>
+                        <button type="button" data-hub-action="prompter" data-surface="creator">PromptGen</button>
                         <button type="button" data-hub-action="env">Environment</button>
                         <button type="button" data-hub-action="insert">Insert object</button>
-                        <button type="button" data-hub-action="saveworld">Save world</button>
-                        <button type="button" data-hub-action="worlds">Load worlds</button>
-                        <button type="button" data-hub-action="exportplay">Export &amp; play</button>
-                        <button type="button" data-hub-action="export">Export wizard</button>
+                        <button type="button" data-hub-action="saveworld" data-surface="creator">Save world</button>
+                        <button type="button" data-hub-action="worlds" data-surface="creator">Load worlds</button>
+                        <button type="button" data-hub-action="exportplay" data-surface="creator">Export &amp; play</button>
+                        <button type="button" data-hub-action="export" data-surface="creator">Export wizard</button>
                         <button type="button" data-hub-action="keys">Key bindings</button>
                         <button type="button" data-hub-action="help">Help &amp; commands</button>
                         <button type="button" data-hub-action="chat">Chat (T)</button>
                         <button type="button" data-hub-action="tutorial">Tutorial (3-step)</button>
-                        <button type="button" data-hub-action="tutorialfull">Tutorial (full)</button>
+                        <button type="button" data-hub-action="tutorialfull" data-surface="creator">Tutorial (full)</button>
                     </div>
                 </div>
                 <div class="corner-hub corner-hub-bl" data-hub="play">
@@ -477,9 +486,10 @@
                         <button type="button" data-hub-action="inspect" class="hub-edit-only">Edit object</button>
                         <button type="button" data-hub-action="env" class="hub-edit-only">Environment</button>
                         <button type="button" data-hub-action="sfx" class="hub-edit-only">Sound library</button>
-                        <button type="button" data-hub-action="setup">Agents / SETUP</button>
+                        <button type="button" data-hub-action="setup" data-surface="creator">Agents / SETUP</button>
                         <button type="button" data-hub-action="help">Help &amp; commands</button>
                         <button type="button" data-hub-action="chat">Chat (T)</button>
+                        <button type="button" data-surface-set="creator" data-surface="player" class="surface-chip">Creator tools…</button>
                     </div>
                 </div>
             </nav>
@@ -504,7 +514,7 @@
                         <button id="btn-host-panel" class="btn-sm" style="display:none;" title="Host / players">PLAYERS</button>
                         <button id="btn-sync-story" class="btn-sm" style="display:none;" title="What syncs in multiplayer">SYNC</button>
                     </div>
-                    <button type="button" id="agent-reconnect-chip" class="agent-reconnect-chip agent-reconnect-off" title="Connect AI agent" aria-live="polite">Agent —</button>
+                    <button type="button" id="agent-reconnect-chip" class="agent-reconnect-chip agent-reconnect-off" title="Connect AI agent" aria-live="polite" data-surface="creator">Agent —</button>
                     <div id="creator-sync-chip" class="creator-sync-chip" aria-live="polite" title="Session sync status"></div>
                 </div>
                 <div class="toolbar-actions">
@@ -512,7 +522,7 @@
                     <button id="btn-fullscreen-toolbar" class="btn-sm toolbar-keep mobile-only" type="button" aria-label="Enter fullscreen" title="Fullscreen">FULL</button>
                     <button id="btn-control-mode" class="btn-sm toolbar-keep" title="Walk / Fly">FLY</button>
                     <button id="btn-bindings" class="btn-sm toolbar-keep" title="Key bindings">KEYS</button>
-                    <button id="btn-open-setup" class="btn-sm toolbar-keep" type="button" title="Agents, Grok, Ollama, design brief">SETUP</button>
+                    <button id="btn-open-setup" class="btn-sm toolbar-keep" type="button" title="Agents, Grok, Ollama, design brief" data-surface="creator">SETUP</button>
                     <button id="btn-toolbar-more" class="btn-sm toolbar-more-trigger" type="button" title="More tools">MORE ▾</button>
                     <div id="toolbar-more-menu" class="toolbar-more-menu">
                         <button id="btn-env-toggle" class="btn-sm" title="Environment panel">ENV</button>
@@ -770,11 +780,17 @@
                 </details>
                 <div id="agent-tier-warnings"></div>
                 <p class="insert-hint" style="margin:4px 0 8px;">Walk to the <strong>AI Build Station</strong> and press <strong>F</strong>, or open the portal below. Agents detect Grok Build + Ollama automatically.</p>
-                <button id="setup-open-portal" type="button" style="width:100%;margin-bottom:6px;">OPEN AGENT PORTAL</button>
-                <button id="setup-start-brief" type="button" class="btn-sm" style="width:100%;margin-bottom:6px;">ADVANCED: DESIGN BRIEF</button>
-                <button id="setup-resume-brief" type="button" class="btn-sm" style="width:100%;margin-bottom:8px;">RESUME DRAFT BRIEF</button>
-                <label class="export-wizard-check" style="margin-bottom:10px;"><input type="checkbox" id="setup-show-all-tools"> Compact UI (hide extra hints — full tabs stay in nav)</label>
-                <details class="setup-advanced-wrap" open>
+                <div class="surface-switcher" style="margin-bottom:10px;">
+                    <button type="button" class="surface-chip" data-surface-set="player">Play</button>
+                    <button type="button" class="surface-chip" data-surface-set="creator">Creator</button>
+                    <button type="button" class="surface-chip" data-surface-set="full">Full</button>
+                </div>
+                <p class="insert-hint surface-profile-hint" id="setup-surface-hint" style="margin:0 0 8px;">UI surface controls which tools show. Phones default to Play.</p>
+                <button id="setup-open-portal" type="button" style="width:100%;margin-bottom:6px;" data-surface="creator">OPEN AGENT PORTAL</button>
+                <button id="setup-start-brief" type="button" class="btn-sm" style="width:100%;margin-bottom:6px;" data-surface="creator">ADVANCED: DESIGN BRIEF</button>
+                <button id="setup-resume-brief" type="button" class="btn-sm" style="width:100%;margin-bottom:8px;" data-surface="creator">RESUME DRAFT BRIEF</button>
+                <label class="export-wizard-check" style="margin-bottom:10px;" data-surface="creator"><input type="checkbox" id="setup-show-all-tools"> Compact UI (hide extra hints — full tabs stay in nav)</label>
+                <details class="setup-advanced-wrap" open data-surface="creator">
                     <summary>Providers — Grok &amp; Ollama</summary>
                 <p class="insert-hint" style="margin:0 0 8px;"><strong>Ollama setup:</strong> clone <code>https://github.com/medicinalsheep/threshold</code> → <code>npm install</code> → <code>npm run ollama:serve</code> (not plain <code>ollama serve</code> — fixes 403 CORS). Minis: <code>ollama pull medicinalsheep/threshold-mini-npc</code> or <code>npm run models:mini</code>.</p>
                 <label class="insert-hint">xAI API key (session — not shared from other browser tabs)</label>
@@ -800,7 +816,7 @@
                 <label class="insert-hint">Legacy default Ollama model</label>
                 <select id="agent-ollama-model" class="insert-input" style="margin-bottom:6px;"><option value="">— probe on refresh —</option></select>
                 </details>
-                <details class="setup-advanced-wrap">
+                <details class="setup-advanced-wrap" data-surface="creator">
                     <summary>PERF — measure harness</summary>
                 <p class="insert-hint" style="margin:0 0 6px;">Sample frame times + Neg LOD + Visibility + draw calls. Use before/after graphics tier or dense scenes. Live HUD: top PERF chip or <kbd>`</kbd>.</p>
                 <div class="prop-row" style="margin-bottom:6px;">

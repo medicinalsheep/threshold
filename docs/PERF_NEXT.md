@@ -137,4 +137,4 @@ Document: “200 cubes, orbit, mobile tier: p95 frame time −X% with stack on v
 | Multi-mat / skinned | ✅ 10.13.9 |
 | Floor path B | ✅ 10.13.9 |
 | CI headless harness | Plan only |
-| Player surface (mobile) | Plan only |
+| Player surface (mobile) | ✅ 10.13.11 |

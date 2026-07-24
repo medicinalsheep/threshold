@@ -30,10 +30,12 @@ export const AgentReconnectChip = {
 
         let grok = Auth.isLoggedIn();
         let ollama = false;
-        try {
-            const p = await OllamaClient.probe(1200);
-            ollama = p.ok;
-        } catch { /* offline */ }
+        if (window.SurfaceProfile?.allowsOllamaProbe?.() !== false) {
+            try {
+                const p = await OllamaClient.probe(1200);
+                ollama = p.ok;
+            } catch { /* offline */ }
+        }
 
         const hasProvider = grok || ollama;
         let state = 'off';

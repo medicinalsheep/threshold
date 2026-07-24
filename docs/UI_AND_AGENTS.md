@@ -6,6 +6,23 @@ Quick reference for corner hubs, Agent Portal, optional Grok key, and session lo
 
 ---
 
+## UI surfaces (player / creator / full)
+
+Same live URL — different chrome. Module: `src/shared/surfaceProfile.js`.
+
+| Profile | Default when | Hides |
+|---------|----------------|--------|
+| **player** | Coarse pointer, mobile UA, width ≤900 | AI portal chip, Ollama probes, SETUP/Compiler/PromptGen/export, Grok lobby block |
+| **creator** | Desktop fine pointer | Full-only extras |
+| **full** | `?surface=full` | Nothing |
+
+- **URL:** `?surface=player|creator|full` (preferred over `mode` for surface)
+- **Lobby:** Play / Creator / Full chips · BUILD mode nudges creator
+- **In-engine:** SCENE → “Creator tools…” on player · SETUP switcher
+- Pref stored in `ViewPrefs.surfaceProfile`
+
+---
+
 ## Lobby (session start)
 
 | Action | Notes |
