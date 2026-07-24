@@ -1,3 +1,11 @@
+## 10.13.13 — Neg LOD softer distance + scene-aware tint
+
+- **Longer distances** — default **72m** · Lite 52 / Mobile 68 / Realistic 88 / Ultra 110; hysteresis 8; softer fade (min opacity 0.88)
+- **Appearance sampling** — each material’s albedo + emissive + metal/rough cues → unique far color
+- **Scene tint** — mix fog / background / hemi / sun (`envBlend`, `envLightBoost`); re-sample on time-of-day & fog changes (`notifyEnvChange`)
+- **Auto static props** on Lite/Mobile/**Realistic** (min 3 objects); builders get free far LOD without hand-flagging
+- Config `negative-lod.json` v4
+
 ## 10.13.12 — Doc truth sweep (post surface / E4)
 
 - Align spine docs with shipped product: surfaces, Neg LOD stack, Visibility E0–E4, no X OAuth

@@ -56,8 +56,8 @@ Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [UI_AND_A
 
 ## Shipped perf (do not re-invent)
 
-- **Neg LOD A+B** — far unlit / flat materials (`userData.negativeLOD`)
-- **Neg LOD tier auto** — Lite/Mobile graphics auto-flags eligible props (`applyTierPolicy`)
+- **Neg LOD** — far unlit · **long distances** (~52–110m by tier) · **per-material appearance** tinted by scene fog/hemi/sun
+- **Neg LOD tier auto** — static props on Lite/Mobile/Realistic (`applyTierPolicy`)
 - **Neg LOD multi-mat / skinned / floor B** — 1:1 slot flats · shared clone · floor unlit when high/far
 - **Visibility E0–E4** — frustum × distance · sleep/env gates · **spatial buckets** at scale
 - **Perf harness** — SETUP → PERF · `PerfHarness.measure()` · JSON export

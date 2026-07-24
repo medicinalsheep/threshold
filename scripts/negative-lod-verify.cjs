@@ -54,10 +54,19 @@ for (const token of [
     'collectFloorTargets',
     'isSkinnedMesh',
     'poolKeys',
+    'composeFarColor',
+    'sampleEnvTint',
+    'sampleAlbedo',
+    'notifyEnvChange',
+    'isStaticProp',
 ]) {
     if (mod.includes(token)) ok(`multi-mat/floor has ${token}`);
     else fail(`missing ${token}`);
 }
+if (cfgAuto.defaultDistance >= 60) ok(`defaultDistance ${cfgAuto.defaultDistance} (far softer)`);
+else fail('defaultDistance should be ≥60 for less-noticeable flats');
+if (cfgAuto.envBlend > 0 && cfgAuto.appearanceSample !== false) ok('appearance + envBlend enabled');
+else fail('appearanceSample/envBlend missing');
 
 const perf = read('src/shared/perfHarness.js');
 if (perf.includes('export const PerfHarness') && perf.includes('measure(')) ok('perfHarness.js present');

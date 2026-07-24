@@ -9,35 +9,47 @@ import { isLoadSuspended } from './aiMemoryFreeze.js';
 
 const cfg = {
     enabled: cfgJson.enabled !== false,
-    defaultDistance: Number(cfgJson.defaultDistance) || 40,
-    hysteresis: Number(cfgJson.hysteresis) || 4,
+    defaultDistance: Number(cfgJson.defaultDistance) || 72,
+    hysteresis: Number(cfgJson.hysteresis) || 8,
     maxUpdatesPerFrame: Number(cfgJson.maxUpdatesPerFrame) || 48,
-    fadeStart: Number(cfgJson.fadeStart) || 0.85,
-    fadeEnd: Number(cfgJson.fadeEnd) || 1.15,
+    fadeStart: Number(cfgJson.fadeStart) || 0.72,
+    fadeEnd: Number(cfgJson.fadeEnd) || 1.35,
+    fadeMinOpacity: Number(cfgJson.fadeMinOpacity) || 0.88,
     preserveMapDefault: !!cfgJson.preserveMapDefault,
     disableCastShadowWhenFlat: cfgJson.disableCastShadowWhenFlat !== false,
     forceFullWhenSelected: cfgJson.forceFullWhenSelected !== false,
+    /** 0–1 mix of scene fog/hemi/sun into far flat color (softens pops). */
+    envBlend: Number.isFinite(Number(cfgJson.envBlend)) ? Number(cfgJson.envBlend) : 0.4,
+    /** Extra multiply from ambient/hemi so flats track world lighting. */
+    envLightBoost: Number.isFinite(Number(cfgJson.envLightBoost)) ? Number(cfgJson.envLightBoost) : 0.22,
+    appearanceSample: cfgJson.appearanceSample !== false,
     excludeFlags: Array.isArray(cfgJson.excludeFlags) ? cfgJson.excludeFlags : [],
-    /** Graphics tiers that auto-flag eligible props (Lite / Mobile). */
+    /** Graphics tiers that auto-flag eligible static props. */
     autoEnableTiers: Array.isArray(cfgJson.autoEnableTiers)
         ? cfgJson.autoEnableTiers
-        : ['compatibility', 'balanced'],
-    autoEnableMinObjects: Number(cfgJson.autoEnableMinObjects) || 6,
+        : ['compatibility', 'balanced', 'realistic'],
+    autoEnableMinObjects: Number(cfgJson.autoEnableMinObjects) || 3,
+    autoEnableStaticOnly: cfgJson.autoEnableStaticOnly !== false,
     distanceByTier: cfgJson.distanceByTier && typeof cfgJson.distanceByTier === 'object'
         ? cfgJson.distanceByTier
-        : { compatibility: 28, balanced: 40, realistic: 55, ultra: 55 },
+        : { compatibility: 52, balanced: 68, realistic: 88, ultra: 110 },
     floor: {
         enabled: cfgJson.floor?.enabled !== false,
         autoTiersOnly: cfgJson.floor?.autoTiersOnly !== false,
-        cameraHeight: Number(cfgJson.floor?.cameraHeight) || 12,
-        distance: Number(cfgJson.floor?.distance) || 45,
-        hysteresis: Number(cfgJson.floor?.hysteresis) || 2,
+        cameraHeight: Number(cfgJson.floor?.cameraHeight) || 18,
+        distance: Number(cfgJson.floor?.distance) || 72,
+        hysteresis: Number(cfgJson.floor?.hysteresis) || 4,
         preserveMap: cfgJson.floor?.preserveMap !== false,
     },
 };
 
 const _camPos = new THREE.Vector3();
 const _objPos = new THREE.Vector3();
+const _tmpColor = new THREE.Color();
+const _tmpColor2 = new THREE.Color();
+
+/** Bumps when fog / time-of-day / lights change so flats re-tint. */
+let _envGen = 1;
 
 /** @type {Set<THREE.Object3D>} */
 const registry = new Set();
@@ -49,7 +61,7 @@ const runtime = new WeakMap();
 const flatPool = new Map();
 
 /**
- * @typedef {{ state: 'full'|'flat', fullMat: any, castShadow: boolean, receiveShadow: boolean, poolKey: string|null }} RuntimeState
+ * @typedef {{ state: 'full'|'flat', fullMat: any, castShadow: boolean, receiveShadow: boolean, poolKey: string|null, poolKeys: (string|null)[]|null, envGen: number }} RuntimeState
  */
 
 function masterEnabled() {
@@ -76,9 +88,27 @@ function distanceForTier(tier) {
     return Number.isFinite(d) && d > 0 ? d : cfg.defaultDistance;
 }
 
+/** Static-ish props suitable for auto far LOD (builders drop these on the grid). */
+function isStaticProp(obj) {
+    if (!obj) return false;
+    const ud = obj.userData || {};
+    if (ud.isProjectile || ud.isPlayer || ud.isDriven || ud.driverKey) return false;
+    if (ud.isVehicle && !ud.staticVehicle) return false;
+    if (ud.negativeLodDynamic) return false;
+    // Moving physics bodies — still allow (far material only) unless forced dynamic
+    if (cfg.autoEnableStaticOnly) {
+        if (ud.hasPhysics && Number(ud.mass) > 0 && !ud.locked && !ud.isStatic && !ud.static) {
+            // light dynamics OK; heavy movers skip auto
+            if (Number(ud.mass) > 8) return false;
+        }
+    }
+    return true;
+}
+
 /** Eligible for graphics-tier auto Neg LOD (not user-owned / excluded). */
 function isAutoEligible(obj) {
     if (!obj || isExcluded(obj)) return false;
+    if (!isStaticProp(obj)) return false;
     const ud = obj.userData || {};
     if (ud.negativeLodForcedOff || ud.negativeLOD === false || ud.negativeLod === false) return false;
     // User / scene-authored flag — leave alone (except re-tune distance only if tier-auto)
@@ -190,28 +220,153 @@ function ensureOwnedMaterials(mesh) {
     }
 }
 
-function preserveMapActive(mat) {
-    return !!(mat?.map);
+function clamp01(x) {
+    return Math.min(1, Math.max(0, x));
+}
+
+/**
+ * Read original material appearance (albedo + emissive + metalness cue).
+ * Each mesh slot keeps its own far color so a red crate ≠ a blue wall.
+ */
+function sampleAlbedo(fullMat) {
+    _tmpColor.setRGB(0.72, 0.72, 0.74);
+    if (fullMat?.color?.isColor) {
+        _tmpColor.copy(fullMat.color);
+    } else if (typeof fullMat?.color?.getHex === 'function') {
+        _tmpColor.setHex(fullMat.color.getHex());
+    }
+    // Emissive keeps lit signs / neon readable when flat
+    if (fullMat?.emissive?.isColor) {
+        const e = Number(fullMat.emissiveIntensity) || 0;
+        if (e > 0.001) {
+            _tmpColor.r = clamp01(_tmpColor.r + fullMat.emissive.r * e * 0.45);
+            _tmpColor.g = clamp01(_tmpColor.g + fullMat.emissive.g * e * 0.45);
+            _tmpColor.b = clamp01(_tmpColor.b + fullMat.emissive.b * e * 0.45);
+        }
+    }
+    // Metals read darker / cooler at distance
+    const metal = Number(fullMat?.metalness);
+    if (Number.isFinite(metal) && metal > 0.05) {
+        _tmpColor.r = _tmpColor.r * (1 - metal * 0.28) + 0.18 * metal;
+        _tmpColor.g = _tmpColor.g * (1 - metal * 0.28) + 0.19 * metal;
+        _tmpColor.b = _tmpColor.b * (1 - metal * 0.28) + 0.22 * metal;
+    }
+    // Rough plastics desaturate slightly (fog-friendly)
+    const rough = Number(fullMat?.roughness);
+    if (Number.isFinite(rough) && rough > 0.55) {
+        const avg = (_tmpColor.r + _tmpColor.g + _tmpColor.b) / 3;
+        const t = (rough - 0.55) * 0.35;
+        _tmpColor.r += (avg - _tmpColor.r) * t;
+        _tmpColor.g += (avg - _tmpColor.g) * t;
+        _tmpColor.b += (avg - _tmpColor.b) * t;
+    }
+    return _tmpColor.clone();
+}
+
+/**
+ * Scene lighting / atmosphere for far flats — fog, background, hemi, sun.
+ * Rebuilds every call so time-of-day stays coherent.
+ */
+function sampleEnvTint() {
+    const out = new THREE.Color(0.45, 0.5, 0.55);
+    const scene = window.Engine?.scene;
+    let samples = 0;
+    _tmpColor2.setRGB(0, 0, 0);
+
+    const fog = scene?.fog?.color;
+    if (fog?.isColor) {
+        _tmpColor2.add(fog);
+        samples += 1;
+    }
+    const bg = scene?.background;
+    if (bg?.isColor) {
+        _tmpColor2.add(bg);
+        samples += 1;
+    }
+
+    const hemi = window.Environment?.hemiLight;
+    if (hemi?.visible !== false && hemi?.color) {
+        _tmpColor2.r += hemi.color.r * 0.55 + (hemi.groundColor?.r ?? 0.2) * 0.35;
+        _tmpColor2.g += hemi.color.g * 0.55 + (hemi.groundColor?.g ?? 0.18) * 0.35;
+        _tmpColor2.b += hemi.color.b * 0.55 + (hemi.groundColor?.b ?? 0.15) * 0.35;
+        samples += 1;
+    }
+
+    const sun = window.Environment?.sunLight;
+    if (sun?.visible !== false && sun?.color) {
+        const i = Math.min(1.2, Number(sun.intensity) || 0.8) * 0.35;
+        _tmpColor2.r += sun.color.r * i;
+        _tmpColor2.g += sun.color.g * i;
+        _tmpColor2.b += sun.color.b * i;
+        samples += 0.6;
+    }
+
+    if (samples > 0) {
+        out.copy(_tmpColor2).multiplyScalar(1 / Math.max(1, samples));
+    }
+    out.r = clamp01(out.r);
+    out.g = clamp01(out.g);
+    out.b = clamp01(out.b);
+    return out;
+}
+
+/**
+ * Albedo × soft ambient + lerp toward fog/env — unique per material, tracks scene.
+ */
+function composeFarColor(fullMat, obj) {
+    if (!cfg.appearanceSample) {
+        return fullMat?.color?.getHex?.() ?? 0xaaaaaa;
+    }
+    const albedo = sampleAlbedo(fullMat);
+    const env = sampleEnvTint();
+    const blend = clamp01(
+        obj?.userData?.negativeLodEnvBlend != null
+            ? Number(obj.userData.negativeLodEnvBlend)
+            : cfg.envBlend,
+    );
+    const boost = clamp01(cfg.envLightBoost);
+
+    // Light response: albedo * (ambient floor + env)
+    const lit = new THREE.Color(
+        clamp01(albedo.r * (0.42 + env.r * boost + (1 - boost) * 0.35)),
+        clamp01(albedo.g * (0.42 + env.g * boost + (1 - boost) * 0.35)),
+        clamp01(albedo.b * (0.42 + env.b * boost + (1 - boost) * 0.35)),
+    );
+    // Atmosphere pull so distant flats sit in the same sky/fog band
+    lit.lerp(env, blend * 0.85);
+    return lit.getHex();
+}
+
+function appearanceKey(fullMat, farHex, useMap) {
+    const mapId = useMap && fullMat?.map ? fullMat.map.uuid.slice(0, 8) : 'nomap';
+    // Quantize env gen into key so pool reuses within same atmosphere stamp
+    return `${farHex.toString(16)}_${mapId}_e${_envGen}`;
 }
 
 function acquireFlat(fullMat, obj, forcePreserveMap) {
     const useMap = (forcePreserveMap || preserveMap(obj)) && fullMat?.map;
-    const hex = fullMat?.color?.getHex?.() ?? 0xffffff;
-    const key = `${hex.toString(16)}_${useMap ? fullMat.map.uuid : 'nomap'}`;
+    const farHex = composeFarColor(fullMat, obj);
+    const key = appearanceKey(fullMat, farHex, useMap);
     let entry = flatPool.get(key);
     if (!entry) {
         const mat = new THREE.MeshBasicMaterial({
-            color: hex,
+            color: farHex,
             map: useMap ? fullMat.map : null,
             transparent: false,
             opacity: 1,
             toneMapped: true,
+            // Keep fog interaction so far objects sink into atmosphere
+            fog: true,
         });
-        entry = { mat, refs: 0 };
+        // Soften map contrast when present (less "sticker" look)
+        if (useMap && mat.map) {
+            mat.color.multiplyScalar(0.92);
+        }
+        entry = { mat, refs: 0, farHex };
         flatPool.set(key, entry);
     }
     entry.refs += 1;
-    return { mat: entry.mat, key };
+    return { mat: entry.mat, key, farHex };
 }
 
 function releaseFlat(key) {
@@ -255,13 +410,15 @@ function applyOpacity(flatMat, dist, threshold, obj) {
     if (!fadeEnabled(obj) || !flatMat?.isMeshBasicMaterial) return;
     const start = threshold * cfg.fadeStart;
     const end = threshold * cfg.fadeEnd;
+    const minOp = clamp01(cfg.fadeMinOpacity);
     let opacity = 1;
-    if (dist >= end) opacity = 0.35;
+    // Soft only — aggressive ghosting made flats *more* noticeable
+    if (dist >= end) opacity = minOp;
     else if (dist > start) {
         const t = (dist - start) / Math.max(0.001, end - start);
-        opacity = 1 - t * 0.65;
+        opacity = 1 - t * (1 - minOp);
     }
-    flatMat.transparent = opacity < 0.999;
+    flatMat.transparent = opacity < 0.995;
     flatMat.opacity = opacity;
     flatMat.depthWrite = opacity > 0.9;
     flatMat.needsUpdate = true;
@@ -282,7 +439,11 @@ function enterFlat(mesh, objRoot, opts = {}) {
     if (mesh.isSkinnedMesh && mesh.userData?.negativeLodNoSkin) return false;
 
     const rt = getRt(mesh);
-    if (rt.state === 'flat') return false;
+    // Re-enter when atmosphere stamp changed so flats track lighting
+    if (rt.state === 'flat' && rt.envGen === _envGen) return false;
+    if (rt.state === 'flat' && rt.envGen !== _envGen) {
+        enterFull(mesh);
+    }
 
     ensureOwnedMaterials(mesh);
 
@@ -296,21 +457,29 @@ function enterFlat(mesh, objRoot, opts = {}) {
     rt.receiveShadow = mesh.receiveShadow;
     rt.poolKeys = [];
     rt.poolKey = null;
+    rt.envGen = _envGen;
 
     const forceMap = !!opts.preserveMap;
     const flats = [];
+    const appearanceHexes = [];
     for (const full of slots) {
         if (!isFlattable(full)) {
             flats.push(full);
             rt.poolKeys.push(null);
+            appearanceHexes.push(null);
             continue;
         }
-        const { mat: flat, key } = acquireFlat(full, objRoot || mesh, forceMap);
+        const { mat: flat, key, farHex } = acquireFlat(full, objRoot || mesh, forceMap);
         flats.push(flat);
         rt.poolKeys.push(key);
+        appearanceHexes.push(farHex);
     }
 
     mesh.material = wasArray ? flats : flats[0];
+    // Authoring hint: last sampled far colors (not networked)
+    if (objRoot?.userData) {
+        objRoot.userData._negLodFarColors = appearanceHexes.filter((h) => h != null);
+    }
 
     if (cfg.disableCastShadowWhenFlat && !mesh.isInstancedMesh) {
         mesh.castShadow = false;
@@ -447,6 +616,23 @@ let _scanOffset = 0;
 export const NegativeLod = {
     config: cfg,
 
+    /** Call after fog / time-of-day / major light changes so flats re-sample scene tint. */
+    notifyEnvChange() {
+        _envGen += 1;
+        // Drop pooled flats tied to old atmosphere (refcounted; live meshes re-acquire)
+        for (const [key, entry] of [...flatPool.entries()]) {
+            if (entry.refs <= 0) {
+                entry.mat.map = null;
+                entry.mat.dispose();
+                flatPool.delete(key);
+            }
+        }
+    },
+
+    getEnvGeneration() {
+        return _envGen;
+    },
+
     /** Call when object gains/loses negativeLOD flag or is created */
     syncObject(obj) {
         if (!obj) return;
@@ -495,7 +681,7 @@ export const NegativeLod = {
     },
 
     /**
-     * Auto-enable Neg LOD on eligible objects for Lite/Mobile tiers.
+     * Auto-enable Neg LOD on eligible static objects for configured graphics tiers.
      * Strips prior tier-auto flags when tier is outside autoEnableTiers.
      * @param {string} [tier] graphics tier id
      * @param {THREE.Object3D[]} [objects]
@@ -506,7 +692,7 @@ export const NegativeLod = {
         const tierId = tier || State?.graphicsTier || 'realistic';
         const list = objects || State?.objects || [];
         const autoTiers = cfg.autoEnableTiers || [];
-        const min = cfg.autoEnableMinObjects || 6;
+        const min = cfg.autoEnableMinObjects || 3;
         const dist = distanceForTier(tierId);
         let enabled = 0;
         let stripped = 0;
@@ -527,6 +713,13 @@ export const NegativeLod = {
 
         for (const obj of list) {
             if (!isAutoEligible(obj)) continue;
+            // Refresh distance if already tier-auto (config bumps)
+            if (obj.userData?.negativeLodSource === 'tier-auto') {
+                obj.userData.negativeLodDistance = dist;
+                this.syncObject(obj);
+                enabled += 1;
+                continue;
+            }
             this.enableObject(obj, { distance: dist, source: 'tier-auto' });
             enabled += 1;
         }
@@ -538,12 +731,6 @@ export const NegativeLod = {
         const tierId = window.State?.graphicsTier || 'realistic';
         if (!(cfg.autoEnableTiers || []).includes(tierId)) return false;
         if (!isAutoEligible(obj)) return false;
-        const n = window.State?.objects?.length ?? 0;
-        if (n < (cfg.autoEnableMinObjects || 6) && n < 1) return false;
-        // Allow early auto on first props once scene has any objects
-        if (n < (cfg.autoEnableMinObjects || 6)) {
-            // still enable this prop so dense scenes build up; policy re-run after load sets the rest
-        }
         this.enableObject(obj, { distance: distanceForTier(tierId), source: 'tier-auto' });
         return true;
     },

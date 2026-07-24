@@ -125,11 +125,14 @@ export const Environment = {
             Engine.scene.fog.color.copy(sky);
             if (State.env.atmosphereEnabled) Engine.scene.background = sky.clone();
         }
+        // Far flats re-sample fog/hemi/sun tint
+        window.NegativeLod?.notifyEnvChange?.();
     },
 
     setFog: function (density) {
         State.env.fogDensity = density;
         if (Engine.scene?.fog) Engine.scene.fog.density = density;
+        window.NegativeLod?.notifyEnvChange?.();
     },
 
     createWater: function () {

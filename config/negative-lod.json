@@ -1,29 +1,34 @@
 {
   "format": "threshold-negative-lod",
-  "version": 3,
+  "version": 4,
   "enabled": true,
-  "defaultDistance": 40,
-  "hysteresis": 4,
+  "defaultDistance": 72,
+  "hysteresis": 8,
   "maxUpdatesPerFrame": 48,
-  "fadeStart": 0.85,
-  "fadeEnd": 1.15,
+  "fadeStart": 0.72,
+  "fadeEnd": 1.35,
+  "fadeMinOpacity": 0.88,
   "preserveMapDefault": false,
   "disableCastShadowWhenFlat": true,
   "forceFullWhenSelected": true,
-  "autoEnableTiers": ["compatibility", "balanced"],
-  "autoEnableMinObjects": 6,
+  "envBlend": 0.4,
+  "envLightBoost": 0.22,
+  "appearanceSample": true,
+  "autoEnableTiers": ["compatibility", "balanced", "realistic"],
+  "autoEnableMinObjects": 3,
+  "autoEnableStaticOnly": true,
   "distanceByTier": {
-    "compatibility": 28,
-    "balanced": 40,
-    "realistic": 55,
-    "ultra": 55
+    "compatibility": 52,
+    "balanced": 68,
+    "realistic": 88,
+    "ultra": 110
   },
   "floor": {
     "enabled": true,
     "autoTiersOnly": true,
-    "cameraHeight": 12,
-    "distance": 45,
-    "hysteresis": 2,
+    "cameraHeight": 18,
+    "distance": 72,
+    "hysteresis": 4,
     "preserveMap": true
   },
   "excludeFlags": [
@@ -33,5 +38,5 @@
     "isHero",
     "lockedFloor"
   ],
-  "note": "Shader LOD: far unlit. Multi-mat 1:1 + shared clone + skinned safe. Floor path B: ground/instanced swap when camera high/far on Lite/Mobile."
+  "note": "Far unlit LOD with longer distances + per-material appearance tinted by scene fog/hemi/sun so flats blend into the world. Auto on static props for Lite/Mobile/Realistic."
 }

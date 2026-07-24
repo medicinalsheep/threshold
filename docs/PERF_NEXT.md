@@ -1,9 +1,9 @@
 # Performance next steps (after Neg LOD A–E4)
 
-**Status:** Core perf stack shipped · **Engine:** 10.13.11+  
+**Status:** Core perf stack shipped · **Engine:** 10.13.13+  
 **Related:** [NEGATIVE_LOD.md](NEGATIVE_LOD.md) · [UI_AND_AGENTS.md](UI_AND_AGENTS.md) (surfaces)
 
-X OAuth is **removed**. Shipped: **Neg LOD** (tier auto, multi-mat, floor B) · **Visibility E0–E4** · **measure harness** · **player surface** (no Ollama on phones). Remaining optional: CI headless harness.
+X OAuth is **removed**. Shipped: **Neg LOD** (long distance, scene-aware tint, tier auto, multi-mat, floor B) · **Visibility E0–E4** · **measure harness** · **player surface**. Remaining optional: CI headless harness.
 
 ---
 

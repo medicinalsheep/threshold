@@ -376,7 +376,11 @@ export const UI = {
         const negEl = document.getElementById('insp-negative-lod');
         const negDist = document.getElementById('insp-negative-lod-dist');
         if (negEl) negEl.checked = !!(obj.userData.negativeLOD || obj.userData.negativeLod);
-        if (negDist) negDist.value = obj.userData.negativeLodDistance ?? 40;
+        if (negDist) {
+            negDist.value = obj.userData.negativeLodDistance
+                ?? NegativeLod.config?.defaultDistance
+                ?? 72;
+        }
         this.syncNegativeLodStatus(obj);
         this.populateSoundClipSelect(obj.userData.soundClipId || '');
         this.syncSoundInspectorMode();
@@ -390,9 +394,16 @@ export const UI = {
         const vis = obj.userData?._visClass || '—';
         const vstats = window.VisibilitySystem?.getStats?.() || {};
         const sleep = obj.userData?._visPhysicsSleep ? ' · phys sleep' : '';
+        const distM = obj.userData.negativeLodDistance
+            || NegativeLod.config?.defaultDistance
+            || 72;
+        const farCols = obj.userData?._negLodFarColors;
+        const farHint = farCols?.length
+            ? ` · tint #${Number(farCols[0]).toString(16).padStart(6, '0')}`
+            : '';
         el.textContent = on
-            ? `Neg LOD on · vis ${vis}${sleep} · far unlit (~${obj.userData.negativeLodDistance || 40}m) · flat ${stats.flat ?? '—'}/${stats.registered ?? '—'} · A${vstats.A ?? 0}/B${vstats.B ?? 0}/C${vstats.C ?? 0}/D${vstats.D ?? 0}/E${vstats.E ?? 0} · sh${vstats.shadowsDimmed ?? 0}/ps${vstats.physicsAsleep ?? 0}`
-            : `Negative LOD off · vis ${vis}${sleep} · A${vstats.A ?? 0}/B${vstats.B ?? 0}/C${vstats.C ?? 0}/D${vstats.D ?? 0}/E${vstats.E ?? 0}`;
+            ? `Neg LOD on · vis ${vis}${sleep} · far unlit (~${distM}m)${farHint} · flat ${stats.flat ?? '—'}/${stats.registered ?? '—'} · env#${NegativeLod.getEnvGeneration?.() ?? '—'} · A${vstats.A ?? 0}/B${vstats.B ?? 0}/C${vstats.C ?? 0}/D${vstats.D ?? 0}/E${vstats.E ?? 0}`
+            : `Negative LOD off · vis ${vis}${sleep} · auto static props on Lite/Mobile/Realistic · A${vstats.A ?? 0}/B${vstats.B ?? 0}/C${vstats.C ?? 0}/D${vstats.D ?? 0}/E${vstats.E ?? 0}`;
     },
     syncTextureInspector: async function (obj) {
         const status = document.getElementById('insp-texture-status');
