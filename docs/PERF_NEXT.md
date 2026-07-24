@@ -80,7 +80,9 @@ Configs: `lod-distances.json` · `negative-lod.json` · `visibility.json`.
 ### In-engine
 SETUP → **PERF** · `window.PerfHarness` · HUD: FPS · neg flat/reg · vis A/C/E · last p95.
 
-### CLI
+### CLI (CI headless)
+
+`scripts/perf-harness.cjs` (Puppeteer) — also gated by `npm run perf:verify` on every Pages deploy.
 
 ```bash
 npm run perf:verify
@@ -88,6 +90,7 @@ npm run perf:harness
 npm run perf:harness:compare
 npm run perf:harness -- --cubes 200 --seconds 5 --warm 1 --tier compatibility
 npm run negative-lod:verify
+npm run physics:verify
 ```
 
 Defaults: **5s** sample · **1s** warm-up discarded · hitch **>100ms** dropped · `dist-store/perf-latest.json`.
