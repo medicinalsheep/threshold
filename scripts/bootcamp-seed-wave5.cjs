@@ -273,7 +273,7 @@ const COACHES = [
 const GUIDE = [
     pair('guide', 'What is player surface?', 'player surface hides AI/Ollama/export chrome; default on phones; ?surface=player'),
     pair('guide', 'Ollama port for Pages?', 'Proxy http://127.0.0.1:11435 via npm run ollama:serve — not raw :11434'),
-    pair('guide', 'Neg LOD default distance?', 'About 72m default; Lite ~52m Mobile ~68m Realistic ~88m Ultra ~110m'),
+    pair('guide', 'Neg LOD default distance?', 'About 100m default; Lite ~72m Mobile ~95m Realistic ~125m Ultra ~165m; mesh/HILOD first at 18/48m'),
     pair('guide', 'World.createObject argument order?', "World.createObject(type, name, colorHex, usePhysics) — type first: cube|sphere|cone|torus"),
     pair('guide', 'Default render mode?', 'Engine.setRenderMode(4) realistic PBR'),
     pair('guide', 'How to train minis?', 'npm run train:mini -- --full then SAVE TIERS small=threshold-mini-npc medium=threshold-mini-dev'),

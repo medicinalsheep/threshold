@@ -352,14 +352,26 @@ function sampleSceneExposure() {
 }
 
 /**
- * Bake missing lights into flat color so unlit ≈ mid-range lit PBR, not muddy.
- * Per-material albedo + soft env/fog; metals pick up sky tint instead of greying out.
+ * Effective RGB light response for unlit bake (missing hemi/sun).
  */
-function composeFarColor(fullMat, obj) {
+function lightResponse(env, exposure, boost, lift) {
+    const base = cfg.ambientFloor + (exposure - cfg.ambientFloor) * 0.55;
+    return {
+        r: clamp01((base + env.r * boost * 0.35) * lift),
+        g: clamp01((base + env.g * boost * 0.35) * lift),
+        b: clamp01((base + env.b * boost * 0.35) * lift),
+    };
+}
+
+/**
+ * Bake missing lights into flat color so unlit ≈ mid-range lit PBR, not muddy.
+ * @param {{ forMap?: boolean }} [opts] forMap: map carries albedo — color is light-only
+ *   (MeshBasic multiplies map * color; never re-apply albedo into color when mapped).
+ */
+function composeFarColor(fullMat, obj, opts = {}) {
     if (!cfg.appearanceSample) {
         return fullMat?.color?.getHex?.() ?? 0xaaaaaa;
     }
-    const albedo = sampleAlbedo(fullMat);
     const env = sampleEnvTint();
     const exposure = sampleSceneExposure();
     const blend = clamp01(
@@ -369,18 +381,27 @@ function composeFarColor(fullMat, obj) {
     );
     const boost = clamp01(cfg.envLightBoost);
     const lift = Number.isFinite(cfg.unlitLift) ? cfg.unlitLift : 1.12;
+    const L = lightResponse(env, exposure, boost, lift);
+
+    // Textured flats: map = albedo detail; color = exposure only (avoids map*albedo*light mud)
+    if (opts.forMap) {
+        const scale = Number.isFinite(cfg.mapColorScale) ? cfg.mapColorScale : 1.05;
+        const lit = new THREE.Color(
+            clamp01(L.r * scale),
+            clamp01(L.g * scale),
+            clamp01(L.b * scale),
+        );
+        lit.lerp(env, blend * 0.3);
+        return lit.getHex();
+    }
+
+    const albedo = sampleAlbedo(fullMat);
     const metal = clamp01(Number(fullMat?.metalness) || 0);
 
-    // Effective light: ambient floor + scene exposure + env chroma boost
-    // Avoid the old albedo*0.7 path that made everything look "just darker"
-    const lightR = cfg.ambientFloor + (exposure - cfg.ambientFloor) * 0.55 + env.r * boost * 0.35;
-    const lightG = cfg.ambientFloor + (exposure - cfg.ambientFloor) * 0.55 + env.g * boost * 0.35;
-    const lightB = cfg.ambientFloor + (exposure - cfg.ambientFloor) * 0.55 + env.b * boost * 0.35;
-
     const lit = new THREE.Color(
-        clamp01(albedo.r * lightR * lift),
-        clamp01(albedo.g * lightG * lift),
-        clamp01(albedo.b * lightB * lift),
+        clamp01(albedo.r * L.r),
+        clamp01(albedo.g * L.g),
+        clamp01(albedo.b * L.b),
     );
 
     // Metals: mix env as fake specular fill (keep value, add sky)
@@ -403,8 +424,8 @@ function appearanceKey(fullMat, farHex, useMap) {
 }
 
 function acquireFlat(fullMat, obj, forcePreserveMap) {
-    const useMap = (forcePreserveMap || preserveMap(obj)) && fullMat?.map;
-    const farHex = composeFarColor(fullMat, obj);
+    const useMap = !!(forcePreserveMap || preserveMap(obj)) && !!fullMat?.map;
+    const farHex = composeFarColor(fullMat, obj, { forMap: useMap });
     const key = appearanceKey(fullMat, farHex, useMap);
     let entry = flatPool.get(key);
     if (!entry) {
@@ -417,10 +438,8 @@ function acquireFlat(fullMat, obj, forcePreserveMap) {
             // Keep fog interaction so far objects sink into atmosphere
             fog: true,
         });
-        // Map * color: slight lift so textured flats match lit PBR (was 0.92 → muddy)
-        if (useMap && mat.map) {
-            mat.color.multiplyScalar(cfg.mapColorScale);
-        }
+        // Shared pool — never mutate opacity/transparent per-object (cross-object thrash)
+        mat.userData = { ...(mat.userData || {}), _negLodShared: true };
         entry = { mat, refs: 0, farHex };
         flatPool.set(key, entry);
     }
@@ -467,6 +486,8 @@ function getRt(obj) {
 
 function applyOpacity(flatMat, dist, threshold, obj) {
     if (!fadeEnabled(obj) || !flatMat?.isMeshBasicMaterial) return;
+    // Pooled flats are shared across objects — mutating opacity thrashes neighbors
+    if (flatMat.userData?._negLodShared) return;
     const start = threshold * cfg.fadeStart;
     const end = threshold * cfg.fadeEnd;
     const minOp = clamp01(cfg.fadeMinOpacity);
@@ -614,15 +635,15 @@ function ensureFloorPathC(nearMesh) {
     if (!pack?.matrices?.length) return null;
     if (pack.farMesh) return pack;
 
-    const flatHex = composeFarColor(nearMesh.material, nearMesh);
-    const useMap = cfg.floor.preserveMap && nearMesh.material?.map;
+    const useMap = !!(cfg.floor.preserveMap && nearMesh.material?.map);
+    const flatHex = composeFarColor(nearMesh.material, nearMesh, { forMap: useMap });
     const flatMat = new THREE.MeshBasicMaterial({
         color: flatHex,
         map: useMap ? nearMesh.material.map : null,
         fog: true,
         toneMapped: true,
     });
-    if (useMap) flatMat.color.multiplyScalar(cfg.mapColorScale);
+    flatMat.userData = { _negLodShared: true, _negLodFloor: true };
     const far = new THREE.InstancedMesh(nearMesh.geometry, flatMat, pack.total);
     far.castShadow = false;
     far.receiveShadow = true;
@@ -644,14 +665,15 @@ function ensureFloorPathC(nearMesh) {
 function updateFloorPathC(nearMesh, camera) {
     const pack = ensureFloorPathC(nearMesh);
     if (!pack) return 0;
-    const nearDist = cfg.floor.pathCNearDistance || 36;
+    const nearDist = cfg.floor.pathCNearDistance || 52;
     camera.getWorldPosition(_camPos);
     let nNear = 0;
     let nFar = 0;
     const far = pack.farMesh;
     // Re-tint far mat when env changes
     if (pack.envGen !== _envGen && pack.flatMat) {
-        pack.flatMat.color.setHex(composeFarColor(nearMesh.material, nearMesh));
+        const useMap = !!(pack.flatMat.map);
+        pack.flatMat.color.setHex(composeFarColor(nearMesh.material, nearMesh, { forMap: useMap }));
         pack.envGen = _envGen;
     }
     for (let i = 0; i < pack.matrices.length; i += 1) {
@@ -792,10 +814,11 @@ export const NegativeLod = {
     syncObject(obj) {
         if (!obj) return;
         if (wantsNegative(obj) && !isExcluded(obj)) {
+            // Register root only — applyStateToMeshes traverses descendants.
+            // (Registering every child double-scanned budget and double-swapped mats.)
             registry.add(obj);
-            // also register mesh children for direct access
             getMeshes(obj).forEach((m) => {
-                if (m !== obj) registry.add(m);
+                if (m !== obj) registry.delete(m);
             });
         } else {
             this.disableObject(obj, { clearFlag: false });
@@ -980,6 +1003,18 @@ export const NegativeLod = {
                 registry.delete(obj);
                 continue;
             }
+            // Skip child meshes if an ancestor is already registered (legacy double-reg)
+            let anc = obj.parent;
+            let skipChild = false;
+            while (anc) {
+                if (registry.has(anc) && wantsNegative(anc)) {
+                    skipChild = true;
+                    registry.delete(obj);
+                    break;
+                }
+                anc = anc.parent;
+            }
+            if (skipChild) continue;
             if (!wantsNegative(obj) || isExcluded(obj)) {
                 this.disableObject(obj, { clearFlag: false });
                 registry.delete(obj);

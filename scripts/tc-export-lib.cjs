@@ -387,7 +387,7 @@ function buildTcManifest(options = {}) {
     const blenderMan = readJson('import/threshold_blender_manifest.json', { models: [] });
     const gimpMan = readJson('textures/threshold_manifest.json', { textures: [] });
     const videoMan = readJson('video/threshold_video_manifest.json', { videos: [] });
-    const lodDistances = readJson('config/lod-distances.json', { distances: [0, 12, 28] }).distances;
+    const lodDistances = readJson('config/lod-distances.json', { distances: [0, 18, 48] }).distances;
 
     return {
         format: 'threshold-game',

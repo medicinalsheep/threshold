@@ -333,7 +333,7 @@ const PERF_CODE = [
     prop.position.set(0, 1, -4);
     prop.userData.surfaceType = 'metal';
     // LOD distances reference (Blender lod_export / meshLod): near, mid, far
-    prop.userData.lodDistances = [0, 12, 28];
+    prop.userData.lodDistances = [0, 18, 48];
     prop.userData.polyBudget = 'medium';`)),
     suggest('// mobile tier comment + simpler materials', IIFE(`    // graphicsProfile Lite/Mobile will prefer WebP + lower HILOD
     const rock = World.createObject('cube', 'deco_rock', 0x6a6a5a, false);
@@ -450,7 +450,7 @@ const SCENES = [
     hero.scale.set(1.5, 1.5, 1.5);
     hero.position.set(0, 0.75, -4);
     hero.userData.surfaceType = 'metal';
-    hero.userData.lodDistances = [0, 12, 28];
+    hero.userData.lodDistances = [0, 18, 48];
     hero.userData.polyBudget = 'medium';
     hero.userData.texRes = '2k';
     if (hero.material) {

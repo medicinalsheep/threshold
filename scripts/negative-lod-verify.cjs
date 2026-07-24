@@ -82,10 +82,13 @@ const lodD = JSON.parse(read('config/lod-distances.json'));
 if (Array.isArray(lodD.distances) && lodD.distances[lodD.distances.length - 1] < cfgAuto.defaultDistance) {
     ok(`mesh/HILOD last rung ${lodD.distances[lodD.distances.length - 1]}m < Neg ${cfgAuto.defaultDistance}m`);
 } else fail('lod-distances must stay shorter than Neg so mesh/tex cheapen first');
-for (const token of ['unlitLift', 'sampleSceneExposure', 'ambientFloor', 'mapColorScale']) {
+for (const token of ['unlitLift', 'sampleSceneExposure', 'ambientFloor', 'mapColorScale', 'forMap', '_negLodShared', 'lightResponse']) {
     if (mod.includes(token)) ok(`light bake has ${token}`);
     else fail(`missing ${token}`);
 }
+if (mod.includes('Register root only') || mod.includes('registry.delete(m)')) {
+    ok('registry avoids child double-scan');
+} else fail('registry double-scan guard missing');
 
 const perf = read('src/shared/perfHarness.js');
 if (perf.includes('export const PerfHarness') && perf.includes('measure(')) ok('perfHarness.js present');

@@ -49,7 +49,7 @@ flowchart TB
 | `stripe` | Lane paint | albedo, roughness | asphalt |
 | `terminal` | Kiosks, AI stations | albedo, roughness, metalness | — |
 
-### HILOD tiers (distance `[0, 12, 28]` m)
+### HILOD tiers (distance `[0, 18, 48]` m — mesh/tex; Neg unlit ~100m)
 
 | Suffix | Max px | Graphics tier |
 |--------|--------|---------------|

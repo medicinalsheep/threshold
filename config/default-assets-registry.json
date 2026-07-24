@@ -57,7 +57,7 @@
     }
   },
   "lod": {
-    "distancesM": [0, 12, 28],
+    "distancesM": [0, 18, 48],
     "config": "config/lod-distances.json",
     "runtime": "MeshLod.update()"
   },

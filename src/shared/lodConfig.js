@@ -1,6 +1,6 @@
 import lodDistances from '../../config/lod-distances.json';
 
-export const LOD_DISTANCES = lodDistances.distances || [0, 12, 28];
+export const LOD_DISTANCES = lodDistances.distances || [0, 18, 48];
 
 export function pickLodLevel(distance, distances = LOD_DISTANCES) {
     let level = 0;

@@ -1,3 +1,11 @@
+## 10.13.20 — Neg LOD review fixes (pre-doc-sweep)
+
+- **Map flats** — `composeFarColor({ forMap })` uses light-only color (no map×albedo×light mud)
+- **Shared pool** — skip per-object opacity on `_negLodShared` mats (no neighbor thrash)
+- **Registry** — register root only; skip child if ancestor registered (budget double-scan)
+- Fallbacks aligned: lod `[0,18,48]`, vis near/far 100/145, pathC near 52, bootcamp wave5 distances
+- ASSET_CAPABILITIES HILOD distances corrected
+
 ## 10.13.19 — Neg LOD / HILOD gameplay polish (light bake + farther)
 
 - **Unlit light compensation** — flats bake hemi/sun/ambient (`unlitLift`, `ambientFloor`, `envLightBoost`) so far props match mid-range PBR instead of looking “just darker”

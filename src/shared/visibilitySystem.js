@@ -22,8 +22,8 @@ const sleepCfg = visCfg.sleep || {};
 const spatialCfg = visCfg.spatial || {};
 const cfg = {
     enabled: visCfg.enabled !== false,
-    nearDistance: Number(visCfg.nearDistance) || Number(negCfg.defaultDistance) || 40,
-    farDistance: Number(visCfg.farDistance) || 60,
+    nearDistance: Number(visCfg.nearDistance) || Number(negCfg.defaultDistance) || 100,
+    farDistance: Number(visCfg.farDistance) || 145,
     frustumMargin: Number(visCfg.frustumMargin) || 0.08,
     frameHysteresis: Math.max(1, Number(visCfg.frameHysteresis) || 6),
     maxUpdatesPerFrame: Number(visCfg.maxUpdatesPerFrame) || 96,

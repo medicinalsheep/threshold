@@ -1,6 +1,7 @@
 export const BLENDER_MANIFEST_FORMAT = 'threshold-blender-manifest';
 export const BLENDER_MANIFEST_NAME = 'threshold_blender_manifest.json';
-export const DEFAULT_LOD_DISTANCES = [0, 12, 28];
+/** Keep in sync with config/lod-distances.json (MeshLod + HILOD rungs). */
+export const DEFAULT_LOD_DISTANCES = [0, 18, 48];
 
 function normName(name = '') {
     return String(name).trim().toLowerCase();
