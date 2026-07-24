@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.13)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.17
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.18
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -72,6 +72,7 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | Compiler + scene undo | `compiler/main.js`, `sceneHistory.js` |
 | PromptGen + EXAMPLES | `prompter/main.js`, `promptCookbook.js` |
 | GIMP live SYNC | `creativeWatch.js`, `textureBridge.js` |
+| Material library | `materialPresets.js` + `materialLibrary.js` — [MATERIALS.md](MATERIALS.md) |
 | Blender GLB + LOD | `blender-export.cjs`, `meshLod.js` |
 | UI layout edit | `hubLayout.js` — UNLOCK/LOCK corner hubs |
 | Scene dock strip | `panelDrag.js` — ◀ collapses to tab column |

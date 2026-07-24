@@ -56,7 +56,9 @@ Rules:
 Return ONLY executable JavaScript. Minimal change preferred for patches.
 Use World, THREE, PlayerController, Physics.
 Render mode: Engine.setRenderMode(4) for realistic/default/PBR. Modes 0-3 ONLY if user explicitly asked retro/terminal/toon/pixel/hyper.
-Use userData.textures for GIMP PBR. Prefer MaterialPresets over CanvasTexture.
+Use userData.textures for GIMP PBR. Prefer MaterialPresets / MaterialLibrary over CanvasTexture.
+Apply: MaterialPresets.applyMaterialPreset(mesh, 'pbr_brick_aged') or await MaterialLibrary.applyWithMaps(mesh, id).
+Name mesh Mat Wood / Mat Brick / … to wire starter maps. Never CanvasTexture noise for hero surfaces.
 World.createObject(type, name, colorHex, usePhysics) — type first (cube|sphere|cone|torus).
 ${getSceneContextBrief()}
 ${getSoundContext()}`;

@@ -1,7 +1,7 @@
 {
   "format": "threshold-default-textures",
-  "version": 2,
-  "note": "Hero-quality procedural defaults — 2K masters + HILOD 1k/2k + WebP for Lite/Mobile. GIMP can override any slot.",
+  "version": 3,
+  "note": "Starter PBR library — 2K masters + HILOD 1k/2k + WebP. Palettes match tc-gen-tex slotFn styles.",
   "masterPx": 2048,
   "hilod": [
     { "suffix": "_1k", "px": 1024 },
@@ -14,12 +14,9 @@
       "objectName": "Starter Ground",
       "tcEd": "tc-lite",
       "slots": ["albedo", "roughness", "normal"],
-      "palette": {
-        "base": [48, 50, 54],
-        "speck": [62, 64, 70],
-        "ring": [78, 82, 88]
-      },
-      "style": "concrete"
+      "palette": { "base": [48, 50, 54], "speck": [62, 64, 70], "ring": [78, 82, 88] },
+      "style": "concrete",
+      "presetId": "pbr_concrete_weathered"
     },
     {
       "slug": "starter_terminal",
@@ -32,7 +29,136 @@
         "trim": [72, 80, 92],
         "accent": [36, 170, 230]
       },
-      "style": "terminal"
+      "style": "terminal",
+      "presetId": "pbr_metal_brushed"
+    },
+    {
+      "slug": "starter_wood",
+      "objectName": "Mat Wood",
+      "tcEd": "tc-lite",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "grain": [108, 82, 54],
+        "dark": [78, 56, 36],
+        "ring": [128, 98, 68]
+      },
+      "style": "wood",
+      "presetId": "pbr_wood_snow"
+    },
+    {
+      "slug": "starter_asphalt",
+      "objectName": "Mat Asphalt",
+      "tcEd": "tc-lite",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "base": [28, 28, 30],
+        "crack": [18, 18, 20]
+      },
+      "style": "asphalt",
+      "presetId": "pbr_asphalt_wet"
+    },
+    {
+      "slug": "starter_brick",
+      "objectName": "Mat Brick",
+      "tcEd": "tc-lite",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "brick": [140, 62, 48],
+        "mortar": [120, 110, 100],
+        "dark": [90, 40, 32]
+      },
+      "style": "brick",
+      "presetId": "pbr_brick_aged"
+    },
+    {
+      "slug": "starter_dirt",
+      "objectName": "Mat Dirt",
+      "tcEd": "tc-lite",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "dust": [118, 96, 72],
+        "clay": [98, 78, 58],
+        "dark": [72, 58, 42]
+      },
+      "style": "dirt",
+      "presetId": "pbr_dirt_packed"
+    },
+    {
+      "slug": "starter_grass",
+      "objectName": "Mat Grass",
+      "tcEd": "tc-lite",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "blade": [48, 92, 42],
+        "dark": [62, 48, 32]
+      },
+      "style": "grass",
+      "presetId": "pbr_grass_dry"
+    },
+    {
+      "slug": "starter_metal_mat",
+      "objectName": "Mat Metal",
+      "tcEd": "tc-lite",
+      "slots": ["albedo", "roughness", "metalness", "normal"],
+      "palette": {
+        "plate": [72, 76, 82],
+        "slot": [48, 52, 58],
+        "edge": [98, 102, 108]
+      },
+      "style": "metal_grate",
+      "presetId": "pbr_metal_brushed"
+    },
+    {
+      "slug": "starter_copper",
+      "objectName": "Mat Copper",
+      "tcEd": "tc-lite",
+      "slots": ["albedo", "roughness", "metalness", "normal"],
+      "palette": {
+        "edge": [210, 130, 90],
+        "shine": [180, 98, 62],
+        "patina": [48, 110, 88]
+      },
+      "style": "copper",
+      "presetId": "pbr_copper_aged"
+    },
+    {
+      "slug": "starter_plaster",
+      "objectName": "Mat Plaster",
+      "tcEd": "tc-lite",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "base": [210, 205, 196],
+        "speck": [190, 185, 176],
+        "ring": [170, 160, 148]
+      },
+      "style": "wall",
+      "presetId": "pbr_plaster_interior"
+    },
+    {
+      "slug": "starter_fabric",
+      "objectName": "Mat Fabric",
+      "tcEd": "tc-lite",
+      "slots": ["albedo", "roughness"],
+      "palette": {
+        "weave": [72, 88, 110],
+        "thread": [58, 70, 90],
+        "shadow": [42, 52, 68]
+      },
+      "style": "fabric",
+      "presetId": "pbr_fabric_muted"
+    },
+    {
+      "slug": "starter_gravel",
+      "objectName": "Mat Gravel",
+      "tcEd": "tc-lite",
+      "slots": ["albedo", "roughness", "normal"],
+      "palette": {
+        "stone": [110, 105, 98],
+        "dark": [80, 76, 70],
+        "speck": [150, 145, 138]
+      },
+      "style": "gravel",
+      "presetId": "pbr_gravel_loose"
     }
   ]
 }

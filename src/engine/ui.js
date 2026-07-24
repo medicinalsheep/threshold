@@ -385,6 +385,10 @@ export const UI = {
         this.populateSoundClipSelect(obj.userData.soundClipId || '');
         this.syncSoundInspectorMode();
         this.syncTextureInspector(obj);
+        const matSel = document.getElementById('insp-material-preset');
+        if (matSel && window.MaterialLibrary) {
+            window.MaterialLibrary.fillSelect(matSel, obj.userData?.materialPreset || '');
+        }
     },
     syncNegativeLodStatus: function (obj) {
         const el = document.getElementById('insp-negative-lod-status');

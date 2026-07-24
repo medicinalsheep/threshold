@@ -27,6 +27,7 @@ import '../shared/worldInteract.js';
 import '../shared/sessionUi.js';
 import '../shared/assetProductionPlan.js';
 import '../shared/materialPresets.js';
+import '../shared/materialLibrary.js';
 import '../shared/shaderRegistry.js';
 import '../shared/shaderNodeGraph.js';
 import '../shared/audioZoneSystem.js';
@@ -133,6 +134,7 @@ export function initEngine() {
     UI.init();
     window.initCreatorHud?.();
     window.initPerfHarness?.();
+    window.initMaterialLibrary?.();
     window.GuidedSession?.init?.();
     window.IntroSkip?.init?.();
     window.ActionHints?.init?.();

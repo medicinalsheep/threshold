@@ -17,7 +17,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.13.17" />
+    <meta name="threshold-version" content="10.13.18" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD SUITE</title>
 </head>
@@ -236,7 +236,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.13.17</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" title="UI surface">CREATE</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.13.18</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" title="UI surface">CREATE</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
@@ -685,7 +685,12 @@
                     <div class="prop-row"><button id="btn-delete" style="color:#ff5555;border-color:#ff5555;width:100%;">DELETE</button></div>
                 </div>
                 <div class="insp-panel" data-insp-panel="texture">
-                    <p class="insert-hint insp-texture-hint">Import PNG/JPG maps — or GIMP SYNC from threshold_manifest.json (web batch-picks all slots).</p>
+                    <p class="insert-hint insp-texture-hint">Starter library presets + GIMP maps. Prefer presets over CanvasTexture noise.</p>
+                    <div class="prop-row">
+                        <label>Preset</label>
+                        <select id="insp-material-preset" class="insert-input" style="flex:1;" title="Material library"></select>
+                    </div>
+                    <p class="insert-hint" style="margin:0 0 6px;">Maps from <code>textures/</code> wire when name matches Mat Wood / Mat Brick / …</p>
                     <input type="file" id="insp-texture-file" accept="image/png,image/jpeg,image/webp" hidden>
                     <input type="file" id="insp-texture-batch" accept="image/png,image/jpeg,image/webp" multiple hidden>
                     <input type="file" id="insp-texture-manifest" accept=".json,application/json" hidden>
@@ -1002,6 +1007,9 @@
                 </div>
                 <div class="insert-panel active" data-panel="character">
                     <p class="insert-hint">Static NPC for scene dressing, or spawn yourself as a walkable human (reference for AI character design).</p>
+                    <button type="button" id="insert-material-examples" class="insert-action" title="Spawn material gallery (rows = categories)">MATERIAL LIBRARY EXAMPLES</button>
+                    <button type="button" id="insert-material-mapped" class="insert-action btn-sm" title="Only presets with starter PBR maps">MAPPED MATERIALS</button>
+                    <button type="button" id="btn-material-examples-clear" class="insert-action btn-sm" title="Remove material example meshes">CLEAR MAT EXAMPLES</button>
                     <button id="insert-character" class="insert-action">INSERT NPC</button>
                     <button id="insert-spawn-player" class="insert-action secondary">SPAWN AS PLAYER</button>
                 </div>

@@ -1,3 +1,11 @@
+## 10.13.18 — Starter material library + texture examples
+
+- **Material presets** expanded (~24) with categories: exterior, metal, interior, props, glass, light
+- **Procedural maps** in `default-textures.json`: wood, asphalt, brick, dirt, grass, metal, copper, plaster, fabric, gravel (+ ground/terminal)
+- **`MaterialLibrary`** — `spawnExamples()`, `applyWithMaps()`, inspector preset select
+- INSERT → **MATERIAL LIBRARY EXAMPLES** · EDIT → Texture → Preset dropdown
+- Docs: [MATERIALS.md](MATERIALS.md)
+
 ## 10.13.17 — Mini-model wave5 training pack (Threshold-native)
 
 - **`bootcamp:seed:wave5`** — surfaces, Neg LOD/PERF, Ollama CORS, no X OAuth, store:ship, BUILD_FROM, modern World API patches

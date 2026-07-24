@@ -48,6 +48,7 @@ Voice mic is requested **after** session start — never blocks CREATE.
 | UI surface | `surfaceProfile.js` + `css/surface.css` |
 | Network | `network.js`, `sync.js`, `remotePlayers.js` |
 | Agents | `agentPortal.js`, `agentRouter.js`, `src/grok/`, Ollama |
+| Materials | `materialPresets.js`, `materialLibrary.js` · [MATERIALS.md](MATERIALS.md) |
 | Store / macOS | `scripts/store-ship.cjs`, `notarize-mac.cjs` · [MAC_NOTARIZE.md](MAC_NOTARIZE.md) |
 | Agent map | [AGENTS.md](../AGENTS.md) |
 

@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), tiered local/cloud agents, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **10.13.17**)
+**Version:** `src/config.js` → `VERSION` (currently **10.13.18**)
 
 **Spine (start here):** [docs/BUILD_FROM.md](docs/BUILD_FROM.md) · **Doc index:** [docs/README.md](docs/README.md)
 
@@ -33,7 +33,7 @@ Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blen
 | Ollama client | `src/shared/ollamaClient.js`, `src/ollama/devAgent.js` |
 | Grok agents | `src/grok/client.js`, `npcAgent.js`, `devAgent.js` |
 | Multiplayer | `src/shared/network.js`, `sync.js`, `actions.js` |
-| Creative | `textureBridge.js`, `gltfImport.js`, `creativeWatch.js` |
+| Creative | `textureBridge.js`, `materialPresets.js`, `materialLibrary.js`, `gltfImport.js`, `creativeWatch.js` |
 | Export | `gameExport.js`, `exportWizard.js`, `exportWalkthrough.js` |
 | Store / Steam | `scripts/store-*.cjs`, `store-ship`, `notarize-mac`, `steam-*.cjs` |
 | Training bootcamp | `training/bootcamp/`, `scripts/bootcamp-*.cjs`, `scripts/models-*.cjs` |

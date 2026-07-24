@@ -4,6 +4,6 @@
   "sourceManifest": "exports/tc-show.threshold-game.json",
   "appId": "com.threshold.tc",
   "appName": "TC Show",
-  "version": "10.13.17",
+  "version": "10.13.18",
   "author": "Threshold"
 }

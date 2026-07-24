@@ -1,15 +1,25 @@
 {
   "format": "threshold-starter-textures",
-  "version": 3,
-  "note": "Quality-only PBR — minimum 1K maps (albedo, roughness, normal); GIMP/Blender workflow for user-added assets",
+  "version": 4,
+  "note": "Quality PBR wiring for ground, AI station, and Material Library sample objects",
   "defaults": {
-    "uvRepeat": [4, 4],
-    "normalScale": 0.9,
-    "envMapIntensity": 0.3
+    "uvRepeat": [3, 3],
+    "normalScale": 0.85,
+    "envMapIntensity": 0.32
   },
   "objects": {
     "Starter Ground": { "uvRepeat": [5, 5], "normalScale": 0.95, "envMapIntensity": 0.26 },
-    "AI Build Station": { "uvRepeat": [1, 1], "normalScale": 0.55, "envMapIntensity": 0.38 }
+    "AI Build Station": { "uvRepeat": [1, 1], "normalScale": 0.55, "envMapIntensity": 0.38 },
+    "Mat Wood": { "uvRepeat": [2, 2], "normalScale": 0.7, "envMapIntensity": 0.3 },
+    "Mat Asphalt": { "uvRepeat": [4, 4], "normalScale": 0.55, "envMapIntensity": 0.18 },
+    "Mat Brick": { "uvRepeat": [2.5, 2.5], "normalScale": 0.9, "envMapIntensity": 0.28 },
+    "Mat Dirt": { "uvRepeat": [3, 3], "normalScale": 0.85, "envMapIntensity": 0.22 },
+    "Mat Grass": { "uvRepeat": [4, 4], "normalScale": 0.7, "envMapIntensity": 0.2 },
+    "Mat Metal": { "uvRepeat": [2, 2], "normalScale": 0.6, "envMapIntensity": 0.5 },
+    "Mat Copper": { "uvRepeat": [2, 2], "normalScale": 0.55, "envMapIntensity": 0.52 },
+    "Mat Plaster": { "uvRepeat": [2, 2], "normalScale": 0.4, "envMapIntensity": 0.35 },
+    "Mat Fabric": { "uvRepeat": [3, 3], "normalScale": 0.35, "envMapIntensity": 0.18 },
+    "Mat Gravel": { "uvRepeat": [3, 3], "normalScale": 1.0, "envMapIntensity": 0.22 }
   },
   "aliases": {
     "engine_ground": "Starter Ground",
@@ -17,6 +27,16 @@
     "starter_grid_pad": "Starter Ground",
     "starter_ground": "Starter Ground",
     "starter_ai_terminal": "AI Build Station",
-    "compiler_kiosk": "AI Build Station"
+    "compiler_kiosk": "AI Build Station",
+    "mat_wood": "Mat Wood",
+    "mat_asphalt": "Mat Asphalt",
+    "mat_brick": "Mat Brick",
+    "mat_dirt": "Mat Dirt",
+    "mat_grass": "Mat Grass",
+    "mat_metal": "Mat Metal",
+    "mat_copper": "Mat Copper",
+    "mat_plaster": "Mat Plaster",
+    "mat_fabric": "Mat Fabric",
+    "mat_gravel": "Mat Gravel"
   }
 }
