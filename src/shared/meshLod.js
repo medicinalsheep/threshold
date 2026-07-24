@@ -205,7 +205,7 @@ export const MeshLod = {
             // Avatars: hysteresis to stop zoom thrash; world props soft band
             const level = this.pickLevel(dist, distances, cur, {
                 hysteresis: true,
-                band: obj.userData?.avatarLod ? 1.75 : 1.25,
+                band: obj.userData?.avatarLod ? 3.5 : 4,
             });
             if (level !== cur) {
                 this.setActiveLevel(obj, level);

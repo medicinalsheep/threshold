@@ -47,14 +47,15 @@ const cfg = {
     floor: {
         enabled: cfgJson.floor?.enabled !== false,
         autoTiersOnly: cfgJson.floor?.autoTiersOnly !== false,
-        cameraHeight: Number(cfgJson.floor?.cameraHeight) || 22,
-        distance: Number(cfgJson.floor?.distance) || 100,
-        hysteresis: Number(cfgJson.floor?.hysteresis) || 6,
+        // High so orbit cam doesn't thrash pad PBR ↔ unlit (was 22m → constant flash)
+        cameraHeight: Number(cfgJson.floor?.cameraHeight) || 90,
+        distance: Number(cfgJson.floor?.distance) || 160,
+        hysteresis: Number(cfgJson.floor?.hysteresis) || 12,
         preserveMap: cfgJson.floor?.preserveMap !== false,
-        /** Per-instance near/far split for InstancedMesh decks */
-        pathC: cfgJson.floor?.pathC !== false,
-        pathCMinInstances: Number(cfgJson.floor?.pathCMinInstances) || 16,
-        pathCNearDistance: Number(cfgJson.floor?.pathCNearDistance) || 52,
+        // Default off — near/far slab split looked like texture thrash on workspace pad
+        pathC: cfgJson.floor?.pathC === true,
+        pathCMinInstances: Number(cfgJson.floor?.pathCMinInstances) || 48,
+        pathCNearDistance: Number(cfgJson.floor?.pathCNearDistance) || 80,
     },
 };
 

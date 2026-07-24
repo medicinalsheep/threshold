@@ -30,13 +30,14 @@
   "floor": {
     "enabled": true,
     "autoTiersOnly": true,
-    "cameraHeight": 22,
-    "distance": 100,
-    "hysteresis": 6,
+    "cameraHeight": 90,
+    "distance": 160,
+    "hysteresis": 12,
     "preserveMap": true,
-    "pathC": true,
-    "pathCMinInstances": 16,
-    "pathCNearDistance": 52
+    "pathC": false,
+    "pathCMinInstances": 48,
+    "pathCNearDistance": 80,
+    "note": "pathC off by default — near/far slab flip looked like texture thrash on workspace pad"
   },
   "excludeFlags": [
     "isPlayer",

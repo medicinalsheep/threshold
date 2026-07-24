@@ -18,7 +18,7 @@ export const GRAPHICS_TIERS = {
     balanced: {
         id: 'balanced',
         label: 'Mobile',
-        description: 'PBR realistic · atmosphere — phones & tablets',
+        description: 'PBR realistic · atmosphere · 2K textures — phones & tablets',
         renderMode: 4,
         env: { waterEnabled: false, atmosphereEnabled: true, fogDensity: 0.016 },
         physicsIterations: 12,
@@ -26,7 +26,7 @@ export const GRAPHICS_TIERS = {
         shadowMapSize: 2048,
         bloomStrength: 0.38,
         waterTexSize: 512,
-        textureMax: 1024,
+        textureMax: 2048,
     },
     realistic: {
         id: 'realistic',
@@ -99,7 +99,8 @@ function probeGpuTier() {
     if (!gl) return 0;
     const renderer = raw.toLowerCase();
     if (/swiftshader|llvmpipe|software|basic render/.test(renderer)) tier = 0;
-    else if (/intel|mesa|hd graphics|uhd graphics/.test(renderer)) tier = 1;
+    // Integrated is still fine for 2K PBR — don't force "potato" tier
+    else if (/intel|mesa|hd graphics|uhd graphics|iris/.test(renderer)) tier = 2;
     else if (/apple m\d|nvidia|geforce|rtx|radeon rx|rx \d|arc a\d/.test(renderer)) tier = 3;
     else if (/apple gpu|adreno 6|adreno 7|mali-g7/.test(renderer)) tier = 2;
     return tier;
@@ -108,13 +109,17 @@ function probeGpuTier() {
 export const GraphicsProfile = {
     detect() {
         const cores = navigator.hardwareConcurrency || 4;
-        const memoryGb = navigator.deviceMemory || 4;
-        const gpuTier = probeGpuTier();
+        // Firefox often omits deviceMemory — default high on desktop so we don't lock Lite/1K
         const touch = isTouchDevice();
         const mobileUa = /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent);
+        const memoryGb = navigator.deviceMemory
+            || ((touch || mobileUa) ? 4 : 8);
+        const gpuTier = probeGpuTier();
 
         if (gpuTier <= 0 || (cores <= 2 && memoryGb <= 2)) return 'compatibility';
-        if (touch || mobileUa || cores <= 4 || memoryGb <= 4 || gpuTier <= 1) return 'balanced';
+        // Phones/tablets only → Mobile; desktop Intel/Firefox → Realistic (not muddy 1K)
+        if (touch || mobileUa) return 'balanced';
+        if (cores <= 2 && memoryGb <= 4 && gpuTier <= 1) return 'balanced';
         if (!touch && cores >= 8 && memoryGb >= 8 && gpuTier >= 3) return 'ultra';
         return 'realistic';
     },
@@ -179,11 +184,12 @@ export const GraphicsProfile = {
             Environment.setFog(State.env.fogDensity);
             State.env.waterEnabled = false;
             Environment.removeWater?.();
-            // Keep polished workspace pad on default grid; simple plane for other templates
-            if (window.State?.templateId === 'grid' || window.State?.starterGridBuilt) {
+            // Never rebuild the pad on every tier apply (wipes maps → flash).
+            // Only ensure pad once; template bootstrap owns first build.
+            if (!(window.State?.templateId === 'grid' || window.State?.starterGridBuilt)) {
+                if (!Environment.floorGroup) Environment.useSimpleGround?.();
+            } else if (!Environment.floorGroup && !Environment._padBuilding) {
                 Environment.useWorkspacePad?.();
-            } else {
-                Environment.useSimpleGround?.();
             }
 
             if (State.env.atmosphereEnabled) {

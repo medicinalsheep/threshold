@@ -1,6 +1,7 @@
 {
   "format": "threshold-lod-distances",
-  "version": 2,
-  "distances": [0, 18, 48],
-  "note": "MeshLod + TextureHilod (meters). Stack order: 0→hi mesh/tex PBR · 18→mid · 48→low · then Neg LOD unlit at ~100m (see negative-lod.json). Must stay shorter than Neg default so geometry/tex cheapen before shader flat."
+  "version": 3,
+  "distances": [0, 35, 75],
+  "hysteresisBand": 4,
+  "note": "MeshLod + TextureHilod (m). Farther rungs + hysteresis reduce zoom thrash. Neg unlit still later (~100m)."
 }

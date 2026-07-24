@@ -1,3 +1,11 @@
+## 10.14.4 — Fix blocky look + texture thrash
+
+- **Root cause:** floor Neg LOD path B/C flipped pad PBR↔unlit while orbiting; HILOD swapped maps without hysteresis; Intel/Firefox often locked Mobile@1K
+- Floor path **C off** by default; path B only when cam very high/far (90m / 160m)
+- HILOD: hysteresis + cooldown · no avatar/floor distance swaps · drop bare-master vs `_2k` flash
+- LOD rungs **35 / 75m** · Mobile tier **2K** · desktop detect prefers Realistic
+- Workspace pad **idempotent** (no rebuild on every graphics apply)
+
 ## 10.14.3 — Doc truth sweep + browser notes + light cleanup
 
 - Align spine docs with **10.14.0–2**: workspace pad · PLAY entry · physics · avatar LOD · faster CI

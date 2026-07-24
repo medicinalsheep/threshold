@@ -1,6 +1,5 @@
 /** Avatar PBR textures — skin / fabric / hair HILOD (R8.2.4) */
 
-import { TextureHilod } from './textureHilod.js';
 import { normalizeProfile, resolveSkinSlug } from './appearanceProfile.js';
 import { finishMaterial } from './starterTex.js';
 
@@ -138,7 +137,12 @@ export const AvatarTex = {
             hair: hairSlug,
         };
 
-        await TextureHilod.discoverVariantsFromBundle(tracked[0] || group);
+        // Do NOT register HILOD distance swaps on avatar meshes — causes skin/clothes flicker.
+        // Apply best maps once; mesh LOD already drops geo detail at range.
+        for (const mesh of tracked) {
+            if (mesh.userData) mesh.userData.noTextureHilod = true;
+        }
+        group.userData.noTextureHilod = true;
         return { maps, meshes: tracked.length };
     },
 

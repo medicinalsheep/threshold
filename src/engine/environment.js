@@ -55,6 +55,13 @@ export const Environment = {
      * Preferred default for ENTER (play/build).
      */
     useWorkspacePad: async function (halfSize = FLOOR_HALF) {
+        // Idempotent — rebuilding every graphics tier / notify caused map thrash
+        if (this.floorGroup && this._padHalf === halfSize) {
+            window.Physics?.setPadCollider?.(halfSize, 0.06, 'concrete');
+            return { group: this.floorGroup, textureTarget: this.floorTextureTarget };
+        }
+        if (this._padBuilding) return null;
+        this._padBuilding = true;
         this.clearFloorDeck();
         const plane = Engine.groundPlane;
         if (plane) {
@@ -68,13 +75,18 @@ export const Environment = {
             const deck = createConcreteSlabDeck(halfSize);
             this.floorGroup = deck.group;
             this.floorTextureTarget = deck.textureTarget;
+            this._padHalf = halfSize;
             Engine.scene.add(deck.group);
             if (!State.objects.includes(deck.group)) {
                 State.objects.push(deck.group);
             }
-            // Path C target on instanced mesh
-            if (deck.instanced && !State.objects.includes(deck.instanced)) {
-                State.objects.push(deck.instanced);
+            // Instanced slabs stay on one material (path C off by default in config)
+            if (deck.instanced) {
+                deck.instanced.userData.noTextureHilod = true;
+                deck.instanced.userData.isFloor = true;
+                if (!State.objects.includes(deck.instanced)) {
+                    State.objects.push(deck.instanced);
+                }
             }
             await wireDeckTextures(deck.textureTarget);
             window.Physics?.setPadCollider?.(halfSize, 0.06, 'concrete');
@@ -84,6 +96,8 @@ export const Environment = {
             this.useSimpleGround();
             window.Physics?.setPadCollider?.(halfSize, 0.06, 'concrete');
             return null;
+        } finally {
+            this._padBuilding = false;
         }
     },
 

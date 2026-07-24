@@ -2,7 +2,7 @@
 
 **North star:** Plan everything before generation. Creators design games; the tool makes pieces fall into place — not AI slop dumped into a blank chat.
 
-**Version:** 10.14.3 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.14.4 · **Live:** https://medicinalsheep.github.io/threshold/
 
 ---
 

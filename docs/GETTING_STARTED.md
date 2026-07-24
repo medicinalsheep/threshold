@@ -1,4 +1,4 @@
-# Getting started with Threshold (v10.14.3)
+# Getting started with Threshold (v10.14.4)
 
 One linear path from lobby to shipping — **workspace pad** default, Agent Portal, tiered agents, and optional **TC** export practice.
 
