@@ -1,3 +1,13 @@
+## 10.14.1 — Avatar LOD pop fix + realistic starter look
+
+- **LOD hop fixed** — walk mixers on all avatar LOD tiers (shared time); named-part pose copy fallback
+- **alignLodScene** — feet + XZ centroid (no lateral hop)
+- **Mesh LOD hysteresis** — band ~1.75 m avatars / 1.25 m props (zoom thrash)
+- Hair/MOD rebind awaits on level change; AvatarTex refresh on switch
+- **Default outfit** — hoodie + shoes + belt (profile v2); preset `starter_realistic`
+- **Skin/fabric maps** — richer procedural + normals; AvatarTex applies normal maps
+- `avatarPoseSync.js` · regenerate skin/fabric textures
+
 ## 10.14.0 — Workspace pad · physics foundation · starter kit
 
 - **ENTER → PLAY** walk-ready (lobby PLAY/BUILD still honored; default play)

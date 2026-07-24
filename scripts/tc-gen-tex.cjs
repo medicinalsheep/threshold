@@ -390,37 +390,102 @@ function asphaltRough(x, y, w, h) {
 function fabricAlbedo(x, y, w, h, pal) {
     const u = x / w;
     const v = y / h;
-    const weave = (Math.floor(u * 24) + Math.floor(v * 24)) % 2 === 0;
-    const base = weave ? pal.weave : pal.thread;
-    const fold = Math.sin(v * 8) * 0.08;
-    const n = noise(x, y, 113) * 8;
-    const shade = fold < -0.04 ? pal.shadow : base;
-    return [Math.min(255, shade[0] + n), Math.min(255, shade[1] + n), Math.min(255, shade[2] + n), 255];
+    // Finer twill + wear so clothing reads less like solid plastic
+    const twill = (Math.floor(u * 48 + v * 12) + Math.floor(v * 48)) % 2 === 0;
+    const weave = (Math.floor(u * 32) + Math.floor(v * 32)) % 2 === 0;
+    let base = weave ? (pal.weave || [70, 90, 110]) : (pal.thread || [55, 70, 90]);
+    if (twill) {
+        base = [
+            Math.min(255, base[0] + 6),
+            Math.min(255, base[1] + 5),
+            Math.min(255, base[2] + 4),
+        ];
+    }
+    const fold = Math.sin(v * 7 + u * 2) * 0.1;
+    const wear = noise(x * 0.4, y * 0.4, 114) > 0.82 ? 10 : 0;
+    const n = noise(x, y, 113) * 7 + wear;
+    const shade = fold < -0.05 ? (pal.shadow || [40, 50, 65]) : base;
+    return [
+        Math.min(255, shade[0] + n),
+        Math.min(255, shade[1] + n),
+        Math.min(255, shade[2] + n),
+        255,
+    ];
 }
 
 function fabricRough(x, y, w, h) {
-    const base = 220;
-    const n = noise(x, y, 115) * 18;
-    return [Math.min(255, base + n), Math.min(255, base + n), Math.min(255, base + n), 255];
+    const weave = noise(x * 2, y * 2, 115);
+    const base = weave > 0.55 ? 205 : 225;
+    const n = (noise(x, y, 116) - 0.5) * 20;
+    const o = Math.min(255, Math.max(0, base + n));
+    return [o, o, o, 255];
+}
+
+function fabricNormal(x, y, w, h) {
+    const u = x / w;
+    const v = y / h;
+    const hx = Math.sin(u * Math.PI * 64) * 0.08 + (noise(x + 1, y, 118) - noise(x - 1, y, 118)) * 0.35;
+    const hy = Math.sin(v * Math.PI * 64) * 0.08 + (noise(x, y + 1, 118) - noise(x, y - 1, 118)) * 0.35;
+    const nx = -hx;
+    const ny = -hy;
+    const nz = 1;
+    const len = Math.hypot(nx, ny, nz) || 1;
+    return [
+        Math.round((nx / len * 0.5 + 0.5) * 255),
+        Math.round((ny / len * 0.5 + 0.5) * 255),
+        Math.round((nz / len * 0.5 + 0.5) * 255),
+        255,
+    ];
 }
 
 function skinAlbedo(x, y, w, h, pal) {
     const u = x / w;
     const v = y / h;
-    const pore = noise(x, y, 171) * 14;
-    const vein = Math.sin(v * 42 + noise(x, y, 173) * 2) * 6;
-    const fold = Math.sin(u * 18) * Math.sin(v * 14) * 8;
-    let base = pal.base;
-    if (fold < -4) base = pal.shadow;
-    else if (fold > 4) base = pal.warm;
-    const n = pore + vein + noise(x, y, 175) * 6;
-    return [Math.min(255, base[0] + n), Math.min(255, base[1] + n), Math.min(255, base[2] + n), 255];
+    // Multi-scale pores + subtle subsurface warmth (less plastic flat)
+    const pore = (noise(x * 2.2, y * 2.2, 171) - 0.5) * 18
+        + (noise(x * 5.5, y * 5.5, 172) - 0.5) * 8;
+    const freckle = noise(x * 3.1, y * 3.4, 174) > 0.88 ? -14 : 0;
+    const vein = Math.sin(v * 38 + noise(x, y, 173) * 2.2) * 5;
+    const fold = Math.sin(u * 16) * Math.sin(v * 12) * 10;
+    let base = pal.base || [210, 170, 140];
+    if (fold < -5) base = pal.shadow || [170, 120, 100];
+    else if (fold > 5) base = pal.warm || [230, 190, 160];
+    // Cheek/undertone bias toward warm mid
+    const cheek = Math.exp(-((u - 0.5) ** 2 + (v - 0.42) ** 2) * 18) * 12;
+    const n = pore + vein + freckle + noise(x, y, 175) * 5 + cheek;
+    return [
+        Math.min(255, Math.max(0, base[0] + n + cheek * 0.4)),
+        Math.min(255, Math.max(0, base[1] + n * 0.92)),
+        Math.min(255, Math.max(0, base[2] + n * 0.85)),
+        255,
+    ];
 }
 
 function skinRough(x, y, w, h) {
-    const pore = noise(x, y, 177) > 0.92 ? 145 : 178;
-    const n = noise(x, y, 179) * 22;
-    return [Math.min(255, pore + n), Math.min(255, pore + n), Math.min(255, pore + n), 255];
+    // Softer skin: mid roughness with pore micro-variation (not chalky)
+    const pore = noise(x * 3, y * 3, 177);
+    const base = pore > 0.9 ? 152 : pore > 0.7 ? 165 : 172;
+    const n = (noise(x, y, 179) - 0.5) * 16;
+    const o = Math.min(255, Math.max(0, base + n));
+    return [o, o, o, 255];
+}
+
+function skinNormal(x, y, w, h) {
+    // Soft normal from multi-scale height
+    const h00 = noise(x, y, 185);
+    const hx = noise(x + 1, y, 185) - noise(x - 1, y, 185);
+    const hy = noise(x, y + 1, 185) - noise(x, y - 1, 185);
+    const str = 0.55;
+    const nx = -hx * str;
+    const ny = -hy * str;
+    const nz = 1;
+    const len = Math.hypot(nx, ny, nz) || 1;
+    return [
+        Math.round((nx / len * 0.5 + 0.5) * 255),
+        Math.round((ny / len * 0.5 + 0.5) * 255),
+        Math.round((nz / len * 0.5 + 0.5) * 255),
+        255,
+    ];
 }
 
 function hairAlphaAlbedo(x, y, w, h, pal) {
@@ -566,10 +631,12 @@ function slotFn(asset, slot) {
     if (asset.style === 'fabric') {
         if (slot === 'albedo') return (x, y, w, h) => fabricAlbedo(x, y, w, h, asset.palette);
         if (slot === 'roughness') return (x, y, w, h) => fabricRough(x, y, w, h);
+        if (slot === 'normal') return (x, y, w, h) => fabricNormal(x, y, w, h);
     }
     if (asset.style === 'skin') {
         if (slot === 'albedo') return (x, y, w, h) => skinAlbedo(x, y, w, h, asset.palette);
         if (slot === 'roughness') return (x, y, w, h) => skinRough(x, y, w, h);
+        if (slot === 'normal') return (x, y, w, h) => skinNormal(x, y, w, h);
     }
     if (asset.style === 'hair_alpha') {
         if (slot === 'albedo') return (x, y, w, h) => hairAlphaAlbedo(x, y, w, h, asset.palette);

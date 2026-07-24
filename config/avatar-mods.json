@@ -110,6 +110,7 @@
   },
   "presets": {
     "clear": { "label": "Clear all", "mods": [] },
+    "starter_realistic": { "label": "Realistic starter", "mods": ["hoodie_urban", "shoes_casual", "belt_utility"] },
     "explorer": { "label": "Explorer", "mods": ["hat_wide_brim", "jacket_field", "pack_field", "boots_field", "belt_utility"] },
     "operator": { "label": "Operator", "mods": ["helmet_tactical", "goggles_tech", "vest_tactical", "pack_tactical", "belt_tactical", "gloves_tactical", "boots_combat", "acc_radio"] },
     "scientist": { "label": "Scientist", "mods": ["hardhat_lab", "glasses_round", "coat_lab", "id_lanyard", "boots_lab", "prop_clipboard"] },

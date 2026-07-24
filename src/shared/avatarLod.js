@@ -1,12 +1,13 @@
 /**
  * Avatar LOD — distance mesh tiers for player/NPC bodies (Threshold uniqueness).
  * Uses MeshLod chains from avatar-manifest body.lods[] + re-binds hair/mods on switch.
+ * Pose continuity: AvatarPoseSync multi-mixer + part copy (no hop on zoom).
  */
 
 import { AssetBundle } from './assetBundle.js';
 import { MeshLod } from './meshLod.js';
 import { AvatarManifest } from './avatarManifest.js';
-import { LOD_DISTANCES } from './lodConfig.js';
+import { setupAvatarLodMixers, disposeAvatarLodMixers } from './avatarPoseSync.js';
 
 const AVATAR_LOD_DISTANCES = [0, 10, 22];
 
@@ -27,6 +28,7 @@ function lodEntriesFromBody(body) {
 export const AvatarLod = {
     async setup(group, bodySpec = {}) {
         if (!group) return false;
+        disposeAvatarLodMixers(group);
         MeshLod.dispose(group);
 
         const body = bodySpec.glb
@@ -39,7 +41,6 @@ export const AvatarLod = {
             return false;
         }
 
-        // lod0 is current primary child (GLB just loaded by HumanMesh.loadGltf)
         let lod0 = null;
         for (const c of group.children) {
             if (c.userData?.hairSlot || c.userData?.avatarMod || c.userData?.modLayer) continue;
@@ -49,6 +50,11 @@ export const AvatarLod = {
         if (!lod0) lod0 = group.children[0];
         if (!lod0) return false;
 
+        // Preserve LOD0 walk clips from primary load if present on mixer root
+        if (group.userData.mixerClip?._clip) {
+            lod0.userData._gltfAnimations = [group.userData.mixerClip.getClip?.() || group.userData.mixerClip._clip].filter(Boolean);
+        }
+
         const distances = entries.map((e) => e.distance);
         try {
             await MeshLod.initChain(group, lod0, entries, {
@@ -57,6 +63,7 @@ export const AvatarLod = {
             group.userData.avatarLod = true;
             group.userData.lodDistances = distances.length ? distances : [...AVATAR_LOD_DISTANCES];
             group.userData.avatarLodBodyId = body.id || bodySpec.bodyId || null;
+            setupAvatarLodMixers(group);
             return true;
         } catch (e) {
             console.warn('[avatar-lod] setup failed', e.message || e);
@@ -65,25 +72,41 @@ export const AvatarLod = {
         }
     },
 
-    onLevelChange(root, level) {
+    async onLevelChange(root, level) {
         if (!root?.userData?.avatarLod) return;
-        // Hair/mods live on anchors inside active body — re-apply slots
-        const profile = root.userData.appearanceProfile;
-        if (!profile) return;
-        window.HairSlot?.attach?.(root, profile).catch?.(() => {});
-        window.AvatarMod?.apply?.(root, profile).catch?.(() => {});
         root.userData.lodActive = level;
+
+        // Rebind accessories to anchors on the newly visible body (await to avoid empty frame)
+        const profile = root.userData.appearanceProfile;
+        if (profile) {
+            try {
+                await window.HairSlot?.attach?.(root, profile);
+            } catch { /* optional */ }
+            try {
+                await window.AvatarMod?.apply?.(root, profile);
+            } catch { /* optional */ }
+        }
+
+        // Ensure newly shown LOD has maps if compose only hit LOD0 once
+        try {
+            if (window.AvatarTex?.refreshActive) {
+                await window.AvatarTex.refreshActive(root, profile);
+            }
+        } catch { /* optional */ }
     },
 };
 
-// Hook MeshLod level switches for avatar roots
-const _origSetActive = MeshLod.setActiveLevel.bind(MeshLod);
-MeshLod.setActiveLevel = function setActiveLevelAvatarAware(root, level) {
-    const prev = root?.userData?.lodActive;
-    _origSetActive(root, level);
-    if (root?.userData?.avatarLod && prev !== root.userData.lodActive) {
-        AvatarLod.onLevelChange(root, root.userData.lodActive);
-    }
-};
+// Patch once (module can be imported from composer + main)
+if (!MeshLod._avatarLodPatched) {
+    MeshLod._avatarLodPatched = true;
+    const _origSetActive = MeshLod.setActiveLevel.bind(MeshLod);
+    MeshLod.setActiveLevel = function setActiveLevelAvatarAware(root, level) {
+        const prev = root?.userData?.lodActive;
+        _origSetActive(root, level);
+        if (root?.userData?.avatarLod && prev !== root.userData.lodActive) {
+            void AvatarLod.onLevelChange(root, root.userData.lodActive);
+        }
+    };
+}
 
 window.AvatarLod = AvatarLod;

@@ -352,6 +352,13 @@ export const HumanMesh = {
     updateWalk(group, horizontalSpeed, dt = 0.016, sprinting = false) {
         if (!group) return;
 
+        // Multi-LOD pose sync (all tiers advance so zoom swaps don't hop)
+        if (group.userData?.avatarLod && window.AvatarPoseSync?.updateAvatarLodPose) {
+            if (window.AvatarPoseSync.updateAvatarLodPose(group, horizontalSpeed, dt, sprinting)) {
+                return;
+            }
+        }
+
         if (group.userData.isGltf && group.userData.mixer) {
             const clip = group.userData.mixerClip;
             if (clip) {
@@ -446,6 +453,9 @@ export const HumanMesh = {
         group.userData.mixerClip = null;
 
         const avatarRoot = avatarRootFromModel(model);
+        model.userData._gltfAnimations = gltf.animations || [];
+        group.userData._lod0Animations = gltf.animations || [];
+
         const walkClip = pickWalkClip(gltf.animations);
         if (walkClip) {
             const mixer = new THREE.AnimationMixer(avatarRoot);

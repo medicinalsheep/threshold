@@ -1,14 +1,22 @@
 /** AppearanceProfile — serializable character composition state (R8.2) */
 
 export const APPEARANCE_FORMAT = 'threshold-appearance';
-export const APPEARANCE_VERSION = 1;
+/** v2: default civilian outfit mods + richer starter maps */
+export const APPEARANCE_VERSION = 2;
 
 export const DEFAULT_COLORS = {
-    skin: '#e8b896',
-    shirt: '#3d5a80',
-    pants: '#232830',
+    skin: '#e0b090',
+    shirt: '#4a6b8a',
+    pants: '#2c323c',
     hair: '#2a1810',
 };
+
+/** Light field kit — reads as clothed, not naked prims */
+export const DEFAULT_OUTFIT_MODS = [
+    'hoodie_urban',
+    'shoes_casual',
+    'belt_utility',
+];
 
 export const SKIN_TEXTURE_VARIANTS = [
     { id: 'starter_skin_light', label: 'Light' },
@@ -21,8 +29,8 @@ export const DEFAULT_PROFILE = {
     version: APPEARANCE_VERSION,
     bodyId: 'male_default',
     hairId: 'hair_short_m',
-    /** Modular gear stack (avatar MOD layer) — ids from avatar-manifest.mods */
-    mods: [],
+    /** Modular gear — urban casual starter */
+    mods: [...DEFAULT_OUTFIT_MODS],
     colors: { ...DEFAULT_COLORS },
     textures: {
         skin: 'starter_skin_medium',
@@ -48,20 +56,42 @@ export function normalizeProfile(raw = {}) {
         colors: { ...DEFAULT_COLORS },
         textures: { ...DEFAULT_PROFILE.textures },
         props: { torso: null, head: null },
-        mods: [],
+        mods: [...DEFAULT_OUTFIT_MODS],
     };
     if (!raw || typeof raw !== 'object') return base;
-    const mods = Array.isArray(raw.mods)
+
+    // Migration: pre-v2 profiles with empty mods get starter outfit once
+    const ver = Number(raw.version) || 1;
+    let mods = Array.isArray(raw.mods)
         ? [...new Set(raw.mods.filter(Boolean))]
-        : [];
+        : [...DEFAULT_OUTFIT_MODS];
+    if (ver < 2 && Array.isArray(raw.mods) && raw.mods.length === 0 && !raw._modsCleared) {
+        mods = [...DEFAULT_OUTFIT_MODS];
+    }
+    // Explicit empty after v2: honor user clear
+    if (ver >= 2 && Array.isArray(raw.mods) && raw.mods.length === 0) {
+        mods = [];
+    }
+
     return {
         ...base,
         ...raw,
+        version: Math.max(ver, APPEARANCE_VERSION),
         mods,
         colors: { ...DEFAULT_COLORS, ...(raw.colors || {}) },
         textures: { ...DEFAULT_PROFILE.textures, ...(raw.textures || {}) },
         props: { torso: null, head: null, ...(raw.props || {}) },
     };
+}
+
+/** One-click realistic starter (UI) */
+export function realisticStarterProfile(overrides = {}) {
+    return normalizeProfile({
+        ...DEFAULT_PROFILE,
+        ...overrides,
+        version: APPEARANCE_VERSION,
+        mods: [...DEFAULT_OUTFIT_MODS],
+    });
 }
 
 export function profileFromLegacyAppearance(appearance = {}) {

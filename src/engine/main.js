@@ -29,6 +29,7 @@ import '../shared/assetProductionPlan.js';
 import '../shared/materialPresets.js';
 import '../shared/materialLibrary.js';
 import '../shared/starterKit.js';
+import '../shared/avatarPoseSync.js';
 import '../shared/shaderRegistry.js';
 import '../shared/shaderNodeGraph.js';
 import '../shared/audioZoneSystem.js';

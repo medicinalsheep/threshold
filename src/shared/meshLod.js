@@ -14,10 +14,16 @@ function mimeFromPath(filePath = '') {
     return filePath.toLowerCase().endsWith('.gltf') ? 'model/gltf+json' : 'model/gltf-binary';
 }
 
+function attachGltfMeta(gltf) {
+    const scene = gltf.scene;
+    scene.userData._gltfAnimations = gltf.animations || [];
+    return scene;
+}
+
 async function loadGltfSource(source) {
     if (source.url) {
         const gltf = await loader.loadAsync(source.url);
-        return gltf.scene;
+        return attachGltfMeta(gltf);
     }
     if (source.path && ThresholdShell.isNative) {
         let buf = await ThresholdShell.readBinary(source.path);
@@ -27,7 +33,7 @@ async function loadGltfSource(source) {
         const url = URL.createObjectURL(blob);
         try {
             const gltf = await loader.loadAsync(url);
-            return gltf.scene;
+            return attachGltfMeta(gltf);
         } finally {
             URL.revokeObjectURL(url);
         }
@@ -38,7 +44,7 @@ async function loadGltfSource(source) {
         const url = URL.createObjectURL(file);
         try {
             const gltf = await loader.loadAsync(url);
-            return gltf.scene;
+            return attachGltfMeta(gltf);
         } finally {
             URL.revokeObjectURL(url);
         }
@@ -46,6 +52,12 @@ async function loadGltfSource(source) {
     throw new Error('LOD source requires url or path');
 }
 
+const _c0 = new THREE.Vector3();
+const _cN = new THREE.Vector3();
+
+/**
+ * Match height, feet (Y), and XZ centroid so LOD swaps don't hop sideways.
+ */
 function alignLodScene(scene, lod0Scene) {
     scene.position.set(0, 0, 0);
     scene.rotation.set(0, 0, 0);
@@ -63,9 +75,40 @@ function alignLodScene(scene, lod0Scene) {
         scene.scale.setScalar(s);
         scene.updateMatrixWorld(true);
     }
-    const boxN2 = new THREE.Box3().setFromObject(scene);
+    let boxN2 = new THREE.Box3().setFromObject(scene);
+    // Feet to same ground plane
+    scene.position.y += box0.min.y - boxN2.min.y;
+    scene.updateMatrixWorld(true);
+    boxN2 = new THREE.Box3().setFromObject(scene);
+    // XZ center — prevents lateral hop when LODs have different AABB (face/detail drop)
+    box0.getCenter(_c0);
+    boxN2.getCenter(_cN);
+    scene.position.x += _c0.x - _cN.x;
+    scene.position.z += _c0.z - _cN.z;
+    scene.updateMatrixWorld(true);
+    // Re-feet after XZ shift
+    boxN2 = new THREE.Box3().setFromObject(scene);
     scene.position.y += box0.min.y - boxN2.min.y;
     return scene;
+}
+
+/**
+ * Hysteresis so zooming near a threshold doesn't thrash LOD levels.
+ * @param {number} band meters of stickiness (default 1.5)
+ */
+export function pickLodLevelHysteresis(distance, distances, current = 0, band = 1.5) {
+    const raw = pickLodLevel(distance, distances);
+    if (!distances?.length) return raw;
+    const cur = Math.max(0, Math.min(current ?? 0, distances.length - 1));
+    if (raw === cur) return cur;
+    if (raw > cur) {
+        // Going farther — only step up when past threshold + band
+        const thr = distances[raw] ?? 0;
+        return distance >= thr + band ? raw : cur;
+    }
+    // Coming closer — only step down when below current rung − band
+    const thr = distances[cur] ?? 0;
+    return distance <= thr - band ? raw : cur;
 }
 
 export const MeshLod = {
@@ -77,7 +120,10 @@ export const MeshLod = {
             : DEFAULT_DISTANCES;
     },
 
-    pickLevel(distance, distances = DEFAULT_DISTANCES) {
+    pickLevel(distance, distances = DEFAULT_DISTANCES, current = 0, opts = {}) {
+        if (opts.hysteresis || opts.band) {
+            return pickLodLevelHysteresis(distance, distances, current, opts.band ?? 1.5);
+        }
         return pickLodLevel(distance, distances);
     },
 
@@ -155,8 +201,13 @@ export const MeshLod = {
                 ? obj.userData._visDist
                 : _camPos.distanceTo(_objPos);
             const distances = this.distancesFor(obj.userData);
-            const level = this.pickLevel(dist, distances);
-            if (level !== obj.userData.lodActive) {
+            const cur = obj.userData.lodActive ?? 0;
+            // Avatars: hysteresis to stop zoom thrash; world props soft band
+            const level = this.pickLevel(dist, distances, cur, {
+                hysteresis: true,
+                band: obj.userData?.avatarLod ? 1.75 : 1.25,
+            });
+            if (level !== cur) {
                 this.setActiveLevel(obj, level);
             }
         }

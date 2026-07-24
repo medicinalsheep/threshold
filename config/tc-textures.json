@@ -215,11 +215,11 @@
       "objectName": "Fabric Banner",
       "tcEd": "tc-lite",
       "surfaceType": "default",
-      "slots": ["albedo", "roughness"],
+      "slots": ["albedo", "roughness", "normal"],
       "palette": {
-        "weave": [88, 72, 118],
-        "thread": [108, 92, 138],
-        "shadow": [62, 52, 82]
+        "weave": [72, 98, 128],
+        "thread": [58, 82, 108],
+        "shadow": [42, 58, 78]
       },
       "style": "fabric"
     },
@@ -227,11 +227,11 @@
       "slug": "starter_skin_light",
       "objectName": "Avatar Skin Light",
       "tcEd": "starter-chr",
-      "slots": ["albedo", "roughness"],
+      "slots": ["albedo", "roughness", "normal"],
       "palette": {
-        "base": [255, 228, 210],
-        "warm": [248, 218, 198],
-        "shadow": [220, 188, 168]
+        "base": [242, 210, 188],
+        "warm": [248, 200, 178],
+        "shadow": [210, 170, 148]
       },
       "style": "skin"
     },
@@ -239,11 +239,11 @@
       "slug": "starter_skin_medium",
       "objectName": "Avatar Skin Medium",
       "tcEd": "starter-chr",
-      "slots": ["albedo", "roughness"],
+      "slots": ["albedo", "roughness", "normal"],
       "palette": {
-        "base": [232, 184, 150],
-        "warm": [218, 168, 132],
-        "shadow": [188, 142, 108]
+        "base": [224, 176, 144],
+        "warm": [232, 168, 128],
+        "shadow": [180, 130, 98]
       },
       "style": "skin"
     },
@@ -251,11 +251,11 @@
       "slug": "starter_skin_deep",
       "objectName": "Avatar Skin Deep",
       "tcEd": "starter-chr",
-      "slots": ["albedo", "roughness"],
+      "slots": ["albedo", "roughness", "normal"],
       "palette": {
-        "base": [168, 112, 78],
-        "warm": [148, 98, 68],
-        "shadow": [118, 78, 52]
+        "base": [158, 102, 72],
+        "warm": [172, 108, 72],
+        "shadow": [108, 70, 48]
       },
       "style": "skin"
     },

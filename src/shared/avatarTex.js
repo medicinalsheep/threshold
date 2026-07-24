@@ -9,7 +9,9 @@ const SHIRT_REGION = ['torso', 'shoulder', 'collar', 'shirt', 'body'];
 const PANTS_REGION = ['hip', 'leg', 'pant'];
 const HAIR_REGION = ['hair'];
 
-const AVATAR_FINISH = { uvRepeat: [1, 1], normalScale: 0.85, envMapIntensity: 0.32 };
+const AVATAR_FINISH = { uvRepeat: [1, 1], normalScale: 1.05, envMapIntensity: 0.38 };
+const SKIN_FINISH = { uvRepeat: [1, 1], normalScale: 0.55, envMapIntensity: 0.28 };
+const FABRIC_FINISH = { uvRepeat: [2.2, 2.2], normalScale: 0.9, envMapIntensity: 0.34 };
 
 function hexToNum(hex) {
     if (typeof hex === 'number') return hex;
@@ -96,26 +98,40 @@ export const AvatarTex = {
             if (!region) continue;
 
             if (region === 'skin') {
-                maps += await applySlug(mesh, skinSlug, ['albedo', 'roughness'], TB);
+                maps += await applySlug(mesh, skinSlug, ['albedo', 'roughness', 'normal'], TB);
                 tintMaterial(mesh, p.colors.skin, true);
+                finishMaterial(mesh, SKIN_FINISH);
             } else if (region === 'shirt') {
-                maps += await applySlug(mesh, fabricSlug, ['albedo', 'roughness'], TB);
+                maps += await applySlug(mesh, fabricSlug, ['albedo', 'roughness', 'normal'], TB);
                 tintMaterial(mesh, p.colors.shirt, true);
+                finishMaterial(mesh, FABRIC_FINISH);
             } else if (region === 'pants') {
-                maps += await applySlug(mesh, fabricSlug, ['albedo', 'roughness'], TB);
+                maps += await applySlug(mesh, fabricSlug, ['albedo', 'roughness', 'normal'], TB);
                 tintMaterial(mesh, p.colors.pants, true);
+                finishMaterial(mesh, FABRIC_FINISH);
             } else if (region === 'hair') {
                 maps += await applySlug(mesh, hairSlug, ['albedo'], TB);
                 tintMaterial(mesh, p.colors.hair, true);
                 setupHairMaterial(mesh);
+                finishMaterial(mesh, AVATAR_FINISH);
+            } else {
+                finishMaterial(mesh, AVATAR_FINISH);
             }
 
-            finishMaterial(mesh, AVATAR_FINISH);
             tracked.push(mesh);
         }
 
         group.userData.avatarTex = true;
         group.userData.avatarTexMeshes = tracked;
+        // Include all LOD scene meshes for HILOD / refresh
+        const scenes = group.userData?._lodScenes;
+        if (scenes?.length) {
+            for (const sc of scenes) {
+                sc.traverse((c) => {
+                    if (c.isMesh && c.material && !tracked.includes(c)) tracked.push(c);
+                });
+            }
+        }
         group.userData.avatarTexProfile = {
             skin: skinSlug,
             shirt: fabricSlug,
@@ -129,6 +145,14 @@ export const AvatarTex = {
     async refreshGroup(group) {
         if (!group?.userData?.avatarTexProfile) return;
         return this.apply(group, group.userData.appearanceProfile || {});
+    },
+
+    /** After LOD switch — ensure active body meshes have maps */
+    async refreshActive(group, profile) {
+        if (!group) return;
+        const p = profile || group.userData?.appearanceProfile;
+        if (!p) return this.refreshGroup(group);
+        return this.apply(group, p);
     },
 };
 
