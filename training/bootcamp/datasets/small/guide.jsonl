@@ -24,3 +24,11 @@
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nrun hilod compression"},{"role":"assistant","content":"INTENT: texture\nAPI: textures:hilod + tex:compress"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nswitch to lite graphics"},{"role":"assistant","content":"INTENT: graphics\nAPI: graphicsProfile Lite"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nwrite a production plan first"},{"role":"assistant","content":"INTENT: other\nAPI: production_plan"}]}
+{"task":"guide","messages":[{"role":"user","content":"What is player surface?"},{"role":"assistant","content":"player surface hides AI/Ollama/export chrome; default on phones; ?surface=player"}]}
+{"task":"guide","messages":[{"role":"user","content":"Ollama port for Pages?"},{"role":"assistant","content":"Proxy http://127.0.0.1:11435 via npm run ollama:serve — not raw :11434"}]}
+{"task":"guide","messages":[{"role":"user","content":"Neg LOD default distance?"},{"role":"assistant","content":"About 72m default; Lite ~52m Mobile ~68m Realistic ~88m Ultra ~110m"}]}
+{"task":"guide","messages":[{"role":"user","content":"World.createObject argument order?"},{"role":"assistant","content":"World.createObject(type, name, colorHex, usePhysics) — type first: cube|sphere|cone|torus"}]}
+{"task":"guide","messages":[{"role":"user","content":"Default render mode?"},{"role":"assistant","content":"Engine.setRenderMode(4) realistic PBR"}]}
+{"task":"guide","messages":[{"role":"user","content":"How to train minis?"},{"role":"assistant","content":"npm run train:mini -- --full then SAVE TIERS small=threshold-mini-npc medium=threshold-mini-dev"}]}
+{"task":"guide","messages":[{"role":"user","content":"Perf compare CLI?"},{"role":"assistant","content":"npm run perf:harness:compare — 200 cubes, 5s, warm 1s, Neg LOD on vs off"}]}
+{"task":"guide","messages":[{"role":"user","content":"store:ship does what?"},{"role":"assistant","content":"store:prep + package targets + upload-guide.md; signing stays local"}]}

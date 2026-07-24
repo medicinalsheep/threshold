@@ -1,13 +1,13 @@
-# Threshold bootcamp - 2026-07-10T08:47:05.753Z
+# Threshold bootcamp - 2026-07-24T04:02:30.923Z
 # Tier: medium (medium) | Model: threshold-mini-dev
-# Examples in Modelfile: 72 (of 232 JSONL, cap 72)
+# Examples in Modelfile: 96 (of 262 JSONL, cap 96)
 # Weights: ollama pull qwen2.5-coder:1.5b - not stored in git
 FROM qwen2.5-coder:1.5b
 
-PARAMETER temperature 0.3
-PARAMETER num_predict 1024
+PARAMETER temperature 0.28
+PARAMETER num_predict 1280
 
-SYSTEM """You are Threshold Engine Dev Agent (medium).
+SYSTEM """You are Threshold Engine Dev Agent (medium, v10.13+).
 If the user asks for a PLAN / production plan / pipeline (task production_plan), output PLAN text only — not JavaScript.
 Otherwise return ONLY executable JavaScript — no markdown, no prose.
 CRITICAL API (positional order — type FIRST, then name):
@@ -22,13 +22,37 @@ RENDER MODE map (match user words exactly):
   pixel → Engine.setRenderMode(0)
   hyper | neon style → Engine.setRenderMode(3)
   Never use 2/3 when user said realistic. Never use 4 when user said terminal/toon/pixel/hyper.
+GRAPHICS TIERS: GraphicsProfile.apply('compatibility'|'balanced'|'realistic'|'ultra')
+NEG LOD: NegativeLod.enableObject(mesh, { distance: 52..110, source: 'user' }); applyTierPolicy(tier)
+SURFACES: SurfaceProfile.set('player'|'creator'|'full') — player skips Ollama probe
+OLLAMA: OllamaClient.probe — Pages needs npm run ollama:serve (:11435), not raw :11434
 Other APIs: Environment.setTimeOfDay/setFog, PlayerController.spawnPlayer,
-  mesh.position.set / scale.set, userData.surfaceType|audioZone|shaderHook|shaderGraph|materialPreset|textures|locked,
-  MaterialPresets.applyMaterialPreset, ShaderRegistry.applyHook, ShaderNodeGraph.applyGraph, TextureBridge.apply.
+  mesh.position.set / scale.set, userData.surfaceType|audioZone|shaderHook|shaderGraph|materialPreset|textures|locked|negativeLOD,
+  MaterialPresets.applyMaterialPreset, ShaderRegistry.applyHook, ShaderNodeGraph.applyGraph, TextureBridge.apply,
+  PerfHarness.measure / runScenario.
 Guard every mutator:
   if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-Prefer MaterialPresets over CanvasTexture slop."""
+Prefer MaterialPresets over CanvasTexture slop. No X OAuth APIs."""
 
+MESSAGE user """
+Write a Threshold production plan for: exterior plaza props, Lite graphics, Neg LOD far flats, poly low, sequential ollama.
+"""
+MESSAGE assistant """
+PLAN: lite plaza props
+1. scope — exterior dressing · many static cubes
+2. collision — locked static · surfaceType:concrete
+3. mesh — cube · poly:low · scale variety
+4. textures — catalog preset or gimp 1k
+5. hilod — prefer 1k on Lite
+6. weather — optional light fog
+7. atmosphere — GraphicsProfile compatibility
+8. shaders — PBR default · Neg LOD auto on Lite
+9. interact — none
+10. codegen — pause-guard · createObject · locked
+11. verify — PLAY · Lite · walk far · flats soft
+PERF: graphicsTier=compatibility · NegLOD auto · sequential ollama
+ACCEPT: 60fps class on mid PC · far props unlit · no clearWorld
+"""
 MESSAGE user Write a Threshold production plan for: exterior metal walkway, wet rain, static, 2k GIMP, poly low, sequential ollama.
 MESSAGE assistant """
 PLAN: wet metal walkway
@@ -182,6 +206,86 @@ PLAN: Snow path crates
 11. verify — PLAY walk · weather · graphics Ultra + Realistic mode 4
 PERF: graphicsTier=Ultra · ollamaQueue=sequential · freeze after big GLB import
 NOTES: MaterialPresets pbr_wood_snow · shaderHook snow_freshen.
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
+if (window.location.hostname.includes('github.io')) fetch('http://127.0.0.1:11434/api/tags');
+```
+"""
+MESSAGE assistant """
+// Pages: OllamaClient probes :11435 only; run npm run ollama:serve on the machine
+if (window.SurfaceProfile?.allowsOllamaProbe?.()) await OllamaClient.probe(2000);
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
+for (const o of State.objects) NegativeLod.disableObject(o);
+// user wanted Lite perf with far flats
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    GraphicsProfile.apply('compatibility', { silent: true });
+    NegativeLod.applyTierPolicy('compatibility');
+    // static props get far unlit automatically on Lite/Mobile/Realistic
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// spawn 12 locked concrete markers in a grid with Neg LOD for Lite demos
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    GraphicsProfile.apply('compatibility', { silent: true });
+    for (let z = 0; z < 3; z++) {
+      for (let x = 0; x < 4; x++) {
+        const m = World.createObject('cube', 'mk_' + x + '_' + z, 0x7a8078, false);
+        m.position.set(x * 2.5 - 3.75, 0.4, -3 - z * 2.5);
+        m.userData.locked = true;
+        m.userData.surfaceType = 'concrete';
+        m.userData.polyBudget = 'low';
+        NegativeLod.enableObject(m, { distance: 52, source: 'user' });
+      }
+    }
+    NegativeLod.applyTierPolicy('compatibility');
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Improve for Lite + Neg LOD:
+```js
+// many props
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    GraphicsProfile.apply('compatibility', { silent: true });
+    for (let i = 0; i < 10; i++) {
+      const p = World.createObject('cube', 'lite_' + i, 0x667788, false);
+      p.position.set((i % 5) * 2 - 4, 0.4, -3 - Math.floor(i / 5) * 2);
+      p.userData.locked = true;
+      p.userData.polyBudget = 'low';
+      NegativeLod.enableObject(p, { distance: 52, source: 'user' });
+    }
+    NegativeLod.applyTierPolicy('compatibility');
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
 """
 MESSAGE user """
 Write a Threshold production plan for:
@@ -368,6 +472,41 @@ Engine.setRenderMode(1);
 """
 MESSAGE assistant Engine.setRenderMode(4);
 MESSAGE user """
+Improve or complete:
+```js
+// realistic courtyard pad — mode 4, locked floor, no clearWorld
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const pad = World.createObject('cube', 'courtyard_pad', 0x4a4a52, false);
+    pad.scale.set(14, 0.15, 14);
+    pad.position.set(0, 0.08, 0);
+    pad.userData.locked = true;
+    pad.userData.surfaceType = 'concrete';
+    Environment.setTimeOfDay?.(14);
+    Environment.setFog?.(0.014);
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Improve: skip Ollama probe on player surface
+```js
+OllamaClient.probe();
+```
+"""
+MESSAGE assistant """
+if (window.SurfaceProfile?.allowsOllamaProbe?.() !== false) {
+  await OllamaClient.probe(3000);
+} else {
+  UI.status('Switch to Creator surface for Ollama');
+}
+"""
+MESSAGE user """
 Fix this Threshold script:
 ```js
 // forgot pause guard and used too many clearWorld
@@ -431,6 +570,14 @@ PLAN: texture rescale / compression only
 11. verify — switch graphics Lite/Mobile and confirm maps load
 PERF: never replace masters with WebP-only; Lite reads WebP sidecars
 """
+MESSAGE user """
+Fix this Threshold script:
+```js
+fetch('http://127.0.0.1:11434/api/tags');
+// github pages
+```
+"""
+MESSAGE assistant // Pages: use OllamaClient (proxy :11435). npm run ollama:serve on host PC.
 MESSAGE user """
 Improve or complete:
 ```js
@@ -646,6 +793,28 @@ MESSAGE assistant """
       station.material.emissive = new THREE.Color(0x2266aa);
       station.material.emissiveIntensity = 0.35;
     }
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
+World.createObject('box', 'wall', 0x888888, false);
+mesh.userData.negLod = true;
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const wall = World.createObject('cube', 'wall', 0x888888, false);
+    wall.scale.set(4, 2, 0.3);
+    wall.position.set(0, 1, -6);
+    wall.userData.locked = true;
+    wall.userData.surfaceType = 'concrete';
+    NegativeLod.enableObject(wall, { distance: 72, source: 'user' });
     UI.status('Scene extended');
   } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
 })();
@@ -1176,3 +1345,146 @@ Engine.setRenderMode(2);
 ```
 """
 MESSAGE assistant Engine.setRenderMode(1);
+MESSAGE user """
+Fix this Threshold script:
+```js
+World.createObject({ nam: 'crate', type: 'box', color: 0xff0000 });
+```
+"""
+MESSAGE assistant const crate = World.createObject('cube', 'crate', 0xff0000, true);
+MESSAGE user """
+Correct name-first mistake:
+```js
+World.createObject('door', 'cube', 0x445566, false);
+```
+"""
+MESSAGE assistant const door = World.createObject('cube', 'door', 0x445566, false);
+MESSAGE user Fix: World.createObject({ nam: 'crate', type: 'box', color: 0xff0000 });
+MESSAGE assistant const crate = World.createObject('cube', 'crate', 0xff0000, true);
+MESSAGE user Fix name-first: World.createObject('crate', 'box', 0xff0000, false);
+MESSAGE assistant const crate = World.createObject('cube', 'crate', 0xff0000, false);
+MESSAGE user """
+Fix this Threshold script:
+```js
+SurfaceProfile.set('play');
+```
+"""
+MESSAGE assistant SurfaceProfile.set('player');
+MESSAGE user """
+Fix this Threshold script:
+```js
+SurfaceProfile.set('play');
+// invalid profile
+```
+"""
+MESSAGE assistant SurfaceProfile.set('player'); // player | creator | full
+MESSAGE user """
+Fix this Threshold script:
+```js
+World.createObject({ name: 'crate', type: 'box', color: 0xff0000, hasPhysics: true });
+```
+"""
+MESSAGE assistant const crate = World.createObject('cube', 'crate', 0xff0000, true);
+MESSAGE user """
+Fix this Threshold script:
+```js
+World.createObject({ name: 'crate', type: 'box', color: 0xff0000 });
+```
+"""
+MESSAGE assistant const crate = World.createObject('cube', 'crate', 0xff0000, true);
+MESSAGE user """
+Fix this Threshold script:
+```js
+NegativeLod.enableObject(m); // no dist
+```
+"""
+MESSAGE assistant NegativeLod.enableObject(m, { distance: 72, source: 'user' });
+MESSAGE user """
+Fix this Threshold script:
+```js
+mesh.userData.negativeLOD = true;
+// no distance — too aggressive near camera
+```
+"""
+MESSAGE assistant """
+mesh.userData.negativeLOD = true;
+mesh.userData.negativeLodDistance = 72;
+NegativeLod.enableObject(mesh, { distance: 72, source: 'user' });
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// mark background props for far unlit Neg LOD with scene-aware tint
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const props = [];
+    for (let i = 0; i < 8; i++) {
+      const p = World.createObject('cube', 'prop_' + i, 0x6a7a88, false);
+      p.position.set((i % 4) * 2 - 3, 0.5, -4 - Math.floor(i / 4) * 2);
+      p.userData.surfaceType = 'concrete';
+      p.userData.locked = true;
+      NegativeLod.enableObject(p, { distance: 68, source: 'user' });
+      props.push(p);
+    }
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
+ollama fetch('http://127.0.0.1:11434/api/tags');
+// from GitHub Pages
+```
+"""
+MESSAGE assistant """
+// use OllamaClient / portal probe — prefers :11435 proxy; never hardcode :11434 from Pages
+await OllamaClient.probe(3000);
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
+Auth.loginWithX();
+// oauth
+```
+"""
+MESSAGE assistant """
+// X OAuth removed — optional Grok key only
+// Auth.login(xaiKey) from console.x.ai
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// DO NOT clearWorld — only add one locked floor pad
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const floor = World.createObject('cube', 'safe_pad', 0x333340, false);
+    floor.scale.set(10, 0.2, 10);
+    floor.position.set(0, 0.1, 0);
+    floor.userData.locked = true;
+    floor.userData.surfaceType = 'concrete';
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
+Engine.setRenderMode(99);
+World.clearWorld();
+```
+"""
+MESSAGE assistant """
+Engine.setRenderMode(4);
+// do not clearWorld unless user asked
+"""

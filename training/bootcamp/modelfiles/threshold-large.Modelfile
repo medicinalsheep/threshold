@@ -1,27 +1,46 @@
-# Threshold bootcamp - 2026-07-10T08:47:05.759Z
+# Threshold bootcamp - 2026-07-24T04:02:30.936Z
 # Tier: large_scenes (large) | Model: threshold-large-scenes
-# Examples in Modelfile: 32 (of 62 JSONL, cap 32)
+# Examples in Modelfile: 40 (of 63 JSONL, cap 40)
 # Weights: ollama pull llama3.1:8b - not stored in git
 FROM llama3.1:8b
 
 PARAMETER temperature 0.35
 PARAMETER num_predict 2048
 
-SYSTEM """You are Threshold Engine architect (large). Return ONLY a complete JavaScript IIFE with try/catch.
+SYSTEM """You are Threshold Engine architect (large, v10.13+). Return ONLY a complete JavaScript IIFE with try/catch.
 Structure:
 (function() {
   try {
     if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
     Engine.setRenderMode(4);  // ALWAYS 4 unless user asked retro/terminal/toon/hyper
     // World.createObject(type, name, colorHex, usePhysics) — type FIRST
+    // Optional: NegativeLod.enableObject for far static props; locked floors
     UI.status('Scene extended');
   } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
 })();
 Globals: World, Engine, Environment, State, UI, PlayerController, Physics, THREE (materials only),
-  MaterialPresets, ShaderRegistry, ShaderNodeGraph, TextureBridge, Runtime.
+  MaterialPresets, ShaderRegistry, ShaderNodeGraph, TextureBridge, Runtime, NegativeLod, GraphicsProfile, SurfaceProfile.
 Extend live scene — never clearWorld unless asked. No markdown. No fake engines (no new ThresholdEngine).
-Never setRenderMode(2) or (3) for realistic scenes."""
+Never setRenderMode(2) or (3) for realistic scenes. Prefer poly:low + locked static for Lite demos."""
 
+MESSAGE user Generate realistic Threshold IIFE: six low poly crates in two rows, wood surface, physics off, Neg LOD, realistic PBR
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    for (let i = 0; i < 6; i++) {
+      const c = World.createObject('cube', 'crate_' + i, 0x8b5a2b, false);
+      c.position.set((i % 3) * 1.4 - 1.4, 0.5, -2 - Math.floor(i / 3) * 1.4);
+      c.userData.surfaceType = 'wood';
+      c.userData.polyBudget = 'low';
+      c.userData.locked = true;
+      NegativeLod.enableObject(c, { distance: 68, source: 'user' });
+    }
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
 MESSAGE user """
 Generate realistic Threshold IIFE: IMPLEMENT PLAN wet_metal_walkway: exterior locked metal walkway slab with wet_hero, poly low
 """
@@ -703,6 +722,136 @@ MESSAGE assistant """
     creek.position.set(0, 0.3, 7.5);
     creek.visible = false;
     creek.userData.audioZone = 'creek_near';
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user Generate realistic Threshold IIFE: wind foliage bushes along a path
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    for (let i = 0; i < 4; i++) {
+      const bush = World.createObject('sphere', 'bush_' + i, 0x2f6b3a, false);
+      bush.scale.set(1.1, 0.85, 1.1);
+      bush.position.set(-4 + i * 2.2, 0.55, -1);
+      bush.userData.surfaceType = 'grass';
+      bush.userData.shaderGraph = 'wind_foliage';
+      if (window.ShaderNodeGraph?.applyGraph) ShaderNodeGraph.applyGraph(bush, 'wind_foliage');
+    }
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user Generate realistic Threshold IIFE: sci-fi crates with neon_rim and locked floor
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const floor = World.createObject('cube', 'sci_floor', 0x1a1a22, false);
+    floor.scale.set(14, 0.2, 14);
+    floor.position.set(0, 0.1, 0);
+    floor.userData.locked = true;
+    floor.userData.surfaceType = 'metal';
+    for (let i = 0; i < 3; i++) {
+      const c = World.createObject('cube', 'sci_crate_' + i, 0x223344, false);
+      c.position.set(i * 2 - 2, 0.5, -3);
+      c.userData.surfaceType = 'metal';
+      c.userData.shaderGraph = 'neon_rim';
+      if (window.ShaderNodeGraph?.applyGraph) ShaderNodeGraph.applyGraph(c, 'neon_rim');
+    }
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user Generate realistic Threshold IIFE: F-interact props: rest bench and info pedestal
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const bench = World.createObject('cube', 'rest_bench', 0x4a4035, false);
+    bench.scale.set(1.8, 0.4, 0.7);
+    bench.position.set(-2, 0.2, 4);
+    bench.userData.surfaceType = 'wood';
+    Object.assign(bench.userData, { interactHint: 'Sit', interactRadius: 2 });
+    const ped = World.createObject('cube', 'info_pedestal', 0x555566, false);
+    ped.scale.set(0.6, 1.0, 0.6);
+    ped.position.set(2, 0.5, 4);
+    ped.userData.surfaceType = 'metal';
+    Object.assign(ped.userData, { interactHint: 'Read plaque', interactRadius: 2.2 });
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user Generate realistic Threshold IIFE: two colored boxes and log when player spawns
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const a = World.createObject('cube', 'box_a', 0xff4444, true);
+    const b = World.createObject('cube', 'box_b', 0x4488ff, true);
+    a.position.set(-1.5, 0.5, 0);
+    b.position.set(1.5, 0.5, 0);
+    if (window.PlayerController?.getLocalPlayer && !PlayerController.getLocalPlayer()) {
+      PlayerController.spawnPlayer();
+      console.log('player spawned');
+    }
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user Generate realistic Threshold IIFE: minimal empty-safe extend: single locked pad only
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const floor = World.createObject('cube', 'safe_pad', 0x333340, false);
+    floor.scale.set(10, 0.2, 10);
+    floor.position.set(0, 0.1, 0);
+    floor.userData.locked = true;
+    floor.userData.surfaceType = 'concrete';
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user Generate realistic Threshold IIFE: physics barrel line with friction
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    for (let i = 0; i < 4; i++) {
+      const barrel = World.createObject('cube', 'barrel_' + i, 0x553311, true);
+      barrel.scale.set(0.7, 1.1, 0.7);
+      barrel.position.set(i * 1.4 - 2, 0.6, -4);
+      barrel.userData.mass = 18;
+      barrel.userData.friction = 0.65;
+      barrel.userData.surfaceType = 'wood';
+    }
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user Generate realistic Threshold IIFE: storm exterior shed with dusk env
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    if (window.Environment?.setTimeOfDay) Environment.setTimeOfDay(17.5);
+    if (window.Environment?.setFog) Environment.setFog(0.025);
+    const shed = World.createObject('cube', 'shed', 0x5a5048, false);
+    shed.scale.set(3.2, 2.4, 2.8);
+    shed.position.set(-5, 1.2, -6);
+    shed.userData.surfaceType = 'wood';
+    shed.userData.shaderGraph = 'storm_exterior';
+    shed.userData.locked = true;
+    if (window.ShaderNodeGraph?.applyGraph) ShaderNodeGraph.applyGraph(shed, 'storm_exterior');
     UI.status('Scene extended');
   } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
 })();

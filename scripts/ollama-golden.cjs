@@ -205,6 +205,42 @@ const CASES = [
         },
     },
     {
+        id: 'intent_surface_creator',
+        run: async () => {
+            const msg = 'enable creator tools';
+            const { text, ms } = await chat(NPC, INTENT_SYS, `Classify (two lines only — INTENT then API):\n${msg}`, 80);
+            const p = parseIntent(text, msg);
+            return { ok: p.intent === 'other' && /surface|creator|SurfaceProfile/i.test(text), detail: text, ms };
+        },
+    },
+    {
+        id: 'intent_ollama_cors',
+        run: async () => {
+            const msg = 'ollama cors blocked';
+            const { text, ms } = await chat(NPC, INTENT_SYS, `Classify (two lines only — INTENT then API):\n${msg}`, 80);
+            const p = parseIntent(text, msg);
+            return { ok: p.intent === 'other' && /ollama|serve|11435|cors/i.test(text), detail: text, ms };
+        },
+    },
+    {
+        id: 'intent_no_x_oauth',
+        run: async () => {
+            const msg = 'sign in with x twitter';
+            const { text, ms } = await chat(NPC, INTENT_SYS, `Classify (two lines only — INTENT then API):\n${msg}`, 80);
+            const p = parseIntent(text, msg);
+            return { ok: p.intent === 'other' && /removed|display name|grok|oauth/i.test(text), detail: text, ms };
+        },
+    },
+    {
+        id: 'intent_neg_lod',
+        run: async () => {
+            const msg = 'enable negative lod';
+            const { text, ms } = await chat(NPC, INTENT_SYS, `Classify (two lines only — INTENT then API):\n${msg}`, 80);
+            const p = parseIntent(text, msg);
+            return { ok: (p.intent === 'edit' || p.intent === 'other') && /NegativeLod|negative/i.test(text), detail: text, ms };
+        },
+    },
+    {
         id: 'npc_guest_denied',
         run: async () => {
             const { text, ms } = await chat(
@@ -215,6 +251,45 @@ const CASES = [
             );
             const ok = !/^INTENT:/im.test(text) && /host|guest|only|cannot|can't|no\b/i.test(text);
             return { ok, detail: text, ms };
+        },
+    },
+    {
+        id: 'npc_player_surface',
+        run: async () => {
+            const { text, ms } = await chat(
+                NPC,
+                'You are a Threshold UI coach. 1-3 sentences. Product-accurate.',
+                'You are a Threshold UI coach. Player says: Why is there no AI button on my phone?',
+                140,
+            );
+            const ok = !/^INTENT:/im.test(text) && /player|surface|creator|ollama/i.test(text);
+            return { ok, detail: text, ms };
+        },
+    },
+    {
+        id: 'dev_surface_profile_fix',
+        run: async () => {
+            const { text, ms } = await chat(
+                DEV,
+                'Return ONLY JavaScript. Fix Threshold APIs.',
+                'Fix this Threshold script:\n```js\nSurfaceProfile.set(\'play\');\n```',
+                120,
+            );
+            const fixed = finalizeCode(text, 'SurfaceProfile.set play');
+            return { ok: /SurfaceProfile\.set\(\s*['"]player['"]/.test(fixed), detail: fixed, ms };
+        },
+    },
+    {
+        id: 'dev_neg_lod_distance',
+        run: async () => {
+            const { text, ms } = await chat(
+                DEV,
+                'Return ONLY JavaScript. Fix Threshold APIs.',
+                'Fix this Threshold script:\n```js\nmesh.userData.negativeLOD = true;\n// no distance\n```',
+                160,
+            );
+            const fixed = finalizeCode(text, 'negativeLOD');
+            return { ok: /NegativeLod\.enableObject|negativeLodDistance/i.test(fixed), detail: fixed, ms };
         },
     },
     {

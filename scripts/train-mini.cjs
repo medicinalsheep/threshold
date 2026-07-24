@@ -11,6 +11,7 @@
  *   npm run train:mini -- --critical    # intent/render-mode hard fixes
  *   npm run train:mini -- --wave3       # planning + hilod/compress + performance
  *   npm run train:mini -- --wave4       # safety + plan/code + recovery + export
+ *   npm run train:mini -- --wave5       # 10.13 product: surfaces, NegLOD, Ollama CORS, store
  *   npm run train:mini -- --full        # all waves + critical + build + create
  *   npm run train:mini -- --full --golden  # full + ollama:golden
  */
@@ -23,6 +24,7 @@ const mergeSeed = process.argv.includes('--merge-seed');
 const wave2 = process.argv.includes('--wave2') || process.argv.includes('--full');
 const wave3 = process.argv.includes('--wave3') || process.argv.includes('--full');
 const wave4 = process.argv.includes('--wave4') || process.argv.includes('--full');
+const wave5 = process.argv.includes('--wave5') || process.argv.includes('--full');
 const critical = process.argv.includes('--critical') || process.argv.includes('--full');
 const full = process.argv.includes('--full');
 const golden = process.argv.includes('--golden');
@@ -65,6 +67,10 @@ if (wave4 || full) {
     run('bootcamp:seed:wave4', [path.join('scripts', 'bootcamp-seed-wave4.cjs')]);
 }
 
+if (wave5 || full) {
+    run('bootcamp:seed:wave5', [path.join('scripts', 'bootcamp-seed-wave5.cjs')]);
+}
+
 if (critical || full) {
     run('bootcamp:seed:critical', [path.join('scripts', 'bootcamp-seed-critical.cjs')]);
 }
@@ -88,4 +94,6 @@ Optional checks:
   npm run ollama:verify
   npm run ollama:golden
   npm run ollama:stress -- --models threshold-mini-npc,threshold-mini-dev,llama3.2:3B
+  npm run models:mobile   # rebuild 1B phone pack after wave5
+  npm run models:publish -- --all   # maintainers only
 `);

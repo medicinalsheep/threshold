@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), tiered local/cloud agents, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **10.13.16**)
+**Version:** `src/config.js` → `VERSION` (currently **10.13.17**)
 
 **Spine (start here):** [docs/BUILD_FROM.md](docs/BUILD_FROM.md) · **Doc index:** [docs/README.md](docs/README.md)
 
@@ -98,6 +98,9 @@ Copy `.env.local.example` → `.env.local` for `VITE_OLLAMA_URL`, optional `VITE
 
 ```bash
 npm run bootcamp:build          # JSONL → Modelfiles in training/bootcamp/
+npm run bootcamp:seed:wave5     # 10.13 product power pack for minis
+npm run train:mini -- --wave5   # seed wave5 → build → ollama create
+npm run train:mini -- --full --golden
 npm run models:mini             # threshold-mini-npc + threshold-mini-dev (canonical)
 npm run models:large -- --yes   # optional threshold-dev + threshold-large-scenes
 npm run bootcamp:import -- --file training/bootcamp/datasets/raw/pair.json

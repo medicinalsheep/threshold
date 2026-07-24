@@ -52,6 +52,7 @@ npm run bootcamp:seed              # base curated set
 npm run bootcamp:seed:wave2        # whole-product coverage
 npm run bootcamp:seed:wave3        # production plans, HILOD/WebP, Lite/Mobile
 npm run bootcamp:seed:wave4        # anti-slop, host/guest, recovery, plan↔code
+npm run bootcamp:seed:wave5        # **10.13 power pack** — surfaces, Neg LOD, Ollama CORS, store, no X
 npm run bootcamp:seed:critical     # intent format + render-mode hard fixes
 npm run bootcamp:build && npm run models:mini
 ```
@@ -59,10 +60,24 @@ npm run bootcamp:build && npm run models:mini
 One-shot full pipeline:
 
 ```bash
-npm run train:mini -- --full           # all seeds + build + create
+npm run train:mini -- --full           # waves 2–5 + critical + build + create
+npm run train:mini -- --wave5          # product pack only + build + create
 npm run train:mini -- --full --golden  # + local regression (needs Ollama)
-npm run ollama:golden                  # format / safety / plan smoke suite
+npm run ollama:golden                  # format / safety / plan / surface / NegLOD smoke
 ```
+
+### Wave 5 focus (make minis “Threshold-native”)
+
+| Domain | Models |
+|--------|--------|
+| Surfaces player/creator/full | mini-npc intent + coaches |
+| Neg LOD + tiers + PERF | mini-dev patches + plans |
+| Ollama `:11435` / no X OAuth | both |
+| store:ship / BUILD_FROM literacy | coaches + guide |
+| Grid props with Neg LOD IIFEs | mini-dev + large scenes |
+
+After train: **SETUP → AGENTS** → Small `threshold-mini-npc` · Medium `threshold-mini-dev` → **SAVE TIERS**.  
+Publish (maintainers): `npm run models:publish -- --all`.
 
 ---
 

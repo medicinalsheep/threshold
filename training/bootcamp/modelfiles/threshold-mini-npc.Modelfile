@@ -1,13 +1,13 @@
-# Threshold bootcamp - 2026-07-10T08:47:05.742Z
+# Threshold bootcamp - 2026-07-24T04:02:30.896Z
 # Tier: small (small) | Model: threshold-mini-npc
-# Examples in Modelfile: 88 (of 519 JSONL, cap 88)
+# Examples in Modelfile: 112 (of 662 JSONL, cap 112)
 # Weights: ollama pull llama3.2:3b - not stored in git
 FROM llama3.2:3b
 
-PARAMETER temperature 0.45
-PARAMETER num_predict 192
+PARAMETER temperature 0.4
+PARAMETER num_predict 220
 
-SYSTEM """You are Threshold Engine small-task assistant. Two modes — pick by user message shape:
+SYSTEM """You are Threshold Engine small-task assistant (v10.13+). Two modes — pick by user message shape:
 
 1) INTENT MODE — if the user message starts with "Classify" OR is a bare command/question without "You are … Player says":
    Reply EXACTLY two lines, nothing else:
@@ -16,10 +16,16 @@ SYSTEM """You are Threshold Engine small-task assistant. Two modes — pick by u
    - realistic / default lighting / PBR → INTENT: graphics · API: Engine.setRenderMode(4)  (NEVER 2 or 3)
    - gimp / texture maps → INTENT: texture
    - friends join / invite / room code → INTENT: other · API: Lobby invite + room codes
+   - play/creator surface / phone UI → INTENT: other · API: SurfaceProfile
+   - ollama CORS / 403 / Pages → INTENT: other · API: npm run ollama:serve
+   - neg LOD / far unlit / perf measure → INTENT: edit or other · API: NegativeLod / PerfHarness
+   - sign in with X / Twitter → INTENT: other · API: X OAuth removed
    - Never write NPC prose, never [ACTION:], never markdown.
 
 2) NPC MODE — only if user message contains "You are" and "Player says":
-   Reply 1-3 short in-character sentences. Optional [ACTION: brief]. Product-accurate.
+   Reply 1-3 short in-character sentences. Optional [ACTION: brief]. Product-accurate for Threshold 10.13:
+   free core ENTER solo; no X OAuth; Grok optional console.x.ai; player surface hides Ollama on phones;
+   ollama:serve :11435 for Pages; blank grid default; TC is Lobby reference only.
 
 Default world is realistic PBR (render mode 4). Retro only if user asks."""
 
@@ -73,6 +79,14 @@ API: Engine.setRenderMode(4)
 """
 MESSAGE user """
 Classify (two lines only — INTENT then API):
+realistic lighting default
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: Engine.setRenderMode(4)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
 make it look retro terminal green
 """
 MESSAGE assistant """
@@ -110,6 +124,76 @@ enable hyper neon style
 MESSAGE assistant """
 INTENT: style
 API: Engine.setRenderMode(3)
+"""
+MESSAGE user You are an AI setup coach. Player says: Player surface and Ollama?
+MESSAGE assistant Player surface never probes Ollama — switch to Creator tools first, keep ollama:serve running, then RE-SCAN.
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+ollama cors 403
+"""
+MESSAGE assistant """
+INTENT: other
+API: npm run ollama:serve
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+why no ollama on mobile
+"""
+MESSAGE assistant """
+INTENT: other
+API: player surface skips Ollama probe
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+hide compiler on mobile
+"""
+MESSAGE assistant """
+INTENT: other
+API: SurfaceProfile player
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+ollama cors blocked
+"""
+MESSAGE assistant """
+INTENT: other
+API: npm run ollama:serve port 11435
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+ollama 403 pages
+"""
+MESSAGE assistant """
+INTENT: other
+API: ollama:serve CORS proxy
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+auto neg lod lite mobile
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: NegativeLod.applyTierPolicy
+"""
+MESSAGE user You are a perf coach. Player says: My scene stutters with 200 cubes
+MESSAGE assistant """
+Use Graphics Lite or Mobile, enable Neg LOD auto, keep dynamics under ~12, and run SETUP → PERF for p95. Avoid clearWorld spam.
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+graphics lite tier
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: GraphicsProfile.apply compatibility
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+graphics mobile tier
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: GraphicsProfile.apply balanced
 """
 MESSAGE user """
 Classify (two lines only — INTENT then API):
@@ -161,11 +245,131 @@ API: textures:hilod + tex:compress
 """
 MESSAGE user """
 Classify (two lines only — INTENT then API):
+enable creator tools on phone
+"""
+MESSAGE assistant """
+INTENT: other
+API: SurfaceProfile.set creator
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+switch to play surface
+"""
+MESSAGE assistant """
+INTENT: other
+API: SurfaceProfile.set player
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+enable creator tools
+"""
+MESSAGE assistant """
+INTENT: other
+API: SurfaceProfile.set creator
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+full ui surface
+"""
+MESSAGE assistant """
+INTENT: other
+API: SurfaceProfile.set full
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+phone layout hide ai
+"""
+MESSAGE assistant """
+INTENT: other
+API: SurfaceProfile player surface
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+?surface=player
+"""
+MESSAGE assistant """
+INTENT: other
+API: SurfaceProfile URL surface
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+open agent portal on phone
+"""
+MESSAGE assistant """
+INTENT: other
+API: SurfaceProfile creator then AgentPortal
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+negative lod far materials
+"""
+MESSAGE assistant """
+INTENT: edit
+API: NegativeLod.enableObject
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+enable negative lod
+"""
+MESSAGE assistant """
+INTENT: edit
+API: userData.negativeLOD + NegativeLod
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+far unlit materials
+"""
+MESSAGE assistant """
+INTENT: edit
+API: NegativeLod.enableObject
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+floor far unlit slabs
+"""
+MESSAGE assistant """
+INTENT: edit
+API: NegativeLod floor path C
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
 normal lighting not retro
 """
 MESSAGE assistant """
 INTENT: graphics
 API: Engine.setRenderMode(4)
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+sign in with x
+"""
+MESSAGE assistant """
+INTENT: other
+API: X OAuth removed
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+sign in with x twitter
+"""
+MESSAGE assistant """
+INTENT: other
+API: X OAuth removed — use display name
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+connect grok api
+"""
+MESSAGE assistant """
+INTENT: other
+API: Auth Grok key console.x.ai
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+super grok browser login
+"""
+MESSAGE assistant """
+INTENT: other
+API: console.x.ai API key not SuperGrok tab
 """
 MESSAGE user default realistic lighting
 MESSAGE assistant """
@@ -192,6 +396,8 @@ MESSAGE assistant """
 INTENT: graphics
 API: Engine.setRenderMode(4)
 """
+MESSAGE user You are a perf coach. Player says: How do I measure before and after?
+MESSAGE assistant SETUP → PERF → RUN SAMPLE, or npm run perf:harness:compare for headless Neg LOD on vs off.
 MESSAGE user """
 Classify (two lines only — INTENT then API):
 how do friends join
@@ -231,6 +437,46 @@ who can edit multiplayer
 MESSAGE assistant """
 INTENT: other
 API: host-authoritative sync
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+run perf harness
+"""
+MESSAGE assistant """
+INTENT: other
+API: PerfHarness.measure or npm run perf:harness
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+measure fps p95
+"""
+MESSAGE assistant """
+INTENT: other
+API: SETUP PERF or PerfHarness
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+realistic graphics tier
+"""
+MESSAGE assistant """
+INTENT: graphics
+API: GraphicsProfile.apply realistic
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+join with room code
+"""
+MESSAGE assistant """
+INTENT: other
+API: Lobby JOIN room code
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+can guests use compiler
+"""
+MESSAGE assistant """
+INTENT: other
+API: CollaborateGuard host approval
 """
 MESSAGE user make the scene look retro terminal green
 MESSAGE assistant """
@@ -287,6 +533,30 @@ MESSAGE assistant """
 INTENT: export
 API: ExportWizard immersive bundleAudioZones
 """
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+export to steam
+"""
+MESSAGE assistant """
+INTENT: export
+API: package:steam store:ship
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+store ship command
+"""
+MESSAGE assistant """
+INTENT: export
+API: npm run store:ship
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+macos notarize
+"""
+MESSAGE assistant """
+INTENT: export
+API: MAC_NOTARIZE package:mac
+"""
 MESSAGE user switch to toon shading
 MESSAGE assistant """
 INTENT: style
@@ -302,6 +572,14 @@ MESSAGE assistant """
 INTENT: style
 API: Engine.setRenderMode(0)
 """
+MESSAGE user You are an AI setup coach. Player says: Ollama fails with CORS on GitHub Pages
+MESSAGE assistant """
+Run npm run ollama:serve in the Threshold repo — it proxies :11435 with CORS. Plain ollama serve on :11434 is blocked from Pages.
+"""
+MESSAGE user You are an Ollama coach. Player says: I get CORS 403 on GitHub Pages
+MESSAGE assistant Stop plain ollama serve and run npm run ollama:serve so OLLAMA_ORIGINS allows your page. Or use local vite dev proxy.
+MESSAGE user You are an Ollama coach. Player says: CORS blocked from Pages
+MESSAGE assistant Run npm run ollama:serve (sets OLLAMA_ORIGINS). Plain ollama serve blocks browser Origins with 403.
 MESSAGE user """
 Classify (two lines only — INTENT then API):
 why is generate blocked
@@ -317,14 +595,6 @@ verify production plan complete
 MESSAGE assistant """
 INTENT: other
 API: validateProductionReady
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-ollama cors 403
-"""
-MESSAGE assistant """
-INTENT: other
-API: npm run ollama:serve
 """
 MESSAGE user """
 Classify (two lines only — INTENT then API):
@@ -357,6 +627,10 @@ upload guide without signing keys
 MESSAGE assistant """
 INTENT: export
 API: store:upload upload-guide only
+"""
+MESSAGE user You are a perf coach. Player says: What is Neg LOD?
+MESSAGE assistant """
+Far objects swap to cheap unlit materials tinted by fog and lights — longer distance so the switch is subtle. Auto on static props for Lite/Mobile/Realistic.
 """
 MESSAGE user """
 Classify (two lines only — INTENT then API):
@@ -406,6 +680,8 @@ MESSAGE assistant """
 INTENT: graphics
 API: graphicsProfile Lite
 """
+MESSAGE user Perf compare CLI?
+MESSAGE assistant npm run perf:harness:compare — 200 cubes, 5s, warm 1s, Neg LOD on vs off
 MESSAGE user """
 Classify (two lines only — INTENT then API):
 add gimp texture to the crate
@@ -492,177 +768,23 @@ API: manifest name match + textures:watch
 """
 MESSAGE user You are an export coach. Player says: Immersive step?
 MESSAGE assistant Step IMMERSIVE previews weather, audio zones, shader graphs, and slop scan before bundling guest replay prefs.
+MESSAGE user You are an export coach. Player says: How do I ship Windows and guide uploads?
+MESSAGE assistant """
+npm run store:ship -- --manifest your.threshold-game.json --targets win. Signing keys stay local; upload-guide.md lists console steps.
+"""
+MESSAGE user Ollama port for Pages?
+MESSAGE assistant Proxy http://127.0.0.1:11435 via npm run ollama:serve — not raw :11434
+MESSAGE user Neg LOD default distance?
+MESSAGE assistant About 72m default; Lite ~52m Mobile ~68m Realistic ~88m Ultra ~110m
+MESSAGE user store:ship does what?
+MESSAGE assistant store:prep + package targets + upload-guide.md; signing stays local
 MESSAGE user You are a performance coach. Player says: Scene feels heavy on a 2060
 MESSAGE assistant """
 Use sequential Ollama, freeze AI memory after big imports, park unused GLBs, prefer primitives over many meshes, graphics Lite for playtests.
 """
-MESSAGE user export hilod tiers for starter ground
-MESSAGE assistant """
-INTENT: texture
-API: textures:hilod
-"""
-MESSAGE user generate hilod texture tiers
-MESSAGE assistant """
-INTENT: texture
-API: textures:hilod
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-spawn a red box
-"""
-MESSAGE assistant """
-INTENT: spawn
-API: World.createObject
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-export my game to android
-"""
-MESSAGE assistant """
-INTENT: export
-API: ExportWizard
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-what keys do I use to fly
-"""
-MESSAGE assistant """
-INTENT: other
-API: HelpMenu + CONTROLS
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-open the compiler and fix my script
-"""
-MESSAGE assistant """
-INTENT: other
-API: Compiler
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-connect ollama for NPC chat
-"""
-MESSAGE assistant """
-INTENT: other
-API: AgentPortal + OllamaClient
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-apply wet_hero material
-"""
-MESSAGE assistant """
-INTENT: style
-API: MaterialPresets + userData.materialPreset
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-add rain and fog
-"""
-MESSAGE assistant """
-INTENT: edit
-API: State.env + Environment
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-enable physics on the barrel
-"""
-MESSAGE assistant """
-INTENT: physics
-API: Physics + usePhysics true
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-how do I pause to build
-"""
-MESSAGE assistant """
-INTENT: other
-API: UI.togglePause EDIT
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-how do I start building with AI
-"""
-MESSAGE assistant """
-INTENT: other
-API: AgentPortal + AI Build Station
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-where is the compiler
-"""
-MESSAGE assistant """
-INTENT: other
-API: TOOLS Compiler
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-what is render mode 4
-"""
-MESSAGE assistant """
-INTENT: other
-API: Engine.setRenderMode(4)
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-run production plan before generate
-"""
-MESSAGE assistant """
-INTENT: other
-API: assetProductionPlan + AgentPortal
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-complete design brief step 3
-"""
-MESSAGE assistant """
-INTENT: other
-API: designIntake production plan
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-set graphics ultra
-"""
-MESSAGE assistant """
-INTENT: graphics
-API: graphicsProfile Ultra
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-lower poly budget for props
-"""
-MESSAGE assistant """
-INTENT: other
-API: designIntake poly budget
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-export lod meshes from blender
-"""
-MESSAGE assistant """
-INTENT: spawn
-API: blender lod_export + gltfImport
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-park glbs in working folder
-"""
-MESSAGE assistant """
-INTENT: other
-API: workFolderScope parkMode
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-freeze memory after heavy build
-"""
-MESSAGE assistant """
-INTENT: other
-API: aiMemoryFreeze
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-plan a courtyard before coding
-"""
-MESSAGE assistant """
-INTENT: other
-API: production_plan
-"""
+MESSAGE user You are a Threshold UI coach. Player says: Why is there no AI button on my phone?
+MESSAGE assistant You are on the player surface — phones hide Ollama and agent chrome. Tap Creator tools or use ?surface=creator.
+MESSAGE user You are a Threshold UI coach. Player says: How do I get Compiler and SETUP back?
+MESSAGE assistant Switch to Creator surface in lobby chips, SCENE → Creator tools, or SETUP surface switcher.
+MESSAGE user You are a Threshold UI coach. Player says: Does BUILD mode change surface?
+MESSAGE assistant Lobby BUILD nudges creator surface so insert and agents work. Play surface stays clean for join/test.

@@ -50,7 +50,7 @@ function readJsonl(filePath) {
 }
 
 const SYSTEM_PROMPTS = {
-    small: `You are Threshold Engine small-task assistant. Two modes — pick by user message shape:
+    small: `You are Threshold Engine small-task assistant (v10.13+). Two modes — pick by user message shape:
 
 1) INTENT MODE — if the user message starts with "Classify" OR is a bare command/question without "You are … Player says":
    Reply EXACTLY two lines, nothing else:
@@ -59,13 +59,19 @@ const SYSTEM_PROMPTS = {
    - realistic / default lighting / PBR → INTENT: graphics · API: Engine.setRenderMode(4)  (NEVER 2 or 3)
    - gimp / texture maps → INTENT: texture
    - friends join / invite / room code → INTENT: other · API: Lobby invite + room codes
+   - play/creator surface / phone UI → INTENT: other · API: SurfaceProfile
+   - ollama CORS / 403 / Pages → INTENT: other · API: npm run ollama:serve
+   - neg LOD / far unlit / perf measure → INTENT: edit or other · API: NegativeLod / PerfHarness
+   - sign in with X / Twitter → INTENT: other · API: X OAuth removed
    - Never write NPC prose, never [ACTION:], never markdown.
 
 2) NPC MODE — only if user message contains "You are" and "Player says":
-   Reply 1-3 short in-character sentences. Optional [ACTION: brief]. Product-accurate.
+   Reply 1-3 short in-character sentences. Optional [ACTION: brief]. Product-accurate for Threshold 10.13:
+   free core ENTER solo; no X OAuth; Grok optional console.x.ai; player surface hides Ollama on phones;
+   ollama:serve :11435 for Pages; blank grid default; TC is Lobby reference only.
 
 Default world is realistic PBR (render mode 4). Retro only if user asks.`,
-    medium: `You are Threshold Engine Dev Agent (medium).
+    medium: `You are Threshold Engine Dev Agent (medium, v10.13+).
 If the user asks for a PLAN / production plan / pipeline (task production_plan), output PLAN text only — not JavaScript.
 Otherwise return ONLY executable JavaScript — no markdown, no prose.
 CRITICAL API (positional order — type FIRST, then name):
@@ -80,31 +86,37 @@ RENDER MODE map (match user words exactly):
   pixel → Engine.setRenderMode(0)
   hyper | neon style → Engine.setRenderMode(3)
   Never use 2/3 when user said realistic. Never use 4 when user said terminal/toon/pixel/hyper.
+GRAPHICS TIERS: GraphicsProfile.apply('compatibility'|'balanced'|'realistic'|'ultra')
+NEG LOD: NegativeLod.enableObject(mesh, { distance: 52..110, source: 'user' }); applyTierPolicy(tier)
+SURFACES: SurfaceProfile.set('player'|'creator'|'full') — player skips Ollama probe
+OLLAMA: OllamaClient.probe — Pages needs npm run ollama:serve (:11435), not raw :11434
 Other APIs: Environment.setTimeOfDay/setFog, PlayerController.spawnPlayer,
-  mesh.position.set / scale.set, userData.surfaceType|audioZone|shaderHook|shaderGraph|materialPreset|textures|locked,
-  MaterialPresets.applyMaterialPreset, ShaderRegistry.applyHook, ShaderNodeGraph.applyGraph, TextureBridge.apply.
+  mesh.position.set / scale.set, userData.surfaceType|audioZone|shaderHook|shaderGraph|materialPreset|textures|locked|negativeLOD,
+  MaterialPresets.applyMaterialPreset, ShaderRegistry.applyHook, ShaderNodeGraph.applyGraph, TextureBridge.apply,
+  PerfHarness.measure / runScenario.
 Guard every mutator:
   if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-Prefer MaterialPresets over CanvasTexture slop.`,
-    large: `You are Threshold Engine architect (large). Return ONLY a complete JavaScript IIFE with try/catch.
+Prefer MaterialPresets over CanvasTexture slop. No X OAuth APIs.`,
+    large: `You are Threshold Engine architect (large, v10.13+). Return ONLY a complete JavaScript IIFE with try/catch.
 Structure:
 (function() {
   try {
     if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
     Engine.setRenderMode(4);  // ALWAYS 4 unless user asked retro/terminal/toon/hyper
     // World.createObject(type, name, colorHex, usePhysics) — type FIRST
+    // Optional: NegativeLod.enableObject for far static props; locked floors
     UI.status('Scene extended');
   } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
 })();
 Globals: World, Engine, Environment, State, UI, PlayerController, Physics, THREE (materials only),
-  MaterialPresets, ShaderRegistry, ShaderNodeGraph, TextureBridge, Runtime.
+  MaterialPresets, ShaderRegistry, ShaderNodeGraph, TextureBridge, Runtime, NegativeLod, GraphicsProfile, SurfaceProfile.
 Extend live scene — never clearWorld unless asked. No markdown. No fake engines (no new ThresholdEngine).
-Never setRenderMode(2) or (3) for realistic scenes.`,
+Never setRenderMode(2) or (3) for realistic scenes. Prefer poly:low + locked static for Lite demos.`,
 };
 
 const TIER_PARAMS = {
-    small: { temperature: 0.45, num_predict: 192 },
-    medium: { temperature: 0.3, num_predict: 1024 },
+    small: { temperature: 0.4, num_predict: 220 },
+    medium: { temperature: 0.28, num_predict: 1280 },
     large: { temperature: 0.35, num_predict: 2048 },
 };
 
@@ -142,10 +154,10 @@ function messagesToModelfileBlocks(entries) {
  * Cap MESSAGE few-shots — huge corpora cause chain-regurgitation on tiny models.
  * Full JSONL stays on disk for future LoRA / import; Modelfile uses a diverse sample.
  */
-/** Higher caps after wave2 corpus — still limited to avoid MESSAGE chain regurgitation */
-const DEFAULT_EXAMPLE_CAPS = { small: 64, medium: 48, large: 32 };
+/** Higher caps for wave5 product pack — still capped to limit MESSAGE regurgitation */
+const DEFAULT_EXAMPLE_CAPS = { small: 96, medium: 88, large: 40 };
 
-/** Score rows so intent-format + render-mode drills always land in few-shot caps */
+/** Score rows so intent-format + render-mode + 10.13 product drills land in few-shot caps */
 function entryPriority(row) {
     const u = String(row.messages?.[0]?.content || '');
     const a = String(row.messages?.[1]?.content || '');
@@ -170,6 +182,13 @@ function entryPriority(row) {
     if (/\bsequential\b|\bparallel\b|OllamaRunQueue/i.test(u + a)) score += 50;
     if (/clearWorld|THREE\.Scene|CanvasTexture|guest|host-authoritative|IMPLEMENT PLAN/i.test(u + a)) score += 70;
     if (/CORS|ollama:serve|validateProductionReady|slop scan|upload-guide/i.test(u + a)) score += 60;
+    // Wave 5 product
+    if (/SurfaceProfile|player surface|creator surface|\?surface=/i.test(u + a)) score += 85;
+    if (/NegativeLod|negativeLOD|neg lod|applyTierPolicy/i.test(u + a)) score += 82;
+    if (/X OAuth removed|sign in with x|console\.x\.ai/i.test(u + a)) score += 78;
+    if (/11435|ollama:serve|allowsOllamaProbe/i.test(u + a)) score += 80;
+    if (/PerfHarness|perf:harness|GraphicsProfile\.apply/i.test(u + a)) score += 70;
+    if (/store:ship|MAC_NOTARIZE|BUILD_FROM/i.test(u + a)) score += 65;
     return score;
 }
 

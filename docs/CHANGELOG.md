@@ -1,3 +1,11 @@
+## 10.13.17 — Mini-model wave5 training pack (Threshold-native)
+
+- **`bootcamp:seed:wave5`** — surfaces, Neg LOD/PERF, Ollama CORS, no X OAuth, store:ship, BUILD_FROM, modern World API patches
+- Higher few-shot caps (npc ~112, dev ~96) + SYSTEM prompts v10.13; priority sampler for product drills
+- `train:mini --wave5` / `--full` includes wave5; golden cases for surface, CORS, X removed, Neg LOD
+- Datasets: `small/wave5_product.jsonl`, `medium/wave5_product.jsonl` · bootcamp config v6
+- Docs: BOOTCAMP · TRAINING_BACKLOG
+
 ## 10.13.16 — Doc truth sweep (post 10.13.15)
 
 - Align spine docs with **floor path C · E5 · store:ship · mac notary · tuned harness**

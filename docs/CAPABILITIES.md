@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.13)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.16
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.17
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -116,8 +116,8 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | Agent status + GPU chip | `agentStatus.js` |
 | Sequential Ollama queue | `ollamaRunQueue.js` |
 | Capability matrix | Red/yellow/green per model × tier |
-| Mini models (GitHub) | `npm run models:mini` |
-| Benchmarks | `npm run ollama:benchmark` |
+| Mini models (GitHub) | `npm run models:mini` · **wave5** `train:mini -- --wave5` |
+| Benchmarks | `npm run ollama:benchmark` · `ollama:golden` |
 | Ollama CORS proxy | `npm run ollama:serve` → `:11435` (Pages + localhost); not plain `ollama serve` |
 | Play surface Ollama | **No probe** on player surface (avoids mobile CORS noise) |
 

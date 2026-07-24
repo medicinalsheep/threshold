@@ -1,8 +1,8 @@
 {
   "format": "threshold-bootcamp",
-  "version": 5,
+  "version": 6,
   "root": "./training/bootcamp",
-  "note": "Portable path in repo. Override with config/bootcamp.local.json or BOOTCAMP_ROOT env (gitignored).",
+  "note": "Portable path in repo. Override with config/bootcamp.local.json or BOOTCAMP_ROOT env (gitignored). Wave5 = 10.13 product power pack.",
   "ollamaHost": "http://127.0.0.1:11434",
   "models": {
     "small": {
@@ -10,19 +10,21 @@
       "base": "llama3.2:3b",
       "datasets": [
         "datasets/small/critical.jsonl",
+        "datasets/small/wave5_product.jsonl",
         "datasets/small/safety_npc.jsonl",
         "datasets/small/classify.jsonl",
         "datasets/small/npc.jsonl",
         "datasets/small/guide.jsonl"
       ],
       "modelfile": "modelfiles/threshold-mini-npc.Modelfile",
-      "maxExamples": 88
+      "maxExamples": 112
     },
     "medium": {
       "name": "threshold-mini-dev",
       "base": "qwen2.5-coder:1.5b",
       "datasets": [
         "datasets/medium/critical.jsonl",
+        "datasets/medium/wave5_product.jsonl",
         "datasets/medium/safety.jsonl",
         "datasets/medium/plan_code.jsonl",
         "datasets/medium/planning.jsonl",
@@ -30,8 +32,8 @@
         "datasets/medium/compiler.jsonl"
       ],
       "modelfile": "modelfiles/threshold-mini-dev.Modelfile",
-      "maxExamples": 72,
-      "note": "safety + plan/code + planning + performance + compiler"
+      "maxExamples": 96,
+      "note": "wave5 product + safety + plan/code + planning + performance + compiler"
     },
     "large_dev": {
       "name": "threshold-dev",

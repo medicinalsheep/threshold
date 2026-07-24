@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "10.13.16",
+  "version": "10.13.17",
   "type": "module",
   "engines": {
     "node": ">=22.0.0"
@@ -96,6 +96,7 @@
     "bootcamp:seed:critical": "node scripts/bootcamp-seed-critical.cjs",
     "bootcamp:seed:wave3": "node scripts/bootcamp-seed-wave3.cjs",
     "bootcamp:seed:wave4": "node scripts/bootcamp-seed-wave4.cjs",
+    "bootcamp:seed:wave5": "node scripts/bootcamp-seed-wave5.cjs",
     "bootcamp:build": "node scripts/bootcamp-build.cjs",
     "bootcamp:create": "node scripts/bootcamp-create.cjs",
     "bootcamp:import": "node scripts/bootcamp-import.cjs",
