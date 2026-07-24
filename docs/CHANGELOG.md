@@ -1,3 +1,9 @@
+## 10.13.16 — Doc truth sweep (post 10.13.15)
+
+- Align spine docs with **floor path C · E5 · store:ship · mac notary · tuned harness**
+- Updated: BUILD_FROM paste · CAPABILITIES ship/perf · PERF_NEXT status · NEGATIVE_LOD header · ROADMAP 10.13.12–15 · open/deferred · AGENTS · docs index · CONSOLIDATION_PLAN
+- Verify matrix: surface · negative-lod · perf · store:ship · mac:notarize:check
+
 ## 10.13.15 — Floor path C, E5 remotes/bloom, store ship, harness tune
 
 - **Floor path C** — InstancedMesh slab decks split near (PBR) / far (unlit) per instance (`floor.pathC`)

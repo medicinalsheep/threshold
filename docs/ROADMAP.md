@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.13.15 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.13.16 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -164,8 +164,12 @@ Accounts guide: [AUTH.md](AUTH.md) · Snapshot: [CAPABILITIES.md](CAPABILITIES.m
 | **10.13.9** | Multi-mat / skinned / floor path B |
 | **10.13.10** | Visibility **E4** spatial buckets |
 | **10.13.11** | **Player / creator / full** surface profiles |
+| **10.13.12** | Doc truth sweep |
+| **10.13.13** | Neg LOD longer range + scene-aware tint |
+| **10.13.14** | CI headless **perf:harness** (Puppeteer) |
+| **10.13.15** | Floor path **C** · **E5** remotes/bloom · **store:ship** · mac notary · harness tune |
 
-Perf notes: [PERF_NEXT.md](PERF_NEXT.md) · Surfaces: [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
+Perf: [PERF_NEXT.md](PERF_NEXT.md) · Surfaces: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Ship: [STORE_RELEASE.md](STORE_RELEASE.md) · [MAC_NOTARIZE.md](MAC_NOTARIZE.md)
 
 ---
 
@@ -174,22 +178,25 @@ Perf notes: [PERF_NEXT.md](PERF_NEXT.md) · Surfaces: [UI_AND_AGENTS.md](UI_AND_
 | Area | Notes |
 |------|-------|
 | GIMP hero hand-paint | Optional via GIMP SYNC (procedural heroes shipped 10.12.16) |
-| Doc / version hygiene | ✅ `version:sync` + ongoing sweeps |
-| CI headless perf harness | Optional — in-engine PERF is live |
-| Store upload automation | Signing keys remain local; upload manual |
+| Doc / version hygiene | ✅ `version:sync` + sweeps |
+| Store / macOS notary | ✅ scripts + docs; **needs studio certs + Mac host** for real notarize |
 | Training dataset growth | Waves 1–4 + `train:mini` + `ollama:golden`; grow via EXPORT TRAINING PAIR |
-| macOS notarization | Planned |
 | Trellis/Veo-class models | Listed in `models-registry.json` |
 | TC reference edition | Lobby **TC DEMO** path kept; separate from default grid |
+| Mac App Store Catalyst | Out of scope — desktop dmg via Electron |
 
 ---
 
 ## Verify before ship
 
 ```bash
+npm run version:sync:check
 npm run build
 node scripts/portal-ui-verify.cjs
 npm run controls:verify
+node scripts/surface-verify.cjs
+node scripts/negative-lod-verify.cjs
+npm run perf:verify
 npm run store:verify    # optional packaging smoke
 ```
 

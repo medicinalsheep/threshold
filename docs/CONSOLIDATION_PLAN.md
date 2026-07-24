@@ -34,7 +34,7 @@ Action plan from project review. Execute in order; each phase should pass `npm r
 
 **Goal:** One source of truth for shipped version.
 
-- [x] Source of truth: `src/config.js` → `VERSION` (currently **10.13.15**)
+- [x] Source of truth: `src/config.js` → `VERSION` (currently **10.13.16**)
 - [x] `npm run version:sync` — patches `package.json`, `package-lock.json`, README + doc headers
 - [x] `npm run version:sync:check` — CI drift gate (exit 1 if headers stale)
 
@@ -87,8 +87,8 @@ Action plan from project review. Execute in order; each phase should pass `npm r
 | `intent_classify` router | ✅ `src/shared/intentRouter.js` + game chat (T) routing |
 | AWS relay polish | ✅ PM2, Docker, nginx example, `relay:verify`, graceful shutdown |
 | Training dataset growth | ✅ classify.jsonl 15 · npc.jsonl 8 examples |
-| Store upload automation | ✅ `npm run store:upload` → `upload-guide.md` (signing local) |
-| macOS notarization | Deferred — needs Mac hardware |
+| Store upload automation | ✅ `store:upload` + **`store:ship`** (signing local) |
+| macOS notarization | ✅ scripts + [MAC_NOTARIZE.md](MAC_NOTARIZE.md) — needs Mac + certs to run |
 | GIMP hero 2K hand pass | Deferred — procedural seed ships |
 | Training dataset growth | ✅ 2026-07-10 — classify/npc/compiler/scenes expanded |
 | Local Ollama 2060 bench | ✅ llama3.2:3B default; qwen2.5 large; client think/num_ctx |

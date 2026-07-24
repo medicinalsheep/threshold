@@ -2,7 +2,7 @@
 
 **Collaborative 3D game lab** — host a session, connect an AI agent, build in the browser, play with friends, export real packages.
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.15
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.16
 
 **Build from this:** [docs/BUILD_FROM.md](docs/BUILD_FROM.md) — one-page outline for forks and Grok/agent chats (live link, six-step loop, do/don’t).
 
@@ -37,7 +37,8 @@ Threshold is for people who want to **go from idea → playable 3D scene → shi
 ```
 
 Multiplayer: **CREATE SESSION** → copy invite → **ENTER SESSION**. Friends **JOIN** with room code.  
-Optional: **Grok** API key for cloud AI — [docs/AUTH.md](docs/AUTH.md). Local Ollama: `npm run ollama:serve` (not plain `ollama serve`).
+Optional: **Grok** API key for cloud AI — [docs/AUTH.md](docs/AUTH.md). Local Ollama: `npm run ollama:serve` (not plain `ollama serve`).  
+Ship: [docs/STORE_RELEASE.md](docs/STORE_RELEASE.md) · macOS notary: [docs/MAC_NOTARIZE.md](docs/MAC_NOTARIZE.md) · `npm run store:ship`.
 
 ---
 

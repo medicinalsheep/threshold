@@ -1,4 +1,4 @@
-# Getting started with Threshold (v10.13.15)
+# Getting started with Threshold (v10.13.16)
 
 One linear path from lobby to shipping — blank grid default, Agent Portal, tiered agents, and optional **TC** export practice.
 
@@ -54,6 +54,9 @@ Verify:
 npm run assets:verify
 npm run controls:verify
 node scripts/portal-ui-verify.cjs
+node scripts/surface-verify.cjs
+node scripts/negative-lod-verify.cjs
+npm run perf:verify
 npm run preview                 # http://localhost:4173
 ```
 

@@ -1,9 +1,9 @@
 # Negative LOD — Design & Implementation Plan
 
-**Status:** A+B + **E0–E4 shipped** (through 10.13.10) · tier auto / multi-mat / floor B (10.13.8–9)  
+**Status:** A+B · **E0–E5** · tier auto · multi-mat · floor B/**C** · scene-aware tint — **shipped through 10.13.15**  
 **Target version:** 10.13.x  
 **Live engine version:** see `src/config.js` → `VERSION`  
-**Related:** `meshLod.js`, `textureHilod.js`, `visibilitySystem.js`, `config/negative-lod.json`, `config/visibility.json`, [PERF_NEXT.md](PERF_NEXT.md)
+**Related:** `meshLod.js`, `textureHilod.js`, `visibilitySystem.js`, `remotePlayers.js`, `config/negative-lod.json`, `config/visibility.json`, [PERF_NEXT.md](PERF_NEXT.md)
 
 ---
 
@@ -677,8 +677,9 @@ else auto matrix above
 | **E2** | Off-screen far: shadow off + optional Cannon sleep | **Done (10.13.3)** |
 | **E3** | Weather/shader/audio env gates | **Done (10.13.4)** |
 | **E4** | Spatial buckets if needed | **Done (10.13.10)** |
+| **E5** | Far remotes · bloom skip · floor path C | **Done (10.13.15)** |
 
-### Follow-on outline (E3 → E4+)
+### Follow-on outline (E3 → E5)
 
 **E2 — Sleep / shadow elimination** ✅
 - Class **D/E**: stash & disable `castShadow`; restore on A/B/C

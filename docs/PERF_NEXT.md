@@ -1,9 +1,9 @@
-# Performance next steps (after Neg LOD A–E4)
+# Performance status (Neg LOD + Visibility + harness)
 
-**Status:** Core perf stack shipped · **Engine:** 10.13.13+  
-**Related:** [NEGATIVE_LOD.md](NEGATIVE_LOD.md) · [UI_AND_AGENTS.md](UI_AND_AGENTS.md) (surfaces)
+**Status:** Core perf stack **complete** · **Engine:** 10.13.15+  
+**Related:** [NEGATIVE_LOD.md](NEGATIVE_LOD.md) · [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
 
-X OAuth is **removed**. Shipped: **Neg LOD** (long distance, scene-aware tint, tier auto, multi-mat, floor B) · **Visibility E0–E4** · **measure harness** · **player surface**. Remaining optional: CI headless harness.
+X OAuth is **removed**. Shipped: Neg LOD (long dist, scene tint, tier auto, multi-mat, floor B/**C**) · Visibility **E0–E4** · **E5** remotes/bloom · measure + **CI harness** · **player surface**.
 
 ---
 
@@ -120,12 +120,13 @@ Compare prints p95 on/off and **% lower with Neg LOD** when Δ positive.
 
 ```text
 1. Auto-enable by tier     ✅
-2. Measure harness         ✅ (in-engine)
+2. Measure harness         ✅ (in-engine + CI)
 3. Multi-mat / skinned     ✅
-4. Floor deck B            ✅
-5. E4 spatial buckets      ✅ 10.13.10
-6. CI headless harness     ✅ 10.13.14
-7. Player surface (mobile) ✅ 10.13.11
+4. Floor deck B + C        ✅
+5. E4 spatial buckets      ✅
+6. E5 remotes / bloom      ✅
+7. Player surface          ✅
+8. store:ship + mac notary ✅ (scripts; certs local)
 ```
 
 ---

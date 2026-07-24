@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), tiered local/cloud agents, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **10.13.15**)
+**Version:** `src/config.js` → `VERSION` (currently **10.13.16**)
 
 **Spine (start here):** [docs/BUILD_FROM.md](docs/BUILD_FROM.md) · **Doc index:** [docs/README.md](docs/README.md)
 
@@ -75,10 +75,13 @@ npm run tc:ship
 npm run tc:ship:verify
 npm run controls:verify         # binding defaults + doc truth
 npm run store:verify            # packaging E2E smoke
+npm run store:ship -- --manifest <game>.json --targets win
+npm run mac:notarize:check
 node scripts/surface-verify.cjs
 node scripts/negative-lod-verify.cjs
 npm run perf:verify
 npm run perf:harness            # headless Puppeteer → dist-store/perf-*.json
+npm run perf:harness:compare
 ```
 
 ### Agents & Ollama
@@ -163,7 +166,9 @@ Live manifest: `textures/threshold_manifest.json` (not `old/plugins/...` sample)
 | [docs/STREAMLINED_DEV.md](docs/STREAMLINED_DEV.md) | Lobby → agents → export path |
 | [docs/AUTH.md](docs/AUTH.md) | Optional Grok API key |
 | [docs/BUILD_FROM.md](docs/BUILD_FROM.md) | **One-page spine** for agents & forks |
-| [docs/PERF_NEXT.md](docs/PERF_NEXT.md) | Perf stack status (E0–E4 shipped; CI optional) |
+| [docs/PERF_NEXT.md](docs/PERF_NEXT.md) | Perf stack complete (E0–E5 · harness) |
+| [docs/MAC_NOTARIZE.md](docs/MAC_NOTARIZE.md) | macOS sign + notary + staple |
+| [docs/STORE_RELEASE.md](docs/STORE_RELEASE.md) | Store prep / package / ship |
 | [docs/AGENT_ROUTING.md](docs/AGENT_ROUTING.md) | Tiered router, benchmarks, providers |
 | [docs/MODEL_DISTRIBUTION.md](docs/MODEL_DISTRIBUTION.md) | GitHub vs local weights policy |
 | [docs/BOOTCAMP.md](docs/BOOTCAMP.md) | Training bootcamp quick start |

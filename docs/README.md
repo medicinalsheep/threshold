@@ -1,6 +1,6 @@
 # Threshold documentation index
 
-**Version:** 10.13.15 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.13.16 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Full scope map — quality-first blank grid, optional TC reference editions, and where to read more.
 
@@ -78,7 +78,8 @@ flowchart TB
 | Creative loop | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | BUILD → insert · PromptGen |
 | Full asset pipeline | [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | `npm run assets:pack` |
 | TC export practice | [REFERENCE_EDITIONS.md](REFERENCE_EDITIONS.md) | Lobby → **TC DEMO** |
-| Ship to stores | [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) | TOOLS → EXPORT → `store:prep` |
+| Ship to stores | [STORE_RELEASE.md](STORE_RELEASE.md) · [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) | `store:ship` · `package:*` |
+| macOS notarize | [MAC_NOTARIZE.md](MAC_NOTARIZE.md) | `mac:notarize:check` · `package:mac` |
 
 ---
 
@@ -102,6 +103,9 @@ node scripts/surface-verify.cjs # player/creator surface markers
 node scripts/negative-lod-verify.cjs
 npm run perf:verify             # static perf harness smoke
 npm run perf:harness            # headless measure → dist-store/perf-*.json
+npm run perf:harness:compare
+npm run store:ship -- --manifest game.json --targets win
+npm run mac:notarize:check
 npm run build                   # GitHub Pages → dist-pages/
 ```
 
@@ -118,7 +122,7 @@ npm run build                   # GitHub Pages → dist-pages/
 | [MAC_NOTARIZE.md](MAC_NOTARIZE.md) | macOS sign + notary + staple |
 | [STEAM_RELEASE.md](STEAM_RELEASE.md) | Steam depot upload |
 | [MULTIPLAYER.md](MULTIPLAYER.md) | Room codes, PeerJS, join troubleshooting |
-| [NEGATIVE_LOD.md](NEGATIVE_LOD.md) | Neg LOD + Visibility E0–E4 design |
+| [NEGATIVE_LOD.md](NEGATIVE_LOD.md) | Neg LOD + Visibility E0–E5 + floor C |
 | [../extension/threshold-chrome/README.md](../extension/threshold-chrome/README.md) | Chrome: local mini → Grok tab paste |
 | [ROADMAP.md](ROADMAP.md) | v10.8+ forward plan |
 | [PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md) | Vision + pillars |

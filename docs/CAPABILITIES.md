@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.13)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.15
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.16
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -101,8 +101,10 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 |------------|---------------|
 | 9-step EXPORT wizard | TOOLS → EXPORT — [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) |
 | Quick EXPORT & PLAY | `quickExportPlay.js` |
-| Store metadata | `npm run store:prep` |
-| Android / Windows / iOS / Steam | `package:*` scripts |
+| Store orchestrator | `npm run store:ship -- --manifest game.json --targets win` |
+| Store metadata | `npm run store:prep` · `store:assets` · `store:upload` |
+| Android / Windows / iOS / Steam | `package:*` · `package:steam` · `steam:depot` |
+| macOS notarize | [MAC_NOTARIZE.md](MAC_NOTARIZE.md) · `mac:notarize:check` · `mac:staple` |
 | Store verify smoke | `npm run store:verify` |
 
 ---
@@ -128,9 +130,10 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | Layer | Status |
 |-------|--------|
 | Code-split after lobby | `app-engine`, `app-compiler`, `app-prompter`, vendors |
-| Neg LOD stack | Tier auto · multi-mat/skinned · floor path B |
+| Neg LOD stack | Long dist · scene tint · tier auto · multi-mat · floor B/**C** |
 | Visibility E0–E4 | Classify · gates · sleep · env · spatial |
-| Measure | SETUP → PERF · `PerfHarness` · HUD |
+| E5 | Far remotes · bloom skip |
+| Measure | SETUP → PERF · `perf:harness` (5s + 1s warm) · HUD |
 
 Details: [PERF_NEXT.md](PERF_NEXT.md) · [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
 
@@ -149,7 +152,8 @@ node scripts/portal-ui-verify.cjs
 node scripts/negative-lod-verify.cjs
 node scripts/surface-verify.cjs
 npm run perf:verify
-npm run perf:harness            # optional browser; needs puppeteer
+npm run perf:harness            # browser; needs puppeteer
+npm run mac:notarize:check      # env only (no secrets printed)
 npm run build
 ```
 
@@ -163,5 +167,6 @@ npm run build
 - [CHANGELOG.md](CHANGELOG.md) — version history
 - [AUTH.md](AUTH.md) — optional Grok API key (no X OAuth)
 - [UI_AND_AGENTS.md](UI_AND_AGENTS.md) — surfaces, hubs, portal
+- [STORE_RELEASE.md](STORE_RELEASE.md) · [MAC_NOTARIZE.md](MAC_NOTARIZE.md)
 - [AGENTS.md](../AGENTS.md) — contributor map
 - [old/docs/](../old/docs/) — archived phase history
