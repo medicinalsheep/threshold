@@ -66,10 +66,26 @@ for (const token of [
     if (mod.includes(token)) ok(`multi-mat/floor has ${token}`);
     else fail(`missing ${token}`);
 }
-if (cfgAuto.defaultDistance >= 60) ok(`defaultDistance ${cfgAuto.defaultDistance} (far softer)`);
-else fail('defaultDistance should be ≥60 for less-noticeable flats');
-if (cfgAuto.envBlend > 0 && cfgAuto.appearanceSample !== false) ok('appearance + envBlend enabled');
-else fail('appearanceSample/envBlend missing');
+if (cfgAuto.defaultDistance >= 90) ok(`defaultDistance ${cfgAuto.defaultDistance} (gameplay far)`);
+else fail('defaultDistance should be ≥90 for less-noticeable flats');
+if (cfgAuto.unlitLift >= 1 && cfgAuto.ambientFloor >= 0.5 && cfgAuto.appearanceSample !== false) {
+    ok(`unlitLift ${cfgAuto.unlitLift} · ambientFloor ${cfgAuto.ambientFloor} (light bake)`);
+} else fail('unlitLift/ambientFloor missing for light-compensated flats');
+if (cfgAuto.envBlend >= 0 && cfgAuto.envBlend <= 0.35 && cfgAuto.appearanceSample !== false) {
+    ok(`envBlend ${cfgAuto.envBlend} (soft fog, not muddy)`);
+} else fail('envBlend should be low (≤0.35) so flats keep color identity');
+const visCfg = JSON.parse(read('config/visibility.json'));
+if (visCfg.nearDistance >= 90 && visCfg.nearDistance <= cfgAuto.defaultDistance + 5) {
+    ok(`visibility nearDistance ${visCfg.nearDistance} aligns with Neg`);
+} else fail('visibility nearDistance should align with Neg defaultDistance (~100)');
+const lodD = JSON.parse(read('config/lod-distances.json'));
+if (Array.isArray(lodD.distances) && lodD.distances[lodD.distances.length - 1] < cfgAuto.defaultDistance) {
+    ok(`mesh/HILOD last rung ${lodD.distances[lodD.distances.length - 1]}m < Neg ${cfgAuto.defaultDistance}m`);
+} else fail('lod-distances must stay shorter than Neg so mesh/tex cheapen first');
+for (const token of ['unlitLift', 'sampleSceneExposure', 'ambientFloor', 'mapColorScale']) {
+    if (mod.includes(token)) ok(`light bake has ${token}`);
+    else fail(`missing ${token}`);
+}
 
 const perf = read('src/shared/perfHarness.js');
 if (perf.includes('export const PerfHarness') && perf.includes('measure(')) ok('perfHarness.js present');

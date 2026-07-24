@@ -122,7 +122,8 @@ export const MaterialLibrary = {
                 mesh.userData.polyBudget = 'low';
                 await this.applyWithMaps(mesh, p.id);
                 if (window.NegativeLod?.enableObject) {
-                    window.NegativeLod.enableObject(mesh, { distance: 72, source: 'user' });
+                    const d = window.NegativeLod.config?.defaultDistance || 100;
+                    window.NegativeLod.enableObject(mesh, { distance: d, source: 'user' });
                 }
                 spawned.push(mesh);
             }

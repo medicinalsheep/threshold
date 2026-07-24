@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.13)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.18
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.19
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -131,7 +131,7 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | Layer | Status |
 |-------|--------|
 | Code-split after lobby | `app-engine`, `app-compiler`, `app-prompter`, vendors |
-| Neg LOD stack | Long dist · scene tint · tier auto · multi-mat · floor B/**C** |
+| Neg LOD stack | ~100m default · light bake · HILOD/mesh first · tier auto · floor B/**C** |
 | Visibility E0–E4 | Classify · gates · sleep · env · spatial |
 | E5 | Far remotes · bloom skip |
 | Measure | SETUP → PERF · `perf:harness` (5s + 1s warm) · HUD |

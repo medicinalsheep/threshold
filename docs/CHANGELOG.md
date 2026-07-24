@@ -1,3 +1,13 @@
+## 10.13.19 — Neg LOD / HILOD gameplay polish (light bake + farther)
+
+- **Unlit light compensation** — flats bake hemi/sun/ambient (`unlitLift`, `ambientFloor`, `envLightBoost`) so far props match mid-range PBR instead of looking “just darker”
+- Softer fog pull (`envBlend` 0.18); metals keep chroma via env mix; textured flats use `mapColorScale` 1.05
+- **Distances pushed** — default **100m** · Lite 72 / Mobile 95 / Realistic 125 / Ultra 165; hysteresis 12
+- **Visibility aligned** — nearDistance 100 / farSleep 145 so B=full PBR, C only past Neg threshold
+- **Order of ops** — MeshLod+HILOD at 18/48m → Neg unlit last; C no longer force-flats without distance hysteresis
+- Floor path C near band 52m; path B height/distance 22/100
+- Docs: NEGATIVE_LOD stack diagram
+
 ## 10.13.18 — Starter material library + texture examples
 
 - **Material presets** expanded (~24) with categories: exterior, metal, interior, props, glass, light

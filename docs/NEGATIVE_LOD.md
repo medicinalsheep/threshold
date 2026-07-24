@@ -1,19 +1,55 @@
 # Negative LOD — Design & Implementation Plan
 
-**Status:** A+B · **E0–E5** · tier auto · multi-mat · floor B/**C** · scene-aware tint — **shipped through 10.13.15**  
+**Status:** A+B · **E0–E5** · tier auto · multi-mat · floor B/**C** · **light-compensated flats** — **shipped through 10.13.19**  
 **Target version:** 10.13.x  
 **Live engine version:** see `src/config.js` → `VERSION`  
-**Related:** `meshLod.js`, `textureHilod.js`, `visibilitySystem.js`, `remotePlayers.js`, `config/negative-lod.json`, `config/visibility.json`, [PERF_NEXT.md](PERF_NEXT.md)
+**Related:** `meshLod.js`, `textureHilod.js`, `visibilitySystem.js`, `remotePlayers.js`, `config/negative-lod.json`, `config/visibility.json`, `config/lod-distances.json`, [PERF_NEXT.md](PERF_NEXT.md)
+
+---
+
+## 0. Gameplay stack (order of operations)
+
+Per frame in `engineCore` (after classify):
+
+```
+1. VisibilitySystem.update  → A focus · B on-near · C on-far · D/E off-screen
+2. MeshLod.update           → geometry LOD0/1/2  (lod-distances: 0 / 18 / 48 m)
+3. TextureHilod.update      → tex res swap on A/B only (same distances)
+4. NegativeLod.update       → far unlit Basic   (default ~100 m; tier 72–165)
+```
+
+| Band | Mesh | Texture | Material |
+|------|------|---------|----------|
+| 0–18 m | LOD0 | hi / tier max | full PBR |
+| 18–48 m | LOD1 | mid | full PBR |
+| 48–~100 m | LOD2 | low (if still A/B) | full PBR |
+| ≥ Neg threshold | stay LOD2 | freeze (C skips HILOD) | **unlit flat** (light-baked color) |
+
+**Rules that keep this honest:**
+
+- `lod-distances` last rung **must be &lt; Neg `defaultDistance`** so mesh/tex cheapen **before** shader flat  
+- Visibility `nearDistance` **≈ Neg default** so B = full PBR and C only starts near the unlit band  
+- Neg uses **distance + hysteresis** for C (does not force-flat on class C alone)  
+- D/E: freeze material state (no thrash off-screen)
+
+### Far color (why flats used to look “just darker”)
+
+`MeshBasicMaterial` receives **no lights**. Old path did roughly `albedo × 0.7` then heavy fog lerp → muddy. **v5** bakes missing light:
+
+- `ambientFloor` + scene hemi/sun exposure (`sampleSceneExposure`)  
+- `unlitLift` (~1.12) so mid-range unlit ≈ lit PBR  
+- low `envBlend` (identity preserved)  
+- metals: env mix instead of greying out  
 
 ---
 
 ## 1. Idea (one paragraph)
 
-Add a boolean **`negativeLOD`** on materials and/or objects. When `true` and the camera is far enough, the renderer **does not swap meshes** (classic LOD). Instead it **swaps the material’s shading path** to an ultra-cheap “negative” shader: **no PBR**, no lights/shadows/envMap/reflections, only **flat albedo color** (optional map sample) plus **distance fade**. Close range restores full `MeshStandardMaterial` (or the previous material). This is a **shader LOD** complementary to existing **mesh LOD** and **texture HILOD**.
+Add a boolean **`negativeLOD`** on materials and/or objects. When `true` and the camera is far enough, the renderer **does not swap meshes** (classic LOD). Instead it **swaps the material’s shading path** to an ultra-cheap “negative” shader: **no PBR**, no lights/shadows/envMap/reflections, only **flat light-compensated color** (optional map sample) plus a soft distance fade. Close range restores full `MeshStandardMaterial` (or the previous material). This is a **shader LOD** complementary to existing **mesh LOD** and **texture HILOD**.
 
 ```
 distance < near  → full PBR (MeshStandard / graphs / weather)
-distance ≥ far   → NegativeFlat (unlit + fade)
+distance ≥ far   → NegativeFlat (unlit + light bake + soft fade)
 hysteresis band  → keep last state (avoid thrash)
 ```
 
@@ -28,11 +64,7 @@ hysteresis band  → keep last state (avoid thrash)
 | Hard for agent-generated primitives | Perfect for mass-spawned AI props |
 | Align/scale chain complexity | Material swap only |
 
-**Gains stack** with MeshLod + TextureHilod:
-
-1. **Near:** full PBR + high tex  
-2. **Mid:** cheaper tex (HILOD) ± mesh LOD1  
-3. **Far:** **negativeLOD** flat unlit (and optionally hide shadows)  
+**Gains stack** with MeshLod + TextureHilod (see §0).
 
 ---
 

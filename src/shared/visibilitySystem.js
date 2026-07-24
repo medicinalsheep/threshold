@@ -117,9 +117,18 @@ function isDescendant(a, b) {
     return false;
 }
 
+/**
+ * B/C boundary (on-screen near vs far). Prefer per-object Neg distance so
+ * visibility and NegativeLod agree; fall back to config nearDistance
+ * (aligned with negative-lod defaultDistance).
+ */
 function nearDist(obj) {
     const d = Number(obj.userData?.negativeLodDistance);
     if (Number.isFinite(d) && d > 0) return d;
+    const negDefault = Number(window.NegativeLod?.config?.defaultDistance);
+    if (Number.isFinite(negDefault) && negDefault > 0) return negDefault;
+    const negCfgDefault = Number(negCfg.defaultDistance);
+    if (Number.isFinite(negCfgDefault) && negCfgDefault > 0) return negCfgDefault;
     return cfg.nearDistance;
 }
 
@@ -127,7 +136,8 @@ function farDist(obj) {
     const d = Number(obj.userData?.offscreenSleepDistance);
     if (Number.isFinite(d) && d > 0) return d;
     const n = nearDist(obj);
-    return Math.max(cfg.farDistance, n + 15);
+    // Sleep further out than Neg flat so off-screen work stops after shader LOD
+    return Math.max(cfg.farDistance, n + 40);
 }
 
 function estimateRadius(obj) {

@@ -379,7 +379,7 @@ export const UI = {
         if (negDist) {
             negDist.value = obj.userData.negativeLodDistance
                 ?? NegativeLod.config?.defaultDistance
-                ?? 72;
+                ?? 100;
         }
         this.syncNegativeLodStatus(obj);
         this.populateSoundClipSelect(obj.userData.soundClipId || '');
@@ -400,7 +400,7 @@ export const UI = {
         const sleep = obj.userData?._visPhysicsSleep ? ' · phys sleep' : '';
         const distM = obj.userData.negativeLodDistance
             || NegativeLod.config?.defaultDistance
-            || 72;
+            || 100;
         const farCols = obj.userData?._negLodFarColors;
         const farHint = farCols?.length
             ? ` · tint #${Number(farCols[0]).toString(16).padStart(6, '0')}`

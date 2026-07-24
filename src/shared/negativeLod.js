@@ -9,19 +9,30 @@ import { isLoadSuspended } from './aiMemoryFreeze.js';
 
 const cfg = {
     enabled: cfgJson.enabled !== false,
-    defaultDistance: Number(cfgJson.defaultDistance) || 72,
-    hysteresis: Number(cfgJson.hysteresis) || 8,
+    defaultDistance: Number(cfgJson.defaultDistance) || 100,
+    hysteresis: Number(cfgJson.hysteresis) || 12,
     maxUpdatesPerFrame: Number(cfgJson.maxUpdatesPerFrame) || 48,
-    fadeStart: Number(cfgJson.fadeStart) || 0.72,
-    fadeEnd: Number(cfgJson.fadeEnd) || 1.35,
-    fadeMinOpacity: Number(cfgJson.fadeMinOpacity) || 0.88,
+    fadeStart: Number(cfgJson.fadeStart) || 0.82,
+    fadeEnd: Number(cfgJson.fadeEnd) || 1.45,
+    fadeMinOpacity: Number(cfgJson.fadeMinOpacity) || 0.94,
     preserveMapDefault: !!cfgJson.preserveMapDefault,
     disableCastShadowWhenFlat: cfgJson.disableCastShadowWhenFlat !== false,
     forceFullWhenSelected: cfgJson.forceFullWhenSelected !== false,
-    /** 0–1 mix of scene fog/hemi/sun into far flat color (softens pops). */
-    envBlend: Number.isFinite(Number(cfgJson.envBlend)) ? Number(cfgJson.envBlend) : 0.4,
-    /** Extra multiply from ambient/hemi so flats track world lighting. */
-    envLightBoost: Number.isFinite(Number(cfgJson.envLightBoost)) ? Number(cfgJson.envLightBoost) : 0.22,
+    /** Soft pull toward fog/sky (keep low — high values muddy flats). */
+    envBlend: Number.isFinite(Number(cfgJson.envBlend)) ? Number(cfgJson.envBlend) : 0.18,
+    /** How much hemi/sun luminance lifts unlit albedo. */
+    envLightBoost: Number.isFinite(Number(cfgJson.envLightBoost)) ? Number(cfgJson.envLightBoost) : 0.55,
+    /**
+     * Unlit materials miss lights: bake average scene exposure into flat color.
+     * >1 slightly brighter than raw albedo so far props match mid-range PBR.
+     */
+    unlitLift: Number.isFinite(Number(cfgJson.unlitLift)) ? Number(cfgJson.unlitLift) : 1.12,
+    /** Minimum light response floor (0–1) before env contribution. */
+    ambientFloor: Number.isFinite(Number(cfgJson.ambientFloor)) ? Number(cfgJson.ambientFloor) : 0.62,
+    /** Metals sample more env (fake reflection) instead of going dark grey. */
+    metalEnvMix: Number.isFinite(Number(cfgJson.metalEnvMix)) ? Number(cfgJson.metalEnvMix) : 0.22,
+    /** MeshBasic map * color: slight lift so textured flats aren't dimmer than PBR. */
+    mapColorScale: Number.isFinite(Number(cfgJson.mapColorScale)) ? Number(cfgJson.mapColorScale) : 1.05,
     appearanceSample: cfgJson.appearanceSample !== false,
     excludeFlags: Array.isArray(cfgJson.excludeFlags) ? cfgJson.excludeFlags : [],
     /** Graphics tiers that auto-flag eligible static props. */
@@ -32,18 +43,18 @@ const cfg = {
     autoEnableStaticOnly: cfgJson.autoEnableStaticOnly !== false,
     distanceByTier: cfgJson.distanceByTier && typeof cfgJson.distanceByTier === 'object'
         ? cfgJson.distanceByTier
-        : { compatibility: 52, balanced: 68, realistic: 88, ultra: 110 },
+        : { compatibility: 72, balanced: 95, realistic: 125, ultra: 165 },
     floor: {
         enabled: cfgJson.floor?.enabled !== false,
         autoTiersOnly: cfgJson.floor?.autoTiersOnly !== false,
-        cameraHeight: Number(cfgJson.floor?.cameraHeight) || 18,
-        distance: Number(cfgJson.floor?.distance) || 72,
-        hysteresis: Number(cfgJson.floor?.hysteresis) || 4,
+        cameraHeight: Number(cfgJson.floor?.cameraHeight) || 22,
+        distance: Number(cfgJson.floor?.distance) || 100,
+        hysteresis: Number(cfgJson.floor?.hysteresis) || 6,
         preserveMap: cfgJson.floor?.preserveMap !== false,
         /** Per-instance near/far split for InstancedMesh decks */
         pathC: cfgJson.floor?.pathC !== false,
         pathCMinInstances: Number(cfgJson.floor?.pathCMinInstances) || 16,
-        pathCNearDistance: Number(cfgJson.floor?.pathCNearDistance) || 36,
+        pathCNearDistance: Number(cfgJson.floor?.pathCNearDistance) || 52,
     },
 };
 
@@ -232,8 +243,9 @@ function clamp01(x) {
 }
 
 /**
- * Read original material appearance (albedo + emissive + metalness cue).
+ * Read original material appearance (albedo + emissive).
  * Each mesh slot keeps its own far color so a red crate ≠ a blue wall.
+ * Does NOT darken metals — unlit compensation happens in composeFarColor.
  */
 function sampleAlbedo(fullMat) {
     _tmpColor.setRGB(0.72, 0.72, 0.74);
@@ -246,23 +258,16 @@ function sampleAlbedo(fullMat) {
     if (fullMat?.emissive?.isColor) {
         const e = Number(fullMat.emissiveIntensity) || 0;
         if (e > 0.001) {
-            _tmpColor.r = clamp01(_tmpColor.r + fullMat.emissive.r * e * 0.45);
-            _tmpColor.g = clamp01(_tmpColor.g + fullMat.emissive.g * e * 0.45);
-            _tmpColor.b = clamp01(_tmpColor.b + fullMat.emissive.b * e * 0.45);
+            _tmpColor.r = clamp01(_tmpColor.r + fullMat.emissive.r * e * 0.55);
+            _tmpColor.g = clamp01(_tmpColor.g + fullMat.emissive.g * e * 0.55);
+            _tmpColor.b = clamp01(_tmpColor.b + fullMat.emissive.b * e * 0.55);
         }
     }
-    // Metals read darker / cooler at distance
-    const metal = Number(fullMat?.metalness);
-    if (Number.isFinite(metal) && metal > 0.05) {
-        _tmpColor.r = _tmpColor.r * (1 - metal * 0.28) + 0.18 * metal;
-        _tmpColor.g = _tmpColor.g * (1 - metal * 0.28) + 0.19 * metal;
-        _tmpColor.b = _tmpColor.b * (1 - metal * 0.28) + 0.22 * metal;
-    }
-    // Rough plastics desaturate slightly (fog-friendly)
+    // Very rough surfaces: mild desat only (fog-friendly), keep value
     const rough = Number(fullMat?.roughness);
-    if (Number.isFinite(rough) && rough > 0.55) {
+    if (Number.isFinite(rough) && rough > 0.7) {
         const avg = (_tmpColor.r + _tmpColor.g + _tmpColor.b) / 3;
-        const t = (rough - 0.55) * 0.35;
+        const t = (rough - 0.7) * 0.22;
         _tmpColor.r += (avg - _tmpColor.r) * t;
         _tmpColor.g += (avg - _tmpColor.g) * t;
         _tmpColor.b += (avg - _tmpColor.b) * t;
@@ -271,11 +276,10 @@ function sampleAlbedo(fullMat) {
 }
 
 /**
- * Scene lighting / atmosphere for far flats — fog, background, hemi, sun.
- * Rebuilds every call so time-of-day stays coherent.
+ * Scene atmosphere tint (fog / sky / hemi / sun color) — not exposure.
  */
 function sampleEnvTint() {
-    const out = new THREE.Color(0.45, 0.5, 0.55);
+    const out = new THREE.Color(0.55, 0.58, 0.62);
     const scene = window.Engine?.scene;
     let samples = 0;
     _tmpColor2.setRGB(0, 0, 0);
@@ -293,19 +297,19 @@ function sampleEnvTint() {
 
     const hemi = window.Environment?.hemiLight;
     if (hemi?.visible !== false && hemi?.color) {
-        _tmpColor2.r += hemi.color.r * 0.55 + (hemi.groundColor?.r ?? 0.2) * 0.35;
-        _tmpColor2.g += hemi.color.g * 0.55 + (hemi.groundColor?.g ?? 0.18) * 0.35;
-        _tmpColor2.b += hemi.color.b * 0.55 + (hemi.groundColor?.b ?? 0.15) * 0.35;
+        _tmpColor2.r += hemi.color.r * 0.6 + (hemi.groundColor?.r ?? 0.25) * 0.3;
+        _tmpColor2.g += hemi.color.g * 0.6 + (hemi.groundColor?.g ?? 0.22) * 0.3;
+        _tmpColor2.b += hemi.color.b * 0.6 + (hemi.groundColor?.b ?? 0.2) * 0.3;
         samples += 1;
     }
 
     const sun = window.Environment?.sunLight;
     if (sun?.visible !== false && sun?.color) {
-        const i = Math.min(1.2, Number(sun.intensity) || 0.8) * 0.35;
+        const i = Math.min(1.4, Number(sun.intensity) || 0.8) * 0.4;
         _tmpColor2.r += sun.color.r * i;
         _tmpColor2.g += sun.color.g * i;
         _tmpColor2.b += sun.color.b * i;
-        samples += 0.6;
+        samples += 0.55;
     }
 
     if (samples > 0) {
@@ -318,7 +322,38 @@ function sampleEnvTint() {
 }
 
 /**
- * Albedo × soft ambient + lerp toward fog/env — unique per material, tracks scene.
+ * Scalar scene luminance estimate — what PBR would get from hemi+sun on average.
+ * Used to lift MeshBasicMaterial so far flats aren't just "darker albedo".
+ */
+function sampleSceneExposure() {
+    let L = cfg.ambientFloor;
+    const hemi = window.Environment?.hemiLight;
+    if (hemi?.visible !== false) {
+        const hi = Number(hemi.intensity);
+        // Three hemi often ~0.4–0.8; contribute half as even fill
+        L += (Number.isFinite(hi) ? hi : 0.45) * 0.42;
+        if (hemi.color) {
+            L += (hemi.color.r + hemi.color.g + hemi.color.b) / 3 * 0.12;
+        }
+    }
+    const sun = window.Environment?.sunLight;
+    if (sun?.visible !== false) {
+        const si = Number(sun.intensity);
+        // Sphere-average N·L ≈ 0.35 for a directional key
+        L += (Number.isFinite(si) ? si : 0.85) * 0.28;
+    }
+    const amb = window.Environment?.ambientLight;
+    if (amb?.visible !== false && amb) {
+        const ai = Number(amb.intensity);
+        L += (Number.isFinite(ai) ? ai : 0.2) * 0.35;
+    }
+    // Night / dark scenes: don't invent light; day: cap so we don't blow out
+    return Math.min(1.65, Math.max(cfg.ambientFloor * 0.85, L));
+}
+
+/**
+ * Bake missing lights into flat color so unlit ≈ mid-range lit PBR, not muddy.
+ * Per-material albedo + soft env/fog; metals pick up sky tint instead of greying out.
  */
 function composeFarColor(fullMat, obj) {
     if (!cfg.appearanceSample) {
@@ -326,21 +361,38 @@ function composeFarColor(fullMat, obj) {
     }
     const albedo = sampleAlbedo(fullMat);
     const env = sampleEnvTint();
+    const exposure = sampleSceneExposure();
     const blend = clamp01(
         obj?.userData?.negativeLodEnvBlend != null
             ? Number(obj.userData.negativeLodEnvBlend)
             : cfg.envBlend,
     );
     const boost = clamp01(cfg.envLightBoost);
+    const lift = Number.isFinite(cfg.unlitLift) ? cfg.unlitLift : 1.12;
+    const metal = clamp01(Number(fullMat?.metalness) || 0);
 
-    // Light response: albedo * (ambient floor + env)
+    // Effective light: ambient floor + scene exposure + env chroma boost
+    // Avoid the old albedo*0.7 path that made everything look "just darker"
+    const lightR = cfg.ambientFloor + (exposure - cfg.ambientFloor) * 0.55 + env.r * boost * 0.35;
+    const lightG = cfg.ambientFloor + (exposure - cfg.ambientFloor) * 0.55 + env.g * boost * 0.35;
+    const lightB = cfg.ambientFloor + (exposure - cfg.ambientFloor) * 0.55 + env.b * boost * 0.35;
+
     const lit = new THREE.Color(
-        clamp01(albedo.r * (0.42 + env.r * boost + (1 - boost) * 0.35)),
-        clamp01(albedo.g * (0.42 + env.g * boost + (1 - boost) * 0.35)),
-        clamp01(albedo.b * (0.42 + env.b * boost + (1 - boost) * 0.35)),
+        clamp01(albedo.r * lightR * lift),
+        clamp01(albedo.g * lightG * lift),
+        clamp01(albedo.b * lightB * lift),
     );
-    // Atmosphere pull so distant flats sit in the same sky/fog band
-    lit.lerp(env, blend * 0.85);
+
+    // Metals: mix env as fake specular fill (keep value, add sky)
+    if (metal > 0.08) {
+        const mMix = cfg.metalEnvMix * metal;
+        lit.r = clamp01(lit.r * (1 - mMix * 0.35) + env.r * mMix * 0.85 + albedo.r * metal * 0.15);
+        lit.g = clamp01(lit.g * (1 - mMix * 0.35) + env.g * mMix * 0.85 + albedo.g * metal * 0.15);
+        lit.b = clamp01(lit.b * (1 - mMix * 0.35) + env.b * mMix * 0.85 + albedo.b * metal * 0.15);
+    }
+
+    // Soft atmosphere only — high blend washed identity / looked like dim fog paint
+    lit.lerp(env, blend * 0.55);
     return lit.getHex();
 }
 
@@ -365,9 +417,9 @@ function acquireFlat(fullMat, obj, forcePreserveMap) {
             // Keep fog interaction so far objects sink into atmosphere
             fog: true,
         });
-        // Soften map contrast when present (less "sticker" look)
+        // Map * color: slight lift so textured flats match lit PBR (was 0.92 → muddy)
         if (useMap && mat.map) {
-            mat.color.multiplyScalar(0.92);
+            mat.color.multiplyScalar(cfg.mapColorScale);
         }
         entry = { mat, refs: 0, farHex };
         flatPool.set(key, entry);
@@ -563,12 +615,14 @@ function ensureFloorPathC(nearMesh) {
     if (pack.farMesh) return pack;
 
     const flatHex = composeFarColor(nearMesh.material, nearMesh);
+    const useMap = cfg.floor.preserveMap && nearMesh.material?.map;
     const flatMat = new THREE.MeshBasicMaterial({
         color: flatHex,
-        map: cfg.floor.preserveMap ? nearMesh.material?.map || null : null,
+        map: useMap ? nearMesh.material.map : null,
         fog: true,
         toneMapped: true,
     });
+    if (useMap) flatMat.color.multiplyScalar(cfg.mapColorScale);
     const far = new THREE.InstancedMesh(nearMesh.geometry, flatMat, pack.total);
     far.castShadow = false;
     far.receiveShadow = true;
@@ -960,17 +1014,18 @@ export const NegativeLod = {
             const h = hysteresisOf(obj);
             const mode = modeOf(obj);
 
+            // Distance-primary + vis gates (do not force-flat on C alone —
+            // vis nearDistance may lag object threshold; hysteresis prevents thrash).
+            // Stack: MeshLod/HILOD cheapen first (lod-distances); Neg unlit last.
             let wantFlat = false;
             if (mode === 'force-full') {
                 wantFlat = false;
             } else if (mode === 'force-flat') {
                 wantFlat = true;
             } else if (vis === 'A' || vis === 'B') {
-                wantFlat = false; // on-screen near / focus → full PBR
-            } else if (vis === 'C') {
-                wantFlat = true; // on-screen far → flat unlit
+                wantFlat = false; // focus / on-screen near → always full PBR
             } else {
-                // Vis not ready yet — distance hysteresis
+                // C (on-far) or unclassified: distance + hysteresis only
                 const meshes = getMeshes(obj);
                 const sample = meshes[0];
                 const cur = sample ? (runtime.get(sample)?.state || 'full') : 'full';

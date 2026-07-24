@@ -1,9 +1,9 @@
 {
   "format": "threshold-visibility",
-  "version": 2,
+  "version": 3,
   "enabled": true,
-  "nearDistance": 40,
-  "farDistance": 60,
+  "nearDistance": 100,
+  "farDistance": 145,
   "frustumMargin": 0.08,
   "frameHysteresis": 6,
   "maxUpdatesPerFrame": 96,
@@ -44,5 +44,5 @@
     "D": "off-screen near — light JS",
     "E": "off-screen far — max skip"
   },
-  "note": "E0–E4: classify + sleep + spatial buckets when object count is high. Camera-local; do not network _visClass."
+  "note": "v3: nearDistance aligns with Neg LOD default (~100m) so B=full PBR, C=flat candidate only past Neg threshold. farDistance for off-screen sleep (D/E). Mesh/Texture LOD still use lod-distances.json (shorter). Camera-local; do not network _visClass."
 }

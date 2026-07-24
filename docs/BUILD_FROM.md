@@ -58,7 +58,7 @@ Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [UI_AND_A
 
 ## Shipped systems (do not re-invent)
 
-- **Neg LOD** — long distances (~52–110m) · per-material appearance · fog/hemi/sun tint · tier auto static props · multi-mat/skinned · **floor B + path C** (instance near/far)
+- **Neg LOD** — long distances (~72–165m, default 100) · light-baked unlit color · tier auto static props · multi-mat/skinned · **floor B + path C** (instance near/far) · mesh/HILOD first (18/48m)
 - **Visibility E0–E4** — frustum × distance · sleep/env · spatial buckets
 - **E5** — far remote lerp · bloom skip (Lite / no on-screen emissive)
 - **Surfaces** — player / creator / full (`?surface=`)

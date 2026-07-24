@@ -1,38 +1,42 @@
 {
   "format": "threshold-negative-lod",
-  "version": 4,
+  "version": 5,
   "enabled": true,
-  "defaultDistance": 72,
-  "hysteresis": 8,
+  "defaultDistance": 100,
+  "hysteresis": 12,
   "maxUpdatesPerFrame": 48,
-  "fadeStart": 0.72,
-  "fadeEnd": 1.35,
-  "fadeMinOpacity": 0.88,
+  "fadeStart": 0.82,
+  "fadeEnd": 1.45,
+  "fadeMinOpacity": 0.94,
   "preserveMapDefault": false,
   "disableCastShadowWhenFlat": true,
   "forceFullWhenSelected": true,
-  "envBlend": 0.4,
-  "envLightBoost": 0.22,
+  "envBlend": 0.18,
+  "envLightBoost": 0.55,
+  "unlitLift": 1.12,
+  "ambientFloor": 0.62,
+  "metalEnvMix": 0.22,
+  "mapColorScale": 1.05,
   "appearanceSample": true,
   "autoEnableTiers": ["compatibility", "balanced", "realistic"],
   "autoEnableMinObjects": 3,
   "autoEnableStaticOnly": true,
   "distanceByTier": {
-    "compatibility": 52,
-    "balanced": 68,
-    "realistic": 88,
-    "ultra": 110
+    "compatibility": 72,
+    "balanced": 95,
+    "realistic": 125,
+    "ultra": 165
   },
   "floor": {
     "enabled": true,
     "autoTiersOnly": true,
-    "cameraHeight": 18,
-    "distance": 72,
-    "hysteresis": 4,
+    "cameraHeight": 22,
+    "distance": 100,
+    "hysteresis": 6,
     "preserveMap": true,
     "pathC": true,
     "pathCMinInstances": 16,
-    "pathCNearDistance": 36
+    "pathCNearDistance": 52
   },
   "excludeFlags": [
     "isPlayer",
@@ -41,5 +45,5 @@
     "isHero",
     "lockedFloor"
   ],
-  "note": "Far unlit LOD with longer distances + per-material appearance tinted by scene fog/hemi/sun so flats blend into the world. Auto on static props for Lite/Mobile/Realistic."
+  "note": "v5 gameplay: farther thresholds; unlitLift+ambientFloor bake missing lights into flat color (no dark muddy flats); soft fog pull; align with visibility nearDistance."
 }

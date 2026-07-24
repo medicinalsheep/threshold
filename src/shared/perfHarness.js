@@ -296,7 +296,7 @@ export const PerfHarness = {
                         mesh.userData.locked = true;
                         if (negLod) {
                             window.NegativeLod?.enableObject?.(mesh, {
-                                distance: window.NegativeLod?.config?.defaultDistance || 72,
+                                distance: window.NegativeLod?.config?.defaultDistance || 100,
                                 source: 'perf-scenario',
                             });
                         } else {
