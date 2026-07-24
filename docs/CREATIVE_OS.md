@@ -2,7 +2,7 @@
 
 **North star:** Plan everything before generation. Creators design games; the tool makes pieces fall into place — not AI slop dumped into a blank chat.
 
-**Version:** 10.13.20 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.13.21 · **Live:** https://medicinalsheep.github.io/threshold/
 
 ---
 
@@ -26,7 +26,7 @@ Every asset — world, prop, character, texture, sound — follows the same orde
 2. **Collision & physics** — static, dynamic, trigger, visual-only
 3. **Mesh / GLB** — Blender export or procedural primitive; poly budget
 4. **PBR textures (master)** — 2K+ albedo, roughness, normal; object name = manifest slot
-5. **HILOD + compression** — `_1k` / `_2k` PNG + WebP via `textures:watch`
+5. **HILOD + compression** — `_1k` / `_2k` PNG + WebP via `textures:watch` (swap @ 18/48m; Neg unlit later ~100m)
 6. **Weather hooks** — `surfaceType`, wet/dust/snow/wet-glass variants
 7. **Atmosphere & lighting** — time of day, fog, audio zones
 8. **Material presets** — `MaterialPresets.applyMaterialPreset` — tuned PBR, no slop

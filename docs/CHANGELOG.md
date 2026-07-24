@@ -1,3 +1,9 @@
+## 10.13.21 — Doc truth sweep (LOD stack + materials + perf)
+
+- Align spine with **10.13.18–20**: material library · Neg light bake · distances 100m / 18·48 HILOD · vis 100/145
+- Updated: [PERF_NEXT.md](PERF_NEXT.md) (full status rewrite) · BUILD_FROM paste · CAPABILITIES · NEGATIVE_LOD · ROADMAP 10.13.16–21 · R8/TC lod distances · ASSET_CAPABILITIES
+- Verify: `version:sync:check` · `negative-lod:verify`
+
 ## 10.13.20 — Neg LOD review fixes (pre-doc-sweep)
 
 - **Map flats** — `composeFarColor({ forMap })` uses light-only color (no map×albedo×light mud)

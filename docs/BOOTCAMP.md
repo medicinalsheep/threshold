@@ -52,7 +52,7 @@ npm run bootcamp:seed              # base curated set
 npm run bootcamp:seed:wave2        # whole-product coverage
 npm run bootcamp:seed:wave3        # production plans, HILOD/WebP, Lite/Mobile
 npm run bootcamp:seed:wave4        # anti-slop, host/guest, recovery, plan↔code
-npm run bootcamp:seed:wave5        # **10.13 power pack** — surfaces, Neg LOD, Ollama CORS, store, no X
+npm run bootcamp:seed:wave5        # **10.13 power pack** — surfaces, Neg LOD ~100m, Ollama CORS, store, no X
 npm run bootcamp:seed:critical     # intent format + render-mode hard fixes
 npm run bootcamp:build && npm run models:mini
 ```

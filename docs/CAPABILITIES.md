@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.13)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.20
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.21
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -48,7 +48,7 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | F interact | `worldInteract.js` |
 | TC circuit + drive | `tcCircuit.js`, `tcDrive.js` |
 | Graphics tiers | `graphicsProfile.js` — PBR default; retro opt-in |
-| Negative LOD (far unlit) | long dist · scene tint · static auto · multi-mat · **floor path C**; [NEGATIVE_LOD.md](NEGATIVE_LOD.md) |
+| Negative LOD (far unlit) | ~100m · **light bake** · mesh/HILOD first · static auto · multi-mat · floor B/**C**; [NEGATIVE_LOD.md](NEGATIVE_LOD.md) |
 | E5 remotes / bloom | Far remote lerp · bloom skip Lite/no emissive |
 | Perf measure | `perfHarness.js` — SETUP → PERF · HUD · `npm run perf:harness` (CI) |
 | Visibility E0–E4 | `visibilitySystem.js` — frustum×distance · sleep · env · **spatial buckets** |
@@ -131,10 +131,11 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | Layer | Status |
 |-------|--------|
 | Code-split after lobby | `app-engine`, `app-compiler`, `app-prompter`, vendors |
-| Neg LOD stack | ~100m default · light bake · HILOD/mesh first · tier auto · floor B/**C** |
-| Visibility E0–E4 | Classify · gates · sleep · env · spatial |
+| Neg LOD stack | ~100m · light bake · tiers 72–165 · HILOD/mesh 18/48 first · floor B/**C** |
+| Visibility E0–E4 | near 100 / sleep 145 · gates · sleep · env · spatial |
 | E5 | Far remotes · bloom skip |
-| Measure | SETUP → PERF · `perf:harness` (5s + 1s warm) · HUD |
+| Materials | Presets + starter maps · [MATERIALS.md](MATERIALS.md) |
+| Measure | SETUP → PERF · `perf:harness` · `negative-lod:verify` |
 
 Details: [PERF_NEXT.md](PERF_NEXT.md) · [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
 

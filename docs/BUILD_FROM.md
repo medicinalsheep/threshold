@@ -58,11 +58,12 @@ Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [UI_AND_A
 
 ## Shipped systems (do not re-invent)
 
-- **Neg LOD** — long distances (~72–165m, default 100) · light-baked unlit color · tier auto static props · multi-mat/skinned · **floor B + path C** (instance near/far) · mesh/HILOD first (18/48m)
-- **Visibility E0–E4** — frustum × distance · sleep/env · spatial buckets
+- **Neg LOD** — ~**100m** default (tiers 72–165) · **light-baked** unlit (not muddy dark) · tier auto · multi-mat/skinned · **floor B + path C** · mesh/HILOD first (**18/48m**) · [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
+- **Visibility E0–E4** — near **100** / sleep **145** · sleep/env · spatial buckets
 - **E5** — far remote lerp · bloom skip (Lite / no on-screen emissive)
+- **Materials** — presets + starter maps · INSERT library examples · [MATERIALS.md](MATERIALS.md)
 - **Surfaces** — player / creator / full (`?surface=`)
-- **Perf** — SETUP → PERF · `npm run perf:harness` / `perf:harness:compare` · warm-up + hitch filter
+- **Perf** — SETUP → PERF · `npm run perf:harness` / `perf:harness:compare` · `negative-lod:verify`
 - **Store** — `npm run store:ship` · mac notary hooks · signing stays local
 
 ### UI surfaces (same URL)
@@ -110,7 +111,9 @@ npm run build               # dist-pages (GitHub Pages)
 npm run preview:pages       # smoke what visitors get
 npm run version:sync:check  # VERSION header drift gate
 npm run perf:verify
+npm run negative-lod:verify
 npm run perf:harness:compare
+npm run textures:gen:default   # starter PBR library maps
 npm run store:ship -- --manifest exports/game.threshold-game.json --targets win
 ```
 
@@ -126,7 +129,8 @@ Repo: https://github.com/medicinalsheep/threshold
 Spine: docs/BUILD_FROM.md · CAPABILITIES.md · AGENTS.md · UI_AND_AGENTS.md
 Free core: ENTER solo, optional Grok + Ollama (creator surface), PeerJS CREATE/JOIN.
 No X OAuth. Surfaces: player | creator | full (?surface=). Mobile → player.
-Perf: Neg LOD (tint + floor C) · Vis E0–E4 · E5 remotes/bloom · perf:harness.
+Perf: Neg LOD light-bake ~100m · mesh/HILOD 18/48 · Vis E0–E4 · E5 · perf:harness.
+Materials: MATERIAL LIBRARY EXAMPLES · MATERIALS.md. No CanvasTexture spam.
 Ship: store:ship · MAC_NOTARIZE.md (signing local).
 Task: [your goal]
 ```

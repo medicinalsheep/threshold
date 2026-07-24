@@ -150,7 +150,7 @@ Use Child assets as **design seeds** — same objects can anchor many game types
 | Export + LOD | `npm run blender:export -- --blend plugins/threshold-blender/tc_veh.blend --object "TC Runner" --slug tc_run --lod --mass 3.4 --realism r5` |
 | Manifest | `import/threshold_blender_manifest.json` |
 | Web bundle | `public/bundle/import/tc_*.glb` (dev) · `npm run bundle:assets` (ship) |
-| Loader | `src/shared/tcVeh.js` — `MeshLod` @ `[0, 12, 28]` |
+| Loader | `src/shared/tcVeh.js` — `MeshLod` @ `[0, 18, 48]` (see `lod-distances.json`) |
 | Verify | `npm run tc:verify` |
 
 Lobby **TC DEMO** loads the **Showcase** (vehicles + NPCs + SFX); falls back to vehicles-only or TC Lite procedural.

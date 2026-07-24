@@ -1,150 +1,121 @@
 # Performance status (Neg LOD + Visibility + harness)
 
-**Status:** Core perf stack **complete** · **Engine:** 10.13.15+  
-**Related:** [NEGATIVE_LOD.md](NEGATIVE_LOD.md) · [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
+**Status:** Core perf stack **complete** · **Engine:** **10.13.20**  
+**Related:** [NEGATIVE_LOD.md](NEGATIVE_LOD.md) · [MATERIALS.md](MATERIALS.md) · [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
 
-X OAuth is **removed**. Shipped: Neg LOD (long dist, scene tint, tier auto, multi-mat, floor B/**C**) · Visibility **E0–E4** · **E5** remotes/bloom · measure + **CI harness** · **player surface**.
+X OAuth is **removed**. Shipped: Neg LOD (**~100m** default, **light-baked** unlit, tier auto, multi-mat, floor B/**C**) · MeshLod + HILOD **18/48m** first · Visibility **E0–E4** (near **100** / sleep **145**) · **E5** remotes/bloom · measure + **CI harness** · **player surface** · **material library**.
 
 ---
 
-## 1. Neg LOD auto-enable by graphics tier — **SHIPPED 10.13.8**
+## Stack order (do not invert)
 
-### Goal
-On **compatibility / balanced** (and optionally mobile detect), automatically set `userData.negativeLOD = true` on eligible background objects so authors don’t have to click every prop.
+```text
+1. VisibilitySystem.update   → A focus · B on-near · C on-far · D/E off
+2. MeshLod.update            → geometry LOD  (config/lod-distances: 0 / 18 / 48 m)
+3. TextureHilod.update       → tex res on A/B only
+4. NegativeLod.update        → far unlit Basic  (default ~100 m; tiers 72–165)
+```
 
-### Design
+| Band | Mesh | Texture | Material |
+|------|------|---------|----------|
+| 0–18 m | LOD0 | hi | full PBR |
+| 18–48 m | LOD1 | mid | full PBR |
+| 48–~100 m | LOD2 | low (while B) | full PBR |
+| ≥ Neg threshold | freeze | freeze | unlit + light bake |
+
+Configs: `lod-distances.json` · `negative-lod.json` · `visibility.json`.
+
+---
+
+## 1. Neg LOD auto-enable by graphics tier — **SHIPPED 10.13.8+**
 
 | Input | Behavior |
 |-------|----------|
-| `config/negative-lod.json` → `autoEnableTiers` | e.g. `["compatibility", "balanced"]` |
-| `autoEnableMinObjects` | Only if `State.objects.length >= N` (avoid empty grid noise) |
-| Exclude | `isPlayer`, `isFloor`, `isHero`, `negativeLodExempt`, selected, vehicles, GLTF heroes with mesh LOD chain optional |
+| `autoEnableTiers` | `compatibility`, `balanced`, `realistic` |
+| `distanceByTier` | Lite **72** · Mobile **95** · Realistic **125** · Ultra **165** |
+| `defaultDistance` | **100** m · hysteresis **12** |
+| Exclude | `isPlayer`, `isFloor`, `isHero`, `negativeLodExempt`, vehicles, GLTF heroes |
 
-### When to run
-1. After graphics tier apply (`GraphicsProfile.apply*`)  
-2. After scene load / template bootstrap  
-3. Optional: when object count crosses threshold  
+**API:** `NegativeLod.applyTierPolicy(tier)` · `maybeAutoEnable(obj)` · source `tier-auto` vs `user` / `negativeLodForcedOff`.
 
-### Implementation sketch
-```js
-// negativeLod.js
-NegativeLod.applyTierPolicy(tier, objects) {
-  if (!autoEnableTiers.includes(tier)) return;
-  if (objects.length < min) return;
-  for (const o of objects) {
-    if (excluded(o)) continue;
-    if (o.userData.negativeLOD === false) continue; // user forced off
-    if (!o.userData.negativeLOD) NegativeLod.enableObject(o, { distance: defaultForTier(tier) });
-  }
-}
-```
-
-Distance by tier: compatibility 28m · balanced 40m · realistic/ultra opt-in only or longer 55m.
-
-### Shipped
-- `config/negative-lod.json` → `autoEnableTiers`, `autoEnableMinObjects`, `distanceByTier`
-- `NegativeLod.applyTierPolicy(tier)` · `maybeAutoEnable(obj)` · source `tier-auto` vs `user` / `negativeLodForcedOff`
-- Hooks: `GraphicsProfile.apply`, scene load, template bootstrap, `World.createObject`
-
-### Effort
-**S** — done.
+**Far color (10.13.19–20):** `unlitLift` · `ambientFloor` · soft `envBlend` · `forMap` light-only when textured · no shared-pool opacity thrash.
 
 ---
 
-## 2. Multi-material / skinned edge cases — **SHIPPED 10.13.9**
+## 2. Multi-material / skinned — **SHIPPED 10.13.9**
 
 | Case | Approach |
 |------|----------|
-| **Multi-material mesh** | Stash full array; flat 1:1 per slot (`poolKeys`) |
-| **Shared material** | `clone()` when `userData.shared` / `_shared` / `negativeLodClone` |
-| **SkinnedMesh** | Swap mats only; skeleton kept; force-full on selection |
-| **InstancedMesh** | Floor path B (§3) |
-
-### Effort
-**M** — done (in-engine).
+| Multi-material | Stash full array; flat 1:1 (`poolKeys`) |
+| Shared material | Clone when `shared` / `_shared` / `negativeLodClone` |
+| SkinnedMesh | Mat swap only; skeleton kept; selection force-full |
+| Registry | Root-only register (no child double-scan) |
 
 ---
 
-## 3. Instanced floor deck — **SHIPPED path B 10.13.9**
+## 3. Floor deck — **SHIPPED B 10.13.9 · C 10.13.15**
 
-| Option | Status |
-|--------|--------|
-| **A. Keep excluded** from prop registry | ✅ floors stay out of prop auto |
-| **B. Swap shared mat** when camera high/far | ✅ `updateFloorTargets` · Lite/Mobile |
-| **C. Split near/far instances** | Deferred (L) |
-
-Config: `negative-lod.json` → `floor.cameraHeight` (12) · `floor.distance` (45) · `autoTiersOnly`.
+| Path | Behavior |
+|------|----------|
+| **B** | Whole-mat unlit when camera high/far (`cameraHeight` 22 · `distance` 100) |
+| **C** | InstancedMesh near/far split (`pathCNearDistance` **52**) |
 
 ---
 
-## 4. Measure harness — **SHIPPED 10.13.8** (in-engine)
+## 4. Visibility E0–E4 + E5
 
-### Goal
-Repeatable before/after numbers for Neg LOD + visibility (not subjective “feels faster”).
+| Layer | Status |
+|-------|--------|
+| E0 classify A–E | ✅ 10.13.1 · near **100** / far sleep **145** |
+| E1 gates | MeshLod / HILOD / idle / spin / NPC |
+| E2 sleep | D/E shadows · E physics sleep |
+| E3 env | Weather / shaders / audio |
+| E4 spatial | Buckets when objects ≥120 |
+| E5 | Far remote lerp · bloom skip Lite/no emissive |
 
-### Deliverable
-In-engine **SETUP → PERF — measure harness** + `window.PerfHarness` · HUD shows last sample:
+---
 
-| Metric | How |
-|--------|-----|
-| FPS avg / 1% low | `requestAnimationFrame` over 5s |
-| Frame ms p50/p95 | same |
-| `VisibilitySystem.getStats()` | A–E counts, shadowsDimmed, physicsAsleep |
-| `NegativeLod.getStats()` | flat/full/switches |
-| Draw calls / triangles | `renderer.info.render` |
-| Scenario | Flag: empty grid · 200 cubes NegLOD · 200 cubes off |
+## 5. Measure harness — **SHIPPED**
 
-### Shipped
-- `src/shared/perfHarness.js` — `measure(ms)`, `snapshot()`, `downloadLast()`
-- SETUP panel: RUN SAMPLE · SNAPSHOT · DOWNLOAD JSON
-- Creator PERF HUD: FPS + neg flat/reg + vis A/C/E + last sample p95
+### In-engine
+SETUP → **PERF** · `window.PerfHarness` · HUD: FPS · neg flat/reg · vis A/C/E · last p95.
 
-### CLI (headless) — **SHIPPED 10.13.14+** (tuned 10.13.15)
+### CLI
 
 ```bash
-npm run perf:verify              # static smoke (always CI)
-npm run perf:harness             # 200 cubes · 5s · 1s warm · Lite
-npm run perf:harness:compare     # Neg LOD on vs off + % p95
+npm run perf:verify
+npm run perf:harness
+npm run perf:harness:compare
 npm run perf:harness -- --cubes 200 --seconds 5 --warm 1 --tier compatibility
+npm run negative-lod:verify
 ```
 
-Defaults: **5s sample**, **1s warm-up discarded**, hitch frames **>100ms** dropped.  
-Writes `dist-store/perf-<stamp>.json` and `dist-store/perf-latest.json`.
-
-### Success bar
-Compare prints p95 on/off and **% lower with Neg LOD** when Δ positive.
+Defaults: **5s** sample · **1s** warm-up discarded · hitch **>100ms** dropped · `dist-store/perf-latest.json`.
 
 ---
 
-## Suggested order
-
-```text
-1. Auto-enable by tier     ✅
-2. Measure harness         ✅ (in-engine + CI)
-3. Multi-mat / skinned     ✅
-4. Floor deck B + C        ✅
-5. E4 spatial buckets      ✅
-6. E5 remotes / bloom      ✅
-7. Player surface          ✅
-8. store:ship + mac notary ✅ (scripts; certs local)
-```
-
----
-
-## Done vs not (perf stack)
+## Done checklist
 
 | Item | Status |
 |------|--------|
-| Neg LOD A+B | ✅ |
-| Vis E0–E3 | ✅ |
-| Vis E4 spatial | ✅ 10.13.10 |
-| X OAuth | ❌ removed |
-| Tier auto-enable | ✅ 10.13.8 |
-| Measure harness (in-engine) | ✅ 10.13.8 |
-| Multi-mat / skinned | ✅ 10.13.9 |
-| Floor path B | ✅ 10.13.9 |
-| Floor path C | ✅ 10.13.15 |
-| CI headless harness | ✅ 10.13.14+ |
-| Player surface (mobile) | ✅ 10.13.11 |
+| Neg LOD A+B + light bake | ✅ 10.13.0 → **.20** |
+| Vis E0–E4 | ✅ |
 | E5 remotes / bloom | ✅ 10.13.15 |
-| store:ship + mac notary | ✅ 10.13.15 |
+| Tier auto | ✅ · realistic included |
+| Floor B + C | ✅ |
+| Mesh/HILOD before unlit | ✅ 18/48 &lt; 100 |
+| CI harness | ✅ |
+| Player surface | ✅ |
+| Material library | ✅ 10.13.18 |
+| store:ship + mac notary | ✅ scripts; certs local |
+| X OAuth | ❌ removed |
+
+---
+
+## Open (not perf blockers)
+
+| Area | Notes |
+|------|-------|
+| Real store notarize | Needs studio certs + Mac host |
+| Dataset growth | wave5 shipped; grow via EXPORT TRAINING PAIR |
+| Hero hand-paint | Optional GIMP SYNC |

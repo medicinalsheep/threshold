@@ -1,9 +1,9 @@
 # Negative LOD — Design & Implementation Plan
 
-**Status:** A+B · **E0–E5** · tier auto · multi-mat · floor B/**C** · **light-compensated flats** — **shipped through 10.13.19**  
+**Status:** A+B · **E0–E5** · tier auto · multi-mat · floor B/**C** · **light-compensated flats** · review fixes — **shipped through 10.13.20** (doc truth **10.13.21**)  
 **Target version:** 10.13.x  
 **Live engine version:** see `src/config.js` → `VERSION`  
-**Related:** `meshLod.js`, `textureHilod.js`, `visibilitySystem.js`, `remotePlayers.js`, `config/negative-lod.json`, `config/visibility.json`, `config/lod-distances.json`, [PERF_NEXT.md](PERF_NEXT.md)
+**Related:** `meshLod.js`, `textureHilod.js`, `visibilitySystem.js`, `remotePlayers.js`, `config/negative-lod.json`, `config/visibility.json`, `config/lod-distances.json`, [PERF_NEXT.md](PERF_NEXT.md) · [MATERIALS.md](MATERIALS.md)
 
 ---
 
@@ -108,8 +108,8 @@ Prefer **object `userData`** as source of truth (syncs with multiplayer / scene 
   "format": "threshold-negative-lod",
   "version": 1,
   "enabled": true,
-  "defaultDistance": 40,
-  "hysteresis": 4,
+  "defaultDistance": 100,
+  "hysteresis": 12,
   "maxUpdatesPerFrame": 48,
   "fadeStart": 0.85,
   "fadeEnd": 1.15,
@@ -121,7 +121,7 @@ Prefer **object `userData`** as source of truth (syncs with multiplayer / scene 
 }
 ```
 
-Extend `config/lod-distances.json` note **or** keep separate so mesh LOD distances (12 / 28) stay independent of negative flat threshold (often **farther**, e.g. 40–60 m).
+Keep `config/lod-distances.json` (**0 / 18 / 48** m) shorter than Neg **defaultDistance** (**~100** m) so mesh/tex cheapen before unlit.
 
 ### 3.3 Scene / export serialization
 

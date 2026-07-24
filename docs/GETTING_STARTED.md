@@ -1,4 +1,4 @@
-# Getting started with Threshold (v10.13.20)
+# Getting started with Threshold (v10.13.21)
 
 One linear path from lobby to shipping — blank grid default, Agent Portal, tiered agents, and optional **TC** export practice.
 
@@ -19,7 +19,7 @@ Lobby → ENTER (solo) → play or build → EDIT or PLAY → Export → Package
 | 2 | Engine | Blank grid · short corner-hub tour |
 | 3 | **Surface** | Phones default **player** (clean play UI). Desktop **creator** for AI tools. `?surface=` |
 | 4 | **Agent Portal** (creator) | Describe what to build · Grok/Ollama auto-detect |
-| 5 | **EDIT** | TOOLS menu → insert, Compiler, PromptGen, textures |
+| 5 | **EDIT** | TOOLS menu → insert, **MATERIAL LIBRARY EXAMPLES**, Compiler, PromptGen, textures |
 | 6 | **PLAY** | Top-left PLAY · walk physics · **F** interact |
 | 7 | **SETUP** (optional) | Ollama tiers, freeze prefs, Grok key — [AGENT_ROUTING.md](AGENT_ROUTING.md) |
 | 8 | **TOOLS → EXPORT** | 9-step walkthrough → manifest (TARGETS default Web only) |

@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.13.20 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.13.21 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -168,8 +168,14 @@ Accounts guide: [AUTH.md](AUTH.md) · Snapshot: [CAPABILITIES.md](CAPABILITIES.m
 | **10.13.13** | Neg LOD longer range + scene-aware tint |
 | **10.13.14** | CI headless **perf:harness** (Puppeteer) |
 | **10.13.15** | Floor path **C** · **E5** remotes/bloom · **store:ship** · mac notary · harness tune |
+| **10.13.16** | Doc truth sweep (post floor C / E5 / store) |
+| **10.13.17** | Mini-model **wave5** Threshold-native training pack |
+| **10.13.18** | **Material library** + procedural starter PBR maps |
+| **10.13.19** | Neg LOD **light bake** · distances ~100m · vis/mesh stack align |
+| **10.13.20** | Neg LOD review fixes (map flats, shared pool, registry) |
+| **10.13.21** | Doc truth sweep (LOD stack + materials + perf) |
 
-Perf: [PERF_NEXT.md](PERF_NEXT.md) · Surfaces: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Ship: [STORE_RELEASE.md](STORE_RELEASE.md) · [MAC_NOTARIZE.md](MAC_NOTARIZE.md)
+Perf: [PERF_NEXT.md](PERF_NEXT.md) · Materials: [MATERIALS.md](MATERIALS.md) · Surfaces: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Ship: [STORE_RELEASE.md](STORE_RELEASE.md) · [MAC_NOTARIZE.md](MAC_NOTARIZE.md)
 
 ---
 

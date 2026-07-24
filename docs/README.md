@@ -1,6 +1,6 @@
 # Threshold documentation index
 
-**Version:** 10.13.20 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.13.21 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Full scope map — quality-first blank grid, optional TC reference editions, and where to read more.
 
@@ -35,7 +35,7 @@ flowchart TB
         TOUCH[Touch + UNLOCK layout]
         PBR[Quality PBR 1K+]
         TE[Third Eye + F interact]
-        PERF[Neg LOD + Vis E0-E4]
+        PERF[Neg LOD light-bake + Vis E0-E4]
     end
     subgraph create [Create]
         SETUP[SETUP + agents]
@@ -71,7 +71,7 @@ flowchart TB
 | Mobile play vs build chrome | [UI_AND_AGENTS.md](UI_AND_AGENTS.md) surfaces | `?surface=player` |
 | Agent tiers & benchmarks | [AGENT_ROUTING.md](AGENT_ROUTING.md) | `ollama:benchmark` · SMART DEV |
 | UI layout + agents | [UI_AND_AGENTS.md](UI_AND_AGENTS.md) | Portal · freeze · touch · UNLOCK |
-| Perf stack / measure | [PERF_NEXT.md](PERF_NEXT.md) · [NEGATIVE_LOD.md](NEGATIVE_LOD.md) | SETUP → PERF |
+| Perf stack / measure | [PERF_NEXT.md](PERF_NEXT.md) · [NEGATIVE_LOD.md](NEGATIVE_LOD.md) | ~100m light-bake · HILOD 18/48 · SETUP → PERF |
 | Train mini agents | [BOOTCAMP.md](BOOTCAMP.md) · [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) | `npm run train:mini -- --no-seed` · `ollama:golden` |
 | Android APK (after polish) | [ANDROID_PREP.md](ANDROID_PREP.md) · [STORE_RELEASE.md](STORE_RELEASE.md) | `npm run package:android` |
 | Action controls | [CONTROLS.md](CONTROLS.md) | LMB aim · RMB shoot · F interact · PTT **N** |
@@ -118,11 +118,11 @@ npm run build                   # GitHub Pages → dist-pages/
 | [BUILD_FROM.md](BUILD_FROM.md) | **One-page spine** — live link, loop, do/don’t |
 | [GETTING_STARTED.md](GETTING_STARTED.md) | Lobby → ship linear path |
 | [AUTH.md](AUTH.md) | Optional Grok API key (no X OAuth) |
-| [PERF_NEXT.md](PERF_NEXT.md) | Perf stack · `perf:harness` |
+| [PERF_NEXT.md](PERF_NEXT.md) | Perf stack complete · light-bake Neg · harness |
 | [MAC_NOTARIZE.md](MAC_NOTARIZE.md) | macOS sign + notary + staple |
 | [STEAM_RELEASE.md](STEAM_RELEASE.md) | Steam depot upload |
 | [MULTIPLAYER.md](MULTIPLAYER.md) | Room codes, PeerJS, join troubleshooting |
-| [NEGATIVE_LOD.md](NEGATIVE_LOD.md) | Neg LOD + Visibility E0–E5 + floor C |
+| [NEGATIVE_LOD.md](NEGATIVE_LOD.md) | Neg LOD light-bake + Vis E0–E5 + floor C |
 | [../extension/threshold-chrome/README.md](../extension/threshold-chrome/README.md) | Chrome: local mini → Grok tab paste |
 | [ROADMAP.md](ROADMAP.md) | v10.8+ forward plan |
 | [PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md) | Vision + pillars |

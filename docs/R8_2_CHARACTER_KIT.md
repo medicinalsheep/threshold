@@ -343,7 +343,7 @@ PromptGen outputs can:
 | `starter_avatar_female` | Same tier budget | Same | Same |
 | Hair | Always LOD0 on player | — | Hidden at 28 m |
 
-Distances: `config/lod-distances.json` → `[0, 12, 28]` m · `MeshLod.update()`.
+Distances: `config/lod-distances.json` → `[0, 18, 48]` m · `MeshLod.update()` (Neg unlit later ~100m).
 
 Collider: always LOD0 bounding box (existing physics pattern).
 
