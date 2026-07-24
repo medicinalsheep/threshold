@@ -1,9 +1,9 @@
-# Performance next steps (after Neg LOD A–E3)
+# Performance next steps (after Neg LOD A–E4)
 
-**Status:** Core perf stack shipped · **Engine:** 10.13.10+  
-**Related:** [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
+**Status:** Core perf stack shipped · **Engine:** 10.13.11+  
+**Related:** [NEGATIVE_LOD.md](NEGATIVE_LOD.md) · [UI_AND_AGENTS.md](UI_AND_AGENTS.md) (surfaces)
 
-X OAuth is **removed**. Shipped through **E4 spatial** + Neg LOD stack + measure harness. Remaining optional: CI headless, player surface.
+X OAuth is **removed**. Shipped: **Neg LOD** (tier auto, multi-mat, floor B) · **Visibility E0–E4** · **measure harness** · **player surface** (no Ollama on phones). Remaining optional: CI headless harness.
 
 ---
 
@@ -119,7 +119,7 @@ Document: “200 cubes, orbit, mobile tier: p95 frame time −X% with stack on v
 4. Floor deck B            ✅
 5. E4 spatial buckets      ✅ 10.13.10
 6. Optional CI headless    (after manual baselines exist)
-7. Player surface (mobile) (product — separate from PERF)
+7. Player surface (mobile) ✅ 10.13.11
 ```
 
 ---

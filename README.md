@@ -2,7 +2,7 @@
 
 **Collaborative 3D game lab** — host a session, connect an AI agent, build in the browser, play with friends, export real packages.
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.11
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.12
 
 **Build from this:** [docs/BUILD_FROM.md](docs/BUILD_FROM.md) — one-page outline for forks and Grok/agent chats (live link, six-step loop, do/don’t).
 
@@ -28,15 +28,16 @@ Threshold is for people who want to **go from idea → playable 3D scene → shi
 
 ```
 1. LOBBY     → name · PLAY or BUILD · **ENTER →** (solo; no account needed)
-2. ENGINE    → blank grid · corner hub tour (~3 steps)
-3. PORTAL    → AI scans Grok/Ollama · describe what to build
-4. EDIT      → TOOLS menu → Compiler / PromptGen / insert
-5. PLAY      → tap PLAY (top-left) · touch toggle (bottom-left) · test walk physics
-6. SHIP      → TOOLS → Export when ready
+2. SURFACE   → phones default Play UI; desktop Creator (AI tools). ?surface=player|creator|full
+3. ENGINE    → blank grid · corner hub tour (~3 steps)
+4. PORTAL    → (creator) AI scans Grok/Ollama · describe what to build
+5. EDIT      → TOOLS menu → Compiler / PromptGen / insert
+6. PLAY      → tap PLAY (top-left) · touch toggle (bottom-left) · test walk physics
+7. SHIP      → TOOLS → Export when ready
 ```
 
 Multiplayer: **CREATE SESSION** → copy invite → **ENTER SESSION**. Friends **JOIN** with room code.  
-Optional: **Grok** API key for cloud AI — [docs/AUTH.md](docs/AUTH.md). Local Ollama needs no account.
+Optional: **Grok** API key for cloud AI — [docs/AUTH.md](docs/AUTH.md). Local Ollama: `npm run ollama:serve` (not plain `ollama serve`).
 
 ---
 

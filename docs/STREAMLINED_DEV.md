@@ -1,6 +1,8 @@
-# Streamlined dev path (v10.12)
+# Streamlined dev path (v10.13)
 
 One linear path from lobby to shipped build — solo ENTER, optional host/join, Agent Portal, creative tools, export.
+
+**Spine:** [BUILD_FROM.md](BUILD_FROM.md) · **Surfaces:** [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
 
 ---
 
@@ -11,20 +13,20 @@ One linear path from lobby to shipped build — solo ENTER, optional host/join, 
 | **Solo (default)** | Lobby → **ENTER →** → blank grid (BUILD / EDIT, no network) |
 | **Host** | Lobby → **CREATE SESSION** → copy invite → **ENTER SESSION** |
 | **Join** | Lobby → paste code → **JOIN** (+ passcode if host set one) |
+| **Surface** | Phones → **player**; desktop → **creator**. Lobby chips or `?surface=` |
 
-Multiplayer is optional PeerJS. **No X or Grok account required** for local solo dev.
+Multiplayer is optional PeerJS. **No account required** for local solo play. Grok key optional for cloud AI.
 
 ---
 
 ## 2. Agent Portal + SETUP
 
-**Agent Portal** opens on ENTER. **SETUP** tab (SCENE menu → SETUP) holds tier prefs and dev tools.
+**Agent Portal** / AI tools are on the **creator** surface (desktop default; phones use **Creator tools**). **SETUP** tab (SCENE → SETUP) holds tier prefs and dev tools.
 
 | Chip | Meaning |
 |------|---------|
 | **Grok ✓** | xAI API key in this tab (or remembered on device) |
-| **X ✓** | Optional OAuth identity — feed/posts, display name |
-| **Ollama ✓** | `npm run ollama:serve` + models listed |
+| **Ollama ✓** | `npm run ollama:serve` + models listed (not on player surface) |
 | **Watch ✓** | `npm run textures:watch` — GIMP/Blender hot-reload |
 | **Tex N** | Textures loaded in scene library |
 | **Freeze** | AI memory freeze active during local inference |

@@ -1,3 +1,9 @@
+## 10.13.12 — Doc truth sweep (post surface / E4)
+
+- Align spine docs with shipped product: surfaces, Neg LOD stack, Visibility E0–E4, no X OAuth
+- Updated: BUILD_FROM paste · CAPABILITIES · GETTING_STARTED · STREAMLINED_DEV · AUTH · UI_AND_AGENTS · PERF_NEXT · NEGATIVE_LOD header · ROADMAP 10.13 table · README / docs index · AGENTS map
+- Verify cmds called out: `surface-verify` · `negative-lod-verify` · `version:sync:check`
+
 ## 10.13.11 — Player / creator surface profiles
 
 - **`SurfaceProfile`** — `player` | `creator` | `full` (body classes + `data-surface`)

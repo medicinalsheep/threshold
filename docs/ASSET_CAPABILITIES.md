@@ -2,7 +2,7 @@
 
 Threshold ships a **full starter pipeline** for realistic action games: procedural PBR textures with HILOD, WebP/KTX2 codecs, Blender import, rigged avatars, surface footstep SFX, and FPS combat (ADS).
 
-**Current version:** v10.13.11 — blank grid default, tiered agents, bootcamp mini models (see [CAPABILITIES.md](CAPABILITIES.md))
+**Current version:** v10.13.12 — blank grid default, tiered agents, bootcamp mini models (see [CAPABILITIES.md](CAPABILITIES.md))
 
 ---
 

@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.13.11 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.13.12 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -145,10 +145,27 @@ UI reference: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Controls: [CONTROLS.md](CO
 |-------|-------|
 | **10.12.16–19** | Hero textures · Android prep · combat touch · avatar LOD · full MOD gear |
 | **10.12.20–21** | Generation intensity / MOD policy · Ollama Pages CORS/PNA proxy (`ollama:serve`) |
-| **10.12.22–26** | Grok API hooks · X OAuth · feed/post · display name · dual-auth UI · portal X status |
+| **10.12.22–26** | Grok API hooks · X OAuth (later removed) · display name |
 | **10.12.27–28** | CREATE no longer blocked by VoIP · Peer host 12s timeout · lobby ENTER-first UI rebuild |
 
 Accounts guide: [AUTH.md](AUTH.md) · Snapshot: [CAPABILITIES.md](CAPABILITIES.md)
+
+---
+
+## 10.13 — Perf stack + surfaces ✅
+
+| Slice | Focus |
+|-------|-------|
+| **10.13.0–4** | Neg LOD A+B · Visibility E0–E3 |
+| **10.13.5** | **Remove X OAuth** — Grok key + display name only |
+| **10.13.6** | [BUILD_FROM.md](BUILD_FROM.md) spine · public GH truth |
+| **10.13.7** | Pages Ollama: probe `:11435` only |
+| **10.13.8** | Neg LOD tier auto · measure harness |
+| **10.13.9** | Multi-mat / skinned / floor path B |
+| **10.13.10** | Visibility **E4** spatial buckets |
+| **10.13.11** | **Player / creator / full** surface profiles |
+
+Perf notes: [PERF_NEXT.md](PERF_NEXT.md) · Surfaces: [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
 
 ---
 
@@ -157,7 +174,8 @@ Accounts guide: [AUTH.md](AUTH.md) · Snapshot: [CAPABILITIES.md](CAPABILITIES.m
 | Area | Notes |
 |------|-------|
 | GIMP hero hand-paint | Optional via GIMP SYNC (procedural heroes shipped 10.12.16) |
-| Doc / version hygiene | ✅ `version:sync` + 10.12.28 doc sweep (`AUTH.md`, lobby truth) |
+| Doc / version hygiene | ✅ `version:sync` + ongoing sweeps |
+| CI headless perf harness | Optional — in-engine PERF is live |
 | Store upload automation | Signing keys remain local; upload manual |
 | Training dataset growth | Waves 1–4 + `train:mini` + `ollama:golden`; grow via EXPORT TRAINING PAIR |
 | macOS notarization | Planned |

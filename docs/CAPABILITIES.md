@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.13)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.11
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.13.12
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -15,8 +15,8 @@ Single progress snapshot — what ships today, how the pieces connect, and what 
 | Blank grid spawn | `starterScene.js`, `starterTemplates.js` |
 | Lobby (ENTER primary) | `lobby/main.js` — solo **ENTER** · CREATE optional multiplayer |
 | Progressive UI unlock | Scene dock, Compiler, PromptGen opt-in |
-| Surface profiles | `surfaceProfile.js` — player / creator / full (`?surface=`) |
-| Agent Portal on ENTER | `agentPortal.js` — Grok/Ollama auto-detect |
+| Surface profiles | `surfaceProfile.js` — player / creator / full (`?surface=`) · mobile → player |
+| Agent Portal | `agentPortal.js` — Grok/Ollama auto-detect (**creator** surface; skipped on player) |
 | Corner hub UI | `hubLayout.js` — PLAY/EDIT, TOOLS, SCENE menus |
 | Room codes + passcode | `roomCode.js`, `hostPasscode.js` |
 | Grok API (optional) | BYO key — [AUTH.md](AUTH.md) |
@@ -50,10 +50,11 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | Graphics tiers | `graphicsProfile.js` — PBR default; retro opt-in |
 | Negative LOD (far unlit) | `negativeLod.js` — tier auto · multi-mat/skinned · floor path B; [NEGATIVE_LOD.md](NEGATIVE_LOD.md) |
 | Perf measure | `perfHarness.js` — SETUP → PERF · HUD sample |
-| Visibility classes A–E | `visibilitySystem.js` — frustum×distance; feeds Neg LOD (E0) |
+| Visibility E0–E4 | `visibilitySystem.js` — frustum×distance · sleep · env · **spatial buckets** |
 | Vis gates (E1) | MeshLod / HILOD / idle / spin / NPC anim skip off-screen |
 | Vis sleep (E2) | D/E shadow dim · E physics sleep · selection wake |
 | Vis env (E3) | Weather/shader/audio zone skip off-screen |
+| Vis spatial (E4) | Cell buckets when objects ≥120 · full sweep every 45 frames |
 
 [CONTROLS.md](CONTROLS.md)
 
@@ -114,15 +115,23 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | Capability matrix | Red/yellow/green per model × tier |
 | Mini models (GitHub) | `npm run models:mini` |
 | Benchmarks | `npm run ollama:benchmark` |
-| Ollama CORS proxy | `npm run ollama:serve` (Pages + localhost) |
+| Ollama CORS proxy | `npm run ollama:serve` → `:11435` (Pages + localhost); not plain `ollama serve` |
+| Play surface Ollama | **No probe** on player surface (avoids mobile CORS noise) |
 
 [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) · [BOOTCAMP.md](BOOTCAMP.md)
 
 ---
 
-## Performance (v9.9+)
+## Performance (v10.13)
 
-Lazy-loaded chunks after lobby ENTER: `app-engine`, `app-compiler`, `app-prompter`, vendor splits.
+| Layer | Status |
+|-------|--------|
+| Code-split after lobby | `app-engine`, `app-compiler`, `app-prompter`, vendors |
+| Neg LOD stack | Tier auto · multi-mat/skinned · floor path B |
+| Visibility E0–E4 | Classify · gates · sleep · env · spatial |
+| Measure | SETUP → PERF · `PerfHarness` · HUD |
+
+Details: [PERF_NEXT.md](PERF_NEXT.md) · [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
 
 ---
 
@@ -134,7 +143,10 @@ npm run tc:verify
 npm run controls:verify
 npm run store:verify
 npm run ollama:verify
+npm run version:sync:check
 node scripts/portal-ui-verify.cjs
+node scripts/negative-lod-verify.cjs
+node scripts/surface-verify.cjs
 npm run build
 ```
 
@@ -142,9 +154,11 @@ npm run build
 
 ## Related
 
+- [BUILD_FROM.md](BUILD_FROM.md) — one-page spine
 - [docs/README.md](README.md) — doc index
 - [ROADMAP.md](ROADMAP.md) — v10.8+ forward plan
 - [CHANGELOG.md](CHANGELOG.md) — version history
-- [AUTH.md](AUTH.md) — X + Grok accounts
+- [AUTH.md](AUTH.md) — optional Grok API key (no X OAuth)
+- [UI_AND_AGENTS.md](UI_AND_AGENTS.md) — surfaces, hubs, portal
 - [AGENTS.md](../AGENTS.md) — contributor map
 - [old/docs/](../old/docs/) — archived phase history

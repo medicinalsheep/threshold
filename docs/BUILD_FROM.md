@@ -44,12 +44,13 @@ Voice mic is requested **after** session start — never blocks CREATE.
 | Auth (Grok key + name) | `src/auth/` |
 | Engine | `src/engine/` + `src/shared/` |
 | Neg LOD | `negativeLod.js` + `config/negative-lod.json` |
-| Visibility A–E | `visibilitySystem.js` + `config/visibility.json` |
+| Visibility E0–E4 | `visibilitySystem.js` + `config/visibility.json` |
+| UI surface | `surfaceProfile.js` + `css/surface.css` |
 | Network | `network.js`, `sync.js` |
 | Agents | `agentPortal.js`, `agentRouter.js`, `src/grok/`, Ollama |
 | Agent map | [AGENTS.md](../AGENTS.md) |
 
-Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [MULTIPLAYER.md](MULTIPLAYER.md) · [NEGATIVE_LOD.md](NEGATIVE_LOD.md) · PERF_NEXT · [GETTING_STARTED.md](GETTING_STARTED.md). Full index: [README.md](README.md).
+Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · [MULTIPLAYER.md](MULTIPLAYER.md) · [NEGATIVE_LOD.md](NEGATIVE_LOD.md) · PERF_NEXT · [GETTING_STARTED.md](GETTING_STARTED.md). Full index: [README.md](README.md).
 
 ---
 
@@ -71,7 +72,7 @@ Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [MULTIPLA
 
 Mobile / coarse pointer defaults to **player**. Switch anytime in lobby or SETUP.
 
-Next: optional CI headless. Details: [PERF_NEXT.md](PERF_NEXT.md).
+Optional remaining: CI headless harness. Details: [PERF_NEXT.md](PERF_NEXT.md).
 
 ---
 
@@ -81,10 +82,11 @@ Next: optional CI headless. Details: [PERF_NEXT.md](PERF_NEXT.md).
 
 - Prefer ENTER solo first; CREATE only when testing multiplayer  
 - Optional Grok from [console.x.ai](https://console.x.ai) — not SuperGrok browser login  
-- Prefer graphics tier + existing Neg LOD / visibility flags over new systems  
+- Prefer graphics tier + existing Neg LOD / visibility / surface flags over new systems  
 - Read this file + CAPABILITIES + AGENTS.md before large refactors  
 - Keep `src/config.js` `VERSION` as truth; run `npm run version:sync` after bumps  
-- Quality defaults: PBR, production intake, export slop scan (no CanvasTexture spam)
+- Quality defaults: PBR, production intake, export slop scan (no CanvasTexture spam)  
+- Respect player surface (no Ollama probe / no forced Portal on phones)
 
 **Don’t**
 
@@ -93,7 +95,7 @@ Next: optional CI headless. Details: [PERF_NEXT.md](PERF_NEXT.md).
 - Invent new auth providers without updating AUTH.md  
 - Default retro shaders or procedural texture spam  
 - Force-push or change product direction without human confirm  
-- Re-probe Ollama on player surface / re-add X OAuth
+- Re-enable Ollama probes on player surface without an explicit creator switch
 
 ---
 
@@ -116,8 +118,9 @@ Ollama for **GitHub Pages**: keep a local proxy open — `node scripts/ollama-co
 ```text
 Live: https://medicinalsheep.github.io/threshold/
 Repo: https://github.com/medicinalsheep/threshold
-Spine: docs/BUILD_FROM.md · CAPABILITIES.md · AGENTS.md
-Free core: ENTER solo, optional Grok key + Ollama, PeerJS CREATE/JOIN.
-No X OAuth. Perf: Neg LOD + Visibility E0–E3 shipped; next = PERF_NEXT.md order.
+Spine: docs/BUILD_FROM.md · CAPABILITIES.md · AGENTS.md · UI_AND_AGENTS.md
+Free core: ENTER solo, optional Grok key + Ollama (creator surface), PeerJS CREATE/JOIN.
+No X OAuth. Surfaces: player | creator | full (?surface=). Mobile → player.
+Perf: Neg LOD stack + Visibility E0–E4 shipped. Optional: CI headless (PERF_NEXT).
 Task: [your goal]
 ```

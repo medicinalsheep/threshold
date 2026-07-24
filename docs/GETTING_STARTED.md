@@ -1,4 +1,4 @@
-# Getting started with Threshold (v10.13.11)
+# Getting started with Threshold (v10.13.12)
 
 One linear path from lobby to shipping — blank grid default, Agent Portal, tiered agents, and optional **TC** export practice.
 
@@ -9,7 +9,7 @@ One linear path from lobby to shipping — blank grid default, Agent Portal, tie
 ## The loop
 
 ```
-Lobby → ENTER (solo) → Agent Portal → EDIT or PLAY → Export → Package
+Lobby → ENTER (solo) → play or build → EDIT or PLAY → Export → Package
          ↘ CREATE SESSION → share invite → ENTER SESSION (multiplayer host)
 ```
 
@@ -17,15 +17,16 @@ Lobby → ENTER (solo) → Agent Portal → EDIT or PLAY → Export → Package
 |------|--------|----------------|
 | 1 | **Lobby → ENTER →** | Solo primary — starts BUILD; no network needed |
 | 2 | Engine | Blank grid · short corner-hub tour |
-| 3 | **Agent Portal** | Describe what to build · Grok/Ollama auto-detect |
-| 4 | **EDIT** | TOOLS menu → insert, Compiler, PromptGen, textures |
-| 5 | **PLAY** | Top-left PLAY · walk physics · **F** interact |
-| 6 | **SETUP** (optional) | Ollama tiers, freeze prefs, Grok key — [AGENT_ROUTING.md](AGENT_ROUTING.md) |
-| 7 | **TOOLS → EXPORT** | 9-step walkthrough → manifest (TARGETS default Web only) |
-| 8 | **CLI** | `store:prep`, `package:*` or `package:steam` |
+| 3 | **Surface** | Phones default **player** (clean play UI). Desktop **creator** for AI tools. `?surface=` |
+| 4 | **Agent Portal** (creator) | Describe what to build · Grok/Ollama auto-detect |
+| 5 | **EDIT** | TOOLS menu → insert, Compiler, PromptGen, textures |
+| 6 | **PLAY** | Top-left PLAY · walk physics · **F** interact |
+| 7 | **SETUP** (optional) | Ollama tiers, freeze prefs, Grok key — [AGENT_ROUTING.md](AGENT_ROUTING.md) |
+| 8 | **TOOLS → EXPORT** | 9-step walkthrough → manifest (TARGETS default Web only) |
+| 9 | **CLI** | `store:prep`, `package:*` or `package:steam` |
 
 Optional multiplayer: **CREATE SESSION** → copy code/link → **ENTER SESSION**. Friends **JOIN** with code (+ passcode if set).  
-Optional demo: **Lobby → TC DEMO**. Accounts (X / Grok) are optional — [AUTH.md](AUTH.md).
+Optional demo: **Lobby → TC DEMO** (creator surface). Optional **Grok** key — [AUTH.md](AUTH.md).
 
 ---
 
@@ -69,12 +70,12 @@ npm run ollama:verify
 
 After **ENTER**:
 
-1. **Agent Portal** opens — connect Grok or Ollama, describe a simple scene.
-2. Switch to **EDIT** (top-left) — TOOLS menu for Compiler / insert.
+1. On **desktop (creator):** Agent Portal / AI chip — connect Grok or Ollama, describe a scene. On **phone (player):** walk/test first; tap **Creator tools** when you need AI.
+2. Switch to **EDIT** (top-left) — TOOLS menu for insert (Compiler/export on creator).
 3. Switch to **PLAY** — test walk, LMB aim, touch toggle (bottom-left).
 4. Press **T** for in-game chat; **UNLOCK** (top-left) to drag hub buttons.
 
-Full controls: [CONTROLS.md](CONTROLS.md) · UI layout: [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
+Full controls: [CONTROLS.md](CONTROLS.md) · UI layout / surfaces: [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
 
 ---
 
@@ -150,8 +151,9 @@ npm run store:verify              # optional smoke
 
 - [ROADMAP.md](ROADMAP.md) — v10.8+ forward plan
 - [STREAMLINED_DEV.md](STREAMLINED_DEV.md) — Portal → SETUP → export
-- [AUTH.md](AUTH.md) — optional X + Grok accounts
+- [AUTH.md](AUTH.md) — optional Grok API key (no X OAuth)
+- [BUILD_FROM.md](BUILD_FROM.md) — one-page spine
 - [AGENT_ROUTING.md](AGENT_ROUTING.md) — tiered Ollama + Grok
-- [UI_AND_AGENTS.md](UI_AND_AGENTS.md) — lobby, hubs, freeze
+- [UI_AND_AGENTS.md](UI_AND_AGENTS.md) — surfaces, lobby, hubs, freeze
 - [CONTROLS.md](CONTROLS.md) — action controls + movement tuning
 - [CHANGELOG.md](CHANGELOG.md) — version history

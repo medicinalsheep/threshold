@@ -55,7 +55,7 @@ See [AUTH.md](AUTH.md).
 
 | Feature | Where | Notes |
 |---------|-------|-------|
-| Auto-detect Grok + Ollama | Agent Portal on enter | Connect → tier picks → build chat |
+| Auto-detect Grok + Ollama | Agent Portal (creator surface) | Connect → tier picks → build chat; **no Ollama on player** |
 | Model tiers | small / medium / large | Chat · patches · full world scripts |
 | Capability matrix | SETUP + Portal | Red ✗ · yellow ⚠ · green ● per model×tier |
 | Sequential local runs | SETUP checkbox | Default: one Ollama model at a time |

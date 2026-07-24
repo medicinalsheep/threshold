@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), tiered local/cloud agents, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **10.13.11**)
+**Version:** `src/config.js` → `VERSION` (currently **10.13.12**)
 
 **Spine (start here):** [docs/BUILD_FROM.md](docs/BUILD_FROM.md) · **Doc index:** [docs/README.md](docs/README.md)
 
@@ -75,6 +75,8 @@ npm run tc:ship
 npm run tc:ship:verify
 npm run controls:verify         # binding defaults + doc truth
 npm run store:verify            # packaging E2E smoke
+node scripts/surface-verify.cjs
+node scripts/negative-lod-verify.cjs
 ```
 
 ### Agents & Ollama
@@ -158,7 +160,8 @@ Live manifest: `textures/threshold_manifest.json` (not `old/plugins/...` sample)
 | [README.md](README.md) | Quick start + capabilities |
 | [docs/STREAMLINED_DEV.md](docs/STREAMLINED_DEV.md) | Lobby → agents → export path |
 | [docs/AUTH.md](docs/AUTH.md) | Optional Grok API key |
-| [docs/PERF_NEXT.md](docs/PERF_NEXT.md) | Perf follow-ons (Neg LOD tier, harness, …) |
+| [docs/BUILD_FROM.md](docs/BUILD_FROM.md) | **One-page spine** for agents & forks |
+| [docs/PERF_NEXT.md](docs/PERF_NEXT.md) | Perf stack status (E0–E4 shipped; CI optional) |
 | [docs/AGENT_ROUTING.md](docs/AGENT_ROUTING.md) | Tiered router, benchmarks, providers |
 | [docs/MODEL_DISTRIBUTION.md](docs/MODEL_DISTRIBUTION.md) | GitHub vs local weights policy |
 | [docs/BOOTCAMP.md](docs/BOOTCAMP.md) | Training bootcamp quick start |
@@ -170,7 +173,7 @@ Live manifest: `textures/threshold_manifest.json` (not `old/plugins/...` sample)
 | [docs/EXPORT_WALKTHROUGH.md](docs/EXPORT_WALKTHROUGH.md) | 9-step export wizard |
 | [docs/THRESHOLD_CHILD_ASSETS.md](docs/THRESHOLD_CHILD_ASSETS.md) | TC original-asset policy |
 | [docs/REFERENCE_EDITIONS.md](docs/REFERENCE_EDITIONS.md) | TC edition registry |
-| [docs/UI_AND_AGENTS.md](docs/UI_AND_AGENTS.md) | Lobby, hubs, freeze, touch |
+| [docs/UI_AND_AGENTS.md](docs/UI_AND_AGENTS.md) | Surfaces, lobby, hubs, freeze, touch |
 | [docs/CAPABILITIES.md](docs/CAPABILITIES.md) | Shipped snapshot |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | v10.8+ forward plan |
 | [docs/CHANGELOG.md](docs/CHANGELOG.md) | Version history |

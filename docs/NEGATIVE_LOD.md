@@ -1,9 +1,9 @@
 # Negative LOD — Design & Implementation Plan
 
-**Status:** Phase **A+B implemented** (10.13.0) · E0–E2+ planned below  
+**Status:** A+B + **E0–E4 shipped** (through 10.13.10) · tier auto / multi-mat / floor B (10.13.8–9)  
 **Target version:** 10.13.x  
-**Live engine version:** 10.13.0+  
-**Related:** `meshLod.js`, `textureHilod.js`, `lodConfig.js`, `config/lod-distances.json`, `engineCore.js` animate tick
+**Live engine version:** see `src/config.js` → `VERSION`  
+**Related:** `meshLod.js`, `textureHilod.js`, `visibilitySystem.js`, `config/negative-lod.json`, `config/visibility.json`, [PERF_NEXT.md](PERF_NEXT.md)
 
 ---
 

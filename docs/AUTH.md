@@ -29,7 +29,10 @@ Custom lobby field only → multiplayer `Session.playerName` via `displayName.js
 
 ## Local AI (not “auth”)
 
-Ollama on the user’s machine — `npm run ollama:serve` + minis. No API key.
+Ollama on the user’s machine — `npm run ollama:serve` (proxy **:11435**) + minis. No API key.  
+Plain `ollama serve` alone **CORS-blocks** GitHub Pages.
+
+**Player surface** (mobile default) does **not** probe Ollama — switch to **Creator** tools first. See [UI_AND_AGENTS.md](UI_AND_AGENTS.md).
 
 Chrome extension **Threshold Bridge** can run minis and paste into an open Grok **tab** (user-driven automation) — see `extension/threshold-chrome/README.md`.
 
@@ -38,4 +41,5 @@ Chrome extension **Threshold Bridge** can run minis and paste into an open Grok 
 ## Related
 
 - [AGENT_ROUTING.md](AGENT_ROUTING.md) — Grok vs Ollama routing  
-- [UI_AND_AGENTS.md](UI_AND_AGENTS.md) — portal / SETUP  
+- [UI_AND_AGENTS.md](UI_AND_AGENTS.md) — surfaces, portal / SETUP  
+- [BUILD_FROM.md](BUILD_FROM.md) — one-page product spine

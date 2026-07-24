@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → local GIMP/Blender art → tiered AI agents (Ollama + Grok).
 
-**Current version:** **10.13.11**
+**Current version:** **10.13.12**
 
 **Forward plan:** [ROADMAP.md](ROADMAP.md) · **Snapshot:** [CAPABILITIES.md](CAPABILITIES.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
@@ -32,7 +32,7 @@
 6. SHIP         → TOOLS → Export when ready
 ```
 
-Optional: **Lobby → TC DEMO** for bundled reference editions. Optional **X / Grok** accounts — [AUTH.md](AUTH.md).
+Optional: **Lobby → TC DEMO** for bundled reference editions. Optional **Grok** API key — [AUTH.md](AUTH.md). Mobile defaults to **player** surface — [UI_AND_AGENTS.md](UI_AND_AGENTS.md).
 
 See [GETTING_STARTED.md](GETTING_STARTED.md) · [STREAMLINED_DEV.md](STREAMLINED_DEV.md) · [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
 

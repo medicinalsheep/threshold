@@ -1,6 +1,6 @@
 # Threshold documentation index
 
-**Version:** 10.13.11 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.13.12 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Full scope map — quality-first blank grid, optional TC reference editions, and where to read more.
 
@@ -25,6 +25,7 @@ Legacy edition manifests (`threshold-child-*`) live in `old/reference-editions/`
 flowchart TB
     subgraph session [Session]
         LOBBY[ENTER solo / CREATE / JOIN]
+        SURF[Surface player / creator / full]
         PORTAL[Agent Portal]
         HUBS[Corner hub UI]
         AUTH[Optional Grok key]
@@ -34,6 +35,7 @@ flowchart TB
         TOUCH[Touch + UNLOCK layout]
         PBR[Quality PBR 1K+]
         TE[Third Eye + F interact]
+        PERF[Neg LOD + Vis E0-E4]
     end
     subgraph create [Create]
         SETUP[SETUP + agents]
@@ -45,12 +47,14 @@ flowchart TB
         EXP[9-step EXPORT wizard]
         NAT[APK / Windows / iOS / Steam]
     end
-    LOBBY --> PORTAL --> create
-    LOBBY --> play
+    LOBBY --> SURF
+    SURF --> play
+    SURF -->|creator| PORTAL --> create
     AUTH -.-> PORTAL
     SETUP --> COMP
     ART --> play
     play --> EXP --> NAT
+    PERF -.-> play
 ```
 
 ---
@@ -64,8 +68,10 @@ flowchart TB
 | Clone & develop | [GETTING_STARTED.md](GETTING_STARTED.md) | `npm install` → `npm run quickstart` |
 | Streamlined dev path | [STREAMLINED_DEV.md](STREAMLINED_DEV.md) | Portal → SETUP → EXPORT |
 | Grok API key (optional) | [AUTH.md](AUTH.md) | Not required to play |
+| Mobile play vs build chrome | [UI_AND_AGENTS.md](UI_AND_AGENTS.md) surfaces | `?surface=player` |
 | Agent tiers & benchmarks | [AGENT_ROUTING.md](AGENT_ROUTING.md) | `ollama:benchmark` · SMART DEV |
 | UI layout + agents | [UI_AND_AGENTS.md](UI_AND_AGENTS.md) | Portal · freeze · touch · UNLOCK |
+| Perf stack / measure | [PERF_NEXT.md](PERF_NEXT.md) · [NEGATIVE_LOD.md](NEGATIVE_LOD.md) | SETUP → PERF |
 | Train mini agents | [BOOTCAMP.md](BOOTCAMP.md) · [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) | `npm run train:mini -- --no-seed` · `ollama:golden` |
 | Android APK (after polish) | [ANDROID_PREP.md](ANDROID_PREP.md) · [STORE_RELEASE.md](STORE_RELEASE.md) | `npm run package:android` |
 | Action controls | [CONTROLS.md](CONTROLS.md) | LMB aim · RMB shoot · F interact · PTT **N** |
@@ -91,6 +97,9 @@ npm run controls:verify         # binding defaults + doc truth
 npm run store:verify            # packaging E2E smoke
 npm run models:mini             # install mini agents
 npm run build:icons             # favicon ladder from appicon512.png
+npm run version:sync:check      # VERSION header drift
+node scripts/surface-verify.cjs # player/creator surface markers
+node scripts/negative-lod-verify.cjs
 npm run build                   # GitHub Pages → dist-pages/
 ```
 
@@ -103,9 +112,9 @@ npm run build                   # GitHub Pages → dist-pages/
 | [BUILD_FROM.md](BUILD_FROM.md) | **One-page spine** — live link, loop, do/don’t |
 | [GETTING_STARTED.md](GETTING_STARTED.md) | Lobby → ship linear path |
 | [AUTH.md](AUTH.md) | Optional Grok API key (no X OAuth) |
-| [PERF_NEXT.md](PERF_NEXT.md) | Neg LOD tier auto, multi-mat, floor, measure harness |
+| [PERF_NEXT.md](PERF_NEXT.md) | Perf stack status · optional CI headless |
 | [MULTIPLAYER.md](MULTIPLAYER.md) | Room codes, PeerJS, join troubleshooting |
-| [NEGATIVE_LOD.md](NEGATIVE_LOD.md) | Design: far-field unlit shader LOD (`negativeLOD`) |
+| [NEGATIVE_LOD.md](NEGATIVE_LOD.md) | Neg LOD + Visibility E0–E4 design |
 | [../extension/threshold-chrome/README.md](../extension/threshold-chrome/README.md) | Chrome: local mini → Grok tab paste |
 | [ROADMAP.md](ROADMAP.md) | v10.8+ forward plan |
 | [PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md) | Vision + pillars |
@@ -115,7 +124,7 @@ npm run build                   # GitHub Pages → dist-pages/
 | [AGENT_ROUTING.md](AGENT_ROUTING.md) | Tiered agents + bootcamp |
 | [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) | GitHub vs local weights |
 | [CAPABILITIES.md](CAPABILITIES.md) | Progress snapshot |
-| [UI_AND_AGENTS.md](UI_AND_AGENTS.md) | Lobby, hubs, freeze, touch, optional Grok |
+| [UI_AND_AGENTS.md](UI_AND_AGENTS.md) | Surfaces, lobby, hubs, freeze, touch, Grok |
 | [STORE_VERIFY.md](STORE_VERIFY.md) | Store/native verify plan |
 | [GIMP_TEXTURES.md](GIMP_TEXTURES.md) | GIMP install, batch, live SYNC |
 | [BLENDER_AVATARS.md](BLENDER_AVATARS.md) | Rigged GLB export |
