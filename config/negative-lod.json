@@ -29,7 +29,10 @@
     "cameraHeight": 18,
     "distance": 72,
     "hysteresis": 4,
-    "preserveMap": true
+    "preserveMap": true,
+    "pathC": true,
+    "pathCMinInstances": 16,
+    "pathCNearDistance": 36
   },
   "excludeFlags": [
     "isPlayer",

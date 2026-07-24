@@ -99,14 +99,20 @@ In-engine **SETUP → PERF — measure harness** + `window.PerfHarness` · HUD s
 - SETUP panel: RUN SAMPLE · SNAPSHOT · DOWNLOAD JSON
 - Creator PERF HUD: FPS + neg flat/reg + vis A/C/E + last sample p95
 
-### CLI (headless) — still open
-Puppeteer against `vite preview` + scripted camera orbit; write `dist-store/perf-*.json`.
+### CLI (headless) — **SHIPPED 10.13.14+** (tuned 10.13.15)
 
-### Effort
-In-engine **done**. CI headless **M+** later.
+```bash
+npm run perf:verify              # static smoke (always CI)
+npm run perf:harness             # 200 cubes · 5s · 1s warm · Lite
+npm run perf:harness:compare     # Neg LOD on vs off + % p95
+npm run perf:harness -- --cubes 200 --seconds 5 --warm 1 --tier compatibility
+```
+
+Defaults: **5s sample**, **1s warm-up discarded**, hitch frames **>100ms** dropped.  
+Writes `dist-store/perf-<stamp>.json` and `dist-store/perf-latest.json`.
 
 ### Success bar
-Document: “200 cubes, orbit, mobile tier: p95 frame time −X% with stack on vs off.” (run SETUP → PERF after spawn)
+Compare prints p95 on/off and **% lower with Neg LOD** when Δ positive.
 
 ---
 
@@ -118,7 +124,7 @@ Document: “200 cubes, orbit, mobile tier: p95 frame time −X% with stack on v
 3. Multi-mat / skinned     ✅
 4. Floor deck B            ✅
 5. E4 spatial buckets      ✅ 10.13.10
-6. Optional CI headless    (after manual baselines exist)
+6. CI headless harness     ✅ 10.13.14
 7. Player surface (mobile) ✅ 10.13.11
 ```
 
@@ -136,5 +142,8 @@ Document: “200 cubes, orbit, mobile tier: p95 frame time −X% with stack on v
 | Measure harness (in-engine) | ✅ 10.13.8 |
 | Multi-mat / skinned | ✅ 10.13.9 |
 | Floor path B | ✅ 10.13.9 |
-| CI headless harness | Plan only |
+| Floor path C | ✅ 10.13.15 |
+| CI headless harness | ✅ 10.13.14+ |
 | Player surface (mobile) | ✅ 10.13.11 |
+| E5 remotes / bloom | ✅ 10.13.15 |
+| store:ship + mac notary | ✅ 10.13.15 |

@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "10.13.13",
+  "version": "10.13.15",
   "type": "module",
   "engines": {
     "node": ">=22.0.0"
@@ -30,9 +30,12 @@
     "package:ios": "node scripts/package-ios.cjs",
     "package:win": "node scripts/package-win.cjs",
     "package:mac": "node scripts/package-mac.cjs",
+    "mac:notarize:check": "node scripts/notarize-mac.cjs --check",
+    "mac:staple": "node scripts/notarize-mac.cjs --staple",
     "package:android:release": "node scripts/package-android-release.cjs",
     "store:prep": "node scripts/store-prep.cjs",
     "store:assets": "node scripts/store-assets.cjs",
+    "store:ship": "node scripts/store-ship.cjs",
     "package:steam": "node scripts/package-steam.cjs",
     "steam:depot": "node scripts/steam-depot.cjs",
     "reference:fetch": "node scripts/fetch-reference-assets.cjs",
@@ -75,6 +78,9 @@
     "tc:verify": "node scripts/tc-verify.cjs",
     "controls:verify": "node scripts/controls-verify.cjs",
     "negative-lod:verify": "node scripts/negative-lod-verify.cjs",
+    "perf:verify": "node scripts/perf-harness-verify.cjs",
+    "perf:harness": "node scripts/perf-harness.cjs",
+    "perf:harness:compare": "node scripts/perf-harness.cjs --compare",
     "store:verify": "node scripts/store-verify.cjs",
     "store:upload": "node scripts/store-upload.cjs",
     "intent:verify": "node scripts/intent-router-verify.cjs",
@@ -118,6 +124,7 @@
     "electron": "^34.5.8",
     "electron-builder": "^25.1.8",
     "png-to-ico": "^2.1.8",
+    "puppeteer": "^24.15.0",
     "sharp": "^0.33.5",
     "vite": "^6.2.0"
   },

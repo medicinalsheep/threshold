@@ -96,13 +96,15 @@ export const PerfHarness = {
             return Promise.reject(new Error('PerfHarness already running'));
         }
         this._running = true;
-        this._durationMs = Math.max(1000, Number(durationMs) || 5000);
+        this._durationMs = Math.max(1500, Number(durationMs) || 5000);
+        this._warmMs = Math.max(0, Number(opts.warmMs ?? 1000));
         this._label = opts.label || 'sample';
         this._frameTimes = [];
         this._prevFrame = 0;
         this._sampleStart = 0;
+        this._maxDt = Number(opts.maxDtMs) || 100; // drop hitch spikes from stats
 
-        window.UI?.status?.(`PERF sample ${this._durationMs / 1000}s…`);
+        window.UI?.status?.(`PERF sample ${this._durationMs / 1000}s (warm ${this._warmMs}ms)…`);
 
         return new Promise((resolve, reject) => {
             this._resolve = resolve;
@@ -116,9 +118,13 @@ export const PerfHarness = {
                 }
                 const dt = now - this._prevFrame;
                 this._prevFrame = now;
-                if (dt > 0 && dt < 250) this._frameTimes.push(dt);
+                const elapsed = now - this._sampleStart;
+                // Discard warm-up + extreme hitch frames (tab focus, GC)
+                if (elapsed >= this._warmMs && dt > 0 && dt < this._maxDt) {
+                    this._frameTimes.push(dt);
+                }
 
-                if (now - this._sampleStart < this._durationMs) {
+                if (elapsed < this._durationMs) {
                     this._sampleRaf = requestAnimationFrame(onFrame);
                     return;
                 }
@@ -152,6 +158,7 @@ export const PerfHarness = {
         const result = {
             label: this._label,
             durationMs: this._durationMs,
+            warmMs: this._warmMs,
             frames: n,
             fpsAvg: Math.round(fpsAvg * 10) / 10,
             fps1pctLow: Math.round(fps1pct * 10) / 10,
@@ -229,6 +236,160 @@ export const PerfHarness = {
             this._paintSetup(this._lastResult);
             window.UI?.status?.('PERF snapshot captured');
         });
+    },
+
+    /**
+     * Headless / CI scenario: spawn N cubes, optional Neg LOD, tier, orbit camera, measure.
+     * @param {{
+     *   cubes?: number,
+     *   negLod?: boolean,
+     *   tier?: string,
+     *   durationMs?: number,
+     *   orbit?: boolean,
+     *   orbitRadius?: number,
+     *   label?: string,
+     *   clearProps?: boolean,
+     * }} [opts]
+     */
+    async runScenario(opts = {}) {
+        const cubes = Math.max(0, Math.min(2000, Number(opts.cubes) || 200));
+        const negLod = opts.negLod !== false;
+        const tier = opts.tier || 'compatibility';
+        const durationMs = Math.max(2000, Number(opts.durationMs) || 5000);
+        const warmMs = Math.max(0, Number(opts.warmMs ?? 1000));
+        const orbit = opts.orbit !== false;
+        const orbitRadius = Number(opts.orbitRadius) || 28;
+        const label = opts.label || `cubes${cubes}_${negLod ? 'neg' : 'full'}_${tier}`;
+
+        // EDIT world so World.createObject is allowed
+        if (window.State && !window.State.isPaused) {
+            window.State.isPaused = true;
+            window.UI?.updateSimMode?.();
+            window.dispatchEvent(new CustomEvent('threshold:pause', { detail: { paused: true, reason: 'perf' } }));
+        }
+        window.SurfaceProfile?.set?.('creator');
+        window.GraphicsProfile?.apply?.(tier, { silent: true, persist: false });
+
+        if (opts.clearProps !== false) {
+            this._clearPerfProps();
+        }
+
+        const World = window.World;
+        const THREE = window.THREE;
+        const spawned = [];
+        if (World?.createObject && cubes > 0) {
+            const side = Math.ceil(Math.sqrt(cubes));
+            const spacing = 2.2;
+            const origin = -((side - 1) * spacing) / 2;
+            let n = 0;
+            for (let z = 0; z < side && n < cubes; z += 1) {
+                for (let x = 0; x < side && n < cubes; x += 1) {
+                    // Vary colors so appearance-tint path is exercised
+                    const hue = (n * 0.07) % 1;
+                    const color = THREE
+                        ? new THREE.Color().setHSL(hue, 0.55, 0.48).getHex()
+                        : 0x888888;
+                    const mesh = World.createObject('cube', `perf_${n}`, color, false);
+                    if (mesh) {
+                        mesh.position.set(origin + x * spacing, 0.5, origin + z * spacing);
+                        mesh.userData.isPerfProp = true;
+                        mesh.userData.locked = true;
+                        if (negLod) {
+                            window.NegativeLod?.enableObject?.(mesh, {
+                                distance: window.NegativeLod?.config?.defaultDistance || 72,
+                                source: 'perf-scenario',
+                            });
+                        } else {
+                            window.NegativeLod?.disableObject?.(mesh, { clearFlag: true, forceOff: true });
+                        }
+                        spawned.push(mesh);
+                        n += 1;
+                    }
+                }
+            }
+        }
+
+        window.NegativeLod?.applyTierPolicy?.(tier);
+        window.VisibilitySystem?.invalidateSpatial?.();
+
+        // Resume PLAY for realistic render loop cost
+        if (window.State) {
+            window.State.isPaused = false;
+            window.UI?.updateSimMode?.();
+            window.dispatchEvent(new CustomEvent('threshold:pause', { detail: { paused: false } }));
+        }
+
+        // Warm a few frames
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+        let orbitStop = null;
+        if (orbit && window.Engine?.camera) {
+            orbitStop = this._startOrbit(orbitRadius);
+        }
+
+        try {
+            const result = await this.measure(durationMs, { label, warmMs });
+            result.scenario = {
+                cubes,
+                spawned: spawned.length,
+                negLod,
+                tier,
+                orbit,
+                orbitRadius,
+                warmMs,
+            };
+            this._lastResult = result;
+            this._paintSetup(result);
+            return result;
+        } finally {
+            if (typeof orbitStop === 'function') orbitStop();
+        }
+    },
+
+    _clearPerfProps() {
+        const State = window.State;
+        const Engine = window.Engine;
+        if (!State?.objects) return;
+        const keep = [];
+        for (const o of State.objects) {
+            if (o?.userData?.isPerfProp || String(o?.userData?.name || '').startsWith('perf_')) {
+                try {
+                    window.NegativeLod?.disableObject?.(o, { clearFlag: true });
+                    Engine?.scene?.remove?.(o);
+                    o.geometry?.dispose?.();
+                    const mats = Array.isArray(o.material) ? o.material : [o.material];
+                    mats.forEach((m) => m?.dispose?.());
+                } catch { /* ignore */ }
+            } else {
+                keep.push(o);
+            }
+        }
+        State.objects = keep;
+        window.VisibilitySystem?.invalidateSpatial?.();
+    },
+
+    _startOrbit(radius = 28) {
+        const cam = window.Engine?.camera;
+        if (!cam) return () => {};
+        const controls = window.Engine?.controls;
+        const prevEnabled = controls?.enabled;
+        if (controls) controls.enabled = false;
+        let t0 = performance.now();
+        let alive = true;
+        const tick = (now) => {
+            if (!alive) return;
+            const t = (now - t0) / 1000;
+            const y = 10 + Math.sin(t * 0.4) * 2;
+            cam.position.set(Math.sin(t * 0.55) * radius, y, Math.cos(t * 0.55) * radius);
+            cam.lookAt(0, 1.5, 0);
+            cam.updateMatrixWorld?.(true);
+            requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+        return () => {
+            alive = false;
+            if (controls) controls.enabled = prevEnabled !== false;
+        };
     },
 };
 

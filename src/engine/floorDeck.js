@@ -71,8 +71,9 @@ function buildInstancedSlabs(THREE, halfSize) {
         mat.map.needsUpdate = true;
     }
 
+    const total = count * count;
     const geo = new THREE.BoxGeometry(SLAB_SIZE, SLAB_THICK, SLAB_SIZE);
-    const mesh = new THREE.InstancedMesh(geo, mat, count * count);
+    const mesh = new THREE.InstancedMesh(geo, mat, total);
     mesh.castShadow = false;
     mesh.receiveShadow = true;
     mesh.renderOrder = 4;
@@ -84,6 +85,8 @@ function buildInstancedSlabs(THREE, halfSize) {
         surfaceType: 'concrete',
     };
 
+    /** Path C: stash matrices for near/far instance split */
+    const matrices = [];
     const dummy = new THREE.Object3D();
     let idx = 0;
     for (let iz = 0; iz < count; iz += 1) {
@@ -99,12 +102,20 @@ function buildInstancedSlabs(THREE, halfSize) {
             dummy.rotation.y = ((ix * 3 + iz * 5) % 4) * 0.003;
             dummy.updateMatrix();
             mesh.setMatrixAt(idx, dummy.matrix);
+            matrices.push(dummy.matrix.clone());
             idx += 1;
         }
     }
     mesh.instanceMatrix.needsUpdate = true;
+    mesh.count = total;
+    mesh.userData.floorPathC = {
+        matrices,
+        total,
+        nearMesh: mesh,
+        farMesh: null,
+    };
 
-    return { mesh, count, pitch, origin };
+    return { mesh, count, pitch, origin, matrices };
 }
 
 function buildSubstrate(THREE, halfSize) {

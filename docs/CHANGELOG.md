@@ -1,3 +1,18 @@
+## 10.13.15 — Floor path C, E5 remotes/bloom, store ship, harness tune
+
+- **Floor path C** — InstancedMesh slab decks split near (PBR) / far (unlit) per instance (`floor.pathC`)
+- **E5** — remote players low-rate lerp + hide vitals when far; bloom skip on Lite / no on-screen emissive
+- **Store** — `npm run store:ship` orchestrator; `mac:notarize:check` / `mac:staple`; [MAC_NOTARIZE.md](MAC_NOTARIZE.md); electron-builder `afterSign`
+- **Harness** — default 5s + 1s warm-up; drop hitch frames >100ms; compare prints % p95
+
+## 10.13.14 — CI headless perf harness
+
+- **`PerfHarness.runScenario`** — spawn N cubes · Neg LOD on/off · graphics tier · camera orbit · measure
+- **CLI** `npm run perf:harness` (Puppeteer + vite preview) → `dist-store/perf-*.json` + `perf-latest.json`
+- **`--compare`** Neg LOD on vs force-off p95 delta
+- **Static** `npm run perf:verify` always in CI; live harness on Pages deploy (continue-on-error)
+- DevDep: `puppeteer`
+
 ## 10.13.13 — Neg LOD softer distance + scene-aware tint
 
 - **Longer distances** — default **72m** · Lite 52 / Mobile 68 / Realistic 88 / Ultra 110; hysteresis 8; softer fade (min opacity 0.88)

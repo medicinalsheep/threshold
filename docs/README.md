@@ -1,6 +1,6 @@
 # Threshold documentation index
 
-**Version:** 10.13.13 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.13.15 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Full scope map — quality-first blank grid, optional TC reference editions, and where to read more.
 
@@ -100,6 +100,8 @@ npm run build:icons             # favicon ladder from appicon512.png
 npm run version:sync:check      # VERSION header drift
 node scripts/surface-verify.cjs # player/creator surface markers
 node scripts/negative-lod-verify.cjs
+npm run perf:verify             # static perf harness smoke
+npm run perf:harness            # headless measure → dist-store/perf-*.json
 npm run build                   # GitHub Pages → dist-pages/
 ```
 
@@ -112,7 +114,9 @@ npm run build                   # GitHub Pages → dist-pages/
 | [BUILD_FROM.md](BUILD_FROM.md) | **One-page spine** — live link, loop, do/don’t |
 | [GETTING_STARTED.md](GETTING_STARTED.md) | Lobby → ship linear path |
 | [AUTH.md](AUTH.md) | Optional Grok API key (no X OAuth) |
-| [PERF_NEXT.md](PERF_NEXT.md) | Perf stack status · optional CI headless |
+| [PERF_NEXT.md](PERF_NEXT.md) | Perf stack · `perf:harness` |
+| [MAC_NOTARIZE.md](MAC_NOTARIZE.md) | macOS sign + notary + staple |
+| [STEAM_RELEASE.md](STEAM_RELEASE.md) | Steam depot upload |
 | [MULTIPLAYER.md](MULTIPLAYER.md) | Room codes, PeerJS, join troubleshooting |
 | [NEGATIVE_LOD.md](NEGATIVE_LOD.md) | Neg LOD + Visibility E0–E4 design |
 | [../extension/threshold-chrome/README.md](../extension/threshold-chrome/README.md) | Chrome: local mini → Grok tab paste |

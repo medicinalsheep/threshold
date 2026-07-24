@@ -43,9 +43,18 @@ jobs:
           echo "texture bundle OK ($(find dist-pages/bundle/textures -type f | wc -l) files)"
       - run: node scripts/portal-ui-verify.cjs
       - run: npm run controls:verify
+      - run: node scripts/negative-lod-verify.cjs
+      - run: node scripts/surface-verify.cjs
+      - run: npm run perf:verify
       - run: node scripts/tc-drive-verify.cjs
       - run: node scripts/tc-circuit-verify.cjs
       - run: node scripts/intent-router-verify.cjs
+      # Headless browser sample (WebGL); non-blocking if GPU stack flakes on runner
+      - name: Perf harness (headless)
+        continue-on-error: true
+        run: npm run perf:harness -- --cubes 200 --seconds 5 --warm 1 --tier compatibility --compare
+        env:
+          PERF_BASE: /
 
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -56,6 +56,8 @@ module.exports = {
         gatekeeperAssess: false,
         artifactName: '${productName}-${version}-mac.${ext}',
     },
+    /** Notarize when APPLE_* env present — docs/MAC_NOTARIZE.md */
+    afterSign: 'scripts/notarize-mac.cjs',
     linux: {
         target: ['AppImage'],
         icon: 'electron/resources/icon.png',

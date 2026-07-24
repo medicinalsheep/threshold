@@ -661,7 +661,66 @@ export const Engine = {
         if (State.isRecording && Recorder.stream) {
             Recorder.stream.getVideoTracks()[0].requestFrame();
         }
+        // E5: skip bloom when no on-screen emissive / Lite tier (saves full-screen pass)
+        this._updateBloomSkip();
         this.composer.render();
         window.CreatorHud?.tick?.(time);
-    }
+    },
+
+    /**
+     * E5 — disable UnrealBloom when nothing on-screen is emissive, or graphics is Lite.
+     * Restores prior enabled state when bloom is useful again.
+     */
+    _updateBloomSkip() {
+        if (!this.bloomPass) return;
+        if (this._bloomUserOff) return;
+        const tier = State.graphicsTier;
+        if (tier === 'compatibility') {
+            if (this.bloomPass.enabled) {
+                this._bloomWasOn = true;
+                this.bloomPass.enabled = false;
+            }
+            return;
+        }
+        // Hyper/realistic: scan a budget of A/B objects for emissive
+        let need = false;
+        const objects = State.objects || [];
+        const n = Math.min(objects.length, 48);
+        const start = (this._bloomScanOffset || 0) % Math.max(1, objects.length);
+        for (let i = 0; i < n && !need; i += 1) {
+            const obj = objects[(start + i) % Math.max(1, objects.length)];
+            if (!obj) continue;
+            const c = obj.userData?._visClass;
+            if (c === 'D' || c === 'E') continue;
+            obj.traverse?.((m) => {
+                if (need || !m.isMesh) return;
+                const mats = Array.isArray(m.material) ? m.material : [m.material];
+                for (const mat of mats) {
+                    if (mat?.emissiveIntensity > 0.08 && mat?.emissive && mat.emissive.getHex?.() !== 0) {
+                        need = true;
+                        break;
+                    }
+                }
+            });
+            if (obj.isMesh) {
+                const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+                for (const mat of mats) {
+                    if (mat?.emissiveIntensity > 0.08 && mat?.emissive && mat.emissive.getHex?.() !== 0) {
+                        need = true;
+                        break;
+                    }
+                }
+            }
+        }
+        this._bloomScanOffset = start + n;
+        if (need) {
+            if (this._bloomWasOn || State.renderMode === 4) {
+                this.bloomPass.enabled = true;
+                this._bloomWasOn = false;
+            }
+        } else if (this.bloomPass.enabled) {
+            this._bloomWasOn = true;
+            this.bloomPass.enabled = false;
+        }
+    },
 };

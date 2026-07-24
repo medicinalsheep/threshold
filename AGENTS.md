@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), tiered local/cloud agents, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **10.13.13**)
+**Version:** `src/config.js` → `VERSION` (currently **10.13.15**)
 
 **Spine (start here):** [docs/BUILD_FROM.md](docs/BUILD_FROM.md) · **Doc index:** [docs/README.md](docs/README.md)
 
@@ -35,7 +35,7 @@ Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blen
 | Multiplayer | `src/shared/network.js`, `sync.js`, `actions.js` |
 | Creative | `textureBridge.js`, `gltfImport.js`, `creativeWatch.js` |
 | Export | `gameExport.js`, `exportWizard.js`, `exportWalkthrough.js` |
-| Store / Steam | `scripts/store-*.cjs`, `scripts/steam-*.cjs`, `electron/steam*.cjs` |
+| Store / Steam | `scripts/store-*.cjs`, `store-ship`, `notarize-mac`, `steam-*.cjs` |
 | Training bootcamp | `training/bootcamp/`, `scripts/bootcamp-*.cjs`, `scripts/models-*.cjs` |
 | Model registry | `config/models-registry.json`, `config/agent-tasks.json` |
 | TC assets | `tcShow.js`, `tcVeh.js`, `tcChr.js`, `tcSfx.js`, `tcLite.js`, `tcMeta.js` |
@@ -77,6 +77,8 @@ npm run controls:verify         # binding defaults + doc truth
 npm run store:verify            # packaging E2E smoke
 node scripts/surface-verify.cjs
 node scripts/negative-lod-verify.cjs
+npm run perf:verify
+npm run perf:harness            # headless Puppeteer → dist-store/perf-*.json
 ```
 
 ### Agents & Ollama

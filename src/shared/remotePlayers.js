@@ -133,12 +133,34 @@ export const RemotePlayers = {
             let entry = this.markers.get(k);
             if (!entry) entry = this._createMarker(k, names.get(k) || k, pos.mode, pos.appearance);
             const yOff = pos.mode === 'fly' ? 1.2 : 0;
-            entry.group.position.lerp(
-                new THREE.Vector3(pos.x, pos.y + yOff, pos.z),
-                0.35
-            );
-            if (Number.isFinite(pos.rotY)) entry.group.rotation.y = pos.rotY;
-            this._updateVitalsPill(entry, pos.vitals, pos.mode);
+            const target = new THREE.Vector3(pos.x, pos.y + yOff, pos.z);
+            // E5: far / off-screen remotes — cheaper lerp + skip vitals redraw
+            const cam = Engine.camera;
+            let dist = 0;
+            if (cam) {
+                dist = cam.position.distanceTo(entry.group.position);
+            }
+            const vis = window.VisibilitySystem?.getClass?.(entry.group)
+                || window.VisibilitySystem?.resolveClass?.(entry.group);
+            const far = vis === 'D' || vis === 'E' || dist > 48;
+            const mid = !far && (vis === 'C' || dist > 28);
+            const lerp = far ? 0.08 : mid ? 0.18 : 0.35;
+            entry.group.position.lerp(target, lerp);
+            if (Number.isFinite(pos.rotY)) {
+                if (far) {
+                    // snap less often — only if yaw delta large
+                    const dy = Math.abs(entry.group.rotation.y - pos.rotY);
+                    if (dy > 0.12) entry.group.rotation.y = pos.rotY;
+                } else {
+                    entry.group.rotation.y = pos.rotY;
+                }
+            }
+            if (far) {
+                if (entry.vitalsSprite) entry.vitalsSprite.visible = false;
+            } else {
+                this._updateVitalsPill(entry, pos.vitals, pos.mode);
+            }
+            entry._visFar = far;
         });
 
         this.markers.forEach((entry, key) => {
@@ -211,9 +233,16 @@ export const RemotePlayers = {
         ring.position.y = 0.02;
         group.add(ring);
 
-        group.userData = { isRemotePlayer: true, playerKey: key, label, isHuman: mode !== 'fly' };
+        group.userData = {
+            isRemotePlayer: true,
+            playerKey: key,
+            label,
+            isHuman: mode !== 'fly',
+            // Participate in visibility classify when pushed to State.objects optional —
+            // distance-based E5 gate works without registration.
+        };
         Engine.scene.add(group);
-        const entry = { group, label };
+        const entry = { group, label, _visFar: false };
         this.markers.set(key, entry);
         return entry;
     },

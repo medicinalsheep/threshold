@@ -59,6 +59,9 @@ for (const token of [
     'sampleAlbedo',
     'notifyEnvChange',
     'isStaticProp',
+    'updateFloorPathC',
+    'ensureFloorPathC',
+    'pathC',
 ]) {
     if (mod.includes(token)) ok(`multi-mat/floor has ${token}`);
     else fail(`missing ${token}`);

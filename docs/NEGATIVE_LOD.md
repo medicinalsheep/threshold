@@ -697,13 +697,13 @@ else auto matrix above
 - Full sweep every `fullSweepEvery` frames (default 45)
 - Config: `config/visibility.json` → `spatial` · stats on `VisibilitySystem.getStats()`
 
-**E5+ (optional)**
-- Remote player avatar: low-rate pose when D/E
-- Postprocess: skip bloom if no emissive on-screen (graphics tier)
-- Dirty-bit MP: already partial — tighten for off-screen remotes
+**E5+** ✅ (10.13.15)
+- Remote player avatar: low-rate lerp + hide vitals when far / D–E
+- Postprocess: skip bloom on Lite or when no on-screen emissive
+- Floor path C: InstancedMesh near/far instance split (`floor.pathC`)
 
 ```text
-A+B → E0 → E1 (done) → E2 → measure → E3 → E4 if scale needs it
+A+B → E0–E4 → E5 remotes/bloom/floor C → measure harness
 ```
 
 ---

@@ -72,7 +72,8 @@ Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [UI_AND_A
 
 Mobile / coarse pointer defaults to **player**. Switch anytime in lobby or SETUP.
 
-Optional remaining: CI headless harness. Details: [PERF_NEXT.md](PERF_NEXT.md).
+Perf CI: `npm run perf:verify` · browser: `npm run perf:harness` / `perf:harness:compare`.  
+Store: `npm run store:ship -- --manifest game.json` · macOS notary: [MAC_NOTARIZE.md](MAC_NOTARIZE.md).
 
 ---
 

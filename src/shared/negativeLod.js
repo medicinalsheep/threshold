@@ -40,8 +40,15 @@ const cfg = {
         distance: Number(cfgJson.floor?.distance) || 72,
         hysteresis: Number(cfgJson.floor?.hysteresis) || 4,
         preserveMap: cfgJson.floor?.preserveMap !== false,
+        /** Per-instance near/far split for InstancedMesh decks */
+        pathC: cfgJson.floor?.pathC !== false,
+        pathCMinInstances: Number(cfgJson.floor?.pathCMinInstances) || 16,
+        pathCNearDistance: Number(cfgJson.floor?.pathCNearDistance) || 36,
     },
 };
+
+const _floorMat = new THREE.Matrix4();
+const _floorPos = new THREE.Vector3();
 
 const _camPos = new THREE.Vector3();
 const _objPos = new THREE.Vector3();
@@ -547,13 +554,97 @@ function collectFloorTargets() {
 }
 
 /**
- * Floor path B: one shared mat → Basic when camera high or far from origin.
- * Whole slab deck pops together (acceptable).
+ * Floor path C — per-instance near/far split for InstancedMesh slab decks.
+ * Near instances keep PBR; far instances use unlit Basic (unique appearance tint).
+ */
+function ensureFloorPathC(nearMesh) {
+    const pack = nearMesh?.userData?.floorPathC;
+    if (!pack?.matrices?.length) return null;
+    if (pack.farMesh) return pack;
+
+    const flatHex = composeFarColor(nearMesh.material, nearMesh);
+    const flatMat = new THREE.MeshBasicMaterial({
+        color: flatHex,
+        map: cfg.floor.preserveMap ? nearMesh.material?.map || null : null,
+        fog: true,
+        toneMapped: true,
+    });
+    const far = new THREE.InstancedMesh(nearMesh.geometry, flatMat, pack.total);
+    far.castShadow = false;
+    far.receiveShadow = true;
+    far.renderOrder = nearMesh.renderOrder;
+    far.userData = {
+        isFloor: true,
+        negativeLodFloor: true,
+        isFloorFar: true,
+        noVisibility: true,
+    };
+    far.count = 0;
+    far.visible = false;
+    nearMesh.parent?.add(far);
+    pack.farMesh = far;
+    pack.flatMat = flatMat;
+    return pack;
+}
+
+function updateFloorPathC(nearMesh, camera) {
+    const pack = ensureFloorPathC(nearMesh);
+    if (!pack) return 0;
+    const nearDist = cfg.floor.pathCNearDistance || 36;
+    camera.getWorldPosition(_camPos);
+    let nNear = 0;
+    let nFar = 0;
+    const far = pack.farMesh;
+    // Re-tint far mat when env changes
+    if (pack.envGen !== _envGen && pack.flatMat) {
+        pack.flatMat.color.setHex(composeFarColor(nearMesh.material, nearMesh));
+        pack.envGen = _envGen;
+    }
+    for (let i = 0; i < pack.matrices.length; i += 1) {
+        const m = pack.matrices[i];
+        _floorPos.setFromMatrixPosition(m);
+        const horiz = Math.hypot(_camPos.x - _floorPos.x, _camPos.z - _floorPos.z);
+        if (horiz <= nearDist) {
+            nearMesh.setMatrixAt(nNear, m);
+            nNear += 1;
+        } else {
+            far.setMatrixAt(nFar, m);
+            nFar += 1;
+        }
+    }
+    nearMesh.count = nNear;
+    nearMesh.instanceMatrix.needsUpdate = true;
+    nearMesh.visible = nNear > 0;
+    far.count = nFar;
+    far.instanceMatrix.needsUpdate = true;
+    far.visible = nFar > 0;
+    // Ensure near mesh stays full PBR (path B would have flattened it)
+    if (runtime.get(nearMesh)?.state === 'flat') enterFull(nearMesh);
+    return 1;
+}
+
+function restoreFloorPathC(nearMesh) {
+    const pack = nearMesh?.userData?.floorPathC;
+    if (!pack?.matrices) return;
+    for (let i = 0; i < pack.matrices.length; i += 1) {
+        nearMesh.setMatrixAt(i, pack.matrices[i]);
+    }
+    nearMesh.count = pack.total;
+    nearMesh.instanceMatrix.needsUpdate = true;
+    nearMesh.visible = true;
+    if (pack.farMesh) {
+        pack.farMesh.count = 0;
+        pack.farMesh.visible = false;
+    }
+}
+
+/**
+ * Floor path B: whole-mat swap · path C: per-instance near/far for InstancedMesh decks.
  */
 function updateFloorTargets(camera) {
     if (!cfg.floor?.enabled || !floorTierAllows()) {
-        // Restore full if we left floors flat from a previous tier
         for (const mesh of collectFloorTargets()) {
+            if (mesh.userData?.floorPathC) restoreFloorPathC(mesh);
             const rt = runtime.get(mesh);
             if (rt?.state === 'flat') enterFull(mesh);
         }
@@ -567,7 +658,17 @@ function updateFloorTargets(camera) {
     let switches = 0;
 
     for (const mesh of collectFloorTargets()) {
-        if (!mesh.visible) continue;
+        if (!mesh.visible && !mesh.userData?.floorPathC) continue;
+
+        // Path C — instanced deck with enough slabs
+        const canC = cfg.floor.pathC
+            && mesh.isInstancedMesh
+            && mesh.userData?.floorPathC?.matrices?.length >= (cfg.floor.pathCMinInstances || 16);
+        if (canC) {
+            switches += updateFloorPathC(mesh, camera);
+            continue;
+        }
+
         mesh.getWorldPosition(_objPos);
         const horiz = Math.hypot(_camPos.x - _objPos.x, _camPos.z - _objPos.z);
         const height = _camPos.y;

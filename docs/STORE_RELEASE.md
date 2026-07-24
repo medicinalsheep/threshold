@@ -39,14 +39,16 @@ The EXPORT wizard collects **public** metadata only. Signing credentials stay on
 
 ```bash
 # 1. Export manifest from Engine (MORE → EXPORT)
-# 2. Prepare store assets + apply bundle ID to native config
-npm run store:prep -- --manifest my-game.threshold-game.json --contact you@example.com
+# 2. One-shot prep + package + upload guide (signing still local)
+npm run store:ship -- --manifest my-game.threshold-game.json --targets win --contact you@example.com
 
-# 3. Package per target
+# Or step-by-step:
+npm run store:prep -- --manifest my-game.threshold-game.json --contact you@example.com
 npm run package:android:release   # AAB (sign in Android Studio if Gradle fails)
 npm run package:ios               # sync — archive on macOS in Xcode
 npm run package:win               # portable .exe + NSIS installer
-npm run package:mac               # macOS .dmg (darwin only)
+npm run package:mac               # macOS .dmg (darwin only) — see MAC_NOTARIZE.md
+npm run store:upload -- --manifest my-game.threshold-game.json
 ```
 
 Output of `store:prep`:
@@ -150,15 +152,21 @@ Reduces SmartScreen warnings. Certificate from DigiCert, Sectigo, etc.
 ## macOS (Electron .dmg)
 
 ```bash
-npm run package:mac    # macOS host only
+npm run package:mac    # macOS host only — signs + afterSign notarize when env set
+npm run mac:notarize:check
+npm run mac:staple -- dist-electron/Threshold-*-mac.dmg
 ```
+
+Full guide: **[MAC_NOTARIZE.md](MAC_NOTARIZE.md)**
 
 | Step | Action |
 |------|--------|
 | Build | `electron-builder` → `dist-electron/*.dmg` |
-| Sign | `CSC_LINK` + Apple Developer ID Application cert |
-| Notarize | `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `notarize` in electron-builder |
-| Staple | `xcrun stapler staple` after notarization |
+| Sign | `CSC_LINK` + `CSC_KEY_PASSWORD` (Developer ID Application) |
+| Notarize | `APPLE_ID` · `APPLE_APP_SPECIFIC_PASSWORD` · `APPLE_TEAM_ID` via `afterSign` |
+| Staple | `npm run mac:staple -- path/to.dmg` |
+
+**Orchestrated:** `npm run store:ship -- --manifest game.json --targets mac --notarize-check`
 
 **Note:** Capacitor iOS ≠ Electron macOS. For Mac App Store with WKWebView, use Xcode iOS target on Apple Silicon Mac or separate macOS Catalyst project (out of scope).
 
@@ -172,6 +180,7 @@ npm run package:mac    # macOS host only
 | `CSC_KEY_PASSWORD` | Windows / macOS | Cert password |
 | `APPLE_ID` | macOS | Notarization Apple ID |
 | `APPLE_APP_SPECIFIC_PASSWORD` | macOS | App-specific password for notary |
+| `APPLE_TEAM_ID` | macOS | 10-char team id for notarytool |
 
 ---
 
