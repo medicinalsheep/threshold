@@ -1,6 +1,6 @@
 # Negative LOD — Design & Implementation Plan
 
-**Status:** A+B · **E0–E5** · tier auto · multi-mat · floor B/**C** · **light-compensated flats** · review fixes — **shipped through 10.13.20** (doc truth **10.13.21**)  
+**Status:** A+B · **E0–E5** · tier auto · multi-mat · floor B/**C** · **light-compensated flats** · review fixes — **shipped through 10.13.20** (product **10.14.x**)  
 **Target version:** 10.13.x  
 **Live engine version:** see `src/config.js` → `VERSION`  
 **Related:** `meshLod.js`, `textureHilod.js`, `visibilitySystem.js`, `remotePlayers.js`, `config/negative-lod.json`, `config/visibility.json`, `config/lod-distances.json`, [PERF_NEXT.md](PERF_NEXT.md) · [MATERIALS.md](MATERIALS.md)

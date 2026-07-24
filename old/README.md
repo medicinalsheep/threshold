@@ -1,6 +1,6 @@
 # Archived / legacy files
 
-Content here is **not used by the active runtime** (v6.4+). Kept for history and migration reference only.
+Content here is **not used by the active runtime** (v10+). Kept for history and migration reference only — **do not delete wholesale** without a migration note; do not import from `src/`.
 
 **Import safety:** `src/` has zero imports from `old/`. Active loaders live in `src/shared/tc*.js` and `config/reference-editions.json`.
 

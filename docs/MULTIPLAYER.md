@@ -34,6 +34,10 @@ Invite URL: `?room=MEDI-83FVY7-FCDU` on the same origin as the host (Pages vs lo
 3. **Host passcode set**, guest left blank → `Wrong passcode`  
 4. **Typos** in room code (O vs 0, I vs 1 — we avoid 0/1/O/I in random segments; name slug can still contain letters from the display name)  
 5. Corporate firewall blocking WebRTC / PeerJS cloud  
+6. **Firefox Enhanced Tracking Protection** set to Strict — allow the site or use Standard if join fails (WebRTC/PeerJS)  
+7. Guest and host on **different origins** (localhost vs Pages) — signaling never matches  
+
+Firefox is supported; “Forget About This Site” only clears cache/storage (useful after deploys). See [GETTING_STARTED.md](GETTING_STARTED.md)#browsers.
 
 ## Host checklist
 

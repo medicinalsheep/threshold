@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.14.2 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.14.3 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -175,11 +175,14 @@ Accounts guide: [AUTH.md](AUTH.md) · Snapshot: [CAPABILITIES.md](CAPABILITIES.m
 | **10.13.20** | Neg LOD review fixes (map flats, shared pool, registry) |
 | **10.13.21** | Doc truth sweep (LOD stack + materials + perf) |
 
-## 10.14 — Workspace pad + physics foundation ✅
+## 10.14 — Workspace pad + physics + polish ✅
 
 | Slice | Focus |
 |-------|-------|
-| **10.14.0** | PLAY entry · slab pad · starter kit · mass/friction truth · hinges · gravity · Physics Lab |
+| **10.14.0** | PLAY entry · slab pad · starter kit · mass/friction · hinges · gravity · Physics Lab |
+| **10.14.1** | Avatar LOD hop fix · realistic starter skin/outfit |
+| **10.14.2** | Pages stale-chunk recovery · faster CI (no texture regen every deploy) |
+| **10.14.3** | Doc truth sweep · browser notes · light cleanup |
 
 Perf: [PERF_NEXT.md](PERF_NEXT.md) · Physics: [PHYSICS.md](PHYSICS.md) · Materials: [MATERIALS.md](MATERIALS.md) · Surfaces: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Ship: [STORE_RELEASE.md](STORE_RELEASE.md)
 
@@ -208,6 +211,7 @@ node scripts/portal-ui-verify.cjs
 npm run controls:verify
 node scripts/surface-verify.cjs
 node scripts/negative-lod-verify.cjs
+npm run physics:verify
 npm run perf:verify
 npm run store:verify    # optional packaging smoke
 ```

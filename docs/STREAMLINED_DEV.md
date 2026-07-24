@@ -1,8 +1,8 @@
-# Streamlined dev path (v10.13)
+# Streamlined dev path (v10.14)
 
-One linear path from lobby to shipped build — solo ENTER, optional host/join, Agent Portal, creative tools, export.
+One linear path from lobby to shipped build — solo ENTER on **workspace pad**, optional host/join, Agent Portal, creative tools, export.
 
-**Spine:** [BUILD_FROM.md](BUILD_FROM.md) · **Surfaces:** [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
+**Spine:** [BUILD_FROM.md](BUILD_FROM.md) · **Surfaces:** [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · **Physics:** [PHYSICS.md](PHYSICS.md)
 
 ---
 
@@ -10,12 +10,13 @@ One linear path from lobby to shipped build — solo ENTER, optional host/join, 
 
 | Step | Action |
 |------|--------|
-| **Solo (default)** | Lobby → **ENTER →** → blank grid (BUILD / EDIT, no network) |
+| **Solo (default)** | Lobby → **ENTER →** → **PLAY** on concrete pad + kit (no network) |
 | **Host** | Lobby → **CREATE SESSION** → copy invite → **ENTER SESSION** |
 | **Join** | Lobby → paste code → **JOIN** (+ passcode if host set one) |
 | **Surface** | Phones → **player**; desktop → **creator**. Lobby chips or `?surface=` |
 
-Multiplayer is optional PeerJS. **No account required** for local solo play. Grok key optional for cloud AI.
+Multiplayer is optional PeerJS. **No account required** for local solo play. Grok key optional for cloud AI.  
+Browsers: Chrome/Edge/Firefox — after deploys, hard-refresh if modules fail to load ([GETTING_STARTED](GETTING_STARTED.md)#browsers).
 
 ---
 

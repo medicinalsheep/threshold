@@ -2,7 +2,7 @@
 
 **Collaborative 3D game lab** — host a session, connect an AI agent, build in the browser, play with friends, export real packages.
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.14.2
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.14.3
 
 **Build from this:** [docs/BUILD_FROM.md](docs/BUILD_FROM.md) — one-page outline for forks and Grok/agent chats (live link, six-step loop, do/don’t).
 
@@ -29,16 +29,17 @@ Threshold is for people who want to **go from idea → playable 3D scene → shi
 ```
 1. LOBBY     → name · PLAY or BUILD · **ENTER →** (solo; no account needed)
 2. SURFACE   → phones default Play UI; desktop Creator (AI tools). ?surface=player|creator|full
-3. ENGINE    → blank grid · corner hub tour (~3 steps)
+3. ENGINE    → workspace pad + kit · PLAY walk-ready · corner hub tour
 4. PORTAL    → (creator) AI scans Grok/Ollama · describe what to build
-5. EDIT      → TOOLS menu → insert / MATERIAL LIBRARY / Compiler / PromptGen
-6. PLAY      → tap PLAY (top-left) · touch toggle (bottom-left) · test walk physics
+5. EDIT      → TOOLS menu → insert / materials / physics lab / Compiler
+6. PLAY      → walk · push props · gravity · touch toggle
 7. SHIP      → TOOLS → Export when ready
 ```
 
 Multiplayer: **CREATE SESSION** → copy invite → **ENTER SESSION**. Friends **JOIN** with room code.  
 Optional: **Grok** API key for cloud AI — [docs/AUTH.md](docs/AUTH.md). Local Ollama: `npm run ollama:serve` (not plain `ollama serve`).  
-Ship: [docs/STORE_RELEASE.md](docs/STORE_RELEASE.md) · macOS notary: [docs/MAC_NOTARIZE.md](docs/MAC_NOTARIZE.md) · `npm run store:ship`.
+Ship: [docs/STORE_RELEASE.md](docs/STORE_RELEASE.md) · macOS notary: [docs/MAC_NOTARIZE.md](docs/MAC_NOTARIZE.md) · `npm run store:ship`.  
+Browsers: Chrome/Edge/**Firefox** — after deploys, hard-refresh if modules fail ([docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)#browsers).
 
 ---
 

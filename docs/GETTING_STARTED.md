@@ -1,28 +1,48 @@
-# Getting started with Threshold (v10.14.2)
+# Getting started with Threshold (v10.14.3)
 
-One linear path from lobby to shipping — blank grid default, Agent Portal, tiered agents, and optional **TC** export practice.
+One linear path from lobby to shipping — **workspace pad** default, Agent Portal, tiered agents, and optional **TC** export practice.
 
-**Full scope:** [README.md](README.md) (doc index) · **Linear dev path:** [STREAMLINED_DEV.md](STREAMLINED_DEV.md)
+**Full scope:** [README.md](README.md) (doc index) · **Linear dev path:** [STREAMLINED_DEV.md](STREAMLINED_DEV.md) · **Spine:** [BUILD_FROM.md](BUILD_FROM.md)
+
+---
+
+## Browsers {#browsers}
+
+| Browser | Notes |
+|---------|--------|
+| **Chrome / Edge** | Fully supported (WebGL + WebRTC) |
+| **Firefox** | Fully supported — **not blocked** by Mozilla specifically |
+| **Safari** | Works for solo play; multiplayer WebRTC varies by iOS version |
+
+**“Forget About This Site” (Firefox History)** clears site data (cache, storage). That is **good** after a GitHub Pages deploy — it removes **stale `index.html`** that pointed at old hashed JS (the `MIME type text/html` console errors). It does **not** mean Firefox is incompatible.
+
+If the live app fails to load modules after a deploy:
+
+1. Hard refresh (`Ctrl+Shift+R`) or open with `?_v=1`  
+2. Or Forget About This Site → reopen the URL  
+3. App auto-reloads once when it detects a stale chunk (v10.14.2+)
+
+**Multiplayer on Firefox:** allow WebRTC; if join fails, check Enhanced Tracking Protection exceptions for the site, or try a temporary “Standard” protection level. Corporate VPN/firewall can block PeerJS cloud.
 
 ---
 
 ## The loop
 
 ```
-Lobby → ENTER (solo) → play or build → EDIT or PLAY → Export → Package
+Lobby → ENTER (solo) → PLAY on pad → EDIT to build → Export → Package
          ↘ CREATE SESSION → share invite → ENTER SESSION (multiplayer host)
 ```
 
 | Step | Where | What you learn |
 |------|--------|----------------|
-| 1 | **Lobby → ENTER →** | Solo primary — **PLAY** walk-ready on workspace pad |
-| 2 | Engine | Concrete pad · kit props · AI station · short hub tour |
-| 3 | **Surface** | Phones default **player** (clean play UI). Desktop **creator** for AI tools. `?surface=` |
-| 4 | **Agent Portal** (creator) | Describe what to build · Grok/Ollama auto-detect |
-| 5 | **EDIT** | TOOLS menu → insert, **MATERIAL LIBRARY EXAMPLES**, Compiler, PromptGen, textures |
-| 6 | **PLAY** | Top-left PLAY · walk physics · **F** interact |
-| 7 | **SETUP** (optional) | Ollama tiers, freeze prefs, Grok key — [AGENT_ROUTING.md](AGENT_ROUTING.md) |
-| 8 | **TOOLS → EXPORT** | 9-step walkthrough → manifest (TARGETS default Web only) |
+| 1 | **Lobby → ENTER →** | Solo — **PLAY** walk-ready on workspace pad |
+| 2 | Engine | Concrete pad · kit (crate/hinge) · AI station · hub tour |
+| 3 | **Surface** | Phones **player**; desktop **creator**. `?surface=` |
+| 4 | **Agent Portal** (creator) | Grok/Ollama · describe a scene |
+| 5 | **EDIT** | Insert · materials · physics lab · Compiler / PromptGen |
+| 6 | **PLAY** | Walk · push props · mass/friction sim · **F** interact |
+| 7 | **SETUP** (optional) | Ollama tiers · gravity · Grok key |
+| 8 | **TOOLS → EXPORT** | 9-step walkthrough |
 | 9 | **CLI** | `store:prep`, `package:*` or `package:steam` |
 
 Optional multiplayer: **CREATE SESSION** → copy code/link → **ENTER SESSION**. Friends **JOIN** with code (+ passcode if set).  
@@ -56,6 +76,7 @@ npm run controls:verify
 node scripts/portal-ui-verify.cjs
 node scripts/surface-verify.cjs
 node scripts/negative-lod-verify.cjs
+npm run physics:verify
 npm run perf:verify
 npm run preview                 # http://localhost:4173
 ```
@@ -71,12 +92,12 @@ npm run ollama:verify
 
 ## First session (2 minutes)
 
-After **ENTER**:
+After **ENTER** (starts in **PLAY**):
 
-1. On **desktop (creator):** Agent Portal / AI chip — connect Grok or Ollama, describe a scene. On **phone (player):** walk/test first; tap **Creator tools** when you need AI.
-2. Switch to **EDIT** (top-left) — TOOLS menu for insert (Compiler/export on creator).
-3. Switch to **PLAY** — test walk, LMB aim, touch toggle (bottom-left).
-4. Press **T** for in-game chat; **UNLOCK** (top-left) to drag hub buttons.
+1. Walk the pad — push the crate, try the hinge gate.
+2. On **desktop (creator):** AI chip / Portal for Grok or Ollama. On **phone (player):** walk first; **Creator tools** when you need AI.
+3. **EDIT** (top-left) — insert, materials, physics lab, Compiler.
+4. **PLAY** again to simulate; **T** chat; **UNLOCK** to drag hubs.
 
 Full controls: [CONTROLS.md](CONTROLS.md) · UI layout / surfaces: [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
 
@@ -86,7 +107,7 @@ Full controls: [CONTROLS.md](CONTROLS.md) · UI layout / surfaces: [UI_AND_AGENT
 
 | Path | For | Policy |
 |------|-----|--------|
-| **Your game** (default) | Blank grid + Portal builds | You source and credit your assets |
+| **Your game** (default) | Workspace pad + Portal builds | You source and credit your assets |
 | **TC** (bundled) | Learning export, demo scenes | Original Threshold art only |
 | **Showcase snippets** | Optional props via INSERT | Wardenclyffe pieces — not default spawn |
 

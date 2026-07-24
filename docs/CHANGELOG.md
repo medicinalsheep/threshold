@@ -1,3 +1,10 @@
+## 10.14.3 — Doc truth sweep + browser notes + light cleanup
+
+- Align spine docs with **10.14.0–2**: workspace pad · PLAY entry · physics · avatar LOD · faster CI
+- **Browsers** section (Firefox supported; Forget About This Site clears stale deploy cache — does not block the app)
+- Updated: BUILD_FROM · GETTING_STARTED · STREAMLINED_DEV · CAPABILITIES · ROADMAP · MULTIPLAYER · ASSET_CAPABILITIES · CREATIVE_OS
+- Remove unused `public/vite.svg`; reinforce `old/` is archive-only
+
 ## 10.14.2 — Pages stale-chunk recovery + faster CI
 
 - **Stale deploy fix** — if dynamic import hits HTML 404 (old hashed chunk), one hard reload with cache-bust

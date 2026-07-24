@@ -13,10 +13,12 @@
 
 ## What it is
 
-Browser **3D creative suite**: blank grid → optional AI (Grok key + local Ollama) → play/build multiplayer → export.  
+Browser **3D creative suite**: workspace pad → optional AI (Grok key + local Ollama) → play/build multiplayer → export.  
 **No account required.** **No X OAuth.** Host-authoritative PeerJS when you CREATE a session.
 
 Stack: Vite · Three.js · Cannon · PeerJS SPA · GitHub Pages.
+
+**Browsers:** Chromium and **Firefox** are supported. After a Pages deploy, hard-refresh or “Forget About This Site” (Firefox) clears stale hashed assets (MIME `text/html` on missing JS). See [GETTING_STARTED.md](GETTING_STARTED.md)#browsers.
 
 ---
 
@@ -25,8 +27,8 @@ Stack: Vite · Three.js · Cannon · PeerJS SPA · GitHub Pages.
 ```text
 1. LOBBY     Open live (or npm run dev) · optional display name
 2. SURFACE   Phones → player UI; desktop → creator · ?surface=player|creator|full
-3. ENTER     Solo blank grid — no network (or CREATE SESSION for MP)
-4. PLAY/EDIT Corner hubs — walk physics vs insert/tools
+3. ENTER     Solo workspace pad (PLAY walk-ready) — or CREATE SESSION for MP
+4. PLAY/EDIT Corner hubs — walk / push kit · EDIT to place + physics
 5. PORTAL    (creator) Grok key and/or Ollama · build agents
 6. SHIP      TOOLS → Export · npm run store:ship (optional)
 ```
@@ -49,22 +51,25 @@ Voice mic is requested **after** session start — never blocks CREATE.
 | Network | `network.js`, `sync.js`, `remotePlayers.js` |
 | Agents | `agentPortal.js`, `agentRouter.js`, `src/grok/`, Ollama |
 | Materials | `materialPresets.js`, `materialLibrary.js` · [MATERIALS.md](MATERIALS.md) |
+| Physics | `physics.js`, `starterKit.js` · [PHYSICS.md](PHYSICS.md) |
+| Avatar LOD / skin | `avatarLod.js`, `avatarPoseSync.js`, `appearanceProfile.js` |
 | Store / macOS | `scripts/store-ship.cjs`, `notarize-mac.cjs` · [MAC_NOTARIZE.md](MAC_NOTARIZE.md) |
 | Agent map | [AGENTS.md](../AGENTS.md) |
 
-Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · [MULTIPLAYER.md](MULTIPLAYER.md) · [NEGATIVE_LOD.md](NEGATIVE_LOD.md) · PERF_NEXT · [STORE_RELEASE.md](STORE_RELEASE.md) · [GETTING_STARTED.md](GETTING_STARTED.md). Full index: [README.md](README.md).
+Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · [MULTIPLAYER.md](MULTIPLAYER.md) · [NEGATIVE_LOD.md](NEGATIVE_LOD.md) · [PHYSICS.md](PHYSICS.md) · PERF_NEXT · [STORE_RELEASE.md](STORE_RELEASE.md) · [GETTING_STARTED.md](GETTING_STARTED.md). Full index: [README.md](README.md).
 
 ---
 
 ## Shipped systems (do not re-invent)
 
-- **Workspace pad** — concrete deck + starter kit (crate/sphere/ramp/hinge) · ENTER → **PLAY** walk-ready · [PHYSICS.md](PHYSICS.md)
-- **Physics** — mass/friction/restitution live · hinges/locks · gravity UI · `npm run physics:verify`
-- **Neg LOD** — ~**100m** default · light-baked unlit · mesh/HILOD first (**18/48m**) · [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
+- **Workspace pad** — concrete deck + starter kit (crate/sphere/ramp/hinge) · ENTER → **PLAY** · [PHYSICS.md](PHYSICS.md)
+- **Physics** — mass/friction/restitution live · hinges/locks · gravity UI · `physics:verify`
+- **Avatar** — realistic starter maps + outfit · multi-LOD walk pose (no zoom hop)
+- **Neg LOD** — ~**100m** light-bake · mesh/HILOD **18/48m** first · [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
 - **Visibility E0–E4** · **E5** remotes/bloom
-- **Materials** — presets + starter maps · INSERT library · [MATERIALS.md](MATERIALS.md)
+- **Materials** — presets + starter maps · [MATERIALS.md](MATERIALS.md)
 - **Surfaces** — player / creator / full (`?surface=`)
-- **Perf** — SETUP → PERF · harness · `negative-lod:verify`
+- **Pages CI** — no full texture regen each deploy · stale-chunk auto-reload
 - **Store** — `npm run store:ship` · mac notary hooks
 
 ### UI surfaces (same URL)
