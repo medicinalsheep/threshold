@@ -1,6 +1,6 @@
 # Threshold documentation index
 
-**Version:** 10.13.9 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.13.10 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Full scope map — quality-first blank grid, optional TC reference editions, and where to read more.
 

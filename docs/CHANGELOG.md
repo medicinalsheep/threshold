@@ -1,3 +1,10 @@
+## 10.13.10 — Visibility E4 spatial buckets
+
+- **E4** — when `objects.length ≥ spatial.minObjects` (default 120), classify **camera cell ring** + **dynamics** most frames
+- Full sweep every `spatial.fullSweepEvery` frames (default 45); cell size 32m · ring 2
+- `VisibilitySystem.invalidateSpatial()` on spawn/clear; stats: `spatialMode` / `spatialCandidates` / `fullSweep`
+- Config: `config/visibility.json` → `spatial`
+
 ## 10.13.9 — Neg LOD multi-mat / skinned / floor path B
 
 - **Multi-material** — stash full array; flat 1:1 per slot (`poolKeys`)

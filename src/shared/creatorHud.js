@@ -101,7 +101,7 @@ export const CreatorHud = {
             `objs ${s.objects}`,
             `draw ${s.draws}`,
             `neg ${neg.flat ?? 0}/${neg.registered ?? 0}`,
-            `vis A${vis.A ?? 0}/C${vis.C ?? 0}/E${vis.E ?? 0}`,
+            `vis A${vis.A ?? 0}/C${vis.C ?? 0}/E${vis.E ?? 0}${vis.spatialMode && vis.spatialMode !== 'off' ? `/${vis.spatialMode}` : ''}`,
             `tier ${tier}`,
             mode === 4 ? 'pbr' : `retro${mode}`,
         ].filter(Boolean).join(' · ');

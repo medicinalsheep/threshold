@@ -1,6 +1,6 @@
 {
   "format": "threshold-visibility",
-  "version": 1,
+  "version": 2,
   "enabled": true,
   "nearDistance": 40,
   "farDistance": 60,
@@ -13,6 +13,14 @@
     "alwaysProcess",
     "negativeLodExempt"
   ],
+  "spatial": {
+    "enabled": true,
+    "minObjects": 120,
+    "cellSize": 32,
+    "cameraRing": 2,
+    "fullSweepEvery": 45,
+    "rebuildOnCountChange": true
+  },
   "sleep": {
     "enabled": true,
     "disableShadowOnD": true,
@@ -36,5 +44,5 @@
     "D": "off-screen near — light JS",
     "E": "off-screen far — max skip"
   },
-  "note": "E0 classify + E2 sleep/shadow on class transition — camera-local; do not network _visClass"
+  "note": "E0–E4: classify + sleep + spatial buckets when object count is high. Camera-local; do not network _visClass."
 }

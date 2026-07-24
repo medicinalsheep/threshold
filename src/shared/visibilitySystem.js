@@ -1,7 +1,8 @@
 /**
- * E0 — VisibilitySystem
+ * E0–E4 — VisibilitySystem
  * Classifies objects by frustum × distance for elimination pipelines.
  * Classes: A focus · B on-near · C on-far · D off-near · E off-far
+ * E4: spatial cell buckets when object count is high (near-camera + dynamics first).
  * @see docs/NEGATIVE_LOD.md §18–21
  */
 import * as THREE from 'three';
@@ -18,6 +19,7 @@ export const VIS = {
 };
 
 const sleepCfg = visCfg.sleep || {};
+const spatialCfg = visCfg.spatial || {};
 const cfg = {
     enabled: visCfg.enabled !== false,
     nearDistance: Number(visCfg.nearDistance) || Number(negCfg.defaultDistance) || 40,
@@ -26,6 +28,14 @@ const cfg = {
     frameHysteresis: Math.max(1, Number(visCfg.frameHysteresis) || 6),
     maxUpdatesPerFrame: Number(visCfg.maxUpdatesPerFrame) || 96,
     focusFlags: Array.isArray(visCfg.focusFlags) ? visCfg.focusFlags : ['isPlayer', 'alwaysProcess'],
+    spatial: {
+        enabled: spatialCfg.enabled !== false,
+        minObjects: Math.max(16, Number(spatialCfg.minObjects) || 120),
+        cellSize: Math.max(8, Number(spatialCfg.cellSize) || 32),
+        cameraRing: Math.max(0, Number(spatialCfg.cameraRing) || 2),
+        fullSweepEvery: Math.max(8, Number(spatialCfg.fullSweepEvery) || 45),
+        rebuildOnCountChange: spatialCfg.rebuildOnCountChange !== false,
+    },
     sleep: {
         enabled: sleepCfg.enabled !== false,
         disableShadowOnD: sleepCfg.disableShadowOnD !== false,
@@ -59,9 +69,23 @@ let _stats = {
     A: 0, B: 0, C: 0, D: 0, E: 0,
     scanned: 0, changed: 0, total: 0,
     shadowsDimmed: 0, physicsAsleep: 0,
+    spatialMode: 'off',
+    spatialCandidates: 0,
+    spatialCells: 0,
+    fullSweep: false,
 };
 let _scanOffset = 0;
 let _frame = 0;
+
+/** E4 — world XZ grid of static-ish object lists */
+const spatialIndex = {
+    /** @type {Map<string, THREE.Object3D[]>} */
+    cells: new Map(),
+    /** @type {WeakMap<THREE.Object3D, string>} */
+    objectCell: new WeakMap(),
+    lastCount: -1,
+    lastRebuildFrame: -1,
+};
 
 function masterEnabled() {
     if (!cfg.enabled) return false;
@@ -305,6 +329,144 @@ function recountSleepStats(objects) {
     return { shadowsDimmed, physicsAsleep };
 }
 
+// ── E4 spatial buckets ──────────────────────────────────────────
+
+function cellKey(x, z) {
+    const s = cfg.spatial.cellSize;
+    return `${Math.floor(x / s)},${Math.floor(z / s)}`;
+}
+
+function isWorldObject(obj) {
+    if (!obj || obj.visible === false) return false;
+    if (obj.userData?.isUi || obj.userData?.noVisibility) return false;
+    return true;
+}
+
+/** Dynamics + focus must reclassify every frame even outside the camera ring. */
+function isSpatialDynamic(obj) {
+    const ud = obj?.userData || {};
+    if (ud.hasPhysics || ud.isPlayer || ud.isProjectile || ud.isDriven || ud.driverKey) return true;
+    if (ud.alwaysProcess || ud.isHero || ud.isVehicle) return true;
+    if (ud._visPhysicsSleep) return true; // may need wake when camera turns
+    return isFocus(obj);
+}
+
+function rebuildSpatialIndex(objects) {
+    spatialIndex.cells.clear();
+    let placed = 0;
+    for (const obj of objects || []) {
+        if (!isWorldObject(obj)) continue;
+        obj.getWorldPosition(_objPos);
+        const key = cellKey(_objPos.x, _objPos.z);
+        let list = spatialIndex.cells.get(key);
+        if (!list) {
+            list = [];
+            spatialIndex.cells.set(key, list);
+        }
+        list.push(obj);
+        spatialIndex.objectCell.set(obj, key);
+        placed += 1;
+    }
+    spatialIndex.lastCount = objects?.length ?? 0;
+    spatialIndex.lastRebuildFrame = _frame;
+    return placed;
+}
+
+/** Move a single object to the correct cell after it was scanned (dynamics). */
+function touchSpatialCell(obj) {
+    if (!obj || !cfg.spatial.enabled) return;
+    obj.getWorldPosition(_objPos);
+    const key = cellKey(_objPos.x, _objPos.z);
+    const prev = spatialIndex.objectCell.get(obj);
+    if (prev === key) return;
+    if (prev) {
+        const arr = spatialIndex.cells.get(prev);
+        if (arr) {
+            const i = arr.indexOf(obj);
+            if (i >= 0) arr.splice(i, 1);
+            if (!arr.length) spatialIndex.cells.delete(prev);
+        }
+    }
+    let list = spatialIndex.cells.get(key);
+    if (!list) {
+        list = [];
+        spatialIndex.cells.set(key, list);
+    }
+    if (!list.includes(obj)) list.push(obj);
+    spatialIndex.objectCell.set(obj, key);
+}
+
+/**
+ * E4 candidate set: camera cell ring + all dynamics.
+ * Full sweep every N frames (or below minObjects → entire list).
+ */
+function gatherSpatialCandidates(objects, camera) {
+    const sp = cfg.spatial;
+    if (!sp.enabled || !objects?.length || objects.length < sp.minObjects) {
+        return {
+            list: objects,
+            mode: objects?.length >= sp.minObjects ? 'all' : 'off',
+            cells: 0,
+            fullSweep: true,
+        };
+    }
+
+    const fullSweep = (_frame % sp.fullSweepEvery) === 0
+        || spatialIndex.cells.size === 0
+        || (sp.rebuildOnCountChange && spatialIndex.lastCount !== objects.length);
+
+    if (fullSweep) {
+        rebuildSpatialIndex(objects);
+        return {
+            list: objects,
+            mode: 'full',
+            cells: spatialIndex.cells.size,
+            fullSweep: true,
+        };
+    }
+
+    camera.getWorldPosition(_camPos);
+    const s = sp.cellSize;
+    const cx = Math.floor(_camPos.x / s);
+    const cz = Math.floor(_camPos.z / s);
+    const ring = sp.cameraRing;
+    const seen = new Set();
+    const list = [];
+    let cellsHit = 0;
+
+    for (let dz = -ring; dz <= ring; dz += 1) {
+        for (let dx = -ring; dx <= ring; dx += 1) {
+            const key = `${cx + dx},${cz + dz}`;
+            const cell = spatialIndex.cells.get(key);
+            if (!cell?.length) continue;
+            cellsHit += 1;
+            for (const obj of cell) {
+                if (!obj || seen.has(obj)) continue;
+                if (!isWorldObject(obj)) continue;
+                seen.add(obj);
+                list.push(obj);
+            }
+        }
+    }
+
+    // Dynamics outside the ring still need classify (moving props / player)
+    for (const obj of objects) {
+        if (seen.has(obj)) continue;
+        if (!isWorldObject(obj)) continue;
+        if (isSpatialDynamic(obj)) {
+            seen.add(obj);
+            list.push(obj);
+        }
+    }
+
+    return {
+        list,
+        mode: 'bucket',
+        cells: cellsHit,
+        fullSweep: false,
+    };
+}
+
 /**
  * Hysteresis: require frameHysteresis consecutive frames agreeing on a new class.
  */
@@ -420,6 +582,8 @@ export const VisibilitySystem = {
 
     /**
      * Classify State.objects (budgeted). Call once per frame before NegativeLod / MeshLod.
+     * E4: when object count ≥ spatial.minObjects, only camera-ring cells + dynamics
+     * are classified most frames; full sweep every spatial.fullSweepEvery frames.
      */
     update(camera = window.Engine?.camera) {
         if (!masterEnabled() || isLoadSuspended()) return;
@@ -428,7 +592,14 @@ export const VisibilitySystem = {
         _frame += 1;
         const objects = window.State?.objects;
         if (!objects?.length) {
-            _stats = { A: 0, B: 0, C: 0, D: 0, E: 0, scanned: 0, changed: 0, total: 0 };
+            spatialIndex.cells.clear();
+            spatialIndex.lastCount = 0;
+            _stats = {
+                A: 0, B: 0, C: 0, D: 0, E: 0,
+                scanned: 0, changed: 0, total: 0,
+                shadowsDimmed: 0, physicsAsleep: 0,
+                spatialMode: 'off', spatialCandidates: 0, spatialCells: 0, fullSweep: false,
+            };
             return;
         }
 
@@ -436,26 +607,24 @@ export const VisibilitySystem = {
         camera.getWorldPosition(_camPos);
         updateFrustum(camera);
 
-        const n = objects.length;
-        const budget = Math.min(cfg.maxUpdatesPerFrame, n);
-        const start = _scanOffset % n;
+        const spatial = gatherSpatialCandidates(objects, camera);
+        const candidates = spatial.list || objects;
+        const n = candidates.length;
+        const budget = Math.min(cfg.maxUpdatesPerFrame, Math.max(1, n));
+        const start = n > 0 ? (_scanOffset % n) : 0;
         let scanned = 0;
         let changed = 0;
         const counts = { A: 0, B: 0, C: 0, D: 0, E: 0 };
 
-        // Always count full pass lightly: for stats, sample classified objects
-        // Full classification within budget; unclassified keep previous class
+        // Budgeted classify over candidates (full list or E4 subset)
         for (let i = 0; i < n && scanned < budget; i += 1) {
-            const obj = objects[(start + i) % n];
-            if (!obj || obj.visible === false) continue;
-            // Skip pure UI / non-world
-            if (obj.userData?.isUi || obj.userData?.noVisibility) continue;
+            const obj = candidates[(start + i) % n];
+            if (!isWorldObject(obj)) continue;
 
             scanned += 1;
             obj.getWorldPosition(_objPos);
             const dist = _camPos.distanceTo(_objPos);
             const onScreen = inFrustum(obj);
-            // refine: sphere center was set in inFrustum via getWorldPosition already
             const raw = classifyRaw(obj, dist, onScreen);
 
             if (!obj.userData) obj.userData = {};
@@ -463,8 +632,13 @@ export const VisibilitySystem = {
             obj.userData._visOnScreen = onScreen;
 
             if (stabilize(obj, raw)) changed += 1;
+
+            // Keep spatial index accurate for movers
+            if (spatial.mode === 'bucket' || isSpatialDynamic(obj)) {
+                touchSpatialCell(obj);
+            }
         }
-        _scanOffset = (start + budget) % Math.max(1, n);
+        _scanOffset = n > 0 ? (start + budget) % n : 0;
 
         // Stats over all objects that have a class
         for (const obj of objects) {
@@ -477,9 +651,20 @@ export const VisibilitySystem = {
             ...counts,
             scanned,
             changed,
-            total: n,
+            total: objects.length,
+            spatialMode: spatial.mode,
+            spatialCandidates: n,
+            spatialCells: spatial.cells || 0,
+            fullSweep: !!spatial.fullSweep,
             ...sleepStats,
         };
+    },
+
+    /** Force rebuild spatial grid (after bulk spawn / clear). */
+    invalidateSpatial() {
+        spatialIndex.cells.clear();
+        spatialIndex.lastCount = -1;
+        spatialIndex.lastRebuildFrame = -1;
     },
 
     /** Force re-apply sleep policy (e.g. after selection change) */

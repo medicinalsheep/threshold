@@ -1,9 +1,9 @@
 # Performance next steps (after Neg LOD A–E3)
 
-**Status:** Partial ship · **Engine:** 10.13.8+  
+**Status:** Core perf stack shipped · **Engine:** 10.13.10+  
 **Related:** [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
 
-X OAuth is **removed**. Shipped: tier auto Neg LOD + in-engine measure harness. Remaining: multi-mat, floor, E4.
+X OAuth is **removed**. Shipped through **E4 spatial** + Neg LOD stack + measure harness. Remaining optional: CI headless, player surface.
 
 ---
 
@@ -117,7 +117,7 @@ Document: “200 cubes, orbit, mobile tier: p95 frame time −X% with stack on v
 2. Measure harness         ✅ (in-engine)
 3. Multi-mat / skinned     ✅
 4. Floor deck B            ✅
-5. E4 spatial buckets      (only if classify CPU shows hot)
+5. E4 spatial buckets      ✅ 10.13.10
 6. Optional CI headless    (after manual baselines exist)
 7. Player surface (mobile) (product — separate from PERF)
 ```
@@ -130,11 +130,11 @@ Document: “200 cubes, orbit, mobile tier: p95 frame time −X% with stack on v
 |------|--------|
 | Neg LOD A+B | ✅ |
 | Vis E0–E3 | ✅ |
+| Vis E4 spatial | ✅ 10.13.10 |
 | X OAuth | ❌ removed |
 | Tier auto-enable | ✅ 10.13.8 |
 | Measure harness (in-engine) | ✅ 10.13.8 |
 | Multi-mat / skinned | ✅ 10.13.9 |
 | Floor path B | ✅ 10.13.9 |
-| E4 spatial | Plan only (scale) |
 | CI headless harness | Plan only |
 | Player surface (mobile) | Plan only |

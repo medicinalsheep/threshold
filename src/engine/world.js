@@ -47,6 +47,7 @@ export const World = {
         State.objects.push(mesh);
         NegativeLod.syncObject(mesh);
         NegativeLod.maybeAutoEnable?.(mesh);
+        window.VisibilitySystem?.invalidateSpatial?.();
         window.dispatchEvent(new CustomEvent('threshold:object-added', { detail: { mesh } }));
         if (usePhysics) {
             const body = Physics.addBody(mesh, type);
@@ -75,6 +76,7 @@ export const World = {
         State.objects.push(mesh);
         NegativeLod.syncObject(mesh);
         NegativeLod.maybeAutoEnable?.(mesh);
+        window.VisibilitySystem?.invalidateSpatial?.();
         window.dispatchEvent(new CustomEvent('threshold:object-added', { detail: { mesh } }));
         if (usePhysics) {
             // Auto-detect best physics shape
@@ -230,6 +232,7 @@ export const World = {
     },
     clearWorld: function (silent = false) {
         window.SceneHistory?.push?.('before:clearWorld');
+        window.VisibilitySystem?.invalidateSpatial?.();
         State.physicsObjects.forEach(p => Physics.world.removeBody(p.body));
         State.physicsObjects = [];
         State.objects.forEach(o => Engine.scene.remove(o));

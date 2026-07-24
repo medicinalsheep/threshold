@@ -77,6 +77,10 @@ export const PerfHarness = {
                 E: vis.E ?? 0,
                 shadowsDimmed: vis.shadowsDimmed ?? 0,
                 physicsAsleep: vis.physicsAsleep ?? 0,
+                spatialMode: vis.spatialMode ?? 'off',
+                spatialCandidates: vis.spatialCandidates ?? 0,
+                spatialCells: vis.spatialCells ?? 0,
+                fullSweep: !!vis.fullSweep,
             },
             ...extra,
         };

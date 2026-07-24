@@ -676,7 +676,7 @@ else auto matrix above
 | **E1** | Gate MeshLod / TextureHilod / idle / spin / NPC anim | **Done (10.13.2)** |
 | **E2** | Off-screen far: shadow off + optional Cannon sleep | **Done (10.13.3)** |
 | **E3** | Weather/shader/audio env gates | **Done (10.13.4)** |
-| **E4** | Spatial buckets if needed | **Next** (if object counts demand) |
+| **E4** | Spatial buckets if needed | **Done (10.13.10)** |
 
 ### Follow-on outline (E3 → E4+)
 
@@ -691,10 +691,11 @@ else auto matrix above
 - Audio zones: no spin-up off-screen; fade volume to 0
 - VOIP: deafened early-out + skip redundant gain writes
 
-**E4 — Spatial acceleration**
-- When `State.objects.length > ~200`, bucket by world cell
-- Only reclassify cells near camera + all dynamics each frame
-- Full sweep every N frames as fallback
+**E4 — Spatial acceleration** ✅ (10.13.10)
+- When `State.objects.length ≥ spatial.minObjects` (default **120**), bucket by world cell (`cellSize` 32m)
+- Reclassify **camera ring** (`cameraRing` 2) + **dynamics** each frame
+- Full sweep every `fullSweepEvery` frames (default 45)
+- Config: `config/visibility.json` → `spatial` · stats on `VisibilitySystem.getStats()`
 
 **E5+ (optional)**
 - Remote player avatar: low-rate pose when D/E

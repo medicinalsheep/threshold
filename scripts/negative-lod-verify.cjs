@@ -99,11 +99,19 @@ for (const token of [
     '_visClass',
     'Frustum',
     'window.VisibilitySystem',
+    'gatherSpatialCandidates',
+    'rebuildSpatialIndex',
+    'invalidateSpatial',
+    'cellKey',
 ]) {
     if (vis.includes(token) || (token === "VIS.A" && vis.includes("A: 'A'"))) ok(`visibilitySystem has ${token}`);
     else if (token === "VIS.A" && vis.includes("A: 'A'")) ok('visibilitySystem has class A');
     else fail(`visibilitySystem missing ${token}`);
 }
+const vcfg = JSON.parse(read('config/visibility.json'));
+if (vcfg.spatial?.enabled && vcfg.spatial.minObjects > 0 && vcfg.spatial.cellSize > 0) {
+    ok('visibility.json spatial E4 config');
+} else fail('visibility.json spatial config missing');
 // softer check for A
 if (vis.includes("A: 'A'") || vis.includes('VIS.A')) ok('visibility classes A–E defined');
 
@@ -136,7 +144,6 @@ if (vis.includes('applySleepPolicies') || vis.includes('stashAndDisableShadows')
 } else fail('E2 sleep policies missing');
 if (vis.includes('sleepPhysics') && vis.includes('wakePhysics')) ok('E2 physics sleep/wake');
 else fail('E2 physics sleep helpers missing');
-const vcfg = JSON.parse(read('config/visibility.json'));
 if (vcfg.sleep?.physicsSleepOnE) ok('config sleep.physicsSleepOnE');
 else fail('visibility.json missing sleep block');
 
