@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
+    <!-- Prefer revalidation of this shell so hashed /assets/* stay in sync after deploys -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
     <link rel="icon" href="icons/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="icons/appicon512.png" />
@@ -17,7 +20,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.14.1" />
+    <meta name="threshold-version" content="10.14.2" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD SUITE</title>
 </head>
@@ -236,7 +239,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.14.1</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" title="UI surface">CREATE</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.14.2</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" title="UI surface">CREATE</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
@@ -1361,6 +1364,34 @@
         </div>
     </div>
 
+    <!-- Recover once if browser cached HTML shell but hashed /assets/* are gone (Pages MIME text/html 404). -->
+    <script>
+    (function () {
+        var KEY = 'threshold_chunk_reload';
+        function reloadOnce() {
+            try {
+                if (sessionStorage.getItem(KEY)) return;
+                sessionStorage.setItem(KEY, '1');
+                var u = new URL(location.href);
+                u.searchParams.set('_v', String(Date.now()));
+                location.replace(u.toString());
+            } catch (e) { /* private mode */ }
+        }
+        window.addEventListener('error', function (e) {
+            var t = e && (e.target || e.srcElement);
+            if (t && t.tagName === 'SCRIPT' && /\/assets\//.test(String(t.src || ''))) reloadOnce();
+            var msg = String((e && e.message) || '');
+            if (/MIME type|dynamically imported|Loading module from|Failed to fetch/i.test(msg)) reloadOnce();
+        }, true);
+        window.addEventListener('unhandledrejection', function (e) {
+            var r = e && e.reason;
+            var msg = String((r && (r.message || r)) || '');
+            if (/MIME type|dynamically imported|Failed to fetch|error loading dynamically|text\/html/i.test(msg)) {
+                reloadOnce();
+            }
+        });
+    })();
+    </script>
     <!-- MAIN SCRIPT -->
     <script type="module" src="/src/main.js"></script>
 </body>

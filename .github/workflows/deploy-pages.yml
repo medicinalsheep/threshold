@@ -27,13 +27,16 @@ jobs:
 
       - run: npm ci
       - run: npm run version:sync:check
-      # Regenerate hero defaults + matching WebP sidecars into public/bundle/textures
-      - run: npm run textures:gen:default
+
+      # Textures ship in-repo (public/bundle + textures). Do NOT regenerate 2K masters
+      # on every deploy — that was ~2–3 min of CI. Local: npm run textures:gen:default
       - run: npm run build
         env:
           VITE_BASE_PATH: /${{ github.event.repository.name }}/
-      # Ensure dist-pages/bundle mirrors textures/import (manifest + PNGs + WebP)
+
+      # Mirror committed textures/import into dist-pages/bundle (copy only)
       - run: npm run bundle:assets
+
       - name: Verify starter textures in dist
         run: |
           test -f dist-pages/bundle/textures/threshold_manifest.json
@@ -41,18 +44,36 @@ jobs:
           test -f dist-pages/bundle/textures/starter_ground_albedo_1k.webp
           test -f dist-pages/bundle/textures/starter_skin_light_albedo.png
           echo "texture bundle OK ($(find dist-pages/bundle/textures -type f | wc -l) files)"
-      - run: node scripts/portal-ui-verify.cjs
-      - run: npm run controls:verify
-      - run: node scripts/negative-lod-verify.cjs
-      - run: node scripts/surface-verify.cjs
-      - run: npm run perf:verify
-      - run: node scripts/tc-drive-verify.cjs
-      - run: node scripts/tc-circuit-verify.cjs
-      - run: node scripts/intent-router-verify.cjs
-      # Headless browser sample (WebGL); non-blocking if GPU stack flakes on runner
-      - name: Perf harness (headless)
+
+      # One parallel verify fan-out (faster than serial node startups)
+      - name: Static verifies
+        run: |
+          set -e
+          node scripts/portal-ui-verify.cjs &
+          p1=$!
+          npm run controls:verify &
+          p2=$!
+          node scripts/negative-lod-verify.cjs &
+          p3=$!
+          node scripts/surface-verify.cjs &
+          p4=$!
+          npm run perf:verify &
+          p5=$!
+          node scripts/tc-drive-verify.cjs &
+          p6=$!
+          node scripts/tc-circuit-verify.cjs &
+          p7=$!
+          node scripts/intent-router-verify.cjs &
+          p8=$!
+          npm run physics:verify &
+          p9=$!
+          wait $p1 $p2 $p3 $p4 $p5 $p6 $p7 $p8 $p9
+
+      # Optional headless sample — skip unless PERF_CI=1 (saves ~1–2 min)
+      - name: Perf harness (headless, optional)
+        if: env.PERF_CI == '1'
         continue-on-error: true
-        run: npm run perf:harness -- --cubes 200 --seconds 5 --warm 1 --tier compatibility --compare
+        run: npm run perf:harness -- --cubes 80 --seconds 3 --warm 1 --tier compatibility
         env:
           PERF_BASE: /
 

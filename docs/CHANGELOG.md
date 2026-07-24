@@ -1,3 +1,9 @@
+## 10.14.2 — Pages stale-chunk recovery + faster CI
+
+- **Stale deploy fix** — if dynamic import hits HTML 404 (old hashed chunk), one hard reload with cache-bust
+- Index meta `Cache-Control: no-cache` for the HTML shell
+- **CI speed** — drop `textures:gen:default` on every Pages build (assets committed); parallel static verifies; optional perf harness only when `PERF_CI=1`
+
 ## 10.14.1 — Avatar LOD pop fix + realistic starter look
 
 - **LOD hop fixed** — walk mixers on all avatar LOD tiers (shared time); named-part pose copy fallback

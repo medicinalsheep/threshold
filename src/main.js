@@ -146,7 +146,17 @@ initSteamBridge();
 
 initSpectate();
 
-initLobby(async () => {
+/**
+ * After a Pages deploy, browsers may keep a stale index.html that points at
+ * old hashed chunks. GitHub returns HTML 404 for missing JS → MIME errors.
+ * One hard reload with a cache-bust usually picks up the new index.
+ */
+function isStaleChunkError(err) {
+    const msg = String(err?.message || err || '');
+    return /Failed to fetch dynamically imported module|error loading dynamically imported module|MIME type|text\/html|Loading module from/i.test(msg);
+}
+
+async function loadEngineModules() {
     const [engineMod, compilerMod, prompterMod] = await Promise.all([
         import('./engine/main.js'),
         import('./compiler/main.js'),
@@ -155,4 +165,23 @@ initLobby(async () => {
     engineMod.initEngine();
     compilerMod.initCompiler();
     prompterMod.initPrompter();
+}
+
+initLobby(async () => {
+    try {
+        await loadEngineModules();
+    } catch (err) {
+        if (isStaleChunkError(err) && !sessionStorage.getItem('threshold_chunk_reload')) {
+            sessionStorage.setItem('threshold_chunk_reload', '1');
+            console.warn('[threshold] Stale deploy cache — reloading for fresh assets…', err);
+            const u = new URL(window.location.href);
+            u.searchParams.set('_v', String(Date.now()));
+            window.location.replace(u.toString());
+            return;
+        }
+        sessionStorage.removeItem('threshold_chunk_reload');
+        console.error('[threshold] Engine load failed', err);
+        throw err;
+    }
+    sessionStorage.removeItem('threshold_chunk_reload');
 });
