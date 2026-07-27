@@ -164,8 +164,14 @@ export const ArrangeMode = {
         window.UI?.status?.('ARRANGE — click to select · drag or WASD to move · Snap in SCENE · Esc deselect');
     },
 
+    _restoreSelectedBody() {
+        const obj = State()?.selectedObject;
+        if (obj) setBodyKinematic(obj, false);
+    },
+
     exitToPlay() {
         this._endDrag();
+        this._restoreSelectedBody();
         clearHighlight();
         const S = State();
         if (S) S.interactionMode = 'play';
@@ -184,6 +190,7 @@ export const ArrangeMode = {
 
     exitToEdit() {
         this._endDrag();
+        this._restoreSelectedBody();
         clearHighlight();
         const S = State();
         if (S) S.interactionMode = 'edit';
@@ -201,18 +208,19 @@ export const ArrangeMode = {
         window.UI?.status?.('EDIT — gizmo · inspector · insert');
     },
 
-    /** Cycle PLAY → ARRANGE → EDIT → PLAY */
+    /** Cycle PLAY → ARRANGE → EDIT → PLAY. Returns true when handled. */
     cycleMode() {
         const S = State();
-        if (!S) return;
+        if (!S) return false;
         if (window.Network?.mode === 'guest') {
             window.UI?.status?.('Only the host can change mode');
-            return;
+            return true;
         }
         const mode = S.interactionMode || (S.isPaused ? 'edit' : 'play');
         if (mode === 'play') this.enter();
         else if (mode === 'arrange') this.exitToEdit();
         else this.exitToPlay();
+        return true;
     },
 
     setMode(mode) {
@@ -224,15 +232,17 @@ export const ArrangeMode = {
     select(obj) {
         const root = pickFilter(obj) || obj;
         if (!root) {
-            window.UI?.deselectObject?.();
-            clearHighlight();
+            this.deselect();
             return null;
         }
         if (root.userData?.isFloor) {
-            window.UI?.deselectObject?.();
-            clearHighlight();
+            this.deselect();
             return null;
         }
+        // Restore previous body before switching selection (avoid kinematic mass leak)
+        const prev = State()?.selectedObject;
+        if (prev && prev !== root) setBodyKinematic(prev, false);
+
         window.UI?.selectObject?.(root);
         // Detach gizmo in arrange — we use drag/WASD
         window.Engine?.transformControl?.detach?.();

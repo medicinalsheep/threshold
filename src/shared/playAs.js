@@ -28,6 +28,7 @@ let _velX = 0;
 let _velZ = 0;
 let _bound = false;
 let _uiBound = false;
+let _jumpLatch = false;
 
 function State() {
     return window.State;
@@ -215,6 +216,7 @@ export const PlayAs = {
         _camPitch = 0.28;
         _velX = 0;
         _velZ = 0;
+        _jumpLatch = false;
 
         root.userData.playAsControlled = true;
         _state = { target: root, kind, human, entry, parked };
@@ -302,8 +304,14 @@ export const PlayAs = {
         const sprint = Controls?.isAction('sprint') ? 1.75 : 1;
         const speed = base * sprint;
         const len = Math.hypot(mx, mz);
-        const body = entry?.body;
+        // Re-resolve physics each tick (body may be added/removed mid-possess)
+        const liveEntry = physicsEntry(target) || entry;
+        if (_state) _state.entry = liveEntry;
+        const body = liveEntry?.body;
         const dynamic = !!(body && body.mass > 0);
+        const jumpHeld = !!Controls?.isAction('jump');
+        const jumpEdge = jumpHeld && !_jumpLatch;
+        if (!jumpHeld) _jumpLatch = false;
 
         if (dynamic) {
             if (len > 0) {
@@ -320,8 +328,9 @@ export const PlayAs = {
             }
             body.velocity.x = _velX;
             body.velocity.z = _velZ;
-            if (human && Controls?.isAction('jump') && Math.abs(body.velocity.y) < 0.45) {
+            if (human && jumpEdge && Math.abs(body.velocity.y) < 0.45) {
                 body.velocity.y = JUMP;
+                _jumpLatch = true;
             }
         } else {
             // Kinematic / mesh-only (NPCs without bodies, static props)
@@ -340,10 +349,17 @@ export const PlayAs = {
                     body.angularVelocity?.set?.(0, 0, 0);
                 }
             }
-            if (human && Controls?.isAction('jump')) {
-                // short hop visual only
-                target.position.y += 0.04;
+            // One-shot hop only (no hold-to-float)
+            if (human && jumpEdge) {
+                const baseY = target.position.y;
+                target.position.y = baseY + 0.35;
                 if (body) body.position.y = target.position.y;
+                _jumpLatch = true;
+                setTimeout(() => {
+                    if (!_state || _state.target !== target) return;
+                    target.position.y = baseY;
+                    if (body) body.position.y = baseY;
+                }, 180);
             }
         }
     },

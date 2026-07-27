@@ -1,6 +1,6 @@
 # Creative Workflow — GIMP, Blender, Engine (v10.8)
 
-**One loop:** CREATE SESSION → blank grid → design on device → import into Engine → playtest → export manifest → ship.
+**One loop:** ENTER (terminal grid) or CREATE SESSION → design on device → import into Engine → playtest → export manifest → ship.
 
 ---
 
@@ -16,7 +16,7 @@
 ### Recommended solo loop
 
 ```
-1. LOBBY → CREATE SESSION → ENTER (blank grid)
+1. LOBBY → ENTER (terminal grid) or CREATE SESSION
 2. Agent Portal — describe scene or use TOOLS → Compiler / PromptGen
 3. BUILD — insert GLTF or Compiler scripts (quality PBR via GIMP/Blender)
 4. ART (pick your path):

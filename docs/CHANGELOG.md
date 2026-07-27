@@ -1,3 +1,9 @@
+## 10.15.6 — Review fixes + full doc sweep
+
+- **Bugs:** hub ARRANGE cycle (no `|| togglePause`) · arrange kinematic restore · keyboard edges without gamepad · play-as hop latch · pause releases play-as · select refresh for Play as
+- **Docs:** PERF_NEXT · NEGATIVE_LOD · MULTIPLAYER modes · PRODUCT/README journeys · GETTING_STARTED · CREATIVE_* · CAPABILITIES perf header
+- Review notes: `docs/_review_10.15.6.md`
+
 ## 10.15.5 — Doc truth sweep (10.15 series close)
 
 - Spine docs match terminal void default · modes · quality ladder · kit opt-in

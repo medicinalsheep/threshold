@@ -476,73 +476,78 @@ export const Controls = {
     pollGamepad() {
         this.gamepadActions = {};
         this.cameraStick = { x: 0, y: 0 };
+        // Snapshot keyboard/touch edges before clear — must restore even when no pad
         const kbEdges = { ...this.justPressed };
         const prevJust = { ...this.justPressed };
         this.justPressed = {};
 
-        if (this._rebindGamepad) this._pollGamepadRebind();
+        try {
+            if (this._rebindGamepad) this._pollGamepadRebind();
 
-        window.TouchControls?.applyToControls?.(this);
+            window.TouchControls?.applyToControls?.(this);
 
-        const pads = navigator.getGamepads?.();
-        if (!pads) return;
-
-        let pad = this.gamepad;
-        if (!pad?.connected) {
-            pad = pads.find((p) => p?.connected) || null;
-            if (pad) { this.gamepad = pad; this.gamepadName = pad.id; }
-        }
-        if (!pad?.connected) return;
-
-        const ax = pad.axes[0] || 0;
-        const ay = pad.axes[1] || 0;
-        const rx = pad.axes[2] || 0;
-        const ry = pad.axes[3] || 0;
-
-        if (ay < -GAMEPAD_DEADZONE) this.gamepadActions.forward = true;
-        if (ay > GAMEPAD_DEADZONE) this.gamepadActions.back = true;
-        if (ax < -GAMEPAD_DEADZONE) this.gamepadActions.left = true;
-        if (ax > GAMEPAD_DEADZONE) this.gamepadActions.right = true;
-
-        if (Math.abs(rx) > GAMEPAD_DEADZONE || Math.abs(ry) > GAMEPAD_DEADZONE) {
-            this.cameraStick.x = rx;
-            this.cameraStick.y = ry;
-        }
-
-        const gp = this.getActiveGamepadMap();
-        const press = (action) => {
-            const idx = gp[action];
-            return typeof idx === 'number' && !!pad.buttons[idx]?.pressed;
-        };
-
-        MOUSE_HELD_ACTIONS.forEach((action) => {
-            if (press(action)) this.gamepadActions[action] = true;
-        });
-        if (press('jump')) this.gamepadActions.jump = true;
-        if (press('up')) this.gamepadActions.up = true;
-        if (press('down')) this.gamepadActions.down = true;
-
-        const edge = (action) => {
-            const idx = gp[action];
-            if (typeof idx !== 'number') return;
-            const pressed = !!pad.buttons[idx]?.pressed;
-            if (EDGE_ACTIONS.has(action) && pressed && !this._prevButtons[idx]) {
-                this.justPressed[action] = true;
+            const pads = navigator.getGamepads?.();
+            let pad = this.gamepad;
+            if (pads) {
+                if (!pad?.connected) {
+                    pad = pads.find((p) => p?.connected) || null;
+                    if (pad) { this.gamepad = pad; this.gamepadName = pad.id; }
+                }
             }
-            this._prevButtons[idx] = pressed;
-        };
 
-        EDGE_ACTIONS.forEach((action) => {
-            if (action === 'pause' && !this.canUse('pause')) return;
-            edge(action);
-        });
+            if (pad?.connected) {
+                const ax = pad.axes[0] || 0;
+                const ay = pad.axes[1] || 0;
+                const rx = pad.axes[2] || 0;
+                const ry = pad.axes[3] || 0;
 
-        Object.keys(prevJust).forEach((k) => {
-            if (prevJust[k] && k.startsWith('touch_')) this.justPressed[k] = true;
-        });
-        Object.keys(kbEdges).forEach((k) => {
-            if (kbEdges[k]) this.justPressed[k] = true;
-        });
+                if (ay < -GAMEPAD_DEADZONE) this.gamepadActions.forward = true;
+                if (ay > GAMEPAD_DEADZONE) this.gamepadActions.back = true;
+                if (ax < -GAMEPAD_DEADZONE) this.gamepadActions.left = true;
+                if (ax > GAMEPAD_DEADZONE) this.gamepadActions.right = true;
+
+                if (Math.abs(rx) > GAMEPAD_DEADZONE || Math.abs(ry) > GAMEPAD_DEADZONE) {
+                    this.cameraStick.x = rx;
+                    this.cameraStick.y = ry;
+                }
+
+                const gp = this.getActiveGamepadMap();
+                const press = (action) => {
+                    const idx = gp[action];
+                    return typeof idx === 'number' && !!pad.buttons[idx]?.pressed;
+                };
+
+                MOUSE_HELD_ACTIONS.forEach((action) => {
+                    if (press(action)) this.gamepadActions[action] = true;
+                });
+                if (press('jump')) this.gamepadActions.jump = true;
+                if (press('up')) this.gamepadActions.up = true;
+                if (press('down')) this.gamepadActions.down = true;
+
+                const edge = (action) => {
+                    const idx = gp[action];
+                    if (typeof idx !== 'number') return;
+                    const pressed = !!pad.buttons[idx]?.pressed;
+                    if (EDGE_ACTIONS.has(action) && pressed && !this._prevButtons[idx]) {
+                        this.justPressed[action] = true;
+                    }
+                    this._prevButtons[idx] = pressed;
+                };
+
+                EDGE_ACTIONS.forEach((action) => {
+                    if (action === 'pause' && !this.canUse('pause')) return;
+                    edge(action);
+                });
+            }
+        } finally {
+            // Always re-merge keyboard + touch edges (playAs K, pause, etc.)
+            Object.keys(prevJust).forEach((k) => {
+                if (prevJust[k] && k.startsWith('touch_')) this.justPressed[k] = true;
+            });
+            Object.keys(kbEdges).forEach((k) => {
+                if (kbEdges[k]) this.justPressed[k] = true;
+            });
+        }
     },
 
     _pollGamepadRebind() {

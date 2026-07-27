@@ -36,8 +36,9 @@ export const CornerHub = {
         if (!root) return;
 
         document.getElementById('hub-mode-toggle')?.addEventListener('click', () => {
-            // PLAY → ARRANGE → EDIT → PLAY
-            window.ArrangeMode?.cycleMode?.() || window.UI?.togglePause?.();
+            // PLAY → ARRANGE → EDIT → PLAY (cycleMode is void — do not || togglePause)
+            if (window.ArrangeMode?.cycleMode) window.ArrangeMode.cycleMode();
+            else window.UI?.togglePause?.();
         });
 
         document.getElementById('hub-agent')?.addEventListener('click', () => {

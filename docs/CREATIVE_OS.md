@@ -2,7 +2,7 @@
 
 **North star:** Plan everything before generation. Creators design games; the tool makes pieces fall into place — not AI slop dumped into a blank chat.
 
-**Version:** 10.15.5 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.15.6 · **Live:** https://medicinalsheep.github.io/threshold/
 
 ---
 
@@ -125,8 +125,7 @@ Export preflight — slop scan → ship
 
 | Phase | Focus |
 |-------|-------|
-| **10.13** | Trellis / Veo-class model gates when registry entries ship |
-| **10.13** | Trellis / Veo-class model gates when registry entries ship |
+| **10.15+** | Quality ladder layers on demand (kit/AI/pad already opt-in) |
 | **Future** | Trellis mesh gen, Veo cutscenes — listed in capability registry, gated when ready |
 
 See [ROADMAP.md](ROADMAP.md) · [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) · [UI_AND_AGENTS.md](UI_AND_AGENTS.md)

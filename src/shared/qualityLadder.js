@@ -254,6 +254,8 @@ export const QualityLadder = {
     status: ladderStatus,
 
     initUi() {
+        if (this._uiBound) return;
+        this._uiBound = true;
         // SCENE + INSERT lighting chips
         document.querySelectorAll('[data-light-preset]').forEach((btn) => {
             btn.addEventListener('click', () => {

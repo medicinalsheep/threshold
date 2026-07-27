@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.15)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.15.5
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.15.6
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -135,7 +135,7 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 
 ---
 
-## Performance (v10.13)
+## Performance (v10.15)
 
 | Layer | Status |
 |-------|--------|

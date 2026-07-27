@@ -2,6 +2,15 @@
 
 **Version:** see `src/config.js` → `VERSION`
 
+## Mode notes (10.15+)
+
+| Feature | Multiplayer |
+|---------|-------------|
+| PLAY / ARRANGE / EDIT | Host controls pause/mode; guests follow host pause |
+| **Play as** (possess) | **Solo only** — guests see a status message |
+| Quality ladder / INSERT | Host edit rights; guests need world-edit permission |
+| Physics kit | Host places; syncs via existing object sync |
+
 ## Room codes
 
 Format: `NAME4-KEY6-RAND4`  

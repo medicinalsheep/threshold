@@ -325,11 +325,18 @@ export const UI = {
             if (SimMode.isPlay()) SceneDock.openTab('skin');
             else SceneDock.closeTab();
             Engine.transformControl.detach();
+            window.PlayAs?.refreshUi?.();
             return;
         }
         if (!SimMode.canEditObject(obj)) {
-            UI.status('PLAY mode — world locked. Pause to edit objects.');
+            // Selection still useful for Play as (K) in PLAY
             Engine.transformControl.detach();
+            if (window.PlayAs?.canPossess?.(obj)) {
+                UI.status('Selected for Play as — press K · or EDIT to inspect');
+            } else {
+                UI.status('PLAY mode — world locked. Pause to edit objects.');
+            }
+            window.PlayAs?.refreshUi?.();
             return;
         }
         SceneDock.openTab('inspect');
@@ -1192,10 +1199,13 @@ export const UI = {
             this.status('Only the host can pause');
             return;
         }
-        // Bare hub mode cycles PLAY→ARRANGE→EDIT; this flips sim pause only.
         // reason === '' means resume (coding pause, chat /unpause, etc.).
+        // Leaving play-as or arrange restores bodies / player before mode flip.
+        if (window.PlayAs?.isActive?.()) {
+            window.PlayAs.release?.({ silent: true });
+        }
         const paused = !State.isPaused;
-        if (!paused && State.interactionMode === 'arrange') {
+        if (State.interactionMode === 'arrange') {
             window.ArrangeMode?.deselect?.();
         }
         const pauseReason = paused ? (reason || 'Paused') : '';

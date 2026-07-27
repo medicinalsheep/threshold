@@ -2,7 +2,7 @@
 
 **Collaborative 3D game lab** — host a session, connect an AI agent, build in the browser, play with friends, export real packages.
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.15.5
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.15.6
 
 **Build from this:** [docs/BUILD_FROM.md](docs/BUILD_FROM.md) — one-page outline for forks and Grok/agent chats (live link, six-step loop, do/don’t).
 
@@ -14,7 +14,7 @@ Threshold is for people who want to **go from idea → playable 3D scene → shi
 
 | You want to… | Threshold gives you… |
 |--------------|----------------------|
-| Prototype a game world fast | Blank grid + AI Build Station + Compiler |
+| Prototype a game world fast | Terminal grid + QUALITY ladder + Compiler |
 | Use your own AI | Agent Portal auto-detects **Grok** + **Ollama** on your machine |
 | Collaborate | PeerJS sessions — host shares a link, friends join live |
 | Art pipeline | GIMP textures + Blender GLB import with hot-reload (local dev) |
@@ -27,13 +27,14 @@ Threshold is for people who want to **go from idea → playable 3D scene → shi
 ## First run (walked through)
 
 ```
-1. LOBBY     → name · PLAY or BUILD · **ENTER →** (solo; no account needed)
-2. SURFACE   → phones default Play UI; desktop Creator (AI tools). ?surface=player|creator|full
-3. ENGINE    → terminal grid (empty) · PLAY walk-ready · corner hub tour
-4. PORTAL    → (creator) AI scans Grok/Ollama · describe what to build
-5. EDIT      → insert · optional PHYSICS KIT / materials · Compiler
-6. PLAY      → walk · sim · touch toggle
-7. SHIP      → TOOLS → Export when ready
+1. LOBBY     → name · **ENTER →** (solo terminal grid; no account needed)
+2. SURFACE   → phones Play UI; desktop Creator. ?surface=player|creator|full
+3. ENGINE    → empty grid · hub PLAY/ARRANGE/EDIT · Play as (K)
+4. QUALITY   → INSERT QUALITY: light · kit · AI · materials · pad (opt-in)
+5. PORTAL    → (creator) Grok/Ollama · describe what to build
+6. EDIT      → gizmo · Compiler · PromptGen
+7. PLAY      → walk · sim · touch toggle
+8. SHIP      → TOOLS → Export when ready
 ```
 
 Multiplayer: **CREATE SESSION** → copy invite → **ENTER SESSION**. Friends **JOIN** with room code.  

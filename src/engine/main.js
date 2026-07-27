@@ -161,14 +161,20 @@ export function initEngine() {
 
     window.addEventListener('threshold:pause', (e) => {
         State.isPaused = !!e.detail?.paused;
-        // Don't overwrite arrange/edit mode if caller already set interactionMode
+        const reason = e.detail?.reason || '';
+        // Don't overwrite arrange if reason is ARRANGE or mode already arrange
         if (!State.isPaused) {
-            State.interactionMode = 'play';
+            if (State.interactionMode === 'arrange') {
+                /* leave arrange until ArrangeMode.exit* sets play */
+            } else {
+                State.interactionMode = 'play';
+            }
+        } else if (reason === 'ARRANGE' || State.interactionMode === 'arrange') {
+            State.interactionMode = 'arrange';
         } else if (State.interactionMode !== 'arrange') {
             State.interactionMode = 'edit';
         }
         UI.updateSimMode();
-        const reason = e.detail?.reason;
         if (State.interactionMode === 'arrange') {
             /* ArrangeMode.enter sets its own status */
         } else {

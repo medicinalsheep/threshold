@@ -1,4 +1,4 @@
-# Getting started with Threshold (v10.15.5)
+# Getting started with Threshold (v10.15.6)
 
 One linear path from lobby to shipping — **terminal grid** default (empty quality baseline), Agent Portal, tiered agents, and optional **TC** export practice.
 
@@ -99,9 +99,10 @@ npm run ollama:verify
 After **ENTER** (starts in **PLAY** on empty grid):
 
 1. Walk the terminal grid — clean slate.
-2. **EDIT** — insert a cube; later INSERT → PHYSICS KIT / AI STATION / materials (quality ladder).
-3. On **desktop (creator):** AI chip / Portal for Grok or Ollama.
-4. **PLAY** to simulate; **T** chat; **UNLOCK** to drag hubs.
+2. Hub **ARRANGE** / **EDIT** — place props; **INSERT → QUALITY** for light / kit / AI / materials / pad.
+3. Select prop → **K** Play as (solo); Esc/K release.
+4. On **desktop (creator):** AI chip / Portal for Grok or Ollama.
+5. **PLAY** to simulate; **T** chat; **UNLOCK** to drag hubs.
 
 Full controls: [CONTROLS.md](CONTROLS.md) · UI layout / surfaces: [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
 
@@ -111,9 +112,9 @@ Full controls: [CONTROLS.md](CONTROLS.md) · UI layout / surfaces: [UI_AND_AGENT
 
 | Path | For | Policy |
 |------|-----|--------|
-| **Your game** (default) | Workspace pad + Portal builds | You source and credit your assets |
+| **Your game** (default) | Terminal grid + QUALITY ladder + Portal | You source and credit your assets |
+| **Workspace Pad** | Lobby template / INSERT QUALITY | Optional polished pad + day light |
 | **TC** (bundled) | Learning export, demo scenes | Original Threshold art only |
-| **Showcase snippets** | Optional props via INSERT | Wardenclyffe pieces — not default spawn |
 
 See [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md). Legacy ids (`threshold-child-*`) are in `old/reference-editions/`.
 

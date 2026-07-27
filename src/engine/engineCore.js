@@ -569,16 +569,17 @@ export const Engine = {
         if (Controls.consumeJustPressed('fire') && !Controls.isHolstered() && !window.PlayAs?.isActive?.()) {
             window.StarterSfx?.fireStarterGun?.();
         }
-        if (Controls.consumeJustPressed('reload') && !window.PlayAs?.isActive?.()) PlayerController.playReload?.();
-        if (Controls.consumeJustPressed('melee') && !window.PlayAs?.isActive?.()) PlayerController.playMelee?.();
-        if (Controls.consumeJustPressed('emote') && !window.PlayAs?.isActive?.()) PlayerController.playEmote?.();
-        if (Controls.consumeJustPressed('holster') && !window.PlayAs?.isActive?.()) {
+        const combatOk = !window.PlayAs?.isActive?.() && !State.isPaused && !window.SimMode?.isArrange?.();
+        if (Controls.consumeJustPressed('reload') && combatOk) PlayerController.playReload?.();
+        if (Controls.consumeJustPressed('melee') && combatOk) PlayerController.playMelee?.();
+        if (Controls.consumeJustPressed('emote') && combatOk) PlayerController.playEmote?.();
+        if (Controls.consumeJustPressed('holster') && combatOk) {
             Controls._holstered = !Controls._holstered;
             UI.status(Controls._holstered ? 'Weapon holstered' : 'Weapon ready');
         }
-        if (Controls.consumeJustPressed('toggleView') && !window.PlayAs?.isActive?.()) PlayerController.toggleViewMode?.();
-        if (Controls.consumeJustPressed('flashlight') && !window.PlayAs?.isActive?.()) PlayerController.toggleFlashlight?.();
-        if (Controls.consumeJustPressed('lookBehind') && !window.PlayAs?.isActive?.()) PlayerController.lookBehind?.();
+        if (Controls.consumeJustPressed('toggleView') && combatOk) PlayerController.toggleViewMode?.();
+        if (Controls.consumeJustPressed('flashlight') && combatOk) PlayerController.toggleFlashlight?.();
+        if (Controls.consumeJustPressed('lookBehind') && combatOk) PlayerController.lookBehind?.();
         if (Controls.consumeJustPressed('horn')) {
             window.StarterSfx?.playStarterSfx?.('starter_horn', 0.55);
         }

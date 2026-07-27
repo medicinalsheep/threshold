@@ -1,6 +1,6 @@
 # Threshold documentation index
 
-**Version:** 10.15.5 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.15.6 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Full scope map — terminal grid default, quality ladder opt-in, optional TC reference editions.
 
@@ -20,7 +20,7 @@ Legacy edition manifests (`threshold-child-*`) live in `old/reference-editions/`
 
 ---
 
-## Capability map (v10.13)
+## Capability map (v10.15)
 
 ```mermaid
 flowchart TB
