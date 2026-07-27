@@ -28,7 +28,7 @@ Stack: Vite · Three.js · Cannon · PeerJS SPA · GitHub Pages.
 1. LOBBY     Open live (or npm run dev) · optional display name
 2. SURFACE   Phones → player UI; desktop → creator · ?surface=player|creator|full
 3. ENTER     Solo terminal grid (PLAY walk-ready) — or CREATE SESSION for MP
-4. PLAY/ARRANGE/EDIT hubs — walk · ARRANGE move props · EDIT gizmo · INSERT when ready
+4. PLAY/ARRANGE/EDIT hubs — walk · ARRANGE move · PLAY AS (K) · EDIT gizmo · INSERT when ready
 5. PORTAL    (creator) Grok key and/or Ollama · build agents
 6. SHIP      TOOLS → Export · npm run store:ship (optional)
 ```

@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.15.2 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.15.3 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -188,7 +188,7 @@ Accounts guide: [AUTH.md](AUTH.md) · Snapshot: [CAPABILITIES.md](CAPABILITIES.m
 | **10.15.0** | **Terminal void default** — strip pad/kit/AI auto; INSERT opt-in |
 | **10.15.1** | Grid units (1u=1m) · snap · grid size menu · `GridSystem` |
 | **10.15.2** | **Arrange mode** — select · drag · WASD · Q/E · R · snap · hub cycle |
-| **10.15.3** | Play as — possess NPC/object *(next)* |
+| **10.15.3** | **Play as** — possess NPC/prop · TPS · K/Esc release · solo-only |
 | **10.15.x** | Quality re-add ladder · doc sweep |
 
 Perf: [PERF_NEXT.md](PERF_NEXT.md) · Physics: [PHYSICS.md](PHYSICS.md) · Materials: [MATERIALS.md](MATERIALS.md)

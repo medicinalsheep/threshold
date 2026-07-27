@@ -87,6 +87,22 @@ EDIT keeps TransformControls gizmo + inspector. ARRANGE is for fast placement wi
 
 ---
 
+## Play as (possess)
+
+Select an NPC or movable prop (not floor, locked, vehicle, or yourself). **Solo only** for now.
+
+| Action | Default |
+|--------|---------|
+| Play as / release | **K** (KEYS → rebind) |
+| Release | **Esc** · **K** · hub **Play as** · inspector **RELEASE** |
+| Move | WASD · sprint Shift |
+| Jump | Space (humans / dynamic bodies) |
+| Look | Mouse (TPS always while possessed) |
+
+Inspector **PLAY AS** button on the selected object. Hub **PLAY+** / SCENE menu also expose it. Release restores your player at the possessed object's position.
+
+---
+
 ## Gamepad layout
 
 | Stick / button | Action |

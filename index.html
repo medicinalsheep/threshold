@@ -20,7 +20,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.15.2" />
+    <meta name="threshold-version" content="10.15.3" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD SUITE</title>
 </head>
@@ -239,7 +239,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.15.2</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" title="UI surface">CREATE</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.15.3</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" title="UI surface">CREATE</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
@@ -475,6 +475,7 @@
                         <button type="button" id="hub-play-toggle" class="corner-hub-toggle hub-play-only" title="Play options">PLAY+</button>
                     </div>
                     <div class="corner-hub-menu hub-play-only" id="hub-play-menu">
+                        <button type="button" data-hub-action="playas">Play as selection (K)</button>
                         <button type="button" data-hub-action="skin">Player skin</button>
                         <button type="button" data-hub-action="chat">Chat (T)</button>
                         <button type="button" data-hub-action="help">Help &amp; commands</button>
@@ -487,6 +488,7 @@
                     <div class="corner-hub-menu" id="hub-scene-menu">
                         <button type="button" data-hub-action="skin" class="hub-play-only">Player skin</button>
                         <button type="button" data-hub-action="inspect" class="hub-edit-only">Edit object</button>
+                        <button type="button" data-hub-action="playas" class="hub-edit-only">Play as selection</button>
                         <button type="button" data-hub-action="env" class="hub-edit-only">Environment</button>
                         <button type="button" data-hub-action="sfx" class="hub-edit-only">Sound library</button>
                         <button type="button" data-hub-action="setup" data-surface="creator">Agents / SETUP</button>
@@ -713,6 +715,9 @@
                         <label>Gizmo</label>
                         <label><input type="radio" name="gizmo" value="translate" checked> Move</label>
                         <label><input type="radio" name="gizmo" value="rotate"> Rotate</label>
+                    </div>
+                    <div class="prop-row prop-row-play-as">
+                        <button id="btn-play-as" type="button" class="btn-sm btn-play-as" title="Possess selection (solo) — K">PLAY AS</button>
                     </div>
                     <div class="prop-row"><button id="btn-delete" style="color:#ff5555;border-color:#ff5555;width:100%;">DELETE</button></div>
                 </div>

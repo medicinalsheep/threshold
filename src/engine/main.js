@@ -31,6 +31,7 @@ import '../shared/materialLibrary.js';
 import '../shared/starterKit.js';
 import '../shared/gridSystem.js';
 import '../shared/arrangeMode.js';
+import '../shared/playAs.js';
 import '../shared/avatarPoseSync.js';
 import '../shared/shaderRegistry.js';
 import '../shared/shaderNodeGraph.js';
@@ -142,6 +143,7 @@ export function initEngine() {
     window.StarterKit?.initStarterKitUi?.();
     window.GridSystem?.initUi?.();
     window.ArrangeMode?._bindInput?.();
+    window.PlayAs?.bindUi?.();
     window.GuidedSession?.init?.();
     window.IntroSkip?.init?.();
     window.ActionHints?.init?.();

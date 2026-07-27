@@ -19,6 +19,8 @@ export const State = {
     isPaused: true,
     /** 'play' | 'arrange' | 'edit' — see SimMode / ArrangeMode */
     interactionMode: 'edit',
+    /** Active possess session from PlayAs, or null */
+    playAs: null,
     aiFrozen: false,
     cutscenePlaying: false,
     cinematicCatalog: [],

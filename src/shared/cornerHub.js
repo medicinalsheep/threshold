@@ -103,6 +103,10 @@ export const CornerHub = {
             setup: () => this.openSceneTab('setup'),
             env: () => (SceneDock.toggleTab?.('env') || this.openSceneTab('env')),
             inspect: () => this.openSceneTab('inspect'),
+            playas: () => {
+                if (window.PlayAs?.isActive?.()) window.PlayAs.release();
+                else window.PlayAs?.possess?.(window.State?.selectedObject);
+            },
             skin: () => this.openSceneTab('skin'),
             sfx: () => this.openSceneTab('sfx'),
             compiler: () => document.querySelector('[data-target="view-compiler"]')?.click(),

@@ -340,6 +340,7 @@ export const UI = {
             Engine.transformControl.attach(obj);
             window.GridSystem?.applyTransformSnap?.();
         } else Engine.transformControl.detach();
+        window.PlayAs?.refreshUi?.();
     },
     deselectObject: function () {
         const prev = State.selectedObject;
@@ -351,6 +352,7 @@ export const UI = {
         } else {
             SceneDock.closeTab();
         }
+        window.PlayAs?.refreshUi?.();
     },
     switchInspTab: function (tab) {
         document.querySelectorAll('.insp-tab').forEach((t) => t.classList.toggle('active', t.dataset.inspTab === tab));
@@ -667,25 +669,35 @@ export const UI = {
         const mode = SimMode.mode?.() || (SimMode.isEdit() ? 'edit' : 'play');
         const edit = SimMode.isEdit();
         const arrange = mode === 'arrange';
+        const playAs = !!window.PlayAs?.isActive?.();
         if (badge) {
-            badge.textContent = arrange ? 'ARRANGE' : (edit ? 'EDIT' : 'PLAY');
-            badge.classList.toggle('edit', edit && !arrange);
-            badge.classList.toggle('play', !edit);
+            badge.textContent = playAs
+                ? 'PLAY AS'
+                : (arrange ? 'ARRANGE' : (edit ? 'EDIT' : 'PLAY'));
+            badge.classList.toggle('edit', edit && !arrange && !playAs);
+            badge.classList.toggle('play', !edit && !playAs);
             badge.classList.toggle('arrange', arrange);
+            badge.classList.toggle('play-as', playAs);
         }
         if (layer) layer.classList.toggle('play-mode', !edit);
         document.body.classList.toggle('play-mode', !edit);
         document.body.classList.toggle('arrange-mode', arrange);
+        document.body.classList.toggle('play-as-active', playAs);
         const playHint = document.getElementById('play-mode-hint');
         if (playHint) {
-            if (arrange) {
+            if (playAs) {
+                playHint.hidden = false;
+                const name = State.playAs?.name || 'object';
+                playHint.innerHTML = `PLAY AS <strong>${name}</strong> — WASD · look · <strong>K</strong> / Esc release`;
+            } else if (arrange) {
                 playHint.hidden = false;
                 playHint.innerHTML = 'ARRANGE — click select · drag / WASD move · <strong>Snap</strong> in SCENE · hub cycles PLAY';
             } else {
                 playHint.hidden = edit;
-                playHint.innerHTML = 'PLAY — tap <strong>EDIT</strong> or <strong>ARRANGE</strong> (top-left) to place &amp; move';
+                playHint.innerHTML = 'PLAY — <strong>ARRANGE</strong> to move · select + <strong>K</strong> Play as · EDIT for gizmo';
             }
         }
+        window.PlayAs?.refreshUi?.();
         window.CornerHub?.onModeChange?.(edit, mode);
         if (!edit) {
             GraphicsPrompt.maybeShowDeferred('play');

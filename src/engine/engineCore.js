@@ -143,7 +143,9 @@ export const Engine = {
         window.addEventListener('blur', () => this._releaseLookLock());
 
         canvas.addEventListener('pointermove', (e) => {
-            if (State.controlMode !== 'walk' || !PlayerController.spawned || State.isPaused) return;
+            const playAs = window.PlayAs?.isActive?.();
+            if (State.controlMode !== 'walk' || State.isPaused) return;
+            if (!playAs && !PlayerController.spawned) return;
             if (e.pointerType === 'touch') return;
 
             let dx = 0;
@@ -158,7 +160,9 @@ export const Engine = {
                 this._lastPointer.y = e.clientY;
             }
             if (Math.abs(dx) + Math.abs(dy) < 0.01) return;
-            PlayerController.applyLookInput(dx, dy, this._lookPointerLocked ? 1 : 0.9);
+            const sens = this._lookPointerLocked ? 1 : 0.9;
+            if (playAs) window.PlayAs.applyLookInput(dx, dy, sens);
+            else PlayerController.applyLookInput(dx, dy, sens);
         });
 
         canvas.addEventListener('pointerdown', (e) => {
@@ -170,7 +174,9 @@ export const Engine = {
     _requestLookLock() {
         const canvas = this.renderer.domElement;
         if (document.pointerLockElement === canvas) return;
-        if (State.controlMode !== 'walk' || !PlayerController.spawned || State.isPaused) return;
+        if (State.controlMode !== 'walk' || State.isPaused) return;
+        const playAs = window.PlayAs?.isActive?.();
+        if (!playAs && !PlayerController.spawned) return;
         canvas.requestPointerLock?.();
     },
 
@@ -185,7 +191,9 @@ export const Engine = {
         if (window.Spectate?.isSpectatorSession?.()) return false;
         if (window.Spectate?.isActive?.() && window.Spectate?.isFollowingHost?.()) return false;
         if (window.Network?.mode === 'spectate') return false;
-        return State.controlMode === 'walk' && PlayerController.spawned && !State.isPaused;
+        if (State.isPaused || State.controlMode !== 'walk') return false;
+        if (window.PlayAs?.isActive?.()) return true;
+        return !!PlayerController.spawned;
     },
 
     syncPhysicsFromMesh: function (mesh) {
@@ -554,19 +562,23 @@ export const Engine = {
             }
         }
         if (Controls.consumeJustPressed('enterVehicle')) this.tryEnterVehicle();
-        if (Controls.consumeJustPressed('fire') && !Controls.isHolstered()) {
+        if (Controls.consumeJustPressed('playAs')) {
+            if (window.PlayAs?.isActive?.()) window.PlayAs.release();
+            else window.PlayAs?.possess?.(State.selectedObject);
+        }
+        if (Controls.consumeJustPressed('fire') && !Controls.isHolstered() && !window.PlayAs?.isActive?.()) {
             window.StarterSfx?.fireStarterGun?.();
         }
-        if (Controls.consumeJustPressed('reload')) PlayerController.playReload?.();
-        if (Controls.consumeJustPressed('melee')) PlayerController.playMelee?.();
-        if (Controls.consumeJustPressed('emote')) PlayerController.playEmote?.();
-        if (Controls.consumeJustPressed('holster')) {
+        if (Controls.consumeJustPressed('reload') && !window.PlayAs?.isActive?.()) PlayerController.playReload?.();
+        if (Controls.consumeJustPressed('melee') && !window.PlayAs?.isActive?.()) PlayerController.playMelee?.();
+        if (Controls.consumeJustPressed('emote') && !window.PlayAs?.isActive?.()) PlayerController.playEmote?.();
+        if (Controls.consumeJustPressed('holster') && !window.PlayAs?.isActive?.()) {
             Controls._holstered = !Controls._holstered;
             UI.status(Controls._holstered ? 'Weapon holstered' : 'Weapon ready');
         }
-        if (Controls.consumeJustPressed('toggleView')) PlayerController.toggleViewMode?.();
-        if (Controls.consumeJustPressed('flashlight')) PlayerController.toggleFlashlight?.();
-        if (Controls.consumeJustPressed('lookBehind')) PlayerController.lookBehind?.();
+        if (Controls.consumeJustPressed('toggleView') && !window.PlayAs?.isActive?.()) PlayerController.toggleViewMode?.();
+        if (Controls.consumeJustPressed('flashlight') && !window.PlayAs?.isActive?.()) PlayerController.toggleFlashlight?.();
+        if (Controls.consumeJustPressed('lookBehind') && !window.PlayAs?.isActive?.()) PlayerController.lookBehind?.();
         if (Controls.consumeJustPressed('horn')) {
             window.StarterSfx?.playStarterSfx?.('starter_horn', 0.55);
         }
@@ -590,12 +602,16 @@ export const Engine = {
         if (!State.isPaused && !camFollow) {
             if (State.controlMode === 'vehicle' && window.TcDrive?.active) {
                 window.TcDrive.prePhysics();
+            } else if (window.PlayAs?.isActive?.()) {
+                window.PlayAs.prePhysics();
             } else if (State.controlMode === 'walk' && PlayerController.spawned) {
                 PlayerController.prePhysics(State.keys);
             }
             Physics.update();
             if (State.controlMode === 'vehicle' && window.TcDrive?.active) {
                 window.TcDrive.postPhysics();
+            } else if (window.PlayAs?.isActive?.()) {
+                window.PlayAs.postPhysics();
             } else if (State.controlMode === 'walk' && PlayerController.spawned) {
                 PlayerController.postPhysics();
                 window.SurvivalNeeds?.tick?.(dt, PlayerController.getMovementContext?.());

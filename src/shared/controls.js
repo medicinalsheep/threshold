@@ -3,7 +3,7 @@ const STORAGE_KB_USER = 'threshold_bindings_user';
 const STORAGE_GP_HOST = 'threshold_gamepad_host';
 const STORAGE_GP_USER = 'threshold_gamepad_user';
 const STORAGE_BINDINGS_SCHEMA = 'threshold_bindings_schema';
-const BINDINGS_SCHEMA = 4;
+const BINDINGS_SCHEMA = 5;
 
 /** Action control map — groups match KEYS menu sections */
 export const CONTROL_ACTIONS = {
@@ -20,6 +20,7 @@ export const CONTROL_ACTIONS = {
     interact: { label: 'Interact', group: 'general' },
     toggleMode: { label: 'Toggle Walk / Fly', group: 'general' },
     enterVehicle: { label: 'Enter / Exit Vehicle', group: 'vehicle' },
+    playAs: { label: 'Play as / Release (possess)', group: 'general' },
     pause: { label: 'Pause Scene (host)', group: 'host', hostOnly: true },
     bindingsMenu: { label: 'Open Keys Menu', group: 'general' },
     sessionPanel: { label: 'Session / Players Panel', group: 'general' },
@@ -99,6 +100,7 @@ const DEFAULT_HOST_KEYBOARD = {
     interact: ['KeyF'],
     toggleMode: ['KeyY'],
     enterVehicle: ['KeyE'],
+    playAs: ['KeyK'],
     pause: ['KeyP'],
     bindingsMenu: ['Backquote'],
     sessionPanel: ['Tab'],
@@ -561,9 +563,15 @@ export const Controls = {
 
         const State = window.State;
         const PC = window.PlayerController;
-        if (State?.controlMode === 'walk' && PC?.spawned && !State?.isPaused) {
-            PC.applyLookInput(-x * 14, y * 14, 1.2);
-            return;
+        if (State?.controlMode === 'walk' && !State?.isPaused) {
+            if (window.PlayAs?.isActive?.()) {
+                window.PlayAs.applyLookInput(-x * 14, y * 14, 1.2);
+                return;
+            }
+            if (PC?.spawned) {
+                PC.applyLookInput(-x * 14, y * 14, 1.2);
+                return;
+            }
         }
 
         const Engine = window.Engine;

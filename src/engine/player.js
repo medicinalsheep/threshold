@@ -176,6 +176,10 @@ export const PlayerController = {
     },
 
     applyLookInput(dx, dy, sens = 1) {
+        if (window.PlayAs?.isActive?.()) {
+            window.PlayAs.applyLookInput(dx, dy, sens);
+            return;
+        }
         if (!this.spawned || window.State?.controlMode !== 'walk' || window.State?.isPaused) return;
         this._camYaw -= dx * 0.003 * sens;
         this._camPitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, this._camPitch + dy * 0.0025 * sens));
@@ -188,6 +192,7 @@ export const PlayerController = {
     },
 
     prePhysics() {
+        if (window.PlayAs?.isActive?.()) return;
         if (!this.spawned || !this.body || window.State?.controlMode !== 'walk' || window.State?.isPaused || window.State?.cutscenePlaying) return;
 
         const Engine = window.Engine;
@@ -259,6 +264,7 @@ export const PlayerController = {
     },
 
     postPhysics() {
+        if (window.PlayAs?.isActive?.()) return;
         if (!this.spawned || !this.body || window.State?.controlMode !== 'walk') return;
 
         const Engine = window.Engine;

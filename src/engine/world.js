@@ -253,6 +253,9 @@ export const World = {
                 : 'Cannot delete — no edit permission');
             return;
         }
+        if (window.PlayAs?.isActive?.() && window.PlayAs.getTarget?.() === root) {
+            window.PlayAs.release?.({ silent: true });
+        }
         window.SceneHistory?.push?.('before:deleteObject', {
             id: root.userData?.id,
             name: root.userData?.name || 'Object',
@@ -276,6 +279,7 @@ export const World = {
         UI.status(`Deleted: ${root.userData?.name || 'Object'}`);
     },
     clearWorld: function (silent = false) {
+        if (window.PlayAs?.isActive?.()) window.PlayAs.release?.({ silent: true });
         window.SceneHistory?.push?.('before:clearWorld');
         window.VisibilitySystem?.invalidateSpatial?.();
         State.physicsObjects.forEach(p => Physics.world.removeBody(p.body));

@@ -3334,9 +3334,34 @@ body.third-eye-alt-peek #canvas-container canvas {
     border: 1px solid #39ff14;
 }
 
+.sim-mode-badge.play-as {
+    background: rgba(120, 180, 255, 0.15);
+    color: #7ab4ff;
+    border: 1px solid #7ab4ff;
+}
+
 body.arrange-mode .play-mode-hint {
     color: #9dff8a;
     border-color: rgba(57, 255, 20, 0.5);
+}
+
+body.play-as-active .play-mode-hint {
+    color: #a8cfff;
+    border-color: rgba(120, 180, 255, 0.55);
+}
+
+.btn-play-as {
+    width: 100%;
+    border-color: #7ab4ff88;
+    color: #7ab4ff;
+    background: rgba(120, 180, 255, 0.08);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+}
+
+.btn-play-as:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 .play-mode-hint {

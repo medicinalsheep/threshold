@@ -1,3 +1,12 @@
+## 10.15.3 — Play as (possess NPC / prop)
+
+- **`PlayAs`** — select NPC or movable prop → possess with walk controls
+- Parks real player body · TPS follow camera · WASD/sprint/jump · look
+- **K** (rebindable) or Esc / inspector **PLAY AS** / hub to release at drop position
+- Solo-only first (MP shows status); vehicles stay on `TcDrive`
+- Blue **PLAY AS** badge; combat/FPS disabled while possessing
+- Next: quality re-add ladder (opt-in layers)
+
 ## 10.15.2 — Arrange mode (select · drag · WASD)
 
 - **`ArrangeMode`** — third interaction layer between PLAY and EDIT
