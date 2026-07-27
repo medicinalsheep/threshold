@@ -49,9 +49,14 @@ if (env.includes('useWorkspacePad') && env.includes('createConcreteSlabDeck')) {
 } else fail('environment missing useWorkspacePad');
 
 const grid = read('src/shared/starterGrid.js');
-if (grid.includes('useWorkspacePad') && grid.includes('spawnStarterKit')) {
-    ok('starterGrid pad + kit');
+// 10.15+: terminal void default; pad/kit opt-in
+if (grid.includes('useSimpleGround') || grid.includes('terminal')) {
+    ok('starterGrid terminal baseline');
+} else if (grid.includes('useWorkspacePad')) {
+    ok('starterGrid workspace path present');
 } else fail('starterGrid incomplete');
+if (read('index.html').includes('insert-physics-kit')) ok('INSERT physics kit opt-in');
+else fail('missing INSERT physics kit button');
 
 const kit = read('src/shared/starterKit.js');
 for (const t of ['spawnStarterKit', 'spawnPhysicsLabSample', 'clearSimSamples', 'hingeBodies']) {
