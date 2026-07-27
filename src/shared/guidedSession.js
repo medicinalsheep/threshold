@@ -51,13 +51,14 @@ export const GuidedSession = {
             Session.pauseReason = pauseReason;
             Session.updateUi?.();
         }
+        State.interactionMode = build ? 'edit' : 'play';
         window.UI?.updateSimMode?.();
         window.PlayerController?._syncWalkOrbit?.();
         window.Engine?._releaseLookLock?.();
 
         const label = build
-            ? 'EDIT — place objects · physics paused · PLAY to simulate'
-            : 'PLAY — walk · push props · tap EDIT to build';
+            ? 'EDIT — place objects · physics paused · hub cycles ARRANGE / PLAY'
+            : 'PLAY — walk · hub → ARRANGE to move props · EDIT for gizmo';
         window.UI?.status?.(label);
     },
 

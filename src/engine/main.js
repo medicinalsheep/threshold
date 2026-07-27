@@ -30,6 +30,7 @@ import '../shared/materialPresets.js';
 import '../shared/materialLibrary.js';
 import '../shared/starterKit.js';
 import '../shared/gridSystem.js';
+import '../shared/arrangeMode.js';
 import '../shared/avatarPoseSync.js';
 import '../shared/shaderRegistry.js';
 import '../shared/shaderNodeGraph.js';
@@ -140,6 +141,7 @@ export function initEngine() {
     window.initMaterialLibrary?.();
     window.StarterKit?.initStarterKitUi?.();
     window.GridSystem?.initUi?.();
+    window.ArrangeMode?._bindInput?.();
     window.GuidedSession?.init?.();
     window.IntroSkip?.init?.();
     window.ActionHints?.init?.();
@@ -155,11 +157,21 @@ export function initEngine() {
 
     window.addEventListener('threshold:pause', (e) => {
         State.isPaused = !!e.detail?.paused;
+        // Don't overwrite arrange/edit mode if caller already set interactionMode
+        if (!State.isPaused) {
+            State.interactionMode = 'play';
+        } else if (State.interactionMode !== 'arrange') {
+            State.interactionMode = 'edit';
+        }
         UI.updateSimMode();
         const reason = e.detail?.reason;
-        UI.status(State.isPaused
-            ? (reason ? `EDIT: ${reason}` : 'EDIT mode — insert, delete, and export unlocked')
-            : 'PLAY mode — tap EDIT (top-left) to build');
+        if (State.interactionMode === 'arrange') {
+            /* ArrangeMode.enter sets its own status */
+        } else {
+            UI.status(State.isPaused
+                ? (reason ? `EDIT: ${reason}` : 'EDIT — gizmo · insert · export')
+                : 'PLAY — walk · hub → ARRANGE to move · EDIT for gizmo');
+        }
         Engine._releaseLookLock?.();
         PlayerController._syncWalkOrbit?.();
         if (!State.isPaused && PlayerController.spawned && State.controlMode === 'walk') {

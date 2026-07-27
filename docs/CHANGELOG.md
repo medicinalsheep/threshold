@@ -1,3 +1,12 @@
+## 10.15.2 — Arrange mode (select · drag · WASD)
+
+- **`ArrangeMode`** — third interaction layer between PLAY and EDIT
+- Hub mode cycles **PLAY → ARRANGE → EDIT → PLAY** (top-left badge)
+- Click canvas to select · drag XZ · **WASD/arrows** nudge · **Q/E** height · **R** rotate 90° · Esc deselect
+- Snap via SCENE **GridSystem** (1 unit = 1 m); kinematic physics while moving
+- Green ARRANGE badge / hub styling; gizmo stays in EDIT only
+- Next: Play as (possess NPC/object)
+
 ## 10.15.1 — Grid units + snap (1 unit = 1 m)
 
 - **`GridSystem`** — cell size prefs, snap toggle, rebuild GridHelper to match cell

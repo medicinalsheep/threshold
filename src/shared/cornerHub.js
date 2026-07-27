@@ -36,7 +36,8 @@ export const CornerHub = {
         if (!root) return;
 
         document.getElementById('hub-mode-toggle')?.addEventListener('click', () => {
-            window.UI?.togglePause?.();
+            // PLAY → ARRANGE → EDIT → PLAY
+            window.ArrangeMode?.cycleMode?.() || window.UI?.togglePause?.();
         });
 
         document.getElementById('hub-agent')?.addEventListener('click', () => {
@@ -121,29 +122,38 @@ export const CornerHub = {
         map[action]?.();
     },
 
-    onModeChange(isEdit) {
-        document.body.classList.toggle('corner-edit-mode', isEdit);
-        document.body.classList.toggle('corner-play-mode', !isEdit);
+    onModeChange(isEdit, modeName) {
+        const mode = modeName || window.SimMode?.mode?.() || (isEdit ? 'edit' : 'play');
+        const arrange = mode === 'arrange';
+        const editLike = isEdit || arrange;
+        document.body.classList.toggle('corner-edit-mode', editLike && !arrange);
+        document.body.classList.toggle('corner-play-mode', !editLike);
+        document.body.classList.toggle('corner-arrange-mode', arrange);
         closeAllHubs();
 
         const modeBtn = document.getElementById('hub-mode-toggle');
         if (modeBtn) {
-            modeBtn.textContent = isEdit ? 'EDIT' : 'PLAY';
-            modeBtn.classList.toggle('hub-mode-edit', isEdit);
-            modeBtn.classList.toggle('hub-mode-play', !isEdit);
-            modeBtn.title = isEdit ? 'Tap to PLAY (resume simulation)' : 'Tap to EDIT (pause & build)';
+            modeBtn.textContent = arrange ? 'ARRANGE' : (isEdit ? 'EDIT' : 'PLAY');
+            modeBtn.classList.toggle('hub-mode-edit', isEdit && !arrange);
+            modeBtn.classList.toggle('hub-mode-play', !editLike);
+            modeBtn.classList.toggle('hub-mode-arrange', arrange);
+            modeBtn.title = arrange
+                ? 'Tap → EDIT (gizmo) · next → PLAY'
+                : isEdit
+                    ? 'Tap → PLAY (resume simulation)'
+                    : 'Tap → ARRANGE (move props) · next → EDIT';
         }
 
         document.querySelectorAll('.hub-edit-only').forEach((el) => {
-            el.hidden = !isEdit;
+            el.hidden = !editLike;
         });
         document.querySelectorAll('.hub-play-only').forEach((el) => {
-            el.hidden = isEdit;
+            el.hidden = editLike;
         });
 
         const sceneToggle = document.getElementById('hub-scene-toggle');
         if (sceneToggle) {
-            sceneToggle.textContent = isEdit ? 'SCENE' : 'SKIN';
+            sceneToggle.textContent = editLike ? 'SCENE' : 'SKIN';
         }
     },
 

@@ -17,6 +17,8 @@ export const State = {
     ctxTargetPos: new THREE.Vector3(),
     isRecording: false,
     isPaused: true,
+    /** 'play' | 'arrange' | 'edit' — see SimMode / ArrangeMode */
+    interactionMode: 'edit',
     aiFrozen: false,
     cutscenePlaying: false,
     cinematicCatalog: [],

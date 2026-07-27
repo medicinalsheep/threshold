@@ -3328,6 +3328,17 @@ body.third-eye-alt-peek #canvas-container canvas {
     border: 1px solid #ffaa00;
 }
 
+.sim-mode-badge.arrange {
+    background: rgba(57, 255, 20, 0.12);
+    color: #39ff14;
+    border: 1px solid #39ff14;
+}
+
+body.arrange-mode .play-mode-hint {
+    color: #9dff8a;
+    border-color: rgba(57, 255, 20, 0.5);
+}
+
 .play-mode-hint {
     position: fixed;
     top: calc(52px + env(safe-area-inset-top, 0px));

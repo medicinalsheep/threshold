@@ -335,7 +335,8 @@ export const UI = {
         SceneDock.openTab('inspect');
         this.loadInspectorFromObject(obj);
         document.getElementById('btn-lock').innerText = obj.userData.locked ? 'LOCKED' : 'UNLOCK';
-        if (!obj.userData.locked && SimMode.isEdit()) {
+        // Gizmo only in EDIT (not ARRANGE — uses drag/WASD)
+        if (!obj.userData.locked && SimMode.isEdit() && !SimMode.isArrange?.()) {
             Engine.transformControl.attach(obj);
             window.GridSystem?.applyTransformSnap?.();
         } else Engine.transformControl.detach();
@@ -663,22 +664,37 @@ export const UI = {
     updateSimMode: function () {
         const badge = document.getElementById('sim-mode-badge');
         const layer = document.getElementById('ui-layer');
+        const mode = SimMode.mode?.() || (SimMode.isEdit() ? 'edit' : 'play');
         const edit = SimMode.isEdit();
+        const arrange = mode === 'arrange';
         if (badge) {
-            badge.textContent = edit ? 'EDIT' : 'PLAY';
-            badge.classList.toggle('edit', edit);
+            badge.textContent = arrange ? 'ARRANGE' : (edit ? 'EDIT' : 'PLAY');
+            badge.classList.toggle('edit', edit && !arrange);
             badge.classList.toggle('play', !edit);
+            badge.classList.toggle('arrange', arrange);
         }
         if (layer) layer.classList.toggle('play-mode', !edit);
         document.body.classList.toggle('play-mode', !edit);
+        document.body.classList.toggle('arrange-mode', arrange);
         const playHint = document.getElementById('play-mode-hint');
-        if (playHint) playHint.hidden = edit;
-        window.CornerHub?.onModeChange?.(edit);
+        if (playHint) {
+            if (arrange) {
+                playHint.hidden = false;
+                playHint.innerHTML = 'ARRANGE — click select · drag / WASD move · <strong>Snap</strong> in SCENE · hub cycles PLAY';
+            } else {
+                playHint.hidden = edit;
+                playHint.innerHTML = 'PLAY — tap <strong>EDIT</strong> or <strong>ARRANGE</strong> (top-left) to place &amp; move';
+            }
+        }
+        window.CornerHub?.onModeChange?.(edit, mode);
         if (!edit) {
             GraphicsPrompt.maybeShowDeferred('play');
             Engine.transformControl.detach();
             SceneDock.closeTab();
             SceneDock.setFullyHidden?.(true, false);
+        } else if (arrange) {
+            Engine.transformControl.detach();
+            SceneDock.closeTab();
         } else {
             SceneDock.closeTab();
             window.CornerHub?.pulseHub?.('tools');
@@ -1162,16 +1178,23 @@ export const UI = {
             this.status('Only the host can pause');
             return;
         }
+        // Bare hub mode cycles PLAY→ARRANGE→EDIT; this flips sim pause only.
+        // reason === '' means resume (coding pause, chat /unpause, etc.).
         const paused = !State.isPaused;
+        if (!paused && State.interactionMode === 'arrange') {
+            window.ArrangeMode?.deselect?.();
+        }
         const pauseReason = paused ? (reason || 'Paused') : '';
         Actions.dispatch('PAUSE', { paused, reason: pauseReason });
         State.isPaused = paused;
+        State.interactionMode = paused ? 'edit' : 'play';
         Session.isPaused = paused;
         Session.pauseReason = pauseReason;
         Session.updateUi();
         Engine._releaseLookLock?.();
         PlayerController._syncWalkOrbit?.();
-        this.status(paused ? `Paused${pauseReason ? `: ${pauseReason}` : ''}` : 'Scene resumed — click canvas to aim');
+        this.updateSimMode();
+        this.status(paused ? `EDIT — ${pauseReason}` : 'PLAY — walk · sim · hub → ARRANGE to move props');
     },
     setCodingPause: function (on) {
         if (!Permissions.canPause() || !Session.autoCodingPause) return;

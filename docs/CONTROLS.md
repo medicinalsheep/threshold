@@ -70,6 +70,23 @@ Arrange via hub **UNLOCK** · **+ BTN** for custom · reset layout restores defa
 
 ---
 
+## Arrange mode (hub: PLAY → ARRANGE → EDIT)
+
+Physics paused. Click canvas props/NPCs (not floor, not self). **Snap** uses SCENE grid (1 unit = 1 m).
+
+| Action | Default |
+|--------|---------|
+| Select / deselect | LMB on object · Esc clear · empty click clears |
+| Drag move (XZ) | LMB drag on selection |
+| Nudge XZ | WASD · Arrow keys (one cell if Snap ON) |
+| Height | Q down · E up (or PageDown / PageUp) |
+| Rotate Y | R (+90° if Snap) · Shift+R reverse |
+| Cycle mode | Top-left hub **PLAY / ARRANGE / EDIT** |
+
+EDIT keeps TransformControls gizmo + inspector. ARRANGE is for fast placement without the gizmo.
+
+---
+
 ## Gamepad layout
 
 | Stick / button | Action |
