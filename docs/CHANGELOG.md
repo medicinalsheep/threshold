@@ -1,3 +1,11 @@
+## 10.15.5 — Doc truth sweep (10.15 series close)
+
+- Spine docs match terminal void default · modes · quality ladder · kit opt-in
+- Updated: BUILD_FROM · GETTING_STARTED · STREAMLINED_DEV · PHYSICS · MATERIALS · UI_AND_AGENTS · CAPABILITIES · AGENTS.md · ASSET_CAPABILITIES · README
+- Paste-into-Grok blurb fixed (no “workspace pad kit on ENTER”)
+- Mode badges documented; materials **not** on enter
+- `scripts/modes-verify.cjs` — arrange / play-as / quality ladder smoke
+
 ## 10.15.4 — Quality re-add ladder (opt-in layers)
 
 - **`QualityLadder`** — terminal void stays default; re-add quality one step at a time

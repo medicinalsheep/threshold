@@ -2,7 +2,9 @@
 
 Quality-first PBR library for builders and agents — **presets + procedural starter maps**, not CanvasTexture noise.
 
-**Live:** open Engine → **INSERT → MATERIAL LIBRARY EXAMPLES** · or EDIT object → **Texture → Preset**.
+**Not on ENTER.** Materials never auto-spawn on the terminal grid. Add via INSERT only (quality ladder 4c).
+
+**Live:** Engine → **INSERT → QUALITY** (or CHARACTER) → **MATERIAL LIBRARY** · or EDIT object → **Texture → Preset**.
 
 ---
 
@@ -16,13 +18,14 @@ npm run textures:gen:default
 npm run bundle:assets
 ```
 
-In Engine (EDIT mode):
+In Engine (EDIT or ARRANGE → then EDIT for inspector):
 
-1. **INSERT → MATERIAL LIBRARY EXAMPLES** — gallery rows = categories (all ~25 presets)  
-2. **INSERT → MAPPED MATERIALS** — only presets with starter PBR maps (wood/brick/…)  
+1. **INSERT → QUALITY → MATERIAL LIBRARY** — gallery rows = categories (~25 presets)  
+2. **MAPPED MATERIALS** — only presets with starter PBR maps (wood/brick/…)  
 3. Select a sample → **Texture** tab → change **Preset** (maps re-wire when name matches)  
 4. **GIMP SYNC** or ALBEDO/ROUGH/METAL/NORMAL to override with your maps  
-5. Agents: `await MaterialLibrary.applyWithMaps(mesh, 'pbr_wood_snow')`
+5. Agents: use PromptGen cookbook **Quality PBR prop** · `await MaterialLibrary.applyWithMaps(mesh, 'pbr_wood_snow')`  
+6. Prefer stable maps; avoid thrashing HILOD on floor/avatars (see 10.14.4 thrash fix)
 
 ---
 

@@ -52,6 +52,8 @@ Voice mic is requested **after** session start — never blocks CREATE.
 | Agents | `agentPortal.js`, `agentRouter.js`, `src/grok/`, Ollama |
 | Materials | `materialPresets.js`, `materialLibrary.js` · [MATERIALS.md](MATERIALS.md) |
 | Physics | `physics.js`, `starterKit.js` · [PHYSICS.md](PHYSICS.md) |
+| Modes / arrange / play-as | `simMode.js`, `arrangeMode.js`, `playAs.js`, `qualityLadder.js` |
+| Grid snap | `gridSystem.js` |
 | Avatar LOD / skin | `avatarLod.js`, `avatarPoseSync.js`, `appearanceProfile.js` |
 | Store / macOS | `scripts/store-ship.cjs`, `notarize-mac.cjs` · [MAC_NOTARIZE.md](MAC_NOTARIZE.md) |
 | Agent map | [AGENTS.md](../AGENTS.md) |
@@ -62,13 +64,15 @@ Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [UI_AND_A
 
 ## Shipped systems (do not re-invent)
 
-- **Terminal grid default** — void + GridHelper · ENTER → **PLAY** · kit/pad/AI opt-in via INSERT
-- **Grid units** — **1 unit = 1 m** · SCENE cell size · snap · `GridSystem`
-- **Physics** — mass/friction/joints · gravity UI · kit not auto · [PHYSICS.md](PHYSICS.md) · `physics:verify`
+- **Terminal grid default** — void + GridHelper · ENTER → **PLAY** · kit/pad/AI **not** auto
+- **Interaction modes** — hub **PLAY → ARRANGE → EDIT** · **Play as (K)** · [CONTROLS.md](CONTROLS.md)
+- **Quality ladder** — INSERT → **QUALITY** · light presets · kit · AI · materials · pad · [CAPABILITIES.md](CAPABILITIES.md)
+- **Grid units** — **1 unit = 1 m** · SCENE cell size · snap · `gridSystem.js`
+- **Physics** — mass/friction/joints · gravity UI · kit opt-in only · [PHYSICS.md](PHYSICS.md)
 - **Avatar** — realistic starter maps + outfit · multi-LOD walk pose (no zoom hop)
-- **Neg LOD** — ~**100m** light-bake · mesh/HILOD **18/48m** first · [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
+- **Neg LOD** — ~**100m** light-bake · mesh/HILOD first · [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
 - **Visibility E0–E4** · **E5** remotes/bloom
-- **Materials** — presets + starter maps · [MATERIALS.md](MATERIALS.md)
+- **Materials** — INSERT / inspector only · [MATERIALS.md](MATERIALS.md)
 - **Surfaces** — player / creator / full (`?surface=`)
 - **Pages CI** — no full texture regen each deploy · stale-chunk auto-reload
 - **Store** — `npm run store:ship` · mac notary hooks
@@ -134,10 +138,12 @@ Ollama for **GitHub Pages**: keep a local proxy open — `node scripts/ollama-co
 Live: https://medicinalsheep.github.io/threshold/
 Repo: https://github.com/medicinalsheep/threshold
 Spine: docs/BUILD_FROM.md · CAPABILITIES.md · AGENTS.md · UI_AND_AGENTS.md
-Free core: ENTER solo → PLAY on workspace pad (crate/hinge kit); EDIT to build.
+Free core: ENTER solo → PLAY on terminal grid (empty). Hub PLAY/ARRANGE/EDIT.
+Quality: INSERT → QUALITY (light · kit · AI · materials · pad). Play as = K.
 Optional Grok + Ollama (creator surface), PeerJS CREATE/JOIN. No X OAuth.
-Physics: mass/friction/joints · PHYSICS.md · physics:verify.
-Perf: Neg LOD ~100m · HILOD 18/48 · Vis E0–E4. Materials: MATERIALS.md.
+Physics kit opt-in only · PHYSICS.md · physics:verify.
+Perf: Neg LOD ~100m · Vis E0–E4. Materials: MATERIALS.md (INSERT, not enter).
 Ship: store:ship · MAC_NOTARIZE.md (signing local).
 Task: [your goal]
 ```
+

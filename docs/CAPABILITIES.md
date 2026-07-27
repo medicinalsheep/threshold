@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.15)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.15.4
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.15.5
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -12,7 +12,7 @@ Single progress snapshot — what ships today, how the pieces connect, and what 
 
 | Capability | Module / doc |
 |------------|--------------|
-| Blank grid spawn | `starterScene.js`, `starterTemplates.js` |
+| Terminal grid spawn | `starterScene.js`, `starterGrid.js`, `starterTemplates.js` (grid default) |
 | Lobby (ENTER primary) | `lobby/main.js` — solo **ENTER** · CREATE optional multiplayer |
 | Progressive UI unlock | Scene dock, Compiler, PromptGen opt-in |
 | Surface profiles | `surfaceProfile.js` — player / creator / full (`?surface=`) · mobile → player |
@@ -31,7 +31,8 @@ Single progress snapshot — what ships today, how the pieces connect, and what 
 
 | Layer | Entry | What you get |
 |-------|-------|--------------|
-| **Your game** | BUILD + Portal | Blank grid, quality-gated AI, GIMP/Blender PBR, export |
+| **Your game** | ENTER + Portal | Terminal grid · QUALITY ladder · GIMP/Blender PBR · export |
+| **Workspace Pad** | Lobby template / QUALITY | Opt-in pad + day light |
 | **TC editions** | Lobby → **TC DEMO** | Vehicles, NPCs, circuit — bundled reference only |
 
 Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survival docs archived in `old/docs/`

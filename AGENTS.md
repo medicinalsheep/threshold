@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), tiered local/cloud agents, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **10.15.4**)
+**Version:** `src/config.js` → `VERSION` (currently **10.15.5**)
 
 **Spine (start here):** [docs/BUILD_FROM.md](docs/BUILD_FROM.md) · **Doc index:** [docs/README.md](docs/README.md)
 
@@ -21,8 +21,12 @@ Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blen
 | Engine physics | `src/engine/physics.js` |
 | Engine environment | `src/engine/environment.js` |
 | Engine state | `src/engine/state.js` |
-| Starter scene | `src/shared/starterScene.js`, `starterGrid.js`, `starterTemplates.js` |
-| Guided session | `src/shared/guidedSession.js`, `walkthrough.js`, `actionHints.js` |
+| Starter scene | `starterScene.js`, `starterGrid.js` (terminal void), `starterTemplates.js` |
+| Grid / snap | `gridSystem.js` — 1 unit = 1 m |
+| Modes | `simMode.js`, `arrangeMode.js`, `playAs.js` — PLAY/ARRANGE/EDIT · possess |
+| Quality ladder | `qualityLadder.js` — light presets · INSERT QUALITY · workspace pad |
+| Kit / AI kiosk | `starterKit.js`, `aiTerminal.js` — **opt-in only** (not on ENTER) |
+| Guided session | `guidedSession.js`, `walkthrough.js`, `actionHints.js` |
 | Quality intake | `designIntake.js`, `agentPortal.js`, `starterTex.js` |
 | MP session | `network.js`, `sync.js`, `remotePlayers.js`, `hostMigration.js`, `syncStory.js` |
 | Realism | `player.js`, `fpsViewmodel.js`, `footsteps.js`, `npcPatrol.js` |

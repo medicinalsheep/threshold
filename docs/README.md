@@ -1,8 +1,8 @@
 # Threshold documentation index
 
-**Version:** 10.15.4 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.15.5 · **Live:** https://medicinalsheep.github.io/threshold/
 
-Full scope map — quality-first blank grid, optional TC reference editions, and where to read more.
+Full scope map — terminal grid default, quality ladder opt-in, optional TC reference editions.
 
 **Start here (agents & forks):** [BUILD_FROM.md](BUILD_FROM.md) · **Snapshot:** [CAPABILITIES.md](CAPABILITIES.md) · **Forward plan:** [ROADMAP.md](ROADMAP.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
@@ -12,8 +12,9 @@ Full scope map — quality-first blank grid, optional TC reference editions, and
 
 | Layer | What | Policy |
 |-------|------|--------|
-| **Your game** | Workspace pad + quality-gated AI + PBR export | Default path; min 1K textures; physics kit |
-| **TC editions** | Lobby → **TC DEMO** — vehicles, circuit, export demo | Bundled reference only — [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) |
+| **Your game** | Terminal void → INSERT QUALITY ladder → AI + PBR export | Default empty; kit/pad opt-in; min 1K textures |
+| **Workspace Pad** | Lobby template or QUALITY → pad | Optional polished base + day light |
+| **TC editions** | Lobby → **TC DEMO** — vehicles, circuit | Bundled reference only — [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) |
 
 Legacy edition manifests (`threshold-child-*`) live in `old/reference-editions/` — active ids are `tc-*`.
 

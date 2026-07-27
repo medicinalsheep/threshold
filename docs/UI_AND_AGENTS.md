@@ -1,6 +1,6 @@
-# UI layout, agents & local model memory (v10.13)
+# UI layout, agents & local model memory (v10.15)
 
-Quick reference for corner hubs, Agent Portal, optional Grok key, and session lobby. Older docs may still say "SCENE → AI tab" — today everything lives under **SETUP** (scene dock) and **Agent Portal**.
+Quick reference for corner hubs, interaction modes, Agent Portal, optional Grok key, and session lobby. Older docs may still say "SCENE → AI tab" — today everything lives under **SETUP** (scene dock) and **Agent Portal**.
 
 **Live version:** see `src/config.js` → `VERSION` · **Spine:** [BUILD_FROM.md](BUILD_FROM.md)
 
@@ -27,10 +27,10 @@ Same live URL — different chrome. Module: `src/shared/surfaceProfile.js`.
 
 | Action | Notes |
 |--------|-------|
-| **ENTER →** | Solo primary path — blank grid, no PeerJS (starts BUILD) |
+| **ENTER →** | Solo primary path — **terminal grid** · **PLAY** walk-ready (no PeerJS) |
 | **CREATE SESSION** | Multiplayer host (12s Peer timeout if server hangs) |
 | **JOIN / SPECTATE** | Room code + optional passcode |
-| **More options** | Passcodes, starter world, voice, optional Grok API key |
+| **More options** | Passcodes, starter world (**Blank Grid** / **Workspace Pad** / TC), voice, Grok |
 | Display name | Custom name shown in multiplayer (no account required) |
 
 Grok is optional. Voice mic is requested **after** the session starts (never blocks CREATE).
@@ -72,16 +72,27 @@ See also [AGENT_ROUTING.md](AGENT_ROUTING.md) for tier config files.
 
 ## In-game UI (corner hubs)
 
-| Corner | PLAY | EDIT |
-|--------|------|------|
-| Top-left | PLAY/EDIT toggle · AI · LINK · **UNLOCK** | Same + layout edit |
-| Top-right | hidden | TOOLS menu |
-| Bottom-left | TOUCH · WALK/FLY · FULL | Same |
-| Bottom-right | PLAY+ menu | SCENE menu (ENV, EDIT, SKIN, SFX, **SETUP**) |
+| Corner | Role |
+|--------|------|
+| Top-left | Mode badge cycles **PLAY → ARRANGE → EDIT** · AI · LINK · **UNLOCK** |
+| Top-right | TOOLS (edit-like modes) |
+| Bottom-left | TOUCH · WALK/FLY · FULL |
+| Bottom-right | PLAY+ (play as, skin…) · SCENE (ENV, EDIT, SKIN, SFX, **SETUP**) |
+
+### Mode badges
+
+| Badge | Color cue | Meaning |
+|-------|-----------|---------|
+| **PLAY** | Amber | Sim running · walk · push props |
+| **ARRANGE** | Terminal green | Paused · click/drag/WASD props · snap |
+| **EDIT** | Accent green | Paused · gizmo · inspector · insert |
+| **PLAY AS** | Blue | Possessing NPC/prop (solo) · **K**/Esc release |
+
+INSERT opens on **QUALITY** first (ladder). Character / GLTF / code remain as sibling tabs.
 
 **UNLOCK** → drag corner buttons, FPS HUD, model status bar, chat header, nav brand, touch controls → **LOCK** when done.
 
-**T** — in-game chat · **/** — commands · **help** menu
+**T** — in-game chat · **/** — commands · **help** menu · **K** — play as / release
 
 ---
 

@@ -6,24 +6,28 @@ Threshold physics is for **playable props + lightweight engineering demos** (mas
 
 ---
 
-## PLAY vs EDIT
+## PLAY / ARRANGE / EDIT
 
 | Mode | Physics |
 |------|---------|
 | **PLAY** | `Physics.update` steps world · walk · push props |
-| **EDIT** | Paused (`State.isPaused`) · place/tune · inspector |
+| **ARRANGE** | Paused · select/drag/WASD props · kinematic while moving |
+| **EDIT** | Paused · gizmo · inspector · insert |
+| **Play as** | Solo possess · drives target body/mesh · player parked |
 
-Solo **ENTER** defaults **PLAY** on the workspace pad. Tap **EDIT** (top-left) to build.
+Solo **ENTER** defaults **PLAY** on the **terminal void** (empty grid). Hub top-left cycles **PLAY → ARRANGE → EDIT**. Kit is **not** auto-spawned.
 
 ---
 
 ## Entry (10.15+)
 
-- **Default:** terminal void + `GridHelper` + simple ground (no auto kit)  
-- **Opt-in INSERT:** PHYSICS KIT · AI BUILD STATION · PHYSICS LAB SAMPLE · materials  
-- Pad API still available: `Environment.useWorkspacePad` (not default)  
+- **Default:** terminal void + `GridHelper` + simple ground (no auto kit / pad / AI)  
+- **Opt-in:** INSERT → **QUALITY** tab (or CHARACTER)  
+  - **PHYSICS KIT** · **AI BUILD STATION** · materials · **PHYSICS LAB** · **WORKSPACE PAD**  
+- Lobby template **Workspace Pad** = pad + day light (opt-in base)  
+- Pad API: `Environment.useWorkspacePad` / `QualityLadder.applyWorkspacePad`  
 
-INSERT → **PHYSICS KIT** · **AI BUILD STATION** · **PHYSICS LAB** · **CLEAR SIM SAMPLES** · **MATERIAL LIBRARY**
+**CLEAR SIM SAMPLES** removes kit + lab props only.
 
 ---
 

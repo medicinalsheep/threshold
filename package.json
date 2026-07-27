@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "10.15.4",
+  "version": "10.15.5",
   "type": "module",
   "engines": {
     "node": ">=22.0.0"
@@ -77,6 +77,7 @@
     "tc:gen:vid": "node scripts/tc-gen-vid.cjs",
     "tc:verify": "node scripts/tc-verify.cjs",
     "controls:verify": "node scripts/controls-verify.cjs",
+    "modes:verify": "node scripts/modes-verify.cjs",
     "negative-lod:verify": "node scripts/negative-lod-verify.cjs",
     "physics:verify": "node scripts/physics-verify.cjs",
     "perf:verify": "node scripts/perf-harness-verify.cjs",

@@ -1,8 +1,8 @@
-# Streamlined dev path (v10.14)
+# Streamlined dev path (v10.15)
 
-One linear path from lobby to shipped build — solo ENTER on **terminal grid**, optional host/join, Agent Portal, creative tools, export.
+One linear path from lobby to shipped build — solo ENTER on **terminal grid**, quality ladder opt-in, optional host/join, Agent Portal, export.
 
-**Spine:** [BUILD_FROM.md](BUILD_FROM.md) · **Surfaces:** [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · **Physics:** [PHYSICS.md](PHYSICS.md)
+**Spine:** [BUILD_FROM.md](BUILD_FROM.md) · **Surfaces:** [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · **Physics:** [PHYSICS.md](PHYSICS.md) · **Controls:** [CONTROLS.md](CONTROLS.md)
 
 ---
 
@@ -14,9 +14,21 @@ One linear path from lobby to shipped build — solo ENTER on **terminal grid**,
 | **Host** | Lobby → **CREATE SESSION** → copy invite → **ENTER SESSION** |
 | **Join** | Lobby → paste code → **JOIN** (+ passcode if host set one) |
 | **Surface** | Phones → **player**; desktop → **creator**. Lobby chips or `?surface=` |
+| **Template** | Blank Grid (default) · Workspace Pad · TC Circuit |
 
 Multiplayer is optional PeerJS. **No account required** for local solo play. Grok key optional for cloud AI.  
 Browsers: Chrome/Edge/Firefox — after deploys, hard-refresh if modules fail to load ([GETTING_STARTED](GETTING_STARTED.md)#browsers).
+
+### Modes after ENTER
+
+| Hub badge | Use |
+|-----------|-----|
+| **PLAY** | Walk · sim · push props |
+| **ARRANGE** | Select · drag · WASD · snap (paused) |
+| **EDIT** | Gizmo · inspector · insert |
+| **PLAY AS** | Select NPC/prop · **K** possess (solo) |
+
+**INSERT → QUALITY** — light · AI station · materials · physics kit · workspace pad · agent recipe.
 
 ---
 
