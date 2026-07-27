@@ -3364,6 +3364,63 @@ body.play-as-active .play-mode-hint {
     cursor: not-allowed;
 }
 
+/* Quality ladder — lighting chips + INSERT QUALITY */
+.env-preset-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    flex: 1;
+}
+
+.env-light-chip {
+    border-color: #5a6a7a88;
+    color: #b8c4d0;
+    font-size: 0.72rem;
+    letter-spacing: 0.03em;
+}
+
+.env-light-chip.active {
+    border-color: #7ab4ff;
+    color: #7ab4ff;
+    background: rgba(120, 180, 255, 0.12);
+    box-shadow: 0 0 6px rgba(120, 180, 255, 0.2);
+}
+
+.ql-steps-list {
+    list-style: none;
+    margin: 6px 0 8px;
+    padding: 0;
+    font-size: 0.72rem;
+    color: #9aa8b8;
+}
+
+.ql-steps-list .ql-step {
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.ql-steps-list .ql-step.done {
+    color: #7ecf9a;
+}
+
+.ql-steps-list .ql-letter {
+    display: inline-block;
+    min-width: 1.6em;
+    font-weight: 700;
+    color: #7ab4ff;
+}
+
+.ql-steps-list em {
+    opacity: 0.65;
+    font-style: normal;
+    font-size: 0.9em;
+}
+
+#ql-status {
+    color: #7ab4ff;
+    font-weight: 600;
+}
+
 .play-mode-hint {
     position: fixed;
     top: calc(52px + env(safe-area-inset-top, 0px));

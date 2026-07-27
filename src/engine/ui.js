@@ -60,7 +60,7 @@ export const UI = {
         document.getElementById('insert-modal')?.addEventListener('click', (e) => {
             if (e.target.id === 'insert-modal') UI.closeInsert();
         });
-        document.querySelectorAll('.insert-tab').forEach((tab) => {
+        document.querySelectorAll('#insert-sheet .insert-tab').forEach((tab) => {
             tab.addEventListener('click', () => UI.switchInsertTab(tab.dataset.tab));
         });
         document.getElementById('insert-character')?.addEventListener('click', () => {
@@ -1063,13 +1063,15 @@ export const UI = {
         Session.refreshSavedPlayerList();
         document.getElementById('insert-modal')?.classList.add('open');
         ensurePanelVisible('#insert-sheet');
+        window.QualityLadder?.syncUi?.();
     },
     closeInsert: function () {
         document.getElementById('insert-modal')?.classList.remove('open');
     },
     switchInsertTab: function (tab) {
-        document.querySelectorAll('.insert-tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === tab));
-        document.querySelectorAll('.insert-panel').forEach((p) => p.classList.toggle('active', p.dataset.panel === tab));
+        if (!tab) return;
+        document.querySelectorAll('#insert-sheet .insert-tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === tab));
+        document.querySelectorAll('#insert-sheet .insert-panel').forEach((p) => p.classList.toggle('active', p.dataset.panel === tab));
     },
     insertGltfFromPanel: async function () {
         const name = document.getElementById('insert-gltf-name')?.value?.trim() || 'GLTF Model';

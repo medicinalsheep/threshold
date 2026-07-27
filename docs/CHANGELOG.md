@@ -1,3 +1,12 @@
+## 10.15.4 — Quality re-add ladder (opt-in layers)
+
+- **`QualityLadder`** — terminal void stays default; re-add quality one step at a time
+- **4a Lighting** — SCENE / INSERT chips: Terminal · Day · Soft · Night (no pad/HILOD thrash)
+- **4b–4d** — INSERT → **QUALITY** tab: AI station · materials · physics kit
+- **4e Workspace pad** — lobby template **Workspace Pad** + INSERT pad button
+- **4f Cookbook** — PromptGen “Quality PBR prop” few-shot (name → collision → preset → maps)
+- Ladder status chips show active layers; CHARACTER tab still has kit/lab/clear
+
 ## 10.15.3 — Play as (possess NPC / prop)
 
 - **`PlayAs`** — select NPC or movable prop → possess with walk controls

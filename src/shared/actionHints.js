@@ -10,7 +10,7 @@ const HINTS = [
     },
     {
         id: 'insert',
-        text: 'INSERT: cube / materials / optional PHYSICS KIT · build quality one layer at a time',
+        text: 'INSERT → QUALITY ladder: light · AI station · materials · physics kit · pad',
         afterMs: 22000,
     },
     {

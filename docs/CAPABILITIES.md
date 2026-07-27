@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.15)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.15.3
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.15.4
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -20,6 +20,7 @@ Single progress snapshot — what ships today, how the pieces connect, and what 
 | Corner hub UI | `cornerHub.js` — PLAY/ARRANGE/EDIT cycle, TOOLS, SCENE |
 | Arrange mode | `arrangeMode.js` — select · drag · WASD · snap (paused) |
 | Play as | `playAs.js` — possess NPC/prop (solo) · **K** release |
+| Quality ladder | `qualityLadder.js` — light presets · INSERT QUALITY · workspace template |
 | Room codes + passcode | `roomCode.js`, `hostPasscode.js` |
 | Grok API (optional) | BYO key — [AUTH.md](AUTH.md) |
 | Short hub tour | `walkthrough.js` — ~3 steps |

@@ -2,6 +2,13 @@
 
 export const PROMPT_COOKBOOK = [
     {
+        id: 'quality_pbr_prop',
+        title: 'Quality PBR prop (ladder 4f)',
+        task: 'extend',
+        idea: 'Add ONE hero prop to the live terminal grid without World.clearWorld. Pipeline: (1) name it Mat Brick Crate (2) World.createObject cube with physics mass 8 friction 0.55 restitution 0.05 (3) apply MaterialPresets.applyMaterialPreset(mesh, \'pbr_brick_aged\') then MaterialLibrary.applyWithMaps if available (4) set userData.surfaceType brick and materialPreset id (5) place near origin on the grid. Do not thrash textures or rebuild the floor.',
+        hint: 'Quality ladder 4f — name → collision → mesh → preset → maps → play-test.',
+    },
+    {
         id: 'wood_crate_row',
         title: 'Wood crate row',
         task: 'extend',

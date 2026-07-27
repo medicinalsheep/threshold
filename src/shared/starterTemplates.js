@@ -9,7 +9,12 @@ export const STARTER_TEMPLATES = {
     grid: {
         id: 'grid',
         name: 'Blank Grid',
-        tagline: 'Empty workspace — UI unlocks as you build',
+        tagline: 'Terminal void — quality layers via INSERT (default)',
+    },
+    workspace: {
+        id: 'workspace',
+        name: 'Workspace Pad',
+        tagline: 'Polished pad + day light (opt-in quality base)',
     },
     'tc-circuit': {
         id: 'tc-circuit',
@@ -123,6 +128,25 @@ export function listStarterTemplates() {
     return TEMPLATE_LIST;
 }
 
+async function bootstrapWorkspaceTemplate() {
+    const State = window.State;
+    if (!State || !sceneEmpty()) return;
+
+    const { EXTERIOR_SPAWN } = await import('./starterSiteLayout.js');
+    await (await import('./starterGrid.js')).buildStarterGrid({ style: 'workspace' });
+    window.QualityLadder?.applyLightingPreset?.('day', { silent: true });
+    State.templateId = 'workspace';
+    State.enterStyle = 'workspace';
+    State.qualityLadder = { ...(State.qualityLadder || {}), workspace: true };
+
+    scheduleTemplateSpawn(EXTERIOR_SPAWN, {
+        skipIntro: true,
+        spawnDelay: 80,
+        status: 'Workspace pad — Day light · INSERT Quality for kit / AI / materials',
+    });
+    window.QualityLadder?.syncUi?.();
+}
+
 export async function bootstrapSelectedTemplate() {
     const id = getSelectedTemplateId();
     window.State.templateId = id;
@@ -130,6 +154,9 @@ export async function bootstrapSelectedTemplate() {
     switch (id) {
         case 'tc-circuit':
             await bootstrapTcCircuitTemplate();
+            break;
+        case 'workspace':
+            await bootstrapWorkspaceTemplate();
             break;
         default:
             await bootstrapStarterScene();

@@ -20,7 +20,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.15.3" />
+    <meta name="threshold-version" content="10.15.4" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD SUITE</title>
 </head>
@@ -239,7 +239,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.15.3</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" title="UI surface">CREATE</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.15.4</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" title="UI surface">CREATE</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
@@ -647,6 +647,16 @@
                     </select>
                 </div>
                 <p id="env-mode-info" class="env-mode-info">Default realistic lighting &amp; textures. Retro styles for AI galleries — ask in PromptGen.</p>
+                <div class="prop-row env-light-presets" title="Quality ladder 4a — lighting only, no texture thrash">
+                    <label>Light</label>
+                    <div class="env-preset-chips">
+                        <button type="button" class="btn-sm env-light-chip" data-light-preset="terminal" title="Dark terminal grid">Terminal</button>
+                        <button type="button" class="btn-sm env-light-chip" data-light-preset="day" title="Daylight PBR">Day</button>
+                        <button type="button" class="btn-sm env-light-chip" data-light-preset="soft" title="Warm soft fill">Soft</button>
+                        <button type="button" class="btn-sm env-light-chip" data-light-preset="night" title="Night / moon">Night</button>
+                    </div>
+                </div>
+                <p class="env-mode-info" style="margin:0 0 6px;">Light presets are SCENE-only (no pad rebuild). Default ENTER = Terminal.</p>
                 <div class="prop-row">
                     <label>Time</label>
                     <input type="range" id="env-time" min="0" max="24" step="0.25" value="14">
@@ -1036,13 +1046,33 @@
                     <button id="insert-close">✕</button>
                 </div>
                 <div class="insert-tabs">
-                    <button class="insert-tab active" data-tab="character">CHARACTER</button>
+                    <button class="insert-tab active" data-tab="quality">QUALITY</button>
+                    <button class="insert-tab" data-tab="character">CHARACTER</button>
                     <button class="insert-tab" data-tab="gltf">GLTF</button>
                     <button class="insert-tab" data-tab="player">PLAYER KEY</button>
                     <button class="insert-tab" data-tab="saved">SAVED</button>
                     <button class="insert-tab" data-tab="code">CODE</button>
                 </div>
-                <div class="insert-panel active" data-panel="character">
+                <div class="insert-panel active" data-panel="quality">
+                    <p class="insert-hint">Quality ladder — terminal void stays empty until you opt in. <span id="ql-status">terminal</span></p>
+                    <ul id="ql-steps-list" class="ql-steps-list" aria-label="Quality ladder steps"></ul>
+                    <p class="insert-hint" style="margin:8px 0 4px;"><strong>4a Lighting</strong> (also SCENE → Light)</p>
+                    <div class="prop-row" style="flex-wrap:wrap;gap:6px;">
+                        <button type="button" id="ql-lighting-terminal" class="btn-sm env-light-chip" data-light-preset="terminal">Terminal</button>
+                        <button type="button" id="ql-lighting-day" class="btn-sm env-light-chip" data-light-preset="day">Day</button>
+                        <button type="button" id="ql-lighting-soft" class="btn-sm env-light-chip" data-light-preset="soft">Soft</button>
+                        <button type="button" id="ql-lighting-night" class="btn-sm env-light-chip" data-light-preset="night">Night</button>
+                    </div>
+                    <p class="insert-hint" style="margin:10px 0 4px;"><strong>4b–4e Content</strong></p>
+                    <button type="button" id="ql-add-ai" class="insert-action" title="4b AI Build Station">AI BUILD STATION</button>
+                    <button type="button" id="ql-add-materials" class="insert-action" title="4c Material library gallery">MATERIAL LIBRARY</button>
+                    <button type="button" id="ql-add-materials-mapped" class="insert-action btn-sm" title="Presets with starter PBR maps">MAPPED MATERIALS</button>
+                    <button type="button" id="ql-add-physics" class="insert-action" title="4d Crate · sphere · ramp · hinge">PHYSICS KIT</button>
+                    <button type="button" id="ql-add-workspace" class="insert-action" title="4e Workspace pad + day light">WORKSPACE PAD</button>
+                    <button type="button" id="ql-open-cookbook" class="insert-action secondary" title="4f PromptGen recipe">AGENT: QUALITY PROP RECIPE</button>
+                    <p class="insert-hint" style="margin:8px 0 0;">Also: CHARACTER tab for NPC · lab samples · clear.</p>
+                </div>
+                <div class="insert-panel" data-panel="character">
                     <p class="insert-hint">Static NPC for scene dressing, or spawn yourself as a walkable human (reference for AI character design).</p>
                     <button type="button" id="insert-material-examples" class="insert-action" title="Spawn material gallery (rows = categories)">MATERIAL LIBRARY EXAMPLES</button>
                     <button type="button" id="insert-material-mapped" class="insert-action btn-sm" title="Only presets with starter PBR maps">MAPPED MATERIALS</button>

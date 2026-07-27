@@ -16,7 +16,7 @@ export async function bootstrapStarterScene() {
     scheduleTemplateSpawn(EXTERIOR_SPAWN, {
         skipIntro: true,
         spawnDelay: 80,
-        status: 'Terminal grid — walk · EDIT to place · INSERT for kit / materials (quality ladder)',
+        status: 'Terminal grid — INSERT → QUALITY to re-add light / kit / AI / pad',
     });
 }
 
