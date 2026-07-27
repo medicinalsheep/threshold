@@ -17,14 +17,13 @@ Solo **ENTER** defaults **PLAY** on the workspace pad. Tap **EDIT** (top-left) t
 
 ---
 
-## Entry workspace
+## Entry (10.15+)
 
-- Concrete **slab pad** (`Environment.useWorkspacePad`) + matching pad collider  
-- Infinite plane stays as a **safety net** under the pad  
-- **Starter kit:** brick crate, sphere, ramp, hinge gate  
-- **AI Build Station** for agents  
+- **Default:** terminal void + `GridHelper` + simple ground (no auto kit)  
+- **Opt-in INSERT:** PHYSICS KIT · AI BUILD STATION · PHYSICS LAB SAMPLE · materials  
+- Pad API still available: `Environment.useWorkspacePad` (not default)  
 
-INSERT → **PHYSICS LAB SAMPLE** · **CLEAR SIM SAMPLES** · **MATERIAL LIBRARY EXAMPLES**
+INSERT → **PHYSICS KIT** · **AI BUILD STATION** · **PHYSICS LAB** · **CLEAR SIM SAMPLES** · **MATERIAL LIBRARY**
 
 ---
 

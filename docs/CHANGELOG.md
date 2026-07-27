@@ -1,3 +1,11 @@
+## 10.15.0 — Terminal void default (quality ladder)
+
+- **ENTER baseline** — dark ground + high-contrast GridHelper only (no pad, no kit, no AI kiosk)
+- Content **opt-in**: INSERT → PHYSICS KIT · AI BUILD STATION · materials · physics lab
+- Status / hints: empty grid first; re-add quality one layer at a time
+- Modules kept (`starterKit.js`, `aiTerminal.js`, `useWorkspacePad`) for later prompts
+- Next: grid units/snap · Arrange · Play as (10.15.1+)
+
 ## 10.14.4 — Fix blocky look + texture thrash
 
 - **Root cause:** floor Neg LOD path B/C flipped pad PBR↔unlit while orbiting; HILOD swapped maps without hysteresis; Intel/Firefox often locked Mobile@1K

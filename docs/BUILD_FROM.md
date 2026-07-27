@@ -13,7 +13,7 @@
 
 ## What it is
 
-Browser **3D creative suite**: workspace pad → optional AI (Grok key + local Ollama) → play/build multiplayer → export.  
+Browser **3D creative suite**: terminal grid → optional AI (Grok key + local Ollama) → play/build multiplayer → export.  
 **No account required.** **No X OAuth.** Host-authoritative PeerJS when you CREATE a session.
 
 Stack: Vite · Three.js · Cannon · PeerJS SPA · GitHub Pages.
@@ -27,8 +27,8 @@ Stack: Vite · Three.js · Cannon · PeerJS SPA · GitHub Pages.
 ```text
 1. LOBBY     Open live (or npm run dev) · optional display name
 2. SURFACE   Phones → player UI; desktop → creator · ?surface=player|creator|full
-3. ENTER     Solo workspace pad (PLAY walk-ready) — or CREATE SESSION for MP
-4. PLAY/EDIT Corner hubs — walk / push kit · EDIT to place + physics
+3. ENTER     Solo terminal grid (PLAY walk-ready) — or CREATE SESSION for MP
+4. PLAY/EDIT Corner hubs — walk · EDIT to place · INSERT kit/materials when ready
 5. PORTAL    (creator) Grok key and/or Ollama · build agents
 6. SHIP      TOOLS → Export · npm run store:ship (optional)
 ```
@@ -62,8 +62,8 @@ Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [UI_AND_A
 
 ## Shipped systems (do not re-invent)
 
-- **Workspace pad** — concrete deck + starter kit (crate/sphere/ramp/hinge) · ENTER → **PLAY** · [PHYSICS.md](PHYSICS.md)
-- **Physics** — mass/friction/restitution live · hinges/locks · gravity UI · `physics:verify`
+- **Terminal grid default** — void + GridHelper · ENTER → **PLAY** · kit/pad/AI opt-in via INSERT
+- **Physics** — mass/friction/joints · gravity UI · kit not auto · [PHYSICS.md](PHYSICS.md) · `physics:verify`
 - **Avatar** — realistic starter maps + outfit · multi-LOD walk pose (no zoom hop)
 - **Neg LOD** — ~**100m** light-bake · mesh/HILOD **18/48m** first · [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
 - **Visibility E0–E4** · **E5** remotes/bloom

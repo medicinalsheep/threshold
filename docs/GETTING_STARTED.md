@@ -1,6 +1,6 @@
-# Getting started with Threshold (v10.14.4)
+# Getting started with Threshold (v10.15.0)
 
-One linear path from lobby to shipping — **workspace pad** default, Agent Portal, tiered agents, and optional **TC** export practice.
+One linear path from lobby to shipping — **terminal grid** default (empty quality baseline), Agent Portal, tiered agents, and optional **TC** export practice.
 
 **Full scope:** [README.md](README.md) (doc index) · **Linear dev path:** [STREAMLINED_DEV.md](STREAMLINED_DEV.md) · **Spine:** [BUILD_FROM.md](BUILD_FROM.md)
 
@@ -29,18 +29,18 @@ If the live app fails to load modules after a deploy:
 ## The loop
 
 ```
-Lobby → ENTER (solo) → PLAY on pad → EDIT to build → Export → Package
+Lobby → ENTER (solo) → PLAY on terminal grid → EDIT to build → Export → Package
          ↘ CREATE SESSION → share invite → ENTER SESSION (multiplayer host)
 ```
 
 | Step | Where | What you learn |
 |------|--------|----------------|
-| 1 | **Lobby → ENTER →** | Solo — **PLAY** walk-ready on workspace pad |
-| 2 | Engine | Concrete pad · kit (crate/hinge) · AI station · hub tour |
+| 1 | **Lobby → ENTER →** | Solo — **PLAY** on empty terminal grid |
+| 2 | Engine | Dark ground + grid · no auto props · hub tour |
 | 3 | **Surface** | Phones **player**; desktop **creator**. `?surface=` |
 | 4 | **Agent Portal** (creator) | Grok/Ollama · describe a scene |
-| 5 | **EDIT** | Insert · materials · physics lab · Compiler / PromptGen |
-| 6 | **PLAY** | Walk · push props · mass/friction sim · **F** interact |
+| 5 | **EDIT** | Insert cube · materials · optional PHYSICS KIT / AI STATION |
+| 6 | **PLAY** | Walk · sim · **F** interact |
 | 7 | **SETUP** (optional) | Ollama tiers · gravity · Grok key |
 | 8 | **TOOLS → EXPORT** | 9-step walkthrough |
 | 9 | **CLI** | `store:prep`, `package:*` or `package:steam` |
@@ -92,12 +92,12 @@ npm run ollama:verify
 
 ## First session (2 minutes)
 
-After **ENTER** (starts in **PLAY**):
+After **ENTER** (starts in **PLAY** on empty grid):
 
-1. Walk the pad — push the crate, try the hinge gate.
-2. On **desktop (creator):** AI chip / Portal for Grok or Ollama. On **phone (player):** walk first; **Creator tools** when you need AI.
-3. **EDIT** (top-left) — insert, materials, physics lab, Compiler.
-4. **PLAY** again to simulate; **T** chat; **UNLOCK** to drag hubs.
+1. Walk the terminal grid — clean slate.
+2. **EDIT** — insert a cube; later INSERT → PHYSICS KIT / AI STATION / materials (quality ladder).
+3. On **desktop (creator):** AI chip / Portal for Grok or Ollama.
+4. **PLAY** to simulate; **T** chat; **UNLOCK** to drag hubs.
 
 Full controls: [CONTROLS.md](CONTROLS.md) · UI layout / surfaces: [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
 

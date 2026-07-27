@@ -2,7 +2,7 @@
 
 **North star:** Plan everything before generation. Creators design games; the tool makes pieces fall into place — not AI slop dumped into a blank chat.
 
-**Version:** 10.14.4 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.15.0 · **Live:** https://medicinalsheep.github.io/threshold/
 
 ---
 
@@ -102,7 +102,7 @@ Agents call `MaterialPresets.applyMaterialPreset(mesh, id)` — presets auto-wir
 ## Creator journey
 
 ```
-LOBBY → ENTER workspace pad (PLAY)
+LOBBY → ENTER terminal grid (PLAY)
   ↓
 AI Portal OR SETUP brief
   ↓

@@ -32,7 +32,13 @@ export async function spawnStarterKit(opts = {}) {
     const World = window.World;
     const State = window.State;
     if (!World?.createObject || !State) return [];
-    if (State.starterKitSpawned && !opts.force) return [];
+    if (State.starterKitSpawned && !opts.force) {
+        window.UI?.status?.('Physics kit already in scene — CLEAR SIM SAMPLES first');
+        return [];
+    }
+    if (State.starterKitSpawned && opts.force) {
+        clearSimSamples();
+    }
 
     const spawned = [];
     const mk = (type, name, color, phys, extra = {}) => {
@@ -235,6 +241,30 @@ export function clearSimSamples() {
 }
 
 export function initStarterKitUi() {
+    document.getElementById('insert-physics-kit')?.addEventListener('click', () => {
+        void spawnStarterKit({ force: true });
+        document.getElementById('insert-modal')?.classList.remove('open');
+        window.UI?.status?.('Physics kit added — PLAY to push · EDIT for mass/friction');
+    });
+    document.getElementById('insert-ai-station')?.addEventListener('click', async () => {
+        const State = window.State;
+        if (State?.objects?.some((o) => o.userData?.id === 'starter_ai_terminal')) {
+            window.UI?.status?.('AI Build Station already in scene');
+            return;
+        }
+        const { spawnAiTerminal } = await import('./aiTerminal.js');
+        spawnAiTerminal({
+            id: 'starter_ai_terminal',
+            pos: { x: -2.8, y: 0, z: 2.4 },
+            rotY: 0.35,
+            showcase: false,
+            name: 'AI Build Station',
+            interactLabel: 'AI Build Station',
+            interactHint: 'Connect agents — Grok · Ollama · build assistant',
+        });
+        document.getElementById('insert-modal')?.classList.remove('open');
+        window.UI?.status?.('AI Build Station placed — F to interact');
+    });
     document.getElementById('insert-physics-lab')?.addEventListener('click', () => {
         void spawnPhysicsLabSample();
         document.getElementById('insert-modal')?.classList.remove('open');

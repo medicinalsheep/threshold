@@ -1,50 +1,77 @@
-/** Workspace pad — default ENTER environment. AI station + starter kit. */
+/**
+ * Terminal void grid — default ENTER baseline (10.15+).
+ * No pad, no kit, no AI kiosk. Content is opt-in via INSERT / later phases.
+ */
 
 import { SITE } from './starterSiteLayout.js';
-import { spawnAiTerminal } from './aiTerminal.js';
-import { spawnStarterKit } from './starterKit.js';
-import { FLOOR_HALF } from '../engine/environment.js';
 
-export async function buildStarterGrid() {
+/**
+ * @param {{ style?: 'terminal' | 'workspace' }} [opts]
+ * workspace = legacy polished pad (not default)
+ */
+export async function buildStarterGrid(opts = {}) {
     const Engine = window.Engine;
     const State = window.State;
     if (!Engine?.scene || !State) return null;
 
     if (State.starterGridBuilt) {
-        return State.objects.find((o) => o.userData?.id === 'engine_floor_deck'
-            || o.userData?.id === 'engine_ground') || null;
+        return State.objects.find((o) => o.userData?.id === 'engine_ground'
+            || o.userData?.id === 'engine_floor_deck') || null;
     }
     State.starterGridBuilt = true;
+    State.enterStyle = opts.style === 'workspace' ? 'workspace' : 'terminal';
 
-    // Polished concrete pad + matching collider (not dark void plane alone)
-    await window.Environment?.useWorkspacePad?.(FLOOR_HALF);
+    if (State.enterStyle === 'workspace') {
+        const { FLOOR_HALF } = await import('../engine/environment.js');
+        await window.Environment?.useWorkspacePad?.(FLOOR_HALF);
+    } else {
+        // Terminal: plain ground + high-contrast grid (pad/kit/AI not auto)
+        window.Environment?.clearFloorDeck?.();
+        window.Environment?.useSimpleGround?.();
+        const plane = Engine.groundPlane;
+        if (plane?.material?.color) {
+            plane.material.color.setHex(0x0c0e10);
+            plane.material.roughness = 0.92;
+            plane.material.metalness = 0.02;
+            plane.material.envMapIntensity = 0.12;
+            plane.material.needsUpdate = true;
+        }
+        // Terminal grid colors (accent major / dim minor)
+        if (Engine.gridHelper) {
+            Engine.scene.remove(Engine.gridHelper);
+            Engine.gridHelper.geometry?.dispose?.();
+            Engine.gridHelper.material?.dispose?.();
+        }
+        const THREE = window.THREE;
+        if (THREE) {
+            Engine.gridHelper = new THREE.GridHelper(80, 80, 0x2a6b3a, 0x1a1f1c);
+            Engine.gridHelper.position.y = 0.07;
+            Engine.scene.add(Engine.gridHelper);
+        }
+    }
 
     State.gridVisible = true;
     if (Engine.gridHelper) Engine.gridHelper.visible = true;
     const gridBtn = document.getElementById('btn-grid');
     if (gridBtn) gridBtn.textContent = 'ON';
 
-    // Soft daylight — readable pad + light-baked Neg LOD
-    State.env.timeOfDay = 14;
-    State.env.fogDensity = 0.01;
-    State.env.atmosphereEnabled = true;
-    window.Environment?.setTimeOfDay?.(14);
-    window.Environment?.setFog?.(0.01);
+    // Hard terminal atmosphere — low fog, dark sky, no soft daylight pad
+    State.env.timeOfDay = 22;
+    State.env.fogDensity = 0.018;
+    State.env.atmosphereEnabled = false;
+    window.Environment?.setTimeOfDay?.(22);
+    window.Environment?.setFog?.(0.018);
     const Env = window.Environment;
-    if (Env) {
-        if (!Env.hemiLight) {
-            const THREE = window.THREE;
-            if (THREE && Engine.scene) {
-                Env.hemiLight = new THREE.HemisphereLight(0x87ceeb, 0x1a2a12, 0.55);
-                Engine.scene.add(Env.hemiLight);
-            }
-        }
-        if (Env.hemiLight) Env.hemiLight.visible = true;
-        const btn = document.getElementById('env-atmo-toggle');
-        if (btn) {
-            btn.textContent = 'ON';
-            btn.classList.add('active');
-        }
+    if (Env?.hemiLight) Env.hemiLight.visible = false;
+    const atmoBtn = document.getElementById('env-atmo-toggle');
+    if (atmoBtn) {
+        atmoBtn.textContent = 'OFF';
+        atmoBtn.classList.remove('active');
+    }
+    // Dim ambient for terminal feel (sun still exists for PBR readability)
+    if (Env?.sunLight) {
+        Env.sunLight.intensity = 0.85;
+        Env.sunLight.color?.setHex?.(0xc8d4e0);
     }
     window.NegativeLod?.notifyEnvChange?.();
 
@@ -59,28 +86,10 @@ export async function buildStarterGrid() {
         Engine.controls.target.set(tgt.x, tgt.y, tgt.z);
     }
 
-    if (!State.objects.some((o) => o.userData?.id === 'starter_ai_terminal')) {
-        spawnAiTerminal({
-            id: 'starter_ai_terminal',
-            pos: { x: -2.8, y: 0, z: 2.4 },
-            rotY: 0.35,
-            showcase: false,
-            name: 'AI Build Station',
-            interactLabel: 'AI Build Station',
-            interactHint: 'Connect agents — Grok · Ollama · build assistant',
-        });
-    }
+    // No auto kit / AI station — INSERT: PHYSICS KIT / AI STATION when ready
 
-    try {
-        await spawnStarterKit();
-    } catch (e) {
-        console.warn('[starter-grid] kit', e);
-    }
-
-    window.StarterTex?.wireStarterTextures?.().catch(() => {});
-
-    return State.objects.find((o) => o.userData?.id === 'engine_floor_deck'
-        || o.userData?.id === 'engine_ground') || null;
+    return State.objects.find((o) => o.userData?.id === 'engine_ground'
+        || o.userData?.id === 'engine_floor_deck') || null;
 }
 
 window.buildStarterGrid = buildStarterGrid;

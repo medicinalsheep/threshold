@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.14.4 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.15.0 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -179,12 +179,19 @@ Accounts guide: [AUTH.md](AUTH.md) · Snapshot: [CAPABILITIES.md](CAPABILITIES.m
 
 | Slice | Focus |
 |-------|-------|
-| **10.14.0** | PLAY entry · slab pad · starter kit · mass/friction · hinges · gravity · Physics Lab |
-| **10.14.1** | Avatar LOD hop fix · realistic starter skin/outfit |
-| **10.14.2** | Pages stale-chunk recovery · faster CI (no texture regen every deploy) |
-| **10.14.3** | Doc truth sweep · browser notes · light cleanup |
+| **10.14.0–4** | Pad/kit era · physics · avatar LOD · thrash fix · docs |
 
-Perf: [PERF_NEXT.md](PERF_NEXT.md) · Physics: [PHYSICS.md](PHYSICS.md) · Materials: [MATERIALS.md](MATERIALS.md) · Surfaces: [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · Ship: [STORE_RELEASE.md](STORE_RELEASE.md)
+## 10.15 — Terminal baseline + arrange / play-as
+
+| Slice | Focus |
+|-------|-------|
+| **10.15.0** | **Terminal void default** — strip pad/kit/AI auto; INSERT opt-in |
+| **10.15.1** | Grid units (1u=1m) · snap · grid size menu *(next)* |
+| **10.15.2** | Arrange mode — select · WASD/drag · snap *(next)* |
+| **10.15.3** | Play as — possess NPC/object *(next)* |
+| **10.15.x** | Quality re-add ladder · doc sweep |
+
+Perf: [PERF_NEXT.md](PERF_NEXT.md) · Physics: [PHYSICS.md](PHYSICS.md) · Materials: [MATERIALS.md](MATERIALS.md)
 
 ---
 

@@ -16,7 +16,7 @@ export async function bootstrapStarterScene() {
     scheduleTemplateSpawn(EXTERIOR_SPAWN, {
         skipIntro: true,
         spawnDelay: 80,
-        status: 'Workspace pad — walk · EDIT to build · push crate / hinge gate · AI station',
+        status: 'Terminal grid — walk · EDIT to place · INSERT for kit / materials (quality ladder)',
     });
 }
 

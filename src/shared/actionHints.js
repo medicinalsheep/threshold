@@ -5,17 +5,17 @@ import { ViewPrefs } from './viewPrefs.js';
 const HINTS = [
     {
         id: 'walk',
-        text: 'Walk the pad — push the crate · try the hinge gate · EDIT (top-left) to build',
+        text: 'Terminal grid — walk the void · EDIT (top-left) to place objects',
         afterMs: 0,
     },
     {
-        id: 'physics',
-        text: 'EDIT → select prop → mass / friction · SCENE gravity · INSERT Physics Lab for more',
-        afterMs: 28000,
+        id: 'insert',
+        text: 'INSERT: cube / materials / optional PHYSICS KIT · build quality one layer at a time',
+        afterMs: 22000,
     },
     {
         id: 'promptgen',
-        text: 'TOOLS → Compiler or PromptGen · AI station (F) for agents',
+        text: 'TOOLS → Compiler or PromptGen · SETUP agents when ready',
         afterMs: 52000,
     },
     {
