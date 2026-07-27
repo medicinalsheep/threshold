@@ -61,8 +61,9 @@ export const Engine = {
         Environment.sunLight.shadow.mapSize.width = 2048;
         Environment.sunLight.shadow.mapSize.height = 2048;
         this.scene.add(Environment.sunLight);
-        // Visual Helpers
-        this.gridHelper = new THREE.GridHelper(40, 40, 0x666666, 0x333333);
+        // Visual grid — rebuilt by GridSystem to match cell size (1 unit = 1 m)
+        this.gridHelper = new THREE.GridHelper(80, 80, 0x2a6b3a, 0x1a1f1c);
+        this.gridHelper.position.y = 0.07;
         this.scene.add(this.gridHelper);
         // Default play surface — Environment.useSimpleGround() wires PBR maps
         const planeGeo = new THREE.PlaneGeometry(100, 100);
@@ -83,7 +84,18 @@ export const Engine = {
         this.transformControl = new TransformControls(this.camera, this.renderer.domElement);
         this.transformControl.addEventListener('dragging-changed', (event) => {
             this.controls.enabled = !event.value;
-            if (!event.value) this.syncPhysicsFromMesh(State.selectedObject);
+            if (!event.value) {
+                // Snap mesh to grid on gizmo release
+                const obj = State.selectedObject;
+                if (obj && window.GridSystem?.isSnapEnabled?.()) {
+                    const s = window.GridSystem.snapPosition(obj.position, { y: false });
+                    obj.position.x = s.x;
+                    obj.position.z = s.z;
+                    obj.rotation.y = window.GridSystem.snapRotationY(obj.rotation.y, 15);
+                    obj.updateMatrixWorld?.(true);
+                }
+                this.syncPhysicsFromMesh(State.selectedObject);
+            }
         });
         this.scene.add(this.transformControl);
         this.raycaster = new THREE.Raycaster();
@@ -192,8 +204,13 @@ export const Engine = {
     },
     toggleGrid: function () {
         State.gridVisible = !State.gridVisible;
-        this.gridHelper.visible = State.gridVisible;
+        if (this.gridHelper) this.gridHelper.visible = State.gridVisible;
         return State.gridVisible;
+    },
+
+    /** Delegate to GridSystem when available */
+    rebuildGridHelper: function () {
+        return window.GridSystem?.rebuildHelper?.() || this.gridHelper;
     },
     setupPipeline: function () {
         const size = new THREE.Vector2(window.innerWidth, window.innerHeight - (document.getElementById('app-nav')?.offsetHeight || 50));

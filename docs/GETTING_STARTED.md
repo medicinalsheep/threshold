@@ -1,4 +1,4 @@
-# Getting started with Threshold (v10.15.0)
+# Getting started with Threshold (v10.15.1)
 
 One linear path from lobby to shipping — **terminal grid** default (empty quality baseline), Agent Portal, tiered agents, and optional **TC** export practice.
 
@@ -39,7 +39,8 @@ Lobby → ENTER (solo) → PLAY on terminal grid → EDIT to build → Export �
 | 2 | Engine | Dark ground + grid · no auto props · hub tour |
 | 3 | **Surface** | Phones **player**; desktop **creator**. `?surface=` |
 | 4 | **Agent Portal** (creator) | Grok/Ollama · describe a scene |
-| 5 | **EDIT** | Insert cube · materials · optional PHYSICS KIT / AI STATION |
+| 5 | **EDIT** | Insert cube · SCENE **Cell** / **Snap** (1 unit = 1 m) · optional kit |
+| 5b | **SCENE** | Grid cell size · snap toggle · show grid |
 | 6 | **PLAY** | Walk · sim · **F** interact |
 | 7 | **SETUP** (optional) | Ollama tiers · gravity · Grok key |
 | 8 | **TOOLS → EXPORT** | 9-step walkthrough |

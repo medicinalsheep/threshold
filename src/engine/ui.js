@@ -335,8 +335,10 @@ export const UI = {
         SceneDock.openTab('inspect');
         this.loadInspectorFromObject(obj);
         document.getElementById('btn-lock').innerText = obj.userData.locked ? 'LOCKED' : 'UNLOCK';
-        if (!obj.userData.locked && SimMode.isEdit()) Engine.transformControl.attach(obj);
-        else Engine.transformControl.detach();
+        if (!obj.userData.locked && SimMode.isEdit()) {
+            Engine.transformControl.attach(obj);
+            window.GridSystem?.applyTransformSnap?.();
+        } else Engine.transformControl.detach();
     },
     deselectObject: function () {
         const prev = State.selectedObject;

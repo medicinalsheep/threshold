@@ -36,18 +36,10 @@ export async function buildStarterGrid(opts = {}) {
             plane.material.envMapIntensity = 0.12;
             plane.material.needsUpdate = true;
         }
-        // Terminal grid colors (accent major / dim minor)
-        if (Engine.gridHelper) {
-            Engine.scene.remove(Engine.gridHelper);
-            Engine.gridHelper.geometry?.dispose?.();
-            Engine.gridHelper.material?.dispose?.();
-        }
-        const THREE = window.THREE;
-        if (THREE) {
-            Engine.gridHelper = new THREE.GridHelper(80, 80, 0x2a6b3a, 0x1a1f1c);
-            Engine.gridHelper.position.y = 0.07;
-            Engine.scene.add(Engine.gridHelper);
-        }
+        // Grid cell size + helper (1 unit = 1 m) via GridSystem
+        window.GridSystem?.rebuildHelper?.();
+        window.GridSystem?.applyTransformSnap?.();
+        window.GridSystem?.syncUi?.();
     }
 
     State.gridVisible = true;

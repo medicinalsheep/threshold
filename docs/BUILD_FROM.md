@@ -63,6 +63,7 @@ Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [UI_AND_A
 ## Shipped systems (do not re-invent)
 
 - **Terminal grid default** — void + GridHelper · ENTER → **PLAY** · kit/pad/AI opt-in via INSERT
+- **Grid units** — **1 unit = 1 m** · SCENE cell size · snap · `GridSystem`
 - **Physics** — mass/friction/joints · gravity UI · kit not auto · [PHYSICS.md](PHYSICS.md) · `physics:verify`
 - **Avatar** — realistic starter maps + outfit · multi-LOD walk pose (no zoom hop)
 - **Neg LOD** — ~**100m** light-bake · mesh/HILOD **18/48m** first · [NEGATIVE_LOD.md](NEGATIVE_LOD.md)

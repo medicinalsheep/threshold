@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.15)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.15.0
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.15.1
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -49,6 +49,7 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | TC circuit + drive | `tcCircuit.js`, `tcDrive.js` |
 | Graphics tiers | `graphicsProfile.js` — PBR default; retro opt-in |
 | Terminal grid default | Void + GridHelper · ENTER PLAY · kit/AI **INSERT only**; [PHYSICS.md](PHYSICS.md) |
+| Grid / snap | 1 unit = 1 m · cell size menu · Transform snap · `gridSystem.js` |
 | Physics / joints | Mass·friction live · hinge/lock · gravity; kit opt-in; `physics:verify` |
 | Avatar defaults | Realistic skin/fabric + normals · starter outfit · multi-LOD walk pose |
 | Pages deploy | Stale-chunk auto-reload · CI skips full texture regen |

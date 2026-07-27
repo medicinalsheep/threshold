@@ -29,6 +29,7 @@ import '../shared/assetProductionPlan.js';
 import '../shared/materialPresets.js';
 import '../shared/materialLibrary.js';
 import '../shared/starterKit.js';
+import '../shared/gridSystem.js';
 import '../shared/avatarPoseSync.js';
 import '../shared/shaderRegistry.js';
 import '../shared/shaderNodeGraph.js';
@@ -138,6 +139,7 @@ export function initEngine() {
     window.initPerfHarness?.();
     window.initMaterialLibrary?.();
     window.StarterKit?.initStarterKitUi?.();
+    window.GridSystem?.initUi?.();
     window.GuidedSession?.init?.();
     window.IntroSkip?.init?.();
     window.ActionHints?.init?.();

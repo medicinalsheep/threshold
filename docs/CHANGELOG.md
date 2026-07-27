@@ -1,3 +1,11 @@
+## 10.15.1 — Grid units + snap (1 unit = 1 m)
+
+- **`GridSystem`** — cell size prefs, snap toggle, rebuild GridHelper to match cell
+- SCENE: Cell size (0.25–5 m / custom) · Snap ON/OFF · “1 unit = 1 m”
+- TransformControls translation/rotation snap when Snap ON
+- Gizmo release snaps XZ + yaw; ViewPrefs persist `gridSize` / `gridSnap`
+- Next: Arrange mode (WASD/drag) · Play as
+
 ## 10.15.0 — Terminal void default (quality ladder)
 
 - **ENTER baseline** — dark ground + high-contrast GridHelper only (no pad, no kit, no AI kiosk)
