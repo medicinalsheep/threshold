@@ -182,6 +182,15 @@ export const UI = {
             UI.renderSoundLibrary();
         });
         document.getElementById('btn-reload-skin')?.addEventListener('click', () => UI.reloadPlayerSkin());
+        document.getElementById('skin-tone-preset')?.addEventListener('change', (e) => {
+            const slug = e.target?.value;
+            const hex = window.AppearanceProfile?.skinHexForSlug?.(slug);
+            const head = document.getElementById('skin-head-color');
+            if (hex && head) head.value = hex;
+            // Auto-apply if player already spawned
+            if (window.PlayerController?.spawned) UI.reloadPlayerSkin?.();
+            else UI.status?.(`Skin tone: ${e.target?.selectedOptions?.[0]?.text || slug} — spawn / reload to apply`);
+        });
         document.getElementById('btn-player-code')?.addEventListener('click', () => UI.openPlayerCodeRef());
 
         document.getElementById('ctx-edit-inspect').onclick = () => { if (State.selectedObject) UI.selectObject(State.selectedObject); UI.closeCtx(); };

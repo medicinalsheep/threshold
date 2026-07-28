@@ -18,11 +18,27 @@ export const DEFAULT_OUTFIT_MODS = [
     'belt_utility',
 ];
 
+/**
+ * Skin tone ladder — lighter → deeper (Fitzpatrick-inspired range).
+ * Each id maps to textures/{id}_{albedo,roughness,normal}*.
+ */
 export const SKIN_TEXTURE_VARIANTS = [
-    { id: 'starter_skin_light', label: 'Light' },
-    { id: 'starter_skin_medium', label: 'Medium' },
-    { id: 'starter_skin_deep', label: 'Deep' },
+    { id: 'starter_skin_porcelain', label: 'Porcelain', hex: '#f2d4c8', hint: 'Very fair · cool' },
+    { id: 'starter_skin_light', label: 'Light', hex: '#e8c4a8', hint: 'Fair · neutral' },
+    { id: 'starter_skin_honey', label: 'Honey', hex: '#e0b090', hint: 'Warm fair' },
+    { id: 'starter_skin_olive', label: 'Olive', hex: '#c4a070', hint: 'Light-medium · olive' },
+    { id: 'starter_skin_medium', label: 'Medium', hex: '#c9956c', hint: 'Medium · warm' },
+    { id: 'starter_skin_tan', label: 'Tan', hex: '#b88858', hint: 'Golden tan' },
+    { id: 'starter_skin_caramel', label: 'Caramel', hex: '#8b5a3c', hint: 'Rich brown' },
+    { id: 'starter_skin_deep', label: 'Deep', hex: '#5c3a28', hint: 'Deep brown' },
+    { id: 'starter_skin_ebony', label: 'Ebony', hex: '#2a1a14', hint: 'Deepest · cool' },
 ];
+
+/** Default mesh tint when a tone is selected (multiplies with map at white) */
+export function skinHexForSlug(slug) {
+    const v = SKIN_TEXTURE_VARIANTS.find((s) => s.id === slug);
+    return v?.hex || DEFAULT_COLORS.skin;
+}
 
 export const DEFAULT_PROFILE = {
     format: APPEARANCE_FORMAT,
@@ -132,9 +148,22 @@ export function profileToMeshOpts(profile) {
 export function resolveSkinSlug(profile) {
     const t = normalizeProfile(profile).textures?.skin || 'starter_skin_medium';
     if (t === 'starter_skin') return 'starter_skin_medium';
-    if (['starter_skin_light', 'starter_skin_medium', 'starter_skin_deep'].includes(t)) return t;
+    if (SKIN_TEXTURE_VARIANTS.some((s) => s.id === t)) return t;
     if (String(t).startsWith('starter_skin_')) return t;
     return 'starter_skin_medium';
+}
+
+/** Fill #skin-tone-preset from SKIN_TEXTURE_VARIANTS */
+export function initSkinToneSelect(selectedId = null) {
+    const sel = document.getElementById('skin-tone-preset');
+    if (!sel) return;
+    const cur = selectedId || sel.value || 'starter_skin_medium';
+    sel.innerHTML = SKIN_TEXTURE_VARIANTS.map((s) => {
+        const title = s.hint ? ` title="${s.hint}"` : '';
+        return `<option value="${s.id}"${title}>${s.label}</option>`;
+    }).join('');
+    if (SKIN_TEXTURE_VARIANTS.some((s) => s.id === cur)) sel.value = cur;
+    else sel.value = 'starter_skin_medium';
 }
 
 export function texturesFromUi() {
@@ -286,6 +315,7 @@ export function syncUiFromProfile(profile) {
     if (document.getElementById('skin-mod-list')) {
         initModPickerUi(p.mods || []);
     }
+    initSkinToneSelect(resolveSkinSlug(p));
     const toneSel = document.getElementById('skin-tone-preset');
     if (toneSel) toneSel.value = resolveSkinSlug(p);
     const imp = document.getElementById('skin-body-import');
@@ -310,6 +340,8 @@ window.AppearanceProfile = {
     profileToMeshOpts,
     profileForNetwork,
     resolveSkinSlug,
+    skinHexForSlug,
+    initSkinToneSelect,
     colorsFromUi,
     texturesFromUi,
     modsFromUi,

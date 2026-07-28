@@ -1,3 +1,9 @@
+## 10.15.10 — Expanded skin tone ladder (9 tones)
+
+- **9 skin textures** (albedo + normal + roughness each): Porcelain · Light · Honey · Olive · Medium · Tan · Caramel · Deep · Ebony
+- SKIN panel select rebuilt from `SKIN_TEXTURE_VARIANTS`; tone change updates head color hex + auto-reloads if spawned
+- Pipeline processes all skins via `textures:handpaint`
+
 ## 10.15.9 — True PBR maps + avatar skins/hair
 
 - **B True PBR** — painted/generated normal + roughness for all 12 materials; metalness for metal/copper/terminal

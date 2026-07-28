@@ -217,6 +217,7 @@ export function initEngine() {
             // Full MOD catalog UI (avatar-mods.json)
             try {
                 const mods = window.AppearanceStore?.getPlayerProfile?.()?.mods || [];
+                window.AppearanceProfile?.initSkinToneSelect?.();
                 window.AppearanceProfile?.initModPickerUi?.(mods);
             } catch { /* optional */ }
         }, 120);

@@ -1339,6 +1339,81 @@
       ]
     },
     {
+      "id": "starter_skin_porcelain_albedo",
+      "objectName": "Avatar Skin Porcelain",
+      "slot": "albedo",
+      "file": "starter_skin_porcelain_albedo.png",
+      "path": "textures/starter_skin_porcelain_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_porcelain_albedo_1k.png",
+          "path": "textures/starter_skin_porcelain_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_porcelain_albedo_2k.png",
+          "path": "textures/starter_skin_porcelain_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_porcelain_roughness",
+      "objectName": "Avatar Skin Porcelain",
+      "slot": "roughness",
+      "file": "starter_skin_porcelain_roughness.png",
+      "path": "textures/starter_skin_porcelain_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_porcelain_roughness_1k.png",
+          "path": "textures/starter_skin_porcelain_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_porcelain_roughness_2k.png",
+          "path": "textures/starter_skin_porcelain_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_porcelain_normal",
+      "objectName": "Avatar Skin Porcelain",
+      "slot": "normal",
+      "file": "starter_skin_porcelain_normal.png",
+      "path": "textures/starter_skin_porcelain_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_porcelain_normal_1k.png",
+          "path": "textures/starter_skin_porcelain_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_porcelain_normal_2k.png",
+          "path": "textures/starter_skin_porcelain_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
       "id": "starter_skin_light_albedo",
       "objectName": "Avatar Skin Light",
       "slot": "albedo",
@@ -1409,6 +1484,156 @@
           "suffix": "_2k",
           "file": "starter_skin_light_normal_2k.png",
           "path": "textures/starter_skin_light_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_honey_albedo",
+      "objectName": "Avatar Skin Honey",
+      "slot": "albedo",
+      "file": "starter_skin_honey_albedo.png",
+      "path": "textures/starter_skin_honey_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_honey_albedo_1k.png",
+          "path": "textures/starter_skin_honey_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_honey_albedo_2k.png",
+          "path": "textures/starter_skin_honey_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_honey_roughness",
+      "objectName": "Avatar Skin Honey",
+      "slot": "roughness",
+      "file": "starter_skin_honey_roughness.png",
+      "path": "textures/starter_skin_honey_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_honey_roughness_1k.png",
+          "path": "textures/starter_skin_honey_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_honey_roughness_2k.png",
+          "path": "textures/starter_skin_honey_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_honey_normal",
+      "objectName": "Avatar Skin Honey",
+      "slot": "normal",
+      "file": "starter_skin_honey_normal.png",
+      "path": "textures/starter_skin_honey_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_honey_normal_1k.png",
+          "path": "textures/starter_skin_honey_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_honey_normal_2k.png",
+          "path": "textures/starter_skin_honey_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_olive_albedo",
+      "objectName": "Avatar Skin Olive",
+      "slot": "albedo",
+      "file": "starter_skin_olive_albedo.png",
+      "path": "textures/starter_skin_olive_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_olive_albedo_1k.png",
+          "path": "textures/starter_skin_olive_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_olive_albedo_2k.png",
+          "path": "textures/starter_skin_olive_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_olive_roughness",
+      "objectName": "Avatar Skin Olive",
+      "slot": "roughness",
+      "file": "starter_skin_olive_roughness.png",
+      "path": "textures/starter_skin_olive_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_olive_roughness_1k.png",
+          "path": "textures/starter_skin_olive_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_olive_roughness_2k.png",
+          "path": "textures/starter_skin_olive_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_olive_normal",
+      "objectName": "Avatar Skin Olive",
+      "slot": "normal",
+      "file": "starter_skin_olive_normal.png",
+      "path": "textures/starter_skin_olive_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_olive_normal_1k.png",
+          "path": "textures/starter_skin_olive_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_olive_normal_2k.png",
+          "path": "textures/starter_skin_olive_normal_2k.png",
           "maxPx": 2048
         }
       ]
@@ -1489,6 +1714,156 @@
       ]
     },
     {
+      "id": "starter_skin_tan_albedo",
+      "objectName": "Avatar Skin Tan",
+      "slot": "albedo",
+      "file": "starter_skin_tan_albedo.png",
+      "path": "textures/starter_skin_tan_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_tan_albedo_1k.png",
+          "path": "textures/starter_skin_tan_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_tan_albedo_2k.png",
+          "path": "textures/starter_skin_tan_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_tan_roughness",
+      "objectName": "Avatar Skin Tan",
+      "slot": "roughness",
+      "file": "starter_skin_tan_roughness.png",
+      "path": "textures/starter_skin_tan_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_tan_roughness_1k.png",
+          "path": "textures/starter_skin_tan_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_tan_roughness_2k.png",
+          "path": "textures/starter_skin_tan_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_tan_normal",
+      "objectName": "Avatar Skin Tan",
+      "slot": "normal",
+      "file": "starter_skin_tan_normal.png",
+      "path": "textures/starter_skin_tan_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_tan_normal_1k.png",
+          "path": "textures/starter_skin_tan_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_tan_normal_2k.png",
+          "path": "textures/starter_skin_tan_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_caramel_albedo",
+      "objectName": "Avatar Skin Caramel",
+      "slot": "albedo",
+      "file": "starter_skin_caramel_albedo.png",
+      "path": "textures/starter_skin_caramel_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_caramel_albedo_1k.png",
+          "path": "textures/starter_skin_caramel_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_caramel_albedo_2k.png",
+          "path": "textures/starter_skin_caramel_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_caramel_roughness",
+      "objectName": "Avatar Skin Caramel",
+      "slot": "roughness",
+      "file": "starter_skin_caramel_roughness.png",
+      "path": "textures/starter_skin_caramel_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_caramel_roughness_1k.png",
+          "path": "textures/starter_skin_caramel_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_caramel_roughness_2k.png",
+          "path": "textures/starter_skin_caramel_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_caramel_normal",
+      "objectName": "Avatar Skin Caramel",
+      "slot": "normal",
+      "file": "starter_skin_caramel_normal.png",
+      "path": "textures/starter_skin_caramel_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_caramel_normal_1k.png",
+          "path": "textures/starter_skin_caramel_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_caramel_normal_2k.png",
+          "path": "textures/starter_skin_caramel_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
       "id": "starter_skin_deep_albedo",
       "objectName": "Avatar Skin Deep",
       "slot": "albedo",
@@ -1564,6 +1939,81 @@
       ]
     },
     {
+      "id": "starter_skin_ebony_albedo",
+      "objectName": "Avatar Skin Ebony",
+      "slot": "albedo",
+      "file": "starter_skin_ebony_albedo.png",
+      "path": "textures/starter_skin_ebony_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_ebony_albedo_1k.png",
+          "path": "textures/starter_skin_ebony_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_ebony_albedo_2k.png",
+          "path": "textures/starter_skin_ebony_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_ebony_roughness",
+      "objectName": "Avatar Skin Ebony",
+      "slot": "roughness",
+      "file": "starter_skin_ebony_roughness.png",
+      "path": "textures/starter_skin_ebony_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_ebony_roughness_1k.png",
+          "path": "textures/starter_skin_ebony_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_ebony_roughness_2k.png",
+          "path": "textures/starter_skin_ebony_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_ebony_normal",
+      "objectName": "Avatar Skin Ebony",
+      "slot": "normal",
+      "file": "starter_skin_ebony_normal.png",
+      "path": "textures/starter_skin_ebony_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_ebony_normal_1k.png",
+          "path": "textures/starter_skin_ebony_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_ebony_normal_2k.png",
+          "path": "textures/starter_skin_ebony_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
       "id": "hair_alpha_albedo",
       "objectName": "Avatar Hair Alpha",
       "slot": "albedo",
@@ -1591,9 +2041,9 @@
   ],
   "exportDir": "textures",
   "tcRealism": "r8",
-  "exportedAt": "2026-07-28T02:02:27.000Z",
+  "exportedAt": "2026-07-28T02:48:36.712Z",
   "note": "Starter PBR library — 2K masters + HILOD 1k/2k + WebP. Palettes match tc-gen-tex slotFn styles.",
-  "updated": "2026-07-28T02:02:27.000Z",
+  "updated": "2026-07-28T02:48:36.712Z",
   "handpainted": true,
   "handpaintedNote": "True painted/generated albedo + normal + roughness (+ metalness); avatar skins (10.15.9)"
 }

@@ -20,7 +20,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.15.9" />
+    <meta name="threshold-version" content="10.15.10" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD SUITE</title>
 </head>
@@ -239,7 +239,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.15.9</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" title="UI surface">CREATE</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.15.10</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" title="UI surface">CREATE</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
@@ -936,10 +936,16 @@
                     </select>
                 </div>
                 <div class="prop-row"><label>Skin tone</label>
-                    <select id="skin-tone-preset" class="insert-input" style="flex:1;">
+                    <select id="skin-tone-preset" class="insert-input" style="flex:1;" title="Expanded tone ladder (porcelain → ebony)">
+                        <option value="starter_skin_porcelain">Porcelain</option>
                         <option value="starter_skin_light">Light</option>
+                        <option value="starter_skin_honey">Honey</option>
+                        <option value="starter_skin_olive">Olive</option>
                         <option value="starter_skin_medium" selected>Medium</option>
+                        <option value="starter_skin_tan">Tan</option>
+                        <option value="starter_skin_caramel">Caramel</option>
                         <option value="starter_skin_deep">Deep</option>
+                        <option value="starter_skin_ebony">Ebony</option>
                     </select>
                 </div>
                 <div class="prop-row"><label>Shirt</label><input type="color" id="skin-body-color" value="#3d5a80"></div>

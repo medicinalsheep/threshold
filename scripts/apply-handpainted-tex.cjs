@@ -334,33 +334,18 @@ function buildManifestEntries(slug, objectName, produced) {
     return entries;
 }
 
-/** Avatar skins + hair (not in default-textures.json) */
+/** Avatar skins + hair (not in default-textures.json) — expanded tone ladder */
 const AVATAR_ASSETS = [
-    {
-        slug: 'starter_skin_light',
-        objectName: 'Avatar Skin Light',
-        slots: ['albedo', 'roughness', 'normal'],
-        seamless: false,
-    },
-    {
-        slug: 'starter_skin_medium',
-        objectName: 'Avatar Skin Medium',
-        slots: ['albedo', 'roughness', 'normal'],
-        seamless: false,
-    },
-    {
-        slug: 'starter_skin_deep',
-        objectName: 'Avatar Skin Deep',
-        slots: ['albedo', 'roughness', 'normal'],
-        seamless: false,
-    },
-    {
-        slug: 'hair_alpha',
-        objectName: 'Avatar Hair Alpha',
-        slots: ['albedo'],
-        seamless: false,
-        keepAlpha: true,
-    },
+    { slug: 'starter_skin_porcelain', objectName: 'Avatar Skin Porcelain', slots: ['albedo', 'roughness', 'normal'], seamless: false },
+    { slug: 'starter_skin_light', objectName: 'Avatar Skin Light', slots: ['albedo', 'roughness', 'normal'], seamless: false },
+    { slug: 'starter_skin_honey', objectName: 'Avatar Skin Honey', slots: ['albedo', 'roughness', 'normal'], seamless: false },
+    { slug: 'starter_skin_olive', objectName: 'Avatar Skin Olive', slots: ['albedo', 'roughness', 'normal'], seamless: false },
+    { slug: 'starter_skin_medium', objectName: 'Avatar Skin Medium', slots: ['albedo', 'roughness', 'normal'], seamless: false },
+    { slug: 'starter_skin_tan', objectName: 'Avatar Skin Tan', slots: ['albedo', 'roughness', 'normal'], seamless: false },
+    { slug: 'starter_skin_caramel', objectName: 'Avatar Skin Caramel', slots: ['albedo', 'roughness', 'normal'], seamless: false },
+    { slug: 'starter_skin_deep', objectName: 'Avatar Skin Deep', slots: ['albedo', 'roughness', 'normal'], seamless: false },
+    { slug: 'starter_skin_ebony', objectName: 'Avatar Skin Ebony', slots: ['albedo', 'roughness', 'normal'], seamless: false },
+    { slug: 'hair_alpha', objectName: 'Avatar Hair Alpha', slots: ['albedo'], seamless: false, keepAlpha: true },
 ];
 
 async function main() {

@@ -109,7 +109,9 @@ export const AvatarTex = {
 
             if (region === 'skin') {
                 maps += await applySlug(mesh, skinSlug, ['albedo', 'roughness', 'normal'], TB);
-                tintMaterial(mesh, p.colors.skin, true);
+                // Map-driven look: keep tint near white when maps present; soft multiply via profile color
+                const toneHex = window.AppearanceProfile?.skinHexForSlug?.(skinSlug);
+                tintMaterial(mesh, p.colors.skin || toneHex || '#ffffff', true);
                 finishMaterial(mesh, SKIN_FINISH);
             } else if (region === 'shirt') {
                 maps += await applySlug(mesh, fabricSlug, ['albedo', 'roughness', 'normal'], TB);
