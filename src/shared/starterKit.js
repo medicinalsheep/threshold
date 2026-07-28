@@ -4,7 +4,13 @@
  */
 import * as THREE from 'three';
 
-const TAGS = { isStarterKit: true, isSimSample: true, negativeLodSource: 'tier-auto' };
+// noTextureHilod set when maps apply; skip auto Neg LOD on small sim props (anti pop)
+const TAGS = {
+    isStarterKit: true,
+    isSimSample: true,
+    noTextureHilod: true,
+    negativeLodExempt: true,
+};
 
 function place(mesh, x, y, z, rotY = 0) {
     if (!mesh) return null;
@@ -46,7 +52,7 @@ export async function spawnStarterKit(opts = {}) {
             physics: phys,
             force: true,
             silent: true,
-            noAutoNeg: false,
+            noAutoNeg: true,
             mass: extra.mass,
             friction: extra.friction,
             restitution: extra.restitution,

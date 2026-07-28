@@ -38,15 +38,41 @@ export function resolveFinishSettings(obj) {
     return starterTexCfg.defaults || {};
 }
 
+/**
+ * Prefer explicit HILOD tier over bare master (same res often — thrash flash).
+ * Order: _2k → _1k → bare.
+ */
+export function preferTierPath(entry) {
+    if (!entry) return null;
+    const variants = entry.variants || [];
+    const pick = (suf) => variants.find((v) => (v.suffix || '').toLowerCase() === suf);
+    const v2 = pick('_2k');
+    if (v2) return v2.path || `textures/${v2.file}`;
+    const v1 = pick('_1k');
+    if (v1) return v1.path || `textures/${v1.file}`;
+    return entry.path || (entry.file ? `textures/${entry.file}` : null);
+}
+
 export async function applyEntriesToMesh(mesh, entries, TB) {
     let maps = 0;
     for (const entry of entries) {
-        const filePath = entry.path || `textures/${entry.file}`;
+        const filePath = preferTierPath(entry);
+        if (!filePath) continue;
         try {
-            await TB.applyPathToObject(mesh, entry.slot, filePath);
+            await TB.applyPathToObject(mesh, entry.slot, filePath, {
+                skipBareMaster: true,
+                lockHilod: true,
+            });
             maps += 1;
         } catch (e) {
             console.warn('[starter-tex]', mesh.userData?.name, entry.slot, e);
+        }
+    }
+    // Hand-painted / starter maps: freeze HILOD after apply (anti-glitch)
+    if (mesh?.userData) {
+        mesh.userData.noTextureHilod = true;
+        if (mesh.userData.isMaterialExample) {
+            mesh.userData.negativeLodExempt = true;
         }
     }
     finishMaterial(mesh, resolveFinishSettings(mesh));
@@ -103,4 +129,10 @@ export async function wireStarterTextures() {
     return { n: wired, maps };
 }
 
-window.StarterTex = { wireStarterTextures, finishMaterial, resolveFinishSettings };
+window.StarterTex = {
+    wireStarterTextures,
+    finishMaterial,
+    resolveFinishSettings,
+    preferTierPath,
+    applyEntriesToMesh,
+};

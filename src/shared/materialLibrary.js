@@ -120,11 +120,13 @@ export const MaterialLibrary = {
                 mesh.userData.materialLibraryId = p.id;
                 mesh.userData.materialCategory = cats[row].id;
                 mesh.userData.polyBudget = 'low';
+                // Gallery samples: freeze maps — HILOD / Neg LOD thrash looked like glitching
+                mesh.userData.noTextureHilod = true;
+                mesh.userData.negativeLodExempt = true;
+                mesh.userData.negativeLOD = false;
+                mesh.userData.negativeLod = false;
                 await this.applyWithMaps(mesh, p.id);
-                if (window.NegativeLod?.enableObject) {
-                    const d = window.NegativeLod.config?.defaultDistance || 100;
-                    window.NegativeLod.enableObject(mesh, { distance: d, source: 'user' });
-                }
+                // Do NOT auto-enable Neg LOD on gallery samples (far orbit → unlit pop)
                 spawned.push(mesh);
             }
         }

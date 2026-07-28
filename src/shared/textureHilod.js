@@ -13,7 +13,7 @@ import {
 
 const _camPos = new THREE.Vector3();
 const _objPos = new THREE.Vector3();
-const UPDATE_INTERVAL_MS = 280;
+const UPDATE_INTERVAL_MS = 480;
 let _lastUpdateMs = 0;
 let _lastTier = null;
 let _lastCamKey = '';
@@ -81,10 +81,22 @@ export const TextureHilod = {
 
     registerVariant(obj, slot, path, texId = null) {
         if (!obj || !slot || !path) return;
+        if (obj.userData?.noTextureHilod) return;
         const hilod = ensureHilodUserData(obj);
         if (!hilod.slots[slot]) hilod.slots[slot] = {};
         const suffix = variantSuffix(path.split(/[/\\]/).pop() || path);
         hilod.slots[slot][suffix] = { path, texId };
+        // Bare master '' thrash with _2k when same res — drop bare once a tier exists
+        this.dropBareMasterIfTiers(obj, slot);
+    },
+
+    /** Remove bare '' variant when _1k/_2k/_4k exist (anti-flash) */
+    dropBareMasterIfTiers(obj, slot) {
+        const slots = obj?.userData?.textureHilod?.slots?.[slot];
+        if (!slots || !('' in slots)) return;
+        if (slots._2k || slots._1k || slots._4k) {
+            delete slots[''];
+        }
     },
 
     registerFromManifestEntries(obj, entries = []) {
@@ -186,9 +198,10 @@ export const TextureHilod = {
 
     async updateObject(obj, camera, TextureBridge) {
         if (!obj?.material || !obj.userData?.textureHilod?.slots) return;
-        // Floors / heroes / avatars: keep a stable map — distance thrash looked like "glitching textures"
+        // Floors / heroes / avatars / locked maps: keep a stable map — thrash = "glitching textures"
         if (obj.userData?.isFloor || obj.userData?.negativeLodFloor || obj.userData?.noTextureHilod) return;
         if (obj.userData?.isPlayer || obj.userData?.isHuman || obj.userData?.avatarTex) return;
+        if (obj.userData?.isMaterialExample || obj.userData?.isSimSample) return;
 
         const hilod = obj.userData.textureHilod;
         const distances = hilod.distances || LOD_DISTANCES;
@@ -198,9 +211,11 @@ export const TextureHilod = {
         const dist = Number.isFinite(obj.userData?._visDist)
             ? obj.userData._visDist
             : _camPos.distanceTo(_objPos);
-        const band = Number(hilod.hysteresisBand) || 4;
+        // Wider stickiness for painted maps
+        const band = Number(hilod.hysteresisBand) || 8;
 
         for (const slot of Object.keys(hilod.slots)) {
+            this.dropBareMasterIfTiers(obj, slot);
             const available = this.availableSuffixes(obj, slot);
             const prev = hilod.activeBySlot[slot];
             const prevIdx = Math.max(0, available.indexOf(prev));
@@ -211,10 +226,10 @@ export const TextureHilod = {
                 : prevIdx;
             const suffix = pickSuffix(dist, distances, textureMax, available, ladderIdx, band);
             if (prev === suffix) continue;
-            // Cooldown per slot — never thrash more than once per 450ms
+            // Cooldown per slot — thrash less than once per 900ms
             const coolKey = `_hilodCool_${slot}`;
             const now = performance.now();
-            if (hilod[coolKey] && now - hilod[coolKey] < 450) continue;
+            if (hilod[coolKey] && now - hilod[coolKey] < 900) continue;
             hilod[coolKey] = now;
             await this.applySuffix(obj, slot, suffix, TextureBridge);
         }
@@ -236,6 +251,7 @@ export const TextureHilod = {
             if (o?.userData?.isPlayer || o?.userData?.isHuman || o?.userData?.avatarTex) continue;
             if (o?.userData?.avatarTexMeshes?.length) continue;
             if (o?.userData?.isFloor || o?.userData?.negativeLodFloor) continue;
+            if (o?.userData?.noTextureHilod || o?.userData?.isMaterialExample) continue;
             if (o?.userData?.textureHilod?.slots && Object.keys(o.userData.textureHilod.slots).length) {
                 tasks.push(this.updateObject(o, camera, TextureBridge));
             }

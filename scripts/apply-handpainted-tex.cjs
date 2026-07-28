@@ -103,7 +103,7 @@ async function luminanceRaw(pngSharp) {
     return { lum, w, h, rgb: data, ch };
 }
 
-async function writeNormalFromLum(lum, w, h, outPath, strength = 2.2) {
+async function writeNormalFromLum(lum, w, h, outPath, strength = 1.15) {
     const out = Buffer.alloc(w * h * 3);
     for (let y = 0; y < h; y++) {
         for (let x = 0; x < w; x++) {
@@ -215,7 +215,7 @@ async function processSlug(slug, srcJpg, assetCfg) {
     // Normal
     if (slots.includes('normal')) {
         const nTmp = path.join(tmpDir, `${slug}_n.png`);
-        await writeNormalFromLum(lum, w, h, nTmp, METAL_SLUGS.has(slug) ? 1.4 : 2.4);
+        await writeNormalFromLum(lum, w, h, nTmp, METAL_SLUGS.has(slug) ? 0.75 : 1.15);
         const files = await writeTiers(nTmp, `${slug}_normal`, TEX);
         produced.push(...files.map((f) => ({ slot: 'normal', file: f })));
     }

@@ -172,15 +172,23 @@ export const TextureBridge = {
         throw new Error(`Texture not found in bundle: ${name} (${tried})`);
     },
 
-    async applyPathToObject(obj, slot, filePath) {
+    async applyPathToObject(obj, slot, filePath, opts = {}) {
         if (!obj?.material || !SLOT_PROPS[slot] || !filePath) return null;
         const record = await this.loadFileFromPath(filePath);
         await this.applySlot(obj, slot, record.id);
         const textures = ensureTexturesUserData(obj);
         textures[slot] = record.id;
-        TextureHilod.registerVariant(obj, slot, filePath, record.id);
-        TextureHilod.discoverVariants(obj, slot, filePath, (p) => this.loadFileFromPath(p));
-        TextureHilod.discoverVariantsFromBundle(obj);
+        if (opts.lockHilod || obj.userData?.noTextureHilod) {
+            // Stable maps only — no distance thrash registration
+            obj.userData.noTextureHilod = true;
+        } else {
+            TextureHilod.registerVariant(obj, slot, filePath, record.id);
+            TextureHilod.discoverVariants(obj, slot, filePath, (p) => this.loadFileFromPath(p));
+            TextureHilod.discoverVariantsFromBundle(obj);
+            if (opts.skipBareMaster) {
+                TextureHilod.dropBareMasterIfTiers?.(obj, slot);
+            }
+        }
         if (slot === 'albedo') obj.userData.textureHint = filePath;
         return record;
     },
@@ -425,8 +433,11 @@ export const TextureBridge = {
         const texture = await NativeTextureCodec.loadTextureFromUrl(loadUrl, { isKtx2 });
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
+        // Albedo sRGB; data maps must stay linear (wrong space = shimmer/spec crawl)
         if (slot === 'albedo' && THREE.SRGBColorSpace) {
             texture.colorSpace = THREE.SRGBColorSpace;
+        } else if (THREE.NoColorSpace) {
+            texture.colorSpace = THREE.NoColorSpace;
         }
         mat[prop] = texture;
         if (slot === 'normal' && mat.normalScale) {

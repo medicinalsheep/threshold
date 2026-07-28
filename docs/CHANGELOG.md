@@ -1,3 +1,13 @@
+## 10.15.8 — Anti-glitch texture / LOD engineering
+
+- **Starter maps lock** — `applyWithMaps` / material library: `noTextureHilod` (no distance map swaps)
+- **Prefer `_2k`/`_1k`** over bare master; drop bare when tiers exist (anti-flash)
+- **Material gallery** — no Neg LOD auto, no HILOD thrash
+- **Physics kit** — `noAutoNeg` + `negativeLodExempt` + frozen maps
+- **UV / normal scale** dialed down for hand-painted set (`starter-textures.json` v5)
+- **Data maps** force linear color space (rough/metal/normal)
+- HILOD cooldown 900 ms · wider hysteresis · slower update interval
+
 ## 10.15.7 — Hand-painted starter material textures
 
 - Replaced procedural hatch albedos for all **12** default materials with painted photoreal masters

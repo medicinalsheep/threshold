@@ -56,7 +56,7 @@ export function parseTextureFileName(fileName = '') {
  * @param {number} [currentIdx] last chosen index into available (hysteresis)
  * @param {number} [band] meters of stickiness at rung boundaries
  */
-export function pickSuffix(distance, distances, textureMax, availableSuffixes = [''], currentIdx = 0, band = 4) {
+export function pickSuffix(distance, distances, textureMax, availableSuffixes = [''], currentIdx = 0, band = 8) {
     const order = preferenceOrder(textureMax);
     // Keep only known quality ladder entries that exist
     let available = order.filter((s) => availableSuffixes.includes(s));
