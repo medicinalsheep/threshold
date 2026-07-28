@@ -6,7 +6,8 @@ Quality-first PBR library for builders and agents — **presets + hand-painted s
 
 **Live:** Engine → **INSERT → QUALITY** (or CHARACTER) → **MATERIAL LIBRARY** · or EDIT object → **Texture → Preset**.
 
-**Regen painted masters:** sources in `textures/_handpainted_src/` → `npm run textures:handpaint` (albedo masters → normal/roughness/metalness + HILOD + WebP).
+**Regen painted masters:** sources in `textures/_handpainted_src/` → `npm run textures:handpaint`  
+Albedo + optional true `{slug}_normal|roughness|metalness.*` → HILOD + WebP. Avatar skins/hair included.
 
 ---
 

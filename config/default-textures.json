@@ -1,7 +1,7 @@
 {
   "format": "threshold-default-textures",
-  "version": 4,
-  "note": "Starter PBR library — hand-painted albedos (10.15.7) + derived N/R/M + HILOD 1k/2k + WebP",
+  "version": 5,
+  "note": "Starter PBR — true hand-painted albedo + N/R/M (10.15.9) + HILOD 1k/2k + WebP",
   "masterPx": 2048,
   "hilod": [
     {
@@ -51,7 +51,8 @@
       "slots": [
         "albedo",
         "roughness",
-        "metalness"
+        "metalness",
+        "normal"
       ],
       "palette": {
         "body": [
@@ -308,7 +309,8 @@
       "tcEd": "tc-lite",
       "slots": [
         "albedo",
-        "roughness"
+        "roughness",
+        "normal"
       ],
       "palette": {
         "weave": [
@@ -360,5 +362,6 @@
       "presetId": "pbr_gravel_loose"
     }
   ],
-  "handpainted": true
+  "handpainted": true,
+  "truePbr": true
 }

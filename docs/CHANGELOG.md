@@ -1,3 +1,11 @@
+## 10.15.9 — True PBR maps + avatar skins/hair
+
+- **B True PBR** — painted/generated normal + roughness for all 12 materials; metalness for metal/copper/terminal
+- **C Avatar** — light/medium/deep skin albedo+normal+roughness · hair_alpha albedo
+- Pipeline prefers true maps over luminance-derived; sources in `textures/_handpainted_src/*_{normal,roughness,metalness}.*`
+- Fabric + terminal now include normals · avatarTex prefers `_2k` with `lockHilod`
+- Regen: `npm run textures:handpaint`
+
 ## 10.15.8 — Anti-glitch texture / LOD engineering
 
 - **Starter maps lock** — `applyWithMaps` / material library: `noTextureHilod` (no distance map swaps)

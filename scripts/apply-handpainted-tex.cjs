@@ -184,18 +184,47 @@ function compressWebp(pngPath) {
     }
 }
 
-async function processSlug(slug, srcJpg, assetCfg) {
+function findSlotSource(srcDir, slug, slot) {
+    for (const ext of ['.png', '.jpg', '.jpeg', '.webp']) {
+        const p = path.join(srcDir, `${slug}_${slot}${ext}`);
+        if (fs.existsSync(p)) return p;
+    }
+    return null;
+}
+
+async function processSlotImage(srcPath, outBase, tmpDir, masterPx, seamless = true, keepAlpha = false) {
+    const tmp = path.join(tmpDir, `${path.basename(outBase)}_m.png`);
+    if (seamless) {
+        await (await makeSeamlessish(srcPath, masterPx)).toFile(tmp);
+    } else {
+        let p = sharp(srcPath).resize(masterPx, masterPx, { fit: 'cover', position: 'centre' });
+        if (!keepAlpha) p = p.removeAlpha();
+        await p.png().toFile(tmp);
+    }
+    return tmp;
+}
+
+async function processSlug(slug, srcJpg, assetCfg, srcDir, opts = {}) {
     const slots = assetCfg?.slots || ['albedo', 'roughness', 'normal'];
     const tmpDir = path.join(TEX, '_tmp_hp');
     fs.mkdirSync(tmpDir, { recursive: true });
     fs.mkdirSync(TEX, { recursive: true });
     fs.mkdirSync(PUB, { recursive: true });
+    const seamless = opts.seamless !== false;
 
+    const keepAlpha = !!opts.keepAlpha;
     const seamlessPng = path.join(tmpDir, `${slug}_albedo_master.png`);
-    await (await makeSeamlessish(srcJpg, MASTER)).toFile(seamlessPng);
+    if (seamless) {
+        await (await makeSeamlessish(srcJpg, MASTER)).toFile(seamlessPng);
+    } else {
+        let p = sharp(srcJpg).resize(MASTER, MASTER, { fit: 'cover', position: 'centre' });
+        if (!keepAlpha) p = p.removeAlpha();
+        await p.png().toFile(seamlessPng);
+    }
 
     const { lum, w, h } = await luminanceRaw(sharp(seamlessPng));
     const produced = [];
+    const trueSlots = [];
 
     // Albedo
     if (slots.includes('albedo')) {
@@ -203,30 +232,55 @@ async function processSlug(slug, srcJpg, assetCfg) {
         produced.push(...files.map((f) => ({ slot: 'albedo', file: f })));
     }
 
-    // Roughness
+    // Roughness — prefer true painted/generated map
     if (slots.includes('roughness')) {
+        const trueR = findSlotSource(srcDir, slug, 'roughness');
         const roughTmp = path.join(tmpDir, `${slug}_rough.png`);
-        const inv = !METAL_SLUGS.has(slug); // metals: bright = smoother
-        await writeRoughnessFromLum(lum, w, h, roughTmp, inv, METAL_SLUGS.has(slug) ? 0.4 : 0.58, 0.4);
+        if (trueR) {
+            const rMaster = await processSlotImage(trueR, `${slug}_r`, tmpDir, MASTER, seamless);
+            await sharp(rMaster).greyscale().png().toFile(roughTmp);
+            trueSlots.push('roughness');
+        } else {
+            const inv = !METAL_SLUGS.has(slug);
+            await writeRoughnessFromLum(lum, w, h, roughTmp, inv, METAL_SLUGS.has(slug) ? 0.4 : 0.58, 0.4);
+        }
         const files = await writeTiers(roughTmp, `${slug}_roughness`, TEX);
         produced.push(...files.map((f) => ({ slot: 'roughness', file: f })));
     }
 
-    // Normal
+    // Normal — prefer true map
     if (slots.includes('normal')) {
+        const trueN = findSlotSource(srcDir, slug, 'normal');
         const nTmp = path.join(tmpDir, `${slug}_n.png`);
-        await writeNormalFromLum(lum, w, h, nTmp, METAL_SLUGS.has(slug) ? 0.75 : 1.15);
+        if (trueN) {
+            const nMaster = await processSlotImage(trueN, `${slug}_n`, tmpDir, MASTER, seamless);
+            await sharp(nMaster).png().toFile(nTmp);
+            trueSlots.push('normal');
+        } else {
+            await writeNormalFromLum(lum, w, h, nTmp, METAL_SLUGS.has(slug) ? 0.75 : 1.15);
+        }
         const files = await writeTiers(nTmp, `${slug}_normal`, TEX);
         produced.push(...files.map((f) => ({ slot: 'normal', file: f })));
     }
 
     // Metalness
     if (slots.includes('metalness')) {
+        const trueM = findSlotSource(srcDir, slug, 'metalness');
         const mTmp = path.join(tmpDir, `${slug}_m.png`);
-        const base = slug === 'starter_copper' ? 0.7 : slug === 'starter_terminal' ? 0.45 : 0.82;
-        await writeMetalnessFromLum(lum, w, h, mTmp, base);
+        if (trueM) {
+            const mMaster = await processSlotImage(trueM, `${slug}_met`, tmpDir, MASTER, seamless);
+            await sharp(mMaster).greyscale().png().toFile(mTmp);
+            trueSlots.push('metalness');
+        } else {
+            const base = slug === 'starter_copper' ? 0.7 : slug === 'starter_terminal' ? 0.45 : 0.82;
+            await writeMetalnessFromLum(lum, w, h, mTmp, base);
+        }
         const files = await writeTiers(mTmp, `${slug}_metalness`, TEX);
         produced.push(...files.map((f) => ({ slot: 'metalness', file: f })));
+    }
+
+    if (trueSlots.length) {
+        console.log(`  [true PBR] ${slug}: ${trueSlots.join(', ')}`);
     }
 
     // WebP + public copy
@@ -261,7 +315,7 @@ function buildManifestEntries(slug, objectName, produced) {
             tcEd: 'tc-lite',
             license: TC_LIC,
             realism: REALISM,
-            source: 'handpainted-10.15.7',
+            source: 'handpainted-true-pbr-10.15.9',
             variants: [],
         };
         for (const f of files) {
@@ -280,6 +334,35 @@ function buildManifestEntries(slug, objectName, produced) {
     return entries;
 }
 
+/** Avatar skins + hair (not in default-textures.json) */
+const AVATAR_ASSETS = [
+    {
+        slug: 'starter_skin_light',
+        objectName: 'Avatar Skin Light',
+        slots: ['albedo', 'roughness', 'normal'],
+        seamless: false,
+    },
+    {
+        slug: 'starter_skin_medium',
+        objectName: 'Avatar Skin Medium',
+        slots: ['albedo', 'roughness', 'normal'],
+        seamless: false,
+    },
+    {
+        slug: 'starter_skin_deep',
+        objectName: 'Avatar Skin Deep',
+        slots: ['albedo', 'roughness', 'normal'],
+        seamless: false,
+    },
+    {
+        slug: 'hair_alpha',
+        objectName: 'Avatar Hair Alpha',
+        slots: ['albedo'],
+        seamless: false,
+        keepAlpha: true,
+    },
+];
+
 async function main() {
     const { srcDir } = parseArgs();
     const cfg = JSON.parse(fs.readFileSync(CFG, 'utf8'));
@@ -290,18 +373,25 @@ async function main() {
         process.exit(1);
     }
 
-    // Also accept textures/_handpainted_src/starter_*.jpg
-    const map = { ...DEFAULT_MAP };
+    // Prefer named sources (starter_brick.jpg); fall back to 1.jpg map only if present
+    const map = {};
     for (const a of cfg.assets || []) {
         const alt = path.join(srcDir, `${a.slug}.jpg`);
         const altPng = path.join(srcDir, `${a.slug}.png`);
         if (fs.existsSync(alt)) map[`${a.slug}.jpg`] = a.slug;
-        if (fs.existsSync(altPng)) map[`${a.slug}.png`] = a.slug;
+        else if (fs.existsSync(altPng)) map[`${a.slug}.png`] = a.slug;
+    }
+    if (!Object.keys(map).length) {
+        for (const [file, slug] of Object.entries(DEFAULT_MAP)) {
+            if (fs.existsSync(path.join(srcDir, file))) map[file] = slug;
+        }
     }
 
     const allEntries = [];
     let count = 0;
+    const seen = new Set();
     for (const [file, slug] of Object.entries(map)) {
+        if (seen.has(slug)) continue;
         const src = path.join(srcDir, file);
         if (!fs.existsSync(src)) {
             console.warn('[skip missing]', file);
@@ -312,8 +402,33 @@ async function main() {
             console.warn('[skip unknown slug]', slug);
             continue;
         }
-        const produced = await processSlug(slug, src, asset);
+        seen.add(slug);
+        const produced = await processSlug(slug, src, asset, srcDir, { seamless: true });
         allEntries.push(...buildManifestEntries(slug, asset.objectName, produced));
+        count += 1;
+    }
+
+    // Avatar skins / hair
+    for (const av of AVATAR_ASSETS) {
+        let src = findSlotSource(srcDir, av.slug, 'albedo')
+            || path.join(srcDir, `${av.slug}.jpg`)
+            || path.join(srcDir, `${av.slug}.png`);
+        if (!fs.existsSync(src)) {
+            for (const ext of ['.jpg', '.png', '.jpeg']) {
+                const p = path.join(srcDir, `${av.slug}${ext}`);
+                if (fs.existsSync(p)) { src = p; break; }
+            }
+        }
+        if (!fs.existsSync(src)) {
+            console.warn('[avatar skip]', av.slug);
+            continue;
+        }
+        const asset = { slug: av.slug, objectName: av.objectName, slots: av.slots };
+        const produced = await processSlug(av.slug, src, asset, srcDir, {
+            seamless: av.seamless !== false,
+            keepAlpha: !!av.keepAlpha,
+        });
+        allEntries.push(...buildManifestEntries(av.slug, av.objectName, produced));
         count += 1;
     }
 
@@ -321,18 +436,18 @@ async function main() {
     man.format = GIMP_MANIFEST;
     man.updated = new Date().toISOString();
     man.handpainted = true;
-    man.handpaintedNote = 'Albedo from painted masters; normal/roughness/metalness derived (10.15.7)';
+    man.handpaintedNote = 'True painted/generated albedo + normal + roughness (+ metalness); avatar skins (10.15.9)';
     fs.writeFileSync(path.join(TEX, 'threshold_manifest.json'), JSON.stringify(man, null, 2));
     fs.copyFileSync(path.join(TEX, 'threshold_manifest.json'), path.join(PUB, 'threshold_manifest.json'));
 
-    // Bump default-textures note
-    cfg.note = 'Starter PBR library — hand-painted albedos (10.15.7) + derived N/R/M + HILOD 1k/2k + WebP';
-    cfg.version = 4;
+    cfg.note = 'Starter PBR — true hand-painted albedo + N/R/M (10.15.9) + HILOD 1k/2k + WebP';
+    cfg.version = 5;
     cfg.masterPx = MASTER;
     cfg.handpainted = true;
+    cfg.truePbr = true;
     fs.writeFileSync(CFG, JSON.stringify(cfg, null, 2) + '\n');
 
-    console.log(`\nDone: ${count} materials · ${allEntries.length} manifest slots`);
+    console.log(`\nDone: ${count} materials/avatars · ${allEntries.length} manifest slots`);
 }
 
 main().catch((e) => {

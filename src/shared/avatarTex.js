@@ -8,9 +8,9 @@ const SHIRT_REGION = ['torso', 'shoulder', 'collar', 'shirt', 'body'];
 const PANTS_REGION = ['hip', 'leg', 'pant'];
 const HAIR_REGION = ['hair'];
 
-const AVATAR_FINISH = { uvRepeat: [1, 1], normalScale: 1.05, envMapIntensity: 0.38 };
-const SKIN_FINISH = { uvRepeat: [1, 1], normalScale: 0.55, envMapIntensity: 0.28 };
-const FABRIC_FINISH = { uvRepeat: [2.2, 2.2], normalScale: 0.9, envMapIntensity: 0.34 };
+const AVATAR_FINISH = { uvRepeat: [1, 1], normalScale: 0.45, envMapIntensity: 0.38 };
+const SKIN_FINISH = { uvRepeat: [1, 1], normalScale: 0.35, envMapIntensity: 0.28 };
+const FABRIC_FINISH = { uvRepeat: [1.5, 1.5], normalScale: 0.35, envMapIntensity: 0.34 };
 
 function hexToNum(hex) {
     if (typeof hex === 'number') return hex;
@@ -38,13 +38,24 @@ function collectMeshes(root) {
 async function applySlug(mesh, slug, slots, TB) {
     let n = 0;
     for (const slot of slots) {
-        const path = `textures/${slug}_${slot}.png`;
-        try {
-            await TB.applyPathToObject(mesh, slot, path);
-            n += 1;
-        } catch (e) {
-            console.warn('[avatar-tex]', slug, slot, e.message || e);
+        // Prefer HILOD tier (anti-thrash), fall back to bare
+        const candidates = [
+            `textures/${slug}_${slot}_2k.png`,
+            `textures/${slug}_${slot}_1k.png`,
+            `textures/${slug}_${slot}.png`,
+        ];
+        let ok = false;
+        for (const path of candidates) {
+            try {
+                await TB.applyPathToObject(mesh, slot, path, { lockHilod: true, skipBareMaster: true });
+                n += 1;
+                ok = true;
+                break;
+            } catch {
+                /* try next */
+            }
         }
+        if (!ok) console.warn('[avatar-tex]', slug, slot, 'not found');
     }
     return n;
 }

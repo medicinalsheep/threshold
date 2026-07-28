@@ -364,216 +364,6 @@
       ]
     },
     {
-      "id": "starter_skin_light_albedo",
-      "objectName": "Avatar Skin Light",
-      "slot": "albedo",
-      "file": "starter_skin_light_albedo.png",
-      "path": "textures/starter_skin_light_albedo.png",
-      "tcEd": "starter-chr",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_skin_light_albedo_1k.png",
-          "path": "textures/starter_skin_light_albedo_1k.png",
-          "maxPx": 256
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_skin_light_albedo_2k.png",
-          "path": "textures/starter_skin_light_albedo_2k.png",
-          "maxPx": 512
-        },
-        {
-          "suffix": "_4k",
-          "file": "starter_skin_light_albedo_4k.png",
-          "path": "textures/starter_skin_light_albedo_4k.png",
-          "maxPx": 1024
-        }
-      ]
-    },
-    {
-      "id": "starter_skin_light_roughness",
-      "objectName": "Avatar Skin Light",
-      "slot": "roughness",
-      "file": "starter_skin_light_roughness.png",
-      "path": "textures/starter_skin_light_roughness.png",
-      "tcEd": "starter-chr",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_skin_light_roughness_1k.png",
-          "path": "textures/starter_skin_light_roughness_1k.png",
-          "maxPx": 256
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_skin_light_roughness_2k.png",
-          "path": "textures/starter_skin_light_roughness_2k.png",
-          "maxPx": 512
-        },
-        {
-          "suffix": "_4k",
-          "file": "starter_skin_light_roughness_4k.png",
-          "path": "textures/starter_skin_light_roughness_4k.png",
-          "maxPx": 1024
-        }
-      ]
-    },
-    {
-      "id": "starter_skin_medium_albedo",
-      "objectName": "Avatar Skin Medium",
-      "slot": "albedo",
-      "file": "starter_skin_medium_albedo.png",
-      "path": "textures/starter_skin_medium_albedo.png",
-      "tcEd": "starter-chr",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_skin_medium_albedo_1k.png",
-          "path": "textures/starter_skin_medium_albedo_1k.png",
-          "maxPx": 256
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_skin_medium_albedo_2k.png",
-          "path": "textures/starter_skin_medium_albedo_2k.png",
-          "maxPx": 512
-        },
-        {
-          "suffix": "_4k",
-          "file": "starter_skin_medium_albedo_4k.png",
-          "path": "textures/starter_skin_medium_albedo_4k.png",
-          "maxPx": 1024
-        }
-      ]
-    },
-    {
-      "id": "starter_skin_medium_roughness",
-      "objectName": "Avatar Skin Medium",
-      "slot": "roughness",
-      "file": "starter_skin_medium_roughness.png",
-      "path": "textures/starter_skin_medium_roughness.png",
-      "tcEd": "starter-chr",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_skin_medium_roughness_1k.png",
-          "path": "textures/starter_skin_medium_roughness_1k.png",
-          "maxPx": 256
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_skin_medium_roughness_2k.png",
-          "path": "textures/starter_skin_medium_roughness_2k.png",
-          "maxPx": 512
-        },
-        {
-          "suffix": "_4k",
-          "file": "starter_skin_medium_roughness_4k.png",
-          "path": "textures/starter_skin_medium_roughness_4k.png",
-          "maxPx": 1024
-        }
-      ]
-    },
-    {
-      "id": "starter_skin_deep_albedo",
-      "objectName": "Avatar Skin Deep",
-      "slot": "albedo",
-      "file": "starter_skin_deep_albedo.png",
-      "path": "textures/starter_skin_deep_albedo.png",
-      "tcEd": "starter-chr",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_skin_deep_albedo_1k.png",
-          "path": "textures/starter_skin_deep_albedo_1k.png",
-          "maxPx": 256
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_skin_deep_albedo_2k.png",
-          "path": "textures/starter_skin_deep_albedo_2k.png",
-          "maxPx": 512
-        },
-        {
-          "suffix": "_4k",
-          "file": "starter_skin_deep_albedo_4k.png",
-          "path": "textures/starter_skin_deep_albedo_4k.png",
-          "maxPx": 1024
-        }
-      ]
-    },
-    {
-      "id": "starter_skin_deep_roughness",
-      "objectName": "Avatar Skin Deep",
-      "slot": "roughness",
-      "file": "starter_skin_deep_roughness.png",
-      "path": "textures/starter_skin_deep_roughness.png",
-      "tcEd": "starter-chr",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_skin_deep_roughness_1k.png",
-          "path": "textures/starter_skin_deep_roughness_1k.png",
-          "maxPx": 256
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_skin_deep_roughness_2k.png",
-          "path": "textures/starter_skin_deep_roughness_2k.png",
-          "maxPx": 512
-        },
-        {
-          "suffix": "_4k",
-          "file": "starter_skin_deep_roughness_4k.png",
-          "path": "textures/starter_skin_deep_roughness_4k.png",
-          "maxPx": 1024
-        }
-      ]
-    },
-    {
-      "id": "hair_alpha_albedo",
-      "objectName": "Avatar Hair Alpha",
-      "slot": "albedo",
-      "file": "hair_alpha_albedo.png",
-      "path": "textures/hair_alpha_albedo.png",
-      "tcEd": "starter-chr",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "hair_alpha_albedo_1k.png",
-          "path": "textures/hair_alpha_albedo_1k.png",
-          "maxPx": 256
-        },
-        {
-          "suffix": "_2k",
-          "file": "hair_alpha_albedo_2k.png",
-          "path": "textures/hair_alpha_albedo_2k.png",
-          "maxPx": 512
-        },
-        {
-          "suffix": "_4k",
-          "file": "hair_alpha_albedo_4k.png",
-          "path": "textures/hair_alpha_albedo_4k.png",
-          "maxPx": 1024
-        }
-      ]
-    },
-    {
       "id": "starter_ground_albedo",
       "objectName": "Starter Ground",
       "slot": "albedo",
@@ -582,7 +372,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -607,7 +397,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -632,7 +422,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -657,7 +447,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -682,7 +472,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -699,6 +489,31 @@
       ]
     },
     {
+      "id": "starter_terminal_normal",
+      "objectName": "AI Build Station",
+      "slot": "normal",
+      "file": "starter_terminal_normal.png",
+      "path": "textures/starter_terminal_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_terminal_normal_1k.png",
+          "path": "textures/starter_terminal_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_terminal_normal_2k.png",
+          "path": "textures/starter_terminal_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
       "id": "starter_terminal_metalness",
       "objectName": "AI Build Station",
       "slot": "metalness",
@@ -707,7 +522,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -724,81 +539,6 @@
       ]
     },
     {
-      "id": "starter_dirt_albedo",
-      "objectName": "Mat Dirt",
-      "slot": "albedo",
-      "file": "starter_dirt_albedo.png",
-      "path": "textures/starter_dirt_albedo.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "source": "handpainted-10.15.7",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_dirt_albedo_1k.png",
-          "path": "textures/starter_dirt_albedo_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_dirt_albedo_2k.png",
-          "path": "textures/starter_dirt_albedo_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_dirt_roughness",
-      "objectName": "Mat Dirt",
-      "slot": "roughness",
-      "file": "starter_dirt_roughness.png",
-      "path": "textures/starter_dirt_roughness.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "source": "handpainted-10.15.7",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_dirt_roughness_1k.png",
-          "path": "textures/starter_dirt_roughness_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_dirt_roughness_2k.png",
-          "path": "textures/starter_dirt_roughness_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_dirt_normal",
-      "objectName": "Mat Dirt",
-      "slot": "normal",
-      "file": "starter_dirt_normal.png",
-      "path": "textures/starter_dirt_normal.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "source": "handpainted-10.15.7",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_dirt_normal_1k.png",
-          "path": "textures/starter_dirt_normal_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_dirt_normal_2k.png",
-          "path": "textures/starter_dirt_normal_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
       "id": "starter_wood_albedo",
       "objectName": "Mat Wood",
       "slot": "albedo",
@@ -807,7 +547,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -832,7 +572,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -857,7 +597,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -882,7 +622,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -907,7 +647,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -932,7 +672,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -957,7 +697,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -982,7 +722,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -1007,7 +747,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -1024,326 +764,76 @@
       ]
     },
     {
-      "id": "starter_copper_albedo",
-      "objectName": "Mat Copper",
+      "id": "starter_dirt_albedo",
+      "objectName": "Mat Dirt",
       "slot": "albedo",
-      "file": "starter_copper_albedo.png",
-      "path": "textures/starter_copper_albedo.png",
+      "file": "starter_dirt_albedo.png",
+      "path": "textures/starter_dirt_albedo.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
-          "file": "starter_copper_albedo_1k.png",
-          "path": "textures/starter_copper_albedo_1k.png",
+          "file": "starter_dirt_albedo_1k.png",
+          "path": "textures/starter_dirt_albedo_1k.png",
           "maxPx": 1024
         },
         {
           "suffix": "_2k",
-          "file": "starter_copper_albedo_2k.png",
-          "path": "textures/starter_copper_albedo_2k.png",
+          "file": "starter_dirt_albedo_2k.png",
+          "path": "textures/starter_dirt_albedo_2k.png",
           "maxPx": 2048
         }
       ]
     },
     {
-      "id": "starter_copper_roughness",
-      "objectName": "Mat Copper",
+      "id": "starter_dirt_roughness",
+      "objectName": "Mat Dirt",
       "slot": "roughness",
-      "file": "starter_copper_roughness.png",
-      "path": "textures/starter_copper_roughness.png",
+      "file": "starter_dirt_roughness.png",
+      "path": "textures/starter_dirt_roughness.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
-          "file": "starter_copper_roughness_1k.png",
-          "path": "textures/starter_copper_roughness_1k.png",
+          "file": "starter_dirt_roughness_1k.png",
+          "path": "textures/starter_dirt_roughness_1k.png",
           "maxPx": 1024
         },
         {
           "suffix": "_2k",
-          "file": "starter_copper_roughness_2k.png",
-          "path": "textures/starter_copper_roughness_2k.png",
+          "file": "starter_dirt_roughness_2k.png",
+          "path": "textures/starter_dirt_roughness_2k.png",
           "maxPx": 2048
         }
       ]
     },
     {
-      "id": "starter_copper_normal",
-      "objectName": "Mat Copper",
+      "id": "starter_dirt_normal",
+      "objectName": "Mat Dirt",
       "slot": "normal",
-      "file": "starter_copper_normal.png",
-      "path": "textures/starter_copper_normal.png",
+      "file": "starter_dirt_normal.png",
+      "path": "textures/starter_dirt_normal.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
-          "file": "starter_copper_normal_1k.png",
-          "path": "textures/starter_copper_normal_1k.png",
+          "file": "starter_dirt_normal_1k.png",
+          "path": "textures/starter_dirt_normal_1k.png",
           "maxPx": 1024
         },
         {
           "suffix": "_2k",
-          "file": "starter_copper_normal_2k.png",
-          "path": "textures/starter_copper_normal_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_copper_metalness",
-      "objectName": "Mat Copper",
-      "slot": "metalness",
-      "file": "starter_copper_metalness.png",
-      "path": "textures/starter_copper_metalness.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "source": "handpainted-10.15.7",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_copper_metalness_1k.png",
-          "path": "textures/starter_copper_metalness_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_copper_metalness_2k.png",
-          "path": "textures/starter_copper_metalness_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_fabric_albedo",
-      "objectName": "Mat Fabric",
-      "slot": "albedo",
-      "file": "starter_fabric_albedo.png",
-      "path": "textures/starter_fabric_albedo.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "source": "handpainted-10.15.7",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_fabric_albedo_1k.png",
-          "path": "textures/starter_fabric_albedo_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_fabric_albedo_2k.png",
-          "path": "textures/starter_fabric_albedo_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_fabric_roughness",
-      "objectName": "Mat Fabric",
-      "slot": "roughness",
-      "file": "starter_fabric_roughness.png",
-      "path": "textures/starter_fabric_roughness.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "source": "handpainted-10.15.7",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_fabric_roughness_1k.png",
-          "path": "textures/starter_fabric_roughness_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_fabric_roughness_2k.png",
-          "path": "textures/starter_fabric_roughness_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_metal_mat_albedo",
-      "objectName": "Mat Metal",
-      "slot": "albedo",
-      "file": "starter_metal_mat_albedo.png",
-      "path": "textures/starter_metal_mat_albedo.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "source": "handpainted-10.15.7",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_metal_mat_albedo_1k.png",
-          "path": "textures/starter_metal_mat_albedo_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_metal_mat_albedo_2k.png",
-          "path": "textures/starter_metal_mat_albedo_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_metal_mat_roughness",
-      "objectName": "Mat Metal",
-      "slot": "roughness",
-      "file": "starter_metal_mat_roughness.png",
-      "path": "textures/starter_metal_mat_roughness.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "source": "handpainted-10.15.7",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_metal_mat_roughness_1k.png",
-          "path": "textures/starter_metal_mat_roughness_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_metal_mat_roughness_2k.png",
-          "path": "textures/starter_metal_mat_roughness_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_metal_mat_normal",
-      "objectName": "Mat Metal",
-      "slot": "normal",
-      "file": "starter_metal_mat_normal.png",
-      "path": "textures/starter_metal_mat_normal.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "source": "handpainted-10.15.7",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_metal_mat_normal_1k.png",
-          "path": "textures/starter_metal_mat_normal_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_metal_mat_normal_2k.png",
-          "path": "textures/starter_metal_mat_normal_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_metal_mat_metalness",
-      "objectName": "Mat Metal",
-      "slot": "metalness",
-      "file": "starter_metal_mat_metalness.png",
-      "path": "textures/starter_metal_mat_metalness.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "source": "handpainted-10.15.7",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_metal_mat_metalness_1k.png",
-          "path": "textures/starter_metal_mat_metalness_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_metal_mat_metalness_2k.png",
-          "path": "textures/starter_metal_mat_metalness_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_plaster_albedo",
-      "objectName": "Mat Plaster",
-      "slot": "albedo",
-      "file": "starter_plaster_albedo.png",
-      "path": "textures/starter_plaster_albedo.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "source": "handpainted-10.15.7",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_plaster_albedo_1k.png",
-          "path": "textures/starter_plaster_albedo_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_plaster_albedo_2k.png",
-          "path": "textures/starter_plaster_albedo_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_plaster_roughness",
-      "objectName": "Mat Plaster",
-      "slot": "roughness",
-      "file": "starter_plaster_roughness.png",
-      "path": "textures/starter_plaster_roughness.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "source": "handpainted-10.15.7",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_plaster_roughness_1k.png",
-          "path": "textures/starter_plaster_roughness_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_plaster_roughness_2k.png",
-          "path": "textures/starter_plaster_roughness_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_plaster_normal",
-      "objectName": "Mat Plaster",
-      "slot": "normal",
-      "file": "starter_plaster_normal.png",
-      "path": "textures/starter_plaster_normal.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "source": "handpainted-10.15.7",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_plaster_normal_1k.png",
-          "path": "textures/starter_plaster_normal_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_plaster_normal_2k.png",
-          "path": "textures/starter_plaster_normal_2k.png",
+          "file": "starter_dirt_normal_2k.png",
+          "path": "textures/starter_dirt_normal_2k.png",
           "maxPx": 2048
         }
       ]
@@ -1357,7 +847,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -1382,7 +872,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -1407,7 +897,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -1424,6 +914,356 @@
       ]
     },
     {
+      "id": "starter_metal_mat_albedo",
+      "objectName": "Mat Metal",
+      "slot": "albedo",
+      "file": "starter_metal_mat_albedo.png",
+      "path": "textures/starter_metal_mat_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_metal_mat_albedo_1k.png",
+          "path": "textures/starter_metal_mat_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_metal_mat_albedo_2k.png",
+          "path": "textures/starter_metal_mat_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_metal_mat_roughness",
+      "objectName": "Mat Metal",
+      "slot": "roughness",
+      "file": "starter_metal_mat_roughness.png",
+      "path": "textures/starter_metal_mat_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_metal_mat_roughness_1k.png",
+          "path": "textures/starter_metal_mat_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_metal_mat_roughness_2k.png",
+          "path": "textures/starter_metal_mat_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_metal_mat_normal",
+      "objectName": "Mat Metal",
+      "slot": "normal",
+      "file": "starter_metal_mat_normal.png",
+      "path": "textures/starter_metal_mat_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_metal_mat_normal_1k.png",
+          "path": "textures/starter_metal_mat_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_metal_mat_normal_2k.png",
+          "path": "textures/starter_metal_mat_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_metal_mat_metalness",
+      "objectName": "Mat Metal",
+      "slot": "metalness",
+      "file": "starter_metal_mat_metalness.png",
+      "path": "textures/starter_metal_mat_metalness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_metal_mat_metalness_1k.png",
+          "path": "textures/starter_metal_mat_metalness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_metal_mat_metalness_2k.png",
+          "path": "textures/starter_metal_mat_metalness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_copper_albedo",
+      "objectName": "Mat Copper",
+      "slot": "albedo",
+      "file": "starter_copper_albedo.png",
+      "path": "textures/starter_copper_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_copper_albedo_1k.png",
+          "path": "textures/starter_copper_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_copper_albedo_2k.png",
+          "path": "textures/starter_copper_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_copper_roughness",
+      "objectName": "Mat Copper",
+      "slot": "roughness",
+      "file": "starter_copper_roughness.png",
+      "path": "textures/starter_copper_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_copper_roughness_1k.png",
+          "path": "textures/starter_copper_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_copper_roughness_2k.png",
+          "path": "textures/starter_copper_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_copper_normal",
+      "objectName": "Mat Copper",
+      "slot": "normal",
+      "file": "starter_copper_normal.png",
+      "path": "textures/starter_copper_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_copper_normal_1k.png",
+          "path": "textures/starter_copper_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_copper_normal_2k.png",
+          "path": "textures/starter_copper_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_copper_metalness",
+      "objectName": "Mat Copper",
+      "slot": "metalness",
+      "file": "starter_copper_metalness.png",
+      "path": "textures/starter_copper_metalness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_copper_metalness_1k.png",
+          "path": "textures/starter_copper_metalness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_copper_metalness_2k.png",
+          "path": "textures/starter_copper_metalness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_plaster_albedo",
+      "objectName": "Mat Plaster",
+      "slot": "albedo",
+      "file": "starter_plaster_albedo.png",
+      "path": "textures/starter_plaster_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_plaster_albedo_1k.png",
+          "path": "textures/starter_plaster_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_plaster_albedo_2k.png",
+          "path": "textures/starter_plaster_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_plaster_roughness",
+      "objectName": "Mat Plaster",
+      "slot": "roughness",
+      "file": "starter_plaster_roughness.png",
+      "path": "textures/starter_plaster_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_plaster_roughness_1k.png",
+          "path": "textures/starter_plaster_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_plaster_roughness_2k.png",
+          "path": "textures/starter_plaster_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_plaster_normal",
+      "objectName": "Mat Plaster",
+      "slot": "normal",
+      "file": "starter_plaster_normal.png",
+      "path": "textures/starter_plaster_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_plaster_normal_1k.png",
+          "path": "textures/starter_plaster_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_plaster_normal_2k.png",
+          "path": "textures/starter_plaster_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_fabric_albedo",
+      "objectName": "Mat Fabric",
+      "slot": "albedo",
+      "file": "starter_fabric_albedo.png",
+      "path": "textures/starter_fabric_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_fabric_albedo_1k.png",
+          "path": "textures/starter_fabric_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_fabric_albedo_2k.png",
+          "path": "textures/starter_fabric_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_fabric_roughness",
+      "objectName": "Mat Fabric",
+      "slot": "roughness",
+      "file": "starter_fabric_roughness.png",
+      "path": "textures/starter_fabric_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_fabric_roughness_1k.png",
+          "path": "textures/starter_fabric_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_fabric_roughness_2k.png",
+          "path": "textures/starter_fabric_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_fabric_normal",
+      "objectName": "Mat Fabric",
+      "slot": "normal",
+      "file": "starter_fabric_normal.png",
+      "path": "textures/starter_fabric_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_fabric_normal_1k.png",
+          "path": "textures/starter_fabric_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_fabric_normal_2k.png",
+          "path": "textures/starter_fabric_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
       "id": "starter_gravel_albedo",
       "objectName": "Mat Gravel",
       "slot": "albedo",
@@ -1432,7 +1272,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -1457,7 +1297,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -1482,7 +1322,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
-      "source": "handpainted-10.15.7",
+      "source": "handpainted-true-pbr-10.15.9",
       "variants": [
         {
           "suffix": "_1k",
@@ -1497,13 +1337,263 @@
           "maxPx": 2048
         }
       ]
+    },
+    {
+      "id": "starter_skin_light_albedo",
+      "objectName": "Avatar Skin Light",
+      "slot": "albedo",
+      "file": "starter_skin_light_albedo.png",
+      "path": "textures/starter_skin_light_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_light_albedo_1k.png",
+          "path": "textures/starter_skin_light_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_light_albedo_2k.png",
+          "path": "textures/starter_skin_light_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_light_roughness",
+      "objectName": "Avatar Skin Light",
+      "slot": "roughness",
+      "file": "starter_skin_light_roughness.png",
+      "path": "textures/starter_skin_light_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_light_roughness_1k.png",
+          "path": "textures/starter_skin_light_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_light_roughness_2k.png",
+          "path": "textures/starter_skin_light_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_light_normal",
+      "objectName": "Avatar Skin Light",
+      "slot": "normal",
+      "file": "starter_skin_light_normal.png",
+      "path": "textures/starter_skin_light_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_light_normal_1k.png",
+          "path": "textures/starter_skin_light_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_light_normal_2k.png",
+          "path": "textures/starter_skin_light_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_medium_albedo",
+      "objectName": "Avatar Skin Medium",
+      "slot": "albedo",
+      "file": "starter_skin_medium_albedo.png",
+      "path": "textures/starter_skin_medium_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_medium_albedo_1k.png",
+          "path": "textures/starter_skin_medium_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_medium_albedo_2k.png",
+          "path": "textures/starter_skin_medium_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_medium_roughness",
+      "objectName": "Avatar Skin Medium",
+      "slot": "roughness",
+      "file": "starter_skin_medium_roughness.png",
+      "path": "textures/starter_skin_medium_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_medium_roughness_1k.png",
+          "path": "textures/starter_skin_medium_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_medium_roughness_2k.png",
+          "path": "textures/starter_skin_medium_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_medium_normal",
+      "objectName": "Avatar Skin Medium",
+      "slot": "normal",
+      "file": "starter_skin_medium_normal.png",
+      "path": "textures/starter_skin_medium_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_medium_normal_1k.png",
+          "path": "textures/starter_skin_medium_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_medium_normal_2k.png",
+          "path": "textures/starter_skin_medium_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_deep_albedo",
+      "objectName": "Avatar Skin Deep",
+      "slot": "albedo",
+      "file": "starter_skin_deep_albedo.png",
+      "path": "textures/starter_skin_deep_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_deep_albedo_1k.png",
+          "path": "textures/starter_skin_deep_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_deep_albedo_2k.png",
+          "path": "textures/starter_skin_deep_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_deep_roughness",
+      "objectName": "Avatar Skin Deep",
+      "slot": "roughness",
+      "file": "starter_skin_deep_roughness.png",
+      "path": "textures/starter_skin_deep_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_deep_roughness_1k.png",
+          "path": "textures/starter_skin_deep_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_deep_roughness_2k.png",
+          "path": "textures/starter_skin_deep_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_skin_deep_normal",
+      "objectName": "Avatar Skin Deep",
+      "slot": "normal",
+      "file": "starter_skin_deep_normal.png",
+      "path": "textures/starter_skin_deep_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_skin_deep_normal_1k.png",
+          "path": "textures/starter_skin_deep_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_skin_deep_normal_2k.png",
+          "path": "textures/starter_skin_deep_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "hair_alpha_albedo",
+      "objectName": "Avatar Hair Alpha",
+      "slot": "albedo",
+      "file": "hair_alpha_albedo.png",
+      "path": "textures/hair_alpha_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-true-pbr-10.15.9",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "hair_alpha_albedo_1k.png",
+          "path": "textures/hair_alpha_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "hair_alpha_albedo_2k.png",
+          "path": "textures/hair_alpha_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
     }
   ],
   "exportDir": "textures",
   "tcRealism": "r8",
-  "exportedAt": "2026-07-28T00:10:49.204Z",
+  "exportedAt": "2026-07-28T02:02:27.000Z",
   "note": "Starter PBR library — 2K masters + HILOD 1k/2k + WebP. Palettes match tc-gen-tex slotFn styles.",
-  "updated": "2026-07-28T00:10:49.215Z",
+  "updated": "2026-07-28T02:02:27.000Z",
   "handpainted": true,
-  "handpaintedNote": "Albedo from painted masters; normal/roughness/metalness derived (10.15.7)"
+  "handpaintedNote": "True painted/generated albedo + normal + roughness (+ metalness); avatar skins (10.15.9)"
 }
