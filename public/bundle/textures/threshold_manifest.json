@@ -582,6 +582,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
@@ -606,6 +607,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
@@ -630,6 +632,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
@@ -654,6 +657,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
@@ -678,6 +682,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
@@ -702,6 +707,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
@@ -718,222 +724,6 @@
       ]
     },
     {
-      "id": "starter_wood_albedo",
-      "objectName": "Mat Wood",
-      "slot": "albedo",
-      "file": "starter_wood_albedo.png",
-      "path": "textures/starter_wood_albedo.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_wood_albedo_1k.png",
-          "path": "textures/starter_wood_albedo_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_wood_albedo_2k.png",
-          "path": "textures/starter_wood_albedo_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_wood_roughness",
-      "objectName": "Mat Wood",
-      "slot": "roughness",
-      "file": "starter_wood_roughness.png",
-      "path": "textures/starter_wood_roughness.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_wood_roughness_1k.png",
-          "path": "textures/starter_wood_roughness_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_wood_roughness_2k.png",
-          "path": "textures/starter_wood_roughness_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_wood_normal",
-      "objectName": "Mat Wood",
-      "slot": "normal",
-      "file": "starter_wood_normal.png",
-      "path": "textures/starter_wood_normal.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_wood_normal_1k.png",
-          "path": "textures/starter_wood_normal_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_wood_normal_2k.png",
-          "path": "textures/starter_wood_normal_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_asphalt_albedo",
-      "objectName": "Mat Asphalt",
-      "slot": "albedo",
-      "file": "starter_asphalt_albedo.png",
-      "path": "textures/starter_asphalt_albedo.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_asphalt_albedo_1k.png",
-          "path": "textures/starter_asphalt_albedo_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_asphalt_albedo_2k.png",
-          "path": "textures/starter_asphalt_albedo_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_asphalt_roughness",
-      "objectName": "Mat Asphalt",
-      "slot": "roughness",
-      "file": "starter_asphalt_roughness.png",
-      "path": "textures/starter_asphalt_roughness.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_asphalt_roughness_1k.png",
-          "path": "textures/starter_asphalt_roughness_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_asphalt_roughness_2k.png",
-          "path": "textures/starter_asphalt_roughness_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_asphalt_normal",
-      "objectName": "Mat Asphalt",
-      "slot": "normal",
-      "file": "starter_asphalt_normal.png",
-      "path": "textures/starter_asphalt_normal.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_asphalt_normal_1k.png",
-          "path": "textures/starter_asphalt_normal_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_asphalt_normal_2k.png",
-          "path": "textures/starter_asphalt_normal_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_brick_albedo",
-      "objectName": "Mat Brick",
-      "slot": "albedo",
-      "file": "starter_brick_albedo.png",
-      "path": "textures/starter_brick_albedo.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_brick_albedo_1k.png",
-          "path": "textures/starter_brick_albedo_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_brick_albedo_2k.png",
-          "path": "textures/starter_brick_albedo_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_brick_roughness",
-      "objectName": "Mat Brick",
-      "slot": "roughness",
-      "file": "starter_brick_roughness.png",
-      "path": "textures/starter_brick_roughness.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_brick_roughness_1k.png",
-          "path": "textures/starter_brick_roughness_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_brick_roughness_2k.png",
-          "path": "textures/starter_brick_roughness_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_brick_normal",
-      "objectName": "Mat Brick",
-      "slot": "normal",
-      "file": "starter_brick_normal.png",
-      "path": "textures/starter_brick_normal.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_brick_normal_1k.png",
-          "path": "textures/starter_brick_normal_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_brick_normal_2k.png",
-          "path": "textures/starter_brick_normal_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
       "id": "starter_dirt_albedo",
       "objectName": "Mat Dirt",
       "slot": "albedo",
@@ -942,6 +732,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
@@ -966,6 +757,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
@@ -990,6 +782,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
@@ -1006,169 +799,226 @@
       ]
     },
     {
-      "id": "starter_grass_albedo",
-      "objectName": "Mat Grass",
+      "id": "starter_wood_albedo",
+      "objectName": "Mat Wood",
       "slot": "albedo",
-      "file": "starter_grass_albedo.png",
-      "path": "textures/starter_grass_albedo.png",
+      "file": "starter_wood_albedo.png",
+      "path": "textures/starter_wood_albedo.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
-          "file": "starter_grass_albedo_1k.png",
-          "path": "textures/starter_grass_albedo_1k.png",
+          "file": "starter_wood_albedo_1k.png",
+          "path": "textures/starter_wood_albedo_1k.png",
           "maxPx": 1024
         },
         {
           "suffix": "_2k",
-          "file": "starter_grass_albedo_2k.png",
-          "path": "textures/starter_grass_albedo_2k.png",
+          "file": "starter_wood_albedo_2k.png",
+          "path": "textures/starter_wood_albedo_2k.png",
           "maxPx": 2048
         }
       ]
     },
     {
-      "id": "starter_grass_roughness",
-      "objectName": "Mat Grass",
+      "id": "starter_wood_roughness",
+      "objectName": "Mat Wood",
       "slot": "roughness",
-      "file": "starter_grass_roughness.png",
-      "path": "textures/starter_grass_roughness.png",
+      "file": "starter_wood_roughness.png",
+      "path": "textures/starter_wood_roughness.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
-          "file": "starter_grass_roughness_1k.png",
-          "path": "textures/starter_grass_roughness_1k.png",
+          "file": "starter_wood_roughness_1k.png",
+          "path": "textures/starter_wood_roughness_1k.png",
           "maxPx": 1024
         },
         {
           "suffix": "_2k",
-          "file": "starter_grass_roughness_2k.png",
-          "path": "textures/starter_grass_roughness_2k.png",
+          "file": "starter_wood_roughness_2k.png",
+          "path": "textures/starter_wood_roughness_2k.png",
           "maxPx": 2048
         }
       ]
     },
     {
-      "id": "starter_grass_normal",
-      "objectName": "Mat Grass",
+      "id": "starter_wood_normal",
+      "objectName": "Mat Wood",
       "slot": "normal",
-      "file": "starter_grass_normal.png",
-      "path": "textures/starter_grass_normal.png",
+      "file": "starter_wood_normal.png",
+      "path": "textures/starter_wood_normal.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
-          "file": "starter_grass_normal_1k.png",
-          "path": "textures/starter_grass_normal_1k.png",
+          "file": "starter_wood_normal_1k.png",
+          "path": "textures/starter_wood_normal_1k.png",
           "maxPx": 1024
         },
         {
           "suffix": "_2k",
-          "file": "starter_grass_normal_2k.png",
-          "path": "textures/starter_grass_normal_2k.png",
+          "file": "starter_wood_normal_2k.png",
+          "path": "textures/starter_wood_normal_2k.png",
           "maxPx": 2048
         }
       ]
     },
     {
-      "id": "starter_metal_mat_albedo",
-      "objectName": "Mat Metal",
+      "id": "starter_asphalt_albedo",
+      "objectName": "Mat Asphalt",
       "slot": "albedo",
-      "file": "starter_metal_mat_albedo.png",
-      "path": "textures/starter_metal_mat_albedo.png",
+      "file": "starter_asphalt_albedo.png",
+      "path": "textures/starter_asphalt_albedo.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
-          "file": "starter_metal_mat_albedo_1k.png",
-          "path": "textures/starter_metal_mat_albedo_1k.png",
+          "file": "starter_asphalt_albedo_1k.png",
+          "path": "textures/starter_asphalt_albedo_1k.png",
           "maxPx": 1024
         },
         {
           "suffix": "_2k",
-          "file": "starter_metal_mat_albedo_2k.png",
-          "path": "textures/starter_metal_mat_albedo_2k.png",
+          "file": "starter_asphalt_albedo_2k.png",
+          "path": "textures/starter_asphalt_albedo_2k.png",
           "maxPx": 2048
         }
       ]
     },
     {
-      "id": "starter_metal_mat_roughness",
-      "objectName": "Mat Metal",
+      "id": "starter_asphalt_roughness",
+      "objectName": "Mat Asphalt",
       "slot": "roughness",
-      "file": "starter_metal_mat_roughness.png",
-      "path": "textures/starter_metal_mat_roughness.png",
+      "file": "starter_asphalt_roughness.png",
+      "path": "textures/starter_asphalt_roughness.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
-          "file": "starter_metal_mat_roughness_1k.png",
-          "path": "textures/starter_metal_mat_roughness_1k.png",
+          "file": "starter_asphalt_roughness_1k.png",
+          "path": "textures/starter_asphalt_roughness_1k.png",
           "maxPx": 1024
         },
         {
           "suffix": "_2k",
-          "file": "starter_metal_mat_roughness_2k.png",
-          "path": "textures/starter_metal_mat_roughness_2k.png",
+          "file": "starter_asphalt_roughness_2k.png",
+          "path": "textures/starter_asphalt_roughness_2k.png",
           "maxPx": 2048
         }
       ]
     },
     {
-      "id": "starter_metal_mat_metalness",
-      "objectName": "Mat Metal",
-      "slot": "metalness",
-      "file": "starter_metal_mat_metalness.png",
-      "path": "textures/starter_metal_mat_metalness.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_metal_mat_metalness_1k.png",
-          "path": "textures/starter_metal_mat_metalness_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_metal_mat_metalness_2k.png",
-          "path": "textures/starter_metal_mat_metalness_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_metal_mat_normal",
-      "objectName": "Mat Metal",
+      "id": "starter_asphalt_normal",
+      "objectName": "Mat Asphalt",
       "slot": "normal",
-      "file": "starter_metal_mat_normal.png",
-      "path": "textures/starter_metal_mat_normal.png",
+      "file": "starter_asphalt_normal.png",
+      "path": "textures/starter_asphalt_normal.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
-          "file": "starter_metal_mat_normal_1k.png",
-          "path": "textures/starter_metal_mat_normal_1k.png",
+          "file": "starter_asphalt_normal_1k.png",
+          "path": "textures/starter_asphalt_normal_1k.png",
           "maxPx": 1024
         },
         {
           "suffix": "_2k",
-          "file": "starter_metal_mat_normal_2k.png",
-          "path": "textures/starter_metal_mat_normal_2k.png",
+          "file": "starter_asphalt_normal_2k.png",
+          "path": "textures/starter_asphalt_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_brick_albedo",
+      "objectName": "Mat Brick",
+      "slot": "albedo",
+      "file": "starter_brick_albedo.png",
+      "path": "textures/starter_brick_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-10.15.7",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_brick_albedo_1k.png",
+          "path": "textures/starter_brick_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_brick_albedo_2k.png",
+          "path": "textures/starter_brick_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_brick_roughness",
+      "objectName": "Mat Brick",
+      "slot": "roughness",
+      "file": "starter_brick_roughness.png",
+      "path": "textures/starter_brick_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-10.15.7",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_brick_roughness_1k.png",
+          "path": "textures/starter_brick_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_brick_roughness_2k.png",
+          "path": "textures/starter_brick_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_brick_normal",
+      "objectName": "Mat Brick",
+      "slot": "normal",
+      "file": "starter_brick_normal.png",
+      "path": "textures/starter_brick_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-10.15.7",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_brick_normal_1k.png",
+          "path": "textures/starter_brick_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_brick_normal_2k.png",
+          "path": "textures/starter_brick_normal_2k.png",
           "maxPx": 2048
         }
       ]
@@ -1182,6 +1032,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
@@ -1206,6 +1057,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
@@ -1222,30 +1074,6 @@
       ]
     },
     {
-      "id": "starter_copper_metalness",
-      "objectName": "Mat Copper",
-      "slot": "metalness",
-      "file": "starter_copper_metalness.png",
-      "path": "textures/starter_copper_metalness.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_copper_metalness_1k.png",
-          "path": "textures/starter_copper_metalness_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_copper_metalness_2k.png",
-          "path": "textures/starter_copper_metalness_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
       "id": "starter_copper_normal",
       "objectName": "Mat Copper",
       "slot": "normal",
@@ -1254,6 +1082,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
@@ -1270,73 +1099,26 @@
       ]
     },
     {
-      "id": "starter_plaster_albedo",
-      "objectName": "Mat Plaster",
-      "slot": "albedo",
-      "file": "starter_plaster_albedo.png",
-      "path": "textures/starter_plaster_albedo.png",
+      "id": "starter_copper_metalness",
+      "objectName": "Mat Copper",
+      "slot": "metalness",
+      "file": "starter_copper_metalness.png",
+      "path": "textures/starter_copper_metalness.png",
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
-          "file": "starter_plaster_albedo_1k.png",
-          "path": "textures/starter_plaster_albedo_1k.png",
+          "file": "starter_copper_metalness_1k.png",
+          "path": "textures/starter_copper_metalness_1k.png",
           "maxPx": 1024
         },
         {
           "suffix": "_2k",
-          "file": "starter_plaster_albedo_2k.png",
-          "path": "textures/starter_plaster_albedo_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_plaster_roughness",
-      "objectName": "Mat Plaster",
-      "slot": "roughness",
-      "file": "starter_plaster_roughness.png",
-      "path": "textures/starter_plaster_roughness.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_plaster_roughness_1k.png",
-          "path": "textures/starter_plaster_roughness_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_plaster_roughness_2k.png",
-          "path": "textures/starter_plaster_roughness_2k.png",
-          "maxPx": 2048
-        }
-      ]
-    },
-    {
-      "id": "starter_plaster_normal",
-      "objectName": "Mat Plaster",
-      "slot": "normal",
-      "file": "starter_plaster_normal.png",
-      "path": "textures/starter_plaster_normal.png",
-      "tcEd": "tc-lite",
-      "license": "Original — TC",
-      "realism": "r8",
-      "variants": [
-        {
-          "suffix": "_1k",
-          "file": "starter_plaster_normal_1k.png",
-          "path": "textures/starter_plaster_normal_1k.png",
-          "maxPx": 1024
-        },
-        {
-          "suffix": "_2k",
-          "file": "starter_plaster_normal_2k.png",
-          "path": "textures/starter_plaster_normal_2k.png",
+          "file": "starter_copper_metalness_2k.png",
+          "path": "textures/starter_copper_metalness_2k.png",
           "maxPx": 2048
         }
       ]
@@ -1350,6 +1132,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
@@ -1374,6 +1157,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
@@ -1390,6 +1174,256 @@
       ]
     },
     {
+      "id": "starter_metal_mat_albedo",
+      "objectName": "Mat Metal",
+      "slot": "albedo",
+      "file": "starter_metal_mat_albedo.png",
+      "path": "textures/starter_metal_mat_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-10.15.7",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_metal_mat_albedo_1k.png",
+          "path": "textures/starter_metal_mat_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_metal_mat_albedo_2k.png",
+          "path": "textures/starter_metal_mat_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_metal_mat_roughness",
+      "objectName": "Mat Metal",
+      "slot": "roughness",
+      "file": "starter_metal_mat_roughness.png",
+      "path": "textures/starter_metal_mat_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-10.15.7",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_metal_mat_roughness_1k.png",
+          "path": "textures/starter_metal_mat_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_metal_mat_roughness_2k.png",
+          "path": "textures/starter_metal_mat_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_metal_mat_normal",
+      "objectName": "Mat Metal",
+      "slot": "normal",
+      "file": "starter_metal_mat_normal.png",
+      "path": "textures/starter_metal_mat_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-10.15.7",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_metal_mat_normal_1k.png",
+          "path": "textures/starter_metal_mat_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_metal_mat_normal_2k.png",
+          "path": "textures/starter_metal_mat_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_metal_mat_metalness",
+      "objectName": "Mat Metal",
+      "slot": "metalness",
+      "file": "starter_metal_mat_metalness.png",
+      "path": "textures/starter_metal_mat_metalness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-10.15.7",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_metal_mat_metalness_1k.png",
+          "path": "textures/starter_metal_mat_metalness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_metal_mat_metalness_2k.png",
+          "path": "textures/starter_metal_mat_metalness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_plaster_albedo",
+      "objectName": "Mat Plaster",
+      "slot": "albedo",
+      "file": "starter_plaster_albedo.png",
+      "path": "textures/starter_plaster_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-10.15.7",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_plaster_albedo_1k.png",
+          "path": "textures/starter_plaster_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_plaster_albedo_2k.png",
+          "path": "textures/starter_plaster_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_plaster_roughness",
+      "objectName": "Mat Plaster",
+      "slot": "roughness",
+      "file": "starter_plaster_roughness.png",
+      "path": "textures/starter_plaster_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-10.15.7",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_plaster_roughness_1k.png",
+          "path": "textures/starter_plaster_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_plaster_roughness_2k.png",
+          "path": "textures/starter_plaster_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_plaster_normal",
+      "objectName": "Mat Plaster",
+      "slot": "normal",
+      "file": "starter_plaster_normal.png",
+      "path": "textures/starter_plaster_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-10.15.7",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_plaster_normal_1k.png",
+          "path": "textures/starter_plaster_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_plaster_normal_2k.png",
+          "path": "textures/starter_plaster_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_grass_albedo",
+      "objectName": "Mat Grass",
+      "slot": "albedo",
+      "file": "starter_grass_albedo.png",
+      "path": "textures/starter_grass_albedo.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-10.15.7",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_grass_albedo_1k.png",
+          "path": "textures/starter_grass_albedo_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_grass_albedo_2k.png",
+          "path": "textures/starter_grass_albedo_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_grass_roughness",
+      "objectName": "Mat Grass",
+      "slot": "roughness",
+      "file": "starter_grass_roughness.png",
+      "path": "textures/starter_grass_roughness.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-10.15.7",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_grass_roughness_1k.png",
+          "path": "textures/starter_grass_roughness_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_grass_roughness_2k.png",
+          "path": "textures/starter_grass_roughness_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
+      "id": "starter_grass_normal",
+      "objectName": "Mat Grass",
+      "slot": "normal",
+      "file": "starter_grass_normal.png",
+      "path": "textures/starter_grass_normal.png",
+      "tcEd": "tc-lite",
+      "license": "Original — TC",
+      "realism": "r8",
+      "source": "handpainted-10.15.7",
+      "variants": [
+        {
+          "suffix": "_1k",
+          "file": "starter_grass_normal_1k.png",
+          "path": "textures/starter_grass_normal_1k.png",
+          "maxPx": 1024
+        },
+        {
+          "suffix": "_2k",
+          "file": "starter_grass_normal_2k.png",
+          "path": "textures/starter_grass_normal_2k.png",
+          "maxPx": 2048
+        }
+      ]
+    },
+    {
       "id": "starter_gravel_albedo",
       "objectName": "Mat Gravel",
       "slot": "albedo",
@@ -1398,6 +1432,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
@@ -1422,6 +1457,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
@@ -1446,6 +1482,7 @@
       "tcEd": "tc-lite",
       "license": "Original — TC",
       "realism": "r8",
+      "source": "handpainted-10.15.7",
       "variants": [
         {
           "suffix": "_1k",
@@ -1464,6 +1501,9 @@
   ],
   "exportDir": "textures",
   "tcRealism": "r8",
-  "exportedAt": "2026-07-24T04:19:31.648Z",
-  "note": "Starter PBR library — 2K masters + HILOD 1k/2k + WebP. Palettes match tc-gen-tex slotFn styles."
+  "exportedAt": "2026-07-28T00:10:49.204Z",
+  "note": "Starter PBR library — 2K masters + HILOD 1k/2k + WebP. Palettes match tc-gen-tex slotFn styles.",
+  "updated": "2026-07-28T00:10:49.215Z",
+  "handpainted": true,
+  "handpaintedNote": "Albedo from painted masters; normal/roughness/metalness derived (10.15.7)"
 }

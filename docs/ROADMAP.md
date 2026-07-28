@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.15.6 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.15.7 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -192,6 +192,7 @@ Accounts guide: [AUTH.md](AUTH.md) · Snapshot: [CAPABILITIES.md](CAPABILITIES.m
 | **10.15.4** | **Quality ladder** — light · AI · materials · kit · pad · cookbook |
 | **10.15.5** | **Doc truth sweep** — spine docs + modes-verify · 10.15 series close |
 | **10.15.6** | **Review fixes** — hub cycle · kinematic restore · keyboard edges · doc polish |
+| **10.15.7** | **Hand-painted starter textures** — 12 materials · PBR pipeline |
 
 Perf: [PERF_NEXT.md](PERF_NEXT.md) · Physics: [PHYSICS.md](PHYSICS.md) · Materials: [MATERIALS.md](MATERIALS.md)
 

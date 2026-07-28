@@ -1,3 +1,11 @@
+## 10.15.7 — Hand-painted starter material textures
+
+- Replaced procedural hatch albedos for all **12** default materials with painted photoreal masters
+- Materials: ground · terminal · wood · asphalt · brick · dirt · grass · metal · copper · plaster · fabric · gravel
+- Pipeline `scripts/apply-handpainted-tex.cjs` / `npm run textures:handpaint` — seamless blend · derived normal/roughness/metalness · 1K/2K HILOD · WebP · manifest
+- Sources kept under `textures/_handpainted_src/` for regen
+- `config/default-textures.json` v4 · quality note updated
+
 ## 10.15.6 — Review fixes + full doc sweep
 
 - **Bugs:** hub ARRANGE cycle (no `|| togglePause`) · arrange kinematic restore · keyboard edges without gamepad · play-as hop latch · pause releases play-as · select refresh for Play as

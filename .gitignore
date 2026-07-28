@@ -37,11 +37,14 @@ textures/*.png
 textures/*.jpg
 textures/*.jpeg
 textures/*.webp
+textures/_tmp_hp/
 !textures/tc_*.png
 !textures/starter_*.png
 !textures/starter_*.webp
 !textures/hair_alpha*.png
 !textures/threshold_manifest.json
+!textures/_handpainted_src/
+!textures/_handpainted_src/**
 !textures/.gitkeep
 import/*.glb
 !import/tc_*.glb
@@ -92,3 +95,5 @@ public/bundle/video/*
 !public/bundle/video/tc_intro.webm
 !public/bundle/video/tc_intro.mp4
 !public/bundle/video/threshold_video_manifest.json
+textures/_tmp_hp/
+

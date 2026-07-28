@@ -1,10 +1,12 @@
 # Starter materials & textures
 
-Quality-first PBR library for builders and agents — **presets + procedural starter maps**, not CanvasTexture noise.
+Quality-first PBR library for builders and agents — **presets + hand-painted starter maps** (10.15.7), not CanvasTexture noise.
 
 **Not on ENTER.** Materials never auto-spawn on the terminal grid. Add via INSERT only (quality ladder 4c).
 
 **Live:** Engine → **INSERT → QUALITY** (or CHARACTER) → **MATERIAL LIBRARY** · or EDIT object → **Texture → Preset**.
+
+**Regen painted masters:** sources in `textures/_handpainted_src/` → `npm run textures:handpaint` (albedo masters → normal/roughness/metalness + HILOD + WebP).
 
 ---
 
