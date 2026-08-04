@@ -44,8 +44,9 @@ function pickWalkClip(animations = []) {
 /** Formed proportions for procedural fallback (matches gen-starter-avatar). */
 function resolveForm(options = {}) {
     const female = options.bodyId === 'female_default' || options.form === 'female';
+    let base;
     if (female) {
-        return {
+        base = {
             form: 'female',
             shoulderW: 0.44,
             chestW: 0.4,
@@ -75,37 +76,102 @@ function resolveForm(options = {}) {
             torsoScale: options.torsoScale || [0.92, 1, 0.88],
             hipScale: options.hipScale || [1.08, 1, 1.04],
         };
+    } else {
+        base = {
+            form: 'male',
+            shoulderW: 0.54,
+            chestW: 0.46,
+            chestD: 0.28,
+            waistW: 0.38,
+            hipW: 0.44,
+            hipD: 0.28,
+            hipH: 0.24,
+            torsoH: 0.56,
+            neckR: 0.09,
+            headR: 0.175,
+            headScale: [1.0, 1.06, 0.94],
+            thighTop: 0.11,
+            thighBot: 0.095,
+            calfTop: 0.085,
+            calfBot: 0.07,
+            armTop: 0.065,
+            armBot: 0.05,
+            legLen: 0.86,
+            armLen: 0.52,
+            shoulderY: 1.56,
+            hipY: 0.9,
+            shoe: [0.2, 0.09, 0.3],
+            bust: 0,
+            hipOut: 0.12,
+            armOut: 0.34,
+            torsoScale: options.torsoScale || [1.04, 1, 0.95],
+            hipScale: options.hipScale || [1, 1, 1],
+        };
     }
+
+    // Continuous shape factors from AppearanceProfile.profileToMeshOpts
+    const sf = options._shapeFactors;
+    if (!sf) return base;
+
     return {
-        form: 'male',
-        shoulderW: 0.54,
-        chestW: 0.46,
-        chestD: 0.28,
-        waistW: 0.38,
-        hipW: 0.44,
-        hipD: 0.28,
-        hipH: 0.24,
-        torsoH: 0.56,
-        neckR: 0.09,
-        headR: 0.175,
-        headScale: [1.0, 1.06, 0.94],
-        thighTop: 0.11,
-        thighBot: 0.095,
-        calfTop: 0.085,
-        calfBot: 0.07,
-        armTop: 0.065,
-        armBot: 0.05,
-        legLen: 0.86,
-        armLen: 0.52,
-        shoulderY: 1.56,
-        hipY: 0.9,
-        shoe: [0.2, 0.09, 0.3],
-        bust: 0,
-        hipOut: 0.12,
-        armOut: 0.34,
-        torsoScale: options.torsoScale || [1.04, 1, 0.95],
-        hipScale: options.hipScale || [1, 1, 1],
+        ...base,
+        shoulderW: base.shoulderW * (sf.shoulders || 1),
+        chestW: base.chestW * (sf.chest || 1) * (sf.weight || 1),
+        chestD: base.chestD * (0.92 + (sf.chest || 1) * 0.08) * (sf.weight || 1),
+        waistW: base.waistW * (sf.waist || 1) * (sf.weight || 1),
+        hipW: base.hipW * (sf.hips || 1) * (sf.weight || 1),
+        hipD: base.hipD * (0.94 + (sf.hips || 1) * 0.06) * (sf.weight || 1),
+        thighTop: base.thighTop * (sf.muscle || 1) * (sf.weight || 1),
+        thighBot: base.thighBot * (sf.muscle || 1),
+        calfTop: base.calfTop * (0.95 + (sf.muscle || 1) * 0.05),
+        armTop: base.armTop * (sf.muscle || 1),
+        armBot: base.armBot * (sf.muscle || 1),
+        armOut: base.armOut * (0.92 + (sf.shoulders || 1) * 0.08),
+        hipOut: base.hipOut * (0.92 + (sf.hips || 1) * 0.08),
+        bust: base.bust * (0.65 + (sf.chest || 1) * 0.7),
+        torsoScale: options.torsoScale || base.torsoScale,
+        hipScale: options.hipScale || base.hipScale,
     };
+}
+
+function capturePartScale(obj) {
+    if (!obj) return null;
+    return { x: obj.scale.x, y: obj.scale.y, z: obj.scale.z };
+}
+
+function setPartScale(obj, base, mx, my = 1, mz = null) {
+    if (!obj || !base) return;
+    const z = mz == null ? mx : mz;
+    obj.scale.set(base.x * mx, base.y * my, base.z * z);
+}
+
+/** Drive morph targets if named like shoulders / chest / hips / waist / muscle / weight */
+function applyMorphShape(root, shape) {
+    if (!root || !shape) return false;
+    let any = false;
+    const targets = {
+        shoulders: shape.shoulders,
+        chest: shape.chest,
+        waist: shape.waist,
+        hips: shape.hips,
+        muscle: shape.muscle,
+        weight: shape.weight,
+        height: shape.heightM != null ? 0.5 : 0.5,
+    };
+    root.traverse((c) => {
+        if (!c.isMesh || !c.morphTargetDictionary || !c.morphTargetInfluences) return;
+        const dict = c.morphTargetDictionary;
+        Object.keys(targets).forEach((key) => {
+            const idx = dict[key] ?? dict[key.charAt(0).toUpperCase() + key.slice(1)];
+            if (idx == null) return;
+            // morph 0–1: map slider so 0.5 → 0 influence (neutral)
+            const v = targets[key];
+            const influence = Math.abs(v - 0.5) * 2;
+            c.morphTargetInfluences[idx] = Math.min(1, Math.max(0, influence));
+            any = true;
+        });
+    });
+    return any;
 }
 
 export const HumanMesh = {
@@ -507,6 +573,110 @@ export const HumanMesh = {
         // shoes stay dark — recolor only cylinders on legs is harder; leave whole leg pants color ok for fallback
         paint(parts.armL, headColor, roughness);
         paint(parts.armR, headColor, roughness);
+    },
+
+    /**
+     * Soft body shape on an already-built group (GLB or procedural).
+     * Uses morph targets when present; else scales named parts relative to captured base.
+     * @param {THREE.Object3D} group
+     * @param {object} profileOrShape — full profile or shape object
+     * @param {{ bodyId?: string, defaultHeightM?: number }} opts
+     */
+    applyShape(group, profileOrShape = {}, opts = {}) {
+        if (!group) return false;
+        const shapeRaw = profileOrShape?.shape || profileOrShape;
+        const shape = {
+            heightM: shapeRaw?.heightM ?? null,
+            shoulders: Number(shapeRaw?.shoulders ?? 0.5),
+            chest: Number(shapeRaw?.chest ?? 0.5),
+            waist: Number(shapeRaw?.waist ?? 0.5),
+            hips: Number(shapeRaw?.hips ?? 0.5),
+            muscle: Number(shapeRaw?.muscle ?? 0.5),
+            weight: Number(shapeRaw?.weight ?? 0.5),
+        };
+        // Prefer morphs on GLB when available
+        const usedMorph = applyMorphShape(group, shape);
+
+        const factor = (v, minM = 0.82, maxM = 1.18) => {
+            const t = Math.min(1, Math.max(0, Number(v) || 0.5));
+            if (t <= 0.5) return minM + (1 - minM) * (t / 0.5);
+            return 1 + (maxM - 1) * ((t - 0.5) / 0.5);
+        };
+        const sh = factor(shape.shoulders, 0.78, 1.22);
+        const ch = factor(shape.chest, 0.8, 1.2);
+        const wa = factor(shape.waist, 0.75, 1.25);
+        const hi = factor(shape.hips, 0.8, 1.22);
+        const mu = factor(shape.muscle, 0.85, 1.2);
+        const wt = factor(shape.weight, 0.9, 1.12);
+
+        if (!usedMorph) {
+            const parts = group.userData?.humanParts;
+            if (parts) {
+                if (!group.userData._shapeBaseScales) {
+                    group.userData._shapeBaseScales = {
+                        hips: capturePartScale(parts.hips),
+                        torso: capturePartScale(parts.torso),
+                        shoulders: capturePartScale(parts.shoulders),
+                        armL: capturePartScale(parts.armL),
+                        armR: capturePartScale(parts.armR),
+                        legL: capturePartScale(parts.legL),
+                        legR: capturePartScale(parts.legR),
+                    };
+                }
+                const b = group.userData._shapeBaseScales;
+                setPartScale(parts.hips, b.hips, hi * wt, 1, hi * wt);
+                setPartScale(parts.torso, b.torso, ch * wt * (0.5 + wa * 0.5), 1, ch * wt);
+                setPartScale(parts.shoulders, b.shoulders, sh, 1, sh * 0.95);
+                setPartScale(parts.armL, b.armL, mu, 1, mu);
+                setPartScale(parts.armR, b.armR, mu, 1, mu);
+                setPartScale(parts.legL, b.legL, mu * (0.95 + wt * 0.05), 1, mu);
+                setPartScale(parts.legR, b.legR, mu * (0.95 + wt * 0.05), 1, mu);
+            } else if (group.userData?.isGltf) {
+                // Soft scale common bone/mesh names on GLB without morphs
+                if (!group.userData._shapeBaseGltf) {
+                    const map = {};
+                    group.traverse((c) => {
+                        const n = (c.name || '').toLowerCase();
+                        if (!n || !c.isObject3D) return;
+                        if (/hips|pelvis|torso|spine|chest|shoulder|upperarm|thigh|leg/.test(n)) {
+                            map[c.uuid] = { obj: c, scale: capturePartScale(c), name: n };
+                        }
+                    });
+                    group.userData._shapeBaseGltf = map;
+                }
+                Object.values(group.userData._shapeBaseGltf || {}).forEach((entry) => {
+                    const n = entry.name;
+                    let mx = 1;
+                    let mz = 1;
+                    if (/hips|pelvis/.test(n)) { mx = hi * wt; mz = hi * wt; }
+                    else if (/torso|spine|chest/.test(n)) { mx = ch * wt * (0.5 + wa * 0.5); mz = ch * wt; }
+                    else if (/shoulder/.test(n)) { mx = sh; mz = sh; }
+                    else if (/upperarm|arm/.test(n)) { mx = mu; mz = mu; }
+                    else if (/thigh|leg/.test(n)) { mx = mu * wt; mz = mu; }
+                    setPartScale(entry.obj, entry.scale, mx, 1, mz);
+                });
+            }
+        }
+
+        // Overall height — uniform scale vs body default
+        const bodyId = opts.bodyId || profileOrShape?.bodyId || 'male_default';
+        const defaultH = opts.defaultHeightM
+            ?? (bodyId === 'female_default' ? 1.65 : 1.75);
+        const targetH = shape.heightM != null && Number.isFinite(Number(shape.heightM))
+            ? Number(shape.heightM)
+            : defaultH;
+        const hScale = targetH / defaultH;
+        if (!group.userData._shapeBaseRootScale) {
+            group.userData._shapeBaseRootScale = {
+                x: group.scale.x,
+                y: group.scale.y,
+                z: group.scale.z,
+            };
+        }
+        const rs = group.userData._shapeBaseRootScale;
+        group.scale.set(rs.x * hScale, rs.y * hScale, rs.z * hScale);
+        group.userData.bodyShape = { ...shape, appliedAt: Date.now() };
+        return true;
     },
 };
 

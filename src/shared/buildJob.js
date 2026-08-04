@@ -10,7 +10,8 @@ import { buildProductionPlan, buildProductionReviewPrompt } from './assetProduct
 
 const PREFS_KEY = 'buildJobPrefs';
 
-const STEP_PLANS = {
+/** Full production pipeline (rich / maximal). */
+const STEP_PLANS_FULL = {
     world: [
         { id: 'layout', label: 'Floor & layout', tier: 'large', taskId: 'prompter_generate' },
         { id: 'collision', label: 'Collision & surfaceType', tier: 'medium', taskId: 'dev_suggest' },
@@ -42,12 +43,51 @@ const STEP_PLANS = {
     ],
 };
 
+/** Focused / minimal live jobs — faster default for watching in-scene. */
+const STEP_PLANS_FOCUSED = {
+    world: [
+        { id: 'layout', label: 'Floor & layout', tier: 'large', taskId: 'prompter_generate' },
+        { id: 'props', label: 'Props & landmarks', tier: 'medium', taskId: 'dev_suggest' },
+        { id: 'atmosphere', label: 'Lighting & atmosphere', tier: 'medium', taskId: 'dev_suggest' },
+    ],
+    character: STEP_PLANS_FULL.character,
+    prop: [
+        { id: 'prop', label: 'Prop mesh', tier: 'medium', taskId: 'dev_suggest' },
+        { id: 'shaders', label: 'Material preset', tier: 'medium', taskId: 'dev_suggest' },
+    ],
+    animation: STEP_PLANS_FULL.animation,
+    texture: STEP_PLANS_FULL.texture,
+    sound: STEP_PLANS_FULL.sound,
+};
+
+const STEP_PLANS = STEP_PLANS_FULL;
+
+function resolveIntensity(ctx = {}, prefs = {}) {
+    const raw = prefs.intensity || ctx.intensity || 'focused';
+    const s = String(raw).toLowerCase();
+    if (s === 'rich' || s === 'maximal' || s === 'full') return 'full';
+    if (s === 'minimal' || s === 'quick') return 'focused';
+    return 'focused';
+}
+
 function loadPrefs() {
     try {
         return JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
     } catch {
         return {};
     }
+}
+
+/** Default prefs — live apply ON; focused 3-step world by default. */
+function defaultPrefs() {
+    return {
+        multiStep: true,
+        timeLimitMin: 0,
+        liveApply: true,
+        resumePlay: true,
+        /** focused = 3 steps · full = full production pipeline */
+        intensity: 'focused',
+    };
 }
 
 function savePrefs(patch) {
@@ -145,8 +185,7 @@ export const BuildJob = {
 
     getPrefs() {
         return {
-            multiStep: true,
-            timeLimitMin: 0,
+            ...defaultPrefs(),
             ...loadPrefs(),
         };
     },
@@ -155,8 +194,11 @@ export const BuildJob = {
         return savePrefs(patch);
     },
 
-    planSteps(taskType) {
-        return [...(STEP_PLANS[taskType] || STEP_PLANS.world)];
+    planSteps(taskType, opts = {}) {
+        const intensity = resolveIntensity(opts.ctx || {}, { ...this.getPrefs(), ...opts.prefs });
+        const table = intensity === 'full' ? STEP_PLANS_FULL : STEP_PLANS_FOCUSED;
+        const type = taskType || 'world';
+        return [...(table[type] || table.world || STEP_PLANS_FULL.world)];
     },
 
     isRunning() {
@@ -182,7 +224,7 @@ export const BuildJob = {
         this._abort = false;
 
         const prefs = { ...this.getPrefs(), ...options.prefs };
-        const steps = options.steps || this.planSteps(ctx.taskType || 'world');
+        const steps = options.steps || this.planSteps(ctx.taskType || 'world', { ctx, prefs });
         const deadline = prefs.timeLimitMin > 0
             ? Date.now() + prefs.timeLimitMin * 60 * 1000
             : null;
@@ -221,6 +263,7 @@ export const BuildJob = {
                 }, { timeoutMs });
 
                 const chunk = result.code || result.text || '';
+                const stepCode = sanitizeSceneCode(stripCodeFences(chunk));
                 accumulated = mergeStepCode(accumulated, chunk);
                 log.push({
                     step: step.id,
@@ -235,7 +278,10 @@ export const BuildJob = {
                     step: i,
                     total: steps.length,
                     label: step.label,
+                    stepId: step.id,
                     code: accumulated,
+                    /** This step only — LiveBuild applies chunk so objects are not recreated. */
+                    chunk: stepCode,
                     log,
                 });
             }

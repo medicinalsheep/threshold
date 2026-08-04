@@ -29,12 +29,13 @@ Stack: Vite · Three.js · Cannon · PeerJS SPA · GitHub Pages.
 2. SURFACE   Phones → player UI; desktop → creator · ?surface=player|creator|full
 3. ENTER     Solo terminal grid (PLAY walk-ready) — or CREATE SESSION for MP
 4. PLAY/ARRANGE/EDIT · PLAY AS (K) · INSERT → QUALITY ladder · EDIT gizmo
-5. PORTAL    (creator) Grok key and/or Ollama · build agents
-6. SHIP      TOOLS → Export · npm run store:ship (optional)
+5. BUILD     BUILD SOMETHING / hub AI → brief → GENERATE → LIVE SCENE (creator)
+6. SKIN      SCENE → SKIN — body shape + wardrobe · then TOOLS → Export / store:ship
 ```
 
 Multiplayer: **CREATE SESSION** → copy room code or invite link → friends **JOIN**.  
-Voice mic is requested **after** session start — never blocks CREATE.
+Voice mic is requested **after** session start — never blocks CREATE.  
+**No TC DEMO** in lobby (removed 10.20) — terminal grid is the default.
 
 ---
 
@@ -49,12 +50,13 @@ Voice mic is requested **after** session start — never blocks CREATE.
 | Visibility E0–E4 | `visibilitySystem.js` + `config/visibility.json` |
 | UI surface | `surfaceProfile.js` + `css/surface.css` |
 | Network | `network.js`, `sync.js`, `remotePlayers.js` |
-| Agents | `agentPortal.js`, `agentRouter.js`, `src/grok/`, Ollama |
+| Agents | `agentPortal.js`, `liveBuild.js`, `buildJob.js`, `agentRouter.js`, Ollama |
 | Materials | `materialPresets.js`, `materialLibrary.js` · [MATERIALS.md](MATERIALS.md) |
 | Physics | `physics.js`, `starterKit.js` · [PHYSICS.md](PHYSICS.md) |
 | Modes / arrange / play-as | `simMode.js`, `arrangeMode.js`, `playAs.js`, `qualityLadder.js` |
 | Grid snap | `gridSystem.js` |
-| Avatar LOD / skin | `avatarLod.js`, `avatarPoseSync.js`, `appearanceProfile.js` |
+| Avatar / shape / wardrobe | `appearanceProfile.js`, `clothingLayout.js`, `avatarMod.js`, `avatarLod.js` |
+| Training minis | `training/bootcamp/` · `train:mini -- --wave7` · [BOOTCAMP.md](BOOTCAMP.md) |
 | Store / macOS | `scripts/store-ship.cjs`, `notarize-mac.cjs` · [MAC_NOTARIZE.md](MAC_NOTARIZE.md) |
 | Agent map | [AGENTS.md](../AGENTS.md) |
 
@@ -69,7 +71,9 @@ Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [UI_AND_A
 - **Quality ladder** — INSERT → **QUALITY** · light presets · kit · AI · materials · pad · [CAPABILITIES.md](CAPABILITIES.md)
 - **Grid units** — **1 unit = 1 m** · SCENE cell size · snap · `gridSystem.js`
 - **Physics** — mass/friction/joints · gravity UI · kit opt-in only · [PHYSICS.md](PHYSICS.md)
-- **Avatar** — realistic starter maps + outfit · multi-LOD walk pose (no zoom hop)
+- **Avatar** — realistic maps · **body shape** · **wardrobe** (slot rail) · multi-LOD walk
+- **Live build** — multi-step agents apply in-scene · HUD undo · quick 3-step default
+- **BUILD SOMETHING** — auto-connect when provider ready · one-brief GENERATE
 - **Neg LOD** — ~**100m** light-bake · mesh/HILOD first · [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
 - **Visibility E0–E4** · **E5** remotes/bloom
 - **Materials** — INSERT / inspector only · [MATERIALS.md](MATERIALS.md)
@@ -138,12 +142,12 @@ Ollama for **GitHub Pages**: keep a local proxy open — `node scripts/ollama-co
 Live: https://medicinalsheep.github.io/threshold/
 Repo: https://github.com/medicinalsheep/threshold
 Spine: docs/BUILD_FROM.md · CAPABILITIES.md · AGENTS.md · UI_AND_AGENTS.md
-Free core: ENTER solo → PLAY on terminal grid (empty). Hub PLAY/ARRANGE/EDIT.
-Quality: INSERT → QUALITY (light · kit · AI · materials · pad). Play as = K.
-Optional Grok + Ollama (creator surface), PeerJS CREATE/JOIN. No X OAuth.
-Physics kit opt-in only · PHYSICS.md · physics:verify.
-Perf: Neg LOD ~100m · Vis E0–E4. Materials: MATERIALS.md (INSERT, not enter).
-Ship: store:ship · MAC_NOTARIZE.md (signing local).
+Free core: ENTER solo → PLAY terminal grid. Hub PLAY/ARRANGE/EDIT · Play as = K.
+Build: BUILD SOMETHING / AI → brief → GENERATE → LIVE SCENE (creator).
+Skin: SCENE → SKIN body shape + wardrobe. Quality: INSERT → QUALITY (opt-in).
+Optional Grok + Ollama (creator), PeerJS CREATE/JOIN. No X OAuth. No TC DEMO.
+Physics kit opt-in · PHYSICS.md. Perf: Neg LOD ~100m · Vis E0–E4.
+Train: npm run train:mini -- --wave7. Ship: store:ship · MAC_NOTARIZE.md.
 Task: [your goal]
 ```
 

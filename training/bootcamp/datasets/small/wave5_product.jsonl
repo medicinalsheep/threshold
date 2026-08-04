@@ -55,7 +55,7 @@
 {"task":"npc_chat","messages":[{"role":"user","content":"You are a Threshold ship coach. Player says: How do I notarize Mac?"},{"role":"assistant","content":"On a Mac: set CSC_LINK and APPLE_ID env vars, npm run package:mac, then mac:staple. See docs/MAC_NOTARIZE.md — keys never go in git."}]}
 {"task":"guide","messages":[{"role":"user","content":"What is player surface?"},{"role":"assistant","content":"player surface hides AI/Ollama/export chrome; default on phones; ?surface=player"}]}
 {"task":"guide","messages":[{"role":"user","content":"Ollama port for Pages?"},{"role":"assistant","content":"Proxy http://127.0.0.1:11435 via npm run ollama:serve — not raw :11434"}]}
-{"task":"guide","messages":[{"role":"user","content":"Neg LOD default distance?"},{"role":"assistant","content":"About 72m default; Lite ~52m Mobile ~68m Realistic ~88m Ultra ~110m"}]}
+{"task":"guide","messages":[{"role":"user","content":"Neg LOD default distance?"},{"role":"assistant","content":"About 100m default; Lite ~72m Mobile ~95m Realistic ~125m Ultra ~165m; mesh/HILOD first at 18/48m"}]}
 {"task":"guide","messages":[{"role":"user","content":"World.createObject argument order?"},{"role":"assistant","content":"World.createObject(type, name, colorHex, usePhysics) — type first: cube|sphere|cone|torus"}]}
 {"task":"guide","messages":[{"role":"user","content":"Default render mode?"},{"role":"assistant","content":"Engine.setRenderMode(4) realistic PBR"}]}
 {"task":"guide","messages":[{"role":"user","content":"How to train minis?"},{"role":"assistant","content":"npm run train:mini -- --full then SAVE TIERS small=threshold-mini-npc medium=threshold-mini-dev"}]}

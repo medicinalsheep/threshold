@@ -101,7 +101,9 @@ function finalizeCode(code, user) {
             return full;
         },
     );
-    if (!/\b(clear\s*world|wipe\s*(the\s*)?scene)\b/i.test(user)) {
+    // Only honor explicit user ask to wipe — ignore clearWorld inside the broken code fence
+    const userAsk = String(user || '').replace(/```[\s\S]*?```/g, ' ');
+    if (!/\b(clear\s+the\s+world|clear\s+world|wipe\s*(the\s*)?scene|please\s+clearWorld)\b/i.test(userAsk)) {
         out = out.replace(/World\.clearWorld\s*\([^)]*\)\s*;?/gi, '/* clearWorld removed */');
     }
     if (!/World\.createObject/i.test(out) && (/new\s+THREE\.Scene/i.test(out) || /scene\.add/i.test(out))) {

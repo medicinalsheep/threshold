@@ -52,7 +52,7 @@ const STEPS = [
         title: 'PLAY → test',
         body: (mode) => (mode === 'play'
             ? 'You are in <strong>PLAY</strong> — minimal UI, touch toggle stays on <strong>bottom-left</strong>. '
-                + '<strong>SCENE/SKIN</strong> (bottom-right) for your avatar. Walk to the AI Build Station and press <strong>F</strong>.'
+                + '<strong>SCENE/SKIN</strong> (bottom-right) for your avatar. Tap <strong>BUILD SOMETHING</strong> or <strong>AI</strong> (top-left) to generate into the live scene.'
             : 'Tap <strong>PLAY</strong> (top-left) to run physics and test. Touch controls toggle on bottom-left. '
                 + '<strong>LINK</strong> (top-left) shares your session.'),
         highlight: (m) => (m === 'play' ? '#hub-touch-quick' : '#hub-mode-toggle'),
@@ -118,13 +118,14 @@ const FULL_STEPS = [
     },
     {
         title: 'AI-assisted creation',
-        body: '<strong>Agent Portal</strong> at the AI Build Station (F) · tiered Grok/Ollama routing · '
-            + 'NPC personas in <strong>SETUP</strong> advanced section.',
+        body: '<strong>BUILD SOMETHING</strong> or hub <strong>AI</strong> opens the Agent Portal. '
+            + 'One clear scene brief → <strong>GENERATE → LIVE SCENE</strong> (quick 3-step live build). '
+            + 'Optional station (INSERT → QUALITY) if you want an in-world kiosk; not required.',
         actions: [
             {
-                label: 'Open portal',
+                label: 'Build something',
                 run() {
-                    window.AgentPortal?.show?.();
+                    void window.AgentPortal?.openBuildFast?.();
                 },
             },
         ],

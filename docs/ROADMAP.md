@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.15.10 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.20.1 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -197,6 +197,31 @@ Accounts guide: [AUTH.md](AUTH.md) · Snapshot: [CAPABILITIES.md](CAPABILITIES.m
 | **10.15.9** | **True PBR + avatar** — real N/R/M · skin tones · hair |
 | **10.15.10** | **Skin ladder** — 9 tones porcelain→ebony |
 
+## 10.16 — Live build & in-scene agent feedback
+
+| Slice | Focus |
+|-------|-------|
+| **10.16.0** | **Live apply** — watch multi-step agent builds land in the scene · HUD · docked portal · texture pulse |
+| **10.16.1** | **Phase 1 polish** — live undo · focused 3-step default · play-as dt/host-empty · export mods · audit matrix |
+| **10.17.0** | **Entry → build** — BUILD SOMETHING CTA · auto-connect · fast brief → GENERATE · lobby BUILD skips tour |
+| **10.18.0** | **Body shape** — continuous shoulders/chest/waist/hips/muscle/weight + height · SKIN live sliders |
+| **10.19.0** | **Wardrobe** — slot rail + catalog board · presets · equip/unequip without flat checkbox wall |
+| **10.20.0** | **TC DEMO removed** · **training wave7** (entry + shape + wardrobe + live) |
+| **10.20.1** | **Phase 6 doc ship** — spine truth sweep · audit closed · CAPABILITIES/BUILD_FROM journeys |
+
+### Program 10.16–10.20 (closed)
+
+| Phase | Focus | Version |
+|-------|--------|---------|
+| **0–1** | Audit + live/play-as polish | 10.16.x |
+| **2** | Entry → build | 10.17.0 |
+| **3** | Body shape | 10.18.0 |
+| **4** | Clothing wardrobe | 10.19.0 |
+| **5** | Training wave7 · TC DEMO out | 10.20.0 |
+| **6** | Doc truth sweep | **10.20.1** |
+
+Audit: [`_audit_10.16.md`](_audit_10.16.md).
+
 Perf: [PERF_NEXT.md](PERF_NEXT.md) · Physics: [PHYSICS.md](PHYSICS.md) · Materials: [MATERIALS.md](MATERIALS.md)
 
 ---
@@ -208,9 +233,9 @@ Perf: [PERF_NEXT.md](PERF_NEXT.md) · Physics: [PHYSICS.md](PHYSICS.md) · Mater
 | GIMP hero hand-paint | Optional via GIMP SYNC (procedural heroes shipped 10.12.16) |
 | Doc / version hygiene | ✅ `version:sync` + sweeps |
 | Store / macOS notary | ✅ scripts + docs; **needs studio certs + Mac host** for real notarize |
-| Training dataset growth | Waves 1–4 + `train:mini` + `ollama:golden`; grow via EXPORT TRAINING PAIR |
+| Training dataset growth | Waves 1–**7** seeded · local `train:mini -- --wave7` / `--full --golden`; grow via EXPORT TRAINING PAIR |
 | Trellis/Veo-class models | Listed in `models-registry.json` |
-| TC reference edition | Lobby **TC DEMO** path kept; separate from default grid |
+| TC modules | Lobby **TC DEMO** removed (10.20); code/export scripts remain |
 | Mac App Store Catalyst | Out of scope — desktop dmg via Electron |
 
 ---

@@ -2,7 +2,7 @@
 
 **North star:** Plan everything before generation. Creators design games; the tool makes pieces fall into place — not AI slop dumped into a blank chat.
 
-**Version:** 10.15.10 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** 10.20.1 · **Live:** https://medicinalsheep.github.io/threshold/
 
 ---
 
@@ -104,20 +104,35 @@ Agents call `MaterialPresets.applyMaterialPreset(mesh, id)` — presets auto-wir
 ```
 LOBBY → ENTER terminal grid (PLAY)
   ↓
-AI Portal OR SETUP brief
+BUILD SOMETHING / hub AI (auto-connect if provider ready)
   ↓
-Production review (placement, weather, atmosphere, shaders)
+One brief → GENERATE → LIVE SCENE (quick 3-step default)
   ↓
-GENERATE / RUN AGENT (gated)
+Optional: SKIN body shape + wardrobe · INSERT QUALITY
   ↓
-Multi-step build OR single Compiler IIFE
-  ↓
-GIMP watch / Blender insert
+GIMP watch / Blender insert (maps pulse on hot-reload)
   ↓
 PLAY — weather, footsteps, atmosphere
   ↓
 Export preflight — slop scan → ship
 ```
+
+### Live build (10.16+)
+
+| Piece | Role |
+|-------|------|
+| **Live apply** | Portal checkbox — run each `BuildJob` step in the scene (not wait for full script) |
+| **LiveBuild HUD** | Step list + progress · **↩ undo** last step |
+| **Docked portal** | Agent card shrinks to a corner so the 3D view stays primary |
+| **Texture pulse** | GIMP `textures:watch` / map apply flashes matched meshes |
+| **Compiler still gets code** | Full script saved for review; re-run may duplicate if live already applied |
+
+### Character (10.18–10.19)
+
+| Piece | Role |
+|-------|------|
+| **Body shape** | `shape` 0–1 sliders + optional height · SKIN panel live |
+| **Wardrobe** | Slot rail + catalog over `avatar-mods.json` · presets |
 
 ---
 
@@ -125,7 +140,8 @@ Export preflight — slop scan → ship
 
 | Phase | Focus |
 |-------|-------|
-| **10.15+** | Quality ladder layers on demand (kit/AI/pad already opt-in) |
+| **Shipped 10.16–10.20** | Live build · entry simplify · shape · wardrobe · wave7 train · no TC DEMO |
+| **Optional** | Richer live material previews · store notarize (local certs) · Trellis/Veo when ready |
 | **Future** | Trellis mesh gen, Veo cutscenes — listed in capability registry, gated when ready |
 
 See [ROADMAP.md](ROADMAP.md) · [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) · [UI_AND_AGENTS.md](UI_AND_AGENTS.md)

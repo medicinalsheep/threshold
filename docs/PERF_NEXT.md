@@ -1,6 +1,6 @@
 # Performance status (Neg LOD + Visibility + harness)
 
-**Status:** Core perf stack **complete** · product version: see `src/config.js` → `VERSION` (10.15.x)  
+**Status:** Core perf stack **complete** · product version: see `src/config.js` → `VERSION` (10.20.x)  
 **Related:** [NEGATIVE_LOD.md](NEGATIVE_LOD.md) · [MATERIALS.md](MATERIALS.md) · [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
 
 X OAuth is **removed**. Shipped: Neg LOD (**~100m** default, **light-baked** unlit, tier auto, multi-mat, floor B; path **C off** by default after thrash fix) · MeshLod + HILOD · Visibility **E0–E4** · **E5** remotes/bloom · measure + **CI harness** · **player surface** · **material library** · **terminal void** enter (no pad thrash on ENTER).

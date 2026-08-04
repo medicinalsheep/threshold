@@ -1,6 +1,6 @@
-# Streamlined dev path (v10.15)
+# Streamlined dev path (v10.20)
 
-One linear path from lobby to shipped build — solo ENTER on **terminal grid**, quality ladder opt-in, optional host/join, Agent Portal, export.
+One linear path from lobby to shipped build — solo ENTER on **terminal grid**, **BUILD SOMETHING** → live generate, SKIN shape/wardrobe, quality ladder opt-in, export.
 
 **Spine:** [BUILD_FROM.md](BUILD_FROM.md) · **Surfaces:** [UI_AND_AGENTS.md](UI_AND_AGENTS.md) · **Physics:** [PHYSICS.md](PHYSICS.md) · **Controls:** [CONTROLS.md](CONTROLS.md)
 
@@ -14,7 +14,7 @@ One linear path from lobby to shipped build — solo ENTER on **terminal grid**,
 | **Host** | Lobby → **CREATE SESSION** → copy invite → **ENTER SESSION** |
 | **Join** | Lobby → paste code → **JOIN** (+ passcode if host set one) |
 | **Surface** | Phones → **player**; desktop → **creator**. Lobby chips or `?surface=` |
-| **Template** | Blank Grid (default) · Workspace Pad · TC Circuit |
+| **Template** | Blank Grid (default) · Workspace Pad (opt-in) |
 
 Multiplayer is optional PeerJS. **No account required** for local solo play. Grok key optional for cloud AI.  
 Browsers: Chrome/Edge/Firefox — after deploys, hard-refresh if modules fail to load ([GETTING_STARTED](GETTING_STARTED.md)#browsers).
@@ -32,7 +32,19 @@ Browsers: Chrome/Edge/Firefox — after deploys, hard-refresh if modules fail to
 
 ---
 
-## 2. Agent Portal + SETUP
+## 2. Entry → build (≤3 actions when a provider is ready)
+
+| Action | What happens |
+|--------|----------------|
+| **ENTER** (creator) | Terminal grid · floating **BUILD SOMETHING** |
+| **Lobby BUILD** | Skips walkthrough · same CTA + AI pulse |
+| Tap **BUILD SOMETHING** or hub **AI** | Probe → auto-connect if Grok/Ollama OK → build chat |
+| One scene brief + **GENERATE → LIVE SCENE** | Quick 3-step live job (layout → props → atmosphere) |
+| Phone / player surface | CTA → flips to creator · paste Grok key if needed |
+
+Optional: INSERT → QUALITY AI station (not required — hub AI is enough).
+
+## 3. Agent Portal + SETUP
 
 **Agent Portal** / AI tools are on the **creator** surface (desktop default; phones use **Creator tools**). **SETUP** tab (SCENE → SETUP) holds tier prefs and dev tools.
 

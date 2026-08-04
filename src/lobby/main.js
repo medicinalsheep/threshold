@@ -288,23 +288,6 @@ export function initLobby(onReady) {
         }
     });
 
-    document.getElementById('lobby-tc')?.addEventListener('click', () => {
-        try {
-            setStatus('TC Circuit loading…');
-            Session.init();
-            applyDisplayName();
-            setSelectedTemplateId('tc-circuit');
-            const sel = document.getElementById('lobby-template');
-            if (sel) sel.value = 'tc-circuit';
-            persistLobbyMode();
-            Network.startSolo();
-            enterApp();
-        } catch (e) {
-            console.error('[lobby] tc enter', e);
-            setStatus(e?.message || 'Could not start TC Circuit', true);
-        }
-    });
-
     document.getElementById('lobby-spectate')?.addEventListener('click', async () => {
         const code = normalizeRoomCode(joinInput?.value);
         if (!code) { setStatus('Enter a room code to spectate', true); return; }

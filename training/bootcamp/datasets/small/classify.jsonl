@@ -103,91 +103,23 @@
 {"task":"intent_classify","messages":[{"role":"user","content":"open scene inspector"},{"role":"assistant","content":"INTENT: edit\nAPI: Inspector"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"toggle fly mode"},{"role":"assistant","content":"INTENT: other\nAPI: touchControls + walk/fly"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"enable VOIP"},{"role":"assistant","content":"INTENT: other\nAPI: voip"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"create a multiplayer session"},{"role":"assistant","content":"INTENT: other\nAPI: Lobby.CREATE SESSION"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"join with room code BRAV-XXXX-YYYY"},{"role":"assistant","content":"INTENT: other\nAPI: Lobby.join"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"share invite link with friends"},{"role":"assistant","content":"INTENT: other\nAPI: Lobby invite panel"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"set host passcode"},{"role":"assistant","content":"INTENT: other\nAPI: Lobby passcode + PLAYERS"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"kick a guest"},{"role":"assistant","content":"INTENT: other\nAPI: PLAYERS panel host"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"enable host migration"},{"role":"assistant","content":"INTENT: other\nAPI: hostMigration"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"start spectating player 2"},{"role":"assistant","content":"INTENT: other\nAPI: spectate"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"turn on proximity VOIP"},{"role":"assistant","content":"INTENT: other\nAPI: voip"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"open session panel"},{"role":"assistant","content":"INTENT: other\nAPI: Tab session panel"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"open threshold child TC edition"},{"role":"assistant","content":"INTENT: other\nAPI: Lobby TC"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"load TC vehicles showcase"},{"role":"assistant","content":"INTENT: other\nAPI: Lobby TC + tcVeh"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"start circuit race checkpoints"},{"role":"assistant","content":"INTENT: other\nAPI: tcCircuit"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"drive the haul truck"},{"role":"assistant","content":"INTENT: other\nAPI: tcDrive + interact E"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"spawn TC character kit"},{"role":"assistant","content":"INTENT: spawn\nAPI: tcChr + gltfImport"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"how do I crouch"},{"role":"assistant","content":"INTENT: other\nAPI: CONTROLS Ctrl"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"how do I stealth walk"},{"role":"assistant","content":"INTENT: other\nAPI: CONTROLS U hold"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"how do I aim down sights"},{"role":"assistant","content":"INTENT: other\nAPI: CONTROLS LMB ADS"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"how do I shoot"},{"role":"assistant","content":"INTENT: other\nAPI: CONTROLS RMB fire"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"how do I reload"},{"role":"assistant","content":"INTENT: other\nAPI: CONTROLS R"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"toggle FPS third person"},{"role":"assistant","content":"INTENT: other\nAPI: CONTROLS V"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"enter vehicle key"},{"role":"assistant","content":"INTENT: other\nAPI: CONTROLS E"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"open chat"},{"role":"assistant","content":"INTENT: other\nAPI: CONTROLS T gameChat"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"flashlight toggle"},{"role":"assistant","content":"INTENT: other\nAPI: CONTROLS L"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"rebind keys"},{"role":"assistant","content":"INTENT: other\nAPI: KEYS menu + bindings"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"unlock touch button layout"},{"role":"assistant","content":"INTENT: other\nAPI: hub UNLOCK touch"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"walk fly toggle"},{"role":"assistant","content":"INTENT: other\nAPI: CONTROLS Y"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"open agent portal"},{"role":"assistant","content":"INTENT: other\nAPI: AgentPortal"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"complete production plan before generate"},{"role":"assistant","content":"INTENT: other\nAPI: assetProductionPlan + AgentPortal"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"set ollama small tier model"},{"role":"assistant","content":"INTENT: other\nAPI: AgentRouter tier prefs"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"paste grok api key"},{"role":"assistant","content":"INTENT: other\nAPI: SETUP + Auth"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"enable ai memory freeze"},{"role":"assistant","content":"INTENT: other\nAPI: aiMemoryFreeze SETUP"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"set working folder for agents"},{"role":"assistant","content":"INTENT: other\nAPI: workFolderScope SETUP"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"run smart dev suggest"},{"role":"assistant","content":"INTENT: other\nAPI: Compiler SMART DEV"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"export training pair from compiler"},{"role":"assistant","content":"INTENT: other\nAPI: SETUP EXPORT TRAINING PAIR"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"queue training on apply"},{"role":"assistant","content":"INTENT: other\nAPI: trainingImport queue"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"install gimp plugin"},{"role":"assistant","content":"INTENT: texture\nAPI: npm run gimp:install"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"install blender addon"},{"role":"assistant","content":"INTENT: spawn\nAPI: npm run blender:install"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"export avatar from blender"},{"role":"assistant","content":"INTENT: spawn\nAPI: blender:avatar + gltfImport"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"generate hilod texture tiers"},{"role":"assistant","content":"INTENT: texture\nAPI: textures:hilod"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"compress textures to webp"},{"role":"assistant","content":"INTENT: texture\nAPI: tex:compress"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"pack starter kit assets"},{"role":"assistant","content":"INTENT: other\nAPI: kit:export"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"verify starter sounds"},{"role":"assistant","content":"INTENT: sound\nAPI: sounds:verify"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"fetch real ambient loops"},{"role":"assistant","content":"INTENT: sound\nAPI: sounds:fetch:ambient"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"export web only build"},{"role":"assistant","content":"INTENT: export\nAPI: ExportWizard web"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"export android apk"},{"role":"assistant","content":"INTENT: export\nAPI: ExportWizard + package:android"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"export windows electron"},{"role":"assistant","content":"INTENT: export\nAPI: ExportWizard + package:win"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"export ios capacitor"},{"role":"assistant","content":"INTENT: export\nAPI: ExportWizard + package:ios"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"steam depot package"},{"role":"assistant","content":"INTENT: export\nAPI: package:steam + steam:depot"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"run store verify smoke"},{"role":"assistant","content":"INTENT: export\nAPI: store:verify"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"generate store upload guide"},{"role":"assistant","content":"INTENT: export\nAPI: store:upload"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"quick export and play"},{"role":"assistant","content":"INTENT: export\nAPI: quickExportPlay"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"include immersive weather in export"},{"role":"assistant","content":"INTENT: export\nAPI: ExportWizard immersive step"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"slop scan before ship"},{"role":"assistant","content":"INTENT: export\nAPI: assessSceneSlop + ExportWizard"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"set dusty exterior wear"},{"role":"assistant","content":"INTENT: edit\nAPI: userData.dustExposure + weatherSystem"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"enable heat shimmer shader"},{"role":"assistant","content":"INTENT: style\nAPI: ShaderRegistry heat_shimmer"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"apply pbr metal brushed preset"},{"role":"assistant","content":"INTENT: style\nAPI: MaterialPresets pbr_metal_brushed"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"apply pbr glass wet preset"},{"role":"assistant","content":"INTENT: style\nAPI: MaterialPresets pbr_glass_wet"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"apply pbr wood snow preset"},{"role":"assistant","content":"INTENT: style\nAPI: MaterialPresets pbr_wood_snow"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"apply pbr asphalt wet"},{"role":"assistant","content":"INTENT: style\nAPI: MaterialPresets pbr_asphalt_wet"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"apply neon rim graph"},{"role":"assistant","content":"INTENT: style\nAPI: ShaderNodeGraph neon_rim"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"apply storm exterior graph"},{"role":"assistant","content":"INTENT: style\nAPI: ShaderNodeGraph storm_exterior"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"apply wind foliage graph"},{"role":"assistant","content":"INTENT: style\nAPI: ShaderNodeGraph wind_foliage"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"set interior warm audio zone"},{"role":"assistant","content":"INTENT: sound\nAPI: userData.audioZone interior_warm"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"set highway edge ambient"},{"role":"assistant","content":"INTENT: sound\nAPI: userData.audioZone highway_edge"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"enable survival hunger thirst"},{"role":"assistant","content":"INTENT: other\nAPI: dev/survival npm run dev:survival"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"add survival food prop"},{"role":"assistant","content":"INTENT: spawn\nAPI: dev/survival interact food"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"self host peer relay"},{"role":"assistant","content":"INTENT: other\nAPI: relay/ Docker PM2"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"verify relay health"},{"role":"assistant","content":"INTENT: other\nAPI: relay:verify"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"set graphics ultra"},{"role":"assistant","content":"INTENT: graphics\nAPI: graphicsProfile Ultra"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"set graphics mobile lite"},{"role":"assistant","content":"INTENT: graphics\nAPI: graphicsProfile Lite"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"disable water reflections"},{"role":"assistant","content":"INTENT: graphics\nAPI: graphicsProfile + Environment"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"save world code"},{"role":"assistant","content":"INTENT: other\nAPI: Persistence.saveWorld"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"load world from share link"},{"role":"assistant","content":"INTENT: other\nAPI: Persistence + ?world="}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"undo scene edit"},{"role":"assistant","content":"INTENT: edit\nAPI: sceneHistory undo"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"redo scene edit"},{"role":"assistant","content":"INTENT: edit\nAPI: sceneHistory redo"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"gimme crates with physics"},{"role":"assistant","content":"INTENT: spawn\nAPI: World.createObject"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"make it rain at dusk"},{"role":"assistant","content":"INTENT: edit\nAPI: Environment + State.env"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"ship web build now"},{"role":"assistant","content":"INTENT: export\nAPI: ExportWizard"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"gimp maps on the floor please"},{"role":"assistant","content":"INTENT: texture\nAPI: userData.textures + textures:watch"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"terminal green mode"},{"role":"assistant","content":"INTENT: style\nAPI: Engine.setRenderMode(2)"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"realistic pbr please"},{"role":"assistant","content":"INTENT: graphics\nAPI: Engine.setRenderMode(4)"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"clang when door hits"},{"role":"assistant","content":"INTENT: sound\nAPI: userData.soundClipId collision"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"freeze the ai build"},{"role":"assistant","content":"INTENT: other\nAPI: aiMemoryFreeze"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"who can edit multiplayer"},{"role":"assistant","content":"INTENT: other\nAPI: host-authoritative sync"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"train mini models"},{"role":"assistant","content":"INTENT: other\nAPI: npm run train:mini"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nswitch to arrange mode"},{"role":"assistant","content":"INTENT: edit\nAPI: SimMode arrange + hub cycle"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ncycle play arrange edit"},{"role":"assistant","content":"INTENT: edit\nAPI: hub mode PLAY ARRANGE EDIT"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nplay as this npc"},{"role":"assistant","content":"INTENT: other\nAPI: PlayAs.possess"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\npossess the selected prop"},{"role":"assistant","content":"INTENT: other\nAPI: PlayAs.possess"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nrelease play as"},{"role":"assistant","content":"INTENT: other\nAPI: PlayAs.release"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nterminal void default"},{"role":"assistant","content":"INTENT: other\nAPI: StarterGrid terminal void"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nquality ladder lighting day"},{"role":"assistant","content":"INTENT: graphics\nAPI: QualityLadder lighting"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ninsert quality materials"},{"role":"assistant","content":"INTENT: texture\nAPI: QualityLadder materials + MaterialLibrary"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nopt in physics kit"},{"role":"assistant","content":"INTENT: physics\nAPI: QualityLadder kit + StarterKit"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nworkspace pad template"},{"role":"assistant","content":"INTENT: spawn\nAPI: QualityLadder pad + starterTemplates"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ngrid snap one meter"},{"role":"assistant","content":"INTENT: edit\nAPI: GridSystem snap 1u=1m"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nlive apply agent build"},{"role":"assistant","content":"INTENT: other\nAPI: LiveBuild + BuildJob liveApply"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nwatch agents build in scene"},{"role":"assistant","content":"INTENT: other\nAPI: LiveBuild HUD + portal live apply"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nmulti step live scene generate"},{"role":"assistant","content":"INTENT: spawn\nAPI: BuildJob multiStep LiveBuild"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ngimp texture hot reload"},{"role":"assistant","content":"INTENT: texture\nAPI: CreativeWatch + TextureBridge.hotReload"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nhand painted brick material"},{"role":"assistant","content":"INTENT: texture\nAPI: MaterialLibrary Mat Brick"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\napply material preset brick"},{"role":"assistant","content":"INTENT: texture\nAPI: MaterialPresets.applyMaterialPreset pbr_brick_aged"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nspawn a red box"},{"role":"assistant","content":"INTENT: spawn\nAPI: World.createObject"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nhow do friends join"},{"role":"assistant","content":"INTENT: other\nAPI: Lobby invite + room codes"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nhow do friends join my session"},{"role":"assistant","content":"INTENT: other\nAPI: Lobby invite + room codes"}]}
@@ -221,64 +153,10 @@
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nwhere is the compiler"},{"role":"assistant","content":"INTENT: other\nAPI: TOOLS Compiler"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nwhat is render mode 4"},{"role":"assistant","content":"INTENT: other\nAPI: Engine.setRenderMode(4)"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nwho can edit multiplayer"},{"role":"assistant","content":"INTENT: other\nAPI: host-authoritative sync"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"realistic pbr please"},{"role":"assistant","content":"INTENT: graphics\nAPI: Engine.setRenderMode(4)"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"how do friends join"},{"role":"assistant","content":"INTENT: other\nAPI: Lobby invite + room codes"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"make it look realistic"},{"role":"assistant","content":"INTENT: graphics\nAPI: Engine.setRenderMode(4)"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"can guests edit"},{"role":"assistant","content":"INTENT: other\nAPI: host-authoritative sync"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nrun production plan before generate"},{"role":"assistant","content":"INTENT: other\nAPI: assetProductionPlan + AgentPortal"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ncomplete design brief step 3"},{"role":"assistant","content":"INTENT: other\nAPI: designIntake production plan"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nwhy is generate blocked"},{"role":"assistant","content":"INTENT: other\nAPI: validateProductionReady"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nset texture resolution to 2k master"},{"role":"assistant","content":"INTENT: texture\nAPI: texRes 2k + textures:hilod"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nset texture resolution 1k for mobile"},{"role":"assistant","content":"INTENT: texture\nAPI: texRes 1k + WebP lite"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ngenerate hilod tiers from masters"},{"role":"assistant","content":"INTENT: texture\nAPI: textures:hilod"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ncompress textures to webp"},{"role":"assistant","content":"INTENT: texture\nAPI: tex:compress + WebP sidecars"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nrun textures watch for hilod"},{"role":"assistant","content":"INTENT: texture\nAPI: textures:watch"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nset graphics tier to lite"},{"role":"assistant","content":"INTENT: graphics\nAPI: graphicsProfile Lite"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nset graphics tier mobile"},{"role":"assistant","content":"INTENT: graphics\nAPI: graphicsProfile Mobile"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nset graphics ultra"},{"role":"assistant","content":"INTENT: graphics\nAPI: graphicsProfile Ultra"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nlower poly budget for props"},{"role":"assistant","content":"INTENT: other\nAPI: designIntake poly budget"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nexport lod meshes from blender"},{"role":"assistant","content":"INTENT: spawn\nAPI: blender lod_export + gltfImport"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nallow parallel ollama models"},{"role":"assistant","content":"INTENT: other\nAPI: OllamaRunQueue allowParallelLocal"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nuse sequential ollama queue"},{"role":"assistant","content":"INTENT: other\nAPI: OllamaRunQueue sequential"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ntoo many glbs for parallel"},{"role":"assistant","content":"INTENT: other\nAPI: OllamaRunQueue parallel guard"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\npark glbs in working folder"},{"role":"assistant","content":"INTENT: other\nAPI: workFolderScope parkMode"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nfreeze memory after heavy build"},{"role":"assistant","content":"INTENT: other\nAPI: aiMemoryFreeze"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nplan a courtyard before coding"},{"role":"assistant","content":"INTENT: other\nAPI: production_plan"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\noptimize scene for mobile devices"},{"role":"assistant","content":"INTENT: graphics\nAPI: graphicsProfile Lite + tex WebP"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nrescale masters to 1k and 2k"},{"role":"assistant","content":"INTENT: texture\nAPI: textures:hilod"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nwhat is hilod"},{"role":"assistant","content":"INTENT: other\nAPI: textures:hilod HILOD tiers"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\npoly budget low for phone"},{"role":"assistant","content":"INTENT: other\nAPI: designIntake poly low"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nverify production plan complete"},{"role":"assistant","content":"INTENT: other\nAPI: validateProductionReady"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nbundle webp for lite tier export"},{"role":"assistant","content":"INTENT: export\nAPI: ExportWizard + WebP lite"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nperformance pass fewer objects"},{"role":"assistant","content":"INTENT: edit\nAPI: scene optimize poly budget"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ncan I run compiler as guest"},{"role":"assistant","content":"INTENT: other\nAPI: host-only Compiler"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nspawn a box as guest"},{"role":"assistant","content":"INTENT: other\nAPI: host-authoritative — ask host to EDIT"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nwho is session authority"},{"role":"assistant","content":"INTENT: other\nAPI: host PeerJS authority"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nwhat do guests get on join"},{"role":"assistant","content":"INTENT: other\nAPI: FULL_STATE sync + immersiveReplay"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nsave world as guest"},{"role":"assistant","content":"INTENT: other\nAPI: host-only Persistence.saveWorld"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nollama cors 403"},{"role":"assistant","content":"INTENT: other\nAPI: npm run ollama:serve"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nollama offline"},{"role":"assistant","content":"INTENT: other\nAPI: ollama serve + OllamaClient"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ngenerate button blocked"},{"role":"assistant","content":"INTENT: other\nAPI: validateProductionReady"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nproduction plan incomplete"},{"role":"assistant","content":"INTENT: other\nAPI: AgentPortal Step 3 placement weather"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ngltf failed to load pink box"},{"role":"assistant","content":"INTENT: other\nAPI: aiMemoryFreeze restore + path check"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ntoo many glbs parallel error"},{"role":"assistant","content":"INTENT: other\nAPI: OllamaRunQueue sequential + park GLBs"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ntexture not applying to mesh"},{"role":"assistant","content":"INTENT: texture\nAPI: manifest name match + textures:watch"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nexport slop scan failed"},{"role":"assistant","content":"INTENT: export\nAPI: assessSceneSlop surfaceType MaterialPresets"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nhow do I retrain mini models"},{"role":"assistant","content":"INTENT: other\nAPI: npm run train:mini"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nexport web first only"},{"role":"assistant","content":"INTENT: export\nAPI: ExportWizard web"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nimmersive export step weather audio shaders"},{"role":"assistant","content":"INTENT: export\nAPI: ExportWizard immersive prefs"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nbundle audio zones for guests"},{"role":"assistant","content":"INTENT: export\nAPI: ExportWizard immersive bundleAudioZones"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nslop scan before ship"},{"role":"assistant","content":"INTENT: export\nAPI: assessSceneSlop + ExportWizard"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nstore prep and verify"},{"role":"assistant","content":"INTENT: export\nAPI: store:prep + store:verify"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nupload guide without signing keys"},{"role":"assistant","content":"INTENT: export\nAPI: store:upload upload-guide only"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nsteam package not one click"},{"role":"assistant","content":"INTENT: export\nAPI: package:steam + STEAM_RELEASE docs"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nhow do I aim ads"},{"role":"assistant","content":"INTENT: other\nAPI: CONTROLS LMB ADS"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nhow do I fire shoot"},{"role":"assistant","content":"INTENT: other\nAPI: CONTROLS RMB fire"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ninteract key"},{"role":"assistant","content":"INTENT: other\nAPI: CONTROLS F"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nenter vehicle key"},{"role":"assistant","content":"INTENT: other\nAPI: CONTROLS E"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nopen game chat"},{"role":"assistant","content":"INTENT: other\nAPI: CONTROLS T gameChat"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nstealth walk key"},{"role":"assistant","content":"INTENT: other\nAPI: CONTROLS U hold"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nopen tc reference edition"},{"role":"assistant","content":"INTENT: other\nAPI: Lobby TC — not blank grid"}]}
-{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ntc is not my default game"},{"role":"assistant","content":"INTENT: other\nAPI: Lobby TC reference only"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nswitch to play surface"},{"role":"assistant","content":"INTENT: other\nAPI: SurfaceProfile.set player"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nenable creator tools"},{"role":"assistant","content":"INTENT: other\nAPI: SurfaceProfile.set creator"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nfull ui surface"},{"role":"assistant","content":"INTENT: other\nAPI: SurfaceProfile.set full"}]}
@@ -315,3 +193,22 @@
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nstore ship command"},{"role":"assistant","content":"INTENT: export\nAPI: npm run store:ship"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nmacos notarize"},{"role":"assistant","content":"INTENT: export\nAPI: MAC_NOTARIZE package:mac"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\npause edit multiplayer"},{"role":"assistant","content":"INTENT: other\nAPI: host pause State.isPaused"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nretro terminal green shading"},{"role":"assistant","content":"INTENT: style\nAPI: Engine.setRenderMode(2)"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nnot realistic — terminal green only"},{"role":"assistant","content":"INTENT: style\nAPI: Engine.setRenderMode(2)"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nwhy is generate blocked"},{"role":"assistant","content":"INTENT: other\nAPI: validateProductionReady"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ngenerate button blocked incomplete plan"},{"role":"assistant","content":"INTENT: other\nAPI: validateProductionReady"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nbuild something button"},{"role":"assistant","content":"INTENT: other\nAPI: AgentPortal.openBuildFast + BUILD SOMETHING CTA"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nstart building with grok key"},{"role":"assistant","content":"INTENT: other\nAPI: AgentPortal.openBuildFast auto-connect"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ngenerate live scene from one message"},{"role":"assistant","content":"INTENT: spawn\nAPI: looksLikeBuildBrief + GENERATE LIVE SCENE"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nquick live build three steps"},{"role":"assistant","content":"INTENT: spawn\nAPI: BuildJob intensity focused layout props atmosphere"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nfull production pipeline seven steps"},{"role":"assistant","content":"INTENT: spawn\nAPI: BuildJob intensity full STEP_PLANS"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nbody shape shoulders wider"},{"role":"assistant","content":"INTENT: other\nAPI: AppearanceProfile shape shoulders"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nmake me taller body height"},{"role":"assistant","content":"INTENT: other\nAPI: AppearanceProfile shape heightM"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nskin body shape sliders"},{"role":"assistant","content":"INTENT: other\nAPI: SKIN panel shape + HumanMesh.applyShape"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nequip tactical operator outfit"},{"role":"assistant","content":"INTENT: other\nAPI: ClothingLayout + avatar-mods operator preset"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nwardrobe slot rail unequip hat"},{"role":"assistant","content":"INTENT: other\nAPI: ClothingLayout unequip + AvatarMod"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ndress as scientist lab coat"},{"role":"assistant","content":"INTENT: other\nAPI: AvatarMod coat_lab + generationPolicy archetype"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nopen skin wardrobe catalog"},{"role":"assistant","content":"INTENT: other\nAPI: ClothingLayout mount SKIN dock"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nlive build undo last step"},{"role":"assistant","content":"INTENT: other\nAPI: LiveBuild undoLastStep SceneHistory"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nno tc demo lobby"},{"role":"assistant","content":"INTENT: other\nAPI: TC DEMO removed terminal grid default"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nenter lobby build mode skip tour"},{"role":"assistant","content":"INTENT: other\nAPI: GuidedSession preferBuild skip walkthrough"}]}

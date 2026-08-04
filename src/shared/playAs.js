@@ -151,10 +151,21 @@ export const PlayAs = {
         return canPossess(obj);
     },
 
-    /** Solo (or offline) only — multiplayer deferred */
+    /**
+     * Solo / offline, or host with no guests yet (CREATE SESSION empty room).
+     * Multiplayer possess with remotes still deferred.
+     */
     networkOk() {
         const mode = window.Network?.mode;
-        return !mode || mode === 'solo';
+        if (!mode || mode === 'solo') return true;
+        if (mode === 'host') {
+            const peers = window.Network?.peerCount ?? 0;
+            const remotes = window.RemotePlayers?.list?.()?.length
+                ?? window.RemotePlayers?.count
+                ?? 0;
+            return peers === 0 && remotes === 0;
+        }
+        return false;
     },
 
     toggle(obj) {
@@ -169,7 +180,7 @@ export const PlayAs = {
         if (_state) this.release({ silent: true });
 
         if (!this.networkOk()) {
-            window.UI?.status?.('Play as is solo-only for now');
+            window.UI?.status?.('Play as: solo or empty host only (no guests yet)');
             return false;
         }
 
@@ -264,7 +275,7 @@ export const PlayAs = {
         _camPitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, _camPitch + dy * 0.0025 * sens));
     },
 
-    prePhysics() {
+    prePhysics(dt = 1 / 60) {
         if (!_state || State()?.isPaused || State()?.cutscenePlaying) return;
         const { target, entry, human } = _state;
         if (!target) {
@@ -277,6 +288,7 @@ export const PlayAs = {
             return;
         }
 
+        const frameDt = Math.min(0.05, Math.max(0.001, Number(dt) || 1 / 60));
         const Controls = window.Controls;
         _fwd.set(Math.sin(_camYaw), 0, Math.cos(_camYaw));
         _right.crossVectors(_fwd, new THREE.Vector3(0, 1, 0)).normalize();
@@ -319,12 +331,12 @@ export const PlayAs = {
                 mz /= len;
                 const tx = mx * speed;
                 const tz = mz * speed;
-                _velX += (tx - _velX) * Math.min(1, ACCEL * 0.016);
-                _velZ += (tz - _velZ) * Math.min(1, ACCEL * 0.016);
+                _velX += (tx - _velX) * Math.min(1, ACCEL * frameDt);
+                _velZ += (tz - _velZ) * Math.min(1, ACCEL * frameDt);
                 target.rotation.y = Math.atan2(_velX, _velZ);
             } else {
-                _velX += (0 - _velX) * Math.min(1, DECEL * 0.016);
-                _velZ += (0 - _velZ) * Math.min(1, DECEL * 0.016);
+                _velX += (0 - _velX) * Math.min(1, DECEL * frameDt);
+                _velZ += (0 - _velZ) * Math.min(1, DECEL * frameDt);
             }
             body.velocity.x = _velX;
             body.velocity.z = _velZ;
@@ -337,7 +349,7 @@ export const PlayAs = {
             if (len > 0) {
                 mx /= len;
                 mz /= len;
-                const step = speed * 0.016;
+                const step = speed * frameDt;
                 target.position.x += mx * step;
                 target.position.z += mz * step;
                 target.rotation.y = Math.atan2(mx, mz);

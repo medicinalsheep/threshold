@@ -1,7 +1,9 @@
 # R8.2 — Character Kit (Female Avatar + Hair + Future-Proof Composition)
 
-**Status:** R8.2.0–R8.2.6 shipped · v7.8.3 · **Target:** R8.2.7 props attach  
-**Prerequisite:** R8.1 registry scaffold ✅ · Phase 18.5 GLB+LOD pattern ✅  
+**Status:** Core composition shipped through **10.15–10.16** (9 skin tones · MOD catalog · hair slots · AvatarComposer).  
+**Historical note:** Phase numbers (R8.2.x / v7.x) are archive labels — product truth is [CAPABILITIES.md](CAPABILITIES.md) + [CHANGELOG.md](CHANGELOG.md).  
+**Shipped (10.18–10.19):** continuous body `shape` + **wardrobe** slot rail/catalog (`clothingLayout.js`) over MOD catalog.  
+**Next:** training wave7 on shape + clothing + entry/live — see [_audit_10.16.md](_audit_10.16.md).  
 **North star:** Basic defaults ship immediately; every slot is manifest-driven so user-generated GLBs, GIMP textures, Blender exports, and PromptGen outputs plug in without code changes.
 
 ---

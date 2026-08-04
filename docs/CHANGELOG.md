@@ -1,3 +1,64 @@
+## 10.20.1 — Phase 6 doc ship (program close)
+
+- **Spine truth sweep** — BUILD_FROM · CAPABILITIES · PRODUCT_ROADMAP · STREAMLINED_DEV · CREATIVE_OS journeys match 10.16–10.20 features
+- **Audit closed** — `docs/_audit_10.16.md` marks Phases 0–6 complete
+- **Paste-into-Grok** blurb: BUILD SOMETHING · LIVE SCENE · shape/wardrobe · wave7 train · no TC DEMO
+- ROADMAP program table closed; residual = ops (notarize, publish) + vision (Trellis/Veo)
+
+## 10.20.0 — Remove TC DEMO + training wave7
+
+- **TC DEMO removed** — lobby button, quest card, `tc-circuit` starter template entry (legacy pref maps to blank grid)
+- **Wave 7 bootcamp** — entry/build, body shape, wardrobe MOD ids, quick live, no clearWorld
+  - `npm run bootcamp:seed:wave7` · `npm run train:mini -- --wave7` · `--full` includes wave7
+  - Datasets: `small/wave7_appearance.jsonl`, `medium/wave7_appearance.jsonl`, `medium/wave7_entry_live.jsonl`
+- Bootcamp config v7 lists wave7 first after critical for mini-npc / mini-dev
+
+## 10.19.0 — Clothing wardrobe layout (slot rail + catalog)
+
+- **`ClothingLayout`** (`clothingLayout.js`) — wardrobe board over existing `avatar-mods.json`
+- **Slot rail** — every exclusive/stack slot with equipped piece(s); × unequip; tap slot to filter catalog
+- **Catalog grid** — category chips + search + equip cards (exclusive last-wins)
+- **Presets** — one-click loadouts still work; live reload when player spawned
+- SKIN panel MOD checkboxes replaced by wardrobe UI (mirror list keeps `modsFromUi` compatible)
+
+## 10.18.0 — Body shape (continuous proportions)
+
+- **Appearance profile v3** — `shape: { heightM, shoulders, chest, waist, hips, muscle, weight }` (0–1, 0.5 neutral)
+- **SKIN panel** — Body shape details: sliders + optional height (m) + RESET SHAPE; live apply when spawned
+- **HumanMesh** — form factors for procedural fallback; soft scale / morph targets on GLB; height vs body preset
+- **AvatarComposer** — `applyShapeOnly` for live tweaks; full re-apply for procedural rebuild
+- Export / network include non-neutral shape; mods export already in 10.16.1
+
+## 10.17.0 — Simplify entry → build
+
+- **BUILD SOMETHING** CTA after ENTER (creator + player path into tools)
+- **START BUILDING** when Grok/Ollama ready — Ollama howto + minis + tier pickers collapsed under details
+- **openBuildFast** — hub AI / station / CTA: probe → auto-connect → build chat (≤3 actions with a key)
+- **Fast-path brief** — one scene sentence enables GENERATE immediately (inferred production plan); chat can still refine
+- **Lobby BUILD** skips walkthrough; goes to build pulse + CTA
+- Walkthrough / action hints: hub AI + live GENERATE (no “walk to AI station” requirement)
+- Default live job remains **Quick (3 steps)** from 10.16.1
+
+## 10.16.1 — Phase 1 polish (audit + live undo + play-as)
+
+- **Audit** — `docs/_audit_10.16.md` feature matrix; TRAINING_BACKLOG wave6 done + wave7 goals; PERF_NEXT / R8 kit headers
+- **Live build** — HUD **↩ undo** last live step (SceneHistory); default **Quick live (3 steps)**; full 7-step optional; stronger material-step pulse
+- **Re-run guard** — confirm before full script re-run if live already applied (avoids duplicate objects)
+- **Play as** — frame `dt` movement; empty **host** (0 guests) can possess
+- **Appearance export** — includes `mods` (+ optional `shape` / `modOverrides` for later)
+- **Quality ladder** — cookbook step marks done when opened
+
+## 10.16.0 — Live build + wave6 mini train pack
+
+- **Live apply in scene** — multi-step (and one-shot) agent builds apply each step into the running Engine so creators can walk the grid while layout, materials, and props appear
+- **`LiveBuild`** (`src/shared/liveBuild.js`) — step HUD, progress bar, mesh emissive pulse on new objects, GIMP hot-reload texture flash
+- **Portal options** — Live apply (default ON) · Resume PLAY after each step · docked portal card so the 3D view stays visible
+- **BuildJob** — emits per-step `chunk` (not only accumulated code) so live apply does not re-create earlier objects
+- **TextureBridge** — `live-texture-applied` event for in-scene map feedback during `textures:watch`
+- GENERATE button → **GENERATE → LIVE SCENE** when live mode is on; full script still lands in Compiler for review/re-run
+- **Wave 6 bootcamp** — `bootcamp:seed:wave6` / `train:mini -- --wave6` (live build, arrange, play-as, PBR)
+- **GROKS playground kit** — `Desktop/GROKS playground/threshold-training-kit/` session launcher for local minis
+
 ## 10.15.10 — Expanded skin tone ladder (9 tones)
 
 - **9 skin textures** (albedo + normal + roughness each): Porcelain · Light · Honey · Olive · Medium · Tan · Caramel · Deep · Ebony

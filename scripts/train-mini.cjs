@@ -12,6 +12,8 @@
  *   npm run train:mini -- --wave3       # planning + hilod/compress + performance
  *   npm run train:mini -- --wave4       # safety + plan/code + recovery + export
  *   npm run train:mini -- --wave5       # 10.13 product: surfaces, NegLOD, Ollama CORS, store
+ *   npm run train:mini -- --wave6       # 10.15–10.16: live build, arrange, play-as, PBR
+ *   npm run train:mini -- --wave7       # 10.17–10.19: entry, shape, wardrobe, quick live
  *   npm run train:mini -- --full        # all waves + critical + build + create
  *   npm run train:mini -- --full --golden  # full + ollama:golden
  */
@@ -25,6 +27,8 @@ const wave2 = process.argv.includes('--wave2') || process.argv.includes('--full'
 const wave3 = process.argv.includes('--wave3') || process.argv.includes('--full');
 const wave4 = process.argv.includes('--wave4') || process.argv.includes('--full');
 const wave5 = process.argv.includes('--wave5') || process.argv.includes('--full');
+const wave6 = process.argv.includes('--wave6') || process.argv.includes('--full');
+const wave7 = process.argv.includes('--wave7') || process.argv.includes('--full');
 const critical = process.argv.includes('--critical') || process.argv.includes('--full');
 const full = process.argv.includes('--full');
 const golden = process.argv.includes('--golden');
@@ -45,14 +49,19 @@ function run(label, args) {
 console.log('train:mini — Threshold mini agents (JSONL -> Modelfile -> ollama create)');
 console.log('  Requires: ollama serve, network for base pulls if missing\n');
 
-if (!noSeed || full) {
-    if (!noSeed) {
-        const seedArgs = [path.join('scripts', 'bootcamp-seed.cjs')];
-        if (mergeSeed && !full) seedArgs.push('--merge');
-        run('bootcamp:seed', seedArgs);
-    }
-} else {
+// Base seed rewrites core JSONL — only for full retrain or default (no wave flags).
+// Wave-only runs (e.g. --wave6) merge into existing corpora without wiping wave5/critical.
+const hasWaveFlag = wave2 || wave3 || wave4 || wave5 || wave6 || wave7 || critical;
+const runBaseSeed = !noSeed && (full || !hasWaveFlag || mergeSeed);
+
+if (runBaseSeed) {
+    const seedArgs = [path.join('scripts', 'bootcamp-seed.cjs')];
+    if (mergeSeed && !full) seedArgs.push('--merge');
+    run('bootcamp:seed', seedArgs);
+} else if (noSeed) {
     console.log('Skipping base seed (--no-seed)\n');
+} else {
+    console.log('Skipping base seed (wave-only merge — use --full to rewrite core JSONL)\n');
 }
 
 if (wave2 || full) {
@@ -69,6 +78,14 @@ if (wave4 || full) {
 
 if (wave5 || full) {
     run('bootcamp:seed:wave5', [path.join('scripts', 'bootcamp-seed-wave5.cjs')]);
+}
+
+if (wave6 || full) {
+    run('bootcamp:seed:wave6', [path.join('scripts', 'bootcamp-seed-wave6.cjs')]);
+}
+
+if (wave7 || full) {
+    run('bootcamp:seed:wave7', [path.join('scripts', 'bootcamp-seed-wave7.cjs')]);
 }
 
 if (critical || full) {

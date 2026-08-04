@@ -84,6 +84,11 @@ export const GuidedSession = {
     chooseMode(mode) {
         this.applyMode(mode, mode === 'build' ? 'You chose BUILD' : 'You chose PLAY');
         this.hide();
+        // BUILD: skip walkthrough — go straight to build CTA / portal pulse
+        if (mode === 'build') {
+            requestAnimationFrame(() => this.finishPostTour({ preferBuild: true }));
+            return;
+        }
         if (!ViewPrefs.get('walkthroughDone', false)) {
             requestAnimationFrame(() => Walkthrough.start(0, 'quick', mode));
             return;
@@ -95,9 +100,10 @@ export const GuidedSession = {
         requestAnimationFrame(() => Walkthrough.start(0, 'quick', mode));
     },
 
-    finishPostTour() {
+    finishPostTour(opts = {}) {
         window.ActionHints?.onSessionReady?.();
-        window.AgentPortal?.startIfNeeded?.();
+        const preferBuild = !!opts.preferBuild || this.getSavedMode() === 'build';
+        window.AgentPortal?.startIfNeeded?.({ preferBuild });
     },
 
     startIfNeeded() {
@@ -109,13 +115,21 @@ export const GuidedSession = {
 
         this.applySavedMode();
 
+        const lobbyMode = this.getSavedMode();
+
+        // Lobby BUILD → no tour; open build path immediately after ENTER
+        if (lobbyMode === 'build') {
+            this.applyMode('build');
+            this.finishPostTour({ preferBuild: true });
+            return;
+        }
+
         if (ViewPrefs.get('walkthroughDone', false)) {
-            if (!this.getSavedMode()) this.applyMode('play');
+            if (!lobbyMode) this.applyMode('play');
             this.finishPostTour();
             return;
         }
 
-        const lobbyMode = this.getSavedMode();
         if (lobbyMode) {
             if (!ViewPrefs.get('walkthroughDone', false)) {
                 requestAnimationFrame(() => Walkthrough.start(0, 'quick', lobbyMode));

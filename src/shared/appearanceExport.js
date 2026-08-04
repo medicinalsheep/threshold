@@ -13,13 +13,19 @@ export function profileForExport(profile) {
         version: p.version,
         bodyId: p.bodyId,
         hairId: p.hairId,
+        mods: Array.isArray(p.mods) ? [...p.mods] : [],
         colors: { ...p.colors },
         textures: { ...p.textures },
         props: { ...p.props },
         roughness: p.roughness ?? 0.72,
+        shape: p.shape && typeof p.shape === 'object' ? { ...p.shape } : undefined,
         customBodyImport: p.customBodyImport || null,
         customHairGlb: p.customHairGlb || null,
     };
+    if (p.modOverrides && typeof p.modOverrides === 'object') {
+        out.modOverrides = { ...p.modOverrides };
+    }
+    if (!out.shape) delete out.shape;
     if (p.customBodyGlb && !String(p.customBodyGlb).startsWith('blob:')) {
         out.customBodyGlb = p.customBodyGlb;
     }

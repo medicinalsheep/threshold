@@ -12,11 +12,22 @@ npm run train:mini -- --full
 # Full + golden regression (requires Ollama running)
 npm run train:mini -- --full --golden
 
+# Wave 6 only (live build / arrange / play-as / PBR)
+npm run train:mini -- --wave6
+
+# Wave 7 (entry → build, body shape, wardrobe MOD ids)
+npm run train:mini -- --wave7
+
 # Rebuild from existing JSONL only
 npm run train:mini -- --no-seed
 
+# Desktop session kit (GROKS playground)
+#   ..\GROKS playground\threshold-training-kit\session-train.ps1 -Wave6
+
 # Individual waves
 npm run bootcamp:seed:wave4    # safety + plan/code + recovery
+npm run bootcamp:seed:wave6    # live build + modes
+npm run bootcamp:seed:wave7    # entry + shape + wardrobe
 npm run ollama:golden          # mini model regression suite
 ```
 

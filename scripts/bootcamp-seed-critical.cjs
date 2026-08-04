@@ -63,9 +63,13 @@ const INTENT_FORMAT = [
     intent('normal lighting not retro', 'graphics', 'Engine.setRenderMode(4)'),
     intent('make it look retro terminal green', 'style', 'Engine.setRenderMode(2)'),
     intent('terminal green mode', 'style', 'Engine.setRenderMode(2)'),
+    intent('retro terminal green shading', 'style', 'Engine.setRenderMode(2)'),
+    intent('not realistic — terminal green only', 'style', 'Engine.setRenderMode(2)'),
     intent('switch to toon shading', 'style', 'Engine.setRenderMode(1)'),
     intent('pixel art render mode', 'style', 'Engine.setRenderMode(0)'),
     intent('enable hyper neon style', 'style', 'Engine.setRenderMode(3)'),
+    intent('why is generate blocked', 'other', 'validateProductionReady'),
+    intent('generate button blocked incomplete plan', 'other', 'validateProductionReady'),
     intent('export my game to android', 'export', 'ExportWizard'),
     intent('what keys do I use to fly', 'other', 'HelpMenu + CONTROLS'),
     intent('open the compiler and fix my script', 'other', 'Compiler'),
@@ -139,6 +143,32 @@ const RENDER_FIXES = [
     pair('dev_patch',
         'User asked: "realistic pbr please". Fix:\n```js\nEngine.setRenderMode(2);\n```',
         'Engine.setRenderMode(4);',
+    ),
+    pair('dev_patch',
+        'User asked terminal green. Fix wrong mode:\n```js\nEngine.setRenderMode(1);\n```',
+        'Engine.setRenderMode(2);',
+    ),
+    patch(
+        "World.clearWorld();\nWorld.createObject('cube', 'a', 0xffffff, false);",
+        `(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    // clearWorld removed — extend live scene only
+    const a = World.createObject('cube', 'a', 0xffffff, false);
+    a.position.set(0, 0.5, -2);
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();`,
+    ),
+    pair('dev_patch',
+        'Fix this Threshold script:\n```js\nWorld.clearWorld();\nWorld.createObject(\'cube\', \'a\', 0xffffff, false);\n```',
+        `(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const a = World.createObject('cube', 'a', 0xffffff, false);
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();`,
     ),
     pair('dev_suggest',
         'Complete — user wants DEFAULT realistic scene lighting only:\n```js\n// set correct render mode\n```',

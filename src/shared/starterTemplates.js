@@ -3,8 +3,6 @@
 import { ViewPrefs } from './viewPrefs.js';
 import { bootstrapStarterScene } from './starterScene.js';
 
-import { spawnTcShow } from './tcShow.js';
-
 export const STARTER_TEMPLATES = {
     grid: {
         id: 'grid',
@@ -15,11 +13,6 @@ export const STARTER_TEMPLATES = {
         id: 'workspace',
         name: 'Workspace Pad',
         tagline: 'Polished pad + day light (opt-in quality base)',
-    },
-    'tc-circuit': {
-        id: 'tc-circuit',
-        name: 'TC Circuit',
-        tagline: 'Vehicles + lap timer (optional demo)',
     },
 };
 
@@ -71,44 +64,9 @@ export function scheduleTemplateSpawn(pos, opts = {}) {
     }, delay);
 }
 
-async function bootstrapTcCircuitTemplate() {
-    const State = window.State;
-    if (!State || !sceneEmpty()) return;
-
-    const Engine = window.Engine;
-    const THREE = window.THREE;
-    const C = window.CANNON;
-
-    const asphalt = new THREE.Mesh(
-        new THREE.BoxGeometry(22, 0.08, 18),
-        new THREE.MeshStandardMaterial({ color: 0x2a2c30, roughness: 0.9, metalness: 0.03 })
-    );
-    asphalt.position.set(0, 0.04, 0);
-    asphalt.receiveShadow = true;
-    asphalt.userData = { id: 'template_tc_ground', name: 'Circuit Pad', type: 'platform', locked: true, surfaceType: 'asphalt' };
-    Engine.scene.add(asphalt);
-    State.objects.push(asphalt);
-    if (C) window.Physics?.addStaticBox?.(new C.Vec3(11, 0.04, 9), { x: 0, y: 0.04, z: 0 }, 'ground', 'asphalt');
-
-    await spawnTcShow();
-    window.StarterAnim?.wireScene?.();
-    State.ctxTargetPos.set(0, 0, -2);
-    State.templateId = 'tc-circuit';
-    window.SessionUi?.setShowAllTools?.(true, { silent: true });
-
-    scheduleTemplateSpawn({ x: 0, y: 0, z: 4 }, {
-        skipIntro: true,
-        status: 'TC Circuit — F claim vehicle · drive through green gate for laps',
-        onSpawn: () => {
-            setTimeout(() => {
-                window.TcCircuit?.start?.({}, true);
-                window.TcGateFx?.ensureGate?.(window.TcCircuit?.findCheckpoint?.());
-            }, 600);
-        },
-    });
-}
-
 export function resolveTemplateId(id) {
+    // TC Circuit lobby demo removed — map legacy prefs to blank grid
+    if (id === 'tc-circuit') return 'grid';
     return STARTER_TEMPLATES[id] ? id : 'grid';
 }
 
@@ -152,9 +110,6 @@ export async function bootstrapSelectedTemplate() {
     window.State.templateId = id;
 
     switch (id) {
-        case 'tc-circuit':
-            await bootstrapTcCircuitTemplate();
-            break;
         case 'workspace':
             await bootstrapWorkspaceTemplate();
             break;

@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), tiered local/cloud agents, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **10.15.10**)
+**Version:** `src/config.js` → `VERSION` (currently **10.20.1**)
 
 **Spine (start here):** [docs/BUILD_FROM.md](docs/BUILD_FROM.md) · **Doc index:** [docs/README.md](docs/README.md)
 
@@ -34,6 +34,8 @@ Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blen
 | Compiler | `src/compiler/main.js` |
 | PromptGen | `src/prompter/main.js` |
 | Agent router | `src/shared/agentRouter.js`, `agentPrompts.js`, `agentStatus.js` |
+| Live build | `src/shared/liveBuild.js`, `buildJob.js` — in-scene step apply + HUD |
+| Wardrobe | `src/shared/clothingLayout.js`, `avatarMod.js` — slot rail + catalog |
 | Ollama client | `src/shared/ollamaClient.js`, `src/ollama/devAgent.js` |
 | Grok agents | `src/grok/client.js`, `npcAgent.js`, `devAgent.js` |
 | Multiplayer | `src/shared/network.js`, `sync.js`, `actions.js` |
@@ -103,7 +105,9 @@ Copy `.env.local.example` → `.env.local` for `VITE_OLLAMA_URL`, optional `VITE
 ```bash
 npm run bootcamp:build          # JSONL → Modelfiles in training/bootcamp/
 npm run bootcamp:seed:wave5     # 10.13 product power pack for minis
+npm run bootcamp:seed:wave7     # 10.17–20 entry + shape + wardrobe
 npm run train:mini -- --wave5   # seed wave5 → build → ollama create
+npm run train:mini -- --wave7   # entry/shape/wardrobe pack
 npm run train:mini -- --full --golden
 npm run models:mini             # threshold-mini-npc + threshold-mini-dev (canonical)
 npm run models:large -- --yes   # optional threshold-dev + threshold-large-scenes

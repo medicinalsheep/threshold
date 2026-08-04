@@ -46,7 +46,7 @@ Developers may use `reference/_dev-seeds/` locally to **compare** workflows; tho
 | `tc-sfx` | **Active** | 5 synthesized original SFX seeds |
 | `tc-lite` | **Active (fallback)** | Procedural Runner, Hauler, TC Span v1.1 |
 
-Legacy ids `threshold-child-*` → `tc-*` (v5.8). Archived manifests in `old/reference-editions/`. Lobby button: **TC DEMO**
+Legacy ids `threshold-child-*` → `tc-*` (v5.8). Archived manifests in `old/reference-editions/`. Lobby **TC DEMO** removed (10.20).
 
 Config: `config/reference-editions.json`
 

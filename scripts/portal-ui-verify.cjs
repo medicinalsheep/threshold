@@ -19,6 +19,7 @@ const requiredIds = [
     'agent-portal-connect',
     'agent-portal-stop-job',
     'agent-portal-run-engine',
+    'build-something-cta',
     'agent-reconnect-chip',
     'corner-hubs',
     'hub-mode-toggle',
@@ -33,7 +34,7 @@ const requiredIds = [
     'work-folder-freeze',
 ];
 
-const missing = requiredIds.filter((id) => !html.includes(`id="${id}"`));
+const missing = requiredIds.filter((id) => !html.includes('id="' + id + '"'));
 if (missing.length) {
     console.error('FAIL missing HTML ids:', missing.join(', '));
     process.exit(1);
@@ -58,12 +59,49 @@ if (!engine.includes('body.agent-portal-open')) {
     process.exit(1);
 }
 
+if (!engine.includes('build-something-cta')) {
+    console.error('FAIL engine.css missing build-something-cta styles');
+    process.exit(1);
+}
+
 if (!fs.existsSync(path.join(root, 'src/shared/agentPortal.js'))) {
     console.error('FAIL agentPortal.js missing');
     process.exit(1);
 }
 
-const portalModules = ['codeSanitizer.js', 'buildJob.js', 'agentModelGuide.js', 'sceneApiPrompt.js', 'gameChat.js', 'gameCommands.js', 'helpMenu.js', 'hubLayout.js', 'modelCapability.js', 'ollamaRunQueue.js', 'modelStatusHud.js', 'workFolderScope.js', 'aiMemoryFreeze.js'];
+const portalModules = [
+    'codeSanitizer.js',
+    'buildJob.js',
+    'agentModelGuide.js',
+    'sceneApiPrompt.js',
+    'gameChat.js',
+    'gameCommands.js',
+    'helpMenu.js',
+    'hubLayout.js',
+    'modelCapability.js',
+    'ollamaRunQueue.js',
+    'modelStatusHud.js',
+    'workFolderScope.js',
+    'aiMemoryFreeze.js',
+    'liveBuild.js',
+];
+
+const portalSrc = fs.readFileSync(path.join(root, 'src/shared/agentPortal.js'), 'utf8');
+const phase2Needles = [
+    'openBuildFast',
+    'looksLikeBuildBrief',
+    'inferBuildContext',
+    'showBuildCta',
+    'START BUILDING',
+];
+for (let i = 0; i < phase2Needles.length; i += 1) {
+    const needle = phase2Needles[i];
+    if (!portalSrc.includes(needle)) {
+        console.error('FAIL agentPortal.js missing Phase 2:', needle);
+        process.exit(1);
+    }
+}
+
 const missingMods = portalModules.filter((f) => !fs.existsSync(path.join(root, 'src/shared', f)));
 if (missingMods.length) {
     console.error('FAIL missing portal modules:', missingMods.join(', '));
@@ -81,11 +119,21 @@ if (!walkthrough.includes('Corner hubs')) {
     console.error('FAIL walkthrough missing corner hub step');
     process.exit(1);
 }
+if (!walkthrough.includes('openBuildFast') && !walkthrough.includes('Build something')) {
+    console.error('FAIL walkthrough missing build-fast action');
+    process.exit(1);
+}
 
 if (!fs.existsSync(path.join(root, 'src/shared/cornerHub.js'))) {
     console.error('FAIL cornerHub.js missing');
     process.exit(1);
 }
 
-console.log('PASS portal-ui-verify — DOM ids, responsive rules, scroll lock, modules');
-console.log(`  walkthrough quick steps: ~${Math.min(3, stepCount)} defined in STEPS array`);
+const guided = fs.readFileSync(path.join(root, 'src/shared/guidedSession.js'), 'utf8');
+if (!guided.includes('preferBuild')) {
+    console.error('FAIL guidedSession.js missing preferBuild path');
+    process.exit(1);
+}
+
+console.log('PASS portal-ui-verify - DOM ids, responsive rules, scroll lock, modules, Phase 2 entry');
+console.log('  walkthrough quick steps: ~' + Math.min(3, stepCount) + ' defined in STEPS array');

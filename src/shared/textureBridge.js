@@ -444,6 +444,12 @@ export const TextureBridge = {
             mat.normalScale.set(1, 1);
         }
         mat.needsUpdate = true;
+        // Pulse only during active live build (not HILOD swaps / rehydrate)
+        if (window.LiveBuild?.active) {
+            window.dispatchEvent(new CustomEvent('live-texture-applied', {
+                detail: { objects: [mesh], slot, texId, applied: 1 },
+            }));
+        }
         return true;
     },
 
@@ -550,6 +556,16 @@ export const TextureBridge = {
         const msg = `Hot-reloaded ${event.file || slot} on ${applied} object(s)`;
         window.UI?.status?.(msg);
         if (window.State?.selectedObject) window.UI?.syncTextureInspector?.(window.State.selectedObject);
+        if (applied > 0) {
+            window.dispatchEvent(new CustomEvent('live-texture-applied', {
+                detail: {
+                    objects: targets,
+                    slot,
+                    file: event.file || event.path,
+                    applied,
+                },
+            }));
+        }
         return { applied, message: msg };
     },
 

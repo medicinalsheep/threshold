@@ -1,6 +1,6 @@
-# Threshold — Progress & Capabilities (v10.15)
+# Threshold — Progress & Capabilities (v10.20)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.15.10
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.20.1
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -17,6 +17,10 @@ Single progress snapshot — what ships today, how the pieces connect, and what 
 | Progressive UI unlock | Scene dock, Compiler, PromptGen opt-in |
 | Surface profiles | `surfaceProfile.js` — player / creator / full (`?surface=`) · mobile → player |
 | Agent Portal | `agentPortal.js` — Grok/Ollama auto-detect (**creator** surface; skipped on player) |
+| Live build | `liveBuild.js` — apply agent steps in-scene · HUD · undo last step · texture pulse · docked portal · quick 3-step default |
+| Entry → build | `BUILD SOMETHING` CTA · `openBuildFast` auto-connect · one-brief GENERATE · lobby BUILD skips tour |
+| Body shape | `appearanceProfile.shape` · SKIN sliders · `HumanMesh.applyShape` · live `applyShapeOnly` |
+| Wardrobe | `clothingLayout.js` · slot rail · category catalog · presets over `avatar-mods.json` |
 | Corner hub UI | `cornerHub.js` — PLAY/ARRANGE/EDIT cycle, TOOLS, SCENE |
 | Arrange mode | `arrangeMode.js` — select · drag · WASD · snap (paused) |
 | Play as | `playAs.js` — possess NPC/prop (solo) · **K** release |
@@ -33,7 +37,7 @@ Single progress snapshot — what ships today, how the pieces connect, and what 
 |-------|-------|--------------|
 | **Your game** | ENTER + Portal | Terminal grid · QUALITY ladder · GIMP/Blender PBR · export |
 | **Workspace Pad** | Lobby template / QUALITY | Opt-in pad + day light |
-| **TC editions** | Lobby → **TC DEMO** | Vehicles, NPCs, circuit — bundled reference only |
+| **TC modules** | `tcShow` / `tcDrive` / `tcCircuit` (code paths) | Lobby **TC DEMO** removed — use EXPORT manifests / scripts if needed |
 
 Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survival docs archived in `old/docs/`
 
@@ -47,7 +51,8 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | UI mouse / Third Eye | `thirdEye.js` — **M** / Alt peek; **F** Third Eye |
 | Walk / sprint / crouch / stealth | `controls.js` — stealth on **U** hold |
 | Touch controls | `touchControls.js` — practical pad v4, UNLOCK drag |
-| Avatar LOD + MOD gear | `avatarMod.js`, LOD GLBs, `generation-policy.json` |
+| Avatar LOD + MOD gear | `avatarMod.js`, `clothingLayout.js`, LOD GLBs, `generation-policy.json` |
+| Body shape + wardrobe | `appearanceProfile.shape` · SKIN panel · live apply when spawned |
 | Weather | `weatherSystem.js` |
 | F interact | `worldInteract.js` |
 | TC circuit + drive | `tcCircuit.js`, `tcDrive.js` |
@@ -126,7 +131,8 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | Agent status + GPU chip | `agentStatus.js` |
 | Sequential Ollama queue | `ollamaRunQueue.js` |
 | Capability matrix | Red/yellow/green per model × tier |
-| Mini models (GitHub) | `npm run models:mini` · **wave5** `train:mini -- --wave5` |
+| Mini models (GitHub) | `npm run models:mini` · **wave7** `train:mini -- --wave7` · `--full` |
+| Bootcamp waves | wave5 product · wave6 live · **wave7** entry/shape/wardrobe · [BOOTCAMP.md](BOOTCAMP.md) |
 | Benchmarks | `npm run ollama:benchmark` · `ollama:golden` |
 | Ollama CORS proxy | `npm run ollama:serve` → `:11435` (Pages + localhost); not plain `ollama serve` |
 | Play surface Ollama | **No probe** on player surface (avoids mobile CORS noise) |
@@ -135,7 +141,7 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 
 ---
 
-## Performance (v10.15)
+## Performance (v10.15+ stack complete)
 
 | Layer | Status |
 |-------|--------|
@@ -153,18 +159,16 @@ Details: [PERF_NEXT.md](PERF_NEXT.md) · [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
 ## Verify commands
 
 ```bash
-npm run assets:verify
-npm run tc:verify
-npm run controls:verify
-npm run store:verify
-npm run ollama:verify
 npm run version:sync:check
+npm run controls:verify
 node scripts/portal-ui-verify.cjs
+node scripts/modes-verify.cjs
+node scripts/physics-verify.cjs
 node scripts/negative-lod-verify.cjs
-node scripts/surface-verify.cjs
 npm run perf:verify
-npm run perf:harness            # browser; needs puppeteer
-npm run mac:notarize:check      # env only (no secrets printed)
+npm run store:verify            # packaging smoke (optional)
+npm run ollama:verify           # local LLM (optional)
+npm run train:mini -- --wave7   # seed+build+create minis (needs Ollama)
 npm run build
 ```
 

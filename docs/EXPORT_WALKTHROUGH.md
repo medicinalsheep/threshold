@@ -122,7 +122,7 @@ See [STORE_ASSETS.md](STORE_ASSETS.md) for platform upload steps.
 
 ## TC showcase walkthrough
 
-Use **Lobby → TC DEMO** to load the bundled export demo, then run the wizard:
+Load a saved `.threshold-game.json` or build a small scene, then run the wizard:
 
 | Step | TC expectation |
 |------|----------------|

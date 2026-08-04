@@ -8,6 +8,7 @@ import {
     normalizeProfile,
     profileFromLegacyAppearance,
     profileToMeshOpts,
+    defaultHeightForBody,
 } from './appearanceProfile.js';
 import { AvatarTex } from './avatarTex.js';
 import { AvatarLod } from './avatarLod.js';
@@ -82,9 +83,19 @@ export const AvatarComposer = {
             ? custom
             : AssetBundle.getUrl(`import/${body.file.replace(/^import\//, '')}`);
 
+        // Load GLB at body preset height; continuous shape applied after (avoids double height scale)
+        const bodyHeight = body.heightM || defaultHeightForBody(profile.bodyId);
+
+        // Reset shape capture so re-apply rebuilds clean base scales
+        delete group.userData._shapeBaseScales;
+        delete group.userData._shapeBaseGltf;
+        delete group.userData._shapeBaseRootScale;
+
+        let usedGlb = false;
         try {
-            await HumanMesh.loadGltf(group, url, { heightM: body.heightM });
+            await HumanMesh.loadGltf(group, url, { heightM: bodyHeight });
             group.userData.avatarGlb = body.file;
+            usedGlb = true;
             // Distance LOD chain (lod1/lod2 GLBs) when manifest lists tiers
             try {
                 await AvatarLod.setup(group, body);
@@ -94,17 +105,42 @@ export const AvatarComposer = {
         } catch (e) {
             console.warn('[avatar-composer] body GLB fallback', body.file, e.message || e);
             const meshOpts = profileToMeshOpts(profile);
-            if (!group.userData?.humanParts) {
-                const built = HumanMesh.build(meshOpts);
-                while (group.children.length) group.remove(group.children[0]);
-                group.add(...built.children);
-                group.userData.humanParts = built.userData.humanParts;
-                group.userData.walkPhase = built.userData.walkPhase;
-                group.userData.idlePhase = built.userData.idlePhase;
-            }
+            const built = HumanMesh.build(meshOpts);
+            while (group.children.length) group.remove(group.children[0]);
+            group.add(...built.children);
+            group.userData.humanParts = built.userData.humanParts;
+            group.userData.walkPhase = built.userData.walkPhase;
+            group.userData.idlePhase = built.userData.idlePhase;
+            group.userData.isGltf = false;
+            group.scale.set(1, 1, 1);
         }
 
         this.applyColors(group, profile);
+
+        // Soft shape on GLB (procedural already baked proportions into build)
+        if (usedGlb) {
+            HumanMesh.applyShape(group, profile, {
+                bodyId: profile.bodyId,
+                defaultHeightM: bodyHeight,
+            });
+        } else if (profile.shape?.heightM != null) {
+            // Procedural: only overall height vs form default (sliders baked in meshOpts)
+            HumanMesh.applyShape(group, {
+                ...profile,
+                shape: {
+                    ...profile.shape,
+                    shoulders: 0.5,
+                    chest: 0.5,
+                    waist: 0.5,
+                    hips: 0.5,
+                    muscle: 0.5,
+                    weight: 0.5,
+                },
+            }, {
+                bodyId: profile.bodyId,
+                defaultHeightM: defaultHeightForBody(profile.bodyId),
+            });
+        }
 
         const hairSpec = AvatarManifest.hair(profile.hairId);
         if (hairSpec?.procedural || profile.hairId === 'none') {
@@ -139,6 +175,33 @@ export const AvatarComposer = {
 
         group.userData.appearanceProfile = profile;
         group.userData.glbR82 = true;
+        return group;
+    },
+
+    /**
+     * Live shape tweak. GLB: soft scale/morphs. Procedural: full re-apply (shape baked into mesh).
+     * Re-applies MOD layer so gear tracks new proportions.
+     */
+    async applyShapeOnly(group, profileOrOptions = {}) {
+        if (!group) return null;
+        const profile = this.resolveProfile(
+            typeof profileOrOptions === 'object' ? profileOrOptions : { profile: profileOrOptions },
+        );
+        // Procedural mesh has shape baked at build — full recompose is correct
+        if (!group.userData?.isGltf) {
+            return this.apply(group, profile);
+        }
+        const body = AvatarManifest.resolveBodyGlb(profile, null);
+        HumanMesh.applyShape(group, profile, {
+            bodyId: profile.bodyId,
+            defaultHeightM: body.heightM || defaultHeightForBody(profile.bodyId),
+        });
+        try {
+            await AvatarMod.apply(group, profile);
+        } catch (e) {
+            console.warn('[avatar-composer] shape mods', e.message || e);
+        }
+        group.userData.appearanceProfile = profile;
         return group;
     },
 

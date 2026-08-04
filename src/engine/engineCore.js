@@ -604,7 +604,7 @@ export const Engine = {
             if (State.controlMode === 'vehicle' && window.TcDrive?.active) {
                 window.TcDrive.prePhysics();
             } else if (window.PlayAs?.isActive?.()) {
-                window.PlayAs.prePhysics();
+                window.PlayAs.prePhysics(dt);
             } else if (State.controlMode === 'walk' && PlayerController.spawned) {
                 PlayerController.prePhysics(State.keys);
             }
@@ -612,7 +612,7 @@ export const Engine = {
             if (State.controlMode === 'vehicle' && window.TcDrive?.active) {
                 window.TcDrive.postPhysics();
             } else if (window.PlayAs?.isActive?.()) {
-                window.PlayAs.postPhysics();
+                window.PlayAs.postPhysics(dt);
             } else if (State.controlMode === 'walk' && PlayerController.spawned) {
                 PlayerController.postPhysics();
                 window.SurvivalNeeds?.tick?.(dt, PlayerController.getMovementContext?.());

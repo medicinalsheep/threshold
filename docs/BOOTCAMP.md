@@ -53,17 +53,30 @@ npm run bootcamp:seed:wave2        # whole-product coverage
 npm run bootcamp:seed:wave3        # production plans, HILOD/WebP, Lite/Mobile
 npm run bootcamp:seed:wave4        # anti-slop, host/guest, recovery, plan↔code
 npm run bootcamp:seed:wave5        # **10.13 power pack** — surfaces, Neg LOD ~100m, Ollama CORS, store, no X
+npm run bootcamp:seed:wave6        # **10.15–10.16** — live build, arrange, play-as, PBR materials
+npm run bootcamp:seed:wave7        # **10.17–10.20** — entry/build, body shape, wardrobe, quick live
 npm run bootcamp:seed:critical     # intent format + render-mode hard fixes
 npm run bootcamp:build && npm run models:mini
+# or: npm run train:mini -- --wave7
 ```
 
 One-shot full pipeline:
 
 ```bash
-npm run train:mini -- --full           # waves 2–5 + critical + build + create
+npm run train:mini -- --full           # waves 2–7 + critical + build + create
 npm run train:mini -- --wave5          # product pack only + build + create
+npm run train:mini -- --wave6          # live-build / modes pack + build + create
+npm run train:mini -- --wave7          # entry + shape + wardrobe pack + build + create
 npm run train:mini -- --full --golden  # + local regression (needs Ollama)
 npm run ollama:golden                  # format / safety / plan / surface / NegLOD smoke
+```
+
+### Desktop training session (GROKS playground)
+
+```text
+Desktop\GROKS playground\threshold-training-kit\
+  session-train.ps1 -Wave6          # recommended refresh
+  session-train.ps1 -Full -Golden   # full retrain + smoke
 ```
 
 ### Wave 5 focus (make minis “Threshold-native”)
@@ -75,6 +88,15 @@ npm run ollama:golden                  # format / safety / plan / surface / NegL
 | Ollama `:11435` / no X OAuth | both |
 | store:ship / BUILD_FROM literacy | coaches + guide |
 | Grid props with Neg LOD IIFEs | mini-dev + large scenes |
+
+### Wave 6 focus (live build + modes)
+
+| Domain | Models |
+|--------|--------|
+| Live apply / LiveBuild HUD | mini-npc coaches + mini-dev patches |
+| Arrange / Play as / terminal void | both |
+| MaterialPresets + GIMP slug names | mini-dev |
+| No clearWorld mid live job | mini-dev safety |
 
 After train: **SETUP → AGENTS** → Small `threshold-mini-npc` · Medium `threshold-mini-dev` → **SAVE TIERS**.  
 Publish (maintainers): `npm run models:publish -- --all`.

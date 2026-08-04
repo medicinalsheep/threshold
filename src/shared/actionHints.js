@@ -5,17 +5,17 @@ import { ViewPrefs } from './viewPrefs.js';
 const HINTS = [
     {
         id: 'walk',
-        text: 'Terminal grid — walk the void · EDIT (top-left) to place objects',
+        text: 'Terminal grid — walk the void · BUILD SOMETHING or AI (top-left) to generate live',
         afterMs: 0,
     },
     {
         id: 'insert',
-        text: 'INSERT → QUALITY ladder: light · AI station · materials · physics kit · pad',
+        text: 'INSERT → QUALITY ladder (opt-in): light · materials · kit · pad · optional AI station',
         afterMs: 22000,
     },
     {
         id: 'promptgen',
-        text: 'TOOLS → Compiler or PromptGen · SETUP agents when ready',
+        text: 'One scene brief → GENERATE → LIVE SCENE · or TOOLS → Compiler / PromptGen',
         afterMs: 52000,
     },
     {
@@ -30,23 +30,15 @@ export const ActionHints = {
     _toast: null,
     _sessionStart: 0,
     _shown: new Set(),
-    _tcCard: null,
 
     init() {
         this._el = document.getElementById('action-hint-bar');
         this._toast = document.getElementById('action-hint-toast');
-        this._tcCard = document.getElementById('tc-quest-card');
         this._sessionStart = performance.now();
 
         const done = ViewPrefs.get('actionHintsDone', {});
         HINTS.forEach((h) => {
             if (done[h.id]) this._shown.add(h.id);
-        });
-
-        document.getElementById('tc-quest-dismiss')?.addEventListener('click', () => this.dismissTcQuest());
-        document.getElementById('tc-quest-go')?.addEventListener('click', () => {
-            this.dismissTcQuest();
-            window.UI?.status?.('Exit to lobby → TC DEMO for the 60s lap challenge');
         });
     },
 
@@ -80,7 +72,6 @@ export const ActionHints = {
 
     onSessionReady() {
         this._showHint(HINTS[0]);
-        this._maybeTcQuest();
         this._maybeSurvivalRun();
     },
 
@@ -94,19 +85,6 @@ export const ActionHints = {
         HINTS.forEach((h) => {
             if (elapsed >= h.afterMs) this._showHint(h);
         });
-    },
-
-    _maybeTcQuest() {
-        if (ViewPrefs.get('tcQuestDismissed', false)) return;
-        if (!ViewPrefs.get('walkthroughDone', false)) return;
-        if (window.State?.templateId !== 'tc-circuit') return;
-        if (window.Network?.mode !== 'solo') return;
-        this._tcCard?.classList.add('visible');
-    },
-
-    dismissTcQuest() {
-        ViewPrefs.set('tcQuestDismissed', true);
-        this._tcCard?.classList.remove('visible');
     },
 
     _maybeSurvivalRun() {

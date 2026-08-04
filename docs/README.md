@@ -1,10 +1,10 @@
 # Threshold documentation index
 
-**Version:** 10.15.10 · **Live:** https://medicinalsheep.github.io/threshold/
+**Version:** see `src/config.js` · **Live:** https://medicinalsheep.github.io/threshold/
 
-Full scope map — terminal grid default, quality ladder opt-in, optional TC reference editions.
+Full scope map — terminal grid default, live agents, shape + wardrobe, quality ladder opt-in.
 
-**Start here (agents & forks):** [BUILD_FROM.md](BUILD_FROM.md) · **Snapshot:** [CAPABILITIES.md](CAPABILITIES.md) · **Forward plan:** [ROADMAP.md](ROADMAP.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+**Start here (agents & forks):** [BUILD_FROM.md](BUILD_FROM.md) · **Snapshot:** [CAPABILITIES.md](CAPABILITIES.md) · **Forward plan:** [ROADMAP.md](ROADMAP.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md) · **Audit:** [_audit_10.16.md](_audit_10.16.md)
 
 ---
 
@@ -14,45 +14,45 @@ Full scope map — terminal grid default, quality ladder opt-in, optional TC ref
 |-------|------|--------|
 | **Your game** | Terminal void → INSERT QUALITY ladder → AI + PBR export | Default empty; kit/pad opt-in; min 1K textures |
 | **Workspace Pad** | Lobby template or QUALITY → pad | Optional polished base + day light |
-| **TC editions** | Lobby → **TC DEMO** — vehicles, circuit | Bundled reference only — [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) |
+| **TC modules** | Code/export paths (lobby demo removed 10.20) | [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) |
 
 Legacy edition manifests (`threshold-child-*`) live in `old/reference-editions/` — active ids are `tc-*`.
 
 ---
 
-## Capability map (v10.15)
+## Capability map (v10.20)
 
 ```mermaid
 flowchart TB
     subgraph session [Session]
         LOBBY[ENTER solo / CREATE / JOIN]
         SURF[Surface player / creator / full]
-        PORTAL[Agent Portal]
-        HUBS[Corner hub UI]
+        BUILD[BUILD SOMETHING / Live GENERATE]
+        HUBS[Corner hub PLAY ARRANGE EDIT]
         AUTH[Optional Grok key]
     end
     subgraph play [Play]
-        TPS[TPS / FPS / ADS / UI mouse]
-        TOUCH[Touch + UNLOCK layout]
-        PBR[Quality PBR 1K+]
-        TE[Third Eye + F interact]
-        PERF[Neg LOD light-bake + Vis E0-E4]
+        TPS[TPS / FPS / ADS]
+        TOUCH[Touch + UNLOCK]
+        PBR[Quality PBR]
+        PERF[Neg LOD + Vis E0-E5]
     end
     subgraph create [Create]
-        SETUP[SETUP + agents]
-        COMP[Compiler + scene undo]
-        ART[GIMP / Blender pipeline]
-        FREEZE[AI memory freeze]
+        LIVE[LiveBuild multi-step]
+        SKIN[Shape + wardrobe]
+        SETUP[SETUP agents wave7]
+        ART[GIMP / Blender]
     end
     subgraph ship [Ship]
-        EXP[9-step EXPORT wizard]
-        NAT[APK / Windows / iOS / Steam]
+        EXP[EXPORT wizard]
+        NAT[APK / Win / iOS / Steam]
     end
     LOBBY --> SURF
     SURF --> play
-    SURF -->|creator| PORTAL --> create
-    AUTH -.-> PORTAL
-    SETUP --> COMP
+    SURF -->|creator| BUILD --> LIVE
+    BUILD --> SKIN
+    AUTH -.-> BUILD
+    SETUP --> LIVE
     ART --> play
     play --> EXP --> NAT
     PERF -.-> play
@@ -78,7 +78,7 @@ flowchart TB
 | Action controls | [CONTROLS.md](CONTROLS.md) | LMB aim · RMB shoot · F interact · PTT **N** |
 | Creative loop | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | BUILD → insert · PromptGen |
 | Full asset pipeline | [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | `npm run assets:pack` |
-| TC export practice | [REFERENCE_EDITIONS.md](REFERENCE_EDITIONS.md) | Lobby → **TC DEMO** |
+| TC assets policy | [REFERENCE_EDITIONS.md](REFERENCE_EDITIONS.md) · [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) | Demo button removed |
 | Ship to stores | [STORE_RELEASE.md](STORE_RELEASE.md) · [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) | `store:ship` · `package:*` |
 | macOS notarize | [MAC_NOTARIZE.md](MAC_NOTARIZE.md) | `mac:notarize:check` · `package:mac` |
 

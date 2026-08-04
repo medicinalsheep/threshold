@@ -1,8 +1,21 @@
 /** AppearanceProfile — serializable character composition state (R8.2) */
 
 export const APPEARANCE_FORMAT = 'threshold-appearance';
-/** v2: default civilian outfit mods + richer starter maps */
-export const APPEARANCE_VERSION = 2;
+/** v3: continuous body shape (shoulders/chest/waist/hips/muscle/weight/height) */
+export const APPEARANCE_VERSION = 3;
+
+/** Neutral shape — 0.5 on each axis · heightM null = body preset height */
+export const DEFAULT_SHAPE = {
+    heightM: null,
+    shoulders: 0.5,
+    chest: 0.5,
+    waist: 0.5,
+    hips: 0.5,
+    muscle: 0.5,
+    weight: 0.5,
+};
+
+export const SHAPE_SLIDER_KEYS = ['shoulders', 'chest', 'waist', 'hips', 'muscle', 'weight'];
 
 export const DEFAULT_COLORS = {
     skin: '#e0b090',
@@ -47,6 +60,7 @@ export const DEFAULT_PROFILE = {
     hairId: 'hair_short_m',
     /** Modular gear — urban casual starter */
     mods: [...DEFAULT_OUTFIT_MODS],
+    shape: { ...DEFAULT_SHAPE },
     colors: { ...DEFAULT_COLORS },
     textures: {
         skin: 'starter_skin_medium',
@@ -58,6 +72,53 @@ export const DEFAULT_PROFILE = {
     customBodyImport: null,
     customHairGlb: null,
 };
+
+/** Clamp shape fields · heightM 1.2–2.2 m or null */
+export function normalizeShape(raw = {}) {
+    const n = (v, d = 0.5) => {
+        const x = Number(v);
+        return Number.isFinite(x) ? Math.min(1, Math.max(0, x)) : d;
+    };
+    let heightM = raw?.heightM;
+    if (heightM === '' || heightM == null) {
+        heightM = null;
+    } else {
+        heightM = Number(heightM);
+        if (!Number.isFinite(heightM) || heightM < 1.2 || heightM > 2.2) heightM = null;
+    }
+    return {
+        heightM,
+        shoulders: n(raw?.shoulders),
+        chest: n(raw?.chest),
+        waist: n(raw?.waist),
+        hips: n(raw?.hips),
+        muscle: n(raw?.muscle),
+        weight: n(raw?.weight),
+    };
+}
+
+export function isShapeNeutral(shape) {
+    const s = normalizeShape(shape);
+    if (s.heightM != null) return false;
+    return SHAPE_SLIDER_KEYS.every((k) => Math.abs(s[k] - 0.5) < 0.02);
+}
+
+/**
+ * Map 0–1 slider to multiply factor (0.5 → 1.0).
+ * @param {number} v 0–1
+ * @param {number} minMul at 0
+ * @param {number} maxMul at 1
+ */
+export function shapeFactor(v, minMul = 0.82, maxMul = 1.18) {
+    const t = Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0.5;
+    if (t <= 0.5) return minMul + (1 - minMul) * (t / 0.5);
+    return 1 + (maxMul - 1) * ((t - 0.5) / 0.5);
+}
+
+/** Default height meters for body presets */
+export function defaultHeightForBody(bodyId) {
+    return bodyId === 'female_default' ? 1.65 : 1.75;
+}
 
 function hexToNum(hex) {
     if (typeof hex === 'number') return hex;
@@ -73,6 +134,7 @@ export function normalizeProfile(raw = {}) {
         textures: { ...DEFAULT_PROFILE.textures },
         props: { torso: null, head: null },
         mods: [...DEFAULT_OUTFIT_MODS],
+        shape: { ...DEFAULT_SHAPE },
     };
     if (!raw || typeof raw !== 'object') return base;
 
@@ -94,6 +156,7 @@ export function normalizeProfile(raw = {}) {
         ...raw,
         version: Math.max(ver, APPEARANCE_VERSION),
         mods,
+        shape: normalizeShape(raw.shape || base.shape),
         colors: { ...DEFAULT_COLORS, ...(raw.colors || {}) },
         textures: { ...DEFAULT_PROFILE.textures, ...(raw.textures || {}) },
         props: { torso: null, head: null, ...(raw.props || {}) },
@@ -131,6 +194,15 @@ export function profileFromLegacyAppearance(appearance = {}) {
 export function profileToMeshOpts(profile) {
     const p = normalizeProfile(profile);
     const female = p.bodyId === 'female_default';
+    const shape = normalizeShape(p.shape);
+    const sh = shapeFactor(shape.shoulders, 0.78, 1.22);
+    const ch = shapeFactor(shape.chest, 0.8, 1.2);
+    const hi = shapeFactor(shape.hips, 0.8, 1.22);
+    const wt = shapeFactor(shape.weight, 0.9, 1.12);
+
+    const baseTorso = female ? [0.9, 0.98, 0.88] : [1.06, 1.02, 0.98];
+    const baseHip = female ? [1.1, 1, 1.06] : [1, 1, 1];
+
     return {
         skinColor: hexToNum(p.colors.skin),
         bodyColor: hexToNum(p.colors.shirt),
@@ -139,9 +211,28 @@ export function profileToMeshOpts(profile) {
         roughness: p.roughness ?? 0.72,
         bodyId: p.bodyId,
         form: female ? 'female' : 'male',
-        // Formed presets — wider hips / narrower shoulders for female
-        torsoScale: female ? [0.9, 0.98, 0.88] : [1.06, 1.02, 0.98],
-        hipScale: female ? [1.1, 1, 1.06] : [1, 1, 1],
+        shape,
+        // Base form × continuous shape
+        torsoScale: [
+            baseTorso[0] * ch * wt,
+            baseTorso[1],
+            baseTorso[2] * (0.95 + ch * 0.05),
+        ],
+        hipScale: [
+            baseHip[0] * hi * wt,
+            baseHip[1],
+            baseHip[2] * hi,
+        ],
+        // Extra form knobs consumed by HumanMesh.resolveForm
+        _shapeFactors: {
+            shoulders: sh,
+            chest: ch,
+            waist: shapeFactor(shape.waist, 0.75, 1.25),
+            hips: hi,
+            muscle: shapeFactor(shape.muscle, 0.85, 1.2),
+            weight: wt,
+        },
+        heightM: shape.heightM,
     };
 }
 
@@ -177,7 +268,7 @@ export function texturesFromUi() {
 
 export function profileForNetwork(profile) {
     const p = normalizeProfile(profile);
-    return {
+    const out = {
         bodyId: p.bodyId,
         hairId: p.hairId,
         mods: [...(p.mods || [])],
@@ -193,16 +284,38 @@ export function profileForNetwork(profile) {
         customBodyImport: p.customBodyImport || null,
         customHairGlb: p.customHairGlb || null,
     };
+    // Compact: only send shape when non-neutral
+    if (!isShapeNeutral(p.shape)) {
+        out.shape = normalizeShape(p.shape);
+    }
+    return out;
 }
 
 export function modsFromUi() {
+    // Prefer wardrobe layout state when mounted
+    if (window.ClothingLayout?.getSelected) {
+        const fromLayout = window.ClothingLayout.getSelected();
+        if (Array.isArray(fromLayout) && (fromLayout.length || document.getElementById('skin-wardrobe'))) {
+            return [...fromLayout];
+        }
+    }
     const root = document.getElementById('skin-mod-list');
     if (!root) return [];
     return [...root.querySelectorAll('input[data-mod-id]:checked')].map((el) => el.dataset.modId);
 }
 
-/** Fill SKIN MOD picker from catalog (categories + presets). Call once on engine boot. */
+/**
+ * Fill SKIN wardrobe (slot rail + catalog) or legacy checkbox list.
+ * Call on engine boot and after profile sync.
+ */
 export function initModPickerUi(selected = []) {
+    const wardrobe = document.getElementById('skin-wardrobe');
+    if (wardrobe && window.ClothingLayout?.mount) {
+        window.ClothingLayout.mount({ selected: selected || [] });
+        return;
+    }
+
+    // Legacy fallback: flat category checkboxes
     const list = document.getElementById('skin-mod-list');
     const presets = document.getElementById('skin-mod-presets');
     if (!list) return;
@@ -238,7 +351,6 @@ export function initModPickerUi(selected = []) {
             const btn = e.target.closest('[data-mod-preset]');
             if (!btn) return;
             Mod.applyPresetToUi?.(btn.dataset.modPreset);
-            // Re-paint full catalog with new selection so exclusive siblings stay honest
             paint(modsFromUi());
             window.UI?.status?.(`MOD preset: ${btn.textContent.trim()}`);
         });
@@ -271,6 +383,26 @@ export function initModPickerUi(selected = []) {
     }
 }
 
+export function shapeFromUi(baseShape = {}) {
+    const pick = (id, fallback) => {
+        const el = document.getElementById(id);
+        if (!el) return fallback;
+        return el.value;
+    };
+    const raw = {
+        heightM: pick('skin-shape-height', baseShape.heightM),
+        shoulders: pick('skin-shape-shoulders', baseShape.shoulders ?? 0.5),
+        chest: pick('skin-shape-chest', baseShape.chest ?? 0.5),
+        waist: pick('skin-shape-waist', baseShape.waist ?? 0.5),
+        hips: pick('skin-shape-hips', baseShape.hips ?? 0.5),
+        muscle: pick('skin-shape-muscle', baseShape.muscle ?? 0.5),
+        weight: pick('skin-shape-weight', baseShape.weight ?? 0.5),
+    };
+    // Empty height field → null (body preset)
+    if (raw.heightM === '' || raw.heightM == null) raw.heightM = null;
+    return normalizeShape(raw);
+}
+
 export function profileFromUi(base = {}) {
     const p = normalizeProfile(base);
     const pick = (id, fallback) => document.getElementById(id)?.value ?? fallback;
@@ -279,6 +411,7 @@ export function profileFromUi(base = {}) {
     p.mods = modsFromUi();
     p.colors = colorsFromUi();
     p.textures = texturesFromUi();
+    p.shape = shapeFromUi(p.shape);
     p.roughness = parseFloat(pick('skin-rough', String(p.roughness ?? 0.72)));
     const impEl = document.getElementById('skin-body-import');
     if (impEl) p.customBodyImport = impEl.value.trim() || null;
@@ -301,7 +434,7 @@ export function syncUiFromProfile(profile) {
     const p = normalizeProfile(profile);
     const set = (id, val) => {
         const el = document.getElementById(id);
-        if (el && val) el.value = val;
+        if (el && val != null && val !== '') el.value = val;
     };
     set('skin-body-color', p.colors.shirt);
     set('skin-head-color', p.colors.skin);
@@ -311,8 +444,8 @@ export function syncUiFromProfile(profile) {
     const hairSel = document.getElementById('skin-hair-preset');
     if (bodySel) bodySel.value = p.bodyId;
     if (hairSel) hairSel.value = p.hairId;
-    // Rebuild / sync MOD checkboxes (catalog may be large)
-    if (document.getElementById('skin-mod-list')) {
+    // Rebuild / sync wardrobe or MOD list
+    if (document.getElementById('skin-wardrobe') || document.getElementById('skin-mod-list')) {
         initModPickerUi(p.mods || []);
     }
     initSkinToneSelect(resolveSkinSlug(p));
@@ -330,12 +463,54 @@ export function syncUiFromProfile(profile) {
             || (p.customBodyGlb?.startsWith?.('blob:') ? 'local GLB (session)' : p.customBodyGlb);
         status.textContent = hint ? `Custom body: ${hint}` : 'Custom body: default manifest';
     }
+    // Body shape sliders
+    const s = normalizeShape(p.shape);
+    const setRange = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.value = String(val);
+    };
+    setRange('skin-shape-shoulders', s.shoulders);
+    setRange('skin-shape-chest', s.chest);
+    setRange('skin-shape-waist', s.waist);
+    setRange('skin-shape-hips', s.hips);
+    setRange('skin-shape-muscle', s.muscle);
+    setRange('skin-shape-weight', s.weight);
+    const hEl = document.getElementById('skin-shape-height');
+    if (hEl) hEl.value = s.heightM != null ? String(s.heightM) : '';
+    updateShapeLabels(s);
+}
+
+/** Update numeric labels next to shape sliders */
+export function updateShapeLabels(shape) {
+    const s = normalizeShape(shape);
+    const setLab = (id, text) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+    };
+    const pct = (v) => `${Math.round(v * 100)}%`;
+    setLab('skin-shape-shoulders-val', pct(s.shoulders));
+    setLab('skin-shape-chest-val', pct(s.chest));
+    setLab('skin-shape-waist-val', pct(s.waist));
+    setLab('skin-shape-hips-val', pct(s.hips));
+    setLab('skin-shape-muscle-val', pct(s.muscle));
+    setLab('skin-shape-weight-val', pct(s.weight));
+    setLab(
+        'skin-shape-height-val',
+        s.heightM != null ? `${s.heightM.toFixed(2)} m` : 'preset',
+    );
 }
 
 window.AppearanceProfile = {
     DEFAULT_PROFILE,
+    DEFAULT_SHAPE,
+    SHAPE_SLIDER_KEYS,
     SKIN_TEXTURE_VARIANTS,
+    APPEARANCE_VERSION,
     normalizeProfile,
+    normalizeShape,
+    isShapeNeutral,
+    shapeFactor,
+    defaultHeightForBody,
     profileFromLegacyAppearance,
     profileToMeshOpts,
     profileForNetwork,
@@ -345,7 +520,9 @@ window.AppearanceProfile = {
     colorsFromUi,
     texturesFromUi,
     modsFromUi,
+    shapeFromUi,
     initModPickerUi,
     profileFromUi,
     syncUiFromProfile,
+    updateShapeLabels,
 };

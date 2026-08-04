@@ -42,7 +42,12 @@ export const CornerHub = {
         });
 
         document.getElementById('hub-agent')?.addEventListener('click', () => {
-            window.AgentPortal?.show?.();
+            // Prefer fast build path (auto-connect when provider ready)
+            if (window.AgentPortal?.openBuildFast) {
+                void window.AgentPortal.openBuildFast();
+            } else {
+                window.AgentPortal?.show?.();
+            }
         });
 
         document.getElementById('hub-link')?.addEventListener('click', () => {

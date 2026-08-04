@@ -1,13 +1,13 @@
-# Threshold bootcamp - 2026-07-24T04:02:30.923Z
+# Threshold bootcamp - 2026-08-04T07:10:33.571Z
 # Tier: medium (medium) | Model: threshold-mini-dev
-# Examples in Modelfile: 96 (of 262 JSONL, cap 96)
+# Examples in Modelfile: 128 (of 266 JSONL, cap 128)
 # Weights: ollama pull qwen2.5-coder:1.5b - not stored in git
 FROM qwen2.5-coder:1.5b
 
 PARAMETER temperature 0.28
 PARAMETER num_predict 1280
 
-SYSTEM """You are Threshold Engine Dev Agent (medium, v10.13+).
+SYSTEM """You are Threshold Engine Dev Agent (medium, v10.16+).
 If the user asks for a PLAN / production plan / pipeline (task production_plan), output PLAN text only — not JavaScript.
 Otherwise return ONLY executable JavaScript — no markdown, no prose.
 CRITICAL API (positional order — type FIRST, then name):
@@ -15,6 +15,8 @@ CRITICAL API (positional order — type FIRST, then name):
   types: 'cube' | 'sphere' | 'cone' | 'torus'
   Example: World.createObject('cube', 'crate', 0x8b4513, true)
 WRONG: object form {name,type}, name-first args, 'box'/'cylinder' types, new THREE.Scene, scene.add, World.clearWorld (unless asked).
+LIVE BUILD: multi-step chunks must EXTEND the grid — never clearWorld. Pause-guard every mutator.
+  MaterialPresets.applyMaterialPreset(mesh, id); name objects for GIMP slug match.
 RENDER MODE map (match user words exactly):
   realistic | default lighting | PBR | normal lighting → Engine.setRenderMode(4)
   terminal | terminal green → Engine.setRenderMode(2)
@@ -28,8 +30,8 @@ SURFACES: SurfaceProfile.set('player'|'creator'|'full') — player skips Ollama 
 OLLAMA: OllamaClient.probe — Pages needs npm run ollama:serve (:11435), not raw :11434
 Other APIs: Environment.setTimeOfDay/setFog, PlayerController.spawnPlayer,
   mesh.position.set / scale.set, userData.surfaceType|audioZone|shaderHook|shaderGraph|materialPreset|textures|locked|negativeLOD,
-  MaterialPresets.applyMaterialPreset, ShaderRegistry.applyHook, ShaderNodeGraph.applyGraph, TextureBridge.apply,
-  PerfHarness.measure / runScenario.
+  MaterialPresets.applyMaterialPreset, MaterialLibrary, ShaderRegistry.applyHook, ShaderNodeGraph.applyGraph, TextureBridge.apply,
+  LiveBuild, BuildJob, PerfHarness.measure / runScenario.
 Guard every mutator:
   if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
 Prefer MaterialPresets over CanvasTexture slop. No X OAuth APIs."""
@@ -52,6 +54,81 @@ PLAN: lite plaza props
 11. verify — PLAY · Lite · walk far · flats soft
 PERF: graphicsTier=compatibility · NegLOD auto · sequential ollama
 ACCEPT: 60fps class on mid PC · far props unlit · no clearWorld
+"""
+MESSAGE user """
+Improve live scene:
+```js
+// Generate realistic Threshold IIFE: live-build safe courtyard: locked pad + two physics crates with material presets, no clearWorld
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const pad = World.createObject('cube', 'Courtyard Pad', 0x55555e, false);
+    pad.scale.set(14, 0.12, 14);
+    pad.position.set(0, 0.06, 0);
+    pad.userData.locked = true;
+    pad.userData.surfaceType = 'concrete';
+    for (let i = 0; i < 2; i++) {
+      const c = World.createObject('cube', i ? 'Mat Brick Crate' : 'Mat Wood Crate', i ? 0x8c4838 : 0x6b4a2e, true);
+      c.position.set(i ? 1.5 : -1.5, 0.5, -2);
+      c.userData.surfaceType = i ? 'concrete' : 'wood';
+      if (window.MaterialPresets?.applyMaterialPreset) {
+        MaterialPresets.applyMaterialPreset(c, i ? 'pbr_brick_aged' : 'pbr_wood_snow');
+      }
+    }
+    Environment.setTimeOfDay?.(14);
+    Environment.setFog?.(0.012);
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user Production plan: agent live-build a terminal pad with quality lighting only.
+MESSAGE assistant """
+PLAN: Terminal pad + day light
+1. Scope: interior-feel pad on terminal grid
+2. Collision: locked static floor
+3. Mesh: one cube pad scaled flat · name Terminal Pad
+4. Lighting: QualityLadder / Environment day · Engine.setRenderMode(4)
+5. Live: layout step first so user sees floor appear · then atmosphere step
+6. No kit spam · materials optional MaterialLibrary Starter Ground
+7. Verify PLAY walk on pad
+"""
+MESSAGE user Write a short production plan for a live multi-step courtyard prop build (Threshold 10.16).
+MESSAGE assistant """
+PLAN: Live courtyard crate (10.16)
+1. Scope: exterior prop near origin · no clearWorld
+2. Collision: dynamic mass ~8 · surfaceType wood
+3. Mesh: World.createObject cube named Mat Brick Crate (slug match)
+4. Materials: MaterialPresets pbr_brick_aged then MaterialLibrary maps if present
+5. Live: BuildJob multi-step · LiveBuild apply per step · user walks PLAY
+6. Textures: GIMP watch textures/mat_brick_crate_albedo.png when art lands
+7. Weather: surfaceType for wet · optional dustExposure 0.3
+8. Verify: walk inspect · Live HUD complete · export later
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
+World.clearWorld();
+World.createObject('box', 'floor', 0x444, false);
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    // live-build safe: never clearWorld mid job
+    const floor = World.createObject('cube', 'Terminal Pad', 0x3a3a42, false);
+    floor.scale.set(12, 0.12, 12);
+    floor.position.set(0, 0.06, 0);
+    floor.userData.locked = true;
+    floor.userData.surfaceType = 'concrete';
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
 """
 MESSAGE user Write a Threshold production plan for: exterior metal walkway, wet rain, static, 2k GIMP, poly low, sequential ollama.
 MESSAGE assistant """
@@ -210,6 +287,34 @@ NOTES: MaterialPresets pbr_wood_snow · shaderHook snow_freshen.
 MESSAGE user """
 Fix this Threshold script:
 ```js
+World.clearWorld(); // live step
+```
+"""
+MESSAGE assistant /* live-build: clearWorld blocked */
+MESSAGE user """
+Fix this Threshold script:
+```js
+World.clearWorld(); // after BUILD SOMETHING generate
+```
+"""
+MESSAGE assistant """
+/* never clearWorld on live generate — extend terminal grid */
+// LiveBuild strips clearWorld from step chunks
+"""
+MESSAGE user Production plan: quick live build small plaza after BUILD SOMETHING (focused intensity).
+MESSAGE assistant """
+PLAN: Live plaza (quick 3-step)
+1. Entry: openBuildFast · user brief "small plaza with crates"
+2. Intensity: focused · steps layout → props → atmosphere
+3. Layout: locked pad surfaceType concrete · no clearWorld
+4. Props: 2–3 crates named for GIMP slugs · MaterialPresets
+5. Atmosphere: day light · light fog · Engine.setRenderMode(4)
+6. LiveBuild apply each chunk · Resume PLAY between steps
+7. Verify: walk plaza · HUD complete · code in Compiler
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
 if (window.location.hostname.includes('github.io')) fetch('http://127.0.0.1:11434/api/tags');
 ```
 """
@@ -283,6 +388,91 @@ MESSAGE assistant """
       NegativeLod.enableObject(p, { distance: 52, source: 'user' });
     }
     NegativeLod.applyTierPolicy('compatibility');
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// IMPLEMENT PLAN glass_window
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    // PLAN glass_window
+    const glass = World.createObject('cube', 'window_pane', 0xaaccff, false);
+    glass.scale.set(2.4, 1.6, 0.05);
+    glass.position.set(0, 1.4, -6);
+    if (glass.material) {
+      glass.material.transparent = true;
+      glass.material.opacity = 0.32;
+      glass.material.roughness = 0.06;
+    }
+    glass.userData.surfaceType = 'glass';
+    glass.userData.wetGlass = true;
+    glass.userData.texRes = '2k';
+    glass.userData.polyBudget = 'low';
+    glass.userData.materialPreset = 'pbr_glass_wet';
+    glass.userData.shaderGraph = 'glass_rim';
+    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(glass, 'pbr_glass_wet');
+    if (window.ShaderNodeGraph?.applyGraph) ShaderNodeGraph.applyGraph(glass, 'glass_rim');
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// IMPLEMENT PLAN neon_sign
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    // PLAN neon_sign
+    if (window.Environment?.setTimeOfDay) Environment.setTimeOfDay(22);
+    const sign = World.createObject('cube', 'marquee', 0xff2266, false);
+    sign.scale.set(3.5, 0.7, 0.12);
+    sign.position.set(0, 3.2, -8);
+    sign.userData.locked = true;
+    sign.userData.surfaceType = 'metal';
+    sign.userData.weatherMarquee = true;
+    sign.userData.polyBudget = 'low';
+    sign.userData.materialPreset = 'pbr_emissive_marquee';
+    sign.userData.shaderHook = 'emissive_pulse';
+    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(sign, 'pbr_emissive_marquee');
+    if (window.ShaderRegistry?.applyHook) ShaderRegistry.applyHook(sign, 'emissive_pulse');
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// IMPLEMENT PLAN snow_crate
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    // PLAN snow_crate
+    const c = World.createObject('cube', 'snow_crate', 0x8b6914, true);
+    c.position.set(0, 0.5, -3);
+    c.userData.surfaceType = 'wood';
+    c.userData.snowCap = 0.85;
+    c.userData.mass = 12;
+    c.userData.texRes = '2k';
+    c.userData.polyBudget = 'low';
+    c.userData.materialPreset = 'pbr_wood_snow';
+    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(c, 'pbr_wood_snow');
     UI.status('Scene extended');
   } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
 })();
@@ -439,17 +629,6 @@ MESSAGE assistant Engine.setRenderMode(4);
 MESSAGE user """
 Fix this Threshold script:
 ```js
-Engine.setRenderMode(2);
-// user asked for realistic lighting
-```
-"""
-MESSAGE assistant """
-Engine.setRenderMode(4);
-// realistic PBR default when user wants realistic
-"""
-MESSAGE user """
-Fix this Threshold script:
-```js
 Engine.setRenderMode(3);
 // user asked for realistic / default lighting
 ```
@@ -471,6 +650,75 @@ Engine.setRenderMode(1);
 ```
 """
 MESSAGE assistant Engine.setRenderMode(4);
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+quick live build three steps
+"""
+MESSAGE assistant """
+INTENT: spawn
+API: BuildJob intensity focused layout props atmosphere
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+full production pipeline seven steps
+"""
+MESSAGE assistant """
+INTENT: spawn
+API: BuildJob intensity full STEP_PLANS
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+live build undo last step
+"""
+MESSAGE assistant """
+INTENT: other
+API: LiveBuild undoLastStep SceneHistory
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
+const mat = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(document.createElement('canvas')) });
+const m = World.createObject('cube', 'slop', 0xffffff, false);
+m.material = mat;
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const m = World.createObject('cube', 'stone_block', 0x9a958c, false);
+    m.position.set(0, 0.5, -2);
+    m.userData.surfaceType = 'concrete';
+    m.userData.materialPreset = 'pbr_concrete_weathered';
+    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(m, 'pbr_concrete_weathered');
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// quality PBR prop near origin — name matches GIMP slug contract
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const prop = World.createObject('cube', 'Mat Wood Crate', 0x6b4a2e, true);
+    prop.position.set(-1.4, 0.5, -1.2);
+    prop.userData.surfaceType = 'wood';
+    if (window.MaterialPresets?.applyMaterialPreset) {
+      MaterialPresets.applyMaterialPreset(prop, 'pbr_wood_snow');
+    }
+    // TEXTURE: Mat Wood Crate → textures/mat_wood_crate_albedo.png
+    prop.userData.textureHint = 'textures/mat_wood_crate_albedo.png';
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
 MESSAGE user """
 Improve or complete:
 ```js
@@ -525,6 +773,84 @@ MESSAGE assistant """
       c.position.set((i % 3) - 1, 0.5 + Math.floor(i / 3), -2);
       c.userData.surfaceType = 'wood';
     }
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// pbr_concrete_weathered preset wall
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const wall = World.createObject('cube', 'weathered_wall', 0x8a8680, false);
+    wall.scale.set(5, 2.5, 0.35);
+    wall.position.set(5, 1.25, -4);
+    wall.userData.surfaceType = 'concrete';
+    wall.userData.materialPreset = 'pbr_concrete_weathered';
+    wall.userData.dustExposure = 0.4;
+    wall.userData.locked = true;
+    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(wall, 'pbr_concrete_weathered');
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user Production plan: character loadout tactical operator with custom body shape (Threshold 10.19).
+MESSAGE assistant """
+PLAN: Operator character (10.19)
+1. Scope: character · appearance only (or NPC placeholder)
+2. Appearance bodyId male_default · hair hair_short_m
+3. Shape: shoulders 0.72 · chest 0.65 · muscle 0.7 · heightM 1.82
+4. Mods (catalog only): helmet_tactical, vest_tactical, belt_tactical, shoes_boots
+5. Skin tone: starter_skin_medium · colors shirt/pants from profile
+6. Apply: AppearanceStore + AvatarComposer.apply · ClothingLayout selection
+7. No World.clearWorld · no invented mod ids
+8. Verify: SKIN rail shows headwear/torso/belt/feet filled
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// quick live layout step only — pad, no clearWorld
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const pad = World.createObject('cube', 'Quick Live Pad', 0x4a4a52, false);
+    pad.scale.set(10, 0.14, 10);
+    pad.position.set(0, 0.07, 0);
+    pad.userData.locked = true;
+    pad.userData.surfaceType = 'concrete';
+    pad.userData.liveBuildStep = 'layout';
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// live materials step: apply aged brick preset to named crate if present
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const crate = (State.objects || []).find((o) => /crate/i.test(o.userData?.name || o.name || ''));
+    if (crate && window.MaterialPresets?.applyMaterialPreset) {
+      MaterialPresets.applyMaterialPreset(crate, 'pbr_brick_aged');
+      crate.userData.materialPreset = 'pbr_brick_aged';
+      crate.userData.surfaceType = crate.userData.surfaceType || 'concrete';
+    }
+    if (window.LiveBuild?.pulseObjects && crate) LiveBuild.pulseObjects([crate], { color: 0x00ffaa });
     UI.status('Scene extended');
   } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
 })();
@@ -631,38 +957,6 @@ MESSAGE assistant """
 MESSAGE user """
 Improve or complete:
 ```js
-// IMPLEMENT PLAN glass_window
-```
-"""
-MESSAGE assistant """
-(function() {
-  try {
-    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-    Engine.setRenderMode(4);
-    // PLAN glass_window
-    const glass = World.createObject('cube', 'window_pane', 0xaaccff, false);
-    glass.scale.set(2.4, 1.6, 0.05);
-    glass.position.set(0, 1.4, -6);
-    if (glass.material) {
-      glass.material.transparent = true;
-      glass.material.opacity = 0.32;
-      glass.material.roughness = 0.06;
-    }
-    glass.userData.surfaceType = 'glass';
-    glass.userData.wetGlass = true;
-    glass.userData.texRes = '2k';
-    glass.userData.polyBudget = 'low';
-    glass.userData.materialPreset = 'pbr_glass_wet';
-    glass.userData.shaderGraph = 'glass_rim';
-    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(glass, 'pbr_glass_wet');
-    if (window.ShaderNodeGraph?.applyGraph) ShaderNodeGraph.applyGraph(glass, 'glass_rim');
-    UI.status('Scene extended');
-  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
-})();
-"""
-MESSAGE user """
-Improve or complete:
-```js
 // IMPLEMENT PLAN lite_yard
 ```
 """
@@ -719,59 +1013,6 @@ MESSAGE assistant """
 MESSAGE user """
 Improve or complete:
 ```js
-// IMPLEMENT PLAN neon_sign
-```
-"""
-MESSAGE assistant """
-(function() {
-  try {
-    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-    Engine.setRenderMode(4);
-    // PLAN neon_sign
-    if (window.Environment?.setTimeOfDay) Environment.setTimeOfDay(22);
-    const sign = World.createObject('cube', 'marquee', 0xff2266, false);
-    sign.scale.set(3.5, 0.7, 0.12);
-    sign.position.set(0, 3.2, -8);
-    sign.userData.locked = true;
-    sign.userData.surfaceType = 'metal';
-    sign.userData.weatherMarquee = true;
-    sign.userData.polyBudget = 'low';
-    sign.userData.materialPreset = 'pbr_emissive_marquee';
-    sign.userData.shaderHook = 'emissive_pulse';
-    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(sign, 'pbr_emissive_marquee');
-    if (window.ShaderRegistry?.applyHook) ShaderRegistry.applyHook(sign, 'emissive_pulse');
-    UI.status('Scene extended');
-  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
-})();
-"""
-MESSAGE user """
-Improve or complete:
-```js
-// IMPLEMENT PLAN snow_crate
-```
-"""
-MESSAGE assistant """
-(function() {
-  try {
-    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-    Engine.setRenderMode(4);
-    // PLAN snow_crate
-    const c = World.createObject('cube', 'snow_crate', 0x8b6914, true);
-    c.position.set(0, 0.5, -3);
-    c.userData.surfaceType = 'wood';
-    c.userData.snowCap = 0.85;
-    c.userData.mass = 12;
-    c.userData.texRes = '2k';
-    c.userData.polyBudget = 'low';
-    c.userData.materialPreset = 'pbr_wood_snow';
-    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(c, 'pbr_wood_snow');
-    UI.status('Scene extended');
-  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
-})();
-"""
-MESSAGE user """
-Improve or complete:
-```js
 // IMPLEMENT PLAN ai_station_marker
 ```
 """
@@ -793,6 +1034,30 @@ MESSAGE assistant """
       station.material.emissive = new THREE.Color(0x2266aa);
       station.material.emissiveIntensity = 0.35;
     }
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// weather + hilod-ready exterior wall with dust
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const wall = World.createObject('cube', 'dust_wall', 0x9a958c, false);
+    wall.scale.set(5, 2.5, 0.3);
+    wall.position.set(-4, 1.25, -5);
+    wall.userData.locked = true;
+    wall.userData.surfaceType = 'concrete';
+    wall.userData.dustExposure = 0.65;
+    wall.userData.texRes = '2k';
+    wall.userData.materialPreset = 'pbr_concrete_weathered';
+    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(wall, 'pbr_concrete_weathered');
     UI.status('Scene extended');
   } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
 })();
@@ -844,6 +1109,29 @@ m.position.set(0, 0.5, -2);
 MESSAGE user """
 Fix this Threshold script:
 ```js
+const c = World.createObject({ type: 'cube', name: 'crate' });
+MaterialPresets.apply(c, 'brick');
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const c = World.createObject('cube', 'Mat Brick Crate', 0x8c4838, true);
+    c.position.set(1.2, 0.5, -1.5);
+    c.userData.surfaceType = 'concrete';
+    if (window.MaterialPresets?.applyMaterialPreset) {
+      MaterialPresets.applyMaterialPreset(c, 'pbr_brick_aged');
+    }
+    c.userData.materialPreset = 'pbr_brick_aged';
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer();
 scene.add(new THREE.Mesh(new THREE.BoxGeometry(1,1,1), new THREE.MeshBasicMaterial({color:0xff0000})));
@@ -853,42 +1141,46 @@ MESSAGE assistant """
 const m = World.createObject('cube', 'box_red', 0xff0000, false);
 m.position.set(0, 0.5, -2);
 """
-MESSAGE user """
-Fix this Threshold script:
-```js
-const mat = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(document.createElement('canvas')) });
-const m = World.createObject('cube', 'slop', 0xffffff, false);
-m.material = mat;
-```
-"""
-MESSAGE assistant """
-(function() {
-  try {
-    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-    Engine.setRenderMode(4);
-    const m = World.createObject('cube', 'stone_block', 0x9a958c, false);
-    m.position.set(0, 0.5, -2);
-    m.userData.surfaceType = 'concrete';
-    m.userData.materialPreset = 'pbr_concrete_weathered';
-    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(m, 'pbr_concrete_weathered');
-    UI.status('Scene extended');
-  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
-})();
-"""
-MESSAGE user """
-Fix this Threshold script:
-```js
-const renderer = new THREE.WebGLRenderer(); const scene = new THREE.Scene();
-```
-"""
-MESSAGE assistant """
-// Threshold owns renderer/scene — use World.createObject only
-const m = World.createObject('cube', 'prop', 0x888888, false);
-"""
 MESSAGE user Return ONLY production checklist lines (no JS) for mobile deco bush
 MESSAGE assistant """
 // PLAN bush: exterior · visual · grass · tex 1k · hilod webp · poly low · Lite
 // shader wind_foliage · sequential ollama · no physics · verify Mobile tier
+"""
+MESSAGE user You are a Threshold appearance coach. Player says: How do I change body shape?
+MESSAGE assistant """
+SCENE → SKIN → Body shape. Sliders: shoulders, chest, waist, hips, muscle, weight; optional height in meters. Live apply when spawned. RESET SHAPE for neutral.
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+build something button
+"""
+MESSAGE assistant """
+INTENT: other
+API: AgentPortal.openBuildFast + BUILD SOMETHING CTA
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+start building with grok key
+"""
+MESSAGE assistant """
+INTENT: other
+API: AgentPortal.openBuildFast auto-connect
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+generate live scene from one message
+"""
+MESSAGE assistant """
+INTENT: spawn
+API: looksLikeBuildBrief + GENERATE LIVE SCENE
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+enter lobby build mode skip tour
+"""
+MESSAGE assistant """
+INTENT: other
+API: GuidedSession preferBuild skip walkthrough
 """
 MESSAGE user """
 User asked terminal green. Fix wrong mode:
@@ -1040,235 +1332,10 @@ MESSAGE assistant """
   } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
 })();
 """
-MESSAGE user """
-Improve or complete:
-```js
-// pbr_concrete_weathered preset wall
-```
-"""
+MESSAGE user You are a Threshold lobby guide. Player says: Where did TC DEMO go?
 MESSAGE assistant """
-(function() {
-  try {
-    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-    Engine.setRenderMode(4);
-    const wall = World.createObject('cube', 'weathered_wall', 0x8a8680, false);
-    wall.scale.set(5, 2.5, 0.35);
-    wall.position.set(5, 1.25, -4);
-    wall.userData.surfaceType = 'concrete';
-    wall.userData.materialPreset = 'pbr_concrete_weathered';
-    wall.userData.dustExposure = 0.4;
-    wall.userData.locked = true;
-    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(wall, 'pbr_concrete_weathered');
-    UI.status('Scene extended');
-  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
-})();
+TC DEMO was removed. Default is the terminal void grid. Build with agents or INSERT QUALITY layers — no circuit demo required.
 """
-MESSAGE user """
-Improve or complete:
-```js
-// apply MaterialPreset pbr_default
-```
-"""
-MESSAGE assistant """
-(function() {
-  try {
-    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-    Engine.setRenderMode(4);
-    const m = World.createObject('cube', 'preset_pbr_default', 0x888888, false);
-    m.position.set(-1.5, 0.5, -2);
-    m.userData.materialPreset = 'pbr_default';
-    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(m, 'pbr_default');
-    UI.status('Scene extended');
-  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
-})();
-"""
-MESSAGE user """
-Improve or complete:
-```js
-// apply MaterialPreset pbr_concrete_weathered
-```
-"""
-MESSAGE assistant """
-(function() {
-  try {
-    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-    Engine.setRenderMode(4);
-    const m = World.createObject('cube', 'preset_pbr_concrete_weathered', 0x888888, false);
-    m.position.set(-0.5, 0.5, -2);
-    m.userData.materialPreset = 'pbr_concrete_weathered';
-    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(m, 'pbr_concrete_weathered');
-    UI.status('Scene extended');
-  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
-})();
-"""
-MESSAGE user """
-Improve or complete:
-```js
-// apply MaterialPreset pbr_asphalt_wet
-```
-"""
-MESSAGE assistant """
-(function() {
-  try {
-    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-    Engine.setRenderMode(4);
-    const m = World.createObject('cube', 'preset_pbr_asphalt_wet', 0x888888, false);
-    m.position.set(0.5, 0.5, -2);
-    m.userData.materialPreset = 'pbr_asphalt_wet';
-    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(m, 'pbr_asphalt_wet');
-    UI.status('Scene extended');
-  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
-})();
-"""
-MESSAGE user """
-Improve or complete:
-```js
-// apply MaterialPreset pbr_wood_snow
-```
-"""
-MESSAGE assistant """
-(function() {
-  try {
-    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-    Engine.setRenderMode(4);
-    const m = World.createObject('cube', 'preset_pbr_wood_snow', 0x888888, false);
-    m.position.set(1.5, 0.5, -2);
-    m.userData.materialPreset = 'pbr_wood_snow';
-    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(m, 'pbr_wood_snow');
-    UI.status('Scene extended');
-  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
-})();
-"""
-MESSAGE user """
-Improve or complete:
-```js
-// apply MaterialPreset pbr_metal_brushed
-```
-"""
-MESSAGE assistant """
-(function() {
-  try {
-    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-    Engine.setRenderMode(4);
-    const m = World.createObject('cube', 'preset_pbr_metal_brushed', 0x888888, false);
-    m.position.set(-1.5, 0.5, -3);
-    m.userData.materialPreset = 'pbr_metal_brushed';
-    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(m, 'pbr_metal_brushed');
-    UI.status('Scene extended');
-  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
-})();
-"""
-MESSAGE user """
-Improve or complete:
-```js
-// apply MaterialPreset pbr_glass_wet
-```
-"""
-MESSAGE assistant """
-(function() {
-  try {
-    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-    Engine.setRenderMode(4);
-    const m = World.createObject('cube', 'preset_pbr_glass_wet', 0x888888, false);
-    m.position.set(-0.5, 0.5, -3);
-    m.userData.materialPreset = 'pbr_glass_wet';
-    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(m, 'pbr_glass_wet');
-    UI.status('Scene extended');
-  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
-})();
-"""
-MESSAGE user """
-Improve or complete:
-```js
-// apply MaterialPreset pbr_emissive_marquee
-```
-"""
-MESSAGE assistant """
-(function() {
-  try {
-    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-    Engine.setRenderMode(4);
-    const m = World.createObject('cube', 'preset_pbr_emissive_marquee', 0x888888, false);
-    m.position.set(0.5, 0.5, -3);
-    m.userData.materialPreset = 'pbr_emissive_marquee';
-    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(m, 'pbr_emissive_marquee');
-    UI.status('Scene extended');
-  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
-})();
-"""
-MESSAGE user """
-Improve or complete:
-```js
-// apply MaterialPreset pbr_fabric_muted
-```
-"""
-MESSAGE assistant """
-(function() {
-  try {
-    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-    Engine.setRenderMode(4);
-    const m = World.createObject('cube', 'preset_pbr_fabric_muted', 0x888888, false);
-    m.position.set(1.5, 0.5, -3);
-    m.userData.materialPreset = 'pbr_fabric_muted';
-    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(m, 'pbr_fabric_muted');
-    UI.status('Scene extended');
-  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
-})();
-"""
-MESSAGE user """
-Improve or complete:
-```js
-// GIMP PBR maps matching mesh name Starter Ground
-```
-"""
-MESSAGE assistant """
-(function() {
-  try {
-    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-    Engine.setRenderMode(4);
-    const pad = World.createObject('cube', 'Starter Ground', 0xffffff, false);
-    pad.scale.set(12, 0.15, 12);
-    pad.position.set(0, 0.08, 0);
-    pad.userData.locked = true;
-    pad.userData.surfaceType = 'concrete';
-    pad.userData.textures = {
-      albedo: 'textures/starter_ground_albedo.png',
-      roughness: 'textures/starter_ground_roughness.png',
-      normal: 'textures/starter_ground_normal.png'
-    };
-    if (window.TextureBridge) TextureBridge.apply(pad);
-    UI.status('Scene extended');
-  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
-})();
-"""
-MESSAGE user """
-Improve or complete:
-```js
-// USER ASKED terminal green only
-```
-"""
-MESSAGE assistant """
-(function() {
-  try {
-    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-    Engine.setRenderMode(2);
-    const m = World.createObject('cube', 'term_block', 0x00ff66, false);
-    m.position.set(0, 1, -2);
-    if (m.material) {
-      m.material.emissive = new THREE.Color(0x00ff66);
-      m.material.emissiveIntensity = 0.25;
-    }
-    UI.status('Terminal mode');
-  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
-})();
-"""
-MESSAGE user """
-Complete — user said terminal green screen aesthetic:
-```js
-// setRenderMode for terminal
-```
-"""
-MESSAGE assistant Engine.setRenderMode(2);
 MESSAGE user """
 User asked toon shading. Fix:
 ```js
@@ -1321,30 +1388,10 @@ MESSAGE assistant """
   } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
 })();
 """
-MESSAGE user """
-Improve or complete:
-```js
-// USER ASKED toon style only
-```
-"""
+MESSAGE user Ready JSON for portal: dress player as lab scientist (valid mod ids only).
 MESSAGE assistant """
-(function() {
-  try {
-    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-    Engine.setRenderMode(1);
-    const m = World.createObject('sphere', 'toon_ball', 0xff9944, false);
-    m.position.set(0, 1.2, -2);
-    UI.status('Toon mode');
-  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
-})();
+{"ready":true,"taskType":"character","title":"Lab scientist","summary":"Player appearance scientist loadout","intensity":"focused","placement":"interior","weatherExposure":"sheltered","surfaceType":"concrete","collision":"dynamic","appearance":{"bodyId":"female_default","hairId":"hair_bun_f","mods":["coat_lab","hardhat_lab","id_lanyard","shoes_casual"],"archetype":"scientist"},"shape":{"shoulders":0.45,"chest":0.5,"waist":0.48,"hips":0.55,"muscle":0.4,"weight":0.48,"heightM":null}}
 """
-MESSAGE user """
-User asked toon shading. Fix:
-```js
-Engine.setRenderMode(2);
-```
-"""
-MESSAGE assistant Engine.setRenderMode(1);
 MESSAGE user """
 Fix this Threshold script:
 ```js
@@ -1388,10 +1435,57 @@ MESSAGE assistant const crate = World.createObject('cube', 'crate', 0xff0000, tr
 MESSAGE user """
 Fix this Threshold script:
 ```js
-World.createObject({ name: 'crate', type: 'box', color: 0xff0000 });
+BuildJob.setPrefs({ intensity: 'lottery' });
 ```
 """
-MESSAGE assistant const crate = World.createObject('cube', 'crate', 0xff0000, true);
+MESSAGE assistant BuildJob.setPrefs({ intensity: 'focused' }); // focused | full
+MESSAGE user Quick live steps?
+MESSAGE assistant layout → props → atmosphere (BuildJob intensity focused)
+MESSAGE user Live undo?
+MESSAGE assistant LiveBuild HUD ↩ · SceneHistory per step
+MESSAGE user """
+Improve or complete:
+```js
+// live layout step only: locked ground pad, no props yet
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const pad = World.createObject('cube', 'Live Layout Pad', 0x4a4a52, false);
+    pad.scale.set(10, 0.14, 10);
+    pad.position.set(0, 0.07, 0);
+    pad.userData.locked = true;
+    pad.userData.surfaceType = 'concrete';
+    pad.userData.liveBuildStep = 'layout';
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
+LiveBuild.applyChunk(code); // while PLAY, no pause
+```
+"""
+MESSAGE assistant """
+// LiveBuild.ensureEditable pauses first; Runtime blocks world mutators in PLAY
+if (!State.isPaused) UI.togglePause('Live build');
+LiveBuild.applyChunk(code);
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
+BuildJob.run(ctx); // apply only final accumulated IIFE once
+```
+"""
+MESSAGE assistant """
+// Prefer liveApply: each step emits chunk → LiveBuild.applyChunk (no re-create)
+BuildJob.setPrefs({ multiStep: true, liveApply: true, resumePlay: true });
+await BuildJob.run(ctx);
+"""
 MESSAGE user """
 Fix this Threshold script:
 ```js
@@ -1487,4 +1581,279 @@ World.clearWorld();
 MESSAGE assistant """
 Engine.setRenderMode(4);
 // do not clearWorld unless user asked
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// wet_hero material preset on metal walkway
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const walk = World.createObject('cube', 'metal_walkway', 0x666677, false);
+    walk.scale.set(6, 0.15, 2);
+    walk.position.set(0, 0.1, -5);
+    walk.userData.surfaceType = 'metal';
+    walk.userData.materialPreset = 'wet_hero';
+    walk.userData.shaderGraph = 'wet_hero';
+    if (window.MaterialPresets?.applyMaterialPreset) MaterialPresets.applyMaterialPreset(walk, 'wet_hero');
+    if (window.ShaderNodeGraph?.applyGraph) ShaderNodeGraph.applyGraph(walk, 'wet_hero');
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
+World.createObject('sphere', 's', 0x00ff00, false); PlayerController.spawnPlayer(); World.clearWorld();
+```
+"""
+MESSAGE assistant """
+const s = World.createObject('sphere', 's', 0x00ff00, false);
+if (!PlayerController.getLocalPlayer()) PlayerController.spawnPlayer();
+// removed clearWorld — would wipe the scene
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// lite-friendly locked floor + single crate (low poly)
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    // PERF: few meshes · locked floor · poly low
+    const floor = World.createObject('cube', 'lite_floor', 0x3a3a40, false);
+    floor.scale.set(12, 0.2, 12);
+    floor.position.set(0, 0.1, 0);
+    floor.userData.locked = true;
+    floor.userData.surfaceType = 'concrete';
+    const crate = World.createObject('cube', 'lite_crate', 0x8b4513, true);
+    crate.position.set(0, 0.5, -2);
+    crate.userData.surfaceType = 'wood';
+    crate.userData.mass = 10;
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// apply GIMP maps then note hilod tiers (masters stay 2k)
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const m = World.createObject('cube', 'stone_block', 0xffffff, false);
+    m.position.set(1, 0.5, 0);
+    m.userData.surfaceType = 'concrete';
+    // Masters in textures/; hilod builds _1k/_2k + WebP for Lite/Mobile
+    m.userData.textures = {
+      albedo: 'textures/stone_block_albedo.png',
+      roughness: 'textures/stone_block_roughness.png',
+      normal: 'textures/stone_block_normal.png'
+    };
+    m.userData.texRes = '2k';
+    if (window.TextureBridge) TextureBridge.apply(m);
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// performance: mark heavy glb for lod distances if MeshLod present
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const prop = World.createObject('cube', 'hero_proxy', 0x667788, false);
+    prop.position.set(0, 1, -4);
+    prop.userData.surfaceType = 'metal';
+    // LOD distances reference (Blender lod_export / meshLod): near, mid, far
+    prop.userData.lodDistances = [0, 12, 28];
+    prop.userData.polyBudget = 'medium';
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// mobile tier comment + simpler materials
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    // graphicsProfile Lite/Mobile will prefer WebP + lower HILOD
+    const rock = World.createObject('cube', 'deco_rock', 0x6a6a5a, false);
+    rock.scale.set(1.2, 0.8, 1.0);
+    rock.position.set(-2, 0.4, -3);
+    rock.userData.surfaceType = 'gravel';
+    rock.userData.polyBudget = 'low';
+    rock.userData.locked = true;
+    if (rock.material) {
+      rock.material.roughness = 0.9;
+      rock.material.metalness = 0.05;
+    }
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// rescale-aware texture userData for AI station
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const station = World.createObject('cube', 'AI Build Station', 0x2a4a6a, false);
+    station.scale.set(1.6, 1.2, 1.0);
+    station.position.set(0, 0.6, -8);
+    station.userData.locked = true;
+    station.userData.surfaceType = 'metal';
+    station.userData.texRes = '2k';
+    station.userData.hilod = true; // expect _1k/_2k + webp from textures:watch
+    Object.assign(station.userData, { interactHint: 'AI Build (F)', interactRadius: 2.5 });
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user Return ONLY a short comment block listing pipeline steps before any code for: wet metal walkway
+MESSAGE assistant """
+// PLAN walkway: exterior · static · surfaceType metal · 2k GIMP · hilod+webp
+// weather wet · MaterialPresets wet_hero · audio exterior_open · poly low
+// codegen pause-guard IIFE · verify rain + Lite tier
+"""
+MESSAGE user """
+Improve or complete:
+```js
+// sequential-safe: one glb proxy note without spawning 12 meshes
+```
+"""
+MESSAGE assistant """
+(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    // OllamaRunQueue: sequential default; parallel blocked if GLB count high
+    const marker = World.createObject('cone', 'import_marker', 0xffaa00, false);
+    marker.position.set(0, 1.2, 0);
+    marker.userData.importHint = 'gltfImport single file — freeze memory after';
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
+World.createObject('box', 'crate', 0xff0000, true);
+```
+"""
+MESSAGE assistant const crate = World.createObject('cube', 'crate', 0xff0000, true);
+MESSAGE user """
+Fix this Threshold script:
+```js
+World.createObject('box', 'x', 0xff0000, true);
+```
+"""
+MESSAGE assistant World.createObject('cube', 'x', 0xff0000, true);
+MESSAGE user """
+Fix this Threshold script:
+```js
+World.createObject('crate', 'cube', 0x8b4513, true);
+```
+"""
+MESSAGE assistant const crate = World.createObject('cube', 'crate', 0x8b4513, true);
+MESSAGE user """
+Fix this Threshold script:
+```js
+applySurvivalWorldHooks();
+// default Pages build — survival not loaded
+```
+"""
+MESSAGE assistant """
+// survival is opt-in (npm run dev:survival) — skip hooks on default build
+const prop = World.createObject('cube', 'prop', 0xaa6644, false);
+prop.position.set(1, 0.4, 1);
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
+World.createObject({ name: 'barrel', type: 'cylinder', color: 0x553311, hasPhysic: true });
+```
+"""
+MESSAGE assistant """
+const barrel = World.createObject('cube', 'barrel', 0x553311, true);
+barrel.scale.set(0.8, 1.2, 0.8);
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
+const m = new THREE.Mesh(new THREE.BoxGeometry(1,1,1), new THREE.MeshBasicMaterial({color:0xff0000}));
+scene.add(m);
+```
+"""
+MESSAGE assistant const m = World.createObject('cube', 'box_red', 0xff0000, false);
+MESSAGE user """
+Fix this Threshold script:
+```js
+World.createObject('box', 'floor', 0x333333, false);
+```
+"""
+MESSAGE assistant """
+const floor = World.createObject('cube', 'floor', 0x333333, false);
+floor.scale.set(20, 0.2, 20);
+floor.userData.locked = true;
+floor.userData.surfaceType = 'concrete';
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
+if (State.isPaused === false) World.createObject('cube', 'x', 0xffffff, false);
+```
+"""
+MESSAGE assistant """
+if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); }
+else { World.createObject('cube', 'x', 0xffffff, false); }
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
+Engine.setRenderMode(4)
+World.createObject('cube' 'a' 0xffffff false)
+```
+"""
+MESSAGE assistant """
+Engine.setRenderMode(4);
+const a = World.createObject('cube', 'a', 0xffffff, false);
+"""
+MESSAGE user """
+Fix this Threshold script:
+```js
+const x = World.createObject('cube', 'x', 0xff0000, false)
+x.position = {x:1,y:0,z:0}
+```
+"""
+MESSAGE assistant """
+const x = World.createObject('cube', 'x', 0xff0000, false);
+x.position.set(1, 0, 0);
 """

@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → local GIMP/Blender art → tiered AI agents (Ollama + Grok).
 
-**Current version:** **10.15.10**
+**Current version:** **10.20.1**
 
 **Forward plan:** [ROADMAP.md](ROADMAP.md) · **Snapshot:** [CAPABILITIES.md](CAPABILITIES.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
@@ -12,28 +12,29 @@
 
 | Pillar | Goal |
 |--------|------|
-| **Design** | Terminal grid + quality ladder + Agent Portal + Compiler + PromptGen |
-| **Art** | GIMP live SYNC, Blender GLB, procedural PBR + HILOD, **material library** (INSERT) |
+| **Design** | Terminal grid + quality ladder + live agents + Compiler + PromptGen |
+| **Art** | GIMP live SYNC, Blender GLB, PBR + HILOD, material library, **shape + wardrobe** |
 | **Play** | TPS/FPS/ADS · Arrange · Play as · weather · Third Eye · touch |
-| **Dev** | SETUP tab, tiered agents, sequential Ollama, AI memory freeze |
+| **Dev** | SETUP, tiered agents, sequential Ollama, freeze, **wave7 train:mini** |
 | **Ship** | 9-step EXPORT → `store:prep` → APK / Windows / iOS / Steam |
 | **Scale** | Self-host relay locally or AWS free tier |
 
 ---
 
-## User journey (v10.15+)
+## User journey (v10.20+)
 
 ```
 1. LOBBY        → ENTER (solo terminal grid) or CREATE SESSION / JOIN
 2. ENGINE       → empty grid · hub PLAY/ARRANGE/EDIT · optional Play as (K)
-3. QUALITY      → INSERT QUALITY: light · kit · AI · materials · pad (opt-in)
-4. PORTAL       → Agent Portal scans Grok/Ollama · describe what to build
-5. EDIT         → gizmo · inspector · Compiler / PromptGen
-6. PLAY         → walk · sim · touch toggle
-7. SHIP         → TOOLS → Export when ready
+3. BUILD        → BUILD SOMETHING / AI · one brief · GENERATE → LIVE SCENE
+4. SKIN         → body shape + wardrobe (SCENE → SKIN) when character-focused
+5. QUALITY      → INSERT QUALITY: light · kit · AI · materials · pad (opt-in)
+6. EDIT         → gizmo · inspector · Compiler / PromptGen
+7. PLAY         → walk · sim · touch toggle
+8. SHIP         → TOOLS → Export when ready
 ```
 
-Optional: **Lobby → TC DEMO** for bundled reference editions. Optional **Grok** API key — [AUTH.md](AUTH.md). Mobile defaults to **player** surface — [UI_AND_AGENTS.md](UI_AND_AGENTS.md).
+Optional **Grok** API key — [AUTH.md](AUTH.md). Mobile defaults to **player** surface — [UI_AND_AGENTS.md](UI_AND_AGENTS.md).
 
 See [GETTING_STARTED.md](GETTING_STARTED.md) · [STREAMLINED_DEV.md](STREAMLINED_DEV.md) · [UI_AND_AGENTS.md](UI_AND_AGENTS.md)
 

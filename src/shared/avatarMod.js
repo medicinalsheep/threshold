@@ -988,8 +988,12 @@ export const AvatarMod = {
     applyPresetToUi(presetId) {
         const preset = this.presets()[presetId];
         if (!preset) return;
+        if (window.ClothingLayout?.setSelected) {
+            window.ClothingLayout.setSelected(preset.mods || []);
+            return;
+        }
         const want = new Set(preset.mods || []);
-        document.querySelectorAll('#skin-mod-list input[data-mod-id]').forEach((el) => {
+        document.querySelectorAll('#skin-mod-list input[data-mod-id], #skin-wardrobe-catalog input[data-mod-id]').forEach((el) => {
             el.checked = want.has(el.dataset.modId);
         });
     },

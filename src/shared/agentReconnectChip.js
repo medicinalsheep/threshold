@@ -9,7 +9,10 @@ export const AgentReconnectChip = {
     init() {
         const el = document.getElementById('agent-reconnect-chip');
         if (!el) return;
-        el.addEventListener('click', () => window.AgentPortal?.show?.());
+        el.addEventListener('click', () => {
+            if (window.AgentPortal?.openBuildFast) void window.AgentPortal.openBuildFast();
+            else window.AgentPortal?.show?.();
+        });
         el.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();

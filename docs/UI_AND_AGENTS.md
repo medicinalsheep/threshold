@@ -2,7 +2,8 @@
 
 Quick reference for corner hubs, interaction modes, Agent Portal, optional Grok key, and session lobby. Older docs may still say "SCENE → AI tab" — today everything lives under **SETUP** (scene dock) and **Agent Portal**.
 
-**Live version:** see `src/config.js` → `VERSION` · **Spine:** [BUILD_FROM.md](BUILD_FROM.md)
+**Live version:** see `src/config.js` → `VERSION` (10.20+) · **Spine:** [BUILD_FROM.md](BUILD_FROM.md)  
+**Creator path:** ENTER → **BUILD SOMETHING** → brief → **GENERATE → LIVE SCENE** · SKIN shape/wardrobe · Export.
 
 ---
 
@@ -63,6 +64,10 @@ See [AUTH.md](AUTH.md).
 | Working folder | SETUP + Portal | Memory scope during local Ollama |
 | AI memory freeze | Automatic on local run | Screen snapshot, park assets, restore after |
 | Multi-step builds | Portal build options | Layout → props → atmosphere |
+| **Live apply in scene** | Portal build options (default ON) | Each step runs in Engine; walk while agents work · `LiveBuild` HUD · docked portal |
+| **BUILD SOMETHING** | Floating CTA after ENTER · hub **AI** | Fast path: auto-connect → chat → GENERATE (10.17) |
+| **Quick brief** | Portal chat | One clear scene message unlocks GENERATE (no multi-turn ready JSON) |
+| **Wardrobe** | SCENE → SKIN | Slot rail + catalog cards · presets · live equip when spawned (10.19) |
 | Generation policy | `generation-policy.json` | Intensity budgets + MOD required/optional slots |
 | Ollama CORS | Local + Pages | `npm run ollama:serve` — not plain `ollama serve` |
 

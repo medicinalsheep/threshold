@@ -191,6 +191,19 @@ export const UI = {
             if (window.PlayerController?.spawned) UI.reloadPlayerSkin?.();
             else UI.status?.(`Skin tone: ${e.target?.selectedOptions?.[0]?.text || slug} — spawn / reload to apply`);
         });
+        // Body shape sliders — live apply when player spawned
+        const onShapeChange = () => {
+            const shape = window.AppearanceProfile?.shapeFromUi?.() || {};
+            window.AppearanceProfile?.updateShapeLabels?.(shape);
+            if (window.PlayerController?.spawned) UI.applyPlayerShapeLive?.();
+        };
+        document.querySelectorAll('.skin-shape-slider, #skin-shape-height').forEach((el) => {
+            el.addEventListener('input', onShapeChange);
+            el.addEventListener('change', onShapeChange);
+        });
+        document.getElementById('btn-skin-shape-reset')?.addEventListener('click', () => {
+            void UI.resetPlayerShape?.();
+        });
         document.getElementById('btn-player-code')?.addEventListener('click', () => UI.openPlayerCodeRef());
 
         document.getElementById('ctx-edit-inspect').onclick = () => { if (State.selectedObject) UI.selectObject(State.selectedObject); UI.closeCtx(); };
@@ -628,9 +641,56 @@ export const UI = {
             window.AppearanceStore.setPlayerProfile(profile);
             await PlayerController.applyAppearance(profile);
             window.AppearanceProfile.syncUiFromProfile(profile);
-            this.status(`Appearance applied — ${profile.bodyId} · ${profile.hairId}`);
+            const shapeNote = window.AppearanceProfile.isShapeNeutral?.(profile.shape)
+                ? ''
+                : ' · custom shape';
+            this.status(`Appearance applied — ${profile.bodyId} · ${profile.hairId}${shapeNote}`);
         } catch (e) {
             this.status('Appearance failed: ' + (e.message || e));
+        }
+    },
+
+    /** Live body shape only (debounced full path via AvatarComposer.applyShapeOnly). */
+    applyPlayerShapeLive: async function () {
+        if (!PlayerController.spawned || !PlayerController.group) return;
+        if (this._shapeLiveBusy) {
+            this._shapeLivePending = true;
+            return;
+        }
+        this._shapeLiveBusy = true;
+        try {
+            const profile = window.AppearanceProfile.profileFromUi(window.AppearanceStore.getPlayerProfile());
+            window.AppearanceStore.setPlayerProfile(profile);
+            if (window.AvatarComposer?.applyShapeOnly) {
+                await window.AvatarComposer.applyShapeOnly(PlayerController.group, profile);
+            } else {
+                await PlayerController.applyAppearance(profile);
+            }
+            window.AppearanceProfile.updateShapeLabels?.(profile.shape);
+        } catch (e) {
+            console.warn('[skin] shape live', e.message || e);
+        } finally {
+            this._shapeLiveBusy = false;
+            if (this._shapeLivePending) {
+                this._shapeLivePending = false;
+                void this.applyPlayerShapeLive();
+            }
+        }
+    },
+
+    resetPlayerShape: async function () {
+        const base = window.AppearanceStore.getPlayerProfile();
+        const profile = window.AppearanceProfile.normalizeProfile({
+            ...base,
+            shape: { ...window.AppearanceProfile.DEFAULT_SHAPE },
+        });
+        window.AppearanceStore.setPlayerProfile(profile);
+        window.AppearanceProfile.syncUiFromProfile(profile);
+        if (PlayerController.spawned) {
+            await PlayerController.applyAppearance(profile);
+            this.status('Body shape reset to neutral');
+        } else {
+            this.status('Body shape reset — spawn / reload to apply');
         }
     },
     clearCustomBody: async function () {

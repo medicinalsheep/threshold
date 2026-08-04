@@ -1,4 +1,4 @@
-# Getting started with Threshold (v10.15.10)
+# Getting started with Threshold (v10.20.1)
 
 One linear path from lobby to shipping — **terminal grid** default (empty quality baseline), Agent Portal, tiered agents, and optional **TC** export practice.
 
@@ -38,19 +38,20 @@ Lobby → ENTER (solo) → PLAY on terminal grid → ARRANGE / EDIT to place →
 | 1 | **Lobby → ENTER →** | Solo — **PLAY** on empty terminal grid |
 | 2 | Engine | Dark ground + grid · no auto props · hub tour |
 | 3 | **Surface** | Phones **player**; desktop **creator**. `?surface=` |
-| 4 | **Agent Portal** (creator) | Grok/Ollama · describe a scene |
+| 4 | **BUILD SOMETHING** / **AI** | Auto-connect if key/Ollama · one brief → **GENERATE → LIVE SCENE** |
 | 5 | **EDIT** | Insert cube · SCENE **Cell** / **Snap** (1 unit = 1 m) · optional kit |
 | 5b | **ARRANGE** | Hub cycle · click select · drag / WASD · snap moves |
 | 5c | **PLAY AS** | Select NPC/prop · **K** or inspector **PLAY AS** · release restores player |
 | 5d | **QUALITY** | INSERT → QUALITY: light · AI station · materials · physics kit · pad |
 | 5e | **SCENE** | Grid cell · snap · Light presets (Terminal / Day / Soft / Night) |
+| 5f | **SKIN** | Body shape sliders · wardrobe slot rail + catalog · presets |
 | 6 | **PLAY** | Walk · sim · **F** interact |
-| 7 | **SETUP** (optional) | Ollama tiers · gravity · Grok key |
+| 7 | **SETUP** (optional) | Ollama tiers · gravity · Grok key · train:mini wave7 |
 | 8 | **TOOLS → EXPORT** | 9-step walkthrough |
 | 9 | **CLI** | `store:prep`, `package:*` or `package:steam` |
 
 Optional multiplayer: **CREATE SESSION** → copy code/link → **ENTER SESSION**. Friends **JOIN** with code (+ passcode if set).  
-Optional demo: **Lobby → TC DEMO** (creator surface). Optional **Grok** key — [AUTH.md](AUTH.md).
+Optional **Grok** key — [AUTH.md](AUTH.md).
 
 ---
 

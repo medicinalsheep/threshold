@@ -40,6 +40,7 @@ import '../shared/audioZoneSystem.js';
 import '../shared/immersiveReplay.js';
 import '../shared/designIntake.js';
 import '../shared/agentPortal.js';
+import '../shared/liveBuild.js';
 import '../shared/agentReconnectChip.js';
 import '../shared/cornerHub.js';
 import '../shared/engineAudio.js';
@@ -54,6 +55,7 @@ import '../shared/avatarComposer.js';
 import '../shared/avatarTex.js';
 import '../shared/avatarLod.js';
 import '../shared/avatarMod.js';
+import '../shared/clothingLayout.js';
 import '../shared/generationPolicy.js';
 import '../grok/client.js';
 import '../shared/appearanceExport.js';
@@ -214,6 +216,7 @@ export function initEngine() {
             import('../shared/helpMenu.js').then((m) => m.HelpMenu.init());
             import('../shared/hubLayout.js').then((m) => m.HubLayout.init());
             import('../shared/modelStatusHud.js').then((m) => m.ModelStatusHud.init());
+            import('../shared/liveBuild.js').then((m) => m.LiveBuild.init());
             // Full MOD catalog UI (avatar-mods.json)
             try {
                 const mods = window.AppearanceStore?.getPlayerProfile?.()?.mods || [];

@@ -236,7 +236,7 @@ export function ladderStatus() {
         materials: objs.some((o) => o.userData?.isMaterialExample || o.userData?.materialPreset),
         physics: !!S?.starterKitSpawned || objs.some((o) => o.userData?.isStarterKit || o.userData?.isSimSample),
         workspace: S?.enterStyle === 'workspace',
-        cookbook: true, // always available in PromptGen
+        cookbook: !!S?.qualityLadder?.cookbook,
     };
 }
 
@@ -284,6 +284,9 @@ export const QualityLadder = {
         document.getElementById('ql-open-cookbook')?.addEventListener('click', () => {
             document.querySelector('[data-target="view-prompter"]')?.click();
             document.getElementById('insert-modal')?.classList.remove('open');
+            const S = State();
+            if (S) S.qualityLadder = { ...(S.qualityLadder || {}), cookbook: true };
+            QualityLadder.syncUi();
             window.UI?.status?.('PromptGen cookbook — use “Quality PBR prop” recipe');
         });
 

@@ -14,6 +14,7 @@ import { stripCodeFences } from './agentPrompts.js';
 import { sanitizeSceneCode, codeReadinessSummary } from './codeSanitizer.js';
 import { TIER_GUIDE, tierOptionsHtml, renderTierGuideHtml } from './agentModelGuide.js';
 import { BuildJob } from './buildJob.js';
+import { LiveBuild } from './liveBuild.js';
 import { getSceneApiPrompt } from './sceneApiPrompt.js';
 import { buildAgentPortalSystemPrompt, buildCompilerRequest, validateProductionReady } from './assetProductionPlan.js';
 import { enrichReadyContext, applyAppearancePlan } from './generationPolicy.js';
@@ -141,6 +142,54 @@ function looksLikeCode(text) {
     return /\(function\s*\(|World\.|Engine\.|State\./.test(t);
 }
 
+/** True when the message is a scene/asset brief (not small talk). Enables GENERATE without multi-turn ready JSON. */
+function looksLikeBuildBrief(text) {
+    const t = String(text || '').trim();
+    if (t.length < 10) return false;
+    if (/^(hi|hello|hey|help|thanks|what can you|how do i|who are)/i.test(t) && t.length < 48) return false;
+    if (/\b(build|make|create|add|place|spawn|generate|live build|courtyard|plaza|room|scene|world|prop|npc|character|outfit|dress|floor|layout|crate|landmark)\b/i.test(t)) {
+        return true;
+    }
+    return t.length >= 48;
+}
+
+/** Infer a production-ready context so GENERATE is not blocked on chat “ready” JSON. */
+function inferBuildContext(text) {
+    const t = String(text || '').trim();
+    let taskType = 'world';
+    if (/\b(character|npc|avatar|outfit|dress|operator|scientist|explorer)\b/i.test(t)) taskType = 'character';
+    else if (/\b(prop|crate|barrel|bench|furniture|beacon)\b/i.test(t) && !/\b(world|scene|room|courtyard)\b/i.test(t)) {
+        taskType = 'prop';
+    } else if (/\b(texture|pbr|albedo)\b/i.test(t) && !/\b(scene|world|room)\b/i.test(t)) taskType = 'texture';
+    else if (/\b(sound|sfx|audio|ambient)\b/i.test(t) && !/\b(scene|world)\b/i.test(t)) taskType = 'sound';
+
+    let placement = 'exterior';
+    if (/\b(interior|inside|indoor|room|lab|hall|corridor)\b/i.test(t)) placement = 'interior';
+    else if (/\b(floating|sky|void|air)\b/i.test(t)) placement = 'floating';
+    else if (/\b(doorway|transitional|threshold|courtyard)\b/i.test(t)) placement = 'transitional';
+
+    const title = t.slice(0, 72).replace(/\s+/g, ' ').trim() || 'Quick build';
+    const sheltered = placement === 'interior';
+    return {
+        ready: true,
+        taskType,
+        title,
+        summary: t,
+        placement,
+        weatherExposure: sheltered ? 'sheltered' : (placement === 'floating' ? 'none' : 'full'),
+        weatherVariants: placement === 'exterior' || placement === 'transitional' ? ['wet'] : [],
+        surfaceType: placement === 'interior' ? 'concrete' : 'concrete',
+        collision: taskType === 'prop' ? 'dynamic' : (taskType === 'character' ? 'dynamic' : 'static'),
+        sheltered,
+        intensity: 'focused',
+        style: 'realistic PBR',
+        textureRes: '2k',
+        workflow: 'gimp',
+        atmospherePreset: sheltered ? 'interior_soft' : 'day_clear',
+        _inferred: true,
+    };
+}
+
 function creativePipelineHint(userText, probe) {
     const t = String(userText || '').toLowerCase();
     const hints = [];
@@ -179,6 +228,14 @@ export const AgentPortal = {
     init() {
         this._modal = document.getElementById('agent-portal-modal');
         this.bindOnce();
+        // Wire static CTA if present in index.html
+        const cta = document.getElementById('build-something-cta');
+        if (cta && !cta.dataset.bound) {
+            cta.dataset.bound = '1';
+            cta.addEventListener('click', () => {
+                void this.openBuildFast();
+            });
+        }
     },
 
     bindOnce() {
@@ -388,27 +445,39 @@ export const AgentPortal = {
             : { state: 'off', label: 'Creative watch', detail: 'Optional — npm run textures:watch' };
 
         const rows = [grokLine, ollamaLine, watchLine];
-        const ollamaHowTo = !probe.ollama?.ok ? `
-            <div class="agent-portal-ollama-howto insert-hint">
-                <strong>Use Ollama (desktop / laptop):</strong>
-                <ol class="agent-portal-howto-steps">
-                    <li>Install <a href="https://ollama.com" target="_blank" rel="noopener">Ollama</a> on this PC</li>
-                    <li>Download the repo:
-                        <code>git clone https://github.com/medicinalsheep/threshold.git</code>
-                        (or ZIP from GitHub → Extract)</li>
-                    <li>In that folder: <code>npm install</code></li>
-                    <li>Start with CORS for Pages/local:
-                        <code>npm run ollama:serve</code>
-                        <em>— not plain <code>ollama serve</code> (that causes 403)</em></li>
-                    <li>Then use <strong>Download</strong> buttons below (or terminal <code>ollama pull …</code>)</li>
-                    <li>Reload this tab → <strong>RE-SCAN</strong></li>
-                </ol>
-                <p class="agent-portal-howto-note">Phones: use a Grok/xAI key above — local Ollama is not on-device in the APK.</p>
-            </div>
-        ` : '';
+        const ready = hasAnyProvider(probe);
+        const ollamaHowToBody = `
+            <strong>Use Ollama (desktop / laptop):</strong>
+            <ol class="agent-portal-howto-steps">
+                <li>Install <a href="https://ollama.com" target="_blank" rel="noopener">Ollama</a> on this PC</li>
+                <li>In the Threshold repo: <code>npm install</code> then <code>npm run ollama:serve</code>
+                    <em>— not plain <code>ollama serve</code> (CORS/403 on Pages)</em></li>
+                <li>Download minis below (or <code>ollama pull …</code>) → <strong>RE-SCAN</strong></li>
+            </ol>
+            <p class="agent-portal-howto-note">Phones: paste a Grok/xAI key above — local Ollama is not on-device in the APK.</p>
+        `;
+        const ollamaHowTo = !probe.ollama?.ok
+            ? ready
+                ? `<details class="agent-portal-advanced"><summary class="insert-hint">Ollama offline — how to enable local models</summary>
+                    <div class="agent-portal-ollama-howto insert-hint">${ollamaHowToBody}</div>
+                   </details>`
+                : `<div class="agent-portal-ollama-howto insert-hint">${ollamaHowToBody}</div>`
+            : '';
+
+        const readyBanner = ready
+            ? `<div class="agent-portal-ready-banner">
+                <p class="agent-portal-kicker">Ready to build</p>
+                <p class="insert-hint" style="margin:0 0 8px;">
+                    ${probe.grokApi?.ok || probe.grokKey
+                        ? 'Grok/xAI available'
+                        : 'Ollama online'} · tap <strong>START BUILDING</strong> and describe a scene.
+                    Live apply runs a quick 3-step job in the grid.
+                </p>
+               </div>`
+            : `<p class="agent-portal-kicker">Connect a model</p>`;
 
         el.innerHTML = `
-            <p class="agent-portal-kicker">Scanning your machine…</p>
+            ${readyBanner}
             <ul class="agent-portal-detect-list">
                 ${rows.map((r) => `
                     <li class="agent-portal-detect-item agent-portal-${r.state}">
@@ -418,16 +487,31 @@ export const AgentPortal = {
                 `).join('')}
             </ul>
             ${ollamaHowTo}
-            ${this.renderTrainedPullsHtml(probe)}
-            ${!hasAnyProvider(probe) ? `<p class="insert-hint"><strong>Bring your own model:</strong> paste a Grok/xAI key (works on any device including phone), <em>or</em> start Ollama and download our trained minis below. You can explore the grid without AI.</p>` : ''}
-            ${ctx.onPages ? '<p class="insert-hint">Hosted on GitHub Pages — scene runs in your browser; AI keys and Ollama stay on your device, never on our repo.</p>' : ''}
+            ${ready
+                ? `<details class="agent-portal-advanced"><summary class="insert-hint">Trained minis (optional)</summary>
+                    ${this.renderTrainedPullsHtml(probe)}
+                   </details>`
+                : this.renderTrainedPullsHtml(probe)}
+            ${!ready ? `<p class="insert-hint"><strong>Phone / quick path:</strong> paste a Grok key from
+                <a href="https://console.x.ai" target="_blank" rel="noopener">console.x.ai</a>, SAVE, then START BUILDING.
+                Or start Ollama on desktop and RE-SCAN. You can explore the grid without AI.</p>` : ''}
+            ${ctx.onPages ? '<p class="insert-hint">Hosted on GitHub Pages — AI keys and Ollama stay on your device.</p>' : ''}
         `;
 
-        this.renderModelPicker(probe);
-        this.renderProviderPick(probe);
+        this.renderModelPicker(probe, { collapsed: ready });
+        this.renderProviderPick(probe, { collapsed: ready });
 
         const keyWrap = document.getElementById('agent-portal-xai-wrap');
-        if (keyWrap) keyWrap.style.display = probe.grokKey ? 'none' : '';
+        if (keyWrap) {
+            keyWrap.style.display = probe.grokKey && (probe.grokApi?.ok || probe.grokBuild) ? 'none' : '';
+        }
+
+        const connectBtn = document.getElementById('agent-portal-connect');
+        if (connectBtn) {
+            connectBtn.textContent = ready ? 'START BUILDING →' : 'CONNECT & START BUILDING';
+            connectBtn.style.display = 'inline-block';
+            connectBtn.disabled = false;
+        }
     },
 
     renderTrainedPullsHtml(probe) {
@@ -592,7 +676,7 @@ export const AgentPortal = {
         }
     },
 
-    renderProviderPick(probe) {
+    renderProviderPick(probe, opts = {}) {
         const el = document.getElementById('agent-portal-provider-pick');
         if (!el) return;
 
@@ -611,7 +695,7 @@ export const AgentPortal = {
             return;
         }
 
-        el.innerHTML = `
+        const body = `
             <p class="agent-portal-kicker">Primary provider</p>
             <div class="agent-portal-provider-row">
                 ${options.map((o) => `
@@ -623,9 +707,12 @@ export const AgentPortal = {
             </div>
             <p class="insert-hint">Tasks run one at a time — small models for chat, large for full scene scripts.</p>
         `;
+        el.innerHTML = opts.collapsed
+            ? `<details class="agent-portal-advanced"><summary class="insert-hint">Provider routing (optional)</summary>${body}</details>`
+            : body;
     },
 
-    renderModelPicker(probe) {
+    renderModelPicker(probe, opts = {}) {
         const el = document.getElementById('agent-portal-models');
         if (!el) return;
 
@@ -633,7 +720,7 @@ export const AgentPortal = {
         const prefs = AgentRouter.getTierPrefs();
         const canGrok = probe.grokKey || probe.grokBuild;
 
-        el.innerHTML = `
+        const body = `
             <p class="agent-portal-kicker">Model tiers — when &amp; why</p>
             <div class="agent-tier-guide">${renderTierGuideHtml()}</div>
             ${['small', 'medium', 'large'].map((tier) => `
@@ -663,6 +750,9 @@ export const AgentPortal = {
             <div id="portal-model-matrix" class="portal-model-matrix"></div>
             <div id="portal-tier-warnings"></div>
         `;
+        el.innerHTML = opts.collapsed
+            ? `<details class="agent-portal-advanced"><summary class="insert-hint">Advanced: tiers &amp; work folder</summary>${body}</details>`
+            : body;
         WorkFolderScope.bindSelect('portal-work-folder-scope');
         WorkFolderScope.bindFreezeCheckbox('portal-work-folder-freeze');
         if (models.length) {
@@ -690,7 +780,16 @@ export const AgentPortal = {
         el.innerHTML = `
             <details class="agent-portal-build-details" open>
                 <summary>Build options</summary>
-                <label class="export-wizard-check"><input type="checkbox" id="portal-multistep" ${prefs.multiStep !== false ? 'checked' : ''}> Multi-step build (layout → props → atmosphere)</label>
+                <label class="export-wizard-check"><input type="checkbox" id="portal-multistep" ${prefs.multiStep !== false ? 'checked' : ''}> Multi-step build</label>
+                <label class="export-wizard-check"><input type="checkbox" id="portal-live-apply" ${prefs.liveApply !== false ? 'checked' : ''}> <strong>Live apply in scene</strong> — watch each step land while you walk</label>
+                <label class="export-wizard-check"><input type="checkbox" id="portal-resume-play" ${prefs.resumePlay !== false ? 'checked' : ''}> Resume PLAY after each step (inspect while agents work)</label>
+                <div class="prop-row" style="margin-top:6px;">
+                    <label style="min-width:72px;">Pipeline</label>
+                    <select id="portal-intensity" class="insert-input" style="flex:1;">
+                        <option value="focused" ${prefs.intensity !== 'full' ? 'selected' : ''}>Quick live (3 steps: layout → props → atmosphere)</option>
+                        <option value="full" ${prefs.intensity === 'full' ? 'selected' : ''}>Full production (7 steps: collision → textures → weather…)</option>
+                    </select>
+                </div>
                 <div class="prop-row" style="margin-top:6px;">
                     <label style="min-width:72px;">Time limit</label>
                     <select id="portal-time-limit" class="insert-input" style="flex:1;">
@@ -701,10 +800,54 @@ export const AgentPortal = {
                         <option value="15" ${prefs.timeLimitMin === 15 ? 'selected' : ''}>15 minutes</option>
                     </select>
                 </div>
+                <p class="insert-hint">Live mode docks this panel so you stay in the 3D view. HUD <strong>↩</strong> undoes the last live step. GIMP <code>textures:watch</code> still hot-reloads maps with a mesh pulse.</p>
                 <p class="insert-hint">Routing: small→<code>${esc(route.small || 'auto')}</code> · medium→<code>${esc(route.medium || 'auto')}</code> · large→<code>${esc(route.large || 'auto')}</code> · ${OllamaRunQueue.getPrefs().allowParallelLocal ? 'parallel' : 'sequential'} · folder: <code>${esc(WorkFolderScope.scopeLabel())}</code></p>
             </details>
             <div id="agent-portal-job-log" class="agent-portal-job-log"></div>
         `;
+        this._bindBuildPrefInputs();
+        this._syncGenerateLabel();
+    },
+
+    _bindBuildPrefInputs() {
+        const save = () => {
+            BuildJob.setPrefs({
+                multiStep: document.getElementById('portal-multistep')?.checked !== false,
+                liveApply: document.getElementById('portal-live-apply')?.checked !== false,
+                resumePlay: document.getElementById('portal-resume-play')?.checked !== false,
+                intensity: document.getElementById('portal-intensity')?.value || 'focused',
+                timeLimitMin: parseInt(document.getElementById('portal-time-limit')?.value || '0', 10) || 0,
+            });
+            this._syncGenerateLabel();
+        };
+        ['portal-multistep', 'portal-live-apply', 'portal-resume-play', 'portal-intensity', 'portal-time-limit'].forEach((id) => {
+            document.getElementById(id)?.addEventListener('change', save);
+        });
+    },
+
+    _syncGenerateLabel() {
+        const genBtn = document.getElementById('agent-portal-generate');
+        if (!genBtn) return;
+        const live = document.getElementById('portal-live-apply')?.checked !== false
+            && BuildJob.getPrefs().liveApply !== false;
+        genBtn.textContent = live ? 'GENERATE → LIVE SCENE' : 'GENERATE NOW → COMPILER';
+    },
+
+    /** Dock portal so the 3D view stays visible during live build. */
+    dockForLive() {
+        if (!this._modal) return;
+        this._modal.classList.add('open', 'agent-portal-docked');
+        document.body.classList.add('agent-portal-open', 'agent-portal-live-dock');
+    },
+
+    expandFromLive() {
+        if (!this._modal) return;
+        this._modal.classList.add('open');
+        this._modal.classList.remove('agent-portal-docked');
+        document.body.classList.add('agent-portal-open');
+        document.body.classList.remove('agent-portal-live-dock');
+        this.showStep('build');
+        this.renderChat();
     },
 
     renderJobLog(events = []) {
@@ -716,7 +859,8 @@ export const AgentPortal = {
             }
             if (e.type === 'step-done') {
                 const last = e.log?.[e.log.length - 1];
-                return `<div class="agent-portal-job-step done">✓ ${esc(e.label)} — ${esc(last?.provider)}/${esc(last?.model)} ${last?.ms || 0}ms</div>`;
+                const live = e.chunk ? ' · live' : '';
+                return `<div class="agent-portal-job-step done">✓ ${esc(e.label)} — ${esc(last?.provider)}/${esc(last?.model)} ${last?.ms || 0}ms${live}</div>`;
             }
             if (e.type === 'timeout') return '<div class="agent-portal-job-step warn">⏱ Time limit reached — partial code saved</div>';
             if (e.type === 'stopped') return '<div class="agent-portal-job-step warn">■ Stopped by user</div>';
@@ -731,8 +875,8 @@ export const AgentPortal = {
         const history = this._session.chatHistory || [];
         if (!history.length) {
             log.innerHTML = `<div class="agent-portal-msg agent-portal-msg-assistant">
-                <p>You're on a blank grid with Compiler, GIMP/Blender pipelines, and tiered agents ready.</p>
-                <p><strong>What do you want to build first?</strong> (world, character, prop, texture, sound…)</p>
+                <p>Terminal grid is live. Describe a scene in one message — e.g. “small courtyard with crates and soft lighting”.</p>
+                <p><strong>GENERATE → LIVE SCENE</strong> unlocks as soon as your brief is clear (no multi-turn required). Optional: refine in chat first.</p>
             </div>`;
             return;
         }
@@ -762,10 +906,7 @@ export const AgentPortal = {
         }
         if (connectBtn) connectBtn.style.display = step === 'connect' ? 'inline-block' : 'none';
         if (sendBtn) sendBtn.style.display = step === 'build' ? 'inline-block' : 'none';
-        if (genBtn) {
-            const ready = !!this._session.buildContext?.ready;
-            genBtn.style.display = step === 'build' && ready && !BuildJob.isRunning() ? 'inline-block' : 'none';
-        }
+        this._syncGenerateVisibility();
         const stopBtn = document.getElementById('agent-portal-stop-job');
         if (stopBtn) stopBtn.style.display = step === 'build' && BuildJob.isRunning() ? 'inline-block' : 'none';
         if (step === 'build') this.renderBuildControls();
@@ -778,6 +919,15 @@ export const AgentPortal = {
             };
             title.textContent = titles[step] || 'Agent Portal';
         }
+    },
+
+    _syncGenerateVisibility() {
+        const genBtn = document.getElementById('agent-portal-generate');
+        if (!genBtn) return;
+        const ready = !!this._session.buildContext?.ready;
+        const show = this._step === 'build' && ready && !BuildJob.isRunning();
+        genBtn.style.display = show ? 'inline-block' : 'none';
+        if (show) this._syncGenerateLabel?.();
     },
 
     async runDetect() {
@@ -862,7 +1012,91 @@ export const AgentPortal = {
         this._session = saveSession({ dismissed: true });
         emitPortalChange();
         this.hide();
-        window.UI?.status?.('Explore the grid — press F at the AI Build Station or SETUP anytime');
+        this.showBuildCta();
+        window.UI?.status?.('Explore the grid — tap BUILD SOMETHING or AI (top-left) anytime');
+    },
+
+    /** Primary entry: probe → auto-connect when possible → build chat. */
+    async openBuildFast(opts = {}) {
+        if (window.SurfaceProfile?.isPlayer?.()) {
+            window.SurfaceProfile.set('creator');
+            window.UI?.status?.('Creator tools on');
+        }
+        window.SceneDock?.setFullyHidden?.(false, true);
+        this.hideBuildCta();
+
+        if (!this._modal) this.init();
+        this._modal?.classList.add('open');
+        document.body.classList.add('agent-portal-open');
+        this._modal?.classList.remove('agent-portal-docked');
+        document.body.classList.remove('agent-portal-live-dock');
+
+        const status = document.getElementById('agent-portal-status');
+        if (status) status.textContent = 'Checking agents…';
+
+        const probe = await this.probe();
+        this.renderDetect(probe);
+        AgentStatus.refresh?.();
+        emitPortalChange();
+
+        if (!hasAnyProvider(probe)) {
+            this.showStep('connect');
+            if (status) {
+                status.textContent = 'Paste a Grok key (console.x.ai) or start Ollama, then START BUILDING';
+            }
+            // Focus key field for phone path
+            document.getElementById('agent-portal-xai-key')?.focus?.();
+            return false;
+        }
+
+        if (!this._session.connected) {
+            this.connect();
+        } else {
+            this.showStep('build');
+            this.renderChat();
+        }
+
+        if (opts.prefill) this.prefillChat(opts.prefill);
+        if (status) status.textContent = '';
+        window.UI?.status?.('Describe what to build — one clear message is enough');
+        document.getElementById('agent-portal-chat-input')?.focus?.();
+        return true;
+    },
+
+    showBuildCta() {
+        if (ViewPrefs.get('buildCtaDismissed', false)) return;
+        let el = document.getElementById('build-something-cta');
+        if (!el) {
+            el = document.createElement('button');
+            el.type = 'button';
+            el.id = 'build-something-cta';
+            el.className = 'build-something-cta';
+            el.textContent = 'BUILD SOMETHING';
+            el.title = 'Open Agent Portal and start a live build';
+            const layer = document.getElementById('ui-layer') || document.body;
+            layer.appendChild(el);
+        }
+        if (!el.dataset.bound) {
+            el.dataset.bound = '1';
+            el.addEventListener('click', () => {
+                void this.openBuildFast();
+            });
+        }
+        el.hidden = false;
+        el.classList.add('visible');
+    },
+
+    hideBuildCta() {
+        const el = document.getElementById('build-something-cta');
+        if (el) {
+            el.hidden = true;
+            el.classList.remove('visible');
+        }
+    },
+
+    dismissBuildCta() {
+        ViewPrefs.set('buildCtaDismissed', true);
+        this.hideBuildCta();
     },
 
     async sendChat() {
@@ -882,9 +1116,28 @@ export const AgentPortal = {
         if (input) input.value = '';
         this.renderChat();
 
+        // Fast path: clear scene brief → enable GENERATE immediately (no multi-turn ready JSON)
+        const brief = looksLikeBuildBrief(text);
+        if (brief) {
+            const inferred = enrichReadyContext(inferBuildContext(text), text);
+            history.push({
+                role: 'assistant',
+                text: `Ready from your brief: ${inferred.title} (${inferred.taskType} · ${inferred.placement}). `
+                    + 'Tap GENERATE → LIVE SCENE now, or wait while I refine the plan…',
+                meta: 'fast-path · inferred plan',
+            });
+            this._session = saveSession({
+                chatHistory: history,
+                buildContext: { ...inferred, ready: true },
+            });
+            this.renderChat();
+            this._syncGenerateVisibility();
+            window.UI?.status?.('Brief ready — GENERATE → LIVE SCENE or keep chatting');
+        }
+
         this._busy = true;
         const status = document.getElementById('agent-portal-status');
-        if (status) status.textContent = 'Thinking (small tier)…';
+        if (status) status.textContent = brief ? 'Refining plan (optional)…' : 'Thinking (small tier)…';
 
         try {
             const transcript = history.map((m) => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.text}`).join('\n');
@@ -926,18 +1179,26 @@ export const AgentPortal = {
                     chatHistory: history,
                     buildContext: { ...ready, ready: true },
                 });
-                document.getElementById('agent-portal-generate')?.style && (document.getElementById('agent-portal-generate').style.display = 'inline-block');
+                this._syncGenerateVisibility();
             } else if (looksLikeCode(reply)) {
                 history.push({
                     role: 'assistant',
-                    text: 'I have a script ready — tap GENERATE NOW to open it in Compiler.',
+                    text: 'I have a script ready — tap GENERATE → LIVE SCENE (or review in Compiler).',
                     meta: `${result.provider}/${result.model}`,
                 });
                 this._session = saveSession({
                     chatHistory: history,
                     buildContext: { ready: true, title: 'Scene script', summary: text, _code: stripCodeFences(reply) },
                 });
-                document.getElementById('agent-portal-generate')?.style && (document.getElementById('agent-portal-generate').style.display = 'inline-block');
+                this._syncGenerateVisibility();
+            } else if (brief && this._session.buildContext?.ready) {
+                // Keep inferred plan; append agent reply as notes only
+                history.push({
+                    role: 'assistant',
+                    text: `${reply}${pipelineHint}\n\n(Your brief is still ready — GENERATE whenever you like.)`,
+                    meta: `${result.provider}/${result.model}`,
+                });
+                this._session = saveSession({ chatHistory: history });
             } else {
                 history.push({
                     role: 'assistant',
@@ -985,17 +1246,38 @@ export const AgentPortal = {
         }
 
         const multiStep = document.getElementById('portal-multistep')?.checked !== false;
+        const liveApply = document.getElementById('portal-live-apply')?.checked !== false;
+        const resumePlay = document.getElementById('portal-resume-play')?.checked !== false;
+        const intensity = document.getElementById('portal-intensity')?.value || 'focused';
         const timeLimitMin = parseInt(document.getElementById('portal-time-limit')?.value || '0', 10) || 0;
-        BuildJob.setPrefs({ multiStep, timeLimitMin });
+        BuildJob.setPrefs({ multiStep, liveApply, resumePlay, intensity, timeLimitMin });
 
         this._busy = true;
         const status = document.getElementById('agent-portal-status');
         const jobEvents = [];
+        LiveBuild.init();
+        if (liveApply) {
+            const planLen = multiStep
+                ? BuildJob.planSteps(ctx.taskType || 'world', { ctx, prefs: { intensity } }).length
+                : 1;
+            LiveBuild.startSession({
+                total: planLen,
+                label: multiStep
+                    ? (intensity === 'full' ? 'Full pipeline live build…' : 'Quick live build (3 steps)…')
+                    : 'Generating live scene…',
+                resumePlay,
+                dockPortal: true,
+            });
+            LiveBuild._resumePlay = resumePlay;
+        }
+
         BuildJob.onProgress((ev) => {
             jobEvents.push(ev);
             this.renderJobLog(jobEvents);
             if (ev.type === 'step-start' && status) {
-                status.textContent = `Building: ${ev.label} (${ev.step + 1}/${ev.total})…`;
+                status.textContent = liveApply
+                    ? `Live: ${ev.label} (${ev.step + 1}/${ev.total})…`
+                    : `Building: ${ev.label} (${ev.step + 1}/${ev.total})…`;
             }
         });
 
@@ -1005,15 +1287,23 @@ export const AgentPortal = {
         try {
             let code;
             let meta;
+            let appliedDuringJob = false;
 
-            if (multiStep && (ctx.taskType === 'world' || !ctx.taskType)) {
-                if (status) status.textContent = 'Multi-step build starting (large → medium)…';
+            if (multiStep && (ctx.taskType === 'world' || !ctx.taskType || ['prop', 'character'].includes(ctx.taskType))) {
+                if (status) {
+                    status.textContent = liveApply
+                        ? 'Live multi-step build — watch the scene…'
+                        : 'Multi-step build starting (large → medium)…';
+                }
                 const job = await BuildJob.run(ctx);
                 code = job.code;
+                appliedDuringJob = liveApply && LiveBuild.appliedLive;
                 const last = job.log[job.log.length - 1];
-                meta = last ? `${last.provider}/${last.model} · ${job.log.length} steps` : 'build-job';
+                meta = last
+                    ? `${last.provider}/${last.model} · ${job.log.length} steps${appliedDuringJob ? ' · live' : ''}`
+                    : 'build-job';
             } else {
-                if (status) status.textContent = 'Generating scene (large tier)…';
+                if (status) status.textContent = liveApply ? 'Generating → live scene…' : 'Generating scene (large tier)…';
                 const idea = `${buildCompilerRequest(ctx, this._session.chatHistory || [])}
 
 ${getSceneApiPrompt()}`;
@@ -1024,18 +1314,35 @@ ${getSceneApiPrompt()}`;
                 }, { timeoutMs: 300000 });
                 code = result.code || result.text || '';
                 meta = `${result.provider}/${result.model} · ${result.ms}ms`;
+                if (liveApply && code) {
+                    const liveResult = await LiveBuild.applyFullCode(code, {
+                        label: ctx.title || 'Scene',
+                        source: 'portal-live',
+                    });
+                    appliedDuringJob = !!liveResult?.ok;
+                    if (appliedDuringJob) meta += ' · live';
+                }
             }
 
-            this.applyCode(code, meta);
-            if (status) status.textContent = '';
+            this.applyCode(code, meta, {
+                stayInEngine: liveApply && (appliedDuringJob || LiveBuild.appliedLive),
+                alreadyLive: appliedDuringJob || LiveBuild.appliedLive,
+            });
+            if (status) {
+                status.textContent = liveApply && (appliedDuringJob || LiveBuild.appliedLive)
+                    ? 'Live build finished — walk the scene (code also in Compiler)'
+                    : '';
+            }
         } catch (e) {
             if (status) status.textContent = e.message || 'Generation failed';
             window.UI?.status?.(e.message || 'Generation failed');
+            LiveBuild.endSession({ label: 'Build failed', holdMs: 2000 });
         } finally {
             this._busy = false;
             document.getElementById('agent-portal-stop-job')?.style && (document.getElementById('agent-portal-stop-job').style.display = 'none');
             const ready = !!this._session.buildContext?.ready;
             if (ready) document.getElementById('agent-portal-generate')?.style && (document.getElementById('agent-portal-generate').style.display = 'inline-block');
+            this._syncGenerateLabel();
         }
     },
 
@@ -1044,6 +1351,24 @@ ${getSceneApiPrompt()}`;
         const code = out?.value?.trim();
         if (!code) {
             window.UI?.status?.('No code in Compiler output');
+            return;
+        }
+        // Guard: full script re-run after live apply will often duplicate objects
+        if (LiveBuild.appliedLive) {
+            const go = window.confirm(
+                'Scene already applied live.\n\n'
+                + 'OK = run full script anyway (may duplicate objects)\n'
+                + 'Cancel = keep live scene (code stays in Compiler)',
+            );
+            if (!go) {
+                window.UI?.status?.('Kept live scene — open Compiler to edit without re-running');
+                document.querySelector('[data-target="view-engine"]')?.click();
+                return;
+            }
+        }
+        const live = BuildJob.getPrefs().liveApply !== false;
+        if (live && !LiveBuild.appliedLive) {
+            void LiveBuild.applyFullCode(code, { label: 'Compiler run', source: 'portal-run' });
             return;
         }
         if (window.State && !window.State.isPaused) {
@@ -1059,7 +1384,7 @@ ${getSceneApiPrompt()}`;
         }, 150);
     },
 
-    applyCode(code, meta) {
+    applyCode(code, meta, opts = {}) {
         const sanitized = sanitizeSceneCode(code);
         const readiness = codeReadinessSummary(sanitized);
         const out = document.getElementById('comp-output');
@@ -1067,10 +1392,18 @@ ${getSceneApiPrompt()}`;
         if (inp) inp.value = sanitized;
         if (out) out.value = sanitized;
 
+        const stayInEngine = !!opts.stayInEngine;
+        const alreadyLive = !!opts.alreadyLive;
+
         const history = [...(this._session.chatHistory || [])];
-        const readyNote = readiness.hasEditGuard && readiness.hasIife && readiness.usesWorldApi
-            ? 'Code sanitized & ready — tap RUN IN ENGINE or review in Compiler.'
-            : 'Code in Compiler — review readiness checks, then RUN IN ENGINE.';
+        let readyNote;
+        if (alreadyLive) {
+            readyNote = 'Scene applied live — walk around to inspect. Full script also saved in Compiler (re-run only if you need a clean pass).';
+        } else if (readiness.hasEditGuard && readiness.hasIife && readiness.usesWorldApi) {
+            readyNote = 'Code sanitized & ready — tap RUN IN ENGINE or review in Compiler.';
+        } else {
+            readyNote = 'Code in Compiler — review readiness checks, then RUN IN ENGINE.';
+        }
         history.push({
             role: 'assistant',
             text: readyNote,
@@ -1080,10 +1413,20 @@ ${getSceneApiPrompt()}`;
         this.renderChat();
 
         const runBtn = document.getElementById('agent-portal-run-engine');
-        if (runBtn) runBtn.style.display = 'inline-block';
+        if (runBtn) {
+            runBtn.style.display = 'inline-block';
+            runBtn.textContent = alreadyLive ? 'RE-RUN IN ENGINE' : 'RUN IN ENGINE';
+        }
 
         window.SessionUi?.setShowAllTools?.(true, { silent: true });
-        document.querySelector('[data-target="view-compiler"]')?.click();
+        if (stayInEngine) {
+            document.querySelector('[data-target="view-engine"]')?.click();
+            this.dockForLive();
+        } else {
+            document.querySelector('[data-target="view-compiler"]')?.click();
+            this._modal?.classList.remove('agent-portal-docked');
+            document.body.classList.remove('agent-portal-live-dock');
+        }
         window.Compiler?.checkReady?.();
         window.UI?.status?.(readyNote);
     },
@@ -1097,16 +1440,24 @@ ${getSceneApiPrompt()}`;
         if (!this._modal) return;
         this._modal.classList.add('open');
         document.body.classList.add('agent-portal-open');
+        this.hideBuildCta();
+        if (opts.fastBuild) {
+            void this.openBuildFast(opts);
+            return;
+        }
         if (opts.step === 'build' && this._session.connected) {
             this.showStep('build');
             this.renderChat();
+        } else if (opts.step === 'build') {
+            void this.openBuildFast(opts);
         } else {
             this.runDetect();
         }
     },
 
     hide() {
-        this._modal?.classList.remove('open');
+        this._modal?.classList.remove('open', 'agent-portal-docked');
+        document.body.classList.remove('agent-portal-live-dock');
         document.body.classList.remove('agent-portal-open');
     },
 
@@ -1114,27 +1465,37 @@ ${getSceneApiPrompt()}`;
         // Play surface: offer creator tools instead of empty Ollama wall
         if (window.SurfaceProfile?.isPlayer?.()) {
             window.SurfaceProfile.set('creator');
-            window.UI?.status?.('Creator tools on — AI Build Station ready');
+            window.UI?.status?.('Creator tools on — build path open');
         }
         window.SceneDock?.setFullyHidden?.(false, true);
-        if (this._session.connected) {
-            this.show({ step: 'build' });
-        } else {
-            this.show();
-        }
-        window.UI?.status?.('AI Build Station — connect agents or continue building');
+        void this.openBuildFast();
     },
 
-    startIfNeeded() {
+    startIfNeeded(opts = {}) {
         if (this._session.connected && this._session.chatHistory?.length) return;
-        if (this._session.dismissed) return;
+        if (this._session.dismissed && !opts.preferBuild) return;
         if (IS_GROK_EDITION && !Auth.isLoggedIn()) return;
-        // Play surface: no agent pulse / AI onboarding noise
+        // Play surface: show a single path into creator build (no Ollama wall)
+        if (window.SurfaceProfile?.isPlayer?.()) {
+            setTimeout(() => {
+                this.showBuildCta();
+                window.UI?.status?.('Tap BUILD SOMETHING for creator tools + Grok key');
+            }, 500);
+            return;
+        }
         if (window.SurfaceProfile && !window.SurfaceProfile.allowsAgentAuto()) return;
+
+        const preferBuild = !!opts.preferBuild
+            || ViewPrefs.get('sessionMode', 'play') === 'build';
 
         setTimeout(() => {
             window.CornerHub?.pulseAgent?.();
-            window.UI?.status?.('Explore the grid — tap AI (top-left) or press F at the build station when ready');
+            this.showBuildCta();
+            if (preferBuild) {
+                window.UI?.status?.('Build mode — tap BUILD SOMETHING (or AI top-left) to start a live scene');
+            } else {
+                window.UI?.status?.('Explore the grid — tap BUILD SOMETHING or AI (top-left) when ready');
+            }
         }, 450);
     },
 
