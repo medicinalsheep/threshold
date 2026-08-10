@@ -105,10 +105,12 @@ Report: `dist-store/block6-avatar-audit.json` · runner: `node scripts/block6-av
 
 | ID | Feature | Verify | Surface | Result | Notes |
 |----|---------|--------|---------|--------|-------|
-| P1 | Mode 4 default | visual | both | | |
-| P2 | Neg LOD ~100m | far | both | | |
-| P3 | GraphicsProfile | SETUP | creator | | |
-| P4 | PERF measure | SETUP | creator | | |
+| P1 | Mode 4 default | State.renderMode | both | **PASS** | renderMode 4 · setRenderMode works |
+| P2 | Neg LOD ~100m | enableObject | both | **PASS** | defaultDistance 100 · flag on far prop · negative-lod-verify PASS |
+| P3 | GraphicsProfile tiers | apply all 4 | creator | **PASS** | compatibility→ultra · ENV select 4+ tiers |
+| P4 | PERF measure | PerfHarness.measure | creator | **PASS** | 1.2s sample · fpsAvg ~50 · RUN SAMPLE UI |
+
+Report: `dist-store/block7-perf-audit.json` · runner: `node scripts/block7-perf-audit.cjs`
 
 ## Block 8 — Export
 
@@ -142,4 +144,5 @@ Report: `dist-store/block6-avatar-audit.json` · runner: `node scripts/block6-av
 | 2026-08-10 | **Block 4 complete** | B1–B9 all PASS (portal, live build, minis, ollama gate) |
 | 2026-08-10 | **Block 5 complete** | A1–A5 all PASS (art paths, textureHint, presets, GIMP/Blender UI) |
 | 2026-08-10 | **Block 6 complete** | V1–V3 all PASS (shape, wardrobe, walk LOD) |
-| | Block 7 next | P1–P4 perf & graphics |
+| 2026-08-10 | **Block 7 complete** | P1–P4 all PASS (mode 4, Neg LOD, graphics tiers, PERF) |
+| | Block 8 next | E1–E5 export |
