@@ -1,6 +1,6 @@
-# Export walkthrough (v5.5)
+# Export walkthrough (v10.21+)
 
-Guided **MORE → EXPORT** flow — from game identity through icons, scene content, asset credits, store packs, and download.
+Guided **TOOLS → EXPORT** (or SETUP → OPEN EXPORT WIZARD) — from game identity through icons, scene content, asset credits, store packs, and download.
 
 ---
 
@@ -10,13 +10,23 @@ Guided **MORE → EXPORT** flow — from game identity through icons, scene cont
 |------|-------------|
 | **INFO** | Game name, author, description — becomes store title and manifest |
 | **ICONS** | Bundle ID, custom icon checklist (`icons/appicon512.png`, `build:icons`, `cap:assets`) |
-| **SCENE** | Review world objects, GLTF, textures, sounds, videos in the live scene |
+| **SCENE** | Inventory + **preflight** (empty scene / guest block, texture hints, art naming paths) |
 | **CREDITS** | Attribute every asset — license, author, source (required for store compliance) |
-| **REVIEW** | Full manifest preview + optional sound base64 embed |
+| **IMMERSIVE** | Weather / audio zones / shaders + slop scan |
+| **REVIEW** | Manifest preview + preflight summary + optional sound base64 embed |
 | **TARGETS** | Web / Android / Windows / iOS / Steam — default **Web only**; SHIP lists only checked targets |
-| **STORE** | Contact email, support URL, privacy policy URL for `store:prep` |
+| **STORE** | Contact email, support URL, privacy policy URL for `store:prep` (**optional for Web**) |
 | **PACKS** | Store SKU + registry URI per asset; Steam App/Depot ID; Play + itch mapping |
-| **SHIP** | Download manifest + **target-filtered** CLI + secrets checklist (signing keys are local env, not in manifest) |
+| **SHIP** | Download manifest + **Copy CLI** + secrets checklist (signing keys are local env, not in manifest) |
+
+### Web-only fast path (10.21.3+)
+
+1. Leave **Web** checked, native collapsed.
+2. On **TARGETS**, click **Skip to SHIP (web only)** or **NEXT · SHIP (web)** — skips STORE + PACKS.
+3. On **SHIP**, **Copy CLI** / **Copy name**, then **DOWNLOAD**.
+4. Or use hub **EXPORT & PLAY** for a one-click playable tab (same preflight engine).
+
+Draft fields (name, targets, store…) restore from `localStorage` when you reopen the wizard. Progress pills jump back to visited steps.
 
 ---
 

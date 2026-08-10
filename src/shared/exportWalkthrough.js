@@ -366,6 +366,12 @@ export function validateStep(stepId, draft, inventory) {
         if (!draft.author?.trim()) warnings.push('Author name helps store listings and credits');
     }
 
+    if (stepId === 'content') {
+        if ((inventory?.objectCount ?? 0) < 1) {
+            blockers.push('Scene is empty — add props or run a live build before export');
+        }
+    }
+
     if (stepId === 'branding') {
         if (!draft.branding?.bundleId?.includes('.')) blockers.push('Bundle ID should look like com.you.game');
         const chk = draft.branding?.checklist || {};

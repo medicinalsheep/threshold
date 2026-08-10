@@ -2834,6 +2834,39 @@ body.ui-immersive.touch-off #status-msg {
     color: var(--accent-color);
 }
 
+.export-wizard-progress span.done {
+    border-color: #4a7a58;
+    color: #8fdf9f;
+}
+
+.export-wizard-progress span.visited:not(.active) {
+    opacity: 0.92;
+}
+
+.export-ship-cli-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 10px 0 4px;
+}
+
+.export-preflight-inline {
+    margin-top: 6px;
+    padding: 6px 8px;
+    border: 1px solid #333;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.export-preflight-inline .preflight-err {
+    color: #ff8888;
+}
+
+.export-preflight-inline .preflight-warn {
+    color: #ffb347;
+}
+
 .export-wizard-summary {
     margin: 8px 0;
     padding-left: 18px;

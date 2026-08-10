@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.21)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.21.2
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.21.3
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -19,6 +19,7 @@ Single progress snapshot — what ships today, how the pieces connect, and what 
 | Agent Portal | `agentPortal.js` — Grok/Ollama auto-detect (**creator** surface; skipped on player) |
 | Live build | `liveBuild.js` — apply agent steps in-scene · HUD · undo last step · texture pulse · art-name status · docked portal · quick 3-step default |
 | Art naming contract | `artNaming.js` — inspector **Art:** paths · GIMP/Blender slug · LiveBuild `textureHint` |
+| Export wizard | 9-step EXPORT · web-only skip to SHIP · preflight on SCENE/REVIEW · copy CLI · draft restore |
 | Entry → build | `BUILD SOMETHING` CTA · `openBuildFast` auto-connect · one-brief GENERATE · lobby BUILD skips tour |
 | Body shape | `appearanceProfile.shape` · SKIN sliders · `HumanMesh.applyShape` · live `applyShapeOnly` |
 | Wardrobe | `clothingLayout.js` · slot rail · category catalog · presets over `avatar-mods.json` |

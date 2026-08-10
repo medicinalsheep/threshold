@@ -15,24 +15,43 @@ import {
     buildShipCliLines,
     buildSecretsChecklist,
 } from './exportWalkthrough.js';
+import { runExportPreflight, formatPreflightHtml } from './exportPreflight.js';
 import profilesConfig from '../../config/store-assets.json';
 
 const STEPS = EXPORT_STEPS;
 const LICENSE_PRESETS = profilesConfig.licensePresets || [];
+const DRAFT_KEY = 'threshold-export-draft-v1';
+
+function isWebOnlyTargets(targets = {}) {
+    const t = targets || {};
+    return !!t.web && !t.android && !t.windows && !t.ios && !t.steam;
+}
 
 export const ExportWizard = {
     step: 0,
     draft: defaultExportDraft(),
     inventory: null,
     manifest: null,
+    _maxVisited: 0,
+    _lastCliText: '',
 
     open() {
         this.step = 0;
+        this._maxVisited = 0;
+        const saved = this._loadDraft();
         this.draft = defaultExportDraft({
-            author: Session.playerName || 'Creator',
-            name: 'My Threshold Game',
+            author: Session.playerName || saved?.author || 'Creator',
+            name: saved?.name || 'My Threshold Game',
+            description: saved?.description || '',
+            ...(saved || {}),
         });
-        this.draft.branding.bundleId = suggestBundleId(this.draft.name);
+        if (!this.draft.branding?.bundleId || this.draft.branding.bundleId === 'com.threshold.game') {
+            this.draft.branding.bundleId = suggestBundleId(this.draft.name);
+        }
+        // Default path stays web-only unless user restored native flags
+        if (!saved?.targets) {
+            this.draft.targets = { web: true, android: false, windows: false, ios: false, steam: false };
+        }
         this.inventory = collectContentInventory();
         this.manifest = null;
         document.getElementById('export-wizard-modal')?.classList.add('open');
@@ -40,7 +59,39 @@ export const ExportWizard = {
     },
 
     close() {
+        this._saveDraft();
         document.getElementById('export-wizard-modal')?.classList.remove('open');
+    },
+
+    _saveDraft() {
+        try {
+            localStorage.setItem(DRAFT_KEY, JSON.stringify({
+                name: this.draft.name,
+                author: this.draft.author,
+                description: this.draft.description,
+                branding: this.draft.branding,
+                store: this.draft.store,
+                targets: this.draft.targets,
+                immersive: this.draft.immersive,
+                assetOpportunity: this.draft.assetOpportunity,
+                includeSoundBlobs: this.draft.includeSoundBlobs,
+                credits: {
+                    global: this.draft.credits?.global || '',
+                    // keep entry keys light — licenses/authors only
+                    entries: this.draft.credits?.entries || {},
+                },
+            }));
+        } catch { /* quota / private mode */ }
+    },
+
+    _loadDraft() {
+        try {
+            const raw = localStorage.getItem(DRAFT_KEY);
+            if (!raw) return null;
+            return JSON.parse(raw);
+        } catch {
+            return null;
+        }
     },
 
     bindOnce() {
@@ -53,6 +104,21 @@ export const ExportWizard = {
         document.getElementById('export-wizard-next')?.addEventListener('click', () => this.next());
         root.addEventListener('click', (e) => {
             if (e.target.id === 'export-wizard-modal') this.close();
+        });
+        // Click progress pills to jump back (or to visited steps)
+        root.querySelector('.export-wizard-progress')?.addEventListener('click', (e) => {
+            const pill = e.target.closest?.('[data-wizard-step]');
+            if (!pill) return;
+            const idx = parseInt(pill.getAttribute('data-wizard-step'), 10);
+            if (Number.isNaN(idx) || idx < 0 || idx >= STEPS.length) return;
+            if (idx > this._maxVisited) {
+                window.UI?.status?.('Finish earlier steps first — or use NEXT');
+                return;
+            }
+            this.readStepFromUi();
+            this._saveDraft();
+            this.step = idx;
+            this.render();
         });
     },
 
@@ -184,16 +250,28 @@ export const ExportWizard = {
         const next = document.getElementById('export-wizard-next');
         if (!body) return;
 
+        this._maxVisited = Math.max(this._maxVisited, this.step);
+
         EXPORT_STEP_LABELS.forEach((label, i) => {
             const el = document.querySelector(`[data-wizard-step="${i}"]`);
             if (el) {
                 el.textContent = label;
                 el.classList.toggle('active', i === this.step);
+                el.classList.toggle('done', i < this.step);
+                el.classList.toggle('visited', i <= this._maxVisited);
+                el.title = i <= this._maxVisited ? `Go to ${label}` : `${label} (use NEXT)`;
+                el.style.cursor = i <= this._maxVisited ? 'pointer' : 'default';
             }
         });
 
         if (back) back.disabled = this.step === 0;
-        if (next) next.textContent = this.step === STEPS.length - 1 ? 'DOWNLOAD' : 'NEXT';
+        if (next) {
+            next.textContent = this.step === STEPS.length - 1 ? 'DOWNLOAD' : 'NEXT';
+            // Web-only on TARGETS: primary next can say skip store
+            if (STEPS[this.step] === 'targets' && isWebOnlyTargets(this.draft.targets)) {
+                next.textContent = 'NEXT · SHIP (web)';
+            }
+        }
 
         const stepId = STEPS[this.step];
         this.inventory = collectContentInventory();
@@ -232,6 +310,7 @@ export const ExportWizard = {
 
         if (stepId === 'content') {
             const inv = this.inventory;
+            const preflight = runExportPreflight();
             const objLines = inv.sceneObjects.slice(0, 12).map((o) =>
                 `<li>${escapeText(o.name)} (${escapeText(o.type)})${o.gltfPath ? ` · ${escapeText(o.gltfPath)}` : ''}${o.textureHint ? ` · tex` : ''}</li>`
             ).join('');
@@ -246,7 +325,12 @@ export const ExportWizard = {
                 </ul>
                 <p class="insert-hint">Objects (sample):</p>
                 <ul class="export-wizard-summary export-wizard-scroll">${objLines || '<li>(empty scene)</li>'}${more}</ul>
-                <p class="insert-hint">Before ship: <code>npm run bundle:assets</code> copies <code>textures/</code>, <code>import/</code>, <code>video/</code></p>
+                <div class="export-preflight-inline">
+                    <p class="insert-hint" style="margin-top:10px;"><strong>Preflight</strong> (same checks as EXPORT &amp; PLAY)</p>
+                    ${formatPreflightHtml(preflight)}
+                </div>
+                <p class="insert-hint">Before native ship: <code>npm run bundle:assets</code> copies <code>textures/</code>, <code>import/</code>, <code>video/</code></p>
+                ${this._renderValidation('content')}
             `;
             return;
         }
@@ -334,6 +418,7 @@ export const ExportWizard = {
             const profiles = GameExport.getBuildProfiles();
             const nativeOpen = this.draft.targets.android || this.draft.targets.windows
                 || this.draft.targets.ios || this.draft.targets.steam;
+            const webOnly = isWebOnlyTargets(this.draft.targets);
             body.innerHTML = `
                 <p class="insert-hint">Default path is <strong>Web only</strong> — fastest from idea to playable link. SHIP lists commands for checked targets only.</p>
                 <label class="export-wizard-check"><input type="checkbox" id="export-target-web" ${this.draft.targets.web ? 'checked' : ''}> ${profiles.web.label}</label>
@@ -345,23 +430,45 @@ export const ExportWizard = {
                     <label class="export-wizard-check"><input type="checkbox" id="export-target-steam" ${this.draft.targets.steam ? 'checked' : ''}> ${profiles.steam.label}</label>
                     <p class="insert-hint" style="margin-top:6px;">Steam uses Windows Electron + <code>package:steam</code> · <code>docs/STEAM_RELEASE.md</code></p>
                 </details>
+                ${webOnly
+                    ? `<p class="insert-hint export-wizard-ok" style="margin-top:10px;">Web only → NEXT jumps to <strong>SHIP</strong> (skips STORE + PACKS). Open native targets above if you need them.</p>
+                       <button type="button" id="export-skip-to-ship" class="btn-sm" style="width:100%;margin-top:6px;">Skip to SHIP (web only)</button>`
+                    : `<p class="insert-hint" style="margin-top:10px;">Native selected → continue through STORE + PACKS for metadata &amp; SKUs.</p>`}
+                ${this._renderValidation('targets')}
             `;
+            document.getElementById('export-skip-to-ship')?.addEventListener('click', () => {
+                void this.jumpToShip({ webOnly: true });
+            });
+            // Keep next button label fresh when user toggles targets
+            ['export-target-web', 'export-target-android', 'export-target-windows', 'export-target-ios', 'export-target-steam']
+                .forEach((id) => {
+                    document.getElementById(id)?.addEventListener('change', () => {
+                        this.readTargetsFromUi();
+                        this.render();
+                    });
+                });
             return;
         }
 
         if (stepId === 'store') {
             const s = this.draft.store;
+            const webOnly = isWebOnlyTargets(this.draft.targets);
             body.innerHTML = `
-                <p class="insert-hint">Store metadata — passed to <code>npm run store:prep</code> for privacy policy and listings.</p>
+                <p class="insert-hint">Store metadata — passed to <code>npm run store:prep</code> for privacy policy and listings.
+                ${webOnly ? ' <strong>Optional for Web only</strong> — you can skip to SHIP.' : ''}</p>
                 <label class="insert-hint">Contact email</label>
                 <input type="email" id="export-store-contact" class="insert-input" value="${escapeAttr(s.contactEmail)}" placeholder="you@studio.com">
                 <label class="insert-hint">Support URL</label>
                 <input type="url" id="export-store-support" class="insert-input" value="${escapeAttr(s.supportUrl)}" placeholder="https://yoursite.com/support">
                 <label class="insert-hint">Privacy policy URL (after hosting generated policy)</label>
                 <input type="url" id="export-store-privacy" class="insert-input" value="${escapeAttr(s.privacyPolicyUrl)}" placeholder="https://yoursite.com/privacy">
+                ${webOnly ? '<button type="button" id="export-skip-to-ship" class="btn-sm" style="width:100%;margin:8px 0;">Skip to SHIP (web only)</button>' : ''}
                 ${this._renderValidation('store')}
                 <p class="insert-hint" style="margin-top:8px;"><code>docs/STORE_RELEASE.md</code> · <code>docs/EXPORT_WALKTHROUGH.md</code></p>
             `;
+            document.getElementById('export-skip-to-ship')?.addEventListener('click', () => {
+                void this.jumpToShip({ webOnly: true });
+            });
             return;
         }
 
@@ -417,15 +524,23 @@ export const ExportWizard = {
         this.readReviewFromUi();
         this.manifest = await this.buildManifest();
         const m = this.manifest;
+        const preflight = runExportPreflight();
+        const t = this.draft.targets || {};
+        const targetList = ['web', 'android', 'windows', 'ios', 'steam'].filter((k) => t[k]).join(', ') || 'none';
         body.innerHTML = `
             <p class="insert-hint">Manifest preview — engine v${m.engineVersion}</p>
             <ul class="export-wizard-summary">
                 <li><strong>${escapeText(m.game.name)}</strong> · ${escapeText(m.branding?.bundleId || m.packaging?.capacitor?.appId)}</li>
+                <li>Targets (after this step): <strong>${escapeText(targetList)}</strong>${isWebOnlyTargets(t) ? ' · web-only fast path' : ''}</li>
                 <li>Assets: ${m.assetRegistry?.inventory?.objects ?? 0} obj · ${m.assetRegistry?.inventory?.sounds ?? 0} snd · ${m.assetRegistry?.inventory?.textures ?? 0} tex · ${m.videos?.length ?? 0} video</li>
                 <li>Credits: ${Object.keys(m.credits?.entries || {}).length} attributed · store assets: ${m.assetRegistry?.storeAssets?.status || 'scaffold'}</li>
                 <li>Graphics: ${escapeText(m.graphics?.tier || 'realistic')}</li>
                 <li>Immersive: weather ${m.immersive?.weather?.active ? 'on' : 'off'} · ${m.immersive?.audioZones?.length ?? 0} audio zone(s) · ${(m.immersive?.shaderHooks?.length ?? 0) + (m.immersive?.shaderGraphs?.length ?? 0)} shader entries</li>
             </ul>
+            <div class="export-preflight-inline">
+                <p class="insert-hint"><strong>Preflight</strong></p>
+                ${formatPreflightHtml(preflight, { maxWarn: 5, maxInfo: 4 })}
+            </div>
             <label class="export-wizard-check" style="margin-top:10px;">
                 <input type="checkbox" id="export-include-sounds" ${this.draft.includeSoundBlobs ? 'checked' : ''}>
                 Embed sound clips as base64 in manifest (larger file, portable)
@@ -450,26 +565,88 @@ export const ExportWizard = {
         if (this.draft.targets.ios) targets.push('ios');
         if (this.draft.targets.steam) targets.push('steam');
         const cliLines = buildShipCliLines(this.draft, filename, { secretsNote: true });
+        const cliText = cliLines.join('\n');
+        this._lastCliText = cliText;
         const secrets = buildSecretsChecklist(this.draft);
         const secretsHtml = secrets.map((s) => `
             <li>${s.secret ? '🔐' : '✓'} <strong>${escapeText(s.label)}</strong> — ${escapeText(s.note)}</li>
         `).join('');
+        const webOnly = isWebOnlyTargets(this.draft.targets);
+        const preflight = runExportPreflight();
 
         body.innerHTML = `
-            <p class="insert-hint">Download manifest, then run the commands below on your dev machine. Only selected targets are included.</p>
+            <p class="insert-hint">${webOnly
+                ? 'Web ship — download the manifest, then build for Pages (or use <strong>EXPORT &amp; PLAY</strong> for a one-click playable tab).'
+                : 'Download manifest, then run the commands below on your dev machine. Only selected targets are included.'}</p>
             <ul class="export-wizard-summary">
-                <li>File: <code>${escapeText(filename)}</code></li>
-                <li>Targets: ${targets.join(', ') || 'manifest only'}</li>
+                <li>File: <code id="export-ship-filename">${escapeText(filename)}</code>
+                    <button type="button" id="export-copy-filename" class="btn-sm" style="margin-left:6px;">Copy name</button></li>
+                <li>Targets: <strong>${targets.join(', ') || 'manifest only'}</strong>${webOnly ? ' · web only' : ''}</li>
                 <li>Bundle ID: <code>${escapeText(m.branding?.bundleId || '')}</code></li>
+                <li>Preflight: ${preflight.canProceed
+                    ? (preflight.warnings.length
+                        ? `<span class="export-warn-soft">${preflight.warnings.length} warning(s)</span>`
+                        : '<span class="export-wizard-ok">clean</span>')
+                    : `<span class="export-warn-block">${preflight.errors.length} blocker(s)</span>`}</li>
             </ul>
             <p class="insert-hint"><strong>What you need</strong> (never commit signing keys):</p>
             <ul class="export-wizard-summary">${secretsHtml}</ul>
-            <p class="insert-hint">Post-download commands:</p>
-            <pre class="export-wizard-cli">${escapeText(cliLines.join('\n'))}</pre>
+            <div class="export-ship-cli-head">
+                <p class="insert-hint" style="margin:0;"><strong>Post-download commands</strong></p>
+                <button type="button" id="export-copy-cli" class="btn-sm">Copy CLI</button>
+            </div>
+            <pre class="export-wizard-cli" id="export-wizard-cli-block">${escapeText(cliText)}</pre>
             <p class="insert-hint">Details: <code>docs/STORE_RELEASE.md</code> · <code>docs/EXPORT_WALKTHROUGH.md</code></p>
+            ${!preflight.canProceed
+                ? `<div class="export-preflight-inline">${formatPreflightHtml(preflight, { maxWarn: 4, maxInfo: 2 })}</div>`
+                : ''}
         `;
         this._pendingFilename = filename;
         this._pendingJson = JSON.stringify(m, null, 2);
+
+        document.getElementById('export-copy-cli')?.addEventListener('click', () => {
+            void this._copyText(this._lastCliText || cliText, 'CLI commands copied');
+        });
+        document.getElementById('export-copy-filename')?.addEventListener('click', () => {
+            void this._copyText(filename, 'Filename copied');
+        });
+    },
+
+    async _copyText(text, okStatus = 'Copied') {
+        try {
+            await navigator.clipboard.writeText(String(text || ''));
+            window.UI?.status?.(okStatus);
+        } catch {
+            // Fallback select for older browsers
+            const pre = document.getElementById('export-wizard-cli-block');
+            if (pre) {
+                const range = document.createRange();
+                range.selectNodeContents(pre);
+                const sel = window.getSelection();
+                sel?.removeAllRanges();
+                sel?.addRange(range);
+            }
+            window.UI?.status?.('Select text and copy (Ctrl+C)');
+        }
+    },
+
+    async jumpToShip({ webOnly = false } = {}) {
+        this.readStepFromUi();
+        if (webOnly) {
+            this.draft.targets = {
+                web: true,
+                android: false,
+                windows: false,
+                ios: false,
+                steam: false,
+            };
+        }
+        this._saveDraft();
+        this.manifest = await this.buildManifest();
+        this.step = STEPS.indexOf('package');
+        this._maxVisited = Math.max(this._maxVisited, this.step);
+        this.render();
+        window.UI?.status?.(webOnly ? 'Jumped to SHIP (web only)' : 'Jumped to SHIP');
     },
 
     async download() {
@@ -502,8 +679,21 @@ export const ExportWizard = {
 
     async next() {
         this.readStepFromUi();
+        this._saveDraft();
         const stepId = STEPS[this.step];
-        const v = validateStep(stepId, this.draft, this.inventory || collectContentInventory());
+        const inv = this.inventory || collectContentInventory();
+
+        // SCENE: block empty / guest via preflight
+        if (stepId === 'content') {
+            const pre = runExportPreflight();
+            if (!pre.canProceed) {
+                window.UI?.status?.(pre.errors[0] || 'Fix SCENE preflight blockers');
+                this.render();
+                return;
+            }
+        }
+
+        const v = validateStep(stepId, this.draft, inv);
         if (v.blockers.length) {
             window.UI?.status?.(v.blockers[0]);
             this.render();
@@ -513,6 +703,13 @@ export const ExportWizard = {
             await this.download();
             return;
         }
+
+        // Web-only: from TARGETS jump straight to SHIP (skip STORE + PACKS)
+        if (stepId === 'targets' && isWebOnlyTargets(this.draft.targets)) {
+            await this.jumpToShip({ webOnly: true });
+            return;
+        }
+
         this.step += 1;
         if (STEPS[this.step] === 'package' || STEPS[this.step] === 'review') {
             if (STEPS[this.step] === 'review') this.readReviewFromUi();
@@ -530,6 +727,7 @@ export const ExportWizard = {
     prev() {
         if (this.step <= 0) return;
         this.readStepFromUi();
+        this._saveDraft();
         this.step -= 1;
         this.render();
     },

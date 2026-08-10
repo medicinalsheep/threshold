@@ -1,3 +1,13 @@
+## 10.21.3 — Export polish
+
+- **Wizard SCENE / REVIEW** — inline preflight (same engine as EXPORT & PLAY) + art-name notes
+- **Web-only fast path** — TARGETS → skip STORE/PACKS → SHIP (`Skip to SHIP` / NEXT · SHIP)
+- **SHIP** — Copy CLI + copy filename; preflight status line
+- **Progress pills** — click visited steps to jump back; done styling
+- **Draft restore** — name / targets / store / branding in `localStorage`
+- **Preflight** — art naming infos (`textures/<slug>_albedo.png`); `formatPreflightHtml` helper
+- Docs: EXPORT_WALKTHROUGH web-only path
+
 ## 10.21.2 — Art naming contract (live)
 
 - **`artNaming.js`** — shared slug + expected `textures/<slug>_albedo.png` / `import/<slug>.glb` paths
