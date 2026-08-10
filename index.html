@@ -20,7 +20,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.21.1" />
+    <meta name="threshold-version" content="10.21.2" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD SUITE</title>
 </head>
@@ -238,7 +238,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.21.1</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" title="UI surface">CREATE</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.21.2</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" title="UI surface">CREATE</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
@@ -711,7 +711,8 @@
                     <button type="button" class="insp-tab" data-insp-tab="audio">Audio</button>
                 </div>
                 <div class="insp-panel active" data-insp-panel="general">
-                    <div class="prop-row"><label>Name</label> <input type="text" id="insp-name"></div>
+                    <div class="prop-row"><label>Name</label> <input type="text" id="insp-name" title="Must match GIMP Object name and Blender --object for live SYNC"></div>
+                    <p id="insp-art-paths" class="insert-hint insp-art-paths" title="Engine name → GIMP texture + Blender GLB paths">Art: name object for textures/&lt;slug&gt;_albedo.png · import/&lt;slug&gt;.glb</p>
                     <div class="prop-row"><label>Interact hint</label><input type="text" id="insp-interact-hint" placeholder="F interact label"></div>
                     <div class="prop-row">
                         <label>Gizmo</label>
@@ -724,7 +725,7 @@
                     <div class="prop-row"><button id="btn-delete" style="color:#ff5555;border-color:#ff5555;width:100%;">DELETE</button></div>
                 </div>
                 <div class="insp-panel" data-insp-panel="texture">
-                    <p class="insert-hint insp-texture-hint">Starter library presets + GIMP maps. Prefer presets over CanvasTexture noise.</p>
+                    <p class="insert-hint insp-texture-hint">Starter library presets + GIMP maps. Prefer presets over CanvasTexture noise. Object <strong>Name</strong> must match GIMP export slug and Blender <code>--object</code>.</p>
                     <div class="prop-row">
                         <label>Preset</label>
                         <select id="insp-material-preset" class="insert-input" style="flex:1;" title="Material library"></select>

@@ -7,6 +7,7 @@ import { CREATIVE_WATCH_URL } from '../config.js';
 import { TextureHilod, parseTextureFileName } from './textureHilod.js';
 import { NativeTextureCodec } from './nativeTextureCodec.js';
 import { finishMaterial, resolveFinishSettings } from './starterTex.js';
+import { slugifyObjectName, expectedTexturePath, artPathsForName } from './artNaming.js';
 
 const SLOT_PROPS = {
     albedo: 'map',
@@ -26,12 +27,9 @@ const MANIFEST_FILTERS = [
 const loader = new THREE.TextureLoader();
 const urlCache = new Map();
 
+/** @deprecated use slugifyObjectName from artNaming — kept as local alias */
 function slugify(name = '') {
-    return String(name)
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '_')
-        .replace(/^_+|_+$/g, '') || 'object';
+    return slugifyObjectName(name);
 }
 
 function parseTextureFile(fileName = '') {
@@ -82,6 +80,9 @@ function ensureTexturesUserData(obj) {
 }
 
 export const TextureBridge = {
+    slugifyObjectName,
+    expectedTexturePath,
+    artPathsForName,
     async getObjectUrl(id) {
         if (!id) return null;
         if (urlCache.has(id)) return urlCache.get(id);

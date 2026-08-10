@@ -1,3 +1,11 @@
+## 10.21.2 — Art naming contract (live)
+
+- **`artNaming.js`** — shared slug + expected `textures/<slug>_albedo.png` / `import/<slug>.glb` paths
+- **Inspector** — under Name, live **Art:** path hint updates as you type (GIMP + Blender contract)
+- **LiveBuild** — after each step, status/HUD shows art paths for new named objects; sets `textureHint` when missing
+- **TextureBridge** — uses shared slugify; exposes path helpers
+- Docs: CREATIVE_WORKFLOW naming section
+
 ## 10.21.1 — Origin truth + mini retrain
 
 - **ORIGIN SYSTEM** — permanent origin line on `threshold-mini-npc` / `-dev` / `-mobile` Modelfiles (via `bootcamp-lib` + `models-mobile`)

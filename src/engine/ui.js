@@ -20,6 +20,7 @@ import { SoundLibrary } from '../shared/soundLibrary.js';
 import { SoundPrompt } from '../shared/soundPrompt.js';
 import { TextureLibrary } from '../shared/textureLibrary.js';
 import { TextureBridge } from '../shared/textureBridge.js';
+import { artPathsForName } from '../shared/artNaming.js';
 import { GltfImport } from '../shared/gltfImport.js';
 import { NegativeLod } from '../shared/negativeLod.js';
 import { ThresholdShell } from '../shared/thresholdShell.js';
@@ -390,6 +391,7 @@ export const UI = {
     loadInspectorFromObject: function (obj) {
         if (!obj) return;
         document.getElementById('insp-name').value = obj.userData.name || '';
+        this.syncArtNamingHint(obj.userData.name || '');
         document.getElementById('insp-interact-hint').value = obj.userData.interactHint || '';
         const mat = obj.material;
         if (mat?.color) document.getElementById('insp-color').value = '#' + mat.color.getHexString();
@@ -515,10 +517,28 @@ export const UI = {
             UI.status(e.message || 'GIMP manifest sync failed');
         }
     },
+    /**
+     * Live art-pipeline paths for the object Name field (GIMP + Blender contract).
+     */
+    syncArtNamingHint: function (name) {
+        const el = document.getElementById('insp-art-paths');
+        if (!el) return;
+        const raw = String(name ?? document.getElementById('insp-name')?.value ?? '').trim();
+        if (!raw) {
+            el.textContent = 'Art: set Name → textures/<slug>_albedo.png · import/<slug>.glb';
+            el.dataset.slug = '';
+            return;
+        }
+        const paths = artPathsForName(raw);
+        el.textContent = `Art: ${paths.albedo} · ${paths.glb}`;
+        el.dataset.slug = paths.slug || '';
+        el.title = paths.lines?.join('\n') || paths.oneLine || el.textContent;
+    },
     applyInspectorFromUi: function () {
         const obj = State.selectedObject;
         if (!obj || !SimMode.canEditObject(obj)) return;
         obj.userData.name = document.getElementById('insp-name').value;
+        this.syncArtNamingHint(obj.userData.name);
         const interactHint = document.getElementById('insp-interact-hint').value.trim();
         if (interactHint) obj.userData.interactHint = interactHint;
         else delete obj.userData.interactHint;

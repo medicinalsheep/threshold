@@ -7,6 +7,7 @@ import { Runtime } from './runtime.js';
 import { sanitizeSceneCode } from './codeSanitizer.js';
 import { BuildJob } from './buildJob.js';
 import { SceneHistory } from './sceneHistory.js';
+import { artPathsStatusForObjects, expectedTexturePath } from './artNaming.js';
 
 const PULSE_MS = 1100;
 const RESUME_PLAY_MS = 280;
@@ -344,8 +345,16 @@ export const LiveBuild = {
         }
         this._appliedLive = true;
         const created = this.findNewObjects(before);
+        const artHint = created.length ? artPathsStatusForObjects(created, { max: 2 }) : '';
         if (created.length) {
             this.pulseObjects(created, { color: 0x00ffaa, intensity: 0.6 });
+            // Stash textureHint from name when agents omitted it (GIMP slug contract)
+            for (const obj of created) {
+                const n = obj?.userData?.name;
+                if (n && !obj.userData.textureHint) {
+                    obj.userData.textureHint = expectedTexturePath(n, 'albedo');
+                }
+            }
         } else {
             // Material / atmosphere-only steps — stronger blue pulse so material work is visible
             const recent = (window.State?.objects || []).slice(-8);
@@ -353,11 +362,16 @@ export const LiveBuild = {
             window.UI?.status?.(`Live: ${meta.label || 'step'} · materials / atmosphere`);
         }
 
-        window.UI?.status?.(
-            created.length
-                ? `Live: ${meta.label || 'step'} · +${created.length} object(s)`
-                : `Live: ${meta.label || 'step'} applied`,
-        );
+        const baseStatus = created.length
+            ? `Live: ${meta.label || 'step'} · +${created.length} object(s)`
+            : `Live: ${meta.label || 'step'} applied`;
+        window.UI?.status?.(artHint ? `${baseStatus} · ${artHint}` : baseStatus);
+        if (artHint) {
+            this.renderHud({
+                label: `✓ ${meta.label || 'step'} · ${artHint}`,
+                phase: 'applying',
+            });
+        }
 
         this.resumePlayIfWanted();
         return result;

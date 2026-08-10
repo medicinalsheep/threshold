@@ -48,6 +48,10 @@ Object **Name** in Engine inspector must match export tools:
 | Blender UI | Engine Object Name | `import/stone_block.glb` |
 | Blender CLI | `--object "Stone Block"` | same |
 
+**Live hint (10.21.2+):** EDIT → select object → under **Name**, the inspector shows the expected paths (`Art: textures/… · import/…`). Rename updates the hint immediately. LiveBuild status also echoes art paths for new named props and fills `userData.textureHint` when agents omit it.
+
+Helper module: `src/shared/artNaming.js` · also on `window.ArtNaming` / `TextureBridge.slugifyObjectName`.
+
 **Extend pattern (preferred):** PromptGen → **EXAMPLES** — tested prompts that add to the live scene without `World.clearWorld()`.
 
 ---

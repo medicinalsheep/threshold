@@ -3846,6 +3846,19 @@ body.play-as-active .play-mode-hint {
     font-size: 0.68rem;
 }
 
+.insp-art-paths {
+    margin: 2px 0 8px;
+    padding: 4px 6px;
+    font-size: 0.62rem;
+    line-height: 1.35;
+    color: #9ab8a0;
+    background: rgba(40, 70, 50, 0.25);
+    border-left: 2px solid #4a8a5a;
+    border-radius: 0 2px 2px 0;
+    word-break: break-all;
+    user-select: all;
+}
+
 .insp-texture-actions {
     display: flex;
     flex-wrap: wrap;
