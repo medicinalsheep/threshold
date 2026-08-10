@@ -28,12 +28,14 @@ Living checklist after origin train (10.21.1), art naming (10.21.2), export poli
 
 | ID | Feature | Verify | Surface | Result | Notes |
 |----|---------|--------|---------|--------|-------|
-| S1 | Mobile default player | manual narrow / coarse | player | | body.surface-player |
-| S2 | `?surface=creator` | URL | creator | | |
-| S3 | `?surface=full` | URL | full | | |
-| S4 | Badge cycle | click badge | both | | 10.21.4 |
-| S5 | Lobby + SETUP chips | both | both | | hints sync |
-| S6 | Origin minis | ollama chat | creator | | medicinalsheep MIT |
+| S1 | Player surface + mobile UA | puppeteer `?surface=player` | player | **PASS** | body.surface-player · allowsOllama=false · badge PLAY · hint |
+| S2 | `?surface=creator` | puppeteer | creator | **PASS** | surface-creator · allowsOllama=true · badge CREATE |
+| S3 | `?surface=full` | puppeteer | full | **PASS** | surface-full · badge FULL |
+| S4 | Badge / cycle API | puppeteer cycle | both | **PASS** | player→creator→full→player · badge click works |
+| S5 | Lobby + SETUP chips | puppeteer click creator | both | **PASS** | hints sync both elements |
+| S6 | Origin minis | ollama chat | creator | **PASS** | medicinalsheep MIT; not Anthropic/UK (npc+mobile) |
+
+Report: `dist-store/block1-surface-audit.json` · runner: `node scripts/block1-surface-audit.cjs` (rebuild dist-pages first if stale)
 
 ## Block 2 — Lobby
 
@@ -124,4 +126,5 @@ Living checklist after origin train (10.21.1), art naming (10.21.2), export poli
 |------|--------|---------|
 | 2026-08-10 | Phase A ship 10.21.4 | surface clarity pushed `b4c2b25` |
 | 2026-08-10 | B1 smoke | version + surface + portal + controls + neg-lod + physics PASS |
-| | Block 1–2 manual next | S1–S6, L1–L5 in browser |
+| 2026-08-10 | **Block 1 complete** | S1–S6 all PASS (puppeteer + ollama origin) |
+| | Block 2 next | L1–L5 lobby ENTER/CREATE/JOIN |
