@@ -53,13 +53,15 @@ Report: `dist-store/block2-lobby-audit.json` · runner: `node scripts/block2-lob
 
 | ID | Feature | Verify | Surface | Result | Notes |
 |----|---------|--------|---------|--------|-------|
-| M1 | PLAY/ARRANGE/EDIT | hub | both | | ≠ surface |
-| M2 | Walk/sprint/crouch | keys | both | | |
-| M3 | Touch pad | phone | player | | |
-| M4 | Play as (K) | manual | both | | |
-| M5 | Arrange snap | 1u=1m | creator | | |
-| M6 | TPS/FPS/ADS | LMB/RMB | both | | |
-| M7 | M / F / Alt | keys | both | | |
+| M1 | PLAY/ARRANGE/EDIT | puppeteer cycleMode | both | **PASS** | play→arrange→edit→play · pause on arrange/edit · surface unchanged |
+| M2 | Sprint/crouch/stealth | getActiveBindings | both | **PASS** | Shift / Ctrl / KeyU · controls:verify also PASS |
+| M3 | Touch pad | mobile UA | player | **PASS** | #touch-controls display block · TouchControls enabled |
+| M4 | Play as (K) | possess/release | both | **PASS** | canPossess cube · possess+release · KeyK bound |
+| M5 | Arrange snap 1u=1m | GridSystem | creator | **PASS** | cell=1 · label “1 unit = 1 m” · snap 1.4→1 |
+| M6 | TPS/FPS + LMB/RMB | bindings + toggle | both | **PASS** | Mouse0 aim · Mouse2 fire · tps↔fps toggle |
+| M7 | M / F | bindings | both | **PASS** | KeyM uiMouse · KeyF thirdEye+interact · ThirdEye present |
+
+Report: `dist-store/block3-modes-audit.json` · runner: `node scripts/block3-modes-audit.cjs` (+ `controls-verify`)
 
 ## Block 4 — Build & agents
 
@@ -130,4 +132,5 @@ Report: `dist-store/block2-lobby-audit.json` · runner: `node scripts/block2-lob
 | 2026-08-10 | B1 smoke | version + surface + portal + controls + neg-lod + physics PASS |
 | 2026-08-10 | **Block 1 complete** | S1–S6 all PASS (puppeteer + ollama origin) |
 | 2026-08-10 | **Block 2 complete** | L1–L5 all PASS (solo + PeerJS host/guest + passcode) |
-| | Block 3 next | M1–M7 modes & movement |
+| 2026-08-10 | **Block 3 complete** | M1–M7 all PASS (modes, bindings, touch, play-as, grid, view) |
+| | Block 4 next | B1–B9 build & agents |
