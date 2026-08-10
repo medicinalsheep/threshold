@@ -83,11 +83,13 @@ Report: `dist-store/block4-build-audit.json` · runner: `node scripts/block4-bui
 
 | ID | Feature | Verify | Surface | Result | Notes |
 |----|---------|--------|---------|--------|-------|
-| A1 | Inspector art paths | rename | creator | | 10.21.2 |
-| A2 | LiveBuild textureHint | live step | creator | | |
-| A3 | MaterialPresets | apply | creator | | |
-| A4 | GIMP SYNC copy | status/docs | creator | | |
-| A5 | Blender GLB | if asset | creator | | |
+| A1 | Inspector art paths | puppeteer rename | creator | **PASS** | Stone Block → textures/stone_block_albedo.png · import/stone_block.glb |
+| A2 | LiveBuild textureHint | create named prop | creator | **PASS** | Mat Wood Bench → textures/mat_wood_bench_albedo.png |
+| A3 | MaterialPresets | applyMaterialPreset | creator | **PASS** | pbr_concrete_weathered · 26 select options |
+| A4 | GIMP SYNC UI | button + bridge | creator | **PASS** | GIMP SYNC · pickAndApplyGimpManifest · plugin folder |
+| A5 | Blender GLB UI | insert manifest | creator | **PASS** | BLENDER MANIFEST · GltfImport · plugin folder |
+
+Report: `dist-store/block5-art-audit.json` · runner: `node scripts/block5-art-audit.cjs`
 
 ## Block 6 — Avatar
 
@@ -136,4 +138,5 @@ Report: `dist-store/block4-build-audit.json` · runner: `node scripts/block4-bui
 | 2026-08-10 | **Block 2 complete** | L1–L5 all PASS (solo + PeerJS host/guest + passcode) |
 | 2026-08-10 | **Block 3 complete** | M1–M7 all PASS (modes, bindings, touch, play-as, grid, view) |
 | 2026-08-10 | **Block 4 complete** | B1–B9 all PASS (portal, live build, minis, ollama gate) |
-| | Block 5 next | A1–A5 art & naming |
+| 2026-08-10 | **Block 5 complete** | A1–A5 all PASS (art paths, textureHint, presets, GIMP/Blender UI) |
+| | Block 6 next | V1–V3 avatar |
