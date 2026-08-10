@@ -12,13 +12,13 @@ Living checklist after origin train (10.21.1), art naming (10.21.2), export poli
 
 | Script | Last run | Result | Notes |
 |--------|----------|--------|-------|
-| `version:sync:check` | | | |
-| `surface-verify` | | | extended 10.21.4 |
-| `portal-ui-verify` | | | |
-| `controls:verify` | | | |
-| `negative-lod-verify` | | | |
-| `physics:verify` | | | if present |
-| `perf:verify` | | | if present |
+| `version:sync:check` | 2026-08-10 | PASS | 10.21.4 aligned |
+| `surface-verify` | 2026-08-10 | PASS | extended 10.21.4 |
+| `portal-ui-verify` | 2026-08-10 | PASS | |
+| `controls:verify` | 2026-08-10 | PASS | |
+| `negative-lod-verify` | 2026-08-10 | PASS | |
+| `physics:verify` | 2026-08-10 | PASS | |
+| `perf:verify` | | | run via `node scripts/…` if npm.ps1 blocked |
 | `ollama:golden` | | | optional minis |
 | `store:verify` | | | optional |
 
@@ -122,5 +122,6 @@ Living checklist after origin train (10.21.1), art naming (10.21.2), export poli
 
 | Date | Blocks | Summary |
 |------|--------|---------|
-| | Phase A ship 10.21.4 | surface clarity |
-| | | |
+| 2026-08-10 | Phase A ship 10.21.4 | surface clarity pushed `b4c2b25` |
+| 2026-08-10 | B1 smoke | version + surface + portal + controls + neg-lod + physics PASS |
+| | Block 1–2 manual next | S1–S6, L1–L5 in browser |
