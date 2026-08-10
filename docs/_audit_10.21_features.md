@@ -41,11 +41,13 @@ Report: `dist-store/block1-surface-audit.json` · runner: `node scripts/block1-s
 
 | ID | Feature | Verify | Surface | Result | Notes |
 |----|---------|--------|---------|--------|-------|
-| L1 | ENTER solo | manual | both | | terminal grid PLAY |
-| L2 | CREATE SESSION | manual | creator | | room code |
-| L3 | JOIN | 2 tabs | both | | |
-| L4 | Passcode | manual | both | | |
-| L5 | Display name | manual | both | | |
+| L1 | ENTER solo | puppeteer | both | **PASS** | lobby hidden · Network.mode=solo · template grid · starterGrid · 2 objs |
+| L2 | CREATE SESSION | puppeteer PeerJS | creator | **PASS** | host mode + roomId + hostPasscode set (share panel race ok) |
+| L3 | JOIN | 2 pages | both | **PASS** | empty-code error; guest join with code → lobby hidden · guest mode |
+| L4 | Passcode | unit + 2 pages | both | **PASS** | wrong → “Wrong passcode”; correct → join · unit 5/5 |
+| L5 | Display name | puppeteer | both | **PASS** | lobby-name → Session.playerName |
+
+Report: `dist-store/block2-lobby-audit.json` · runner: `node scripts/block2-lobby-audit.cjs`
 
 ## Block 3 — Modes & movement
 
@@ -127,4 +129,5 @@ Report: `dist-store/block1-surface-audit.json` · runner: `node scripts/block1-s
 | 2026-08-10 | Phase A ship 10.21.4 | surface clarity pushed `b4c2b25` |
 | 2026-08-10 | B1 smoke | version + surface + portal + controls + neg-lod + physics PASS |
 | 2026-08-10 | **Block 1 complete** | S1–S6 all PASS (puppeteer + ollama origin) |
-| | Block 2 next | L1–L5 lobby ENTER/CREATE/JOIN |
+| 2026-08-10 | **Block 2 complete** | L1–L5 all PASS (solo + PeerJS host/guest + passcode) |
+| | Block 3 next | M1–M7 modes & movement |
