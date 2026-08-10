@@ -95,9 +95,11 @@ Report: `dist-store/block5-art-audit.json` · runner: `node scripts/block5-art-a
 
 | ID | Feature | Verify | Surface | Result | Notes |
 |----|---------|--------|---------|--------|-------|
-| V1 | Body shape | SKIN | both | | 10.21 |
-| V2 | Wardrobe | SKIN | both | | |
-| V3 | Walk LOD | walk | both | | |
+| V1 | Body shape | SKIN sliders + applyShape | both | **PASS** | 6 sliders · applyShape soft-scale (Y 1.017) · no crash |
+| V2 | Wardrobe | ClothingLayout equip/unequip | both | **PASS** | hoodie_urban equip · unequip · 13 slots · rail present |
+| V3 | Walk LOD | updateWalk + AvatarLod | both | **PASS** | updateWalk walk/sprint · AvatarLod + PoseSync · no hop error |
+
+Report: `dist-store/block6-avatar-audit.json` · runner: `node scripts/block6-avatar-audit.cjs`
 
 ## Block 7 — Perf
 
@@ -139,4 +141,5 @@ Report: `dist-store/block5-art-audit.json` · runner: `node scripts/block5-art-a
 | 2026-08-10 | **Block 3 complete** | M1–M7 all PASS (modes, bindings, touch, play-as, grid, view) |
 | 2026-08-10 | **Block 4 complete** | B1–B9 all PASS (portal, live build, minis, ollama gate) |
 | 2026-08-10 | **Block 5 complete** | A1–A5 all PASS (art paths, textureHint, presets, GIMP/Blender UI) |
-| | Block 6 next | V1–V3 avatar |
+| 2026-08-10 | **Block 6 complete** | V1–V3 all PASS (shape, wardrobe, walk LOD) |
+| | Block 7 next | P1–P4 perf & graphics |
