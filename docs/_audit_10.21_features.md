@@ -67,15 +67,17 @@ Report: `dist-store/block3-modes-audit.json` · runner: `node scripts/block3-mod
 
 | ID | Feature | Verify | Surface | Result | Notes |
 |----|---------|--------|---------|--------|-------|
-| B1 | BUILD SOMETHING | manual | creator | | |
-| B2 | openBuildFast / hub AI | manual | creator | | |
-| B3 | LIVE SCENE | manual | creator | | no clearWorld |
-| B4 | Live undo | HUD ↩ | creator | | |
-| B5 | SMART DEV | Ollama | creator | | type-first |
-| B6 | Intent realistic→4 | golden | creator | | |
-| B7 | Grok optional | key | creator | | |
-| B8 | Sequential freeze | SETUP | creator | | |
-| B9 | Player blocks Ollama | player | player | | |
+| B1 | BUILD SOMETHING | puppeteer CTA | creator | **PASS** | CTA visible “BUILD SOMETHING” after showBuildCta |
+| B2 | openBuildFast / hub AI | puppeteer | creator | **PASS** | hub-agent exists · openBuildFast opens portal |
+| B3 | LIVE clearWorld block | LiveBuild.applyChunk | creator | **PASS** | clearWorld does not wipe scene (Starter Ground+You remain) |
+| B4 | Live undo | undoLastStep | creator | **PASS** | canUndo · undid · HUD undo button present |
+| B5 | SMART DEV / mini-dev | ollama | creator | **PASS** | type-first cube · setRenderMode(4) · no clearWorld |
+| B6 | Intent realistic→4 | ollama npc | creator | **PASS** | INTENT graphics · setRenderMode(4) |
+| B7 | Grok optional | UI | creator | **PASS** | xAI key field · prefer-grok · no key required |
+| B8 | Sequential + freeze | prefs UI | creator | **PASS** | allowParallelLocal false · freeze checked · parallel off |
+| B9 | Player blocks Ollama | player probe | player | **PASS** | allows=false · skippedSurface · “switch to Creator tools” |
+
+Report: `dist-store/block4-build-audit.json` · runner: `node scripts/block4-build-audit.cjs`
 
 ## Block 5 — Art
 
@@ -133,4 +135,5 @@ Report: `dist-store/block3-modes-audit.json` · runner: `node scripts/block3-mod
 | 2026-08-10 | **Block 1 complete** | S1–S6 all PASS (puppeteer + ollama origin) |
 | 2026-08-10 | **Block 2 complete** | L1–L5 all PASS (solo + PeerJS host/guest + passcode) |
 | 2026-08-10 | **Block 3 complete** | M1–M7 all PASS (modes, bindings, touch, play-as, grid, view) |
-| | Block 4 next | B1–B9 build & agents |
+| 2026-08-10 | **Block 4 complete** | B1–B9 all PASS (portal, live build, minis, ollama gate) |
+| | Block 5 next | A1–A5 art & naming |
