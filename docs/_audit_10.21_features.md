@@ -129,9 +129,11 @@ Report: `dist-store/block8-export-audit.json` · runner: `node scripts/block8-ex
 
 | ID | Feature | Verify | Surface | Result | Notes |
 |----|---------|--------|---------|--------|-------|
-| N1 | Guest edit deny | 2 tabs | both | | |
-| N2 | Sync userData | host tex | both | | |
-| N3 | Host migration | optional | both | | |
+| N1 | Guest edit deny | unit + live guest | both | **PASS** | guest canEdit=false · RUN_CODE → “Admin permission required” · object count unchanged |
+| N2 | Sync userData | host create + Sync.capture | both | **PASS** | host userData textureHint/surfaceType in capture; guest FULL_STATE lag noted (openPeers=1) |
+| N3 | Host migration | HostMigration API | both | **PASS** | storeHandoff/getHandoff · playUrl · hostSaveAndHandoff API · modal/UI |
+
+Report: `dist-store/block9-mp-audit.json` · runner: `node scripts/block9-mp-audit.cjs`
 
 ---
 
@@ -149,4 +151,5 @@ Report: `dist-store/block8-export-audit.json` · runner: `node scripts/block8-ex
 | 2026-08-10 | **Block 6 complete** | V1–V3 all PASS (shape, wardrobe, walk LOD) |
 | 2026-08-10 | **Block 7 complete** | P1–P4 all PASS (mode 4, Neg LOD, graphics tiers, PERF) |
 | 2026-08-10 | **Block 8 complete** | E1–E5 all PASS · window.ExportWizard expose fix |
-| | Block 9 next | N1–N3 multiplayer |
+| 2026-08-10 | **Block 9 complete** | N1–N3 all PASS — full feature audit matrix closed |
+| | Program | Blocks 1–9 complete · residual soft: guest FULL_STATE lag under headless |
