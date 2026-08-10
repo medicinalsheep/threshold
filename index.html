@@ -20,7 +20,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.21.3" />
+    <meta name="threshold-version" content="10.21.4" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD SUITE</title>
 </head>
@@ -96,11 +96,12 @@
 
                         <div class="lobby-surface-row" aria-label="UI surface">
                             <div class="surface-switcher">
-                                <button type="button" class="surface-chip" data-surface-set="player" title="Play / test — hide AI &amp; build tools">Play</button>
-                                <button type="button" class="surface-chip" data-surface-set="creator" title="Build + AI tools">Creator</button>
-                                <button type="button" class="surface-chip" data-surface-set="full" title="All tools">Full</button>
+                                <button type="button" class="surface-chip" data-surface-set="player" title="Play surface — hide AI &amp; build tools (not PLAY mode)">Play surface</button>
+                                <button type="button" class="surface-chip" data-surface-set="creator" title="Creator tools — build + AI">Creator tools</button>
+                                <button type="button" class="surface-chip" data-surface-set="full" title="Full surface — all tools">Full</button>
                             </div>
                             <p id="surface-profile-hint" class="surface-profile-hint lobby-voip-hint"></p>
+                            <p id="surface-url-hint" class="surface-profile-hint" aria-hidden="true"></p>
                         </div>
 
                         <details class="lobby-options-wrap">
@@ -238,7 +239,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.21.3</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" title="UI surface">CREATE</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.21.4</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" class="surface-badge-clickable" title="UI surface — click to cycle Play / Creator / Full" role="button" tabindex="0">CREATE</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
@@ -256,6 +257,10 @@
     </nav>
     <button id="nav-restore-btn" class="nav-restore-btn" type="button" aria-label="Show top menu" title="Show top menu">▼ MENU</button>
     <button id="btn-exit-immersive" class="btn-exit-immersive" type="button" hidden aria-label="Exit fullscreen" title="Exit fullscreen">✕ EXIT</button>
+    <div id="surface-coach" class="surface-coach" hidden role="status" aria-live="polite">
+        <p class="surface-coach-text">Play surface: AI hidden. Tap PLAY badge or SCENE → Creator tools… to build.</p>
+        <button type="button" id="surface-coach-dismiss" class="btn-sm" title="Dismiss">OK</button>
+    </div>
 
     <!-- VIEW: ENGINE -->
     <div id="view-engine" class="view-section active">
@@ -826,11 +831,11 @@
                 <div id="agent-tier-warnings"></div>
                 <p class="insert-hint" style="margin:4px 0 8px;">Walk to the <strong>AI Build Station</strong> and press <strong>F</strong>, or open the portal below. Agents detect Grok Build + Ollama automatically.</p>
                 <div class="surface-switcher" style="margin-bottom:10px;">
-                    <button type="button" class="surface-chip" data-surface-set="player">Play</button>
-                    <button type="button" class="surface-chip" data-surface-set="creator">Creator</button>
-                    <button type="button" class="surface-chip" data-surface-set="full">Full</button>
+                    <button type="button" class="surface-chip" data-surface-set="player" title="Play surface — hide AI">Play surface</button>
+                    <button type="button" class="surface-chip" data-surface-set="creator" title="Creator tools">Creator tools</button>
+                    <button type="button" class="surface-chip" data-surface-set="full" title="Full surface">Full</button>
                 </div>
-                <p class="insert-hint surface-profile-hint" id="setup-surface-hint" style="margin:0 0 8px;">UI surface controls which tools show. Phones default to Play.</p>
+                <p class="insert-hint surface-profile-hint" id="setup-surface-hint" style="margin:0 0 8px;">UI surface controls which tools show. Phones default to Play surface (not PLAY mode).</p>
                 <button id="setup-open-portal" type="button" style="width:100%;margin-bottom:6px;" data-surface="creator">OPEN AGENT PORTAL</button>
                 <button id="setup-start-brief" type="button" class="btn-sm" style="width:100%;margin-bottom:6px;" data-surface="creator">ADVANCED: DESIGN BRIEF</button>
                 <button id="setup-resume-brief" type="button" class="btn-sm" style="width:100%;margin-bottom:8px;" data-surface="creator">RESUME DRAFT BRIEF</button>

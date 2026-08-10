@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.21)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.21.3
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.21.4
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -15,7 +15,7 @@ Single progress snapshot — what ships today, how the pieces connect, and what 
 | Terminal grid spawn | `starterScene.js`, `starterGrid.js`, `starterTemplates.js` (grid default) |
 | Lobby (ENTER primary) | `lobby/main.js` — solo **ENTER** · CREATE optional multiplayer |
 | Progressive UI unlock | Scene dock, Compiler, PromptGen opt-in |
-| Surface profiles | `surfaceProfile.js` — player / creator / full (`?surface=`) · mobile → player |
+| Surface profiles | `surfaceProfile.js` — player / creator / full (`?surface=`) · mobile → player · badge cycle · coach |
 | Agent Portal | `agentPortal.js` — Grok/Ollama auto-detect (**creator** surface; skipped on player) |
 | Live build | `liveBuild.js` — apply agent steps in-scene · HUD · undo last step · texture pulse · art-name status · docked portal · quick 3-step default |
 | Art naming contract | `artNaming.js` — inspector **Art:** paths · GIMP/Blender slug · LiveBuild `textureHint` |

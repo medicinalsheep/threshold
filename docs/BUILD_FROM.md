@@ -89,7 +89,8 @@ Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [UI_AND_A
 | **creator** | Build + agents (desktop default) | `?surface=creator` |
 | **full** | All tools | `?surface=full` |
 
-Mobile / coarse pointer defaults to **player**. Switch anytime in lobby or SETUP.
+Mobile / coarse pointer defaults to **player** (Play surface ≠ hub **PLAY** mode).  
+Switch: lobby chips · SETUP chips · **click nav PLAY/CREATE badge** · SCENE → Creator tools…
 
 ---
 

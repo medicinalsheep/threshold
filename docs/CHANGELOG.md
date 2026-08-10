@@ -1,3 +1,12 @@
+## 10.21.4 — Mobile / player surface clarity
+
+- **Badge cycles surface** — click PLAY/CREATE/FULL badge: player → creator → full (phone escape hatch)
+- **Hints synced** — lobby + SETUP both update; copy separates **Play surface** from **PLAY mode**
+- **First-run coach** — one-shot status + dismissible strip after ENTER on player surface
+- **Touch chips** — min 40px lobby/SETUP surface chips; URL bookmark hint `?surface=`
+- **Badge title** uses `?surface=` (not `?mode=`); still **no Ollama probe on player**
+- `surface-verify` extended; UI_AND_AGENTS / BUILD_FROM notes
+
 ## 10.21.3 — Export polish
 
 - **Wizard SCENE / REVIEW** — inline preflight (same engine as EXPORT & PLAY) + art-name notes

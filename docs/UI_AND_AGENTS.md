@@ -11,16 +11,20 @@ Quick reference for corner hubs, interaction modes, Agent Portal, optional Grok 
 
 Same live URL — different chrome. Module: `src/shared/surfaceProfile.js`.
 
+**Not the same as hub PLAY / ARRANGE / EDIT** (those are interaction modes). Surface = which chrome is visible.
+
 | Profile | Default when | Hides |
 |---------|----------------|--------|
-| **player** | Coarse pointer, mobile UA, width ≤900 | AI portal chip, Ollama probes, SETUP/Compiler/PromptGen/export, Grok lobby block |
-| **creator** | Desktop fine pointer | Full-only extras |
+| **player** (Play surface) | Coarse pointer, mobile UA, width ≤900 | AI portal chip, Ollama probes, SETUP/Compiler/PromptGen/export, Grok lobby block |
+| **creator** (Creator tools) | Desktop fine pointer | Full-only extras |
 | **full** | `?surface=full` | Nothing |
 
-- **URL:** `?surface=player|creator|full` (preferred over `mode` for surface)
-- **Lobby:** Play / Creator / Full chips · BUILD mode nudges creator
-- **In-engine:** SCENE → “Creator tools…” on player · SETUP switcher
-- Pref stored in `ViewPrefs.surfaceProfile`
+- **URL:** `?surface=player|creator|full` (preferred; do not use `mode=` for surface)
+- **Lobby:** Play surface / Creator tools / Full chips (touch-sized)
+- **Nav badge:** click cycles player → creator → full (tooltip explains surface vs mode)
+- **In-engine:** SCENE → “Creator tools…” on player · SETUP switcher · first-run coach once
+- Pref: `ViewPrefs.surfaceProfile` · coach dismiss: `surfaceCoachDismissed`
+- **Never** probe Ollama on player surface
 
 ---
 

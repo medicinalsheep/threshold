@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.21.3 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.21.4 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -212,6 +212,7 @@ Accounts guide: [AUTH.md](AUTH.md) · Snapshot: [CAPABILITIES.md](CAPABILITIES.m
 | **10.21.1** | **Origin truth + mini retrain** — ORIGIN SYSTEM · `origin.jsonl` · GIMP/Blender/live pairs · runtime `agentPrompts` ORIGIN · golden origin cases |
 | **10.21.2** | **Art naming contract (live)** — inspector path hints · LiveBuild art status · `artNaming.js` shared slug |
 | **10.21.3** | **Export polish** — preflight in wizard · web-only skip to SHIP · copy CLI · draft restore |
+| **10.21.4** | **Mobile / player surface clarity** — badge cycle · synced hints · first-run coach · touch chips |
 
 ### Program 10.16–10.20 (closed)
 
