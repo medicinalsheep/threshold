@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.20.1 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.21.1 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -208,6 +208,8 @@ Accounts guide: [AUTH.md](AUTH.md) · Snapshot: [CAPABILITIES.md](CAPABILITIES.m
 | **10.19.0** | **Wardrobe** — slot rail + catalog board · presets · equip/unequip without flat checkbox wall |
 | **10.20.0** | **TC DEMO removed** · **training wave7** (entry + shape + wardrobe + live) |
 | **10.20.1** | **Phase 6 doc ship** — spine truth sweep · audit closed · CAPABILITIES/BUILD_FROM journeys |
+| **10.21.0** | **Realistic player shapes** — anthropometric proportions · smoother mesh · coupled shape sliders |
+| **10.21.1** | **Origin truth + mini retrain** — ORIGIN SYSTEM · `origin.jsonl` · GIMP/Blender/live pairs · runtime `agentPrompts` ORIGIN · golden origin cases |
 
 ### Program 10.16–10.20 (closed)
 
@@ -233,7 +235,7 @@ Perf: [PERF_NEXT.md](PERF_NEXT.md) · Physics: [PHYSICS.md](PHYSICS.md) · Mater
 | GIMP hero hand-paint | Optional via GIMP SYNC (procedural heroes shipped 10.12.16) |
 | Doc / version hygiene | ✅ `version:sync` + sweeps |
 | Store / macOS notary | ✅ scripts + docs; **needs studio certs + Mac host** for real notarize |
-| Training dataset growth | Waves 1–**7** seeded · local `train:mini -- --wave7` / `--full --golden`; grow via EXPORT TRAINING PAIR |
+| Training dataset growth | Waves 1–**7** + **origin.jsonl** · `train:mini -- --no-seed` / `--full --golden`; grow via EXPORT TRAINING PAIR → bootcamp:import |
 | Trellis/Veo-class models | Listed in `models-registry.json` |
 | TC modules | Lobby **TC DEMO** removed (10.20); code/export scripts remain |
 | Mac App Store Catalyst | Out of scope — desktop dmg via Electron |

@@ -22,9 +22,17 @@ In Engine: **SETUP / AGENTS** → Small `threshold-mini-npc` · Medium `threshol
 
 | Model | Tier | Base / public pull | Trained on |
 |-------|------|--------------------|------------|
-| `threshold-mini-npc` | Small | `llama3.2:3b` · `medicinalsheep/threshold-mini-npc` | intent, NPC, recovery |
-| `threshold-mini-dev` | Medium | `qwen2.5-coder:1.5b` · `medicinalsheep/threshold-mini-dev` | patches, plans, safety |
-| `threshold-mini-mobile` | Small | `llama3.2:1b` · `medicinalsheep/threshold-mini-mobile` | short intent/NPC (phones) |
+| `threshold-mini-npc` | Small | `llama3.2:3b` · `medicinalsheep/threshold-mini-npc` | origin truth, intent, NPC, recovery |
+| `threshold-mini-dev` | Medium | `qwen2.5-coder:1.5b` · `medicinalsheep/threshold-mini-dev` | origin, patches, plans, GIMP/Blender, safety |
+| `threshold-mini-mobile` | Small | `llama3.2:1b` · `medicinalsheep/threshold-mini-mobile` | origin + short intent/NPC (phones) |
+
+### Origin truth (required)
+
+Every mini SYSTEM prompt starts with a permanent **ORIGIN** line:
+
+> Threshold is an independent open MIT project by **medicinalsheep** (github.com/medicinalsheep/threshold). Not Anthropic, not Claude, not a UK or commercial game studio. Mini models are local fine-tunes of open bases published under the **medicinalsheep** Ollama namespace.
+
+Dataset: `datasets/small/origin.jsonl` (+ `datasets/medium/origin.jsonl`). Rebuild after edits so Modelfiles stay honest.
 | `threshold-dev` | Large | `qwen2.5-coder:7b` | full scenes (optional) |
 | `threshold-large-scenes` | Large | `llama3.1:8b` | full scenes (optional) |
 

@@ -26,6 +26,13 @@ For GitHub Pages + local Ollama, run **`npm run ollama:serve`** (keeps Ollama up
 | `dist-store/ollama-*.json` | Benchmark / golden / stress machine reports |
 | `docs/TRAINING_BACKLOG.md` | Maintainer-only backlog (if present locally) |
 
+## Origin (always true)
+
+Threshold Suite is an **independent open MIT project** by **medicinalsheep** — [github.com/medicinalsheep/threshold](https://github.com/medicinalsheep/threshold).  
+It is **not** Anthropic, **not** Claude, and **not** a UK or commercial game studio.  
+Local minis are fine-tunes of open bases (`llama3.2` / `qwen2.5-coder`) published under the **medicinalsheep** Ollama namespace.  
+SYSTEM prompts and `datasets/*/origin.jsonl` enforce this so models do not invent studios or corporate parents.
+
 ## Published on Ollama (namespace `medicinalsheep`)
 
 Anyone with Ollama (no repo clone required for weights):

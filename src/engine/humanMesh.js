@@ -9,7 +9,9 @@ function limbGroup(mesh, pivotY, offsetX = 0) {
 }
 
 const GLTF_PART_NAMES = ['legL', 'legR', 'armL', 'armR', 'torso', 'head', 'hips'];
-const SEG = 12;
+/** Higher segments = smoother silhouette (realism pass) */
+const SEG = 18;
+const SEG_LO = 12;
 
 function collectNamedParts(object) {
     const parts = {};
@@ -41,70 +43,82 @@ function pickWalkClip(animations = []) {
     return named || animations[0];
 }
 
-/** Formed proportions for procedural fallback (matches gen-starter-avatar). */
+/**
+ * Anthropometric base proportions (meters) for procedural fallback.
+ * Male ~1.75 m · Female ~1.65 m; shoulder:hip ratio ~1.25 m / ~0.92 f.
+ */
 function resolveForm(options = {}) {
     const female = options.bodyId === 'female_default' || options.form === 'female';
     let base;
     if (female) {
         base = {
             form: 'female',
-            shoulderW: 0.44,
-            chestW: 0.4,
-            chestD: 0.24,
-            waistW: 0.32,
-            hipW: 0.48,
-            hipD: 0.3,
-            hipH: 0.24,
-            torsoH: 0.52,
-            neckR: 0.075,
-            headR: 0.165,
-            headScale: [0.96, 1.04, 0.92],
-            thighTop: 0.105,
-            thighBot: 0.09,
-            calfTop: 0.08,
-            calfBot: 0.065,
-            armTop: 0.055,
-            armBot: 0.045,
-            legLen: 0.82,
-            armLen: 0.48,
-            shoulderY: 1.5,
-            hipY: 0.88,
-            shoe: [0.18, 0.08, 0.26],
-            bust: 0.06,
-            hipOut: 0.13,
-            armOut: 0.28,
-            torsoScale: options.torsoScale || [0.92, 1, 0.88],
-            hipScale: options.hipScale || [1.08, 1, 1.04],
+            // Biacromial narrower, biiliac wider (realistic female frame)
+            shoulderW: 0.38,
+            chestW: 0.36,
+            chestD: 0.22,
+            waistW: 0.28,
+            hipW: 0.42,
+            hipD: 0.28,
+            hipH: 0.22,
+            torsoH: 0.50,
+            neckR: 0.055,
+            neckH: 0.11,
+            headR: 0.105,
+            headScale: [0.92, 1.08, 0.9],
+            thighTop: 0.095,
+            thighBot: 0.078,
+            calfTop: 0.068,
+            calfBot: 0.052,
+            armTop: 0.048,
+            armBot: 0.038,
+            legLen: 0.84,
+            armLen: 0.54,
+            shoulderY: 1.38,
+            hipY: 0.86,
+            shoe: [0.16, 0.06, 0.24],
+            bust: 0.055,
+            hipOut: 0.105,
+            armOut: 0.22,
+            // Soft rest pose — slight knee flex / arm hang
+            armHang: 0.12,
+            legStance: 0.02,
+            torsoScale: options.torsoScale || [1, 1, 1],
+            hipScale: options.hipScale || [1.04, 1, 1.02],
         };
     } else {
         base = {
             form: 'male',
-            shoulderW: 0.54,
-            chestW: 0.46,
-            chestD: 0.28,
-            waistW: 0.38,
-            hipW: 0.44,
-            hipD: 0.28,
-            hipH: 0.24,
-            torsoH: 0.56,
-            neckR: 0.09,
-            headR: 0.175,
-            headScale: [1.0, 1.06, 0.94],
-            thighTop: 0.11,
-            thighBot: 0.095,
-            calfTop: 0.085,
-            calfBot: 0.07,
-            armTop: 0.065,
-            armBot: 0.05,
-            legLen: 0.86,
-            armLen: 0.52,
-            shoulderY: 1.56,
-            hipY: 0.9,
-            shoe: [0.2, 0.09, 0.3],
+            // Broader shoulders, narrower hips (realistic male frame)
+            shoulderW: 0.48,
+            chestW: 0.42,
+            chestD: 0.26,
+            waistW: 0.34,
+            hipW: 0.38,
+            hipD: 0.26,
+            hipH: 0.22,
+            torsoH: 0.54,
+            neckR: 0.065,
+            neckH: 0.12,
+            headR: 0.11,
+            headScale: [0.94, 1.06, 0.92],
+            thighTop: 0.1,
+            thighBot: 0.082,
+            calfTop: 0.072,
+            calfBot: 0.055,
+            armTop: 0.058,
+            armBot: 0.044,
+            legLen: 0.88,
+            armLen: 0.58,
+            shoulderY: 1.44,
+            hipY: 0.88,
+            shoe: [0.18, 0.065, 0.28],
             bust: 0,
-            hipOut: 0.12,
-            armOut: 0.34,
-            torsoScale: options.torsoScale || [1.04, 1, 0.95],
+            hipOut: 0.095,
+            armOut: 0.28,
+            armHang: 0.1,
+            legStance: 0.015,
+            torsoScale: options.torsoScale || [1, 1, 1],
             hipScale: options.hipScale || [1, 1, 1],
         };
     }
@@ -113,22 +127,35 @@ function resolveForm(options = {}) {
     const sf = options._shapeFactors;
     if (!sf) return base;
 
+    const sh = sf.shoulders || 1;
+    const ch = sf.chest || 1;
+    const wa = sf.waist || 1;
+    const hi = sf.hips || 1;
+    const mu = sf.muscle || 1;
+    const wt = sf.weight || 1;
+    // Soft coupling: weight fattens trunk more than extremities; muscle thickens limbs
+    const trunk = 0.55 + wt * 0.45;
+    const limbMu = 0.65 + mu * 0.35;
+    const limbWt = 0.85 + wt * 0.15;
+
     return {
         ...base,
-        shoulderW: base.shoulderW * (sf.shoulders || 1),
-        chestW: base.chestW * (sf.chest || 1) * (sf.weight || 1),
-        chestD: base.chestD * (0.92 + (sf.chest || 1) * 0.08) * (sf.weight || 1),
-        waistW: base.waistW * (sf.waist || 1) * (sf.weight || 1),
-        hipW: base.hipW * (sf.hips || 1) * (sf.weight || 1),
-        hipD: base.hipD * (0.94 + (sf.hips || 1) * 0.06) * (sf.weight || 1),
-        thighTop: base.thighTop * (sf.muscle || 1) * (sf.weight || 1),
-        thighBot: base.thighBot * (sf.muscle || 1),
-        calfTop: base.calfTop * (0.95 + (sf.muscle || 1) * 0.05),
-        armTop: base.armTop * (sf.muscle || 1),
-        armBot: base.armBot * (sf.muscle || 1),
-        armOut: base.armOut * (0.92 + (sf.shoulders || 1) * 0.08),
-        hipOut: base.hipOut * (0.92 + (sf.hips || 1) * 0.08),
-        bust: base.bust * (0.65 + (sf.chest || 1) * 0.7),
+        shoulderW: base.shoulderW * sh * (0.92 + wt * 0.08),
+        chestW: base.chestW * ch * trunk,
+        chestD: base.chestD * (0.88 + ch * 0.12) * trunk,
+        waistW: base.waistW * wa * trunk,
+        hipW: base.hipW * hi * trunk,
+        hipD: base.hipD * (0.9 + hi * 0.1) * trunk,
+        thighTop: base.thighTop * limbMu * limbWt,
+        thighBot: base.thighBot * limbMu,
+        calfTop: base.calfTop * (0.9 + mu * 0.1) * limbWt,
+        calfBot: base.calfBot * (0.92 + mu * 0.08),
+        armTop: base.armTop * limbMu,
+        armBot: base.armBot * limbMu,
+        armOut: base.armOut * (0.9 + sh * 0.1),
+        hipOut: base.hipOut * (0.9 + hi * 0.1),
+        neckR: base.neckR * (0.94 + mu * 0.04 + wt * 0.02),
+        bust: base.bust * (0.55 + ch * 0.9) * (0.9 + wt * 0.1),
         torsoScale: options.torsoScale || base.torsoScale,
         hipScale: options.hipScale || base.hipScale,
     };
@@ -184,120 +211,217 @@ export const HumanMesh = {
         const f = resolveForm(options);
         const ts = f.torsoScale;
         const hs = f.hipScale;
+        const neckH = f.neckH || 0.12;
 
-        const matSkin = new THREE.MeshStandardMaterial({ color: skin, roughness: rough, metalness: 0.02 });
-        const matShirt = new THREE.MeshStandardMaterial({ color: shirt, roughness: rough * 0.95, metalness: 0.03 });
-        const matPants = new THREE.MeshStandardMaterial({ color: pants, roughness: 0.88, metalness: 0.02 });
-        const matHair = new THREE.MeshStandardMaterial({ color: hair, roughness: 0.96, metalness: 0 });
-        const matShoe = new THREE.MeshStandardMaterial({ color: 0x141414, roughness: 0.68, metalness: 0.06 });
-        const eyeMat = new THREE.MeshStandardMaterial({ color: 0x151515, roughness: 0.4 });
+        // PBR-friendly skin: slight SSS-like soft specular (low metal, mid roughness)
+        const matSkin = new THREE.MeshStandardMaterial({
+            color: skin,
+            roughness: Math.min(0.92, rough + 0.08),
+            metalness: 0.02,
+            envMapIntensity: 0.35,
+        });
+        const matShirt = new THREE.MeshStandardMaterial({
+            color: shirt,
+            roughness: Math.min(0.95, rough * 0.95 + 0.05),
+            metalness: 0.04,
+            envMapIntensity: 0.4,
+        });
+        const matPants = new THREE.MeshStandardMaterial({
+            color: pants,
+            roughness: 0.9,
+            metalness: 0.02,
+            envMapIntensity: 0.3,
+        });
+        const matHair = new THREE.MeshStandardMaterial({
+            color: hair,
+            roughness: 0.94,
+            metalness: 0.02,
+            envMapIntensity: 0.25,
+        });
+        const matShoe = new THREE.MeshStandardMaterial({
+            color: 0x1a1a1c,
+            roughness: 0.72,
+            metalness: 0.08,
+        });
+        const eyeMat = new THREE.MeshStandardMaterial({
+            color: 0x1a1a1c,
+            roughness: 0.25,
+            metalness: 0.15,
+        });
+        const scleraMat = new THREE.MeshStandardMaterial({
+            color: 0xf2f0ea,
+            roughness: 0.45,
+            metalness: 0.02,
+        });
 
         const group = new THREE.Group();
         group.name = 'human_avatar';
         group.userData.bodyForm = f.form;
+        group.userData.realismPass = '10.21';
 
-        const hips = new THREE.Mesh(new THREE.BoxGeometry(f.hipW, f.hipH, f.hipD), matPants);
+        // Pelvis — rounded, not a flat box
+        const hips = new THREE.Group();
+        hips.name = 'hips';
         hips.position.y = f.hipY;
         hips.scale.set(hs[0], hs[1], hs[2]);
-        hips.name = 'hips';
-        hips.castShadow = true;
+        const pelvis = new THREE.Mesh(
+            new THREE.SphereGeometry(f.hipW * 0.48, SEG, SEG_LO),
+            matPants
+        );
+        pelvis.scale.set(1, (f.hipH * 1.15) / (f.hipW * 0.48), f.hipD / f.hipW);
+        pelvis.castShadow = true;
+        pelvis.receiveShadow = true;
+        hips.add(pelvis);
 
+        // Torso — three taper rings (pelvis→waist→ribcage) for natural silhouette
         const torso = new THREE.Group();
         torso.name = 'torso';
-        torso.position.y = f.hipY + f.hipH * 0.5 + f.torsoH * 0.5;
+        torso.position.y = f.hipY + f.hipH * 0.35 + f.torsoH * 0.48;
         torso.scale.set(ts[0], ts[1], ts[2]);
 
-        const waist = new THREE.Mesh(
-            new THREE.CylinderGeometry(f.waistW * 0.48, f.hipW * 0.42, f.torsoH * 0.35, SEG),
+        const lower = new THREE.Mesh(
+            new THREE.CylinderGeometry(f.waistW * 0.5, f.hipW * 0.42, f.torsoH * 0.32, SEG),
             matShirt
         );
-        waist.position.y = -f.torsoH * 0.28;
-        waist.castShadow = true;
+        lower.position.y = -f.torsoH * 0.32;
+        lower.castShadow = true;
+
+        const mid = new THREE.Mesh(
+            new THREE.CylinderGeometry(f.waistW * 0.52, f.waistW * 0.5, f.torsoH * 0.22, SEG),
+            matShirt
+        );
+        mid.position.y = -f.torsoH * 0.08;
+        mid.castShadow = true;
 
         const chest = new THREE.Mesh(
-            new THREE.CylinderGeometry(f.chestW * 0.5, f.waistW * 0.48, f.torsoH * 0.55, SEG),
+            new THREE.CylinderGeometry(f.chestW * 0.48, f.waistW * 0.52, f.torsoH * 0.48, SEG),
             matShirt
         );
-        chest.position.y = f.torsoH * 0.08;
-        chest.scale.z = f.chestD / (f.chestW * 0.55);
+        chest.position.y = f.torsoH * 0.18;
+        chest.scale.z = Math.max(0.75, f.chestD / Math.max(0.12, f.chestW * 0.55));
         chest.castShadow = true;
-        torso.add(waist, chest);
+        torso.add(lower, mid, chest);
 
-        if (f.bust > 0) {
-            const bustL = new THREE.Mesh(new THREE.SphereGeometry(f.bust, 10, 8), matShirt);
-            bustL.position.set(-f.chestW * 0.18, f.torsoH * 0.12, f.chestD * 0.38);
-            bustL.scale.set(1, 0.85, 0.75);
+        if (f.bust > 0.01) {
+            const bustL = new THREE.Mesh(new THREE.SphereGeometry(f.bust, SEG_LO, 10), matShirt);
+            bustL.position.set(-f.chestW * 0.16, f.torsoH * 0.14, f.chestD * 0.42);
+            bustL.scale.set(1.05, 0.9, 0.82);
             bustL.castShadow = true;
             const bustR = bustL.clone();
             bustR.position.x = -bustL.position.x;
             torso.add(bustL, bustR);
         }
 
-        const shoulders = new THREE.Mesh(
-            new THREE.BoxGeometry(f.shoulderW, 0.12, f.chestD * 0.95),
+        // Shoulders — deltoid spheres + soft bar (not a hard box)
+        const shoulders = new THREE.Group();
+        shoulders.name = 'shoulders';
+        shoulders.position.y = f.shoulderY;
+        const shoulderBar = new THREE.Mesh(
+            new THREE.CapsuleGeometry(
+                Math.min(0.055, f.chestD * 0.22),
+                Math.max(0.08, f.shoulderW - 0.12),
+                6,
+                SEG_LO
+            ),
             matShirt
         );
-        shoulders.position.y = f.shoulderY;
-        shoulders.name = 'shoulders';
-        shoulders.castShadow = true;
+        shoulderBar.rotation.z = Math.PI / 2;
+        shoulderBar.castShadow = true;
+        const deltoidR = 0.055 + f.armTop * 0.35;
+        const delL = new THREE.Mesh(new THREE.SphereGeometry(deltoidR, SEG_LO, 10), matShirt);
+        delL.position.set(-f.shoulderW * 0.42, -0.01, 0);
+        delL.scale.set(1.05, 0.85, 0.95);
+        delL.castShadow = true;
+        const delR = delL.clone();
+        delR.position.x = -delL.position.x;
+        shoulders.add(shoulderBar, delL, delR);
 
         const collar = new THREE.Mesh(
-            new THREE.BoxGeometry(f.chestW * 0.72, 0.055, f.chestD * 0.9),
+            new THREE.CylinderGeometry(f.chestW * 0.28, f.chestW * 0.34, 0.05, SEG),
             matShirt
         );
-        collar.position.set(0, f.shoulderY + 0.07, 0.02);
+        collar.position.set(0, f.shoulderY + 0.05, 0.01);
         collar.name = 'collar';
         collar.castShadow = true;
 
+        // Neck — capsule taper into head
         const neck = new THREE.Mesh(
-            new THREE.CylinderGeometry(f.neckR * 0.92, f.neckR, 0.12, SEG),
+            new THREE.CylinderGeometry(f.neckR * 0.88, f.neckR * 1.05, neckH, SEG),
             matSkin
         );
-        neck.position.y = f.shoulderY + 0.14;
+        neck.position.y = f.shoulderY + 0.04 + neckH * 0.5;
         neck.name = 'neck';
         neck.castShadow = true;
 
-        const head = new THREE.Mesh(new THREE.SphereGeometry(f.headR, 24, 20), matSkin);
-        head.position.y = f.shoulderY + 0.28;
+        // Head — slightly egg-shaped (realistic cranial ratio)
+        const head = new THREE.Mesh(new THREE.SphereGeometry(f.headR, 28, 22), matSkin);
+        head.position.y = f.shoulderY + 0.04 + neckH + f.headR * 0.85;
         head.scale.set(f.headScale[0], f.headScale[1], f.headScale[2]);
         head.name = 'head';
         head.castShadow = true;
 
         const hairCap = new THREE.Mesh(
-            new THREE.SphereGeometry(f.headR * 1.08, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.52),
+            new THREE.SphereGeometry(f.headR * 1.06, 18, 14, 0, Math.PI * 2, 0, Math.PI * 0.55),
             matHair
         );
-        hairCap.position.y = head.position.y + f.headR * 0.12;
+        hairCap.position.y = head.position.y + f.headR * f.headScale[1] * 0.08;
+        hairCap.scale.copy(head.scale);
         hairCap.name = 'hairCap';
         hairCap.castShadow = true;
 
-        const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.022, 8, 8), eyeMat);
-        eyeL.position.set(-0.055, head.position.y + 0.02, f.headR * 0.82);
+        // Eyes: sclera + iris (reads as human, not black dots)
+        const eyeY = head.position.y + f.headR * 0.06;
+        const eyeZ = f.headR * f.headScale[2] * 0.78;
+        const eyeX = f.headR * 0.32;
+        const scleraL = new THREE.Mesh(new THREE.SphereGeometry(0.018, 10, 8), scleraMat);
+        scleraL.position.set(-eyeX, eyeY, eyeZ);
+        scleraL.scale.set(1.15, 0.85, 0.7);
+        const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.01, 8, 8), eyeMat);
+        eyeL.position.set(-eyeX, eyeY, eyeZ + 0.008);
+        const scleraR = scleraL.clone();
+        scleraR.position.x = eyeX;
         const eyeR = eyeL.clone();
-        eyeR.position.x = 0.055;
+        eyeR.position.x = eyeX;
 
-        const nose = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 6), matSkin);
-        nose.position.set(0, head.position.y - 0.01, f.headR * 0.88);
-        nose.scale.set(0.7, 0.9, 1.1);
+        const nose = new THREE.Mesh(new THREE.SphereGeometry(0.016, 10, 8), matSkin);
+        nose.position.set(0, head.position.y - f.headR * 0.05, f.headR * f.headScale[2] * 0.88);
+        nose.scale.set(0.65, 0.95, 1.15);
 
-        // Legs
+        // Legs — tapered thigh/calf + subtle natural stance
         const buildLeg = (sign) => {
             const legMesh = new THREE.Group();
             const thigh = new THREE.Mesh(
-                new THREE.CylinderGeometry(f.thighBot, f.thighTop, f.legLen * 0.48, SEG),
+                new THREE.CylinderGeometry(f.thighBot, f.thighTop, f.legLen * 0.46, SEG),
                 matPants
             );
-            thigh.position.y = -f.legLen * 0.24;
+            thigh.position.y = -f.legLen * 0.23;
+            thigh.castShadow = true;
+            const knee = new THREE.Mesh(new THREE.SphereGeometry(f.thighBot * 0.95, SEG_LO, 8), matPants);
+            knee.position.y = -f.legLen * 0.46;
+            knee.scale.set(1.05, 0.7, 1.05);
             const calf = new THREE.Mesh(
-                new THREE.CylinderGeometry(f.calfBot, f.calfTop, f.legLen * 0.42, SEG),
+                new THREE.CylinderGeometry(f.calfBot, f.calfTop, f.legLen * 0.4, SEG),
                 matPants
             );
             calf.position.y = -f.legLen * 0.66;
-            const shoe = new THREE.Mesh(new THREE.BoxGeometry(f.shoe[0], f.shoe[1], f.shoe[2]), matShoe);
-            shoe.position.set(0, -f.legLen * 0.92, f.shoe[2] * 0.12);
-            legMesh.add(thigh, calf, shoe);
-            legMesh.traverse((c) => { if (c.isMesh) c.castShadow = true; });
-            return limbGroup(legMesh, f.hipY, sign * f.hipOut);
+            calf.castShadow = true;
+            const shoe = new THREE.Mesh(
+                new THREE.BoxGeometry(f.shoe[0], f.shoe[1], f.shoe[2]),
+                matShoe
+            );
+            shoe.position.set(0, -f.legLen * 0.9, f.shoe[2] * 0.1);
+            // Soft toe bevel via front sphere
+            const toe = new THREE.Mesh(
+                new THREE.SphereGeometry(f.shoe[1] * 0.55, 8, 6),
+                matShoe
+            );
+            toe.position.set(0, -f.legLen * 0.9, f.shoe[2] * 0.38);
+            toe.scale.set(f.shoe[0] * 2.2, 1, 1.4);
+            legMesh.add(thigh, knee, calf, shoe, toe);
+            legMesh.traverse((c) => { if (c.isMesh) { c.castShadow = true; c.receiveShadow = true; } });
+            const g = limbGroup(legMesh, f.hipY - f.hipH * 0.15, sign * f.hipOut);
+            g.rotation.x = f.legStance || 0;
+            return g;
         };
 
         const legL = buildLeg(-1);
@@ -305,24 +429,34 @@ export const HumanMesh = {
         const legR = buildLeg(1);
         legR.name = 'legR';
 
+        // Arms — deltoid root, natural hang, tapered forearm, soft hand
         const buildArm = (sign) => {
             const armMesh = new THREE.Group();
             const upper = new THREE.Mesh(
-                new THREE.CylinderGeometry(f.armBot * 1.05, f.armTop, f.armLen * 0.52, SEG),
+                new THREE.CylinderGeometry(f.armBot * 1.08, f.armTop, f.armLen * 0.48, SEG),
                 matSkin
             );
-            upper.position.y = -f.armLen * 0.26;
+            upper.position.y = -f.armLen * 0.24;
+            upper.castShadow = true;
+            const elbow = new THREE.Mesh(new THREE.SphereGeometry(f.armBot * 1.05, 10, 8), matSkin);
+            elbow.position.y = -f.armLen * 0.48;
             const lower = new THREE.Mesh(
-                new THREE.CylinderGeometry(f.armBot * 0.9, f.armBot * 1.05, f.armLen * 0.42, SEG),
+                new THREE.CylinderGeometry(f.armBot * 0.85, f.armBot * 1.05, f.armLen * 0.4, SEG),
                 matSkin
             );
             lower.position.y = -f.armLen * 0.68;
-            const hand = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.1, 0.045), matSkin);
-            hand.position.y = -f.armLen * 0.95;
-            armMesh.add(upper, lower, hand);
+            lower.castShadow = true;
+            const hand = new THREE.Mesh(
+                new THREE.SphereGeometry(0.038, 10, 8),
+                matSkin
+            );
+            hand.position.y = -f.armLen * 0.92;
+            hand.scale.set(0.85, 1.15, 0.55);
+            armMesh.add(upper, elbow, lower, hand);
             armMesh.traverse((c) => { if (c.isMesh) c.castShadow = true; });
-            const g = limbGroup(armMesh, f.shoulderY - 0.02, sign * f.armOut);
-            g.rotation.z = sign * 0.08;
+            const g = limbGroup(armMesh, f.shoulderY - 0.03, sign * f.armOut);
+            g.rotation.z = sign * (f.armHang || 0.1);
+            g.rotation.x = 0.06;
             return g;
         };
 
@@ -331,7 +465,11 @@ export const HumanMesh = {
         const armR = buildArm(1);
         armR.name = 'armR';
 
-        group.add(hips, torso, shoulders, collar, neck, head, hairCap, eyeL, eyeR, nose, legL, legR, armL, armR);
+        group.add(
+            hips, torso, shoulders, collar, neck, head, hairCap,
+            scleraL, eyeL, scleraR, eyeR, nose,
+            legL, legR, armL, armR
+        );
         group.userData.humanParts = {
             hips,
             torso,
@@ -597,17 +735,25 @@ export const HumanMesh = {
         // Prefer morphs on GLB when available
         const usedMorph = applyMorphShape(group, shape);
 
-        const factor = (v, minM = 0.82, maxM = 1.18) => {
+        // Ease curves — avoid cartoon extremes at slider edges
+        const factor = (v, minM = 0.84, maxM = 1.16) => {
             const t = Math.min(1, Math.max(0, Number(v) || 0.5));
             if (t <= 0.5) return minM + (1 - minM) * (t / 0.5);
             return 1 + (maxM - 1) * ((t - 0.5) / 0.5);
         };
-        const sh = factor(shape.shoulders, 0.78, 1.22);
-        const ch = factor(shape.chest, 0.8, 1.2);
-        const wa = factor(shape.waist, 0.75, 1.25);
-        const hi = factor(shape.hips, 0.8, 1.22);
-        const mu = factor(shape.muscle, 0.85, 1.2);
+        const sh = factor(shape.shoulders, 0.82, 1.18);
+        const ch = factor(shape.chest, 0.84, 1.16);
+        const wa = factor(shape.waist, 0.8, 1.2);
+        const hi = factor(shape.hips, 0.84, 1.18);
+        const mu = factor(shape.muscle, 0.88, 1.14);
         const wt = factor(shape.weight, 0.9, 1.12);
+        const trunk = 0.55 + wt * 0.45;
+        const limbMu = 0.7 + mu * 0.3;
+        const limbWt = 0.88 + wt * 0.12;
+        // Female GLB soft-scale: emphasize hips/waist; male: shoulders/chest
+        const female = (opts.bodyId || profileOrShape?.bodyId) === 'female_default';
+        const hipBias = female ? 1.04 : 0.98;
+        const shBias = female ? 0.97 : 1.03;
 
         if (!usedMorph) {
             const parts = group.userData?.humanParts;
@@ -621,16 +767,25 @@ export const HumanMesh = {
                         armR: capturePartScale(parts.armR),
                         legL: capturePartScale(parts.legL),
                         legR: capturePartScale(parts.legR),
+                        neck: capturePartScale(parts.neck),
                     };
                 }
                 const b = group.userData._shapeBaseScales;
-                setPartScale(parts.hips, b.hips, hi * wt, 1, hi * wt);
-                setPartScale(parts.torso, b.torso, ch * wt * (0.5 + wa * 0.5), 1, ch * wt);
-                setPartScale(parts.shoulders, b.shoulders, sh, 1, sh * 0.95);
-                setPartScale(parts.armL, b.armL, mu, 1, mu);
-                setPartScale(parts.armR, b.armR, mu, 1, mu);
-                setPartScale(parts.legL, b.legL, mu * (0.95 + wt * 0.05), 1, mu);
-                setPartScale(parts.legR, b.legR, mu * (0.95 + wt * 0.05), 1, mu);
+                // Anatomical soft scale: trunk girth separate from limb mass
+                setPartScale(parts.hips, b.hips, hi * trunk * hipBias, 1, hi * trunk * hipBias);
+                setPartScale(
+                    parts.torso,
+                    b.torso,
+                    (ch * 0.55 + wa * 0.45) * trunk * shBias,
+                    1,
+                    ch * trunk
+                );
+                setPartScale(parts.shoulders, b.shoulders, sh * shBias, 1, sh * 0.96);
+                setPartScale(parts.armL, b.armL, limbMu, 1, limbMu);
+                setPartScale(parts.armR, b.armR, limbMu, 1, limbMu);
+                setPartScale(parts.legL, b.legL, limbMu * limbWt, 1, limbMu * limbWt);
+                setPartScale(parts.legR, b.legR, limbMu * limbWt, 1, limbMu * limbWt);
+                if (b.neck) setPartScale(parts.neck, b.neck, 0.96 + mu * 0.04, 1, 0.96 + mu * 0.04);
             } else if (group.userData?.isGltf) {
                 // Soft scale common bone/mesh names on GLB without morphs
                 if (!group.userData._shapeBaseGltf) {
@@ -638,7 +793,7 @@ export const HumanMesh = {
                     group.traverse((c) => {
                         const n = (c.name || '').toLowerCase();
                         if (!n || !c.isObject3D) return;
-                        if (/hips|pelvis|torso|spine|chest|shoulder|upperarm|thigh|leg/.test(n)) {
+                        if (/hips|pelvis|torso|spine|chest|shoulder|upperarm|thigh|leg|neck|clavicle|forearm/.test(n)) {
                             map[c.uuid] = { obj: c, scale: capturePartScale(c), name: n };
                         }
                     });
@@ -648,17 +803,21 @@ export const HumanMesh = {
                     const n = entry.name;
                     let mx = 1;
                     let mz = 1;
-                    if (/hips|pelvis/.test(n)) { mx = hi * wt; mz = hi * wt; }
-                    else if (/torso|spine|chest/.test(n)) { mx = ch * wt * (0.5 + wa * 0.5); mz = ch * wt; }
-                    else if (/shoulder/.test(n)) { mx = sh; mz = sh; }
-                    else if (/upperarm|arm/.test(n)) { mx = mu; mz = mu; }
-                    else if (/thigh|leg/.test(n)) { mx = mu * wt; mz = mu; }
+                    if (/hips|pelvis/.test(n)) { mx = hi * trunk * hipBias; mz = mx; }
+                    else if (/torso|spine|chest/.test(n)) {
+                        mx = (ch * 0.55 + wa * 0.45) * trunk * shBias;
+                        mz = ch * trunk;
+                    }
+                    else if (/shoulder|clavicle/.test(n)) { mx = sh * shBias; mz = sh * 0.96; }
+                    else if (/upperarm|forearm|arm/.test(n)) { mx = limbMu; mz = limbMu; }
+                    else if (/thigh|leg/.test(n)) { mx = limbMu * limbWt; mz = mx; }
+                    else if (/neck/.test(n)) { mx = 0.96 + mu * 0.04; mz = mx; }
                     setPartScale(entry.obj, entry.scale, mx, 1, mz);
                 });
             }
         }
 
-        // Overall height — uniform scale vs body default
+        // Height: mostly Y so body doesn't balloon sideways when taller/shorter
         const bodyId = opts.bodyId || profileOrShape?.bodyId || 'male_default';
         const defaultH = opts.defaultHeightM
             ?? (bodyId === 'female_default' ? 1.65 : 1.75);
@@ -666,6 +825,8 @@ export const HumanMesh = {
             ? Number(shape.heightM)
             : defaultH;
         const hScale = targetH / defaultH;
+        // Slight XZ compensate so tall avatars stay slender (allometric-ish)
+        const xzScale = 1 + (hScale - 1) * 0.35;
         if (!group.userData._shapeBaseRootScale) {
             group.userData._shapeBaseRootScale = {
                 x: group.scale.x,
@@ -674,8 +835,8 @@ export const HumanMesh = {
             };
         }
         const rs = group.userData._shapeBaseRootScale;
-        group.scale.set(rs.x * hScale, rs.y * hScale, rs.z * hScale);
-        group.userData.bodyShape = { ...shape, appliedAt: Date.now() };
+        group.scale.set(rs.x * xzScale, rs.y * hScale, rs.z * xzScale);
+        group.userData.bodyShape = { ...shape, appliedAt: Date.now(), realism: true };
         return true;
     },
 };

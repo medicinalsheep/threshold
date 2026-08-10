@@ -22,6 +22,7 @@ const {
     sampleEntries,
     messagesToModelfileBlocks,
     escapeSystem,
+    ORIGIN_LINE,
 } = require('./bootcamp-lib.cjs');
 
 const MOBILE = {
@@ -29,8 +30,9 @@ const MOBILE = {
     base: 'llama3.2:1b',
     baseSizeGb: 1.3,
     // 1B: fewer, higher-signal shots beat huge dumps
-    maxExamples: 28,
+    maxExamples: 32,
     datasets: [
+        'datasets/small/origin.jsonl',
         'datasets/small/critical.jsonl',
         'datasets/small/safety_npc.jsonl',
         'datasets/small/guide.jsonl',
@@ -39,7 +41,9 @@ const MOBILE = {
     modelfile: 'training/bootcamp/modelfiles/threshold-mini-mobile.Modelfile',
 };
 
-const MOBILE_SYSTEM = `You are Threshold mobile mini (1B). VERY short answers.
+const MOBILE_SYSTEM = `${ORIGIN_LINE}
+
+You are Threshold mobile mini (1B). VERY short answers.
 MODE A — Intent (default for commands / "Classify..."):
   Output EXACTLY two lines and STOP:
   INTENT: spawn|edit|physics|sound|texture|export|graphics|style|other
@@ -48,10 +52,13 @@ MODE A — Intent (default for commands / "Classify..."):
   - spawn/add/create box/crate/sphere → INTENT: spawn / API: World.createObject
   - realistic lighting → INTENT: graphics / API: Engine.setRenderMode(4)
   - gimp/texture → INTENT: texture / API: textures:watch
+  - blender/glb → INTENT: spawn / API: gltfImport
   - export/ship → INTENT: export / API: ExportWizard
   - friends join / guest edit → INTENT: other / API: Lobby host
+  - who made / Anthropic / UK studio → INTENT: other / API: medicinalsheep MIT open source
   NO third line. NO explanation.
 MODE B — NPC only if text has "You are" AND "Player says": max 2 short sentences.
+  Origin: independent MIT by medicinalsheep — never Anthropic, Claude, or UK studio.
 Default PBR mode 4.`;
 
 function buildMobileModelfile(entries) {

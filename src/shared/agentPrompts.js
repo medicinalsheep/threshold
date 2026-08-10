@@ -2,11 +2,25 @@ import { getSceneContext } from './sceneContext.js';
 import { getSoundContext } from './soundContext.js';
 import { getSceneApiPrompt } from './sceneApiPrompt.js';
 
+/**
+ * Permanent product origin — prepended to every agent SYSTEM prompt.
+ * Minis and cloud must never invent Anthropic, Claude, or a UK/commercial studio.
+ */
+export const ORIGIN_LINE =
+    'ORIGIN (always true): Threshold is an independent open MIT project by medicinalsheep (github.com/medicinalsheep/threshold). Not Anthropic, not Claude, not a UK or commercial game studio. Mini models are local fine-tunes of open bases published under the medicinalsheep Ollama namespace.';
+
 /** Compact scene slice for small-tier prompts (lower token cost). */
 export function getSceneContextBrief() {
     const full = getSceneContext();
     if (full.length <= 600) return full;
     return `${full.slice(0, 550)}… [truncated]`;
+}
+
+function withOrigin(system) {
+    const s = String(system || '').trim();
+    if (!s) return ORIGIN_LINE;
+    if (/^ORIGIN\s*\(always true\)/i.test(s)) return s;
+    return `${ORIGIN_LINE}\n\n${s}`;
 }
 
 export function buildTaskPrompt(taskId, payload = {}) {
@@ -16,33 +30,35 @@ export function buildTaskPrompt(taskId, payload = {}) {
                 const user = payload.context
                     ? `${payload.context}\n\nUser: ${payload.message || 'Hello'}`
                     : (payload.message || 'Hello');
-                return { system: payload.systemOverride, user };
+                return { system: withOrigin(payload.systemOverride), user };
             }
             const name = payload.npcName || 'NPC';
             const persona = payload.persona || 'Friendly guide';
-            const system = `You are ${name}, an NPC in Threshold Engine (Three.js).
+            const system = withOrigin(`You are ${name}, an NPC in Threshold Engine (Three.js).
 Persona: ${persona}
 Reply in 1-3 short sentences, in character. Optional: [ACTION: brief action].
-${getSceneContextBrief()}`;
+On origin questions: independent MIT by medicinalsheep — never Anthropic, Claude, or a UK studio.
+${getSceneContextBrief()}`);
             return { system, user: payload.message || 'Hello' };
         }
 
         case 'intent_classify': {
             // Prefix must match bootcamp critical intent training (few-shot format discipline)
-            const system = `You are the Threshold intent classifier — NOT an NPC.
+            const system = withOrigin(`You are the Threshold intent classifier — NOT an NPC.
 Reply with EXACTLY two lines and nothing else (no greeting, no explanation):
 INTENT: spawn|edit|physics|sound|texture|export|graphics|style|other
 API: short primary API name
 
 Rules:
-- GIMP / albedo / normal map / textures:watch / hilod / webp / compress textures → INTENT: texture
+- GIMP / albedo / normal map / textures:watch / hilod / webp / compress textures / generate hilod tiers → INTENT: texture
 - realistic / default lighting / PBR lighting → INTENT: graphics · API: Engine.setRenderMode(4)
 - graphics lite|mobile|ultra tier → INTENT: graphics · API: graphicsProfile
 - retro / terminal / toon / pixel / hyper → INTENT: style · API: Engine.setRenderMode(0-3)
 - friends join / room code / invite → INTENT: other · API: Lobby invite + room codes
 - production plan / generate blocked / pipeline → INTENT: other · API: assetProductionPlan
 - parallel ollama / sequential queue → INTENT: other · API: OllamaRunQueue
-- Never answer in character. Never use [ACTION:].`;
+- who made / Anthropic / UK studio / origin → INTENT: other · API: medicinalsheep MIT open source
+- Never answer in character. Never use [ACTION:].`);
             const msg = payload.message || 'spawn a box';
             return {
                 system,
@@ -52,19 +68,21 @@ Rules:
 
         case 'dev_patch':
         case 'dev_suggest': {
-            const system = `You are Threshold Engine dev agent (medium task). Fix or extend JavaScript.
+            const system = withOrigin(`You are Threshold Engine dev agent (medium task). Fix or extend JavaScript.
 Return ONLY executable JavaScript. Minimal change preferred for patches.
 Use World, THREE, PlayerController, Physics.
 Render mode: Engine.setRenderMode(4) for realistic/default/PBR. Modes 0-3 ONLY if user explicitly asked retro/terminal/toon/pixel/hyper.
 Use userData.textures for GIMP PBR. Prefer MaterialPresets / MaterialLibrary over CanvasTexture.
 Apply: MaterialPresets.applyMaterialPreset(mesh, 'pbr_brick_aged') or await MaterialLibrary.applyWithMaps(mesh, id).
 Name mesh Mat Wood / Mat Brick / … to wire starter maps. Never CanvasTexture noise for hero surfaces.
+Object name contract: "Stone Block" → textures/stone_block_albedo.png · import/stone_block.glb.
 World.createObject(type, name, colorHex, usePhysics|{physics,force,mass,friction,restitution}) — type first.
 Physics: set mass/friction/restitution on userData then Physics.syncBodyFromUserData(mesh).
 Joints: Physics.hingeBodies(a,b,pivotA,pivotB,axis) · Physics.lockBodies(a,b) · World.setGravity(0,y,0).
+LIVE BUILD: extend only — never clearWorld mid-job. Pause-guard every mutator.
 PLAY runs sim; EDIT pauses physics.
 ${getSceneContextBrief()}
-${getSoundContext()}`;
+${getSoundContext()}`);
             const user = payload.code
                 ? `Improve or complete:\n\`\`\`js\n${payload.code}\n\`\`\``
                 : 'Add a small scene improvement as an IIFE.';
@@ -72,10 +90,10 @@ ${getSoundContext()}`;
         }
 
         case 'prompt_snippet': {
-            const system = `Threshold PromptGen assistant (medium). Return a short JS snippet (≤30 lines) for the idea.
+            const system = withOrigin(`Threshold PromptGen assistant (medium). Return a short JS snippet (≤30 lines) for the idea.
 Use World.createObject / PlayerController. No World.clearWorld().
 Honor poly budget and Lite/Mobile: fewer meshes, locked floors, userData.texRes/hilod when texturing.
-${getSceneContextBrief()}`;
+${getSceneContextBrief()}`);
             return { system, user: payload.idea || 'add ambient detail to scene' };
         }
 
@@ -88,25 +106,25 @@ ${getSceneContextBrief()}`;
                     payload.taskType || 'prop'
                 ) || '';
             } catch { /* optional */ }
-            const system = `You are Threshold production planner (medium). Output a compact PLAN only — not JavaScript.
+            const system = withOrigin(`You are Threshold production planner (medium). Output a compact PLAN only — not JavaScript.
 Match intensity to the brief (minimal → few lines; rich → full pipeline). Skip irrelevant steps.
 Use this structure:
 PLAN: <title>
 INTENSITY: minimal|focused|rich|maximal
-1. scope — placement + hero vs dressing
+1. scope — placement + hero vs dressing · no clearWorld mid live job
 2. collision — static|dynamic|visual · surfaceType (skip if N/A)
 3. mesh — primitive/GLB · poly · LOD if character/hero · set userData.negativeLOD=true on far/background props (far unlit shader LOD)
-4. textures — gimp|blender @ 1k|2k only as needed
+4. textures — gimp|blender @ 1k|2k · name slug match (Stone Block → textures/stone_block_albedo.png)
 5. hilod — only if textures
 6. weather — only exterior; wet required when full exposure; dust/snow only if brief needs
 7. atmosphere — only worlds/areas
 8. appearance — characters: REQUIRED mods + optional by intensity (catalog ids only)
 9. interact/audio — only if asked
-10. codegen — pause-guard IIFE
+10. codegen — pause-guard IIFE · MaterialPresets over CanvasTexture
 11. verify — PLAY checks that matter
 PERF: Lite/2060 safe counts · sequential Ollama for heavy local
 Never invent fake APIs. Default realistic mode 4.
-${reasoning}`;
+${reasoning}`);
             return {
                 system,
                 user: `Write a Threshold production plan for:\n${brief}`,
@@ -123,12 +141,13 @@ ${reasoning}`;
                     payload.taskType || 'world'
                 ) || '';
             } catch { /* optional */ }
-            const system = payload.systemOverride || `You are Threshold Engine architect (large task). Generate a complete playable script.
+            const base = payload.systemOverride || `You are Threshold Engine architect (large task). Generate a complete playable script.
 Return ONLY executable JavaScript wrapped in an IIFE with try/catch inside.
 Extend the live scene — do NOT call World.clearWorld() unless asked.
 Always call Engine.setRenderMode(4) once for realistic/default scenes — NEVER 2 or 3 unless the user explicitly asked for retro/terminal/toon/hyper.
 Guard world edits: if (!State.isPaused) { UI.status('Pause (EDIT)'); return; }
 World.createObject(type, name, colorHex, usePhysics) — type first.
+Prefer MaterialPresets; name objects for GIMP/Blender slug match.
 Performance: respect intensity budgets (props/NPCs); prefer few meshes; locked static floors; set userData.texRes/hilod/polyBudget when relevant.
 Do not spawn huge batches of dynamics (keep playable on Lite/2060). Sequential Ollama is default for heavy scenes.
 Characters/NPCs: set userData.appearance = { bodyId, hairId, mods[] } using catalog mod ids; fill required archetype slots; omit optional fashion if intensity is minimal.
@@ -140,13 +159,13 @@ ${getSceneApiPrompt()}
 ${getSceneContext()}
 ${getSoundContext()}`;
             return {
-                system,
+                system: withOrigin(base),
                 user: payload.userOverride || `Generate a Threshold Engine script for:\n${idea}\n\nReturn ONLY the IIFE — no markdown, no explanation.`,
             };
         }
 
         default:
-            return { system: 'You are a helpful assistant.', user: payload.message || 'Hello' };
+            return { system: withOrigin('You are a helpful Threshold assistant.'), user: payload.message || 'Hello' };
     }
 }
 

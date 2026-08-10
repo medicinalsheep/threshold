@@ -1,4 +1,4 @@
-# Getting started with Threshold (v10.20.1)
+# Getting started with Threshold (v10.21.1)
 
 One linear path from lobby to shipping — **terminal grid** default (empty quality baseline), Agent Portal, tiered agents, and optional **TC** export practice.
 

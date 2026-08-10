@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → local GIMP/Blender art → tiered AI agents (Ollama + Grok).
 
-**Current version:** **10.20.1**
+**Current version:** **10.21.1**
 
 **Forward plan:** [ROADMAP.md](ROADMAP.md) · **Snapshot:** [CAPABILITIES.md](CAPABILITIES.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
@@ -62,8 +62,8 @@ See [GETTING_STARTED.md](GETTING_STARTED.md) · [STREAMLINED_DEV.md](STREAMLINED
 | **AgentRouter** | small / medium / large task routing | `agentRouter.js` |
 | **Ollama** | NPC chat, SMART DEV, local PromptGen | localhost only |
 | **Grok** | Large scenes, fallback | xAI key (console.x.ai) — [AUTH.md](AUTH.md) |
-| **X** | Identity / feed / posts (optional) | OAuth PKCE — not an AI provider |
-| **Mini trained** | `threshold-mini-npc`, `threshold-mini-dev` | `npm run models:mini` |
+| **X** | Removed | No X OAuth — optional Grok key only ([AUTH.md](AUTH.md)) |
+| **Mini trained** | `threshold-mini-npc`, `threshold-mini-dev`, `threshold-mini-mobile` | `npm run models:mini` · origin truth in SYSTEM |
 
 Install: [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) · Routing: [AGENT_ROUTING.md](AGENT_ROUTING.md)
 

@@ -1,3 +1,20 @@
+## 10.21.1 — Origin truth + mini retrain
+
+- **ORIGIN SYSTEM** — permanent origin line on `threshold-mini-npc` / `-dev` / `-mobile` Modelfiles (via `bootcamp-lib` + `models-mobile`)
+- **Datasets** — `datasets/small/origin.jsonl` + `datasets/medium/origin.jsonl` (who made / not Anthropic / not UK studio / mini namespace) + GIMP/Blender naming + LiveBuild pause-guard pairs
+- **Runtime** — `agentPrompts.js` prepends the same ORIGIN to every task SYSTEM; intent rules for origin + hilod
+- **Docs** — BOOTCAMP · MODEL_DISTRIBUTION · ROADMAP · PRODUCT_ROADMAP (X OAuth removed row)
+- **Golden** — origin smoke cases in `ollama:golden`; rebuild: `npm run bootcamp:build && npm run models:mini`
+- Ground truth: independent MIT by **medicinalsheep** — not Anthropic, not Claude, not a UK/commercial studio
+
+## 10.21.0 — Realistic player shapes
+
+- **Anthropometric procedural body** — male/female shoulder:hip ratios, smoother SEG, tapered limbs, rounded pelvis, deltoid shoulders, three-zone torso, soft arm hang
+- **Materials** — softer skin roughness + light envMapIntensity; sclera + iris eyes
+- **Shape coupling** — weight fattens trunk more than limbs; muscle thickens arms/legs; height scales mostly Y with slight XZ allometry
+- **GLB soft-scale** — gender bias (female hips, male shoulders) + neck; same ease curves as procedural
+- Slider ranges tightened to avoid cartoon extremes while staying readable
+
 ## 10.20.1 — Phase 6 doc ship (program close)
 
 - **Spine truth sweep** — BUILD_FROM · CAPABILITIES · PRODUCT_ROADMAP · STREAMLINED_DEV · CREATIVE_OS journeys match 10.16–10.20 features

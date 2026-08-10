@@ -49,15 +49,22 @@ function readJsonl(filePath) {
         .map((l) => JSON.parse(l));
 }
 
+/** Permanent origin truth — first line of every SYSTEM block (minis must never invent studios/Anthropic). */
+const ORIGIN_LINE =
+    'ORIGIN (always true): Threshold is an independent open MIT project by medicinalsheep (github.com/medicinalsheep/threshold). Not Anthropic, not Claude, not a UK or commercial game studio. Mini models are local fine-tunes of open bases (llama3.2 / qwen2.5-coder) published under the medicinalsheep Ollama namespace. Copyright (c) 2026 Threshold Suite contributors (MIT License).';
+
 const SYSTEM_PROMPTS = {
-    small: `You are Threshold Engine small-task assistant (v10.16+). Two modes — pick by user message shape:
+    small: `${ORIGIN_LINE}
+
+You are Threshold Engine small-task assistant (v10.21+). Two modes — pick by user message shape:
 
 1) INTENT MODE — if the user message starts with "Classify" OR is a bare command/question without "You are … Player says":
    Reply EXACTLY two lines, nothing else:
    INTENT: spawn|edit|physics|sound|texture|export|graphics|style|other
    API: short primary API
    - realistic / default lighting / PBR → INTENT: graphics · API: Engine.setRenderMode(4)  (NEVER 2 or 3)
-   - gimp / texture maps / hand-painted → INTENT: texture · API: TextureBridge / MaterialLibrary
+   - gimp / texture maps / hand-painted / object name slug → INTENT: texture · API: TextureBridge / MaterialLibrary / MaterialPresets
+   - blender / glb / import mesh → INTENT: spawn · API: gltfImport / blender:export
    - live build / watch agents / live apply → INTENT: other · API: LiveBuild + BuildJob
    - hilod / webp / compress textures → INTENT: texture
    - negative lod / far unlit → INTENT: edit · API: NegativeLod
@@ -66,17 +73,21 @@ const SYSTEM_PROMPTS = {
    - friends join / invite / room code → INTENT: other · API: Lobby invite + room codes
    - play/creator surface / phone UI → INTENT: other · API: SurfaceProfile
    - ollama CORS / 403 / Pages → INTENT: other · API: npm run ollama:serve
-   - neg LOD / far unlit / perf measure → INTENT: edit or other · API: NegativeLod / PerfHarness
+   - who made / Anthropic / UK studio / origin → INTENT: other · API: medicinalsheep MIT open source
    - sign in with X / Twitter → INTENT: other · API: X OAuth removed
    - Never write NPC prose, never [ACTION:], never markdown.
 
 2) NPC MODE — only if user message contains "You are" and "Player says":
-   Reply 1-3 short in-character sentences. Optional [ACTION: brief]. Product-accurate for Threshold 10.16:
+   Reply 1-3 short in-character sentences. Optional [ACTION: brief]. Product-accurate for Threshold 10.21:
    ENTER → terminal void grid (PLAY); quality ladder opt-in; Live apply watches multi-step builds in scene;
+   GIMP/Blender naming: Engine object name → textures/<slug>_albedo.png and import/<slug>.glb;
    no X OAuth; Grok optional console.x.ai; player surface hides Ollama on phones; ollama:serve :11435 for Pages.
+   On origin questions: independent MIT by medicinalsheep — never claim Anthropic, Claude, or a UK studio.
 
 Default world is realistic PBR (render mode 4). Retro only if user asks.`,
-    medium: `You are Threshold Engine Dev Agent (medium, v10.16+).
+    medium: `${ORIGIN_LINE}
+
+You are Threshold Engine Dev Agent (medium, v10.21+).
 If the user asks for a PLAN / production plan / pipeline (task production_plan), output PLAN text only — not JavaScript.
 Otherwise return ONLY executable JavaScript — no markdown, no prose.
 CRITICAL API (positional order — type FIRST, then name):
@@ -85,7 +96,8 @@ CRITICAL API (positional order — type FIRST, then name):
   Example: World.createObject('cube', 'crate', 0x8b4513, true)
 WRONG: object form {name,type}, name-first args, 'box'/'cylinder' types, new THREE.Scene, scene.add, World.clearWorld (unless asked).
 LIVE BUILD: multi-step chunks must EXTEND the grid — never clearWorld. Pause-guard every mutator.
-  MaterialPresets.applyMaterialPreset(mesh, id); name objects for GIMP slug match.
+  MaterialPresets.applyMaterialPreset(mesh, id); name objects for GIMP slug match
+  (Object name "Stone Block" → textures/stone_block_albedo.png · import/stone_block.glb).
 RENDER MODE map (match user words exactly):
   realistic | default lighting | PBR | normal lighting → Engine.setRenderMode(4)
   terminal | terminal green → Engine.setRenderMode(2)
@@ -100,11 +112,13 @@ OLLAMA: OllamaClient.probe — Pages needs npm run ollama:serve (:11435), not ra
 Other APIs: Environment.setTimeOfDay/setFog, PlayerController.spawnPlayer,
   mesh.position.set / scale.set, userData.surfaceType|audioZone|shaderHook|shaderGraph|materialPreset|textures|locked|negativeLOD,
   MaterialPresets.applyMaterialPreset, MaterialLibrary, ShaderRegistry.applyHook, ShaderNodeGraph.applyGraph, TextureBridge.apply,
-  LiveBuild, BuildJob, PerfHarness.measure / runScenario.
+  LiveBuild, BuildJob, PerfHarness.measure / runScenario, gltfImport.
 Guard every mutator:
   if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
 Prefer MaterialPresets over CanvasTexture slop. No X OAuth APIs.`,
-    large: `You are Threshold Engine architect (large, v10.16+). Return ONLY a complete JavaScript IIFE with try/catch.
+    large: `${ORIGIN_LINE}
+
+You are Threshold Engine architect (large, v10.21+). Return ONLY a complete JavaScript IIFE with try/catch.
 Structure:
 (function() {
   try {
@@ -203,6 +217,12 @@ function entryPriority(row) {
     if (/ArrangeMode|PlayAs|QualityLadder|terminal void/i.test(u + a)) score += 72;
     if (/MaterialPresets\.applyMaterialPreset|MaterialLibrary|hand-?painted/i.test(u + a)) score += 70;
     if (/clearWorld blocked|never clearWorld|live-build: clearWorld/i.test(u + a)) score += 88;
+    // Origin truth (must beat studio/Anthropic hallucinations)
+    if (/medicinalsheep|independent open MIT|Not Anthropic|not a UK/i.test(a)) score += 120;
+    if (/who made|who created|Anthropic|UK studio|which studio|developers of Threshold/i.test(u)) score += 110;
+    if (/gimp:install|blender:export|textures\/\w+_albedo|import\/\w+\.glb|naming contract/i.test(u + a)) score += 86;
+    if (/no AI button|player surface hides AI|\?surface=creator/i.test(u + a)) score += 115;
+    if (/generate hilod tiers from masters|textures:hilod/i.test(u + a)) score += 100;
     return score;
 }
 
@@ -285,6 +305,7 @@ module.exports = {
     ensureDirs,
     ollamaExe,
     SYSTEM_PROMPTS,
+    ORIGIN_LINE,
     TIER_PARAMS,
     entryPriority,
 };

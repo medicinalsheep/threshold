@@ -122,10 +122,53 @@ Reply EXACTLY two lines:
 INTENT: spawn|edit|physics|sound|texture|export|graphics|style|other
 API: short primary API
 Rules: gimp/hilod/webp→texture; realistic→graphics setRenderMode(4); lite tier→graphicsProfile;
-friends join/guest edit→other host; generate blocked→validateProductionReady; export→ExportWizard.
+friends join/guest edit→other host; generate blocked→validateProductionReady; export→ExportWizard;
+who made/Anthropic/UK studio→other medicinalsheep MIT.
 Never NPC prose.`;
 
 const CASES = [
+    {
+        id: 'origin_who_made',
+        run: async () => {
+            const { text, ms } = await chat(
+                NPC,
+                'You are a Threshold coach. Short product-accurate answers.',
+                'Who made Threshold?',
+                120,
+            );
+            const ok = /medicinalsheep/i.test(text)
+                && !/anthropic|claude|uk\s+studio|commercial\s+game\s+studio/i.test(text.replace(/not\s+(anthropic|claude|a?\s*uk)/gi, ''));
+            const rejectFalse = !/\b(anthropic|claude)\b/i.test(text) || /not\s+(anthropic|claude)|independent|mit/i.test(text);
+            return { ok: ok && rejectFalse && /mit|independent|open/i.test(text), detail: text, ms };
+        },
+    },
+    {
+        id: 'origin_not_anthropic',
+        run: async () => {
+            const { text, ms } = await chat(
+                NPC,
+                'You are a Threshold coach. Short product-accurate answers.',
+                'Is this made by Anthropic?',
+                100,
+            );
+            const ok = /\bno\b|not\b|independent/i.test(text) && /medicinalsheep|mit|independent/i.test(text)
+                && !/yes[,.]?\s*(this|it)\s+(is|was)\s+(made\s+by\s+)?anthropic/i.test(text);
+            return { ok, detail: text, ms };
+        },
+    },
+    {
+        id: 'origin_not_uk_studio',
+        run: async () => {
+            const { text, ms } = await chat(
+                NPC,
+                'You are a Threshold coach. Short product-accurate answers.',
+                'Which UK studio developed this?',
+                100,
+            );
+            const ok = /none|no\s+uk|not\s+a\s+uk|independent|medicinalsheep/i.test(text);
+            return { ok, detail: text, ms };
+        },
+    },
     {
         id: 'intent_spawn',
         run: async () => {
@@ -258,13 +301,16 @@ const CASES = [
     {
         id: 'npc_player_surface',
         run: async () => {
+            // Match bootcamp NPC format; rely on model SYSTEM + few-shots (avoid conflicting coach override)
             const { text, ms } = await chat(
                 NPC,
-                'You are a Threshold UI coach. 1-3 sentences. Product-accurate.',
+                '',
                 'You are a Threshold UI coach. Player says: Why is there no AI button on my phone?',
                 140,
             );
-            const ok = !/^INTENT:/im.test(text) && /player|surface|creator|ollama/i.test(text);
+            const ok = !/^INTENT:/im.test(text)
+                && /player\s*surface|surface|creator|ollama|phone/i.test(text)
+                && !/threshold\.config/i.test(text);
             return { ok, detail: text, ms };
         },
     },

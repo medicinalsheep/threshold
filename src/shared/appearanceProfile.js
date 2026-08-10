@@ -195,41 +195,44 @@ export function profileToMeshOpts(profile) {
     const p = normalizeProfile(profile);
     const female = p.bodyId === 'female_default';
     const shape = normalizeShape(p.shape);
-    const sh = shapeFactor(shape.shoulders, 0.78, 1.22);
-    const ch = shapeFactor(shape.chest, 0.8, 1.2);
-    const hi = shapeFactor(shape.hips, 0.8, 1.22);
+    // Tighter realism range — sliders still read clearly without cartoon extremes
+    const sh = shapeFactor(shape.shoulders, 0.82, 1.18);
+    const ch = shapeFactor(shape.chest, 0.84, 1.16);
+    const hi = shapeFactor(shape.hips, 0.84, 1.18);
+    const wa = shapeFactor(shape.waist, 0.8, 1.2);
+    const mu = shapeFactor(shape.muscle, 0.88, 1.14);
     const wt = shapeFactor(shape.weight, 0.9, 1.12);
+    const trunk = 0.55 + wt * 0.45;
 
-    const baseTorso = female ? [0.9, 0.98, 0.88] : [1.06, 1.02, 0.98];
-    const baseHip = female ? [1.1, 1, 1.06] : [1, 1, 1];
+    // Gender base scales stay near identity — anatomy lives in resolveForm meters
+    const baseTorso = female ? [0.98, 1, 0.98] : [1.02, 1, 1.0];
+    const baseHip = female ? [1.06, 1, 1.03] : [0.98, 1, 0.98];
 
     return {
         skinColor: hexToNum(p.colors.skin),
         bodyColor: hexToNum(p.colors.shirt),
         pantsColor: hexToNum(p.colors.pants),
         hairColor: hexToNum(p.colors.hair),
-        roughness: p.roughness ?? 0.72,
+        roughness: p.roughness ?? 0.68,
         bodyId: p.bodyId,
         form: female ? 'female' : 'male',
         shape,
-        // Base form × continuous shape
         torsoScale: [
-            baseTorso[0] * ch * wt,
+            baseTorso[0] * (ch * 0.55 + wa * 0.45) * trunk,
             baseTorso[1],
-            baseTorso[2] * (0.95 + ch * 0.05),
+            baseTorso[2] * ch * trunk,
         ],
         hipScale: [
-            baseHip[0] * hi * wt,
+            baseHip[0] * hi * trunk,
             baseHip[1],
-            baseHip[2] * hi,
+            baseHip[2] * hi * trunk,
         ],
-        // Extra form knobs consumed by HumanMesh.resolveForm
         _shapeFactors: {
             shoulders: sh,
             chest: ch,
-            waist: shapeFactor(shape.waist, 0.75, 1.25),
+            waist: wa,
             hips: hi,
-            muscle: shapeFactor(shape.muscle, 0.85, 1.2),
+            muscle: mu,
             weight: wt,
         },
         heightM: shape.heightM,

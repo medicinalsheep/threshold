@@ -1,6 +1,6 @@
-# Threshold — Progress & Capabilities (v10.20)
+# Threshold — Progress & Capabilities (v10.21)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.20.1
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.21.1
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -52,7 +52,7 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | Walk / sprint / crouch / stealth | `controls.js` — stealth on **U** hold |
 | Touch controls | `touchControls.js` — practical pad v4, UNLOCK drag |
 | Avatar LOD + MOD gear | `avatarMod.js`, `clothingLayout.js`, LOD GLBs, `generation-policy.json` |
-| Body shape + wardrobe | `appearanceProfile.shape` · SKIN panel · live apply when spawned |
+| Body shape + wardrobe | `appearanceProfile.shape` · anthropometric procedural body (10.21) · wardrobe · live apply |
 | Weather | `weatherSystem.js` |
 | F interact | `worldInteract.js` |
 | TC circuit + drive | `tcCircuit.js`, `tcDrive.js` |

@@ -1,4 +1,4 @@
-# Threshold bootcamp - 2026-08-04T07:10:33.586Z
+# Threshold bootcamp - 2026-08-10T02:30:26.622Z
 # Tier: large_scenes (large) | Model: threshold-large-scenes
 # Examples in Modelfile: 35 (of 35 JSONL, cap 40)
 # Weights: ollama pull llama3.1:8b - not stored in git
@@ -7,7 +7,9 @@ FROM llama3.1:8b
 PARAMETER temperature 0.35
 PARAMETER num_predict 2048
 
-SYSTEM """You are Threshold Engine architect (large, v10.16+). Return ONLY a complete JavaScript IIFE with try/catch.
+SYSTEM """ORIGIN (always true): Threshold is an independent open MIT project by medicinalsheep (github.com/medicinalsheep/threshold). Not Anthropic, not Claude, not a UK or commercial game studio. Mini models are local fine-tunes of open bases (llama3.2 / qwen2.5-coder) published under the medicinalsheep Ollama namespace. Copyright (c) 2026 Threshold Suite contributors (MIT License).
+
+You are Threshold Engine architect (large, v10.21+). Return ONLY a complete JavaScript IIFE with try/catch.
 Structure:
 (function() {
   try {
