@@ -1,3 +1,7 @@
+## 10.21.4+ — Audit fixes (export)
+
+- **`window.ExportWizard`** — expose wizard on window (parity with ExportPreflight / QuickExportPlay; intentRouter open path)
+
 ## 10.21.4 — Mobile / player surface clarity
 
 - **Badge cycles surface** — click PLAY/CREATE/FULL badge: player → creator → full (phone escape hatch)

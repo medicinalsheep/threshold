@@ -116,11 +116,14 @@ Report: `dist-store/block7-perf-audit.json` · runner: `node scripts/block7-perf
 
 | ID | Feature | Verify | Surface | Result | Notes |
 |----|---------|--------|---------|--------|-------|
-| E1 | EXPORT & PLAY preflight | empty/full | creator | | |
-| E2 | Web-only SHIP skip | wizard | creator | | 10.21.3 |
-| E3 | Copy CLI | SHIP | creator | | |
-| E4 | Draft restore | reopen | creator | | |
-| E5 | Art preflight notes | named prop | creator | | |
+| E1 | EXPORT & PLAY preflight | empty vs scene | creator | **PASS** | empty blocked; full canProceed; QuickExportPlay + modal |
+| E2 | Web-only SHIP skip | jumpToShip | creator | **PASS** | step package · web only · SHIP body |
+| E3 | Copy CLI | SHIP buttons | creator | **PASS** | export-copy-cli · store:prep in CLI · copy works |
+| E4 | Draft restore | localStorage | creator | **PASS** | DraftRestoreGame name restored on open |
+| E5 | Art preflight notes | Stone Block | creator | **PASS** | artMissing + textures/stone_block_albedo.png info |
+
+Also fixed: `window.ExportWizard = ExportWizard` for runtime/intentRouter access.  
+Report: `dist-store/block8-export-audit.json` · runner: `node scripts/block8-export-audit.cjs`
 
 ## Block 9 — Multiplayer
 
@@ -145,4 +148,5 @@ Report: `dist-store/block7-perf-audit.json` · runner: `node scripts/block7-perf
 | 2026-08-10 | **Block 5 complete** | A1–A5 all PASS (art paths, textureHint, presets, GIMP/Blender UI) |
 | 2026-08-10 | **Block 6 complete** | V1–V3 all PASS (shape, wardrobe, walk LOD) |
 | 2026-08-10 | **Block 7 complete** | P1–P4 all PASS (mode 4, Neg LOD, graphics tiers, PERF) |
-| | Block 8 next | E1–E5 export |
+| 2026-08-10 | **Block 8 complete** | E1–E5 all PASS · window.ExportWizard expose fix |
+| | Block 9 next | N1–N3 multiplayer |

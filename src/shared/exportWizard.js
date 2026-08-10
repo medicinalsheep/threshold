@@ -740,3 +740,5 @@ function escapeAttr(s) {
 function escapeText(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
 }
+
+window.ExportWizard = ExportWizard;
