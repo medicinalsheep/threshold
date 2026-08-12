@@ -37,3 +37,18 @@
 {"task":"guide","messages":[{"role":"user","content":"GIMP install + export?"},{"role":"assistant","content":"npm run gimp:install - Filters > Threshold > Export PBR Maps - textures:watch"}]}
 {"task":"guide","messages":[{"role":"user","content":"Blender install + export?"},{"role":"assistant","content":"npm run blender:install - blender:export -- --blend f.blend --object Name"}]}
 {"task":"guide","messages":[{"role":"user","content":"Origin truth line?"},{"role":"assistant","content":"ORIGIN: independent MIT medicinalsheep - not Anthropic - not UK studio - minis under medicinalsheep Ollama"}]}
+{"task":"guide","messages":[{"role":"user","content":"Slug for Mat Brick Wall?"},{"role":"assistant","content":"mat_brick_wall — lowercase, underscores only"}]}
+{"task":"guide","messages":[{"role":"user","content":"Albedo path for Mat Brick Wall?"},{"role":"assistant","content":"textures/mat_brick_wall_albedo.png"}]}
+{"task":"guide","messages":[{"role":"user","content":"Albedo path for Stone Block?"},{"role":"assistant","content":"textures/stone_block_albedo.png"}]}
+{"task":"guide","messages":[{"role":"user","content":"Albedo path for Mat Wood Crate?"},{"role":"assistant","content":"textures/mat_wood_crate_albedo.png"}]}
+{"task":"guide","messages":[{"role":"user","content":"GLB path for Mat Wood Crate?"},{"role":"assistant","content":"import/mat_wood_crate.glb"}]}
+{"task":"guide","messages":[{"role":"user","content":"GIMP export filter path?"},{"role":"assistant","content":"Filters → Threshold → Export PBR Maps · then textures:watch"}]}
+{"task":"guide","messages":[{"role":"user","content":"TextureBridge apply API?"},{"role":"assistant","content":"TextureBridge.applyFromUserData(mesh) or applyPathToObject(mesh, slot, path) — not bare apply()"}]}
+{"task":"guide","messages":[{"role":"user","content":"HILOD command?"},{"role":"assistant","content":"npm run textures:hilod — masters → _1k/_2k WebP sidecars"}]}
+{"task":"guide","messages":[{"role":"user","content":"Kit export command?"},{"role":"assistant","content":"npm run kit:export · verify with kit:verify"}]}
+{"task":"guide","messages":[{"role":"user","content":"Prefer materials how?"},{"role":"assistant","content":"MaterialPresets.applyMaterialPreset first; GIMP maps later; never CanvasTexture slop"}]}
+{"task":"guide","messages":[{"role":"user","content":"textureHint for Stone Block?"},{"role":"assistant","content":"userData.textureHint = 'textures/stone_block_albedo.png' — must match Name slug"}]}
+{"task":"guide","messages":[{"role":"user","content":"Wrong: Mat_Brick_Wall path?"},{"role":"assistant","content":"Never PascalCase or spaces in paths — use mat_brick_wall only"}]}
+{"task":"guide","messages":[{"role":"user","content":"Art audit?"},{"role":"assistant","content":"npm run art:audit → dist-store/art-pipeline-audit.json"}]}
+{"task":"guide","messages":[{"role":"user","content":"Train wave8?"},{"role":"assistant","content":"npm run train:mini -- --wave8"}]}
+{"task":"guide","messages":[{"role":"user","content":"Manifest engineVersion?"},{"role":"assistant","content":"textures/threshold_manifest.json engineVersion tracks product VERSION (10.21.x)"}]}

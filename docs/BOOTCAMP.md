@@ -26,6 +26,24 @@ In Engine: **SETUP / AGENTS** → Small `threshold-mini-npc` · Medium `threshol
 | `threshold-mini-dev` | Medium | `qwen2.5-coder:1.5b` · `medicinalsheep/threshold-mini-dev` | origin, patches, plans, GIMP/Blender, safety |
 | `threshold-mini-mobile` | Small | `llama3.2:1b` · `medicinalsheep/threshold-mini-mobile` | origin + short intent/NPC (phones) |
 
+### Art pipeline training (wave 8)
+
+Slug law + MaterialPresets + TextureBridge + kit/HILOD live in:
+
+- `datasets/small/art_pipeline.jsonl` · `datasets/medium/art_pipeline.jsonl`
+- `datasets/small/wave8_art.jsonl` · `datasets/medium/wave8_art.jsonl` (seed)
+
+Audit + AG probes: `npm run art:audit`.  
+Plan: [ART_PIPELINE_TRAINING_PLAN.md](ART_PIPELINE_TRAINING_PLAN.md).
+
+```bash
+npm run bootcamp:seed:wave8
+npm run train:mini -- --wave8
+# or rebuild only: npm run bootcamp:build && npm run models:mini
+npm run art:audit
+npm run kit:export && npm run kit:verify
+```
+
 ### Origin truth (required)
 
 Every mini SYSTEM prompt starts with a permanent **ORIGIN** line:
@@ -63,18 +81,20 @@ npm run bootcamp:seed:wave4        # anti-slop, host/guest, recovery, plan↔cod
 npm run bootcamp:seed:wave5        # **10.13 power pack** — surfaces, Neg LOD ~100m, Ollama CORS, store, no X
 npm run bootcamp:seed:wave6        # **10.15–10.16** — live build, arrange, play-as, PBR materials
 npm run bootcamp:seed:wave7        # **10.17–10.20** — entry/build, body shape, wardrobe, quick live
+npm run bootcamp:seed:wave8        # **10.21** — art pipeline slug, MaterialPresets, kit, HILOD
 npm run bootcamp:seed:critical     # intent format + render-mode hard fixes
 npm run bootcamp:build && npm run models:mini
-# or: npm run train:mini -- --wave7
+# or: npm run train:mini -- --wave8
 ```
 
 One-shot full pipeline:
 
 ```bash
-npm run train:mini -- --full           # waves 2–7 + critical + build + create
+npm run train:mini -- --full           # waves 2–8 + critical + build + create
 npm run train:mini -- --wave5          # product pack only + build + create
 npm run train:mini -- --wave6          # live-build / modes pack + build + create
 npm run train:mini -- --wave7          # entry + shape + wardrobe pack + build + create
+npm run train:mini -- --wave8          # art pipeline pack + build + create
 npm run train:mini -- --full --golden  # + local regression (needs Ollama)
 npm run ollama:golden                  # format / safety / plan / surface / NegLOD smoke
 ```

@@ -106,9 +106,13 @@ Copy `.env.local.example` → `.env.local` for `VITE_OLLAMA_URL`, optional `VITE
 npm run bootcamp:build          # JSONL → Modelfiles in training/bootcamp/
 npm run bootcamp:seed:wave5     # 10.13 product power pack for minis
 npm run bootcamp:seed:wave7     # 10.17–20 entry + shape + wardrobe
+npm run bootcamp:seed:wave8     # 10.21 art pipeline · slug · kit · HILOD
 npm run train:mini -- --wave5   # seed wave5 → build → ollama create
 npm run train:mini -- --wave7   # entry/shape/wardrobe pack
+npm run train:mini -- --wave8   # art pipeline pack + art:audit
 npm run train:mini -- --full --golden
+npm run kit:export && npm run kit:verify
+npm run art:audit
 npm run models:mini             # threshold-mini-npc + threshold-mini-dev (canonical)
 npm run models:large -- --yes   # optional threshold-dev + threshold-large-scenes
 npm run bootcamp:import -- --file training/bootcamp/datasets/raw/pair.json

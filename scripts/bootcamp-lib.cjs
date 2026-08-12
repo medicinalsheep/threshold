@@ -111,11 +111,13 @@ SURFACES: SurfaceProfile.set('player'|'creator'|'full') — player skips Ollama 
 OLLAMA: OllamaClient.probe — Pages needs npm run ollama:serve (:11435), not raw :11434
 Other APIs: Environment.setTimeOfDay/setFog, PlayerController.spawnPlayer,
   mesh.position.set / scale.set, userData.surfaceType|audioZone|shaderHook|shaderGraph|materialPreset|textures|locked|negativeLOD,
-  MaterialPresets.applyMaterialPreset, MaterialLibrary, ShaderRegistry.applyHook, ShaderNodeGraph.applyGraph, TextureBridge.apply,
+  MaterialPresets.applyMaterialPreset, MaterialLibrary, ShaderRegistry.applyHook, ShaderNodeGraph.applyGraph,
+  TextureBridge.applyFromUserData / applyPathToObject (never bare TextureBridge.apply),
   LiveBuild, BuildJob, PerfHarness.measure / runScenario, gltfImport.
 Guard every mutator:
   if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
-Prefer MaterialPresets over CanvasTexture slop. No X OAuth APIs.`,
+FORBIDDEN in JS output: CanvasTexture, MeshBasicMaterial, m.material = new THREE… — rewrite with MaterialPresets only; never echo broken input lines.
+Prefer MaterialPresets.applyMaterialPreset; GIMP maps via textureHint + textures:watch. No X OAuth APIs.`,
     large: `${ORIGIN_LINE}
 
 You are Threshold Engine architect (large, v10.21+). Return ONLY a complete JavaScript IIFE with try/catch.
@@ -223,6 +225,16 @@ function entryPriority(row) {
     if (/gimp:install|blender:export|textures\/\w+_albedo|import\/\w+\.glb|naming contract/i.test(u + a)) score += 86;
     if (/no AI button|player surface hides AI|\?surface=creator/i.test(u + a)) score += 115;
     if (/generate hilod tiers from masters|textures:hilod/i.test(u + a)) score += 100;
+    // Art pipeline slug discipline (lowercase paths only)
+    if (/mat_brick_wall_albedo|stone_block_albedo|mat_wood_crate_albedo|never PascalCase|applyFromUserData|applyPathToObject/i.test(u + a)) score += 118;
+    if (/CanvasTexture slop|Prefer MaterialPresets|textureHint matches name slug/i.test(u + a)) score += 105;
+    // Anti-canvas: user has slop, assistant has clean MaterialPresets rewrite (no CanvasTexture in answer)
+    if (/CanvasTexture/i.test(u) && /MaterialPresets\.applyMaterialPreset/i.test(a) && !/CanvasTexture/i.test(a)) score += 160;
+    if (/MeshBasicMaterial/i.test(u) && /MaterialPresets\.applyMaterialPreset/i.test(a) && !/MeshBasicMaterial/i.test(a)) score += 140;
+    if (/Stone Block/i.test(u) && /stone_block_albedo/i.test(a) && /MaterialPresets\.applyMaterialPreset/i.test(a)) score += 155;
+    // Wave 8 art / kit
+    if (/\bkit:export\b|kit:verify|starter-texture-kit/i.test(u + a)) score += 100;
+    if (/wave8|art:audit|engineVersion 10\.21/i.test(u + a)) score += 90;
     return score;
 }
 

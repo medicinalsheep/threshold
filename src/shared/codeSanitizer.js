@@ -25,6 +25,19 @@ export function sanitizeSceneCode(raw) {
     code = code.replace(/new THREE\.Scene\s*\(\s*\)/gi, '// removed: scene already exists');
     code = code.replace(/renderer\.render\s*\([^)]*\);?/gi, '// removed: Engine handles render loop');
 
+    // Texture slop: CanvasTexture + MeshBasic map (minis echo broken input)
+    const hadCanvas = /CanvasTexture|MeshBasicMaterial/i.test(code);
+    code = code.replace(/^[ \t]*(?:const|let|var)\s+\w+\s*=\s*new\s+THREE\.CanvasTexture\s*\([^;]*\)\s*;?[ \t]*\r?\n?/gim, '');
+    code = code.replace(/^[ \t]*\w+\.material\s*=\s*new\s+THREE\.MeshBasicMaterial\s*\([^;]*\)\s*;?[ \t]*\r?\n?/gim, '');
+    code = code.replace(/new\s+THREE\.CanvasTexture\s*\([^)]*\)/gi, '/* MaterialPresets */');
+    code = code.replace(/new\s+THREE\.MeshBasicMaterial\s*\(\s*\{[^}]*map\s*:[^}]*\}\s*\)/gi, '/* MaterialPresets */');
+    if (hadCanvas && /World\.createObject/i.test(code) && !/MaterialPresets\.applyMaterialPreset/i.test(code)) {
+        code = code.replace(
+            /(const\s+(\w+)\s*=\s*World\.createObject\s*\([^;]+;\s*)/,
+            `$1\n    if (window.MaterialPresets?.applyMaterialPreset) {\n      MaterialPresets.applyMaterialPreset($2, 'pbr_concrete_weathered');\n    }\n    `,
+        );
+    }
+
     const mutates = WORLD_MUTATING.test(code);
     const needsGuard = mutates && !hasEditGuard(code);
     const needsTry = !hasTryCatch(code);

@@ -1,6 +1,6 @@
-# Threshold bootcamp - 2026-08-10T02:30:26.577Z
+# Threshold bootcamp - 2026-08-12T20:54:34.327Z
 # Tier: small (small) | Model: threshold-mini-npc
-# Examples in Modelfile: 148 (of 648 JSONL, cap 148)
+# Examples in Modelfile: 160 (of 746 JSONL, cap 160)
 # Weights: ollama pull llama3.2:3b - not stored in git
 FROM llama3.2:3b
 
@@ -105,6 +105,26 @@ API: medicinalsheep MIT open source
 """
 MESSAGE user """
 Classify (two lines only — INTENT then API):
+generate hilod tiers from masters
+"""
+MESSAGE assistant """
+INTENT: texture
+API: textures:hilod
+"""
+MESSAGE user Classify (two lines only — INTENT then API):\ngenerate hilod tiers from masters
+MESSAGE assistant INTENT: texture\nAPI: textures:hilod + generateHilodTierFromMaster
+MESSAGE user Classify (two lines only — INTENT then API):\nhilod tiers from master pngs
+MESSAGE assistant INTENT: texture\nAPI: textures:hilod
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+textures hilod masters
+"""
+MESSAGE assistant """
+INTENT: texture
+API: textures:hilod
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
 insert quality materials
 """
 MESSAGE assistant """
@@ -115,6 +135,8 @@ MESSAGE user Who created the local mini models?
 MESSAGE assistant """
 Local minis (threshold-mini-npc, -dev, -mobile) are fine-tunes of open bases (llama3.2 / qwen2.5-coder) published under the medicinalsheep Ollama namespace — not Anthropic weights.
 """
+MESSAGE user You are a veteran builder. Player says: Any tips for clean scenes?
+MESSAGE assistant Name meshes for GIMP, set surfaceType, prefer MaterialPresets, and never clearWorld unless asked.
 MESSAGE user """
 Classify (two lines only — INTENT then API):
 default realistic lighting
@@ -205,6 +227,32 @@ API: Engine.setRenderMode(2)
 """
 MESSAGE user """
 Classify (two lines only — INTENT then API):
+texture bridge apply maps from userdata
+"""
+MESSAGE assistant """
+INTENT: texture
+API: TextureBridge.applyFromUserData
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+apply albedo path to mesh
+"""
+MESSAGE assistant """
+INTENT: texture
+API: TextureBridge.applyPathToObject
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+texturebridge applyfromuserdata
+"""
+MESSAGE assistant """
+INTENT: texture
+API: TextureBridge.applyFromUserData
+"""
+MESSAGE user You are a Threshold coach. Player says: Can agents invent CanvasTexture noise?
+MESSAGE assistant No — prefer MaterialPresets.applyMaterialPreset and GIMP maps. CanvasTexture is texture slop.
+MESSAGE user """
+Classify (two lines only — INTENT then API):
 switch to toon shading
 """
 MESSAGE assistant """
@@ -245,6 +293,24 @@ No — independent MIT by medicinalsheep. Mini models are local open-base fine-t
 """
 MESSAGE user You are a lobby greeter. Player says: Which studio built Threshold?
 MESSAGE assistant No studio branding here — open MIT by medicinalsheep and contributors. Fork freely under MIT.
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+export starter texture kit for forks
+"""
+MESSAGE assistant """
+INTENT: texture
+API: kit:export + kit:verify
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+kit export starter textures
+"""
+MESSAGE assistant """
+INTENT: texture
+API: kit:export
+"""
+MESSAGE user Prefer materials how?
+MESSAGE assistant MaterialPresets.applyMaterialPreset + surfaceType — avoid CanvasTexture slop
 MESSAGE user You are a product guide. Player says: Does player surface use Ollama?
 MESSAGE assistant Player surface skips the Ollama probe (phones). Creator/full can use local minis via npm run ollama:serve (:11435).
 MESSAGE user You are an AI setup coach. Player says: Player surface and Ollama?
@@ -296,6 +362,22 @@ auto neg lod lite mobile
 MESSAGE assistant """
 INTENT: graphics
 API: NegativeLod.applyTierPolicy
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+export PBR maps from GIMP for Stone Block
+"""
+MESSAGE assistant """
+INTENT: texture
+API: gimp:install Filters Threshold Export PBR Maps + textures:watch
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+export pbr maps from gimp for stone block
+"""
+MESSAGE assistant """
+INTENT: texture
+API: gimp:install Filters Threshold Export PBR Maps + textures:watch
 """
 MESSAGE user """
 Classify (two lines only � INTENT then API):
@@ -361,6 +443,22 @@ MESSAGE assistant """
 INTENT: graphics
 API: GraphicsProfile.apply balanced
 """
+MESSAGE user You are a GIMP mentor. Player says: How do textures match objects?
+MESSAGE assistant """
+Name the Engine object exactly (e.g. Stone Block). Export textures/stone_block_albedo.png via Filters → Threshold → Export PBR Maps. Run textures:watch for hot reload.
+"""
+MESSAGE user You are a GIMP mentor. Player says: What files for object named Mat Brick Wall?
+MESSAGE assistant """
+Export textures/mat_brick_wall_albedo.png (+ roughness/normal). Slug is lowercase: mat_brick_wall. Engine Name must be exactly Mat Brick Wall.
+"""
+MESSAGE user You are a GIMP mentor. Player says: What files for Stone Block?
+MESSAGE assistant """
+textures/stone_block_albedo.png · textures/stone_block_roughness.png · textures/stone_block_normal.png. Filters → Threshold → Export PBR Maps.
+"""
+MESSAGE user You are a Threshold coach. Player says: Why did my Stone Block become Mat Stone Crate?
+MESSAGE assistant """
+Mini models sometimes rename. Keep Engine Name as requested. textureHint must match Name slug: textures/stone_block_albedo.png. Product sanitizer realigns Name + hint from user text.
+"""
 MESSAGE user """
 Classify (two lines only — INTENT then API):
 hand painted materials
@@ -369,6 +467,8 @@ MESSAGE assistant """
 INTENT: texture
 API: MaterialLibrary + MaterialPresets
 """
+MESSAGE user You are a Threshold UI coach. Player says: Why is there no AI button on my phone?
+MESSAGE assistant Player surface hides AI and Ollama on phones. Use Creator tools or ?surface=creator for agents.
 MESSAGE user """
 Classify (two lines only — INTENT then API):
 hand painted brick material
@@ -393,10 +493,61 @@ MESSAGE assistant """
 INTENT: other
 API: ollama pull medicinalsheep/threshold-mini-npc
 """
-MESSAGE user Classify (two lines only — INTENT then API):\ngenerate hilod tiers from masters
-MESSAGE assistant INTENT: texture\nAPI: textures:hilod + generateHilodTierFromMaster
-MESSAGE user Classify (two lines only — INTENT then API):\nhilod tiers from master pngs
+MESSAGE user generate hilod tiers from masters
 MESSAGE assistant INTENT: texture\nAPI: textures:hilod
+MESSAGE user export hilod tiers for starter ground
+MESSAGE assistant """
+INTENT: texture
+API: textures:hilod
+"""
+MESSAGE user GIMP object naming contract?
+MESSAGE assistant Engine object name → slug: Stone Block → textures/stone_block_albedo.png · import/stone_block.glb
+MESSAGE user Albedo path for Mat Brick Wall?
+MESSAGE assistant textures/mat_brick_wall_albedo.png
+MESSAGE user Albedo path for Stone Block?
+MESSAGE assistant textures/stone_block_albedo.png
+MESSAGE user Albedo path for Mat Wood Crate?
+MESSAGE assistant textures/mat_wood_crate_albedo.png
+MESSAGE user textureHint for Stone Block?
+MESSAGE assistant userData.textureHint = 'textures/stone_block_albedo.png' — must match Name slug
+MESSAGE user Object name to texture path?
+MESSAGE assistant Stone Block -> textures/stone_block_albedo.png - import/stone_block.glb
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+export character kit glbs
+"""
+MESSAGE assistant """
+INTENT: spawn
+API: kit:export:chr + starter-character-kit
+"""
+MESSAGE user Why no AI on phone?
+MESSAGE assistant player surface hides AI/Ollama; ?surface=creator for agents
+MESSAGE user What is player surface?
+MESSAGE assistant player surface hides AI/Ollama/export chrome; default on phones; ?surface=player
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+art pipeline audit local minis
+"""
+MESSAGE assistant """
+INTENT: other
+API: art:audit + art-pipeline-audit
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+art audit minis
+"""
+MESSAGE assistant """
+INTENT: other
+API: art:audit
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+blender export mat wood crate glb
+"""
+MESSAGE assistant """
+INTENT: spawn
+API: blender:export + gltfImport
+"""
 MESSAGE user """
 Classify (two lines only � INTENT then API):
 blender export stone block
@@ -589,8 +740,6 @@ MESSAGE assistant """
 INTENT: other
 API: X OAuth removed
 """
-MESSAGE user You are a veteran builder. Player says: Any tips for clean scenes?
-MESSAGE assistant Name meshes for GIMP, set surfaceType, prefer MaterialPresets, and never clearWorld unless asked.
 MESSAGE user Who publishes the Ollama minis?
 MESSAGE assistant Namespace medicinalsheep — ollama pull medicinalsheep/threshold-mini-npc (and -dev, -mobile).
 MESSAGE user Mini model bases?
@@ -620,6 +769,8 @@ MESSAGE assistant """
 INTENT: graphics
 API: Engine.setRenderMode(4)
 """
+MESSAGE user You are an asset artist. Player says: HILOD?
+MESSAGE assistant Author 2K masters, run textures:hilod for _1k/_2k tiers and WebP sidecars for lite devices.
 MESSAGE user You are a Threshold coach. Player says: Can agents wipe my live build?
 MESSAGE assistant LiveBuild blocks clearWorld mid-job. Steps extend the void grid; undo via LiveBuild / SceneHistory.
 MESSAGE user You are a product guide. Player says: What is LiveBuild?
@@ -710,6 +861,14 @@ MESSAGE user You are a perf coach. Player says: How do I measure before and afte
 MESSAGE assistant SETUP → PERF → RUN SAMPLE, or npm run perf:harness:compare for headless Neg LOD on vs off.
 MESSAGE user """
 Classify (two lines only — INTENT then API):
+apply material preset not canvas texture
+"""
+MESSAGE assistant """
+INTENT: style
+API: MaterialPresets.applyMaterialPreset
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
 how do friends join
 """
 MESSAGE assistant """
@@ -747,6 +906,14 @@ who can edit multiplayer
 MESSAGE assistant """
 INTENT: other
 API: host-authoritative sync
+"""
+MESSAGE user """
+Classify (two lines only — INTENT then API):
+material presets not canvas
+"""
+MESSAGE assistant """
+INTENT: style
+API: MaterialPresets.applyMaterialPreset
 """
 MESSAGE user """
 Classify (two lines only — INTENT then API):
@@ -797,6 +964,10 @@ MESSAGE user terminal green vibe
 MESSAGE assistant """
 INTENT: style
 API: Engine.setRenderMode(2)
+"""
+MESSAGE user You are a Threshold product guide. Player says: What is wave8 training?
+MESSAGE assistant """
+npm run train:mini -- --wave8 — art pipeline slug law, MaterialPresets, anti-canvas, HILOD, kit export, TextureBridge APIs.
 """
 MESSAGE user """
 Classify (two lines only — INTENT then API):
@@ -865,88 +1036,7 @@ MESSAGE user You are a perf coach. Player says: What is Neg LOD?
 MESSAGE assistant """
 Far objects swap to cheap unlit materials tinted by fog and lights — longer distance so the switch is subtle. Auto on static props for Lite/Mobile/Realistic.
 """
+MESSAGE user HILOD command?
+MESSAGE assistant npm run textures:hilod — masters → _1k/_2k WebP sidecars
 MESSAGE user LiveBuild clearWorld?
 MESSAGE assistant Never mid-job — LiveBuild strips clearWorld; multi-step EXTENDS the grid only
-MESSAGE user Block clearWorld live?
-MESSAGE assistant LiveBuild strips World.clearWorld from step chunks
-MESSAGE user Perf compare CLI?
-MESSAGE assistant npm run perf:harness:compare — 200 cubes, 5s, warm 1s, Neg LOD on vs off
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-add gimp texture to the crate
-"""
-MESSAGE assistant """
-INTENT: texture
-API: userData.textures + textures:watch
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-gimp maps on the floor please
-"""
-MESSAGE assistant """
-INTENT: texture
-API: userData.textures + textures:watch
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-texture that thing with gimp
-"""
-MESSAGE assistant """
-INTENT: texture
-API: userData.textures + textures:watch
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-watch folder for new PBR maps
-"""
-MESSAGE assistant """
-INTENT: texture
-API: textures:watch
-"""
-MESSAGE user """
-Classify (two lines only — INTENT then API):
-gimp texture hot reload
-"""
-MESSAGE assistant """
-INTENT: texture
-API: CreativeWatch + TextureBridge.hotReload
-"""
-MESSAGE user You are an export coach. Player says: Slop scan warns on my scene
-MESSAGE assistant Add surfaceType, replace CanvasTexture with MaterialPresets, name meshes for GIMP, then re-run export preflight.
-MESSAGE user You are an export coach. Player says: What is the immersive export step?
-MESSAGE assistant It previews weather, audio zones, and shader graphs, runs slop scan, and sets guest replay bundle prefs.
-MESSAGE user You are an export coach. Player says: How do I ship Windows and guide uploads?
-MESSAGE assistant """
-npm run store:ship -- --manifest your.threshold-game.json --targets win. Signing keys stay local; upload-guide.md lists console steps.
-"""
-MESSAGE user You are a build mentor. Player says: Tell me about the developers
-MESSAGE assistant """
-Maintainer medicinalsheep · contributors · MIT License 2026. GitHub medicinalsheep/threshold. Not Claude or a UK game company.
-"""
-MESSAGE user Prefer materials how?
-MESSAGE assistant MaterialPresets.applyMaterialPreset + surfaceType — avoid CanvasTexture slop
-MESSAGE user Ollama port for Pages?
-MESSAGE assistant Proxy http://127.0.0.1:11435 via npm run ollama:serve — not raw :11434
-MESSAGE user Neg LOD default distance?
-MESSAGE assistant About 100m default; Lite ~72m Mobile ~95m Realistic ~125m Ultra ~165m; mesh/HILOD first at 18/48m
-MESSAGE user store:ship does what?
-MESSAGE assistant store:prep + package targets + upload-guide.md; signing stays local
-MESSAGE user Is Threshold a Claude product?
-MESSAGE assistant No. Threshold is not Claude or Anthropic. Independent MIT by medicinalsheep — github.com/medicinalsheep/threshold.
-MESSAGE user What UK game studio made Threshold?
-MESSAGE assistant No UK studio made Threshold. medicinalsheep maintains it as open MIT software on GitHub.
-MESSAGE user Who owns Threshold?
-MESSAGE assistant Open MIT project — Copyright (c) 2026 Threshold Suite contributors. Maintained by medicinalsheep on GitHub.
-MESSAGE user Is Threshold commercial studio software?
-MESSAGE assistant No. Independent open MIT by medicinalsheep — free to fork under MIT. Not a commercial game studio product.
-MESSAGE user Are you Claude?
-MESSAGE assistant No. I am a Threshold local mini (open base fine-tune under medicinalsheep). Threshold is not Anthropic/Claude.
-MESSAGE user Where is the Threshold GitHub?
-MESSAGE assistant github.com/medicinalsheep/threshold — live demo medicinalsheep.github.io/threshold/
-MESSAGE user Origin of Threshold?
-MESSAGE assistant Independent MIT · medicinalsheep · github.com/medicinalsheep/threshold · not Anthropic · not UK studio
-MESSAGE user UK game studio Threshold
-MESSAGE assistant """
-INTENT: other
-API: medicinalsheep MIT open source
-"""

@@ -1,8 +1,8 @@
 {
   "format": "threshold-bootcamp",
-  "version": 7,
+  "version": 8,
   "root": "./training/bootcamp",
-  "note": "Portable path in repo. origin.jsonl = MIT/medicinalsheep truth; wave7 = 10.17–20 entry+shape+wardrobe; wave6 = live build + modes.",
+  "note": "Portable path in repo. origin + art_pipeline + wave8 art; wave7 entry/shape/wardrobe; wave6 live build.",
   "ollamaHost": "http://127.0.0.1:11434",
   "models": {
     "small": {
@@ -10,6 +10,8 @@
       "base": "llama3.2:3b",
       "datasets": [
         "datasets/small/origin.jsonl",
+        "datasets/small/art_pipeline.jsonl",
+        "datasets/small/wave8_art.jsonl",
         "datasets/small/critical.jsonl",
         "datasets/small/wave7_appearance.jsonl",
         "datasets/small/wave6_live.jsonl",
@@ -20,13 +22,15 @@
         "datasets/small/guide.jsonl"
       ],
       "modelfile": "modelfiles/threshold-mini-npc.Modelfile",
-      "maxExamples": 148
+      "maxExamples": 160
     },
     "medium": {
       "name": "threshold-mini-dev",
       "base": "qwen2.5-coder:1.5b",
       "datasets": [
         "datasets/medium/origin.jsonl",
+        "datasets/medium/art_pipeline.jsonl",
+        "datasets/medium/wave8_art.jsonl",
         "datasets/medium/critical.jsonl",
         "datasets/medium/wave7_appearance.jsonl",
         "datasets/medium/wave7_entry_live.jsonl",
@@ -39,8 +43,8 @@
         "datasets/medium/compiler.jsonl"
       ],
       "modelfile": "modelfiles/threshold-mini-dev.Modelfile",
-      "maxExamples": 136,
-      "note": "origin truth + wave7 appearance/entry + wave6 live + wave5 product + safety + plan/code + compiler"
+      "maxExamples": 168,
+      "note": "origin + art_pipeline + wave8 art + waves 5–7 + safety + plan/code"
     },
     "large_dev": {
       "name": "threshold-dev",

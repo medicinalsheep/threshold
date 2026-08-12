@@ -102,6 +102,8 @@
     "bootcamp:seed:wave5": "node scripts/bootcamp-seed-wave5.cjs",
     "bootcamp:seed:wave6": "node scripts/bootcamp-seed-wave6.cjs",
     "bootcamp:seed:wave7": "node scripts/bootcamp-seed-wave7.cjs",
+    "bootcamp:seed:wave8": "node scripts/bootcamp-seed-wave8.cjs",
+    "art:audit": "node scripts/art-pipeline-audit.cjs",
     "bootcamp:build": "node scripts/bootcamp-build.cjs",
     "bootcamp:create": "node scripts/bootcamp-create.cjs",
     "bootcamp:import": "node scripts/bootcamp-import.cjs",

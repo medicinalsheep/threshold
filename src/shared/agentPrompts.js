@@ -75,6 +75,7 @@ Render mode: Engine.setRenderMode(4) for realistic/default/PBR. Modes 0-3 ONLY i
 Use userData.textures for GIMP PBR. Prefer MaterialPresets / MaterialLibrary over CanvasTexture.
 Apply: MaterialPresets.applyMaterialPreset(mesh, 'pbr_brick_aged') or await MaterialLibrary.applyWithMaps(mesh, id).
 Name mesh Mat Wood / Mat Brick / … to wire starter maps. Never CanvasTexture noise for hero surfaces.
+FORBIDDEN output: CanvasTexture, MeshBasicMaterial, mesh.material = new THREE… — rewrite with MaterialPresets only; never echo broken input lines.
 Object name contract: "Stone Block" → textures/stone_block_albedo.png · import/stone_block.glb.
 World.createObject(type, name, colorHex, usePhysics|{physics,force,mass,friction,restitution}) — type first.
 Physics: set mass/friction/restitution on userData then Physics.syncBodyFromUserData(mesh).
@@ -233,6 +234,109 @@ export function sanitizeAgentSlop(code, userText = '') {
     if (!/\b(clear\s*world|wipe\s*(the\s*)?scene|reset\s*world)\b/i.test(u)) {
         out = out.replace(/^\s*World\.clearWorld\s*\([^)]*\)\s*;?\s*$/gim, '// clearWorld removed — user did not ask to wipe');
         out = out.replace(/World\.clearWorld\s*\([^)]*\)\s*;?/gi, '/* clearWorld removed */');
+    }
+
+    // CanvasTexture / MeshBasicMaterial texture slop (1.5b minis often echo broken input)
+    // Also recover when model returns comment-only “never CanvasTexture…” with no createObject
+    if (/CanvasTexture|MeshBasicMaterial/i.test(u + out)
+        && !/World\.createObject/i.test(out)
+        && /MaterialPresets|never CanvasTexture|canvas/i.test(out)) {
+        const artNames = [
+            'Mat Brick Wall', 'Mat Wood Crate', 'Mat Stone Crate', 'Mat Stone Block', 'Stone Block',
+        ];
+        let wantName = 'Stone Block';
+        let bestIdx = Infinity;
+        const ul = u.toLowerCase();
+        for (const n of artNames) {
+            const i = ul.indexOf(n.toLowerCase());
+            if (i >= 0 && i < bestIdx) {
+                bestIdx = i;
+                wantName = n;
+            }
+        }
+        const slug = wantName.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+        out = `(function() {
+  try {
+    if (!State.isPaused) { UI.status('Pause (EDIT) to modify world'); return; }
+    Engine.setRenderMode(4);
+    const m = World.createObject('cube', '${wantName}', 0x9a958c, false);
+    m.position.set(0, 0.5, -2);
+    m.userData.surfaceType = 'concrete';
+    if (window.MaterialPresets?.applyMaterialPreset) {
+      MaterialPresets.applyMaterialPreset(m, 'pbr_concrete_weathered');
+    }
+    m.userData.textureHint = 'textures/${slug}_albedo.png';
+    UI.status('Scene extended');
+  } catch (e) { console.error(e); UI.status('Error: ' + e.message); }
+})();`;
+    }
+
+    if (!/\b(canvas\s*texture|debug\s*canvas|procedural\s*canvas)\b/i.test(u)
+        || /\b(fix|replace|remove|no\s+canvas|material\s*preset)\b/i.test(u)) {
+        const hadCanvas = /CanvasTexture|MeshBasicMaterial/i.test(out);
+        // Drop full declaration lines
+        out = out.replace(/^[ \t]*(?:const|let|var)\s+\w+\s*=\s*new\s+THREE\.CanvasTexture\s*\([^;]*\)\s*;?[ \t]*\r?\n?/gim, '');
+        out = out.replace(/^[ \t]*\w+\.material\s*=\s*new\s+THREE\.MeshBasicMaterial\s*\([^;]*\)\s*;?[ \t]*\r?\n?/gim, '');
+        // Inline leftovers
+        out = out.replace(/new\s+THREE\.CanvasTexture\s*\([^)]*\)/gi, '/* MaterialPresets — no canvas map */');
+        out = out.replace(/new\s+THREE\.MeshBasicMaterial\s*\(\s*\{[^}]*map\s*:[^}]*\}\s*\)/gi, '/* MaterialPresets */');
+        // If slop was present and mesh exists without a preset apply, inject one after first createObject
+        if (hadCanvas && /World\.createObject/i.test(out) && !/MaterialPresets\.applyMaterialPreset/i.test(out)) {
+            out = out.replace(
+                /(const\s+(\w+)\s*=\s*World\.createObject\s*\([^;]+;\s*)/,
+                `$1\n    if (window.MaterialPresets?.applyMaterialPreset) {\n      MaterialPresets.applyMaterialPreset($2, 'pbr_concrete_weathered');\n    }\n    `,
+            );
+        }
+        // Drop dead `tex` references if any remain after strip
+        out = out.replace(/\{\s*map\s*:\s*tex\s*\}/gi, '{}');
+    }
+
+    // Art Name contract: prefer Name from user request when minis drift (Stone Block → Mat Stone Crate)
+    {
+        const artNames = [
+            'Mat Brick Wall', 'Mat Wood Crate', 'Mat Stone Crate', 'Mat Stone Block', 'Stone Block',
+        ];
+        let wantName = null;
+        let bestIdx = Infinity;
+        const ul = u.toLowerCase();
+        for (const n of artNames) {
+            const i = ul.indexOf(n.toLowerCase());
+            if (i >= 0 && i < bestIdx) {
+                bestIdx = i;
+                wantName = n;
+            }
+        }
+        if (wantName && /World\.createObject\s*\(/i.test(out)) {
+            out = out.replace(
+                /(World\.createObject\s*\(\s*['"][^'"]+['"]\s*,\s*)['"][^'"]+['"]/,
+                `$1'${wantName}'`,
+            );
+        }
+        const nameM = out.match(
+            /World\.createObject\s*\(\s*['"][^'"]+['"]\s*,\s*['"]([^'"]+)['"]/,
+        );
+        if (nameM) {
+            const slug = String(nameM[1]).trim().toLowerCase()
+                .replace(/[^a-z0-9]+/g, '_')
+                .replace(/^_+|_+$/g, '') || 'object';
+            const want = `textures/${slug}_albedo.png`;
+            if (/textureHint\s*=/.test(out)) {
+                out = out.replace(
+                    /textureHint\s*=\s*['"][^'"]*['"]/g,
+                    `textureHint = '${want}'`,
+                );
+            } else if (/World\.createObject/i.test(out)) {
+                // Inject textureHint after first createObject if mini omitted it
+                out = out.replace(
+                    /(const\s+(\w+)\s*=\s*World\.createObject\s*\([^;]+;\s*)/,
+                    `$1$2.userData.textureHint = '${want}';\n    `,
+                );
+            }
+            out = out.replace(
+                /\/\/\s*TEXTURE:[^\n]*/gi,
+                `// TEXTURE: ${nameM[1]} → ${want}`,
+            );
+        }
     }
 
     // blatant three.js bootstrap (cannot fully rewrite meshes — neutralize scene construction)
