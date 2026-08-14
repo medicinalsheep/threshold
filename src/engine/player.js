@@ -82,6 +82,14 @@ export const PlayerController = {
         this._velX = 0;
         this._velZ = 0;
         await applyPlayerAppearance(this.group, profile);
+        // Appearance / LOD may rebuild hierarchy — rebind walk after full compose
+        HumanMesh.rebindWalk?.(this.group);
+        if (!this.group.userData._playerWalkLogged) {
+            this.group.userData._playerWalkLogged = true;
+            const mode = this.group.userData.walkMode || 'unknown';
+            const clip = this.group.userData.walkClipName || '(none)';
+            console.info(`[player] walk ready mode=${mode} clip=${clip}`);
+        }
 
         this._inheritLookFromCamera();
         if (State.viewMode !== 'fps') {
@@ -92,7 +100,12 @@ export const PlayerController = {
         window.FpsViewmodel?.mount?.(Engine.camera);
 
         if (window.UI?.status) {
-            window.UI.status('Action controls — LMB aim · RMB shoot · F interact/third eye · E vehicle · click canvas to look');
+            const mode = this.group.userData.walkMode;
+            window.UI.status(
+                mode === 'none'
+                    ? 'Player ready — walk limbs missing'
+                    : 'Action controls — LMB aim · RMB shoot · WASD (TPS shows walk) · F interact · E vehicle',
+            );
         }
         window.ThirdEye?.updateHud?.();
         return this.group;
@@ -191,9 +204,12 @@ export const PlayerController = {
         this._camPitch = 0.28;
     },
 
-    prePhysics() {
+    prePhysics(dt = 1 / 60) {
         if (window.PlayAs?.isActive?.()) return;
         if (!this.spawned || !this.body || window.State?.controlMode !== 'walk' || window.State?.isPaused || window.State?.cutscenePlaying) return;
+
+        const frameDt = Number.isFinite(dt) && dt > 0 ? Math.min(0.08, Math.max(1 / 240, dt)) : 1 / 60;
+        this._frameDt = frameDt;
 
         const Engine = window.Engine;
         const camera = Engine?.camera;
@@ -234,14 +250,14 @@ export const PlayerController = {
             mz /= len;
             const tx = mx * targetSpeed;
             const tz = mz * targetSpeed;
-            this._velX += (tx - this._velX) * Math.min(1, ACCEL * 0.016);
-            this._velZ += (tz - this._velZ) * Math.min(1, ACCEL * 0.016);
+            this._velX += (tx - this._velX) * Math.min(1, ACCEL * frameDt);
+            this._velZ += (tz - this._velZ) * Math.min(1, ACCEL * frameDt);
             this.body.velocity.x = this._velX;
             this.body.velocity.z = this._velZ;
             this._lastFacing = Math.atan2(this._velX, this._velZ);
         } else {
-            this._velX += (0 - this._velX) * Math.min(1, DECEL * 0.016);
-            this._velZ += (0 - this._velZ) * Math.min(1, DECEL * 0.016);
+            this._velX += (0 - this._velX) * Math.min(1, DECEL * frameDt);
+            this._velZ += (0 - this._velZ) * Math.min(1, DECEL * frameDt);
             this.body.velocity.x = this._velX;
             this.body.velocity.z = this._velZ;
         }
@@ -263,9 +279,13 @@ export const PlayerController = {
         return { grounded, dist, hit };
     },
 
-    postPhysics() {
+    postPhysics(dt = 1 / 60) {
         if (window.PlayAs?.isActive?.()) return;
         if (!this.spawned || !this.body || window.State?.controlMode !== 'walk') return;
+
+        const frameDt = Number.isFinite(dt) && dt > 0
+            ? Math.min(0.08, Math.max(1 / 240, dt))
+            : (this._frameDt || 1 / 60);
 
         const Engine = window.Engine;
         const camera = Engine?.camera;
@@ -282,7 +302,10 @@ export const PlayerController = {
         const bodyScale = 1 - this._crouchBlend * 0.14;
         this.group.scale.set(1, bodyScale, 1);
 
-        const speed = Math.hypot(this.body.velocity.x, this.body.velocity.z);
+        // Prefer intent speed so walk anim doesn't die when physics damps velocity
+        const bodySpeed = Math.hypot(this.body.velocity.x, this.body.velocity.z);
+        const intentSpeed = Math.hypot(this._velX || 0, this._velZ || 0);
+        const speed = Math.max(bodySpeed, intentSpeed);
         const sprinting = window.Controls?.isAction?.('sprint') && speed > 0.5;
 
         if (speed > 0.2) {
@@ -293,7 +316,7 @@ export const PlayerController = {
             this.group.rotation.y = this._camYaw;
         }
 
-        HumanMesh.updateWalk(this.group, speed, 0.016, sprinting);
+        HumanMesh.updateWalk(this.group, speed, frameDt, sprinting);
 
         const ground = this._probeGround();
         window.Footsteps?.tick?.({

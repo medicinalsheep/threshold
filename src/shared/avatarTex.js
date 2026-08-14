@@ -11,6 +11,17 @@ const HAIR_REGION = ['hair'];
 const AVATAR_FINISH = { uvRepeat: [1, 1], normalScale: 0.45, envMapIntensity: 0.38 };
 const SKIN_FINISH = { uvRepeat: [1, 1], normalScale: 0.35, envMapIntensity: 0.28 };
 const FABRIC_FINISH = { uvRepeat: [1.5, 1.5], normalScale: 0.35, envMapIntensity: 0.34 };
+/** Softer maps on procedural primitive bodies (Track B — no skinned UVs yet) */
+const PRIMITIVE_SKIN_FINISH = { uvRepeat: [1.2, 1.2], normalScale: 0.18, envMapIntensity: 0.22 };
+const PRIMITIVE_FABRIC_FINISH = { uvRepeat: [1.8, 1.8], normalScale: 0.2, envMapIntensity: 0.28 };
+
+function isPrimitiveAvatar(group) {
+    let skinned = false;
+    group?.traverse?.((c) => {
+        if (c.isSkinnedMesh) skinned = true;
+    });
+    return !skinned;
+}
 
 function hexToNum(hex) {
     if (typeof hex === 'number') return hex;
@@ -35,15 +46,21 @@ function collectMeshes(root) {
     return out;
 }
 
-async function applySlug(mesh, slug, slots, TB) {
+async function applySlug(mesh, slug, slots, TB, { prefer1k = false } = {}) {
     let n = 0;
     for (const slot of slots) {
-        // Prefer HILOD tier (anti-thrash), fall back to bare
-        const candidates = [
-            `textures/${slug}_${slot}_2k.png`,
-            `textures/${slug}_${slot}_1k.png`,
-            `textures/${slug}_${slot}.png`,
-        ];
+        // Primitive bodies: prefer 1k (2k stretches worse on cylinders)
+        const candidates = prefer1k
+            ? [
+                `textures/${slug}_${slot}_1k.png`,
+                `textures/${slug}_${slot}.png`,
+                `textures/${slug}_${slot}_2k.png`,
+            ]
+            : [
+                `textures/${slug}_${slot}_2k.png`,
+                `textures/${slug}_${slot}_1k.png`,
+                `textures/${slug}_${slot}.png`,
+            ];
         let ok = false;
         for (const path of candidates) {
             try {
@@ -102,27 +119,30 @@ export const AvatarTex = {
 
         let maps = 0;
         const tracked = [];
+        const primitive = isPrimitiveAvatar(group);
+        const skinFin = primitive ? PRIMITIVE_SKIN_FINISH : SKIN_FINISH;
+        const fabFin = primitive ? PRIMITIVE_FABRIC_FINISH : FABRIC_FINISH;
 
         for (const mesh of meshes) {
             const region = classifyMesh(mesh);
             if (!region) continue;
 
             if (region === 'skin') {
-                maps += await applySlug(mesh, skinSlug, ['albedo', 'roughness', 'normal'], TB);
+                maps += await applySlug(mesh, skinSlug, ['albedo', 'roughness', 'normal'], TB, { prefer1k: primitive });
                 // Map-driven look: keep tint near white when maps present; soft multiply via profile color
                 const toneHex = window.AppearanceProfile?.skinHexForSlug?.(skinSlug);
                 tintMaterial(mesh, p.colors.skin || toneHex || '#ffffff', true);
-                finishMaterial(mesh, SKIN_FINISH);
+                finishMaterial(mesh, skinFin);
             } else if (region === 'shirt') {
-                maps += await applySlug(mesh, fabricSlug, ['albedo', 'roughness', 'normal'], TB);
+                maps += await applySlug(mesh, fabricSlug, ['albedo', 'roughness', 'normal'], TB, { prefer1k: primitive });
                 tintMaterial(mesh, p.colors.shirt, true);
-                finishMaterial(mesh, FABRIC_FINISH);
+                finishMaterial(mesh, fabFin);
             } else if (region === 'pants') {
-                maps += await applySlug(mesh, fabricSlug, ['albedo', 'roughness', 'normal'], TB);
+                maps += await applySlug(mesh, fabricSlug, ['albedo', 'roughness', 'normal'], TB, { prefer1k: primitive });
                 tintMaterial(mesh, p.colors.pants, true);
-                finishMaterial(mesh, FABRIC_FINISH);
+                finishMaterial(mesh, fabFin);
             } else if (region === 'hair') {
-                maps += await applySlug(mesh, hairSlug, ['albedo'], TB);
+                maps += await applySlug(mesh, hairSlug, ['albedo'], TB, { prefer1k: true });
                 tintMaterial(mesh, p.colors.hair, true);
                 setupHairMaterial(mesh);
                 finishMaterial(mesh, AVATAR_FINISH);

@@ -23,11 +23,18 @@ Use this when replacing procedural starter avatars with Blender-rigged character
 
 | Priority | Method |
 |----------|--------|
-| 1 | Clip named `walk`, `Walk`, or `locomotion` |
-| 2 | First clip in `gltf.animations` |
-| 3 | Procedural walk on named nodes (no clip) |
+| 1 | Clips named **`idle`**, **`walk`** / `locomotion`, **`run`** / `sprint` |
+| 2 | First clip used as walk if no named walk |
+| 3 | Procedural limb walk on named nodes (no clip) |
+
+Runtime picks **idle** when stopped, **walk** when moving, **run** when sprinting (or speed &gt; ~5.2 m/s).
 
 **GLTF export:** use **quaternion** rotation tracks (not Euler `rotation[x]`).
+
+### Starter pack (`npm run avatar:gen`)
+
+Generated bodies ship `idle` + `walk` + `run` on named limbs (`legL`/`legR`/`armL`/`armR`).  
+These are improved procedural mannequins (not skinned Blender heroes) — replace with rigged GLBs when ready.
 
 ---
 
@@ -64,11 +71,23 @@ npm run blender:export -- --blend scene.blend --object "Stone Block" --output im
 
 ## NPC roles
 
-| Role ID | Default GLB |
-|---------|-------------|
-| `player` | `starter_avatar.glb` |
-| `guide_npc` | `starter_avatar.glb` |
-| `guard_npc` | `starter_npc_guard.glb` |
-| `mechanic_npc` | `starter_npc_mech.glb` |
+| Role ID | Default GLB | Notes |
+|---------|-------------|--------|
+| `player` | `starter_avatar.glb` | + LOD1/2 · idle/walk/run |
+| `guide_npc` | `starter_avatar.glb` | same body |
+| `guard_npc` | `starter_npc_guard.glb` | bulkier `StarterGuard` form |
+| `mechanic_npc` | `starter_npc_mech.glb` | stockier `StarterMech` form |
 
 Spawn: `spawnHumanWithAvatar({ id: 'guard_npc', glb: 'my_guard.glb' })`
+
+---
+
+## Verify walk (offline + in-engine)
+
+```bash
+npm run walk:verify          # GLB clips + mixer binds legL
+npm run walk:smoke           # Puppeteer TPS ENTER solo → idle/walk/run motion
+npm run walk:smoke:build     # rebuild dist-pages first
+```
+
+`walk:smoke` writes `dist-store/tps-walk-smoke.json` (W1–W7).

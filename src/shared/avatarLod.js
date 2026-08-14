@@ -50,9 +50,9 @@ export const AvatarLod = {
         if (!lod0) lod0 = group.children[0];
         if (!lod0) return false;
 
-        // Preserve LOD0 walk clips from primary load if present on mixer root
-        if (group.userData.mixerClip?._clip) {
-            lod0.userData._gltfAnimations = [group.userData.mixerClip.getClip?.() || group.userData.mixerClip._clip].filter(Boolean);
+        // Keep full animation list (idle/walk/run). Never clobber with a single mixerClip.
+        if (!lod0.userData._gltfAnimations?.length && group.userData._lod0Animations?.length) {
+            lod0.userData._gltfAnimations = group.userData._lod0Animations;
         }
 
         const distances = entries.map((e) => e.distance);
@@ -64,6 +64,10 @@ export const AvatarLod = {
             group.userData.lodDistances = distances.length ? distances : [...AVATAR_LOD_DISTANCES];
             group.userData.avatarLodBodyId = body.id || bodySpec.bodyId || null;
             setupAvatarLodMixers(group);
+            // Ensure primary walk rig still valid after chain swap
+            if (group.userData.walkMode !== 'mixer' && window.HumanMesh?.rebindWalk) {
+                window.HumanMesh.rebindWalk(group);
+            }
             return true;
         } catch (e) {
             console.warn('[avatar-lod] setup failed', e.message || e);

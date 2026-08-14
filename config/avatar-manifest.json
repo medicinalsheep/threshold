@@ -3,7 +3,7 @@
   "version": 3,
   "defaultHeightM": 1.75,
   "preferredRoot": "StarterAvatar",
-  "animationClips": ["walk", "Walk", "locomotion", "idle", "Idle"],
+  "animationClips": ["idle", "Idle", "walk", "Walk", "locomotion", "run", "Run", "sprint"],
   "namedParts": ["legL", "legR", "armL", "armR", "torso", "head", "hips", "neck", "hair_anchor"],
   "fpsHideParts": ["head", "hairCap", "neck"],
   "attachPoints": {

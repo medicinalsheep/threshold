@@ -12,12 +12,72 @@ import {
 } from '../shared/voipConfig.js';
 import { generateHostRoomId, normalizeRoomCode } from '../shared/roomCode.js';
 import { normalizePasscode } from '../shared/hostPasscode.js';
+import { copyText } from '../utils/clipboard.js';
+import {
+    REPO_URL,
+    getProjectLink,
+    buildGrokOpenerPrompt,
+    buildLinkPack,
+    buildShareOneLiner,
+} from '../shared/thresholdOpenerPrompt.js';
 
 function initLobbyReleaseStrip() {
     const el = document.getElementById('lobby-release-strip');
     if (!el) return;
     const logUrl = 'https://github.com/medicinalsheep/threshold/blob/main/docs/CHANGELOG.md';
     el.innerHTML = `v${VERSION} · VOIP lobby + stable panels · <a href="${logUrl}" target="_blank" rel="noopener noreferrer">changelog</a>`;
+}
+
+/** Lobby How to — copy Grok opener / play link / link pack (starter prompt for external chat). */
+function initLobbyHowto() {
+    const statusEl = document.getElementById('lobby-howto-status');
+    const setHow = (msg, isError = false) => {
+        if (!statusEl) return;
+        statusEl.textContent = msg || '';
+        statusEl.classList.toggle('is-error', !!isError);
+    };
+
+    const idea = () => document.getElementById('lobby-howto-idea')?.value?.trim() || '';
+
+    const copy = async (text, okMsg) => {
+        try {
+            await copyText(text);
+            setHow(okMsg);
+            return true;
+        } catch (e) {
+            console.warn('[lobby] copy failed', e);
+            setHow('Copy failed — select text manually', true);
+            return false;
+        }
+    };
+
+    document.getElementById('lobby-copy-opener')?.addEventListener('click', async () => {
+        const text = buildGrokOpenerPrompt({ idea: idea() });
+        await copy(text, 'Grok opener copied — paste into Grok Build or chat');
+    });
+
+    document.getElementById('lobby-copy-project-link')?.addEventListener('click', async () => {
+        await copy(getProjectLink(), 'Play link copied');
+    });
+
+    document.getElementById('lobby-copy-link-pack')?.addEventListener('click', async () => {
+        await copy(buildLinkPack(), 'Link pack copied (play + repo + docs)');
+    });
+
+    const repoA = document.getElementById('lobby-howto-repo');
+    if (repoA) {
+        repoA.href = REPO_URL;
+        repoA.textContent = REPO_URL.replace(/^https:\/\//, '');
+    }
+
+    // Expose one-liner for other UI
+    window.ThresholdOpener = {
+        ...(window.ThresholdOpener || {}),
+        getProjectLink,
+        buildGrokOpenerPrompt,
+        buildLinkPack,
+        buildShareOneLiner,
+    };
 }
 
 function initLobbyModePicker() {
@@ -158,6 +218,7 @@ export function initLobby(onReady) {
     QuickExportPlay.bindOnce();
     initLobbyModePicker();
     initLobbyReleaseStrip();
+    initLobbyHowto();
 
     const enterApp = () => {
         overlay?.classList.add('hidden');

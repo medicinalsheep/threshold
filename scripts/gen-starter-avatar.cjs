@@ -21,19 +21,30 @@ const ROOT = path.join(__dirname, '..');
 const IMPORT = path.join(ROOT, 'import');
 const PUB = path.join(ROOT, 'public', 'bundle', 'import');
 
-/** Detail tiers → LOD0 high · LOD1 mid · LOD2 low */
+/** Detail tiers → LOD0 high · LOD1 mid · LOD2 low (Track B quality floor) */
 function detailParams(detail = 'high') {
-    if (detail === 'low') return { seg: 6, headW: 10, headH: 8, face: false, bust: false };
-    if (detail === 'mid') return { seg: 8, headW: 14, headH: 12, face: true, bust: true };
-    return { seg: 12, headW: 24, headH: 20, face: true, bust: true };
+    if (detail === 'low') return { seg: 8, headW: 12, headH: 10, face: true, bust: true };
+    if (detail === 'mid') return { seg: 14, headW: 20, headH: 16, face: true, bust: true };
+    return { seg: 22, headW: 32, headH: 26, face: true, bust: true };
 }
 
 function mat(c, o = {}) {
     return new THREE.MeshStandardMaterial({
         color: c,
-        roughness: o.r ?? 0.72,
+        roughness: o.r ?? 0.68,
         metalness: o.m ?? 0.04,
+        // Explicit map slots ready for AvatarTex; keeps PBR stable without maps
+        envMapIntensity: o.env ?? 0.35,
     });
+}
+
+/** Cylinders already have UVs; ensure sphere/box meshes too for skin maps */
+function ensureUVs(geo) {
+    if (!geo.attributes.uv) {
+        // Box/sphere from three always have uv; leave as no-op safety
+        geo.computeBoundingBox();
+    }
+    return geo;
 }
 
 function limb(name, mesh, pivotY, offsetX = 0) {
@@ -118,8 +129,8 @@ const FORMS = {
     },
 };
 
-function buildBody(cols, formKey = 'male', detail = 'high') {
-    const f = FORMS[formKey] || FORMS.male;
+function buildBody(cols, formKey = 'male', detail = 'high', formOverride = null) {
+    const f = formOverride || FORMS[formKey] || FORMS.male;
     const d = detailParams(detail);
     const SEG = d.seg;
     const HEAD_W = d.headW;
@@ -337,8 +348,9 @@ function buildBody(cols, formKey = 'male', detail = 'high') {
 
     castShadow(root);
 
-    // For walk clip, limb groups must be named legL/legR/armL/armR
-    return { root, legL, legR, armL, armR, form: f };
+    // Loco clips need named limb groups + torso for bob
+    const torso = root.getObjectByName('torso') || torsoGroup;
+    return { root, legL, legR, armL, armR, torso, form: f };
 }
 
 function buildHairShort(cols) {
@@ -401,19 +413,63 @@ function quatXTrack(nodeName, times, angles) {
     return new THREE.QuaternionKeyframeTrack(`${nodeName}.quaternion`, times, values);
 }
 
-function walkClip(legL, legR, armL, armR) {
-    const d = 0.85;
-    const t = [0, d * 0.25, d * 0.5, d * 0.75, d];
-    const a = 0.52;
-    return new THREE.AnimationClip('walk', d, [
-        quatXTrack(legL.name, t, [0, a, 0, -a, 0]),
-        quatXTrack(legR.name, t, [0, -a, 0, a, 0]),
-        quatXTrack(armL.name, t, [0, -a * 0.75, 0, a * 0.75, 0]),
-        quatXTrack(armR.name, t, [0, a * 0.75, 0, -a * 0.75, 0]),
-    ]);
+function posOffsetYTrack(obj, times, deltas) {
+    const p = obj.position;
+    const values = [];
+    for (const d of deltas) values.push(p.x, p.y + d, p.z);
+    return new THREE.VectorKeyframeTrack(`${obj.name}.position`, times, values);
 }
 
-function exportGlb(root, clip, out) {
+function idleClip(parts) {
+    const { legL, legR, armL, armR, torso } = parts;
+    const d = 2.4;
+    const t = [0, d * 0.5, d];
+    const tracks = [
+        quatXTrack(legL.name, t, [0.04, 0.04, 0.04]),
+        quatXTrack(legR.name, t, [-0.02, -0.02, -0.02]),
+        quatXTrack(armL.name, t, [0.1, 0.12, 0.1]),
+        quatXTrack(armR.name, t, [0.1, 0.08, 0.1]),
+    ];
+    if (torso) tracks.push(posOffsetYTrack(torso, t, [0, 0.012, 0]));
+    return new THREE.AnimationClip('idle', d, tracks);
+}
+
+function walkClip(parts) {
+    const { legL, legR, armL, armR, torso } = parts;
+    const d = 0.9;
+    const t = [0, d * 0.25, d * 0.5, d * 0.75, d];
+    const a = 0.58;
+    const tracks = [
+        quatXTrack(legL.name, t, [0, a, 0, -a, 0]),
+        quatXTrack(legR.name, t, [0, -a, 0, a, 0]),
+        quatXTrack(armL.name, t, [0.08, -a * 0.72, 0.08, a * 0.72, 0.08]),
+        quatXTrack(armR.name, t, [0.08, a * 0.72, 0.08, -a * 0.72, 0.08]),
+    ];
+    if (torso) tracks.push(posOffsetYTrack(torso, t, [0, 0.028, 0, 0.028, 0]));
+    return new THREE.AnimationClip('walk', d, tracks);
+}
+
+function runClip(parts) {
+    const { legL, legR, armL, armR, torso } = parts;
+    const d = 0.55;
+    const t = [0, d * 0.25, d * 0.5, d * 0.75, d];
+    const a = 0.85;
+    const tracks = [
+        quatXTrack(legL.name, t, [0, a, 0, -a, 0]),
+        quatXTrack(legR.name, t, [0, -a, 0, a, 0]),
+        quatXTrack(armL.name, t, [0.15, -a * 0.9, 0.15, a * 0.9, 0.15]),
+        quatXTrack(armR.name, t, [0.15, a * 0.9, 0.15, -a * 0.9, 0.15]),
+    ];
+    if (torso) tracks.push(posOffsetYTrack(torso, t, [0, 0.045, 0, 0.045, 0]));
+    return new THREE.AnimationClip('run', d, tracks);
+}
+
+function buildLocoClips(parts) {
+    return [idleClip(parts), walkClip(parts), runClip(parts)];
+}
+
+function exportGlb(root, clips, out) {
+    const anims = Array.isArray(clips) ? clips.filter(Boolean) : (clips ? [clips] : []);
     return new Promise((res, rej) => {
         new GLTFExporter().parse(root, (r) => {
             fs.mkdirSync(path.dirname(out), { recursive: true });
@@ -421,7 +477,7 @@ function exportGlb(root, clip, out) {
             fs.mkdirSync(PUB, { recursive: true });
             fs.copyFileSync(out, path.join(PUB, path.basename(out)));
             res(out);
-        }, rej, { binary: true, animations: clip ? [clip] : [] });
+        }, rej, { binary: true, animations: anims });
     });
 }
 
@@ -438,26 +494,72 @@ function countTris(root) {
     return Math.round(tris);
 }
 
+/** Form scale biases for distinct silhouettes (not same mannequin tint) */
+const FORM_BIAS = {
+    male: null,
+    female: null,
+    guard: {
+        // bulkier tactical
+        shoulderW: 1.14,
+        chestW: 1.12,
+        chestD: 1.1,
+        hipW: 1.06,
+        thighTop: 1.12,
+        armTop: 1.15,
+        torsoH: 1.04,
+    },
+    mech: {
+        // stockier workshop build
+        shoulderW: 1.08,
+        chestW: 1.1,
+        waistW: 1.08,
+        hipW: 1.1,
+        armTop: 1.12,
+        thighTop: 1.1,
+        legLen: 0.96,
+        armLen: 1.02,
+    },
+};
+
+function applyFormBias(formKey, biasKey) {
+    const base = { ...(FORMS[formKey] || FORMS.male) };
+    const bias = FORM_BIAS[biasKey];
+    if (!bias) return base;
+    for (const [k, v] of Object.entries(bias)) {
+        if (typeof base[k] === 'number' && typeof v === 'number') {
+            base[k] = v > 2 ? v : base[k] * v; // absolute if large, else multiply
+        }
+    }
+    // Distinct root names so LODs/debug stay clear
+    if (biasKey === 'guard') base.rootName = 'StarterGuard';
+    if (biasKey === 'mech') base.rootName = 'StarterMech';
+    return base;
+}
+
 const AVATARS = [
     {
         file: 'starter_avatar.glb',
         form: 'male',
-        cols: { shirt: 0x3d5a80, pants: 0x232830, skin: 0xe8b896, hair: 0x2a1810 },
+        bias: 'male',
+        cols: { shirt: 0x3d5a80, pants: 0x232830, skin: 0xe8b896, hair: 0x2a1810, shoe: 0x121218 },
     },
     {
         file: 'starter_avatar_female.glb',
         form: 'female',
-        cols: { shirt: 0x6a4a6a, pants: 0x2a2838, skin: 0xe8b896, hair: 0x3a2818 },
+        bias: 'female',
+        cols: { shirt: 0x6a4a6a, pants: 0x2a2838, skin: 0xe8c4a8, hair: 0x3a2818, shoe: 0x1a1420 },
     },
     {
         file: 'starter_npc_guard.glb',
         form: 'male',
-        cols: { shirt: 0x2a3d52, pants: 0x1a2028, skin: 0xd4a882, hair: 0x1a1210 },
+        bias: 'guard',
+        cols: { shirt: 0x1e3348, pants: 0x141a22, skin: 0xd4a882, hair: 0x1a1210, shoe: 0x0e1014 },
     },
     {
         file: 'starter_npc_mech.glb',
         form: 'male',
-        cols: { shirt: 0x6b4428, pants: 0x2a2830, skin: 0xc99872, hair: 0x3a2818 },
+        bias: 'mech',
+        cols: { shirt: 0x7a4e2e, pants: 0x2a2830, skin: 0xc99872, hair: 0x3a2818, shoe: 0x2a2018 },
     },
 ];
 
@@ -474,20 +576,23 @@ const LOD_TIERS = [
 ];
 
 async function main() {
+    console.log('[gen-starter-avatar] Track B — higher detail + idle/walk/run clips\n');
     for (const spec of AVATARS) {
-        // LOD chain only for player bodies (manifest male/female defaults)
+        // LOD chain for player bodies; NPCs get high only (distinct bias forms)
         const wantLods = /starter_avatar(_female)?\.glb$/i.test(spec.file);
         const tiers = wantLods ? LOD_TIERS : [LOD_TIERS[0]];
+        const formOver = applyFormBias(spec.form, spec.bias || spec.form);
         for (const lod of tiers) {
-            const { root, legL, legR, armL, armR } = buildBody(spec.cols, spec.form, lod.detail);
-            const clip = walkClip(legL, legR, armL, armR);
+            const built = buildBody(spec.cols, spec.form, lod.detail, formOver);
+            const { root, legL, legR, armL, armR, torso } = built;
+            const clips = buildLocoClips({ legL, legR, armL, armR, torso });
             const base = spec.file.replace(/\.glb$/i, '');
             const file = lod.suffix ? `${base}${lod.suffix}.glb` : spec.file;
             const out = path.join(IMPORT, file);
-            await exportGlb(root, clip, out);
+            await exportGlb(root, clips, out);
             const kb = (fs.statSync(out).size / 1024).toFixed(1);
             const tris = countTris(root);
-            console.log(`[gen-starter-avatar] ${file} (${spec.form}/${lod.detail}) ${kb} KB · ~${tris} tris`);
+            console.log(`[gen-starter-avatar] ${file} (${spec.bias || spec.form}/${lod.detail}) ${kb} KB · ~${tris} tris · clips=${clips.map((c) => c.name).join(',')}`);
         }
     }
     for (const spec of HAIR) {
@@ -497,7 +602,7 @@ async function main() {
         const kb = (fs.statSync(out).size / 1024).toFixed(1);
         console.log(`[gen-starter-avatar] ${spec.file} (${kb} KB)`);
     }
-    console.log('[gen-starter-avatar] done — import/ + public/bundle/import/ (+ LOD1/2 for M/F)');
+    console.log('[gen-starter-avatar] done — import/ + public/bundle/import/ (idle+walk+run)');
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

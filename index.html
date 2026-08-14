@@ -79,6 +79,36 @@
                             </div>
                             <button id="lobby-solo" class="lobby-btn lobby-btn-primary lobby-btn-enter" type="button">ENTER →</button>
                             <p class="lobby-mode-hint">Solo · no network · start immediately</p>
+
+                            <details class="lobby-howto-wrap" id="lobby-howto">
+                                <summary class="lobby-howto-summary">
+                                    <span>How to · Grok opener</span>
+                                    <span class="lobby-howto-chevron" aria-hidden="true">▾</span>
+                                </summary>
+                                <div class="lobby-howto-body">
+                                    <p class="lobby-howto-lead">
+                                        Don’t want to hit ENTER? Copy a <strong>starter prompt</strong> (like grokdevprompt)
+                                        and paste it into <strong>Grok Build</strong> or chat — Threshold is the project reference.
+                                    </p>
+                                    <div class="lobby-howto-actions">
+                                        <button type="button" id="lobby-copy-opener" class="lobby-btn lobby-btn-host">COPY GROK OPENER</button>
+                                        <button type="button" id="lobby-copy-project-link" class="lobby-btn lobby-btn-ghost">COPY PLAY LINK</button>
+                                        <button type="button" id="lobby-copy-link-pack" class="lobby-btn lobby-btn-ghost">COPY LINK PACK</button>
+                                    </div>
+                                    <label class="lobby-howto-idea-label" for="lobby-howto-idea">Optional goal (included in opener)</label>
+                                    <input type="text" id="lobby-howto-idea" class="lobby-input" placeholder="e.g. courtyard with crates + rain PBR" maxlength="200" autocomplete="off">
+                                    <ul class="lobby-howto-list">
+                                        <li><strong>Opener</strong> — full paste for Grok Build / chat</li>
+                                        <li><strong>Play link</strong> — live app URL</li>
+                                        <li><strong>Link pack</strong> — play + repo + docs spine</li>
+                                    </ul>
+                                    <p id="lobby-howto-status" class="lobby-howto-status" role="status" aria-live="polite"></p>
+                                    <p class="lobby-howto-foot">
+                                        Repo:
+                                        <a id="lobby-howto-repo" href="https://github.com/medicinalsheep/threshold" target="_blank" rel="noopener noreferrer">github.com/medicinalsheep/threshold</a>
+                                    </p>
+                                </div>
+                            </details>
                         </div>
 
                         <div class="lobby-multi-zone">

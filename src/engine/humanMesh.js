@@ -8,17 +8,48 @@ function limbGroup(mesh, pivotY, offsetX = 0) {
     return g;
 }
 
-const GLTF_PART_NAMES = ['legL', 'legR', 'armL', 'armR', 'torso', 'head', 'hips'];
+const GLTF_PART_NAMES = ['legL', 'legR', 'armL', 'armR', 'torso', 'head', 'hips', 'shoulders', 'neck', 'collar', 'hairCap'];
 /** Higher segments = smoother silhouette (realism pass) */
 const SEG = 18;
 const SEG_LO = 12;
+/** m/s — below this we idle (was 0.25; felt frozen near stop) */
+const MOVE_EPS = 0.15;
+const DT_MIN = 1 / 240;
+const DT_MAX = 0.08;
+
+function clampDt(dt) {
+    const n = Number(dt);
+    if (!Number.isFinite(n) || n <= 0) return 1 / 60;
+    return Math.min(DT_MAX, Math.max(DT_MIN, n));
+}
 
 function collectNamedParts(object) {
     const parts = {};
+    if (!object) return parts;
     object.traverse((c) => {
         if (GLTF_PART_NAMES.includes(c.name) && parts[c.name] == null) parts[c.name] = c;
     });
     return parts;
+}
+
+function capturePartBases(parts) {
+    if (!parts) return null;
+    const base = {};
+    for (const [k, obj] of Object.entries(parts)) {
+        if (!obj?.position) continue;
+        base[`${k}Y`] = obj.position.y;
+        base[`${k}Rx`] = obj.rotation?.x ?? 0;
+        base[`${k}Rz`] = obj.rotation?.z ?? 0;
+    }
+    // Legacy keys used by updateWalk / updateIdle
+    if (parts.torso) base.torsoY = parts.torso.position.y;
+    if (parts.shoulders) base.shouldersY = parts.shoulders.position.y;
+    if (parts.collar) base.collarY = parts.collar.position.y;
+    if (parts.neck) base.neckY = parts.neck.position.y;
+    if (parts.head) base.headY = parts.head.position.y;
+    if (parts.hairCap) base.hairY = parts.hairCap.position.y;
+    if (parts.hips) base.hipsY = parts.hips.position.y;
+    return base;
 }
 
 function avatarRootFromModel(model) {
@@ -31,16 +62,271 @@ function avatarRootFromModel(model) {
     if (skinnedRoot) return skinnedRoot;
     return model.getObjectByName('StarterAvatar')
         || model.getObjectByName('StarterAvatarFemale')
+        || model.getObjectByName('StarterGuard')
+        || model.getObjectByName('StarterMech')
         || model.children[0]
         || model;
 }
 
+/** Prefer root that owns named limb tracks (node anims on starter GLBs). */
+function pickMixerRoots(model) {
+    const roots = [];
+    if (!model) return roots;
+    // Scene-level first — glTF node tracks resolve relative to loaded scene
+    roots.push(model);
+    const named = model.getObjectByName('StarterAvatar')
+        || model.getObjectByName('StarterAvatarFemale')
+        || model.getObjectByName('StarterGuard')
+        || model.getObjectByName('StarterMech');
+    if (named && named !== model) roots.push(named);
+    let skinned = null;
+    model.traverse((c) => {
+        if (c.isSkinnedMesh && c.skeleton?.bones?.length && !skinned) skinned = c;
+    });
+    if (skinned) roots.unshift(skinned); // real rigs: skinned first
+    // de-dupe
+    return [...new Set(roots)];
+}
+
 const WALK_CLIP_NAMES = ['walk', 'Walk', 'locomotion', 'Locomotion'];
+const IDLE_CLIP_NAMES = ['idle', 'Idle', 'stand', 'Stand', 'rest'];
+const RUN_CLIP_NAMES = ['run', 'Run', 'sprint', 'Sprint'];
+
+function pickNamedClip(animations = [], names = []) {
+    if (!animations?.length) return null;
+    const named = animations.find((c) => names.some((n) => c.name?.includes(n)));
+    return named || null;
+}
 
 function pickWalkClip(animations = []) {
-    if (!animations.length) return null;
-    const named = animations.find((c) => WALK_CLIP_NAMES.some((n) => c.name?.includes(n)));
-    return named || animations[0];
+    return pickNamedClip(animations, WALK_CLIP_NAMES) || animations[0] || null;
+}
+
+function pickIdleClip(animations = []) {
+    return pickNamedClip(animations, IDLE_CLIP_NAMES);
+}
+
+function pickRunClip(animations = []) {
+    return pickNamedClip(animations, RUN_CLIP_NAMES);
+}
+
+function makeAction(mixer, clip, { loop = true, weight = 0 } = {}) {
+    if (!mixer || !clip) return null;
+    const action = mixer.clipAction(clip);
+    action.enabled = true;
+    action.setEffectiveWeight(weight);
+    action.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, Infinity);
+    action.clampWhenFinished = !loop;
+    action.play();
+    action.paused = weight <= 0;
+    return action;
+}
+
+/**
+ * Three returns the SAME action for the same clip — never map idle/walk/run
+ * to one clip via three keys or setLoco will zero the weight on the last pass.
+ */
+function buildLocoActions(mixer, idleClip, walkClip, runClip) {
+    if (!mixer || !walkClip) return null;
+    const walk = makeAction(mixer, walkClip, { weight: 1 });
+    const idle = idleClip && idleClip !== walkClip
+        ? makeAction(mixer, idleClip, { weight: 0 })
+        : null;
+    const run = runClip && runClip !== walkClip
+        ? makeAction(mixer, runClip, { weight: 0 })
+        : null;
+    return {
+        idle,
+        walk,
+        run,
+        /** only one real clip — pause for idle, speed up for run */
+        singleClip: !idle && !run,
+    };
+}
+
+/**
+ * Try AnimationMixer roots until a probe clip moves legL.
+ * Binds idle + walk + run on the same mixer when present.
+ * @returns {{ mixer, action, root, ok: boolean, actions: object }}
+ */
+function bindWalkMixer(model, animationsOrWalk) {
+    const anims = Array.isArray(animationsOrWalk)
+        ? animationsOrWalk
+        : (animationsOrWalk ? [animationsOrWalk] : []);
+    const walkClip = pickWalkClip(anims);
+    const idleClip = pickIdleClip(anims);
+    const runClip = pickRunClip(anims);
+    if (!model || !walkClip) {
+        return { mixer: null, action: null, root: null, ok: false, actions: null };
+    }
+    const leg = model.getObjectByName('legL');
+    for (const root of pickMixerRoots(model)) {
+        try {
+            const mixer = new THREE.AnimationMixer(root);
+            const probe = makeAction(mixer, walkClip, { weight: 1 });
+            probe.paused = false;
+            probe.timeScale = 1;
+            if (leg) {
+                const q0 = leg.quaternion.clone();
+                mixer.update(0.12);
+                const ok = !q0.equals(leg.quaternion);
+                if (!ok) {
+                    mixer.stopAllAction();
+                    continue;
+                }
+            }
+            // Rebuild clean action set after probe (distinct clips only)
+            mixer.stopAllAction();
+            const actions = buildLocoActions(mixer, idleClip, walkClip, runClip);
+            setLocoAction(actions, idleClip ? 'idle' : 'idle', { timeScale: 1 });
+            return {
+                mixer,
+                action: actions.walk || actions.idle,
+                root,
+                ok: true,
+                actions,
+                clips: {
+                    idle: idleClip?.name || null,
+                    walk: walkClip?.name || null,
+                    run: runClip?.name || null,
+                },
+            };
+        } catch {
+            /* try next root */
+        }
+    }
+    return { mixer: null, action: null, root: null, ok: false, actions: null };
+}
+
+/** Weight-based locomotion switch (idle / walk / run). */
+function setLocoAction(actions, name, { timeScale = 1 } = {}) {
+    if (!actions) return;
+
+    // Single walk clip: pause when idle, play walk/run with timescale
+    if (actions.singleClip || (!actions.idle && !actions.run)) {
+        const a = actions.walk;
+        if (!a) return;
+        a.enabled = true;
+        a.setEffectiveWeight(1);
+        a.play();
+        if (name === 'idle') {
+            a.paused = true;
+            a.timeScale = 0;
+        } else {
+            a.paused = false;
+            a.timeScale = name === 'run' ? Math.max(timeScale, 1.35) : timeScale;
+        }
+        return;
+    }
+
+    for (const key of ['idle', 'walk', 'run']) {
+        const action = actions[key];
+        if (!action) continue;
+        const on = key === name || (name === 'run' && key === 'walk' && !actions.run)
+            || (name === 'idle' && key === 'walk' && !actions.idle);
+        // Prefer exact key only when present
+        const exact = key === name;
+        action.enabled = true;
+        if (exact) {
+            action.setEffectiveWeight(1);
+            action.paused = false;
+            action.timeScale = timeScale;
+            action.play();
+        } else {
+            action.setEffectiveWeight(0);
+            action.paused = true;
+            action.timeScale = 0;
+        }
+    }
+}
+
+function pickLocoName(speed, sprinting) {
+    if (speed <= MOVE_EPS) return 'idle';
+    if (sprinting || speed > 5.2) return 'run';
+    return 'walk';
+}
+
+function ensureWalkParts(group, model = null) {
+    const src = model
+        || group?.userData?._lodScenes?.[group.userData.lodActive || 0]
+        || group?.userData?._lodScenes?.[0]
+        || group;
+    const parts = collectNamedParts(src);
+    if (parts.legL && parts.legR) {
+        if (!parts._base) parts._base = capturePartBases(parts);
+        group.userData.humanParts = parts;
+        return parts;
+    }
+    return group.userData.humanParts || null;
+}
+
+/**
+ * Wire walk on a player/NPC group after GLB load (or re-bind after LOD).
+ */
+function setupWalkRig(group, model, animations = []) {
+    if (!group) return;
+    const anims = animations?.length
+        ? animations
+        : (model?.userData?._gltfAnimations || group.userData?._lod0Animations || []);
+    const parts = ensureWalkParts(group, model);
+    const walkClip = pickWalkClip(anims);
+    group.userData.walkClipName = walkClip?.name || null;
+
+    if (walkClip) {
+        const bound = bindWalkMixer(model || group, anims);
+        if (bound.ok) {
+            group.userData.mixer = bound.mixer;
+            group.userData.mixerClip = bound.action;
+            group.userData.locoActions = bound.actions;
+            group.userData.locoClips = bound.clips;
+            group.userData.locoActive = bound.actions?.idle ? 'idle' : 'walk';
+            group.userData.walkMode = 'mixer';
+            group.userData.mixerRoot = bound.root;
+            if (parts) group.userData.humanParts = parts;
+            return 'mixer';
+        }
+    }
+
+    group.userData.mixer = null;
+    group.userData.mixerClip = null;
+    group.userData.locoActions = null;
+    group.userData.walkMode = parts?.legL ? 'procedural' : 'none';
+    if (parts) {
+        group.userData.humanParts = parts;
+        group.userData.walkPhase = 0;
+        group.userData.idlePhase = Math.random() * Math.PI * 2;
+    }
+    return group.userData.walkMode;
+}
+
+function applyRestPose(parts, dt = 0.016) {
+    if (!parts) return;
+    const b = parts._base || {};
+    const k = Math.min(1, dt * 10);
+    const restArm = 0.08;
+    const restLeg = 0.03;
+    if (parts.legL) parts.legL.rotation.x = THREE.MathUtils.lerp(parts.legL.rotation.x, restLeg, k);
+    if (parts.legR) parts.legR.rotation.x = THREE.MathUtils.lerp(parts.legR.rotation.x, -restLeg * 0.5, k);
+    if (parts.armL) {
+        parts.armL.rotation.x = THREE.MathUtils.lerp(parts.armL.rotation.x, restArm, k);
+        if (parts.armL.rotation.z != null) {
+            parts.armL.rotation.z = THREE.MathUtils.lerp(parts.armL.rotation.z, 0.08, k);
+        }
+    }
+    if (parts.armR) {
+        parts.armR.rotation.x = THREE.MathUtils.lerp(parts.armR.rotation.x, restArm, k);
+        if (parts.armR.rotation.z != null) {
+            parts.armR.rotation.z = THREE.MathUtils.lerp(parts.armR.rotation.z, -0.08, k);
+        }
+    }
+    if (parts.torso) {
+        parts.torso.rotation.x = THREE.MathUtils.lerp(parts.torso.rotation.x, 0, k);
+        parts.torso.rotation.y = THREE.MathUtils.lerp(parts.torso.rotation.y, 0, k);
+        if (b.torsoY != null) parts.torso.position.y = THREE.MathUtils.lerp(parts.torso.position.y, b.torsoY, k);
+    }
+    if (parts.hips && b.hipsY != null) {
+        parts.hips.position.y = THREE.MathUtils.lerp(parts.hips.position.y, b.hipsY, k);
+    }
 }
 
 /**
@@ -495,17 +781,20 @@ export const HumanMesh = {
         };
         group.userData.walkPhase = 0;
         group.userData.idlePhase = Math.random() * Math.PI * 2;
+        group.userData.walkMode = 'procedural';
+        group.userData.isGltf = false;
 
         return group;
     },
 
     updateIdle(group, time, dt = 0.016) {
         if (!group) return;
-        if (group.userData?.isGltf && group.userData?.mixer) return;
-
-        const parts = group.userData?.humanParts;
+        dt = clampDt(dt);
+        // Prefer named parts for idle (mixer paused mid-stride looks frozen)
+        const parts = group.userData?.humanParts || ensureWalkParts(group);
         if (!parts) return;
-        const b = parts._base || {};
+        const b = parts._base || capturePartBases(parts) || {};
+        parts._base = b;
 
         group.userData.idlePhase = (group.userData.idlePhase || 0) + dt;
         const t = group.userData.idlePhase;
@@ -513,23 +802,23 @@ export const HumanMesh = {
         const sway = Math.sin(t * 0.7) * 0.028;
         const look = Math.sin(t * 0.35 + (group.userData.idleSeed || 0)) * 0.14;
 
+        applyRestPose(parts, dt);
+
         if (parts.torso) {
-            parts.torso.position.y = (b.torsoY ?? 1.3) + breathe;
-            parts.torso.rotation.y = THREE.MathUtils.lerp(parts.torso.rotation.y, sway * 0.35, 0.05);
+            parts.torso.position.y = (b.torsoY ?? parts.torso.position.y) + breathe;
+            parts.torso.rotation.y = THREE.MathUtils.lerp(parts.torso.rotation.y, sway * 0.35, 0.08);
         }
-        if (parts.shoulders) parts.shoulders.position.y = (b.shouldersY ?? 1.56) + breathe;
-        if (parts.collar) parts.collar.position.y = (b.collarY ?? 1.62) + breathe;
-        if (parts.neck) parts.neck.position.y = (b.neckY ?? 1.66) + breathe;
+        if (parts.shoulders) parts.shoulders.position.y = (b.shouldersY ?? parts.shoulders.position.y) + breathe;
+        if (parts.collar) parts.collar.position.y = (b.collarY ?? parts.collar.position.y) + breathe;
+        if (parts.neck) parts.neck.position.y = (b.neckY ?? parts.neck.position.y) + breathe;
         if (parts.head) {
-            parts.head.position.y = (b.headY ?? 1.8) + breathe * 1.15;
+            parts.head.position.y = (b.headY ?? parts.head.position.y) + breathe * 1.15;
             parts.head.rotation.y = THREE.MathUtils.lerp(parts.head.rotation.y, look, 0.06);
         }
-        if (parts.hairCap) parts.hairCap.position.y = (b.hairY ?? 1.86) + breathe * 1.15;
-        if (parts.armL) parts.armL.rotation.x = THREE.MathUtils.lerp(parts.armL.rotation.x, Math.sin(t * 1.1) * 0.07, 0.08);
-        if (parts.armR) parts.armR.rotation.x = THREE.MathUtils.lerp(parts.armR.rotation.x, -Math.sin(t * 1.1 + 0.5) * 0.07, 0.08);
-        if (parts.legL) parts.legL.rotation.x = THREE.MathUtils.lerp(parts.legL.rotation.x, 0, 0.12);
-        if (parts.legR) parts.legR.rotation.x = THREE.MathUtils.lerp(parts.legR.rotation.x, 0, 0.12);
-        if (parts.hips) parts.hips.position.y = (b.hipsY ?? 0.88) + Math.sin(t * 1.8) * 0.006;
+        if (parts.hairCap) parts.hairCap.position.y = (b.hairY ?? parts.hairCap.position.y) + breathe * 1.15;
+        if (parts.armL) parts.armL.rotation.x = THREE.MathUtils.lerp(parts.armL.rotation.x, 0.08 + Math.sin(t * 1.1) * 0.05, 0.1);
+        if (parts.armR) parts.armR.rotation.x = THREE.MathUtils.lerp(parts.armR.rotation.x, 0.08 - Math.sin(t * 1.1 + 0.5) * 0.05, 0.1);
+        if (parts.hips) parts.hips.position.y = (b.hipsY ?? parts.hips.position.y) + Math.sin(t * 1.8) * 0.006;
     },
 
     setFirstPersonVisible(group, visible) {
@@ -555,30 +844,72 @@ export const HumanMesh = {
 
     updateWalk(group, horizontalSpeed, dt = 0.016, sprinting = false) {
         if (!group) return;
+        dt = clampDt(dt);
+        const speed = Number(horizontalSpeed) || 0;
+        const moving = speed > MOVE_EPS;
+        const mode = group.userData.walkMode;
 
-        // Multi-LOD pose sync (all tiers advance so zoom swaps don't hop)
-        if (group.userData?.avatarLod && window.AvatarPoseSync?.updateAvatarLodPose) {
-            if (window.AvatarPoseSync.updateAvatarLodPose(group, horizontalSpeed, dt, sprinting)) {
+        // Multi-LOD pose sync when mixers are healthy (handles idle/walk/run clips)
+        if (group.userData?.avatarLod && mode !== 'procedural' && window.AvatarPoseSync?.updateAvatarLodPose) {
+            if (window.AvatarPoseSync.updateAvatarLodPose(group, speed, dt, sprinting)) {
+                // Procedural idle only if LOD set has no idle clip
+                if (!moving && !group.userData.locoClips?.idle) {
+                    const parts = group.userData?.humanParts || ensureWalkParts(group);
+                    if (parts) this.updateIdle(group, 0, dt);
+                }
                 return;
             }
         }
 
-        if (group.userData.isGltf && group.userData.mixer) {
-            const clip = group.userData.mixerClip;
-            if (clip) {
-                const moving = horizontalSpeed > 0.25;
-                clip.paused = !moving;
-                clip.timeScale = sprinting ? 1.9 : Math.max(0.55, horizontalSpeed / 3.2);
+        if (group.userData.mixer && mode !== 'procedural') {
+            const actions = group.userData.locoActions;
+            const want = pickLocoName(speed, sprinting);
+            if (actions) {
+                if (group.userData.locoActive !== want) {
+                    group.userData.locoActive = want;
+                    const ts = want === 'run'
+                        ? 1
+                        : want === 'walk'
+                            ? Math.max(0.55, Math.min(speed / 3.2, 2.0))
+                            : 1;
+                    setLocoAction(actions, want, { timeScale: ts });
+                } else if (want === 'walk' && actions.walk) {
+                    actions.walk.timeScale = Math.max(0.55, Math.min(speed / 3.2, 2.0));
+                } else if (want === 'run' && actions.run) {
+                    actions.run.timeScale = sprinting ? 1.15 : 1;
+                }
+                group.userData.mixer.update(dt);
+                // Soft procedural idle only if we lack an idle clip
+                if (want === 'idle' && !group.userData.locoClips?.idle) {
+                    const parts = group.userData?.humanParts || ensureWalkParts(group);
+                    if (parts) this.updateIdle(group, 0, dt);
+                }
+            } else {
+                const clip = group.userData.mixerClip;
+                if (clip) {
+                    if (moving) {
+                        clip.paused = false;
+                        clip.enabled = true;
+                        clip.timeScale = sprinting ? 1.9 : Math.max(0.55, Math.min(speed / 3.2, 2.2));
+                        group.userData.mixer.update(dt);
+                    } else {
+                        clip.paused = true;
+                        clip.timeScale = 0;
+                        const parts = group.userData?.humanParts || ensureWalkParts(group);
+                        if (parts) this.updateIdle(group, 0, dt);
+                    }
+                } else {
+                    group.userData.mixer.update(dt);
+                }
             }
-            group.userData.mixer.update(dt);
             return;
         }
 
-        const parts = group.userData?.humanParts;
-        if (!parts) return;
+        const parts = group.userData?.humanParts || ensureWalkParts(group);
+        if (!parts?.legL) return;
+        if (!parts._base) parts._base = capturePartBases(parts);
         const b = parts._base || {};
 
-        const moving = horizontalSpeed > 0.25;
         group.userData.idlePhase = (group.userData.idlePhase || 0) + dt;
 
         if (!moving) {
@@ -589,8 +920,8 @@ export const HumanMesh = {
 
         const pace = sprinting ? 13.5 : 10;
         const amp = sprinting ? 0.78 : 0.62;
-        const speedFactor = Math.min(horizontalSpeed / 3.2, 1.9);
-        group.userData.walkPhase += dt * pace * speedFactor;
+        const speedFactor = Math.min(speed / 3.2, 1.9);
+        group.userData.walkPhase = (group.userData.walkPhase || 0) + dt * pace * speedFactor;
         const s = Math.sin(group.userData.walkPhase);
         const c = Math.cos(group.userData.walkPhase);
 
@@ -607,13 +938,13 @@ export const HumanMesh = {
         }
 
         const bob = Math.abs(s) * (sprinting ? 0.055 : 0.04);
-        if (parts.torso) parts.torso.position.y = (b.torsoY ?? 1.3) + bob;
-        if (parts.shoulders) parts.shoulders.position.y = (b.shouldersY ?? 1.56) + bob;
-        if (parts.collar) parts.collar.position.y = (b.collarY ?? 1.62) + bob;
-        if (parts.neck) parts.neck.position.y = (b.neckY ?? 1.66) + bob;
-        if (parts.head) parts.head.position.y = (b.headY ?? 1.8) + bob * 1.1;
-        if (parts.hairCap) parts.hairCap.position.y = (b.hairY ?? 1.86) + bob * 1.1;
-        if (parts.hips) parts.hips.position.y = (b.hipsY ?? 0.88) + bob * 0.45;
+        if (parts.torso) parts.torso.position.y = (b.torsoY ?? parts.torso.position.y) + bob;
+        if (parts.shoulders) parts.shoulders.position.y = (b.shouldersY ?? parts.shoulders.position.y) + bob;
+        if (parts.collar) parts.collar.position.y = (b.collarY ?? parts.collar.position.y) + bob;
+        if (parts.neck) parts.neck.position.y = (b.neckY ?? parts.neck.position.y) + bob;
+        if (parts.head) parts.head.position.y = (b.headY ?? parts.head.position.y) + bob * 1.1;
+        if (parts.hairCap) parts.hairCap.position.y = (b.hairY ?? parts.hairCap.position.y) + bob * 1.1;
+        if (parts.hips) parts.hips.position.y = (b.hipsY ?? parts.hips.position.y) + bob * 0.45;
     },
 
     async loadGltf(group, url, options = {}) {
@@ -655,31 +986,33 @@ export const HumanMesh = {
         group.userData.modelUrl = url;
         group.userData.mixer = null;
         group.userData.mixerClip = null;
+        group.userData.walkMode = 'none';
 
-        const avatarRoot = avatarRootFromModel(model);
         model.userData._gltfAnimations = gltf.animations || [];
         group.userData._lod0Animations = gltf.animations || [];
 
-        const walkClip = pickWalkClip(gltf.animations);
-        if (walkClip) {
-            const mixer = new THREE.AnimationMixer(avatarRoot);
-            const clip = mixer.clipAction(walkClip);
-            clip.play();
-            group.userData.mixer = mixer;
-            group.userData.mixerClip = clip;
-            group.userData.humanParts = null;
-        } else {
-            const parts = collectNamedParts(model);
-            if (parts.legL && parts.legR && parts.armL && parts.armR) {
-                group.userData.humanParts = parts;
-                group.userData.walkPhase = 0;
-                group.userData.idlePhase = Math.random() * Math.PI * 2;
-            } else {
-                group.userData.humanParts = null;
-            }
+        const mode = setupWalkRig(group, model, gltf.animations || []);
+        if (!group.userData._walkLogged) {
+            group.userData._walkLogged = true;
+            const clip = group.userData.walkClipName || '(none)';
+            console.info(`[human-mesh] walk rig mode=${mode} clip=${clip} parts=${!!group.userData.humanParts?.legL}`);
         }
 
         return group;
+    },
+
+    /** Re-bind after LOD / appearance — public for AvatarLod */
+    rebindWalk(group) {
+        if (!group) return 'none';
+        const scenes = group.userData?._lodScenes;
+        const model = scenes?.[0]
+            || group.children.find((c) => !c.userData?.hairSlot && !c.userData?.avatarMod)
+            || group.children[0]
+            || group;
+        const anims = model?.userData?._gltfAnimations
+            || group.userData?._lod0Animations
+            || [];
+        return setupWalkRig(group, model, anims);
     },
 
     applySkin(group, { bodyColor = 0x3366cc, headColor = 0xffcc99, pantsColor = 0x1a2844, roughness = 0.7 } = {}) {

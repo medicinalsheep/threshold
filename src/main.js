@@ -13,6 +13,7 @@ import { initAuth } from './auth/main.js';
 import './shared/runtime.js';
 import { initSurfaceProfile } from './shared/surfaceProfile.js';
 import { initLobby } from './lobby/main.js';
+import './shared/thresholdOpenerPrompt.js'; // window.ThresholdOpener for lobby How to / Grok opener
 import { initSpectate } from './spectate/main.js';
 import { ViewPrefs } from './shared/viewPrefs.js';
 import { initFullscreen } from './shared/fullscreen.js';

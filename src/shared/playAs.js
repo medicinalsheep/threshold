@@ -289,6 +289,7 @@ export const PlayAs = {
         }
 
         const frameDt = Math.min(0.05, Math.max(0.001, Number(dt) || 1 / 60));
+        this._lastDt = frameDt;
         const Controls = window.Controls;
         _fwd.set(Math.sin(_camYaw), 0, Math.cos(_camYaw));
         _right.crossVectors(_fwd, new THREE.Vector3(0, 1, 0)).normalize();
@@ -398,12 +399,12 @@ export const PlayAs = {
             }
             const speed = Math.hypot(body.velocity.x, body.velocity.z);
             if (human && window.HumanMesh?.updateWalk) {
-                window.HumanMesh.updateWalk(target, speed, 0.016, speed > 4.5);
+                window.HumanMesh.updateWalk(target, speed, (this._lastDt || 1 / 60), speed > 4.5);
             }
         } else if (human && window.HumanMesh?.updateWalk) {
             // estimate speed from last frame velocity intent
             const sp = Math.hypot(_velX, _velZ) || (window.Controls?.isAction('forward') ? HUMAN_SPEED : 0);
-            window.HumanMesh.updateWalk(target, sp, 0.016, window > 4.5);
+            window.HumanMesh.updateWalk(target, sp, (this._lastDt || 1 / 60), sp > 4.5);
         }
 
         this._updateCamera(target);

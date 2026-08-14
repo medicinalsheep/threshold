@@ -210,6 +210,116 @@
     text-align: center;
 }
 
+/* How to · Grok opener (starter prompt for Grok Build / chat) */
+.lobby-howto-wrap {
+    margin: 6px 0 0;
+    border: 1px solid rgba(57, 255, 20, 0.18);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.25);
+    text-align: left;
+    overflow: hidden;
+}
+
+.lobby-howto-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    cursor: pointer;
+    list-style: none;
+    padding: 10px 12px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #b8f5b0;
+    user-select: none;
+}
+
+.lobby-howto-summary::-webkit-details-marker {
+    display: none;
+}
+
+.lobby-howto-chevron {
+    opacity: 0.7;
+    transition: transform 0.15s ease;
+}
+
+.lobby-howto-wrap[open] .lobby-howto-chevron {
+    transform: rotate(180deg);
+}
+
+.lobby-howto-wrap[open] .lobby-howto-summary {
+    color: var(--accent-color);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.lobby-howto-body {
+    padding: 10px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.lobby-howto-lead {
+    margin: 0;
+    font-size: 0.72rem;
+    line-height: 1.45;
+    color: #aaa;
+}
+
+.lobby-howto-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.lobby-howto-actions .lobby-btn {
+    margin: 0;
+    width: 100%;
+    font-size: 0.72rem !important;
+    padding: 10px 12px !important;
+}
+
+.lobby-howto-idea-label {
+    font-size: 0.65rem;
+    color: #888;
+    letter-spacing: 0.04em;
+}
+
+.lobby-howto-list {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: 0.68rem;
+    color: #8a8a8a;
+    line-height: 1.45;
+}
+
+.lobby-howto-status {
+    min-height: 1.1em;
+    margin: 0;
+    font-size: 0.7rem;
+    color: var(--accent-color);
+}
+
+.lobby-howto-status.is-error {
+    color: #ff6b6b;
+}
+
+.lobby-howto-foot {
+    margin: 0;
+    font-size: 0.65rem;
+    color: #666;
+}
+
+.lobby-howto-foot a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.lobby-howto-foot a:hover {
+    text-decoration: underline;
+}
+
 .lobby-btn-enter {
     font-size: 0.95rem !important;
     letter-spacing: 0.08em !important;
