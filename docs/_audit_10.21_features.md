@@ -21,6 +21,8 @@ Living checklist after origin train (10.21.1), art naming (10.21.2), export poli
 | `perf:verify` | | | run via `node scripts/…` if npm.ps1 blocked |
 | `ollama:golden` | | | optional minis |
 | `store:verify` | | | optional |
+| `avatar:audit` | 2026-08-17 | PASS | Track C gate (10.21.5) |
+| `walk:verify` | 2026-08-17 | PASS | 4 bodies idle/walk/run + mixer |
 
 ---
 
@@ -98,8 +100,9 @@ Report: `dist-store/block5-art-audit.json` · runner: `node scripts/block5-art-a
 | V1 | Body shape | SKIN sliders + applyShape | both | **PASS** | 6 sliders · applyShape soft-scale (Y 1.017) · no crash |
 | V2 | Wardrobe | ClothingLayout equip/unequip | both | **PASS** | hoodie_urban equip · unequip · 13 slots · rail present |
 | V3 | Walk LOD | updateWalk + AvatarLod | both | **PASS** | updateWalk walk/sprint · AvatarLod + PoseSync · no hop error |
+| V4 | Avatar audit gate | `avatar:audit` + `walk:verify` | both | **PASS** | 10.21.5 Track C — clips/limbs/skins/runtime |
 
-Report: `dist-store/block6-avatar-audit.json` · runner: `node scripts/block6-avatar-audit.cjs`
+Report: `dist-store/block6-avatar-audit.json` · runner: `node scripts/block6-avatar-audit.cjs` · gate: `npm run avatar:audit`
 
 ## Block 7 — Perf
 
@@ -153,3 +156,4 @@ Report: `dist-store/block9-mp-audit.json` · runner: `node scripts/block9-mp-aud
 | 2026-08-10 | **Block 8 complete** | E1–E5 all PASS · window.ExportWizard expose fix |
 | 2026-08-10 | **Block 9 complete** | N1–N3 all PASS — full feature audit matrix closed |
 | | Program | Blocks 1–9 complete · residual soft: guest FULL_STATE lag under headless |
+| 2026-08-17 | **Track C** | `avatar:audit` + 10.21.5 walk/idle/run docs · V4 PASS |

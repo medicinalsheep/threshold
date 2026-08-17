@@ -120,9 +120,10 @@ See `docs/BLENDER_AVATARS.md` and `config/avatar-manifest.json`.
 
 - Export **GLB**, Y-up, apply transforms
 - Height auto-scaled to **1.75 m**
-- Walk clip named `walk` (or first animation)
+- Clips named **`idle`**, **`walk`** / `locomotion`, **`run`** / `sprint`
 - Fallback: name nodes `legL`, `legR`, `armL`, `armR`
 - Skinned rigs: `AnimationMixer` binds to first `SkinnedMesh`
+- Gate: `npm run avatar:audit` (manifest + clips + limbs + skins + runtime)
 
 Drop into `import/` → `npm run bundle:assets` → Model Kiosk or `avatarLoader` role map.
 

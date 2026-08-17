@@ -67,7 +67,9 @@ jobs:
           p8=$!
           npm run physics:verify &
           p9=$!
-          wait $p1 $p2 $p3 $p4 $p5 $p6 $p7 $p8 $p9
+          npm run avatar:audit &
+          p10=$!
+          wait $p1 $p2 $p3 $p4 $p5 $p6 $p7 $p8 $p9 $p10
 
       # Optional headless sample — skip unless PERF_CI=1 (saves ~1–2 min)
       - name: Perf harness (headless, optional)

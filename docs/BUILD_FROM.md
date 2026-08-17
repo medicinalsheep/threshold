@@ -55,7 +55,7 @@ Voice mic is requested **after** session start — never blocks CREATE.
 | Physics | `physics.js`, `starterKit.js` · [PHYSICS.md](PHYSICS.md) |
 | Modes / arrange / play-as | `simMode.js`, `arrangeMode.js`, `playAs.js`, `qualityLadder.js` |
 | Grid snap | `gridSystem.js` |
-| Avatar / shape / wardrobe | `appearanceProfile.js`, `clothingLayout.js`, `avatarMod.js`, `avatarLod.js` |
+| Avatar / shape / wardrobe | `appearanceProfile.js`, `clothingLayout.js`, `avatarMod.js`, `avatarLod.js` · `avatar:audit` |
 | Training minis | `training/bootcamp/` · `train:mini -- --wave7` · [BOOTCAMP.md](BOOTCAMP.md) |
 | Store / macOS | `scripts/store-ship.cjs`, `notarize-mac.cjs` · [MAC_NOTARIZE.md](MAC_NOTARIZE.md) |
 | Agent map | [AGENTS.md](../AGENTS.md) |
@@ -128,6 +128,7 @@ npm run preview:pages       # smoke what visitors get
 npm run version:sync:check  # VERSION header drift gate
 npm run perf:verify
 npm run negative-lod:verify
+npm run avatar:audit            # walk clips · limbs · skins · runtime
 npm run perf:harness:compare
 npm run textures:gen:default   # starter PBR library maps
 npm run store:ship -- --manifest exports/game.threshold-game.json --targets win

@@ -102,6 +102,8 @@ npm run build:icons             # favicon ladder from appicon512.png
 npm run version:sync:check      # VERSION header drift
 node scripts/surface-verify.cjs # player/creator surface markers
 node scripts/negative-lod-verify.cjs
+npm run avatar:audit            # walk clips · limbs · skins · runtime
+npm run walk:verify
 npm run perf:verify             # static perf harness smoke
 npm run perf:harness            # headless measure → dist-store/perf-*.json
 npm run perf:harness:compare

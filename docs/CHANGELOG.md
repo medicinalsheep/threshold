@@ -1,3 +1,13 @@
+## 10.21.5 — Walk reliability + avatar audit gate
+
+- **Track A — walk reliability** — real frame `dt` into `updateWalk`; intent speed so anim doesn’t die on physics damp; mixer bind probe + procedural fallback; idle rest when stopped; rebind after appearance/LOD; lower move gate
+- **Track B — multi-clip bodies** — starter avatars + LODs + NPCs ship `idle` / `walk` / `run`; higher-detail procedural generator; guard/mech distinct silhouettes; 1k maps on primitives
+- **TPS smoke** — `npm run walk:verify` (offline mixer) · `npm run walk:smoke` (Puppeteer ENTER → TPS idle/walk/run)
+- **Track C — `avatar:audit`** — manifest clips/parts/roles · every body/LOD/NPC mixer + limbs · skin-tone + fabric + hair maps · runtime dt/loco/rebind · bundle copies · `dist-store/avatar-audit.json`
+- **Lobby How to** — copy Grok Build opener (play link + repo spine) without ENTER
+- Honest floor: starter bodies are still **procedural mannequins** (no skinned Blender hero yet)
+- CI: `avatar:audit` in Pages static verifies
+
 ## 10.21.4+ — Audit fixes (export)
 
 - **`window.ExportWizard`** — expose wizard on window (parity with ExportPreflight / QuickExportPlay; intentRouter open path)

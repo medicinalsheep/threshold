@@ -85,9 +85,11 @@ Spawn: `spawnHumanWithAvatar({ id: 'guard_npc', glb: 'my_guard.glb' })`
 ## Verify walk (offline + in-engine)
 
 ```bash
+npm run avatar:audit         # Track C gate — manifest · clips · limbs · skins · runtime
 npm run walk:verify          # GLB clips + mixer binds legL
 npm run walk:smoke           # Puppeteer TPS ENTER solo → idle/walk/run motion
 npm run walk:smoke:build     # rebuild dist-pages first
 ```
 
+`avatar:audit` writes `dist-store/avatar-audit.json`.  
 `walk:smoke` writes `dist-store/tps-walk-smoke.json` (W1–W7).

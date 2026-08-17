@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), tiered local/cloud agents, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **10.21.4**)
+**Version:** `src/config.js` → `VERSION` (currently **10.21.5**)
 
 **Spine (start here):** [docs/BUILD_FROM.md](docs/BUILD_FROM.md) · **Doc index:** [docs/README.md](docs/README.md)
 
@@ -85,6 +85,8 @@ npm run store:ship -- --manifest <game>.json --targets win
 npm run mac:notarize:check
 node scripts/surface-verify.cjs
 node scripts/negative-lod-verify.cjs
+npm run avatar:audit
+npm run walk:verify
 npm run perf:verify
 npm run perf:harness            # headless Puppeteer → dist-store/perf-*.json
 npm run perf:harness:compare

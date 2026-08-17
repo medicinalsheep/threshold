@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.21)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.21.4
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.21.5
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -62,7 +62,7 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | Terminal grid default | Void + GridHelper · ENTER PLAY · kit/AI **INSERT only**; [PHYSICS.md](PHYSICS.md) |
 | Grid / snap | 1 unit = 1 m · cell size menu · Transform snap · `gridSystem.js` |
 | Physics / joints | Mass·friction live · hinge/lock · gravity; kit opt-in; `physics:verify` |
-| Avatar defaults | Realistic skin/fabric + normals · starter outfit · multi-LOD walk pose |
+| Avatar defaults | Realistic skin/fabric + normals · starter outfit · multi-LOD **idle/walk/run** · `avatar:audit` gate |
 | Pages deploy | Stale-chunk auto-reload · CI skips full texture regen |
 | Negative LOD (far unlit) | ~100m · **light bake** · mesh/HILOD first · static auto · multi-mat · floor B/**C**; [NEGATIVE_LOD.md](NEGATIVE_LOD.md) |
 | E5 remotes / bloom | Far remote lerp · bloom skip Lite/no emissive |
@@ -167,6 +167,8 @@ node scripts/portal-ui-verify.cjs
 node scripts/modes-verify.cjs
 node scripts/physics-verify.cjs
 node scripts/negative-lod-verify.cjs
+npm run avatar:audit
+npm run walk:verify
 npm run perf:verify
 npm run store:verify            # packaging smoke (optional)
 npm run ollama:verify           # local LLM (optional)
