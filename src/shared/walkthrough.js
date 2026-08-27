@@ -81,6 +81,43 @@ const STEPS = [
     },
 ];
 
+
+const FIRST_RUN_STEPS = [
+    {
+        title: 'Walk the grid',
+        body: 'Terminal grid is live. <strong>WASD</strong> to walk · mouse to look. '
+            + 'Tap <strong>BUILD SOMETHING</strong> for a live brief. No Grok or Ollama key? '
+            + '<strong>GENERATE</strong> still drops a pushable demo crate.',
+        highlight: '#build-something-cta',
+        onEnter() {
+            window.AgentPortal?.showBuildCta?.();
+        },
+        actions: [
+            {
+                label: 'BUILD SOMETHING',
+                run() {
+                    window.Walkthrough?.hide?.();
+                    void window.AgentPortal?.openBuildFast?.({ firstRun: true });
+                },
+            },
+        ],
+    },
+    {
+        title: 'GENERATE, then PLAY',
+        body: 'One scene brief → <strong>GENERATE</strong>. With a key that builds live; without one, '
+            + 'a demo crate lands on the grid. Then walk it in <strong>PLAY</strong> — bump the crate.',
+        highlight: '#agent-portal-generate',
+        actions: [
+            {
+                label: 'GENERATE DEMO',
+                run() {
+                    void window.AgentPortal?.runOfflineDemo?.();
+                },
+            },
+        ],
+    },
+];
+
 const FULL_STEPS = [
     {
         title: 'Welcome to Threshold',
@@ -156,16 +193,19 @@ export const Walkthrough = {
     _sessionMode: 'play',
 
     _steps() {
-        return this._mode === 'full' ? FULL_STEPS : STEPS;
+        if (this._mode === 'full') return FULL_STEPS;
+        if (this._mode === 'demo') return FIRST_RUN_STEPS;
+        return STEPS;
     },
 
     startIfNeeded(sessionMode = null) {
-        if (ViewPrefs.get('walkthroughDone', false)) {
+        if (ViewPrefs.get('walkthroughDone', false) || ViewPrefs.get('firstRunDemoDone', false)) {
             window.ActionHints?.onSessionReady?.();
             return;
         }
         const mode = sessionMode || window.GuidedSession?.getSavedMode?.() || 'play';
-        this.start(0, 'quick', mode);
+        window.AgentPortal?.showBuildCta?.();
+        this.start(0, 'demo', mode);
     },
 
     restart() {
@@ -226,7 +266,7 @@ export const Walkthrough = {
         this._clearStepEffects();
 
         document.getElementById('walkthrough-step-label').textContent =
-            `${this.step + 1} / ${total}${this._mode === 'full' ? ' · FULL' : ''}`;
+            `${this.step + 1} / ${total}${this._mode === 'full' ? ' · FULL' : this._mode === 'demo' ? ' · FIRST LOOP' : ''}`;
         document.getElementById('walkthrough-title').textContent = step.title;
 
         const body = typeof step.body === 'function' ? step.body(this._sessionMode) : step.body;
@@ -286,7 +326,11 @@ export const Walkthrough = {
         ViewPrefs.set('walkthroughDone', true);
         ViewPrefs.set('welcomeSeen', true);
         this.hide();
-        const label = this._mode === 'full' ? 'Full tutorial complete' : 'Guided tour complete';
+        const label = this._mode === 'full'
+            ? 'Full tutorial complete'
+            : this._mode === 'demo'
+                ? 'First loop ready — BUILD SOMETHING or GENERATE a demo crate'
+                : 'Guided tour complete';
         window.UI?.status(`${label} — MORE → TUTORIAL to replay`);
         window.ActionHints?.onSessionReady?.();
         window.AgentPortal?.startIfNeeded?.();

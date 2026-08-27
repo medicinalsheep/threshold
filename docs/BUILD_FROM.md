@@ -29,9 +29,12 @@ Stack: Vite · Three.js · Cannon · PeerJS SPA · GitHub Pages.
 2. SURFACE   Phones → player UI; desktop → creator · ?surface=player|creator|full
 3. ENTER     Solo terminal grid (PLAY walk-ready) — or CREATE SESSION for MP
 4. PLAY/ARRANGE/EDIT · PLAY AS (K) · INSERT → QUALITY ladder · EDIT gizmo
-5. BUILD     BUILD SOMETHING / hub AI → brief → GENERATE → LIVE SCENE (creator)
+5. BUILD     BUILD SOMETHING / hub AI → brief → GENERATE → LIVE SCENE (or no-key demo crate)
 6. SKIN      SCENE → SKIN — body shape + wardrobe · then TOOLS → Export / store:ship
 ```
+
+**First visit (no keys):** ENTER → **BUILD SOMETHING** → **GENERATE → DEMO SCENE** (pushable crate) → walk in PLAY.  
+One-shot / dismissible (`ViewPrefs` `firstRunDemoDone` / `walkthroughDone`). Player surface never probes Ollama.
 
 Multiplayer: **CREATE SESSION** → copy room code or invite link → friends **JOIN**.  
 Voice mic is requested **after** session start — never blocks CREATE.  
@@ -74,6 +77,7 @@ Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [UI_AND_A
 - **Avatar** — realistic maps · **body shape** · **wardrobe** (slot rail) · multi-LOD walk
 - **Live build** — multi-step agents apply in-scene · HUD undo · quick 3-step default
 - **BUILD SOMETHING** — auto-connect when provider ready · one-brief GENERATE
+- **First-run demo** — no Grok/Ollama → GENERATE drops a kit crate · then PLAY walk
 - **Neg LOD** — ~**100m** light-bake · mesh/HILOD first · [NEGATIVE_LOD.md](NEGATIVE_LOD.md)
 - **Visibility E0–E4** · **E5** remotes/bloom
 - **Materials** — INSERT / inspector only · [MATERIALS.md](MATERIALS.md)

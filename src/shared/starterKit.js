@@ -228,13 +228,52 @@ export async function spawnPhysicsLabSample() {
     return spawned;
 }
 
+
+/**
+ * Tiny first-run object — one pushable crate near the pad.
+ * Works with no Grok key and no Ollama (kit/quality-ladder fallback).
+ */
+export async function spawnFirstRunDemo(opts = {}) {
+    const World = window.World;
+    const State = window.State;
+    if (!World?.createObject || !State) return [];
+
+    const existing = (State.objects || []).find((o) => o?.userData?.isFirstRunDemo);
+    if (existing && !opts.force) {
+        window.UI?.status?.('Demo crate already on the grid — WASD walk · push it in PLAY');
+        return [existing];
+    }
+
+    const crate = World.createObject('cube', 'Demo Crate', 0x8c4838, {
+        physics: true,
+        force: true,
+        silent: true,
+        noAutoNeg: true,
+        mass: 8,
+        friction: 0.55,
+        restitution: 0.05,
+        y: 0.55,
+        tags: { ...TAGS, isFirstRunDemo: true, id: 'first_run_demo_crate' },
+    });
+    if (!crate) return [];
+
+    place(crate, 2.2, 0.55, -2.0);
+    if (window.MaterialPresets?.applyMaterialPreset) {
+        window.MaterialPresets.applyMaterialPreset(crate, 'pbr_brick_aged');
+        window.MaterialLibrary?.applyWithMaps?.(crate, 'pbr_brick_aged');
+    }
+    State.firstRunDemoSpawned = true;
+    window.UI?.status?.('Demo crate dropped — WASD walk · bump it in PLAY');
+    return [crate];
+}
+
 export function clearSimSamples() {
     const State = window.State;
     const World = window.World;
     if (!State?.objects) return 0;
     window.Physics?.clearConstraints?.();
     const doomed = State.objects.filter(
-        (o) => o?.userData?.isSimSample || o?.userData?.isPhysicsLab || o?.userData?.isStarterKit,
+        (o) => o?.userData?.isSimSample || o?.userData?.isPhysicsLab || o?.userData?.isStarterKit || o?.userData?.isFirstRunDemo,
     );
     for (const o of doomed) {
         try {
@@ -298,6 +337,7 @@ export function initStarterKitUi() {
 
 window.StarterKit = {
     spawnStarterKit,
+    spawnFirstRunDemo,
     spawnPhysicsLabSample,
     clearSimSamples,
     initStarterKitUi,

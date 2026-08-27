@@ -21,7 +21,7 @@ const CYCLE = [SURFACE.PLAYER, SURFACE.CREATOR, SURFACE.FULL];
 
 const HINTS = {
     [SURFACE.PLAYER]:
-        'Play surface — AI & Ollama hidden. Tap Creator tools (or the PLAY badge) to build.',
+        'Play surface — AI hidden. Tap BUILD SOMETHING for a no-key demo crate, or the PLAY badge for Creator tools.',
     [SURFACE.CREATOR]:
         'Creator tools on — local minis & export available. Switch to Play surface for a cleaner phone UI.',
     [SURFACE.FULL]:
@@ -266,7 +266,7 @@ export const SurfaceProfile = {
         if (!this.isPlayer()) return;
         if (ViewPrefs.get(COACH_KEY, false)) return;
         // Prefer status (always present) + optional coach strip
-        const msg = 'Play surface: AI hidden. Tap PLAY badge (top) or SCENE → Creator tools… to build.';
+        const msg = 'Play surface: AI hidden. Tap BUILD SOMETHING for a no-key demo crate, or the PLAY badge for Creator tools.';
         window.UI?.status?.(msg);
         const el = document.getElementById('surface-coach');
         if (el) {

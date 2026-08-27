@@ -307,6 +307,10 @@ export const AgentPortal = {
                 e.preventDefault();
                 void this.pullAllTrainedModels();
             }
+            if (e.target.closest?.('#agent-portal-demo, [data-portal-demo]')) {
+                e.preventDefault();
+                void this.runOfflineDemo();
+            }
         });
     },
 
@@ -474,7 +478,14 @@ export const AgentPortal = {
                     Live apply runs a quick 3-step job in the grid.
                 </p>
                </div>`
-            : `<p class="agent-portal-kicker">Connect a model</p>`;
+            : `<div class="agent-portal-ready-banner">
+                <p class="agent-portal-kicker">No key needed for a first loop</p>
+                <p class="insert-hint" style="margin:0 0 8px;">
+                    <strong>GENERATE → DEMO SCENE</strong> drops a pushable crate on the grid.
+                    Paste a Grok key below only if you want AI to build a custom scene.
+                </p>
+                <button type="button" id="agent-portal-demo">GENERATE → DEMO SCENE</button>
+               </div>`;
 
         el.innerHTML = `
             ${readyBanner}
@@ -508,7 +519,7 @@ export const AgentPortal = {
 
         const connectBtn = document.getElementById('agent-portal-connect');
         if (connectBtn) {
-            connectBtn.textContent = ready ? 'START BUILDING →' : 'CONNECT & START BUILDING';
+            connectBtn.textContent = ready ? 'START BUILDING →' : 'GENERATE → DEMO SCENE';
             connectBtn.style.display = 'inline-block';
             connectBtn.disabled = false;
         }
@@ -828,6 +839,12 @@ export const AgentPortal = {
     _syncGenerateLabel() {
         const genBtn = document.getElementById('agent-portal-generate');
         if (!genBtn) return;
+        const noAi = !!this._session.buildContext?._offlineDemo
+            || !hasAnyProvider(this._probe || this._session.lastProbe || {});
+        if (noAi) {
+            genBtn.textContent = 'GENERATE → DEMO SCENE';
+            return;
+        }
         const live = document.getElementById('portal-live-apply')?.checked !== false
             && BuildJob.getPrefs().liveApply !== false;
         genBtn.textContent = live ? 'GENERATE → LIVE SCENE' : 'GENERATE NOW → COMPILER';
@@ -924,7 +941,9 @@ export const AgentPortal = {
     _syncGenerateVisibility() {
         const genBtn = document.getElementById('agent-portal-generate');
         if (!genBtn) return;
-        const ready = !!this._session.buildContext?.ready;
+        const noAi = !!this._session.buildContext?._offlineDemo
+            || !hasAnyProvider(this._probe || this._session.lastProbe || {});
+        const ready = !!this._session.buildContext?.ready || noAi;
         const show = this._step === 'build' && ready && !BuildJob.isRunning();
         genBtn.style.display = show ? 'inline-block' : 'none';
         if (show) this._syncGenerateLabel?.();
@@ -950,7 +969,7 @@ export const AgentPortal = {
         const probe = this._probe;
 
         if (!hasAnyProvider(probe)) {
-            window.UI?.status?.('Add xAI key or start Ollama — or skip to explore');
+            void this.runOfflineDemo();
             return;
         }
 
@@ -1018,6 +1037,10 @@ export const AgentPortal = {
 
     /** Primary entry: probe → auto-connect when possible → build chat. */
     async openBuildFast(opts = {}) {
+        if (opts.firstRun) {
+            ViewPrefs.set('walkthroughDone', true);
+            window.Walkthrough?.hide?.();
+        }
         if (window.SurfaceProfile?.isPlayer?.()) {
             window.SurfaceProfile.set('creator');
             window.UI?.status?.('Creator tools on');
@@ -1040,12 +1063,7 @@ export const AgentPortal = {
         emitPortalChange();
 
         if (!hasAnyProvider(probe)) {
-            this.showStep('connect');
-            if (status) {
-                status.textContent = 'Paste a Grok key (console.x.ai) or start Ollama, then START BUILDING';
-            }
-            // Focus key field for phone path
-            document.getElementById('agent-portal-xai-key')?.focus?.();
+            this._openOfflineDemoBuild(status);
             return false;
         }
 
@@ -1084,6 +1102,8 @@ export const AgentPortal = {
         }
         el.hidden = false;
         el.classList.add('visible');
+        el.classList.toggle('first-run-pulse', !ViewPrefs.get('firstRunDemoDone', false)
+            && !ViewPrefs.get('buildCtaDismissed', false));
     },
 
     hideBuildCta() {
@@ -1106,7 +1126,28 @@ export const AgentPortal = {
         if (!text) return;
 
         if (!hasAnyProvider(this._probe || this._session.lastProbe || {})) {
-            window.UI?.status?.('Connect Grok or Ollama first');
+            const history = [...(this._session.chatHistory || [])];
+            history.push({ role: 'user', text });
+            history.push({
+                role: 'assistant',
+                text: 'No Grok or Ollama connected. Tap GENERATE → DEMO SCENE to drop a pushable crate, then walk it in PLAY. SETUP if you want a custom AI scene.',
+                meta: 'offline demo',
+            });
+            if (input) input.value = '';
+            this._session = saveSession({
+                chatHistory: history,
+                buildContext: {
+                    ready: true,
+                    title: 'Demo crate',
+                    taskType: 'prop',
+                    placement: 'near pad',
+                    summary: text,
+                    _offlineDemo: true,
+                },
+            });
+            this.renderChat();
+            this._syncGenerateVisibility();
+            window.UI?.status?.('No key — GENERATE drops a demo crate you can walk and push');
             return;
         }
 
@@ -1220,7 +1261,13 @@ export const AgentPortal = {
 
     async generateFromContext() {
         if (this._busy) return;
-        const ctx = this._session.buildContext;
+        const ctx = this._session.buildContext || {};
+        const noAi = !!ctx._offlineDemo
+            || !hasAnyProvider(this._probe || this._session.lastProbe || {});
+        if (noAi) {
+            await this.runOfflineDemo();
+            return;
+        }
         if (!ctx?.ready) {
             window.UI?.status?.('Keep chatting — agent will signal when ready');
             return;
@@ -1242,6 +1289,7 @@ export const AgentPortal = {
 
         if (ctx._code) {
             this.applyCode(ctx._code, 'portal');
+            this._markFirstLoopDone();
             return;
         }
 
@@ -1328,6 +1376,7 @@ ${getSceneApiPrompt()}`;
                 stayInEngine: liveApply && (appliedDuringJob || LiveBuild.appliedLive),
                 alreadyLive: appliedDuringJob || LiveBuild.appliedLive,
             });
+            this._markFirstLoopDone();
             if (status) {
                 status.textContent = liveApply && (appliedDuringJob || LiveBuild.appliedLive)
                     ? 'Live build finished — walk the scene (code also in Compiler)'
@@ -1475,11 +1524,13 @@ ${getSceneApiPrompt()}`;
         if (this._session.connected && this._session.chatHistory?.length) return;
         if (this._session.dismissed && !opts.preferBuild) return;
         if (IS_GROK_EDITION && !Auth.isLoggedIn()) return;
-        // Play surface: show a single path into creator build (no Ollama wall)
+        const firstLoop = !ViewPrefs.get('firstRunDemoDone', false)
+            && !ViewPrefs.get('walkthroughDone', false);
+        // Play surface: CTA only — never probe Ollama
         if (window.SurfaceProfile?.isPlayer?.()) {
             setTimeout(() => {
                 this.showBuildCta();
-                window.UI?.status?.('Tap BUILD SOMETHING for creator tools + Grok key');
+                window.UI?.status?.('Tap BUILD SOMETHING — demo crate needs no key');
             }, 500);
             return;
         }
@@ -1491,12 +1542,67 @@ ${getSceneApiPrompt()}`;
         setTimeout(() => {
             window.CornerHub?.pulseAgent?.();
             this.showBuildCta();
-            if (preferBuild) {
+            if (preferBuild && firstLoop) {
+                window.UI?.status?.('Build mode — opening live brief (no key needed for the demo crate)');
+                void this.openBuildFast({ firstRun: true });
+            } else if (preferBuild) {
                 window.UI?.status?.('Build mode — tap BUILD SOMETHING (or AI top-left) to start a live scene');
             } else {
-                window.UI?.status?.('Explore the grid — tap BUILD SOMETHING or AI (top-left) when ready');
+                window.UI?.status?.('Explore the grid — tap BUILD SOMETHING or GENERATE a demo crate');
             }
         }, 450);
+    },
+
+    _openOfflineDemoBuild(status) {
+        this.showStep('build');
+        const history = [{
+            role: 'assistant',
+            text: 'No Grok or Ollama connected — that is fine. Tap GENERATE → DEMO SCENE to drop a pushable crate, then walk it in PLAY. SETUP if you want a custom live build.',
+            meta: 'offline demo',
+        }];
+        this._session = saveSession({
+            connected: false,
+            dismissed: false,
+            chatHistory: history,
+            buildContext: {
+                ready: true,
+                title: 'Demo crate',
+                taskType: 'prop',
+                placement: 'near pad',
+                summary: 'Pushable crate on the terminal grid (no AI required).',
+                _offlineDemo: true,
+            },
+        });
+        this.prefillChat('Drop a pushable crate I can walk to and shove.');
+        this.renderChat();
+        this._syncGenerateVisibility();
+        if (status) status.textContent = 'No API key — GENERATE drops a demo crate you can walk and push';
+        window.UI?.status?.('No key needed — GENERATE a demo crate, then walk it');
+    },
+
+    _markFirstLoopDone() {
+        ViewPrefs.set('firstRunDemoDone', true);
+        ViewPrefs.set('walkthroughDone', true);
+        ViewPrefs.set('welcomeSeen', true);
+        ViewPrefs.set('buildCtaDismissed', true);
+        this.hideBuildCta();
+        window.Walkthrough?.hide?.();
+        if (window.Walkthrough) window.Walkthrough.active = false;
+        document.getElementById('build-something-cta')?.classList.remove('first-run-pulse');
+    },
+
+    /** Kit/quality-ladder fallback when Grok + Ollama are unavailable. */
+    async runOfflineDemo() {
+        const spawned = await window.StarterKit?.spawnFirstRunDemo?.() || [];
+        this.hide();
+        this._markFirstLoopDone();
+        window.GuidedSession?.applyMode?.('play', 'First-run demo', true);
+        window.ActionHints?.onSessionReady?.();
+        const ok = spawned.length > 0;
+        window.UI?.status?.(ok
+            ? 'Demo crate on the grid — WASD walk · bump it in PLAY'
+            : 'Demo already in scene — WASD walk · push the crate');
+        return ok;
     },
 
     resetSession() {

@@ -21,11 +21,22 @@ import {
     buildShareOneLiner,
 } from '../shared/thresholdOpenerPrompt.js';
 
+
+const LOBBY_TAGLINE = 'Generate a 3D scene, then walk it — no account';
+
+function initLobbyPitch() {
+    const el = document.getElementById('lobby-tagline');
+    if (el) el.textContent = LOBBY_TAGLINE;
+    if (!document.title || /SUITE/i.test(document.title)) {
+        document.title = 'THRESHOLD — generate a 3D scene, then walk it';
+    }
+}
+
 function initLobbyReleaseStrip() {
     const el = document.getElementById('lobby-release-strip');
     if (!el) return;
     const logUrl = 'https://github.com/medicinalsheep/threshold/blob/main/docs/CHANGELOG.md';
-    el.innerHTML = `v${VERSION} · VOIP lobby + stable panels · <a href="${logUrl}" target="_blank" rel="noopener noreferrer">changelog</a>`;
+    el.innerHTML = `v${VERSION} · ENTER → generate → walk · <a href="${logUrl}" target="_blank" rel="noopener noreferrer">changelog</a>`;
 }
 
 /** Lobby How to — copy Grok opener / play link / link pack (starter prompt for external chat). */
@@ -219,6 +230,7 @@ export function initLobby(onReady) {
     initLobbyModePicker();
     initLobbyReleaseStrip();
     initLobbyHowto();
+    initLobbyPitch();
 
     const enterApp = () => {
         overlay?.classList.add('hidden');
