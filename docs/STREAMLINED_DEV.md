@@ -91,6 +91,7 @@ Ollama does **not** edit textures — use GIMP workflow below.
 | GIMP plugin | `npm run gimp:install` | Export PBR to `textures/` |
 | Texture watch | `npm run textures:watch` | Hot-reload into Engine |
 | Blender addon | `npm run blender:install` | Export GLTF to `import/` |
+| Colab (opt-in) | `npm run colab:import -- --zip pack.zip` | Free T4 maps — [COLAB_ASSET_PIPELINE.md](COLAB_ASSET_PIPELINE.md) |
 
 [GIMP_TEXTURES.md](GIMP_TEXTURES.md) · [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md)
 

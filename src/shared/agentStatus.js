@@ -169,6 +169,12 @@ export const AgentStatus = {
                     WorkFolderScope.shouldFreezeOnLocal() ? 'ok' : 'warn',
                     `${WorkFolderScope.getScope().hint}${WorkFolderScope.shouldFreezeOnLocal() ? ' · freeze on' : ' · freeze off'}`),
                 (() => {
+                    const chip = window.ColabPipeline?.chip?.();
+                    return chip
+                        ? renderChip(chip.id, chip.label, chip.state, chip.detail)
+                        : '';
+                })(),
+                (() => {
                     const c = window.GraphicsProfile?.getCompatReport?.() || {};
                     const gpuOk = c.usesGpu ? 'ok' : (c.webgl ? 'warn' : 'off');
                     const short = c.discreteGpu ? 'GPU ✓' : (c.softwareFallback ? 'CPU GL' : 'WebGL');

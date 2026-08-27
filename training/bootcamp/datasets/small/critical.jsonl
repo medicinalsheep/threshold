@@ -69,3 +69,7 @@
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nmaterial presets not canvas"},{"role":"assistant","content":"INTENT: style\nAPI: MaterialPresets.applyMaterialPreset"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ntexturebridge applyfromuserdata"},{"role":"assistant","content":"INTENT: texture\nAPI: TextureBridge.applyFromUserData"}]}
 {"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nart audit minis"},{"role":"assistant","content":"INTENT: other\nAPI: art:audit"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nrun avatar walk audit"},{"role":"assistant","content":"INTENT: other\nAPI: avatar:audit + walk:verify"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\ncopy grok opener from lobby"},{"role":"assistant","content":"INTENT: other\nAPI: lobby How to + thresholdOpenerPrompt"}]}
+{"task":"intent_classify","messages":[{"role":"user","content":"Classify (two lines only — INTENT then API):\nis Threshold by Ollama Games"},{"role":"assistant","content":"INTENT: other\nAPI: medicinalsheep MIT open source"}]}
+{"task":"guide","messages":[{"role":"user","content":"Starter avatar clips?"},{"role":"assistant","content":"idle · walk · run only — no jump or death"}]}

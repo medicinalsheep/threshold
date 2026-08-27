@@ -160,6 +160,49 @@ async function auditGlb(rel, { requireClips = true } = {}) {
         let skinned = false;
         model.traverse((c) => { if (c.isSkinnedMesh) skinned = true; });
         if (!skinned) notes.push('procedural (no SkinnedMesh)');
+
+        let meshes = 0;
+        let missingUv = 0;
+        const meshNames = [];
+        model.traverse((c) => {
+            if (!c.isMesh || !c.geometry) return;
+            meshes += 1;
+            meshNames.push(c.name || '');
+            if (!c.geometry.attributes?.uv) missingUv += 1;
+        });
+        if (missingUv) {
+            fail(`G-${rel}-uv`, `${missingUv}/${meshes} meshes missing UVs`);
+            return;
+        }
+        notes.push(`uv✓ ×${meshes}`);
+
+        const blob = meshNames.join(' ').toLowerCase();
+        const hasSkin = /head|neck|arm/.test(blob);
+        const hasShirt = /torso|shoulder|collar/.test(blob);
+        const hasPants = /hip|leg|pant/.test(blob);
+        if (!hasSkin || !hasShirt || !hasPants) {
+            fail(`G-${rel}-regions`, `need skin/shirt/pants names (skin=${hasSkin} shirt=${hasShirt} pants=${hasPants})`);
+            return;
+        }
+        notes.push('regions✓');
+
+        let tris = 0;
+        model.traverse((c) => {
+            if (!c.isMesh || !c.geometry) return;
+            const g = c.geometry;
+            if (g.index) tris += g.index.count / 3;
+            else if (g.attributes.position) tris += g.attributes.position.count / 3;
+        });
+        tris = Math.round(tris);
+        const lod2 = /_lod2\.glb$/i.test(rel);
+        const lod1 = /_lod1\.glb$/i.test(rel);
+        const minTris = lod2 ? 800 : lod1 ? 2500 : 6000;
+        if (tris < minTris) {
+            fail(`G-${rel}-tris`, `~${tris} tris < ${minTris} floor`);
+            return;
+        }
+        notes.push(`~${tris} tris`);
+        if (model.userData?.heroUv) notes.push('heroUv');
     }
 
     const bundle = path.join(BUNDLE, rel);
@@ -234,6 +277,21 @@ function auditTextures() {
     const hair = texExists('hair_alpha', 'albedo');
     if (hair) pass('T-hair', hair);
     else fail('T-hair', 'hair_alpha albedo missing');
+
+    const uvGuide = path.join(TEX, '_templates', 'hero_uv_guide.png');
+    if (fs.existsSync(uvGuide)) pass('T-uv-guide', 'textures/_templates/hero_uv_guide.png');
+    else fail('T-uv-guide', 'missing hero UV guide — npm run avatar:gen');
+
+    const atlas = path.join(TEX, 'starter_skin_medium_albedo.png');
+    if (fs.existsSync(atlas)) {
+        const st = fs.statSync(atlas);
+        // Skin atlas must leave cloth islands empty (dark). Packed file is 2K.
+        if (st.size > 20000) pass('T-skin-atlas', `starter_skin_medium_albedo.png ${(st.size / 1024).toFixed(0)} KB`);
+        else fail('T-skin-atlas', 'skin atlas too small');
+    } else fail('T-skin-atlas', 'run npm run avatar:atlas');
+    const fab = path.join(TEX, 'starter_fabric_albedo.png');
+    if (fs.existsSync(fab) && fs.statSync(fab).size > 20000) pass('T-fabric-atlas', 'starter_fabric_albedo.png packed');
+    else fail('T-fabric-atlas', 'run npm run avatar:atlas');
 }
 
 function auditRuntime() {
@@ -292,6 +350,16 @@ async function main() {
 
     console.log('\n  Textures');
     auditTextures();
+
+    const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+    const man = fs.existsSync(MANIFEST) ? readJson(MANIFEST) : {};
+    const maleLabel = man.bodies?.male_default?.label || '';
+    if (/procedural/i.test(html) && /starter hero/i.test(html) && !/Male formed/i.test(html)
+        && /procedural/i.test(maleLabel)) {
+        pass('H3-copy', maleLabel);
+    } else {
+        fail('H3-copy', 'SKIN/manifest must say starter hero (procedural), not Male formed');
+    }
 
     console.log('\n  Runtime');
     auditRuntime();

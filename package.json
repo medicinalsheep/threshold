@@ -1,7 +1,7 @@
 {
   "name": "threshold",
   "private": true,
-  "version": "10.21.6",
+  "version": "10.22.3",
   "type": "module",
   "engines": {
     "node": ">=22.0.0"
@@ -60,6 +60,10 @@
     "tex:ktx2": "node scripts/compress-ktx2.cjs",
     "basis:copy": "node scripts/copy-basis-transcoder.cjs",
     "avatar:gen": "node scripts/gen-starter-avatar.cjs",
+    "avatar:atlas": "node scripts/gen-hero-atlas.cjs",
+    "colab:import": "node scripts/colab-asset-import.cjs",
+    "colab:verify": "node scripts/colab-pipeline-verify.cjs",
+    "colab:smoke": "node scripts/colab-ui-smoke.cjs",
     "lab:gen": "node scripts/gen-starter-lab.cjs",
     "building:gen": "node scripts/gen-starter-building.cjs",
     "assets:pack": "node scripts/assets-pack.cjs",
@@ -103,6 +107,8 @@
     "bootcamp:seed:wave6": "node scripts/bootcamp-seed-wave6.cjs",
     "bootcamp:seed:wave7": "node scripts/bootcamp-seed-wave7.cjs",
     "bootcamp:seed:wave8": "node scripts/bootcamp-seed-wave8.cjs",
+    "bootcamp:seed:wave9": "node scripts/bootcamp-seed-wave9.cjs",
+    "wave9:probe": "node scripts/wave9-mini-probe.cjs",
     "art:audit": "node scripts/art-pipeline-audit.cjs",
     "avatar:audit": "node scripts/avatar-audit.cjs",
     "walk:verify": "node scripts/walk-rig-verify.cjs",

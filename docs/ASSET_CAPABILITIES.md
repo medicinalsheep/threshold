@@ -12,6 +12,7 @@ Threshold ships a **full starter pipeline** for realistic action games: procedur
 flowchart TB
     subgraph gen [Build-time generation]
         TEX[tc:gen:tex — procedural PBR]
+        COLAB[optional Colab T4 PBR]
         AV[avatar:gen — GLB + walk]
         SFX[sounds:gen — procedural FX]
         WEBP[tex:compress — WebP HILOD]
@@ -25,6 +26,7 @@ flowchart TB
         AVL[AvatarLoader — Blender GLB]
     end
     TEX --> WEBP --> HILOD
+    COLAB --> WEBP
     TEX --> KTX --> HILOD
     AV --> AVL
     SFX --> FB
@@ -77,6 +79,11 @@ npm run textures:watch   # terminal 1
 npm run dev              # terminal 2
 # GIMP Export PBR Maps → instant hot-reload in Engine
 ```
+
+### Optional Colab T4
+
+Heavier maps on Google’s free T4 (when offered). Never required.  
+[COLAB_ASSET_PIPELINE.md](COLAB_ASSET_PIPELINE.md) · `npm run colab:import -- --zip pack.zip`
 
 ### Starter texture kit
 

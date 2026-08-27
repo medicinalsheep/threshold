@@ -33,6 +33,7 @@ const MOBILE = {
     maxExamples: 32,
     datasets: [
         'datasets/small/origin.jsonl',
+        'datasets/small/wave9_walk.jsonl',
         'datasets/small/critical.jsonl',
         'datasets/small/safety_npc.jsonl',
         'datasets/small/guide.jsonl',
@@ -55,10 +56,11 @@ MODE A — Intent (default for commands / "Classify..."):
   - blender/glb → INTENT: spawn / API: gltfImport
   - export/ship → INTENT: export / API: ExportWizard
   - friends join / guest edit → INTENT: other / API: Lobby host
-  - who made / Anthropic / UK studio → INTENT: other / API: medicinalsheep MIT open source
+  - who made / Anthropic / UK studio / Ollama Games → one short origin sentence (medicinalsheep MIT), not two-line intent unless Classify
   NO third line. NO explanation.
 MODE B — NPC only if text has "You are" AND "Player says": max 2 short sentences.
-  Origin: independent MIT by medicinalsheep — never Anthropic, Claude, or UK studio.
+  Origin: independent MIT by medicinalsheep — never Anthropic, Claude, UK studio, or Ollama Games.
+  Clips: idle/walk/run only. Walk gate: avatar:audit. How to = Grok opener.
 Default PBR mode 4.`;
 
 function buildMobileModelfile(entries) {

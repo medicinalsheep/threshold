@@ -2,7 +2,7 @@
 
 **Vision:** Design in the browser → play with friends → export real games → local GIMP/Blender art → tiered AI agents (Ollama + Grok).
 
-**Current version:** **10.21.6**
+**Current version:** **10.22.3**
 
 **Forward plan:** [ROADMAP.md](ROADMAP.md) · **Snapshot:** [CAPABILITIES.md](CAPABILITIES.md) · **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
@@ -13,9 +13,9 @@
 | Pillar | Goal |
 |--------|------|
 | **Design** | Terminal grid + quality ladder + live agents + Compiler + PromptGen |
-| **Art** | GIMP live SYNC, Blender GLB, PBR + HILOD, material library, **shape + wardrobe** |
+| **Art** | GIMP live SYNC, Blender GLB, PBR + HILOD, material library, **shape + wardrobe**, optional Colab T4 |
 | **Play** | TPS/FPS/ADS · Arrange · Play as · weather · Third Eye · touch |
-| **Dev** | SETUP, tiered agents, sequential Ollama, freeze, **wave7 train:mini** |
+| **Dev** | SETUP, tiered agents, sequential Ollama, freeze, **wave7–9 train:mini** |
 | **Ship** | 9-step EXPORT → `store:prep` → APK / Windows / iOS / Steam |
 | **Scale** | Self-host relay locally or AWS free tier |
 

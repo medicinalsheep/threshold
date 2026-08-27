@@ -22,7 +22,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.21.6" />
+    <meta name="threshold-version" content="10.22.3" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD — generate a 3D scene, then walk it</title>
 </head>
@@ -271,7 +271,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.21.6</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" class="surface-badge-clickable" title="UI surface — click to cycle Play / Creator / Full" role="button" tabindex="0">CREATE</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.22.3</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" class="surface-badge-clickable" title="UI surface — click to cycle Play / Creator / Full" role="button" tabindex="0">CREATE</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
@@ -413,6 +413,7 @@
                         <button type="button" id="agent-portal-stop-job" class="btn-sm" style="display:none;">STOP</button>
                         <button type="button" id="agent-portal-run-engine" class="btn-sm" style="display:none;">RUN IN ENGINE</button>
                         <button type="button" id="agent-portal-open-setup" class="btn-sm">SETUP</button>
+                        <button type="button" id="agent-portal-open-colab" class="btn-sm" data-surface="creator" title="Optional Colab T4 maps">COLAB</button>
                     </div>
                 </div>
                 <p id="agent-portal-status" class="insert-hint agent-portal-status"></p>
@@ -490,6 +491,7 @@
                     <button type="button" id="hub-tools-toggle" class="corner-hub-toggle" title="Build tools menu">TOOLS</button>
                     <div class="corner-hub-menu" id="hub-tools-menu">
                         <button type="button" data-hub-action="setup" data-surface="creator">SETUP · Agents</button>
+                        <button type="button" data-hub-action="colab" data-surface="creator" title="Optional Colab T4 asset pipeline">Cloud assets (Colab)</button>
                         <button type="button" data-hub-action="compiler" data-surface="creator">Compiler</button>
                         <button type="button" data-hub-action="prompter" data-surface="creator">PromptGen</button>
                         <button type="button" data-hub-action="env">Environment</button>
@@ -917,6 +919,15 @@
                 <p class="insert-hint" style="margin:0 0 6px;">Textures: GIMP → <code>textures/</code> + <code>npm run textures:watch</code>. Models: Blender → <code>import/</code>. Export wizard ships web, mobile, Windows, Steam.</p>
                 <button id="setup-open-export" type="button" class="btn-sm" style="width:100%;margin-bottom:8px;">OPEN EXPORT WIZARD</button>
                 </details>
+                <details class="setup-advanced-wrap" id="setup-colab-details" data-surface="creator">
+                    <summary>Cloud Asset Pipeline (Colab) — optional</summary>
+                    <p class="insert-hint" style="margin:0 0 6px;">Free-tier T4 in VS Code via Google’s Colab extension. Never required for play or export. Local GIMP / Blender stay default.</p>
+                    <label class="export-wizard-check" style="margin-bottom:8px;">
+                        <input type="checkbox" id="colab-pipeline-optin"> I use Colab for heavier maps (opt-in chip)
+                    </label>
+                    <p id="colab-pipeline-status" class="insert-hint" style="margin:0 0 8px;">Off — local GIMP / Blender only.</p>
+                    <button id="setup-open-colab" type="button" class="btn-sm" style="width:100%;margin-bottom:6px;">OPEN COLAB GUIDE</button>
+                </details>
                 <details class="setup-advanced-wrap">
                     <summary>NPC &amp; dev agents</summary>
                 <label class="insert-hint">Grok NPC persona</label>
@@ -951,10 +962,11 @@
             <div id="player-skin-panel" class="panel dock-panel" data-dock-panel="skin" style="display:none;">
                 <div class="prop-row"><h3 style="margin:0;">PLAYER SKIN</h3></div>
                 <p class="insert-hint" style="margin:0 0 8px;">PLAY mode: edit your avatar only. World stays locked.</p>
-                <div class="prop-row"><label>Build</label>
-                    <select id="skin-body-preset" class="insert-input" style="flex:1;">
-                        <option value="male_default">Male formed</option>
-                        <option value="female_default">Female formed</option>
+                <p id="skin-body-hint" class="insert-hint" style="margin:0 0 8px;">Starter body is a <strong>procedural hero</strong> (lathe mesh + UV atlas). Not a Blender rig — drop a GLB below to replace.</p>
+                <div class="prop-row"><label>Body</label>
+                    <select id="skin-body-preset" class="insert-input" style="flex:1;" title="Starter hero from avatar:gen — procedural, not Blender">
+                        <option value="male_default">Male — starter hero (procedural)</option>
+                        <option value="female_default">Female — starter hero (procedural)</option>
                     </select>
                 </div>
                 <div class="prop-row"><label>Hair style</label>
@@ -1023,7 +1035,7 @@
                 <input type="search" id="skin-mod-search" class="insert-input" hidden aria-hidden="true" tabindex="-1">
                 <div id="skin-mod-list" class="skin-mod-list" hidden aria-hidden="true"></div>
                 <p class="insert-hint" style="margin:4px 0 0;font-size:0.55rem;">Tap a slot to filter. × on rail unequips. Exclusive slots auto-resolve (last pick wins).</p>
-                <p id="skin-custom-status" class="insert-hint" style="margin:8px 0 4px;">Custom body: default manifest · LOD 0/1/2 auto</p>
+                <p id="skin-custom-status" class="insert-hint" style="margin:8px 0 4px;">Starter body (procedural hero) · LOD 0/1/2 auto</p>
                 <label class="insert-hint">import/ body GLB (persistent)</label>
                 <input type="text" id="skin-body-import" class="insert-input" placeholder="my_avatar.glb" style="margin-bottom:6px;">
                 <label class="insert-hint">Remote GLB URL (optional)</label>
@@ -1041,6 +1053,28 @@
                 </div>
             </div>
 
+            <div id="colab-pipeline-panel" class="colab-pipeline-panel" hidden data-surface="creator" role="dialog" aria-labelledby="colab-pipeline-title">
+                <div class="colab-pipeline-card">
+                    <div class="colab-pipeline-head">
+                        <h3 id="colab-pipeline-title">Cloud Asset Pipeline (Colab)</h3>
+                        <button type="button" id="colab-pipeline-close" class="btn-sm" title="Close">✕</button>
+                    </div>
+                    <p class="insert-hint">Optional T4 GPU for heavier PBR maps. Play, export, and GIMP/Blender do <strong>not</strong> need this. Free tier: T4 when Colab has one · ~12 h session · ~90 min idle · quotas move.</p>
+                    <ol class="colab-pipeline-steps">
+                        <li>Install <a href="https://marketplace.visualstudio.com/items?itemName=Google.colab" target="_blank" rel="noopener">Google Colab for VS Code</a> (publisher: Google).</li>
+                        <li>Open <code>colab/threshold_pbr_starter.ipynb</code> in the repo (or download from GitHub).</li>
+                        <li>Select Kernel → Colab → Auto Connect → pick <strong>T4 GPU</strong> if offered.</li>
+                        <li>Set <code>OBJECT_NAME</code> to the Engine object Name. Run cells. Download the zip.</li>
+                        <li><code>npm run colab:import -- --zip &lt;file.zip&gt;</code> (HILOD on; keep <code>textures:watch</code> or reload). Engine Name comes from <code>threshold-asset.json</code>.</li>
+                    </ol>
+                    <div class="colab-pipeline-actions">
+                        <a class="btn-sm" href="https://github.com/medicinalsheep/threshold/blob/main/colab/threshold_pbr_starter.ipynb" target="_blank" rel="noopener">Open starter notebook</a>
+                        <a class="btn-sm" href="https://research.google.com/colaboratory/faq.html#resource-limits" target="_blank" rel="noopener">Free-tier limits</a>
+                        <button type="button" id="colab-copy-cell" class="btn-sm">Copy slug cell</button>
+                    </div>
+                    <p class="insert-hint" style="margin:10px 0 0;">Full write-up: <code>docs/COLAB_ASSET_PIPELINE.md</code>. No Google login inside this app.</p>
+                </div>
+            </div>
             <!-- Status toast + in-game chat (T — /commands) -->
             <div id="status-msg"></div>
             <div id="game-chat" class="game-chat hidden" role="dialog" aria-label="Chat">

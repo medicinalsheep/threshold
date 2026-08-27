@@ -36,6 +36,19 @@ Slug law + MaterialPresets + TextureBridge + kit/HILOD live in:
 Audit + AG probes: `npm run art:audit`.  
 Plan: [ART_PIPELINE_TRAINING_PLAN.md](ART_PIPELINE_TRAINING_PLAN.md).
 
+### Wave 9 (origin + walk)
+
+Origin harden + starter **idle/walk/run** + `avatar:audit` + lobby How to opener.  
+Plan: [WAVE9_TRAINING_PLAN.md](WAVE9_TRAINING_PLAN.md).
+
+```bash
+npm run bootcamp:seed:wave9
+npm run train:mini -- --wave9
+npm run models:mobile
+npm run ollama:golden
+npm run wave9:probe
+```
+
 ```bash
 npm run bootcamp:seed:wave8
 npm run train:mini -- --wave8

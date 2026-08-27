@@ -5,7 +5,7 @@ import { finishMaterial } from './starterTex.js';
 
 const SKIN_REGION = ['head', 'neck', 'arm', 'skin'];
 const SHIRT_REGION = ['torso', 'shoulder', 'collar', 'shirt', 'body'];
-const PANTS_REGION = ['hip', 'leg', 'pant'];
+const PANTS_REGION = ['hip', 'leg', 'pant', 'shoe'];
 const HAIR_REGION = ['hair'];
 
 const AVATAR_FINISH = { uvRepeat: [1, 1], normalScale: 0.45, envMapIntensity: 0.38 };
@@ -15,7 +15,17 @@ const FABRIC_FINISH = { uvRepeat: [1.5, 1.5], normalScale: 0.35, envMapIntensity
 const PRIMITIVE_SKIN_FINISH = { uvRepeat: [1.2, 1.2], normalScale: 0.18, envMapIntensity: 0.22 };
 const PRIMITIVE_FABRIC_FINISH = { uvRepeat: [1.8, 1.8], normalScale: 0.2, envMapIntensity: 0.28 };
 
+function isHeroUv(group) {
+    if (group?.userData?.heroUv) return true;
+    let found = false;
+    group?.traverse?.((c) => {
+        if (c.userData?.heroUv) found = true;
+    });
+    return found;
+}
+
 function isPrimitiveAvatar(group) {
+    if (isHeroUv(group)) return false;
     let skinned = false;
     group?.traverse?.((c) => {
         if (c.isSkinnedMesh) skinned = true;

@@ -3,7 +3,8 @@
 Quick reference for corner hubs, interaction modes, Agent Portal, optional Grok key, and session lobby. Older docs may still say "SCENE → AI tab" — today everything lives under **SETUP** (scene dock) and **Agent Portal**.
 
 **Live version:** see `src/config.js` → `VERSION` (10.20+) · **Spine:** [BUILD_FROM.md](BUILD_FROM.md)  
-**Creator path:** ENTER → **BUILD SOMETHING** → brief → **GENERATE → LIVE SCENE** (or no-key **DEMO SCENE** crate) · walk in PLAY · SKIN · Export.
+**Creator path:** ENTER → **BUILD SOMETHING** → brief → **GENERATE → LIVE SCENE** (or no-key **DEMO SCENE** crate) · walk in PLAY · SKIN · Export.  
+Optional cloud maps: SETUP / TOOLS / Agent Portal **COLAB** → **Cloud Asset Pipeline (Colab)** — [COLAB_ASSET_PIPELINE.md](COLAB_ASSET_PIPELINE.md).
 
 ---
 
@@ -72,8 +73,10 @@ See [AUTH.md](AUTH.md).
 | **BUILD SOMETHING** | Floating CTA after ENTER · hub **AI** | Fast path: auto-connect → chat → GENERATE (10.17) |
 | **Quick brief** | Portal chat | One clear scene message unlocks GENERATE (no multi-turn ready JSON) |
 | **Wardrobe** | SCENE → SKIN | Slot rail + catalog cards · presets · live equip when spawned (10.19) |
+| **Starter body** | SCENE → SKIN · Body | Procedural hero (male/female) — not a Blender rig; drop a GLB to replace |
 | Generation policy | `generation-policy.json` | Intensity budgets + MOD required/optional slots |
 | Ollama CORS | Local + Pages | `npm run ollama:serve` — not plain `ollama serve` |
+| **Colab maps (opt-in)** | SETUP / TOOLS / Portal **COLAB** | Free T4 via official VS Code extension · never required · [COLAB_ASSET_PIPELINE.md](COLAB_ASSET_PIPELINE.md) |
 
 See also [AGENT_ROUTING.md](AGENT_ROUTING.md) for tier config files.
 

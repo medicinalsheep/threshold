@@ -45,6 +45,8 @@ textures/_tmp_hp/
 !textures/threshold_manifest.json
 !textures/_handpainted_src/
 !textures/_handpainted_src/**
+!textures/_templates/
+!textures/_templates/**
 !textures/.gitkeep
 import/*.glb
 !import/tc_*.glb

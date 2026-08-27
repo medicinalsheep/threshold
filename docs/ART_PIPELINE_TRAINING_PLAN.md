@@ -208,9 +208,10 @@ Also: `config/starter-kit.json` v2 uses live Mat* + Starter Ground + AI Build St
 ## Suggested next session order
 
 1. ~~kit:export + manifest bump + wave8~~ **done**
-2. Optional unit tests for `sanitizeAgentSlop` canvas + name alignment
-3. Publish minis when ready: `npm run models:publish -- --all`
-4. More pairs from real Compiler **EXPORT TRAINING PAIR** via `bootcamp:import`
+2. **Wave 9** — origin harden + walk/avatar/opener · [WAVE9_TRAINING_PLAN.md](WAVE9_TRAINING_PLAN.md)
+3. Optional unit tests for `sanitizeAgentSlop` canvas + name alignment
+4. Publish minis when wave 9 origin+walk probes are green: `npm run models:publish -- --all`
+5. More pairs from real Compiler **EXPORT TRAINING PAIR** via `bootcamp:import`
 
 ---
 

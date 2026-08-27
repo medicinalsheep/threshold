@@ -117,6 +117,7 @@ await MaterialLibrary.applyWithMaps(mesh, 'pbr_concrete_weathered');
 ## Related
 
 - [GIMP_TEXTURES.md](GIMP_TEXTURES.md) — live SYNC workflow  
+- [COLAB_ASSET_PIPELINE.md](COLAB_ASSET_PIPELINE.md) — optional T4 maps  
 - [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) — HILOD / codecs  
 - [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md)  
 - [BUILD_FROM.md](BUILD_FROM.md)  

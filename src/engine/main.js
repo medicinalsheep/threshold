@@ -217,9 +217,11 @@ export function initEngine() {
             import('../shared/hubLayout.js').then((m) => m.HubLayout.init());
             import('../shared/modelStatusHud.js').then((m) => m.ModelStatusHud.init());
             import('../shared/liveBuild.js').then((m) => m.LiveBuild.init());
+            import('../shared/colabPipeline.js').then((m) => m.ColabPipeline.bind());
             // Full MOD catalog UI (avatar-mods.json)
             try {
                 const mods = window.AppearanceStore?.getPlayerProfile?.()?.mods || [];
+                window.AppearanceProfile?.initBodyPresetSelect?.();
                 window.AppearanceProfile?.initSkinToneSelect?.();
                 window.AppearanceProfile?.initModPickerUi?.(mods);
             } catch { /* optional */ }

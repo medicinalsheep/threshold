@@ -2,7 +2,7 @@
 
 **Collaborative 3D game lab** — host a session, connect an AI agent, build in the browser, play with friends, export real packages.
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.21.6
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.22.3
 
 **Build from this:** [docs/BUILD_FROM.md](docs/BUILD_FROM.md) — one-page outline for forks and Grok/agent chats (live link, six-step loop, do/don’t).
 
@@ -17,7 +17,7 @@ Threshold is for people who want to **go from idea → playable 3D scene → shi
 | Prototype a game world fast | Terminal grid + QUALITY ladder + Compiler |
 | Use your own AI | Agent Portal auto-detects **Grok** + **Ollama** on your machine |
 | Collaborate | PeerJS sessions — host shares a link, friends join live |
-| Art pipeline | GIMP textures + Blender GLB import with hot-reload (local dev) |
+| Art pipeline | GIMP textures + Blender GLB import with hot-reload (local dev); optional Colab T4 |
 | Ship | Export wizard → web, Android, Windows, iOS, Steam scaffolds |
 
 **Not a AAA engine** — it's a focused sandbox: JavaScript scene scripts, realistic PBR defaults, tiered agents, and store packaging scripts when you're ready.

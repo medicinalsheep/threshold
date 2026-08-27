@@ -1,4 +1,4 @@
-# Getting started with Threshold (v10.21.6)
+# Getting started with Threshold (v10.22.3)
 
 One linear path from lobby to shipping — **terminal grid** default (empty quality baseline), Agent Portal, tiered agents, and optional **TC** export practice.
 
@@ -46,7 +46,7 @@ Lobby → ENTER (solo) → PLAY on terminal grid → ARRANGE / EDIT to place →
 | 5e | **SCENE** | Grid cell · snap · Light presets (Terminal / Day / Soft / Night) |
 | 5f | **SKIN** | Body shape sliders · wardrobe slot rail + catalog · presets |
 | 6 | **PLAY** | Walk · sim · **F** interact |
-| 7 | **SETUP** (optional) | Ollama tiers · gravity · Grok key · train:mini wave7 |
+| 7 | **SETUP** (optional) | Ollama tiers · gravity · Grok key · Colab cloud maps · train:mini wave9 |
 | 8 | **TOOLS → EXPORT** | 9-step walkthrough |
 | 9 | **CLI** | `store:prep`, `package:*` or `package:steam` |
 
@@ -131,7 +131,7 @@ npm run dev               # terminal 2 — GIMP export hot-reloads
 npm run kit:export        # fork-friendly ~1.4 MB WebP pack
 ```
 
-[GIMP_TEXTURES.md](GIMP_TEXTURES.md) · [BLENDER_AVATARS.md](BLENDER_AVATARS.md) · [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md)
+[GIMP_TEXTURES.md](GIMP_TEXTURES.md) · [BLENDER_AVATARS.md](BLENDER_AVATARS.md) · [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) · [COLAB_ASSET_PIPELINE.md](COLAB_ASSET_PIPELINE.md)
 
 ---
 

@@ -1,8 +1,8 @@
 {
   "format": "threshold-bootcamp",
-  "version": 8,
+  "version": 9,
   "root": "./training/bootcamp",
-  "note": "Portable path in repo. origin + art_pipeline + wave8 art; wave7 entry/shape/wardrobe; wave6 live build.",
+  "note": "Portable path in repo. origin + wave9 walk/opener; art_pipeline + wave8; wave7 entry/shape/wardrobe.",
   "ollamaHost": "http://127.0.0.1:11434",
   "models": {
     "small": {
@@ -10,6 +10,7 @@
       "base": "llama3.2:3b",
       "datasets": [
         "datasets/small/origin.jsonl",
+        "datasets/small/wave9_walk.jsonl",
         "datasets/small/art_pipeline.jsonl",
         "datasets/small/wave8_art.jsonl",
         "datasets/small/critical.jsonl",
@@ -29,6 +30,7 @@
       "base": "qwen2.5-coder:1.5b",
       "datasets": [
         "datasets/medium/origin.jsonl",
+        "datasets/medium/wave9_walk.jsonl",
         "datasets/medium/art_pipeline.jsonl",
         "datasets/medium/wave8_art.jsonl",
         "datasets/medium/critical.jsonl",
@@ -44,7 +46,7 @@
       ],
       "modelfile": "modelfiles/threshold-mini-dev.Modelfile",
       "maxExamples": 168,
-      "note": "origin + art_pipeline + wave8 art + waves 5–7 + safety + plan/code"
+      "note": "origin + wave9 walk + art_pipeline + wave8 + waves 5–7 + safety + plan/code"
     },
     "large_dev": {
       "name": "threshold-dev",

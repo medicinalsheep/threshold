@@ -60,6 +60,18 @@ if (html.includes('id="surface-coach"') && html.includes('surface-coach-dismiss'
 else fail('surface coach missing in index.html');
 if (html.includes('setup-surface-hint')) ok('SETUP surface hint');
 else fail('setup-surface-hint missing');
+if (html.includes('id="setup-colab-details"') && html.includes('id="colab-pipeline-panel"')
+    && html.includes('data-hub-action="colab"') && html.includes('id="agent-portal-open-colab"')) {
+    ok('Colab opt-in markers');
+} else {
+    fail('Colab pipeline SETUP/TOOLS/Portal markers missing');
+}
+if (html.includes('id="colab-pipeline-panel"') && html.includes('data-surface="creator"')
+    && /colab-pipeline-panel[\s\S]{0,80}data-surface="creator"/.test(html)) {
+    ok('Colab panel marked creator surface');
+} else {
+    fail('Colab panel must be data-surface=creator');
+}
 if (html.includes('surface-url-hint')) ok('lobby URL surface hint');
 else fail('surface-url-hint missing');
 

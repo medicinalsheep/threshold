@@ -34,7 +34,9 @@ Runtime picks **idle** when stopped, **walk** when moving, **run** when sprintin
 ### Starter pack (`npm run avatar:gen`)
 
 Generated bodies ship `idle` + `walk` + `run` on named limbs (`legL`/`legR`/`armL`/`armR`).  
-These are improved procedural mannequins (not skinned Blender heroes) — replace with rigged GLBs when ready.
+H0–H2 (10.22): profiled anatomy + packed UV atlas + island skin/fabric maps.  
+Guide: `textures/_templates/hero_uv_guide.png` · regen maps: `npm run avatar:atlas`.  
+Still **procedural** (no skeleton) — replace with a skinned Blender GLB when ready.
 
 ---
 

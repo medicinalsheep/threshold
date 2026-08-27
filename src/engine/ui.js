@@ -726,7 +726,7 @@ export const UI = {
         if (PlayerController.spawned) {
             await PlayerController.applyAppearance(profile);
         }
-        this.status('Custom body cleared — using manifest default');
+        this.status('Custom body cleared — starter hero (procedural)');
     },
     exportAppearanceJson: async function () {
         const profile = window.AppearanceProfile.profileFromUi(window.AppearanceStore.getPlayerProfile());

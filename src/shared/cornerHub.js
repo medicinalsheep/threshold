@@ -107,6 +107,10 @@ export const CornerHub = {
     runAction(action) {
         const map = {
             setup: () => this.openSceneTab('setup'),
+            colab: () => {
+                this.openSceneTab('setup');
+                window.ColabPipeline?.open?.();
+            },
             env: () => (SceneDock.toggleTab?.('env') || this.openSceneTab('env')),
             inspect: () => this.openSceneTab('inspect'),
             playas: () => {

@@ -984,6 +984,10 @@ export const HumanMesh = {
         group.add(model);
         group.userData.isGltf = true;
         group.userData.modelUrl = url;
+        if (model.userData?.heroUv) group.userData.heroUv = true;
+        model.traverse((c) => {
+            if (c.userData?.heroUv) group.userData.heroUv = true;
+        });
         group.userData.mixer = null;
         group.userData.mixerClip = null;
         group.userData.walkMode = 'none';
