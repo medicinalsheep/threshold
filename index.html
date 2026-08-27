@@ -10,19 +10,21 @@
     <link rel="apple-touch-icon" sizes="180x180" href="icons/appicon512.png" />
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <meta name="description" content="Collaborative 3D game lab — build worlds in the browser, play with friends, export real packages." />
-    <meta property="og:title" content="Threshold Suite" />
-    <meta property="og:description" content="Create worlds, record sounds, play together in 3D. AI agents, multiplayer, store export." />
+    <meta name="description" content="THRESHOLD — browser 3D lab. ENTER the grid, tap BUILD SOMETHING, generate a scene (or a no-key demo crate), then walk it. No account." />
+    <meta property="og:title" content="THRESHOLD — generate a 3D scene, then walk it" />
+    <meta property="og:description" content="Browser 3D lab. ENTER the terminal grid, tap BUILD SOMETHING, generate a scene (or a no-key demo), then walk it. No account required." />
     <meta property="og:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta property="og:url" content="https://medicinalsheep.github.io/threshold/" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="THRESHOLD — generate a 3D scene, then walk it" />
+    <meta name="twitter:description" content="Browser 3D lab. ENTER the grid, tap BUILD SOMETHING, generate a scene (or a no-key demo), then walk it. No account." />
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.21.5" />
+    <meta name="threshold-version" content="10.21.6" />
     <meta name="theme-color" content="#39ff14" />
-    <title>THRESHOLD SUITE</title>
+    <title>THRESHOLD — generate a 3D scene, then walk it</title>
 </head>
 <body>
 
@@ -44,7 +46,7 @@
                             <img src="icons/icon_translt.png" alt="Threshold" class="lobby-logo lobby-logo-light" width="280" height="140">
                         </picture>
                         <h1 class="lobby-title-fallback">THRESHOLD</h1>
-                        <p class="tagline" id="lobby-tagline">play as you dev</p>
+                        <p class="tagline" id="lobby-tagline">Generate a 3D scene, then walk it — no account</p>
                         <p id="lobby-release-strip" class="lobby-release-strip" aria-label="Release notes"></p>
                     </div>
                     <div class="lobby-pills">
@@ -269,7 +271,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.21.5</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" class="surface-badge-clickable" title="UI surface — click to cycle Play / Creator / Full" role="button" tabindex="0">CREATE</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.21.6</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" class="surface-badge-clickable" title="UI surface — click to cycle Play / Creator / Full" role="button" tabindex="0">CREATE</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
@@ -288,7 +290,7 @@
     <button id="nav-restore-btn" class="nav-restore-btn" type="button" aria-label="Show top menu" title="Show top menu">▼ MENU</button>
     <button id="btn-exit-immersive" class="btn-exit-immersive" type="button" hidden aria-label="Exit fullscreen" title="Exit fullscreen">✕ EXIT</button>
     <div id="surface-coach" class="surface-coach" hidden role="status" aria-live="polite">
-        <p class="surface-coach-text">Play surface: AI hidden. Tap PLAY badge or SCENE → Creator tools… to build.</p>
+        <p class="surface-coach-text">Play surface: AI hidden. Tap BUILD SOMETHING for a no-key demo crate, or the PLAY badge for Creator tools.</p>
         <button type="button" id="surface-coach-dismiss" class="btn-sm" title="Dismiss">OK</button>
     </div>
 
@@ -473,7 +475,7 @@
         <div id="ui-layer">
             <div id="model-status-hud-float" class="model-status-hud model-status-hud-float" aria-live="polite"></div>
             <div id="live-build-hud" class="live-build-hud" hidden aria-live="polite"></div>
-            <button type="button" id="build-something-cta" class="build-something-cta" hidden title="Open Agent Portal and start a live build">BUILD SOMETHING</button>
+            <button type="button" id="build-something-cta" class="build-something-cta" hidden title="Open a live brief — GENERATE a scene, or a no-key demo crate">BUILD SOMETHING</button>
             <p id="play-mode-hint" class="play-mode-hint" hidden aria-live="polite">PLAY — tap hub mode: <strong>ARRANGE</strong> (move) · <strong>EDIT</strong> (gizmo) · <strong>PLAY</strong> (sim)</p>
             <nav id="corner-hubs" class="corner-hubs" aria-label="Corner controls">
                 <div class="corner-hub corner-hub-tl" data-hub="session">

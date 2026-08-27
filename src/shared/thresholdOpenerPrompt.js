@@ -89,7 +89,7 @@ Opener: copy "Copy Grok opener" from the lobby How to menu, or open PromptGen in
  * Compact one-liner for status bars / chat share.
  */
 export function buildShareOneLiner() {
-    return `Threshold (play-as-you-dev 3D) ${getProjectLink()} · ${REPO_URL}`;
+    return `THRESHOLD — generate a 3D scene, then walk it. ${getProjectLink()} · ${REPO_URL}`;
 }
 
 window.ThresholdOpener = {

@@ -89,8 +89,8 @@ export const GuidedSession = {
             requestAnimationFrame(() => this.finishPostTour({ preferBuild: true }));
             return;
         }
-        if (!ViewPrefs.get('walkthroughDone', false)) {
-            requestAnimationFrame(() => Walkthrough.start(0, 'quick', mode));
+        if (!ViewPrefs.get('walkthroughDone', false) && !ViewPrefs.get('firstRunDemoDone', false)) {
+            requestAnimationFrame(() => Walkthrough.startIfNeeded(mode));
             return;
         }
         requestAnimationFrame(() => this.finishPostTour());
@@ -124,18 +124,14 @@ export const GuidedSession = {
             return;
         }
 
-        if (ViewPrefs.get('walkthroughDone', false)) {
+        if (ViewPrefs.get('walkthroughDone', false) || ViewPrefs.get('firstRunDemoDone', false)) {
             if (!lobbyMode) this.applyMode('play');
             this.finishPostTour();
             return;
         }
 
         if (lobbyMode) {
-            if (!ViewPrefs.get('walkthroughDone', false)) {
-                requestAnimationFrame(() => Walkthrough.start(0, 'quick', lobbyMode));
-            } else {
-                this.finishPostTour();
-            }
+            requestAnimationFrame(() => Walkthrough.startIfNeeded(lobbyMode));
             return;
         }
 

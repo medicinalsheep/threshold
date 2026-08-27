@@ -3,7 +3,7 @@
 Quick reference for corner hubs, interaction modes, Agent Portal, optional Grok key, and session lobby. Older docs may still say "SCENE → AI tab" — today everything lives under **SETUP** (scene dock) and **Agent Portal**.
 
 **Live version:** see `src/config.js` → `VERSION` (10.20+) · **Spine:** [BUILD_FROM.md](BUILD_FROM.md)  
-**Creator path:** ENTER → **BUILD SOMETHING** → brief → **GENERATE → LIVE SCENE** · SKIN shape/wardrobe · Export.
+**Creator path:** ENTER → **BUILD SOMETHING** → brief → **GENERATE → LIVE SCENE** (or no-key **DEMO SCENE** crate) · walk in PLAY · SKIN · Export.
 
 ---
 

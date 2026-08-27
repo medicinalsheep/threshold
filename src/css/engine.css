@@ -257,6 +257,13 @@ body.agent-portal-live-dock .agent-portal-modal.open .agent-portal-card {
     color: #b8ffe8;
 }
 .build-something-cta[hidden] { display: none !important; }
+.build-something-cta.first-run-pulse.visible:not([hidden]) {
+    animation: firstRunCtaPulse 1.6s ease-in-out infinite;
+}
+@keyframes firstRunCtaPulse {
+    0%, 100% { box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 0 16px rgba(0, 255, 170, 0.18); }
+    50% { box-shadow: 0 10px 32px rgba(0, 0, 0, 0.5), 0 0 28px rgba(0, 255, 170, 0.45); }
+}
 body.agent-portal-open .build-something-cta,
 body.ui-minimal .build-something-cta {
     opacity: 0 !important;

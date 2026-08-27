@@ -1,3 +1,11 @@
+## 10.21.6 — First-run demo + landing pitch
+
+- **Lobby pitch** — title / meta / og / tagline: generate a 3D scene, then walk it (no account)
+- **First-run loop** — ENTER → BUILD SOMETHING → GENERATE; no Grok/Ollama drops a pushable demo crate, then PLAY
+- Reuses walkthrough (demo mode), Agent Portal `openBuildFast`, surface coach, ViewPrefs (`firstRunDemoDone`)
+- Player surface still never probes Ollama; returning users skip via prefs
+- Docs: BUILD_FROM first-visit note
+
 ## 10.21.5 — Walk reliability + avatar audit gate
 
 - **Track A — walk reliability** — real frame `dt` into `updateWalk`; intent speed so anim doesn’t die on physics damp; mixer bind probe + procedural fallback; idle rest when stopped; rebind after appearance/LOD; lower move gate

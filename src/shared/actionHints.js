@@ -5,7 +5,7 @@ import { ViewPrefs } from './viewPrefs.js';
 const HINTS = [
     {
         id: 'walk',
-        text: 'Terminal grid — walk the void · BUILD SOMETHING or AI (top-left) to generate live',
+        text: 'Terminal grid — WASD walk · BUILD SOMETHING → GENERATE (demo crate if no key)',
         afterMs: 0,
     },
     {
