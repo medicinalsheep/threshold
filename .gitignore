@@ -16,6 +16,10 @@ ios/*
 .vite/
 .vs/
 *.local
+.env
+.env.*
+!.env.example
+!.env.local.example
 .env.local
 .env.*.local
 config/bootcamp.local.json
