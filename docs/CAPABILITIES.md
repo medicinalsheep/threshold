@@ -1,6 +1,6 @@
 # Threshold — Progress & Capabilities (v10.22)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.22.3
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.22.4
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 

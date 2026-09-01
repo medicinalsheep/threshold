@@ -504,26 +504,30 @@ export const HumanMesh = {
             color: skin,
             roughness: Math.min(0.92, rough + 0.08),
             metalness: 0.02,
-            envMapIntensity: 0.35,
+            envMapIntensity: 0.62,
         });
+        matSkin.userData.baseEnvMapIntensity = 0.62;
         const matShirt = new THREE.MeshStandardMaterial({
             color: shirt,
             roughness: Math.min(0.95, rough * 0.95 + 0.05),
             metalness: 0.04,
-            envMapIntensity: 0.4,
+            envMapIntensity: 0.58,
         });
+        matShirt.userData.baseEnvMapIntensity = 0.58;
         const matPants = new THREE.MeshStandardMaterial({
             color: pants,
             roughness: 0.9,
             metalness: 0.02,
-            envMapIntensity: 0.3,
+            envMapIntensity: 0.52,
         });
+        matPants.userData.baseEnvMapIntensity = 0.52;
         const matHair = new THREE.MeshStandardMaterial({
             color: hair,
             roughness: 0.94,
             metalness: 0.02,
-            envMapIntensity: 0.25,
+            envMapIntensity: 0.4,
         });
+        matHair.userData.baseEnvMapIntensity = 0.4;
         const matShoe = new THREE.MeshStandardMaterial({
             color: 0x1a1a1c,
             roughness: 0.72,

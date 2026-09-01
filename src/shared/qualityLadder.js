@@ -27,11 +27,14 @@ export const LIGHTING_PRESETS = {
         timeOfDay: 14,
         fog: 0.012,
         atmosphere: true,
-        sunIntensity: null, // driven by setTimeOfDay
-        sunColor: null,
+        sunIntensity: 2.2,
+        sunColor: 0xfff1dc,
         hemi: true,
+        hemiSky: 0x9ec8f0,
+        hemiGround: 0x3d2e1c,
+        hemiIntensity: 0.5,
         groundHex: null,
-        hint: 'Daylight PBR · hemi + sun from time of day',
+        hint: 'Photoreal key/fill/rim + IBL bounce — pair with Realistic graphics',
     },
     soft: {
         id: 'soft',
@@ -46,7 +49,7 @@ export const LIGHTING_PRESETS = {
         hemiGround: 0x2a2418,
         hemiIntensity: 0.42,
         groundHex: null,
-        hint: 'Warm evening fill — gentle for portraits',
+        hint: 'Warm evening fill + rim — gentle for portraits',
     },
     night: {
         id: 'night',
@@ -61,7 +64,7 @@ export const LIGHTING_PRESETS = {
         hemiGround: 0x0a0c10,
         hemiIntensity: 0.28,
         groundHex: null,
-        hint: 'Moonlit · keep emissives readable',
+        hint: 'Moonlit rim + cool fill — keep emissives readable',
     },
 };
 
@@ -131,6 +134,7 @@ export function applyLightingPreset(id, opts = {}) {
         Env.sunLight.intensity = preset.sunIntensity;
         if (preset.sunColor != null) Env.sunLight.color?.setHex?.(preset.sunColor);
     }
+    window.LightingRig?.applyLook?.(preset.id, { silent: true });
 
     // Optional ground tint only when still on simple terminal ground (no pad thrash)
     if (preset.groundHex != null && S.enterStyle !== 'workspace') {
