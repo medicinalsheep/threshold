@@ -263,6 +263,7 @@ export async function spawnFirstRunDemo(opts = {}) {
         window.MaterialLibrary?.applyWithMaps?.(crate, 'pbr_brick_aged');
     }
     State.firstRunDemoSpawned = true;
+    window.LightingRig?.refreshMaterials?.();
     window.UI?.status?.('Demo crate dropped — WASD walk · bump it in PLAY');
     return [crate];
 }

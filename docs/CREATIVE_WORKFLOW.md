@@ -1,4 +1,4 @@
-# Creative Workflow — GIMP, Blender, Engine (v10.8)
+# Creative Workflow — GIMP, Blender, Engine (v10.22)
 
 **One loop:** ENTER (terminal grid) or CREATE SESSION → design on device → import into Engine → playtest → export manifest → ship.
 
@@ -23,6 +23,7 @@
    A. GIMP → textures/*.png → GIMP SYNC
    B. Blender → import/*.glb → INSERT → GLTF
    C. Dev: textures:watch + npm run dev (live reload)
+   D. Optional: Colab T4 (`colab/threshold_pbr_starter.ipynb`) → download zip → `npm run colab:import -- --zip pack.zip`
 5. Optional: SETUP (tiered agents) · EDIT inspector hooks
 6. PLAY — test walk, physics, vitals if enabled
 7. SAVE WORLD + TOOLS → EXPORT & PLAY or EXPORT wizard
@@ -47,6 +48,7 @@ Object **Name** in Engine inspector must match export tools:
 | GIMP | Object name: `Stone Block` | `textures/stone_block_albedo.png` |
 | Blender UI | Engine Object Name | `import/stone_block.glb` |
 | Blender CLI | `--object "Stone Block"` | same |
+| Colab (opt-in) | `OBJECT_NAME = "Stone Block"` | zip → `npm run colab:import -- --zip …` |
 
 **Live hint (10.21.2+):** EDIT → select object → under **Name**, the inspector shows the expected paths (`Art: textures/… · import/…`). Rename updates the hint immediately. LiveBuild status also echoes art paths for new named props and fills `userData.textureHint` when agents omit it.
 
@@ -68,6 +70,7 @@ Helper module: `src/shared/artNaming.js` · also on `window.ArtNaming` / `Textur
 | `npm run bundle:assets` | Copy textures/ + import/ → dist-pages/bundle/ |
 | TOOLS → INSERT | Character, GLTF, saved players, custom code |
 | TOOLS → EXPORT | 9-step wizard |
+| Optional Colab T4 | [COLAB_ASSET_PIPELINE.md](COLAB_ASSET_PIPELINE.md) · `npm run colab:import -- --zip pack.zip` |
 
 ---
 
@@ -84,6 +87,7 @@ Use **Hyper (4)** when showcasing PBR textures. Graphics tier in SETUP or SCENE 
 - [GETTING_STARTED.md](GETTING_STARTED.md) — lobby → ship linear path
 - [CONTROLS.md](CONTROLS.md) — action controls
 - [GIMP_TEXTURES.md](GIMP_TEXTURES.md) — install, batch, live SYNC
+- [COLAB_ASSET_PIPELINE.md](COLAB_ASSET_PIPELINE.md) — optional free T4 maps (not required)
 - [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) — HILOD, codecs
 - [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) — 9-step wizard
 - [ROADMAP.md](ROADMAP.md) — forward plan

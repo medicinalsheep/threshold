@@ -1,6 +1,6 @@
 # Threshold Roadmap (v10.8+)
 
-**Current:** 10.21.6 · **Live:** https://medicinalsheep.github.io/threshold/
+**Current:** 10.22.5 · **Live:** https://medicinalsheep.github.io/threshold/
 
 Forward-looking plan after the 10.0 blank-grid rebuild and 10.7 agent/UI polish. Historical phase checklists (v3–9) live in [`old/docs/`](../old/docs/).
 
@@ -214,6 +214,9 @@ Accounts guide: [AUTH.md](AUTH.md) · Snapshot: [CAPABILITIES.md](CAPABILITIES.m
 | **10.21.3** | **Export polish** — preflight in wizard · web-only skip to SHIP · copy CLI · draft restore |
 | **10.21.4** | **Mobile / player surface clarity** — badge cycle · synced hints · first-run coach · touch chips |
 | **10.21.5** | **Walk + avatar gate** — idle/walk/run · TPS smoke · `avatar:audit` · lobby Grok opener |
+| **10.22.0** | **Hero mesh H0/H1** — UV atlas · profiled procedural bodies ~8–9k tris · audit UV/tris |
+| **10.22.1** | **Optional Colab T4** — SETUP/TOOLS entry · starter notebook · `colab:import` |
+| **10.22.2** | **Colab import pass** — zip + manifest · metalness · docsweep (wave9 / Colab path) |
 
 ### Program 10.16–10.20 (closed)
 

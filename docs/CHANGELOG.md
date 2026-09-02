@@ -1,8 +1,61 @@
+## 10.22.5 — Lighting perf (Lite extras off, contact cull, shadow follow)
+
+- Lite/Mobile no longer keep Realistic extras: fill/rim stay out of the scene, contact RT disposed, graphics bootstrap applies the detected tier
+- Contact shadows (Realistic/Ultra): restore renderer clear color, skip aerial camera, skip casters outside the blob
+- Sun / fill / rim follow play focus so gated shadow maps actually cover the player (not stuck at origin)
+- Modest IBL kept on Mobile (no envMap zero — shirts stay fabric, not plastic)
+- First-run demo crate refreshes IBL after spawn
+
+## 10.22.4 — Lighting quality pass
+
+- Photoreal key/fill/rim rig + tighter sun shadow camera; ACES filmic kept, exposure tuned
+- Stronger Day look (IBL bounce so skin/fabric are not plastic); Terminal/Soft/Night kept
+- Contact shadows on Realistic/Ultra only — Lite/Mobile stay cheap (no rim, no contact pass)
+- SCENE → Light: Terminal / Day / Soft / Night. Pair **Day** with Graphics **Realistic**
+
+## 10.22.3 — Desktop 10.22 onto 10.21.6 first-run
+
+- Rebase Desktop hero mesh / Colab / wave9 onto GitHub main
+- **First-run** (from **10.21.6**) came from GitHub main: lobby pitch plus no-key demo crate
+- Keeps 10.22 procedural hero + UV atlas, optional Colab pipeline, wave9 mini train
+
+## 10.22.2 — Colab import pass + docsweep
+
+- Notebook writes **`threshold-asset.json`** + metalness; portable OUT (`/content` or `./threshold_out`); family albedo (stone/wood/metal/fabric/ground); wrap-friendly maps
+- `colab:import` accepts **`--zip`**, infers Engine Name from the pack, `--dry-run` / `--no-bundle`; no default Stone Block footgun
+- Import **HILOD on by default** (`--no-hilod` to skip); pings `textures:watch` when it is up, else prints reload hint
+- Spine sweep: wave9 as latest train · Colab called out in CREATIVE_WORKFLOW / GETTING_STARTED / ASSET_CAPABILITIES
+
+## 10.22.1 — Optional Colab cloud asset pipeline
+
+- **Opt-in only** — SETUP → Cloud Asset Pipeline (Colab) · TOOLS → Cloud assets · Agent Portal **COLAB** · creator/full surface
+- Starter notebook `colab/threshold_pbr_starter.ipynb` (procedural PBR always; optional SD 1.5 on T4)
+- `npm run colab:import` copies `{slug}_albedo.png` (+ roughness/normal) into `textures/`
+- Docs: [COLAB_ASSET_PIPELINE.md](COLAB_ASSET_PIPELINE.md) — T4 / session / idle limits honest
+- No Google login in the app · notebook not in the SPA bundle
+
+## 10.22.0 — Procedural hero mesh + UV atlas (H0/H1)
+
+- **`avatar:gen` v2** — lathe pelvis/torso, tapered thigh/calf/arm, deltoids, hands, profiled feet; male/female LOD0 ~8–9k tris
+- **UV atlas** — packed islands (head/neck/arms/torso/hands/hips/legs/feet) · `textures/_templates/hero_uv_guide.png`
+- **`heroUv` extras** — AvatarTex skips primitive stretch wraps when the GLB is a hero
+- **`avatar:audit`** — UVs, skin/shirt/pants regions, LOD tris floors
+- Walk clips + named `legL`/`armL` groups unchanged
+- **H2 UV atlases** — `avatar:atlas` packs photoreal skin / shirt twill / pants / leather into island maps; 9 tones; shoes use foot islands
+- **H3 SKIN copy** — Body dropdown “starter hero (procedural)”; hint that it is not a Blender rig
+- Honest: still procedural (no SkinnedMesh) — Blender drop-in remains H4
+
+## 10.21.5+ — Wave 9 mini train
+
+- **Wave 9 seed** — origin harden (coach SYSTEM + anti–Ollama Games) · idle/walk/run literacy · `avatar:audit` / `walk:verify` / `walk:smoke` · lobby How to opener
+- `bootcamp.json` v9 · `train:mini -- --wave9` · `wave9:probe` · golden origin + walk cases tightened
+- Plan: [WAVE9_TRAINING_PLAN.md](WAVE9_TRAINING_PLAN.md)
+
 ## 10.21.6 — First-run demo + landing pitch
 
 - **Lobby pitch** — title / meta / og / tagline: generate a 3D scene, then walk it (no account)
-- **First-run loop** — ENTER → BUILD SOMETHING → GENERATE; no Grok/Ollama drops a pushable demo crate, then PLAY
-- Reuses walkthrough (demo mode), Agent Portal `openBuildFast`, surface coach, ViewPrefs (`firstRunDemoDone`)
+- **First-run loop** — ENTER to BUILD SOMETHING to GENERATE; no-key demo crate then PLAY
+- Reuses walkthrough demo mode, Agent Portal openBuildFast, surface coach, ViewPrefs firstRunDemoDone
 - Player surface still never probes Ollama; returning users skip via prefs
 - Docs: BUILD_FROM first-visit note
 

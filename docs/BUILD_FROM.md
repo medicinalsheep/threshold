@@ -59,7 +59,7 @@ Voice mic is requested **after** session start — never blocks CREATE.
 | Modes / arrange / play-as | `simMode.js`, `arrangeMode.js`, `playAs.js`, `qualityLadder.js` |
 | Grid snap | `gridSystem.js` |
 | Avatar / shape / wardrobe | `appearanceProfile.js`, `clothingLayout.js`, `avatarMod.js`, `avatarLod.js` · `avatar:audit` |
-| Training minis | `training/bootcamp/` · `train:mini -- --wave7` · [BOOTCAMP.md](BOOTCAMP.md) |
+| Training minis | `training/bootcamp/` · `train:mini -- --wave9` (latest) · `--wave7` entry/shape · [BOOTCAMP.md](BOOTCAMP.md) |
 | Store / macOS | `scripts/store-ship.cjs`, `notarize-mac.cjs` · [MAC_NOTARIZE.md](MAC_NOTARIZE.md) |
 | Agent map | [AGENTS.md](../AGENTS.md) |
 
@@ -84,6 +84,7 @@ Canonical docs: **this file** · CAPABILITIES · [AUTH.md](AUTH.md) · [UI_AND_A
 - **Surfaces** — player / creator / full (`?surface=`)
 - **Pages CI** — no full texture regen each deploy · stale-chunk auto-reload
 - **Store** — `npm run store:ship` · mac notary hooks
+- **Colab (optional)** — T4 maps via official VS Code extension · [COLAB_ASSET_PIPELINE.md](COLAB_ASSET_PIPELINE.md) · never required
 
 ### UI surfaces (same URL)
 
@@ -109,6 +110,7 @@ Switch: lobby chips · SETUP chips · **click nav PLAY/CREATE badge** · SCENE �
 - Keep `src/config.js` `VERSION` as truth; run `npm run version:sync` after bumps  
 - Quality defaults: PBR, production intake, export slop scan (no CanvasTexture spam)  
 - Respect player surface (no Ollama probe / no forced Portal on phones)
+- Keep Colab / cloud GPU **opt-in** — local GIMP/Blender remain the default art path
 
 **Don’t**
 
@@ -135,6 +137,8 @@ npm run negative-lod:verify
 npm run avatar:audit            # walk clips · limbs · skins · runtime
 npm run perf:harness:compare
 npm run textures:gen:default   # starter PBR library maps
+npm run colab:import -- --zip <file.zip>   # optional Colab T4 maps (Name from pack)
+npm run colab:verify            # optional Colab pipeline static check
 npm run store:ship -- --manifest exports/game.threshold-game.json --targets win
 ```
 
@@ -147,13 +151,14 @@ Ollama for **GitHub Pages**: keep a local proxy open — `node scripts/ollama-co
 ```text
 Live: https://medicinalsheep.github.io/threshold/
 Repo: https://github.com/medicinalsheep/threshold
-Spine: docs/BUILD_FROM.md · CAPABILITIES.md · AGENTS.md · UI_AND_AGENTS.md
+Spine: docs/BUILD_FROM.md · CAPABILITIES.md · AGENTS.md · UI_AND_AGENTS.md · CREATIVE_WORKFLOW.md
 Free core: ENTER solo → PLAY terminal grid. Hub PLAY/ARRANGE/EDIT · Play as = K.
 Build: BUILD SOMETHING / AI → brief → GENERATE → LIVE SCENE (creator).
 Skin: SCENE → SKIN body shape + wardrobe. Quality: INSERT → QUALITY (opt-in).
 Optional Grok + Ollama (creator), PeerJS CREATE/JOIN. No X OAuth. No TC DEMO.
 Physics kit opt-in · PHYSICS.md. Perf: Neg LOD ~100m · Vis E0–E4.
-Train: npm run train:mini -- --wave7. Ship: store:ship · MAC_NOTARIZE.md.
+Art: GIMP/Blender default · optional Colab T4 · COLAB_ASSET_PIPELINE.md.
+Train: npm run train:mini -- --wave9. Ship: store:ship · MAC_NOTARIZE.md.
 Task: [your goal]
 ```
 

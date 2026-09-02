@@ -1,7 +1,7 @@
 {
   "format": "threshold-gimp-manifest",
   "formatVersion": 1,
-  "engineVersion": "10.13.21",
+  "engineVersion": "10.21.4",
   "textures": [
     {
       "id": "tc_run_albedo",
@@ -1979,5 +1979,6 @@
   "note": "Quality-first — 2K masters; _1k/_2k tiers + WebP via textures:hilod / textures:watch",
   "updated": "2026-07-28T02:48:36.712Z",
   "handpainted": true,
-  "handpaintedNote": "True painted/generated albedo + normal + roughness (+ metalness); avatar skins (10.15.9)"
+  "handpaintedNote": "True painted/generated albedo + normal + roughness (+ metalness); avatar skins (10.15.9)",
+  "kitAlignedAt": "2026-08-12T20:52:07.621Z"
 }

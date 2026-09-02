@@ -20,7 +20,7 @@ Legacy edition manifests (`threshold-child-*`) live in `old/reference-editions/`
 
 ---
 
-## Capability map (v10.20)
+## Capability map (v10.22)
 
 ```mermaid
 flowchart TB
@@ -40,8 +40,8 @@ flowchart TB
     subgraph create [Create]
         LIVE[LiveBuild multi-step]
         SKIN[Shape + wardrobe]
-        SETUP[SETUP agents wave7]
-        ART[GIMP / Blender]
+        SETUP[SETUP agents wave9]
+        ART[GIMP / Blender / optional Colab]
     end
     subgraph ship [Ship]
         EXP[EXPORT wizard]
@@ -76,7 +76,7 @@ flowchart TB
 | Train mini agents | [BOOTCAMP.md](BOOTCAMP.md) · [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) | `npm run train:mini -- --no-seed` · `ollama:golden` |
 | Android APK (after polish) | [ANDROID_PREP.md](ANDROID_PREP.md) · [STORE_RELEASE.md](STORE_RELEASE.md) | `npm run package:android` |
 | Action controls | [CONTROLS.md](CONTROLS.md) | LMB aim · RMB shoot · F interact · PTT **N** |
-| Creative loop | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | BUILD → insert · PromptGen |
+| Creative loop | [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | GIMP / Blender · optional Colab |
 | Full asset pipeline | [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | `npm run assets:pack` |
 | TC assets policy | [REFERENCE_EDITIONS.md](REFERENCE_EDITIONS.md) · [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) | Demo button removed |
 | Ship to stores | [STORE_RELEASE.md](STORE_RELEASE.md) · [EXPORT_WALKTHROUGH.md](EXPORT_WALKTHROUGH.md) | `store:ship` · `package:*` |
@@ -130,7 +130,8 @@ npm run build                   # GitHub Pages → dist-pages/
 | [ROADMAP.md](ROADMAP.md) | v10.8+ forward plan |
 | [PRODUCT_ROADMAP.md](PRODUCT_ROADMAP.md) | Vision + pillars |
 | `old/docs/REALISTIC_GAMEPLAY.md` | Archived — survival + showcase (pre-10.11) |
-| [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | GIMP/Blender loop |
+| [CREATIVE_WORKFLOW.md](CREATIVE_WORKFLOW.md) | GIMP/Blender loop + optional Colab |
+| [COLAB_ASSET_PIPELINE.md](COLAB_ASSET_PIPELINE.md) | Optional Colab T4 maps (not required) |
 | [ASSET_CAPABILITIES.md](ASSET_CAPABILITIES.md) | HILOD, codecs, asset systems |
 | [AGENT_ROUTING.md](AGENT_ROUTING.md) | Tiered agents + bootcamp |
 | [MODEL_DISTRIBUTION.md](MODEL_DISTRIBUTION.md) | GitHub vs local weights |

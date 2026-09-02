@@ -983,6 +983,57 @@ body.design-intake-open .design-intake-modal.open {
     font-weight: 600;
 }
 
+.colab-pipeline-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 140;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.55);
+    padding: 16px;
+}
+.colab-pipeline-panel[hidden] {
+    display: none !important;
+}
+.colab-pipeline-card {
+    max-width: 32rem;
+    width: 100%;
+    background: var(--panel-bg, #12141a);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 14px 16px;
+    color: inherit;
+}
+.colab-pipeline-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.colab-pipeline-head h3 {
+    margin: 0;
+    font-size: 0.95rem;
+}
+.colab-pipeline-steps {
+    margin: 8px 0 10px;
+    padding-left: 1.2rem;
+    font-size: 0.72rem;
+    line-height: 1.45;
+}
+.colab-pipeline-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.colab-pipeline-actions a {
+    text-decoration: none;
+    color: inherit;
+    display: inline-flex;
+    align-items: center;
+}
+
 .scene-dock.expanded .dock-panels {
     display: flex;
     flex-direction: column;

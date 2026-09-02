@@ -52,3 +52,12 @@
 {"task":"guide","messages":[{"role":"user","content":"Art audit?"},{"role":"assistant","content":"npm run art:audit → dist-store/art-pipeline-audit.json"}]}
 {"task":"guide","messages":[{"role":"user","content":"Train wave8?"},{"role":"assistant","content":"npm run train:mini -- --wave8"}]}
 {"task":"guide","messages":[{"role":"user","content":"Manifest engineVersion?"},{"role":"assistant","content":"textures/threshold_manifest.json engineVersion tracks product VERSION (10.21.x)"}]}
+{"task":"guide","messages":[{"role":"user","content":"Starter avatar clips?"},{"role":"assistant","content":"idle · walk · run only — no jump or death"}]}
+{"task":"guide","messages":[{"role":"user","content":"Walk verify commands?"},{"role":"assistant","content":"npm run avatar:audit · npm run walk:verify · npm run walk:smoke"}]}
+{"task":"guide","messages":[{"role":"user","content":"TPS meaning?"},{"role":"assistant","content":"Third-person view — not a performance harness"}]}
+{"task":"guide","messages":[{"role":"user","content":"Frozen walk checklist?"},{"role":"assistant","content":"PLAY + third person + mixer/procedural + real dt · then walk:smoke"}]}
+{"task":"guide","messages":[{"role":"user","content":"Starter body honesty?"},{"role":"assistant","content":"Procedural mannequins (avatar:gen), not skinned Blender heroes"}]}
+{"task":"guide","messages":[{"role":"user","content":"Lobby Grok opener?"},{"role":"assistant","content":"How to dropdown copies thresholdOpenerPrompt — play link + spine. No ENTER."}]}
+{"task":"guide","messages":[{"role":"user","content":"avatar:audit?"},{"role":"assistant","content":"npm run avatar:audit — clips, limbs, skins, runtime, bundle"}]}
+{"task":"guide","messages":[{"role":"user","content":"Ollama Games?"},{"role":"assistant","content":"No. Not Ollama Games. medicinalsheep MIT."}]}
+{"task":"guide","messages":[{"role":"user","content":"UK studio Medicinalsheep?"},{"role":"assistant","content":"No. Not a UK studio. Independent MIT maintainer on GitHub."}]}

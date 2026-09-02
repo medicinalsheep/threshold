@@ -1,5 +1,7 @@
 /** AppearanceProfile — serializable character composition state (R8.2) */
 
+import { AvatarManifest } from './avatarManifest.js';
+
 export const APPEARANCE_FORMAT = 'threshold-appearance';
 /** v3: continuous body shape (shoulders/chest/waist/hips/muscle/weight/height) */
 export const APPEARANCE_VERSION = 3;
@@ -247,6 +249,24 @@ export function resolveSkinSlug(profile) {
     return 'starter_skin_medium';
 }
 
+/** Fill #skin-body-preset from avatar-manifest body labels. */
+export function initBodyPresetSelect(selectedId = null) {
+    const sel = document.getElementById('skin-body-preset');
+    if (!sel) return;
+    const bodies = AvatarManifest.bodies() || {};
+    const ids = Object.keys(bodies);
+    if (!ids.length) return;
+    const cur = selectedId || sel.value || 'male_default';
+    sel.innerHTML = ids.map((id) => {
+        const spec = bodies[id] || {};
+        const label = spec.label || id;
+        const title = spec.note ? ` title="${String(spec.note).replace(/"/g, '&quot;')}"` : '';
+        return `<option value="${id}"${title}>${label}</option>`;
+    }).join('');
+    if (ids.includes(cur)) sel.value = cur;
+    else sel.value = ids[0];
+}
+
 /** Fill #skin-tone-preset from SKIN_TEXTURE_VARIANTS */
 export function initSkinToneSelect(selectedId = null) {
     const sel = document.getElementById('skin-tone-preset');
@@ -443,6 +463,7 @@ export function syncUiFromProfile(profile) {
     set('skin-head-color', p.colors.skin);
     set('skin-pants-color', p.colors.pants);
     set('skin-hair-color', p.colors.hair);
+    initBodyPresetSelect(p.bodyId);
     const bodySel = document.getElementById('skin-body-preset');
     const hairSel = document.getElementById('skin-hair-preset');
     if (bodySel) bodySel.value = p.bodyId;
@@ -464,7 +485,9 @@ export function syncUiFromProfile(profile) {
     if (status) {
         const hint = p.customBodyImport
             || (p.customBodyGlb?.startsWith?.('blob:') ? 'local GLB (session)' : p.customBodyGlb);
-        status.textContent = hint ? `Custom body: ${hint}` : 'Custom body: default manifest';
+        status.textContent = hint
+            ? `Custom body: ${hint}`
+            : 'Starter body (procedural hero) · LOD 0/1/2 auto';
     }
     // Body shape sliders
     const s = normalizeShape(p.shape);
@@ -519,6 +542,7 @@ window.AppearanceProfile = {
     profileForNetwork,
     resolveSkinSlug,
     skinHexForSlug,
+    initBodyPresetSelect,
     initSkinToneSelect,
     colorsFromUi,
     texturesFromUi,

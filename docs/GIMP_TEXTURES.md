@@ -37,6 +37,8 @@ gimp -i -b '(python-fu-threshold-build-tc-textures 1 RUN-NONINTERACTIVE "E:/thre
 
 Manifest merges by `objectName` + `slot` — same rules as Node generator.
 
+Optional cloud maps (not required): [COLAB_ASSET_PIPELINE.md](COLAB_ASSET_PIPELINE.md) — `npm run colab:import -- --zip pack.zip`.
+
 ---
 
 ## Styles supported (parity with Node)

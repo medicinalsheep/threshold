@@ -2,7 +2,7 @@
 
 Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blender creative pipeline, realism starter defaults (TPS/FPS/ADS/footsteps), tiered local/cloud agents, and store/Steam export.
 
-**Version:** `src/config.js` → `VERSION` (currently **10.21.6**)
+**Version:** `src/config.js` → `VERSION` (currently **10.22.5**)
 
 **Spine (start here):** [docs/BUILD_FROM.md](docs/BUILD_FROM.md) · **Doc index:** [docs/README.md](docs/README.md)
 
@@ -40,6 +40,7 @@ Browser-first 3D sandbox with PeerJS multiplayer, Compiler, PromptGen, GIMP/Blen
 | Grok agents | `src/grok/client.js`, `npcAgent.js`, `devAgent.js` |
 | Multiplayer | `src/shared/network.js`, `sync.js`, `actions.js` |
 | Creative | `textureBridge.js`, `materialPresets.js`, `materialLibrary.js`, `gltfImport.js`, `creativeWatch.js` |
+| Colab (opt-in) | `src/shared/colabPipeline.js` · `colab/` notebooks · [docs/COLAB_ASSET_PIPELINE.md](docs/COLAB_ASSET_PIPELINE.md) |
 | Export | `gameExport.js`, `exportWizard.js`, `exportWalkthrough.js` |
 | Store / Steam | `scripts/store-*.cjs`, `store-ship`, `notarize-mac`, `steam-*.cjs` |
 | Training bootcamp | `training/bootcamp/`, `scripts/bootcamp-*.cjs`, `scripts/models-*.cjs` |
@@ -109,9 +110,11 @@ npm run bootcamp:build          # JSONL → Modelfiles in training/bootcamp/
 npm run bootcamp:seed:wave5     # 10.13 product power pack for minis
 npm run bootcamp:seed:wave7     # 10.17–20 entry + shape + wardrobe
 npm run bootcamp:seed:wave8     # 10.21 art pipeline · slug · kit · HILOD
+npm run bootcamp:seed:wave9     # 10.21.5–10.22 origin + walk + avatar:audit
 npm run train:mini -- --wave5   # seed wave5 → build → ollama create
 npm run train:mini -- --wave7   # entry/shape/wardrobe pack
 npm run train:mini -- --wave8   # art pipeline pack + art:audit
+npm run train:mini -- --wave9   # latest — origin + walk literacy
 npm run train:mini -- --full --golden
 npm run kit:export && npm run kit:verify
 npm run art:audit

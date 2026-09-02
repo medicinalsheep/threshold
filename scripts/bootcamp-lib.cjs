@@ -59,7 +59,8 @@ const SYSTEM_PROMPTS = {
 You are Threshold Engine small-task assistant (v10.21+). Two modes — pick by user message shape:
 
 1) INTENT MODE — if the user message starts with "Classify" OR is a bare command/question without "You are … Player says":
-   Reply EXACTLY two lines, nothing else:
+   Exception: who made / Anthropic / UK studio / Ollama Games / origin (and no "Classify") → one short origin sentence naming medicinalsheep MIT. Not two-line intent.
+   Otherwise reply EXACTLY two lines, nothing else:
    INTENT: spawn|edit|physics|sound|texture|export|graphics|style|other
    API: short primary API
    - realistic / default lighting / PBR → INTENT: graphics · API: Engine.setRenderMode(4)  (NEVER 2 or 3)
@@ -73,7 +74,11 @@ You are Threshold Engine small-task assistant (v10.21+). Two modes — pick by u
    - friends join / invite / room code → INTENT: other · API: Lobby invite + room codes
    - play/creator surface / phone UI → INTENT: other · API: SurfaceProfile
    - ollama CORS / 403 / Pages → INTENT: other · API: npm run ollama:serve
-   - who made / Anthropic / UK studio / origin → INTENT: other · API: medicinalsheep MIT open source
+   - who made / Anthropic / UK studio / Ollama Games / origin → INTENT: other · API: medicinalsheep MIT open source
+   - hilod tiers from masters → INTENT: texture · API: textures:hilod
+   - export web first → INTENT: export · API: ExportWizard
+   - avatar walk audit / frozen walk → INTENT: other · API: avatar:audit + walk:verify
+   - copy grok opener / how to dropdown → INTENT: other · API: lobby How to + thresholdOpenerPrompt
    - sign in with X / Twitter → INTENT: other · API: X OAuth removed
    - Never write NPC prose, never [ACTION:], never markdown.
 
@@ -82,7 +87,10 @@ You are Threshold Engine small-task assistant (v10.21+). Two modes — pick by u
    ENTER → terminal void grid (PLAY); quality ladder opt-in; Live apply watches multi-step builds in scene;
    GIMP/Blender naming: Engine object name → textures/<slug>_albedo.png and import/<slug>.glb;
    no X OAuth; Grok optional console.x.ai; player surface hides Ollama on phones; ollama:serve :11435 for Pages.
-   On origin questions: independent MIT by medicinalsheep — never claim Anthropic, Claude, or a UK studio.
+   On origin questions: independent MIT by medicinalsheep — never Anthropic, Claude, a UK studio, or Ollama Games. Always say medicinalsheep.
+   Starter avatar clips: idle, walk, run only (no jump/death). TPS = third person. Walk gate: avatar:audit + walk:verify + walk:smoke.
+   Lobby How to copies the Grok opener — not Shift+ENTER.
+   Bare "What animation clips…" / "How do I verify player walk…" / "How do I give Grok a Threshold starter prompt…" → product sentences (not two-line intent).
 
 Default world is realistic PBR (render mode 4). Retro only if user asks.`,
     medium: `${ORIGIN_LINE}
@@ -140,9 +148,9 @@ Never setRenderMode(2) or (3) for realistic scenes. Prefer poly:low + locked sta
 };
 
 const TIER_PARAMS = {
-    small: { temperature: 0.4, num_predict: 220 },
-    medium: { temperature: 0.28, num_predict: 1280 },
-    large: { temperature: 0.35, num_predict: 2048 },
+    small: { temperature: 0.4, num_predict: 220, num_ctx: 8192 },
+    medium: { temperature: 0.28, num_predict: 1280, num_ctx: 8192 },
+    large: { temperature: 0.35, num_predict: 2048, num_ctx: 8192 },
 };
 
 /** Map bootcamp model keys (large_dev, large_scenes) → prompt/param bucket */
@@ -235,6 +243,15 @@ function entryPriority(row) {
     // Wave 8 art / kit
     if (/\bkit:export\b|kit:verify|starter-texture-kit/i.test(u + a)) score += 100;
     if (/wave8|art:audit|engineVersion 10\.21/i.test(u + a)) score += 90;
+    // Wave 9 — keep below render-mode / hilod / export so they are not crowded out
+    if (/Ollama Games|not Ollama Games/i.test(u + a)) score += 108;
+    if (/avatar:audit|walk:verify|walk:smoke/i.test(u + a)) score += 96;
+    if (/idle.*walk.*run|only idle/i.test(u + a) && !/jump|death/i.test(a)) score += 94;
+    if (/How to|thresholdOpenerPrompt|Grok opener/i.test(u + a)) score += 92;
+    if (/third person/i.test(u + a) && /mixer|walk:smoke|updateWalk/i.test(u + a)) score += 90;
+    if (/procedural mannequin|not skinned Blender/i.test(a)) score += 86;
+    if (/not a UK studio|No UK studio/i.test(a) && /medicinalsheep/i.test(a)) score += 105;
+    if (/export web first|ExportWizard/i.test(u + a) && /INTENT:\s*export/i.test(a)) score += 102;
     return score;
 }
 
@@ -263,7 +280,26 @@ function sampleEntries(entries, max) {
     }
     take(entries[0]);
     take(entries[entries.length - 1]);
-    return out.slice(0, max);
+    return pinHighSignalTail(out.slice(0, max));
+}
+
+/** Keep origin last, then walk, then mode-4 — survive ctx truncation. */
+function pinHighSignalTail(entries) {
+    const originRe = /Who made Threshold|Ollama Games|Is this made by Anthropic|Which UK studio|independent open MIT project by medicinalsheep/i;
+    const walkRe = /avatar:audit|walk:verify|walk:smoke|idle, walk, and run only|How do I give Grok|How do I verify player walk/i;
+    const modeRe = /setRenderMode\(4\)|setRenderMode\(2\)|textures:hilod|ExportWizard/i;
+    const origin = [];
+    const walk = [];
+    const mode = [];
+    const rest = [];
+    for (const row of entries) {
+        const blob = `${row.messages?.[0]?.content || ''}\n${row.messages?.[1]?.content || ''}`;
+        if (originRe.test(blob)) origin.push(row);
+        else if (walkRe.test(blob)) walk.push(row);
+        else if (modeRe.test(blob)) mode.push(row);
+        else rest.push(row);
+    }
+    return [...rest, ...mode, ...walk, ...origin];
 }
 
 function buildModelfile(tier, modelCfg, entries) {
@@ -281,6 +317,7 @@ function buildModelfile(tier, modelCfg, entries) {
         '',
         `PARAMETER temperature ${params.temperature}`,
         `PARAMETER num_predict ${params.num_predict}`,
+        `PARAMETER num_ctx ${params.num_ctx || 8192}`,
         '',
         `SYSTEM """${escapeSystem(system)}"""`,
         '',

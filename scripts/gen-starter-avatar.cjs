@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 /**
- * Starter avatar GLBs — moderate-poly human forms + hair + walk clip.
- * Male / female body presets (formed proportions). Run: npm run avatar:gen
+ * Starter / hero avatar GLBs — H0 UV atlas + H1 profiled anatomy.
+ * Male / female / guard / mech. Run: npm run avatar:gen
  */
 const fs = require('fs');
 const path = require('path');
 const THREE = require('three');
 const { GLTFExporter } = require('three/examples/jsm/exporters/GLTFExporter.js');
+const { writePng, fillRgba } = require('./tc-png.cjs');
 
 global.FileReader = class FileReader {
     readAsArrayBuffer(blob) {
@@ -20,39 +21,73 @@ global.FileReader = class FileReader {
 const ROOT = path.join(__dirname, '..');
 const IMPORT = path.join(ROOT, 'import');
 const PUB = path.join(ROOT, 'public', 'bundle', 'import');
+const TEMPLATE = path.join(ROOT, 'textures', '_templates');
 
-/** Detail tiers → LOD0 high · LOD1 mid · LOD2 low (Track B quality floor) */
+/** UV islands (u0,v0,u1,v1) — v=0 bottom. GIMP paints to these. */
+const UV = {
+    HEAD: [0.02, 0.68, 0.48, 0.98],
+    NECK: [0.02, 0.60, 0.18, 0.68],
+    ARM_L: [0.52, 0.72, 0.74, 0.98],
+    ARM_R: [0.76, 0.72, 0.98, 0.98],
+    TORSO: [0.02, 0.34, 0.50, 0.60],
+    HAND_L: [0.54, 0.50, 0.74, 0.70],
+    HAND_R: [0.76, 0.50, 0.98, 0.70],
+    HIPS: [0.02, 0.02, 0.38, 0.32],
+    LEG_L: [0.42, 0.14, 0.68, 0.48],
+    LEG_R: [0.70, 0.14, 0.96, 0.48],
+    FOOT_L: [0.42, 0.02, 0.68, 0.13],
+    FOOT_R: [0.70, 0.02, 0.96, 0.13],
+};
+
+/** Detail tiers → LOD0 high · LOD1 mid · LOD2 low */
 function detailParams(detail = 'high') {
-    if (detail === 'low') return { seg: 8, headW: 12, headH: 10, face: true, bust: true };
-    if (detail === 'mid') return { seg: 14, headW: 20, headH: 16, face: true, bust: true };
-    return { seg: 22, headW: 32, headH: 26, face: true, bust: true };
+    if (detail === 'low') return { seg: 10, headW: 14, headH: 10, face: true, bust: false };
+    if (detail === 'mid') return { seg: 16, headW: 22, headH: 16, face: true, bust: true };
+    return { seg: 28, headW: 36, headH: 28, face: true, bust: true };
 }
 
 function mat(c, o = {}) {
     return new THREE.MeshStandardMaterial({
         color: c,
-        roughness: o.r ?? 0.68,
+        roughness: o.r ?? 0.66,
         metalness: o.m ?? 0.04,
-        // Explicit map slots ready for AvatarTex; keeps PBR stable without maps
         envMapIntensity: o.env ?? 0.35,
     });
 }
 
-/** Cylinders already have UVs; ensure sphere/box meshes too for skin maps */
-function ensureUVs(geo) {
-    if (!geo.attributes.uv) {
-        // Box/sphere from three always have uv; leave as no-op safety
-        geo.computeBoundingBox();
+function packUv(geo, rect) {
+    if (!geo.attributes.uv) return geo;
+    const [u0, v0, u1, v1] = rect;
+    const arr = geo.attributes.uv.array;
+    let minu = Infinity;
+    let minv = Infinity;
+    let maxu = -Infinity;
+    let maxv = -Infinity;
+    for (let i = 0; i < arr.length; i += 2) {
+        minu = Math.min(minu, arr[i]);
+        maxu = Math.max(maxu, arr[i]);
+        minv = Math.min(minv, arr[i + 1]);
+        maxv = Math.max(maxv, arr[i + 1]);
     }
+    const du = (maxu - minu) || 1;
+    const dv = (maxv - minv) || 1;
+    for (let i = 0; i < arr.length; i += 2) {
+        const u = (arr[i] - minu) / du;
+        const v = (arr[i + 1] - minv) / dv;
+        arr[i] = u0 + u * (u1 - u0);
+        arr[i + 1] = v0 + v * (v1 - v0);
+    }
+    geo.attributes.uv.needsUpdate = true;
     return geo;
 }
 
-function limb(name, mesh, pivotY, offsetX = 0) {
-    const g = new THREE.Group();
-    g.name = name;
-    g.position.set(offsetX, pivotY, 0);
-    g.add(mesh);
-    return g;
+function lathe(points, seg) {
+    const vecs = points.map(([x, y]) => new THREE.Vector2(Math.max(0.004, x), y));
+    return new THREE.LatheGeometry(vecs, Math.max(8, seg));
+}
+
+function taperCyl(rTop, rBot, h, seg) {
+    return new THREE.CylinderGeometry(rTop, rBot, h, Math.max(8, seg), 3);
 }
 
 function castShadow(root) {
@@ -64,10 +99,6 @@ function castShadow(root) {
     });
 }
 
-/**
- * Formed body proportions (meters-ish before export scale).
- * Shared detailed topology; scales differ for male / female.
- */
 const FORMS = {
     male: {
         rootName: 'StarterAvatar',
@@ -78,25 +109,26 @@ const FORMS = {
         waistD: 0.24,
         hipW: 0.44,
         hipD: 0.28,
-        hipH: 0.24,
+        hipH: 0.22,
         torsoH: 0.56,
         neckR: 0.09,
         headR: 0.175,
         headScale: [1.0, 1.06, 0.94],
         thighTop: 0.11,
-        thighBot: 0.095,
-        calfTop: 0.085,
-        calfBot: 0.07,
-        armTop: 0.065,
-        armBot: 0.05,
+        thighBot: 0.09,
+        calfTop: 0.082,
+        calfBot: 0.062,
+        armTop: 0.068,
+        armBot: 0.048,
         legLen: 0.86,
         armLen: 0.52,
         shoulderY: 1.56,
         hipY: 0.9,
-        shoe: [0.2, 0.09, 0.3],
+        shoe: [0.11, 0.07, 0.24],
         bust: 0,
-        hipOut: 0.12,
-        armOut: 0.34,
+        hipOut: 0.11,
+        armOut: 0.33,
+        hand: [0.055, 0.09, 0.035],
     },
     female: {
         rootName: 'StarterAvatarFemale',
@@ -107,199 +139,220 @@ const FORMS = {
         waistD: 0.2,
         hipW: 0.48,
         hipD: 0.3,
-        hipH: 0.24,
+        hipH: 0.22,
         torsoH: 0.52,
         neckR: 0.075,
         headR: 0.165,
         headScale: [0.96, 1.04, 0.92],
         thighTop: 0.105,
-        thighBot: 0.09,
-        calfTop: 0.08,
-        calfBot: 0.065,
+        thighBot: 0.086,
+        calfTop: 0.076,
+        calfBot: 0.056,
         armTop: 0.055,
-        armBot: 0.045,
+        armBot: 0.042,
         legLen: 0.82,
         armLen: 0.48,
         shoulderY: 1.5,
         hipY: 0.88,
-        shoe: [0.18, 0.08, 0.26],
-        bust: 0.06,
-        hipOut: 0.13,
-        armOut: 0.28,
+        shoe: [0.1, 0.065, 0.22],
+        bust: 0.055,
+        hipOut: 0.125,
+        armOut: 0.27,
+        hand: [0.048, 0.082, 0.03],
     },
 };
+
+function mesh(name, geo, material, uvRect) {
+    if (uvRect) packUv(geo, uvRect);
+    const m = new THREE.Mesh(geo, material);
+    m.name = name;
+    return m;
+}
 
 function buildBody(cols, formKey = 'male', detail = 'high', formOverride = null) {
     const f = formOverride || FORMS[formKey] || FORMS.male;
     const d = detailParams(detail);
     const SEG = d.seg;
-    const HEAD_W = d.headW;
-    const HEAD_H = d.headH;
     const root = new THREE.Group();
     root.name = f.rootName;
     root.userData.detail = detail;
+    root.userData.heroUv = true;
 
-    const matSkin = mat(cols.skin, { r: 0.62 });
-    const matShirt = mat(cols.shirt, { r: 0.78 });
-    const matPants = mat(cols.pants, { r: 0.88 });
+    const matSkin = mat(cols.skin, { r: 0.58 });
+    const matShirt = mat(cols.shirt, { r: 0.76 });
+    const matPants = mat(cols.pants, { r: 0.86 });
     const matShoe = mat(cols.shoe ?? 0x141414, { r: 0.68, m: 0.08 });
     const matHair = mat(cols.hair ?? 0x2a1810, { r: 0.96 });
-    const matEye = mat(0x151515, { r: 0.35 });
+    const matEye = mat(0x151515, { r: 0.32 });
+    const matSclera = mat(0xf2eee8, { r: 0.28 });
 
-    // ── Hips / pelvis ──
-    const hips = new THREE.Mesh(
-        new THREE.BoxGeometry(f.hipW, f.hipH, f.hipD, 1, 1, 1),
-        matPants
-    );
+    // ── Hips / pelvis (lathe, not a brick) ──
+    const hipsGeo = lathe([
+        [f.hipW * 0.22, -f.hipH * 0.5],
+        [f.hipW * 0.46, -f.hipH * 0.28],
+        [f.hipW * 0.5, 0],
+        [f.hipW * 0.44, f.hipH * 0.28],
+        [f.waistW * 0.4, f.hipH * 0.5],
+    ], SEG);
+    hipsGeo.scale(1, 1, f.hipD / Math.max(0.12, f.hipW * 0.85));
+    hipsGeo.computeVertexNormals();
+    const hips = mesh('hips', hipsGeo, matPants, UV.HIPS);
     hips.position.y = f.hipY;
-    hips.name = 'hips';
-    // Soften with slight taper via scale
-    hips.scale.set(1, 1, 1);
     root.add(hips);
 
-    // ── Torso (shirt) — stacked volumes for waist→chest ──
+    // ── Torso shirt — one lathe waist→chest→shoulder ──
     const torsoGroup = new THREE.Group();
     torsoGroup.name = 'torso';
-    torsoGroup.position.y = f.hipY + f.hipH * 0.5 + f.torsoH * 0.5;
+    torsoGroup.position.y = f.hipY + f.hipH * 0.48 + f.torsoH * 0.5;
 
-    const waist = new THREE.Mesh(
-        new THREE.CylinderGeometry(f.waistW * 0.48, f.hipW * 0.42, f.torsoH * 0.35, SEG),
-        matShirt
-    );
-    waist.position.y = -f.torsoH * 0.28;
-    waist.name = 'torso_waist';
-
-    const chest = new THREE.Mesh(
-        new THREE.CylinderGeometry(f.chestW * 0.5, f.waistW * 0.48, f.torsoH * 0.55, SEG),
-        matShirt
-    );
-    chest.position.y = f.torsoH * 0.08;
-    chest.scale.z = f.chestD / (f.chestW * 0.55);
-    chest.name = 'torso_chest';
-
-    torsoGroup.add(waist, chest);
+    const torsoGeo = lathe([
+        [f.waistW * 0.46, -f.torsoH * 0.5],
+        [f.waistW * 0.48, -f.torsoH * 0.22],
+        [f.chestW * 0.5, f.torsoH * 0.08],
+        [f.chestW * 0.49, f.torsoH * 0.34],
+        [f.shoulderW * 0.26, f.torsoH * 0.5],
+    ], SEG);
+    torsoGeo.scale(1, 1, f.chestD / Math.max(0.14, f.chestW * 0.9));
+    torsoGeo.computeVertexNormals();
+    const torsoMesh = mesh('torso_shirt', torsoGeo, matShirt, UV.TORSO);
+    torsoGroup.add(torsoMesh);
 
     if (f.bust > 0 && d.bust) {
-        const bustL = new THREE.Mesh(new THREE.SphereGeometry(f.bust, Math.max(6, SEG - 2), 8), matShirt);
-        bustL.position.set(-f.chestW * 0.18, f.torsoH * 0.12, f.chestD * 0.38);
-        bustL.scale.set(1, 0.85, 0.75);
-        bustL.name = 'torso_bust_l';
+        const bustGeo = new THREE.SphereGeometry(f.bust, Math.max(8, SEG - 6), 10);
+        const bustL = mesh('torso_bust_l', bustGeo, matShirt, UV.TORSO);
+        bustL.position.set(-f.chestW * 0.16, f.torsoH * 0.1, f.chestD * 0.34);
+        bustL.scale.set(1, 0.82, 0.72);
         const bustR = bustL.clone();
-        bustR.position.x = -bustL.position.x;
         bustR.name = 'torso_bust_r';
+        bustR.position.x = -bustL.position.x;
         torsoGroup.add(bustL, bustR);
     }
-
     root.add(torsoGroup);
 
-    // ── Shoulders + collar ──
-    const shoulders = new THREE.Mesh(
-        new THREE.BoxGeometry(f.shoulderW, 0.12, f.chestD * 0.95),
-        matShirt
-    );
+    // ── Shoulder yoke + deltoids ──
+    const yokeGeo = new THREE.SphereGeometry(f.shoulderW * 0.22, SEG, Math.max(8, SEG / 2));
+    yokeGeo.scale(f.shoulderW / (f.shoulderW * 0.44), 0.42, f.chestD * 0.85 / (f.shoulderW * 0.22));
+    yokeGeo.computeVertexNormals();
+    const shoulders = mesh('shoulders', yokeGeo, matShirt, UV.TORSO);
     shoulders.position.y = f.shoulderY;
-    shoulders.name = 'shoulders';
     root.add(shoulders);
 
-    const collar = new THREE.Mesh(
-        new THREE.BoxGeometry(f.chestW * 0.72, 0.055, f.chestD * 0.9),
-        matShirt
+    const collar = mesh(
+        'collar',
+        taperCyl(f.neckR * 1.15, f.chestW * 0.28, 0.06, SEG),
+        matShirt,
+        UV.TORSO,
     );
-    collar.position.set(0, f.shoulderY + 0.07, 0.02);
-    collar.name = 'collar';
+    collar.position.y = f.shoulderY + 0.055;
     root.add(collar);
 
     // ── Neck + head ──
-    const neck = new THREE.Mesh(
-        new THREE.CylinderGeometry(f.neckR * 0.92, f.neckR, 0.12, SEG),
-        matSkin
+    const neck = mesh(
+        'neck',
+        taperCyl(f.neckR * 0.9, f.neckR, 0.13, SEG),
+        matSkin,
+        UV.NECK,
     );
     neck.position.y = f.shoulderY + 0.14;
-    neck.name = 'neck';
     root.add(neck);
 
-    const head = new THREE.Mesh(
-        new THREE.SphereGeometry(f.headR, HEAD_W, HEAD_H),
-        matSkin
+    const head = mesh(
+        'head',
+        new THREE.SphereGeometry(f.headR, d.headW, d.headH),
+        matSkin,
+        UV.HEAD,
     );
-    head.position.y = f.shoulderY + 0.28;
+    head.position.y = f.shoulderY + 0.29;
     head.scale.set(f.headScale[0], f.headScale[1], f.headScale[2]);
-    head.name = 'head';
     root.add(head);
 
     if (d.face) {
-        // Ears
-        const earGeo = new THREE.SphereGeometry(f.headR * 0.22, 8, 6);
-        const earL = new THREE.Mesh(earGeo, matSkin);
-        earL.position.set(-f.headR * 0.92, head.position.y, 0);
-        earL.scale.set(0.45, 1, 0.7);
-        earL.name = 'ear_l';
+        const earGeo = new THREE.SphereGeometry(f.headR * 0.2, 8, 6);
+        const earL = mesh('ear_l', earGeo, matSkin, UV.HEAD);
+        earL.position.set(-f.headR * 0.9, head.position.y, 0);
+        earL.scale.set(0.42, 1, 0.68);
         const earR = earL.clone();
-        earR.position.x = -earL.position.x;
         earR.name = 'ear_r';
+        earR.position.x = -earL.position.x;
         root.add(earL, earR);
 
-        // Eyes
-        const eyeGeo = new THREE.SphereGeometry(0.022, 8, 8);
-        const eyeL = new THREE.Mesh(eyeGeo, matEye);
-        eyeL.position.set(-0.055, head.position.y + 0.02, f.headR * 0.82);
-        eyeL.name = 'eye_l';
+        const scleraGeo = new THREE.SphereGeometry(0.026, 8, 8);
+        const scleraL = mesh('sclera_l', scleraGeo, matSclera, UV.HEAD);
+        scleraL.position.set(-0.052, head.position.y + 0.018, f.headR * 0.8);
+        const scleraR = scleraL.clone();
+        scleraR.name = 'sclera_r';
+        scleraR.position.x = 0.052;
+        const eyeGeo = new THREE.SphereGeometry(0.014, 8, 8);
+        const eyeL = mesh('eye_l', eyeGeo, matEye, UV.HEAD);
+        eyeL.position.set(-0.052, head.position.y + 0.018, f.headR * 0.9);
         const eyeR = eyeL.clone();
-        eyeR.position.x = 0.055;
         eyeR.name = 'eye_r';
-        root.add(eyeL, eyeR);
+        eyeR.position.x = 0.052;
+        root.add(scleraL, scleraR, eyeL, eyeR);
 
-        // Nose hint
-        const nose = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 6), matSkin);
-        nose.position.set(0, head.position.y - 0.01, f.headR * 0.88);
-        nose.scale.set(0.7, 0.9, 1.1);
-        nose.name = 'nose';
+        const nose = mesh('nose', new THREE.SphereGeometry(0.018, 8, 6), matSkin, UV.HEAD);
+        nose.position.set(0, head.position.y - 0.012, f.headR * 0.9);
+        nose.scale.set(0.68, 0.92, 1.15);
         root.add(nose);
     }
 
-    // Hair anchor (HairSlot)
     const hairAnchor = new THREE.Group();
     hairAnchor.name = 'hair_anchor';
     hairAnchor.position.y = head.position.y + f.headR * 0.55;
     root.add(hairAnchor);
 
-    // Default short hair cap on body (can be replaced by hair GLB)
-    const hairCap = new THREE.Mesh(
-        new THREE.SphereGeometry(f.headR * 1.08, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.52),
-        matHair
+    const hairCap = mesh(
+        'hairCap',
+        new THREE.SphereGeometry(f.headR * 1.08, Math.max(12, SEG - 8), 12, 0, Math.PI * 2, 0, Math.PI * 0.52),
+        matHair,
+        UV.HEAD,
     );
     hairCap.position.y = head.position.y + f.headR * 0.12;
-    hairCap.name = 'hairCap';
     root.add(hairCap);
 
-    // ── Legs (pivot groups for walk) ──
+    // ── Legs (group pivots keep walk clips) ──
     function buildLeg(side) {
         const sign = side === 'L' ? -1 : 1;
         const g = new THREE.Group();
         g.name = side === 'L' ? 'legL' : 'legR';
+        const uvLeg = side === 'L' ? UV.LEG_L : UV.LEG_R;
+        const uvFoot = side === 'L' ? UV.FOOT_L : UV.FOOT_R;
+        const thighH = f.legLen * 0.46;
+        const calfH = f.legLen * 0.4;
 
-        const thigh = new THREE.Mesh(
-            new THREE.CylinderGeometry(f.thighBot, f.thighTop, f.legLen * 0.48, SEG),
-            matPants
+        const thigh = mesh(
+            `leg_thigh_${side}`,
+            taperCyl(f.thighBot, f.thighTop, thighH, SEG),
+            matPants,
+            uvLeg,
         );
-        thigh.position.y = -f.legLen * 0.24;
-        thigh.name = `thigh_${side}`;
+        thigh.position.y = -thighH * 0.5;
 
-        const calf = new THREE.Mesh(
-            new THREE.CylinderGeometry(f.calfBot, f.calfTop, f.legLen * 0.42, SEG),
-            matPants
+        const knee = mesh(
+            `leg_knee_${side}`,
+            new THREE.SphereGeometry(f.thighBot * 1.05, Math.max(8, SEG - 8), 8),
+            matPants,
+            uvLeg,
         );
-        calf.position.y = -f.legLen * 0.66;
-        calf.name = `calf_${side}`;
+        knee.position.y = -thighH;
 
-        const shoe = new THREE.Mesh(
-            new THREE.BoxGeometry(f.shoe[0], f.shoe[1], f.shoe[2]),
-            matShoe
+        const calf = mesh(
+            `leg_calf_${side}`,
+            taperCyl(f.calfBot, f.calfTop, calfH, SEG),
+            matPants,
+            uvLeg,
         );
-        shoe.position.set(0, -f.legLen * 0.92, f.shoe[2] * 0.12);
-        shoe.name = `shoe_${side}`;
+        calf.position.y = -thighH - calfH * 0.5;
 
-        g.add(thigh, calf, shoe);
+        const foot = mesh(
+            `shoe_${side}`,
+            new THREE.BoxGeometry(f.shoe[0], f.shoe[1], f.shoe[2], 1, 1, 2),
+            matShoe,
+            uvFoot,
+        );
+        foot.position.set(0, -f.legLen * 0.92, f.shoe[2] * 0.18);
+
+        g.add(thigh, knee, calf, foot);
         g.position.set(sign * f.hipOut, f.hipY, 0);
         return g;
     }
@@ -313,32 +366,62 @@ function buildBody(cols, formKey = 'male', detail = 'high', formOverride = null)
         const sign = side === 'L' ? -1 : 1;
         const g = new THREE.Group();
         g.name = side === 'L' ? 'armL' : 'armR';
+        const uvArm = side === 'L' ? UV.ARM_L : UV.ARM_R;
+        const uvHand = side === 'L' ? UV.HAND_L : UV.HAND_R;
+        const upH = f.armLen * 0.5;
+        const loH = f.armLen * 0.4;
 
-        const upper = new THREE.Mesh(
-            new THREE.CylinderGeometry(f.armBot * 1.05, f.armTop, f.armLen * 0.52, SEG),
-            matSkin
+        const deltoid = mesh(
+            `shoulder_deltoid_${side}`,
+            new THREE.SphereGeometry(f.armTop * 1.35, Math.max(8, SEG - 8), 8),
+            matShirt,
+            UV.TORSO,
         );
-        upper.position.y = -f.armLen * 0.26;
-        upper.name = `upper_arm_${side}`;
+        deltoid.position.set(0, -0.02, 0);
 
-        const lower = new THREE.Mesh(
-            new THREE.CylinderGeometry(f.armBot * 0.9, f.armBot * 1.05, f.armLen * 0.42, SEG),
-            matSkin
+        const upper = mesh(
+            `arm_upper_${side}`,
+            taperCyl(f.armBot * 1.08, f.armTop, upH, SEG),
+            matSkin,
+            uvArm,
         );
-        lower.position.y = -f.armLen * 0.68;
-        lower.name = `forearm_${side}`;
+        upper.position.y = -upH * 0.5 - 0.02;
 
-        const hand = new THREE.Mesh(
-            new THREE.BoxGeometry(0.07, 0.1, 0.045),
-            matSkin
+        const elbow = mesh(
+            `arm_elbow_${side}`,
+            new THREE.SphereGeometry(f.armBot * 1.08, Math.max(8, SEG - 8), 8),
+            matSkin,
+            uvArm,
         );
-        hand.position.y = -f.armLen * 0.95;
-        hand.name = `hand_${side}`;
+        elbow.position.y = -upH - 0.02;
 
-        g.add(upper, lower, hand);
+        const lower = mesh(
+            `arm_fore_${side}`,
+            taperCyl(f.armBot * 0.88, f.armBot * 1.08, loH, SEG),
+            matSkin,
+            uvArm,
+        );
+        lower.position.y = -upH - loH * 0.5 - 0.02;
+
+        const palm = mesh(
+            `arm_hand_${side}`,
+            new THREE.BoxGeometry(f.hand[0], f.hand[1] * 0.55, f.hand[2], 1, 1, 1),
+            matSkin,
+            uvHand,
+        );
+        palm.position.y = -f.armLen * 0.94;
+
+        const finger = mesh(
+            `arm_fingers_${side}`,
+            new THREE.BoxGeometry(f.hand[0] * 0.92, f.hand[1] * 0.42, f.hand[2] * 0.75, 1, 1, 1),
+            matSkin,
+            uvHand,
+        );
+        finger.position.y = -f.armLen * 0.94 - f.hand[1] * 0.42;
+
+        g.add(deltoid, upper, elbow, lower, palm, finger);
         g.position.set(sign * f.armOut, f.shoulderY - 0.02, 0);
-        // slight rest angle outward
-        g.rotation.z = sign * 0.08;
+        g.rotation.z = sign * 0.09;
         return g;
     }
 
@@ -347,8 +430,6 @@ function buildBody(cols, formKey = 'male', detail = 'high', formOverride = null)
     root.add(armL, armR);
 
     castShadow(root);
-
-    // Loco clips need named limb groups + torso for bob
     const torso = root.getObjectByName('torso') || torsoGroup;
     return { root, legL, legR, armL, armR, torso, form: f };
 }
@@ -358,7 +439,7 @@ function buildHairShort(cols) {
     g.name = 'hair_short_m';
     const cap = new THREE.Mesh(
         new THREE.SphereGeometry(0.195, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.55),
-        mat(cols.hair || 0x2a1810, { r: 0.96 })
+        mat(cols.hair || 0x2a1810, { r: 0.96 }),
     );
     cap.name = 'hair_mesh';
     g.add(cap);
@@ -372,7 +453,7 @@ function buildHairLong(cols) {
     const c = mat(cols.hair || 0x2a1810, { r: 0.94 });
     const cap = new THREE.Mesh(
         new THREE.SphereGeometry(0.195, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.5),
-        c
+        c,
     );
     const drape = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.14, 0.45, 10), c);
     drape.position.set(0, -0.2, -0.06);
@@ -392,7 +473,7 @@ function buildHairBun(cols) {
     const c = mat(cols.hair || 0x4a3828, { r: 0.94 });
     const cap = new THREE.Mesh(
         new THREE.SphereGeometry(0.185, 14, 10, 0, Math.PI * 2, 0, Math.PI * 0.48),
-        c
+        c,
     );
     const bun = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 10), c);
     bun.position.set(0, 0.1, -0.14);
@@ -494,12 +575,10 @@ function countTris(root) {
     return Math.round(tris);
 }
 
-/** Form scale biases for distinct silhouettes (not same mannequin tint) */
 const FORM_BIAS = {
     male: null,
     female: null,
     guard: {
-        // bulkier tactical
         shoulderW: 1.14,
         chestW: 1.12,
         chestD: 1.1,
@@ -509,7 +588,6 @@ const FORM_BIAS = {
         torsoH: 1.04,
     },
     mech: {
-        // stockier workshop build
         shoulderW: 1.08,
         chestW: 1.1,
         waistW: 1.08,
@@ -527,10 +605,9 @@ function applyFormBias(formKey, biasKey) {
     if (!bias) return base;
     for (const [k, v] of Object.entries(bias)) {
         if (typeof base[k] === 'number' && typeof v === 'number') {
-            base[k] = v > 2 ? v : base[k] * v; // absolute if large, else multiply
+            base[k] = v > 2 ? v : base[k] * v;
         }
     }
-    // Distinct root names so LODs/debug stay clear
     if (biasKey === 'guard') base.rootName = 'StarterGuard';
     if (biasKey === 'mech') base.rootName = 'StarterMech';
     return base;
@@ -575,10 +652,57 @@ const LOD_TIERS = [
     { detail: 'low', suffix: '_lod2' },
 ];
 
+const UV_COLORS = {
+    HEAD: [220, 90, 90],
+    NECK: [200, 70, 70],
+    ARM_L: [80, 170, 220],
+    ARM_R: [60, 140, 200],
+    TORSO: [90, 200, 120],
+    HAND_L: [80, 160, 210],
+    HAND_R: [50, 130, 190],
+    HIPS: [200, 170, 70],
+    LEG_L: [180, 110, 220],
+    LEG_R: [150, 80, 200],
+    FOOT_L: [120, 120, 140],
+    FOOT_R: [100, 100, 120],
+};
+
+function writeUvGuide() {
+    const W = 1024;
+    const H = 1024;
+    const rgba = fillRgba(W, H, (x, y) => {
+        const u = x / W;
+        const v = 1 - y / H;
+        let col = [28, 28, 32];
+        for (const [key, rect] of Object.entries(UV)) {
+            const [u0, v0, u1, v1] = rect;
+            if (u >= u0 && u <= u1 && v >= v0 && v <= v1) {
+                const cx = Math.floor(x / 16);
+                const cy = Math.floor(y / 16);
+                const checker = (cx + cy) % 2 === 0;
+                const base = UV_COLORS[key] || [180, 180, 180];
+                col = checker
+                    ? base
+                    : [Math.max(0, base[0] - 28), Math.max(0, base[1] - 28), Math.max(0, base[2] - 28)];
+                const edge = u < u0 + 0.004 || u > u1 - 0.004 || v < v0 + 0.004 || v > v1 - 0.004;
+                if (edge) col = [245, 245, 245];
+                break;
+            }
+        }
+        return [...col, 255];
+    });
+    fs.mkdirSync(TEMPLATE, { recursive: true });
+    const out = path.join(TEMPLATE, 'hero_uv_guide.png');
+    writePng(out, W, H, rgba, fs);
+    const legend = Object.keys(UV).map((k) => `${k} ${UV[k].map((n) => n.toFixed(2)).join(',')}`).join('\n');
+    fs.writeFileSync(path.join(TEMPLATE, 'hero_uv_guide.txt'), `${legend}\n`);
+    console.log(`[gen-starter-avatar] UV guide → textures/_templates/hero_uv_guide.png`);
+}
+
 async function main() {
-    console.log('[gen-starter-avatar] Track B — higher detail + idle/walk/run clips\n');
+    console.log('[gen-starter-avatar] H0/H1 — hero UV atlas + profiled anatomy\n');
+    writeUvGuide();
     for (const spec of AVATARS) {
-        // LOD chain for player bodies; NPCs get high only (distinct bias forms)
         const wantLods = /starter_avatar(_female)?\.glb$/i.test(spec.file);
         const tiers = wantLods ? LOD_TIERS : [LOD_TIERS[0]];
         const formOver = applyFormBias(spec.form, spec.bias || spec.form);
@@ -602,7 +726,7 @@ async function main() {
         const kb = (fs.statSync(out).size / 1024).toFixed(1);
         console.log(`[gen-starter-avatar] ${spec.file} (${kb} KB)`);
     }
-    console.log('[gen-starter-avatar] done — import/ + public/bundle/import/ (idle+walk+run)');
+    console.log('[gen-starter-avatar] done — import/ + public/bundle/import/ + UV guide');
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

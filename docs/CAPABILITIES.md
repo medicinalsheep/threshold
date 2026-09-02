@@ -1,6 +1,6 @@
-# Threshold — Progress & Capabilities (v10.21)
+# Threshold — Progress & Capabilities (v10.22)
 
-**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.21.6
+**Live:** https://medicinalsheep.github.io/threshold/ · **Version:** 10.22.5
 
 Single progress snapshot — what ships today, how the pieces connect, and what is next.
 
@@ -62,7 +62,7 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | Terminal grid default | Void + GridHelper · ENTER PLAY · kit/AI **INSERT only**; [PHYSICS.md](PHYSICS.md) |
 | Grid / snap | 1 unit = 1 m · cell size menu · Transform snap · `gridSystem.js` |
 | Physics / joints | Mass·friction live · hinge/lock · gravity; kit opt-in; `physics:verify` |
-| Avatar defaults | Realistic skin/fabric + normals · starter outfit · multi-LOD **idle/walk/run** · `avatar:audit` gate |
+| Avatar defaults | Procedural **hero** bodies (~8–9k tris) · UV atlas · island skin (9 tones) + shirt/pants/shoe maps · idle/walk/run · `avatar:audit` |
 | Pages deploy | Stale-chunk auto-reload · CI skips full texture regen |
 | Negative LOD (far unlit) | ~100m · **light bake** · mesh/HILOD first · static auto · multi-mat · floor B/**C**; [NEGATIVE_LOD.md](NEGATIVE_LOD.md) |
 | E5 remotes / bloom | Far remote lerp · bloom skip Lite/no emissive |
@@ -88,6 +88,7 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | Compiler + scene undo | `compiler/main.js`, `sceneHistory.js` |
 | PromptGen + EXAMPLES | `prompter/main.js`, `promptCookbook.js` |
 | GIMP live SYNC | `creativeWatch.js`, `textureBridge.js` |
+| Colab cloud maps (opt-in) | `colabPipeline.js` + `colab/threshold_pbr_starter.ipynb` — [COLAB_ASSET_PIPELINE.md](COLAB_ASSET_PIPELINE.md) |
 | Material library | `materialPresets.js` + `materialLibrary.js` — [MATERIALS.md](MATERIALS.md) |
 | Blender GLB + LOD | `blender-export.cjs`, `meshLod.js` |
 | UI layout edit | `hubLayout.js` — UNLOCK/LOCK corner hubs |
@@ -133,8 +134,8 @@ Policy: [THRESHOLD_CHILD_ASSETS.md](THRESHOLD_CHILD_ASSETS.md) · Showcase/survi
 | Agent status + GPU chip | `agentStatus.js` |
 | Sequential Ollama queue | `ollamaRunQueue.js` |
 | Capability matrix | Red/yellow/green per model × tier |
-| Mini models (GitHub) | `npm run models:mini` · **wave7** `train:mini -- --wave7` · `--full` |
-| Bootcamp waves | wave5 product · wave6 live · **wave7** entry/shape/wardrobe · [BOOTCAMP.md](BOOTCAMP.md) |
+| Mini models (GitHub) | `npm run models:mini` · latest **wave9** `train:mini -- --wave9` · `--wave7` entry/shape · `--full` |
+| Bootcamp waves | wave5 product · wave6 live · wave7 entry/shape/wardrobe · wave8 art · **wave9** origin/walk · [BOOTCAMP.md](BOOTCAMP.md) |
 | Benchmarks | `npm run ollama:benchmark` · `ollama:golden` |
 | Ollama CORS proxy | `npm run ollama:serve` → `:11435` (Pages + localhost); not plain `ollama serve` |
 | Play surface Ollama | **No probe** on player surface (avoids mobile CORS noise) |
@@ -172,7 +173,8 @@ npm run walk:verify
 npm run perf:verify
 npm run store:verify            # packaging smoke (optional)
 npm run ollama:verify           # local LLM (optional)
-npm run train:mini -- --wave7   # seed+build+create minis (needs Ollama)
+npm run train:mini -- --wave9   # latest mini seed+build+create (needs Ollama)
+npm run colab:verify            # optional Colab pack/import (no GPU)
 npm run build
 ```
 
@@ -186,6 +188,7 @@ npm run build
 - [CHANGELOG.md](CHANGELOG.md) — version history
 - [AUTH.md](AUTH.md) — optional Grok API key (no X OAuth)
 - [UI_AND_AGENTS.md](UI_AND_AGENTS.md) — surfaces, hubs, portal
+- [COLAB_ASSET_PIPELINE.md](COLAB_ASSET_PIPELINE.md) — optional Colab T4 maps
 - [STORE_RELEASE.md](STORE_RELEASE.md) · [MAC_NOTARIZE.md](MAC_NOTARIZE.md)
 - [AGENTS.md](../AGENTS.md) — contributor map
 - [old/docs/](../old/docs/) — archived phase history

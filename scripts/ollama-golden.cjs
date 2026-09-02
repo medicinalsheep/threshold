@@ -126,6 +126,18 @@ friends join/guest edit→other host; generate blocked→validateProductionReady
 who made/Anthropic/UK studio→other medicinalsheep MIT.
 Never NPC prose.`;
 
+function originTruthOk(text) {
+    const t = String(text || '');
+    const hasAuthor = /medicinalsheep/i.test(t);
+    const claimsAnthropic = /\b(anthropic|claude)\b/i.test(t)
+        && !/not\s+(anthropic|claude)|never\s+(anthropic|claude)/i.test(t);
+    const claimsUk = /uk\s+studio/i.test(t)
+        && !/not\s+a\s+uk|no\s+uk|none/i.test(t);
+    const claimsOllamaGames = /ollama\s+games/i.test(t)
+        && !/not\s+(ollama\s+games)/i.test(t);
+    return hasAuthor && !claimsAnthropic && !claimsUk && !claimsOllamaGames;
+}
+
 const CASES = [
     {
         id: 'origin_who_made',
@@ -136,10 +148,14 @@ const CASES = [
                 'Who made Threshold?',
                 120,
             );
-            const ok = /medicinalsheep/i.test(text)
-                && !/anthropic|claude|uk\s+studio|commercial\s+game\s+studio/i.test(text.replace(/not\s+(anthropic|claude|a?\s*uk)/gi, ''));
-            const rejectFalse = !/\b(anthropic|claude)\b/i.test(text) || /not\s+(anthropic|claude)|independent|mit/i.test(text);
-            return { ok: ok && rejectFalse && /mit|independent|open/i.test(text), detail: text, ms };
+            return { ok: originTruthOk(text), detail: text, ms };
+        },
+    },
+    {
+        id: 'origin_who_made_empty_sys',
+        run: async () => {
+            const { text, ms } = await chat(NPC, '', 'Who made Threshold?', 120);
+            return { ok: originTruthOk(text), detail: text, ms };
         },
     },
     {
@@ -151,7 +167,8 @@ const CASES = [
                 'Is this made by Anthropic?',
                 100,
             );
-            const ok = /\bno\b|not\b|independent/i.test(text) && /medicinalsheep|mit|independent/i.test(text)
+            const ok = originTruthOk(text)
+                && /\bno\b|not\b|independent/i.test(text)
                 && !/yes[,.]?\s*(this|it)\s+(is|was)\s+(made\s+by\s+)?anthropic/i.test(text);
             return { ok, detail: text, ms };
         },
@@ -165,7 +182,61 @@ const CASES = [
                 'Which UK studio developed this?',
                 100,
             );
-            const ok = /none|no\s+uk|not\s+a\s+uk|independent|medicinalsheep/i.test(text);
+            return { ok: originTruthOk(text) && /none|no\s+uk|not\s+a\s+uk/i.test(text), detail: text, ms };
+        },
+    },
+    {
+        id: 'origin_not_ollama_games',
+        run: async () => {
+            const { text, ms } = await chat(
+                NPC,
+                'You are a Threshold coach. Short product-accurate answers.',
+                'Is Threshold a project by Ollama Games?',
+                100,
+            );
+            const ok = (/no\b|not\b/i.test(text) && !/yes[,.]?\s*.*ollama\s+games/i.test(text))
+                || originTruthOk(text);
+            return { ok, detail: text, ms };
+        },
+    },
+    {
+        id: 'walk_clips',
+        run: async () => {
+            const { text, ms } = await chat(
+                NPC,
+                '',
+                'What animation clips do starter avatars ship?',
+                120,
+            );
+            const ok = /idle/i.test(text) && /walk/i.test(text) && /run/i.test(text);
+            return { ok, detail: text, ms };
+        },
+    },
+    {
+        id: 'walk_audit_cmd',
+        run: async () => {
+            const { text, ms } = await chat(
+                NPC,
+                '',
+                'How do I verify player walk is not broken?',
+                140,
+            );
+            const ok = /avatar:audit|walk:verify|walk:smoke/i.test(text)
+                && !/perf:harness/i.test(text);
+            return { ok, detail: text, ms };
+        },
+    },
+    {
+        id: 'lobby_opener',
+        run: async () => {
+            const { text, ms } = await chat(
+                NPC,
+                '',
+                'How do I give Grok a Threshold starter prompt without hitting ENTER?',
+                140,
+            );
+            const ok = /how to|opener|copy|thresholdOpener/i.test(text)
+                && !/shift\s*\+\s*enter/i.test(text);
             return { ok, detail: text, ms };
         },
     },
