@@ -1,3 +1,18 @@
+## 10.22.5 — Lighting perf (Lite extras off, contact cull, shadow follow)
+
+- Lite/Mobile no longer keep Realistic extras: fill/rim stay out of the scene, contact RT disposed, graphics bootstrap applies the detected tier
+- Contact shadows (Realistic/Ultra): restore renderer clear color, skip aerial camera, skip casters outside the blob
+- Sun / fill / rim follow play focus so gated shadow maps actually cover the player (not stuck at origin)
+- Modest IBL kept on Mobile (no envMap zero — shirts stay fabric, not plastic)
+- First-run demo crate refreshes IBL after spawn
+
+## 10.22.4 — Lighting quality pass
+
+- Photoreal key/fill/rim rig + tighter sun shadow camera; ACES filmic kept, exposure tuned
+- Stronger Day look (IBL bounce so skin/fabric are not plastic); Terminal/Soft/Night kept
+- Contact shadows on Realistic/Ultra only — Lite/Mobile stay cheap (no rim, no contact pass)
+- SCENE → Light: Terminal / Day / Soft / Night. Pair **Day** with Graphics **Realistic**
+
 ## 10.22.3 — Desktop 10.22 onto 10.21.6 first-run
 
 - Rebase Desktop hero mesh / Colab / wave9 onto GitHub main

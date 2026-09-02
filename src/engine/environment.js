@@ -174,8 +174,10 @@ export const Environment = {
             const g = 0.35 + warmth * 0.55;
             const b = 0.5 + warmth * 0.4;
             this.sunLight.color.setRGB(r, g, b);
-            this.sunLight.intensity = 0.15 + warmth * 1.85;
+            // Intensity comes from LightingRig (preset look * tier). Fallback if rig is late.
+            if (!window.LightingRig) this.sunLight.intensity = 0.15 + warmth * 1.85;
         }
+        window.LightingRig?.onTimeOfDay?.(hours);
 
         if (Engine.scene?.fog) {
             const sky = new THREE.Color().setHSL(0.58, 0.35, 0.08 + warmth * 0.35);

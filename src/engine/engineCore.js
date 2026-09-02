@@ -7,7 +7,7 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { LightingRig } from './lightingRig.js';
 import { State, IS_TOUCH_DEVICE } from './state.js';
 import { Environment } from './environment.js';
 import { Physics } from './physics.js';
@@ -50,17 +50,21 @@ export const Engine = {
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        this.renderer.toneMappingExposure = 0.84;
+        this.renderer.toneMappingExposure = 1.02;
+        this.renderer.outputColorSpace = THREE.SRGBColorSpace;
         document.getElementById('canvas-container').appendChild(this.renderer.domElement);
-        // Lighting (Realism Upgrade)
-        const amb = new THREE.AmbientLight(0x3a3d42, 0.72);
+        // Lighting (key / fill / rim + IBL). Rig tightens shadows and gates extras.
+        const amb = new THREE.AmbientLight(0x3a3d42, 0.14);
         this.scene.add(amb);
-        Environment.sunLight = new THREE.DirectionalLight(0xfff4e8, 1.55);
-        Environment.sunLight.position.set(10, 20, 10);
+        Environment.ambientLight = amb;
+        Environment.ambLight = amb;
+        Environment.sunLight = new THREE.DirectionalLight(0xfff1dc, 2.05);
+        Environment.sunLight.position.set(12, 22, 10);
         Environment.sunLight.castShadow = true;
         Environment.sunLight.shadow.mapSize.width = 2048;
         Environment.sunLight.shadow.mapSize.height = 2048;
         this.scene.add(Environment.sunLight);
+        this.scene.add(Environment.sunLight.target);
         // Visual grid — rebuilt by GridSystem to match cell size (1 unit = 1 m)
         this.gridHelper = new THREE.GridHelper(80, 80, 0x2a6b3a, 0x1a1f1c);
         this.gridHelper.position.y = 0.07;
@@ -101,6 +105,7 @@ export const Engine = {
         this.raycaster = new THREE.Raycaster();
         this.setupPipeline();
         this.setupImageBasedLighting();
+        LightingRig.init(this, Environment);
         this.setRenderMode(4);
         UI.updateModeDisplay(4);
         window.addEventListener('resize', () => this.onResize());
@@ -301,12 +306,7 @@ export const Engine = {
         this.composer.addPass(this.bloomPass);
     },
     setupImageBasedLighting: function () {
-        if (this._envMap) return;
-        const pmrem = new THREE.PMREMGenerator(this.renderer);
-        pmrem.compileEquirectangularShader();
-        this._envMap = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-        this.scene.environment = this._envMap;
-        pmrem.dispose();
+        LightingRig.setupImageBasedLighting(this);
         State.objects.forEach((o) => {
             if (o.material?.isMeshStandardMaterial) o.material.needsUpdate = true;
         });
@@ -314,16 +314,16 @@ export const Engine = {
 
     applyRenderModeSceneTuning: function (idx) {
         const isRealistic = idx === 4;
-        if (Environment.sunLight) Environment.sunLight.intensity = isRealistic ? 1.38 : 1.5;
-        if (this.renderer) this.renderer.toneMappingExposure = isRealistic ? 0.88 : 0.78;
         if (this.scene.fog) this.scene.fog.density = isRealistic ? State.env.fogDensity : Math.max(State.env.fogDensity, 0.02);
-        State.objects.forEach((obj) => {
-            if (!obj.material?.isMeshStandardMaterial) return;
-            obj.material.envMapIntensity = isRealistic ? 0.48 : 0.18;
-            if (!isRealistic && obj.material.emissive) {
-                obj.material.emissiveIntensity = Math.max(obj.material.emissiveIntensity || 0, 0.1);
-            }
-        });
+        LightingRig.onRenderMode(idx);
+        if (!isRealistic) {
+            State.objects.forEach((obj) => {
+                if (!obj.material?.isMeshStandardMaterial) return;
+                if (obj.material.emissive) {
+                    obj.material.emissiveIntensity = Math.max(obj.material.emissiveIntensity || 0, 0.1);
+                }
+            });
+        }
     },
 
     setRenderMode: function (idx) {
@@ -697,6 +697,7 @@ export const Engine = {
         }
         // E5: skip bloom when no on-screen emissive / Lite tier (saves full-screen pass)
         this._updateBloomSkip();
+        LightingRig.tick();
         this.composer.render();
         window.CreatorHud?.tick?.(time);
     },

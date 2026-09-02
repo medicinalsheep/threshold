@@ -66,6 +66,7 @@ export async function buildStarterGrid(opts = {}) {
         Env.sunLight.color?.setHex?.(0xc8d4e0);
     }
     State.env.lightingPreset = 'terminal';
+    window.LightingRig?.applyLook?.('terminal', { silent: true });
     window.NegativeLod?.notifyEnvChange?.();
     queueMicrotask(() => window.QualityLadder?.syncUi?.());
 

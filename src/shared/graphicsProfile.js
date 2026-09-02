@@ -5,7 +5,7 @@ export const GRAPHICS_TIERS = {
     compatibility: {
         id: 'compatibility',
         label: 'Lite',
-        description: 'PBR realistic · no water · 1K textures — old phones & max reach',
+        description: 'PBR · no extra lights/contact shadows · 1K — old phones & max reach',
         renderMode: 4,
         env: { waterEnabled: false, atmosphereEnabled: false, fogDensity: 0.02 },
         physicsIterations: 8,
@@ -18,7 +18,7 @@ export const GRAPHICS_TIERS = {
     balanced: {
         id: 'balanced',
         label: 'Mobile',
-        description: 'PBR realistic · atmosphere · 2K textures — phones & tablets',
+        description: 'PBR · atmosphere + fill · no contact shadows · 2K — phones & tablets',
         renderMode: 4,
         env: { waterEnabled: false, atmosphereEnabled: true, fogDensity: 0.016 },
         physicsIterations: 12,
@@ -31,7 +31,7 @@ export const GRAPHICS_TIERS = {
     realistic: {
         id: 'realistic',
         label: 'Realistic',
-        description: 'Full PBR · bloom · 2K textures — desktop default',
+        description: 'Full PBR · key/fill/rim · contact shadows · 2K — desktop default',
         renderMode: 4,
         env: { waterEnabled: false, atmosphereEnabled: true, fogDensity: 0.015 },
         physicsIterations: 15,
@@ -44,7 +44,7 @@ export const GRAPHICS_TIERS = {
     ultra: {
         id: 'ultra',
         label: 'Ultra',
-        description: 'PBR max · sharp shadows · 4K textures — high-end desktop',
+        description: 'PBR max · key/fill/rim · contact shadows · 4K — high-end desktop',
         renderMode: 4,
         env: { waterEnabled: false, atmosphereEnabled: true, fogDensity: 0.012 },
         physicsIterations: 20,
@@ -150,6 +150,9 @@ export const GraphicsProfile = {
             return saved;
         }
         State.graphicsTier = State.graphicsDetectedTier;
+        // Engine.init runs before bootstrap; apply lighting so Lite/Mobile
+        // do not keep Realistic extras (rim / contact) until the prompt.
+        window.LightingRig?.applyQuality?.(State.graphicsTier, { silent: true });
         return State.graphicsDetectedTier;
     },
 
@@ -223,6 +226,7 @@ export const GraphicsProfile = {
         if (Environment?.sunLight && preset.shadowMapSize) {
             Environment.sunLight.shadow.mapSize.set(preset.shadowMapSize, preset.shadowMapSize);
         }
+        window.LightingRig?.applyQuality?.(tierId, { silent: true });
 
         if (Engine?.bloomPass && preset.bloomStrength != null && State.renderMode === 4) {
             Engine.bloomPass.strength = preset.bloomStrength;

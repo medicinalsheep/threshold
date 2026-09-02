@@ -22,7 +22,7 @@
     <meta name="twitter:image" content="https://medicinalsheep.github.io/threshold/icons/appicon512.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="threshold-version" content="10.22.3" />
+    <meta name="threshold-version" content="10.22.5" />
     <meta name="theme-color" content="#39ff14" />
     <title>THRESHOLD — generate a 3D scene, then walk it</title>
 </head>
@@ -271,7 +271,7 @@
 
     <!-- APP HEADER -->
     <nav id="app-nav">
-        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.22.3</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" class="surface-badge-clickable" title="UI surface — click to cycle Play / Creator / Full" role="button" tabindex="0">CREATE</span></div>
+        <div class="brand">THRESHOLD <span class="accent" id="app-version">v10.22.5</span><span class="edition-badge" id="edition-badge">WEB</span><span id="surface-profile-badge" class="surface-badge-clickable" title="UI surface — click to cycle Play / Creator / Full" role="button" tabindex="0">CREATE</span></div>
         <button id="nav-toggle" aria-label="Toggle navigation">MENU</button>
         <div class="tabs" id="app-tabs">
             <button class="tab-btn active" data-target="view-engine">ENGINE</button>
@@ -682,12 +682,12 @@
                     <label>Light</label>
                     <div class="env-preset-chips">
                         <button type="button" class="btn-sm env-light-chip" data-light-preset="terminal" title="Dark terminal grid">Terminal</button>
-                        <button type="button" class="btn-sm env-light-chip" data-light-preset="day" title="Daylight PBR">Day</button>
+                        <button type="button" class="btn-sm env-light-chip" data-light-preset="day" title="Photoreal key/fill/rim + IBL">Day</button>
                         <button type="button" class="btn-sm env-light-chip" data-light-preset="soft" title="Warm soft fill">Soft</button>
                         <button type="button" class="btn-sm env-light-chip" data-light-preset="night" title="Night / moon">Night</button>
                     </div>
                 </div>
-                <p class="env-mode-info" style="margin:0 0 6px;">Light presets are SCENE-only (no pad rebuild). Default ENTER = Terminal.</p>
+                <p class="env-mode-info" style="margin:0 0 6px;">Light presets are SCENE-only (no pad rebuild). Default ENTER = Terminal. Day + Graphics Realistic = photoreal key/fill/rim.</p>
                 <div class="prop-row">
                     <label>Time</label>
                     <input type="range" id="env-time" min="0" max="24" step="0.25" value="14">
