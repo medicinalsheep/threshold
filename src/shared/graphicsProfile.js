@@ -150,6 +150,9 @@ export const GraphicsProfile = {
             return saved;
         }
         State.graphicsTier = State.graphicsDetectedTier;
+        // Engine.init runs before bootstrap; apply lighting so Lite/Mobile
+        // do not keep Realistic extras (rim / contact) until the prompt.
+        window.LightingRig?.applyQuality?.(State.graphicsTier, { silent: true });
         return State.graphicsDetectedTier;
     },
 

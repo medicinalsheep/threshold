@@ -146,7 +146,9 @@ export const PRESET_LOOK = {
 };
 
 function getTierId() {
-    const id = window.State?.graphicsTier || 'realistic';
+    const id = window.State?.graphicsTier
+        || window.State?.graphicsDetectedTier
+        || 'realistic';
     if (id === 'custom') return 'realistic';
     return TIER_LIGHTING[id] ? id : 'realistic';
 }
@@ -164,6 +166,7 @@ function getPresetLook() {
 }
 
 const _follow = new THREE.Vector3();
+const _clearColor = new THREE.Color();
 
 export const LightingRig = {
     ambLight: null,
@@ -175,6 +178,9 @@ export const LightingRig = {
     _envBlur: null,
     _frame: 0,
     _baseEnv: new WeakMap(),
+    _sunOffX: 12,
+    _sunOffY: 22,
+    _sunOffZ: 10,
 
     init(Engine, Environment) {
         this.engine = Engine;
@@ -196,23 +202,11 @@ export const LightingRig = {
 
         const sun = Environment.sunLight;
         if (sun) {
+            this._sunOffX = sun.position.x;
+            this._sunOffY = sun.position.y;
+            this._sunOffZ = sun.position.z;
             this._setupSunShadow(sun, getTier());
             if (sun.target && !sun.target.parent) Engine.scene.add(sun.target);
-        }
-
-        if (!this.fillLight) {
-            this.fillLight = new THREE.DirectionalLight(0xb7c9e4, 0.5);
-            this.fillLight.name = 'threshold-fill';
-            this.fillLight.castShadow = false;
-            Engine.scene.add(this.fillLight);
-            Environment.fillLight = this.fillLight;
-        }
-        if (!this.rimLight) {
-            this.rimLight = new THREE.DirectionalLight(0xe8f2ff, 0.4);
-            this.rimLight.name = 'threshold-rim';
-            this.rimLight.castShadow = false;
-            Engine.scene.add(this.rimLight);
-            Environment.rimLight = this.rimLight;
         }
 
         if (Engine.renderer) {
@@ -247,6 +241,50 @@ export const LightingRig = {
             sun.shadow.map.dispose();
             sun.shadow.map = null;
         }
+    },
+
+    _ensureAuxLights(tier) {
+        const Engine = this.engine || window.Engine;
+        const Environment = this.env || window.Environment;
+        if (!Engine?.scene) return;
+
+        const ensure = (key, hex, name) => {
+            if (!this[key]) {
+                this[key] = new THREE.DirectionalLight(hex, 0);
+                this[key].name = name;
+                this[key].castShadow = false;
+            }
+            if (this[key].parent !== Engine.scene) Engine.scene.add(this[key]);
+            if (this[key].target && this[key].target.parent !== Engine.scene) {
+                Engine.scene.add(this[key].target);
+            }
+            if (Environment) Environment[key] = this[key];
+            this[key].visible = true;
+        };
+        const drop = (key) => {
+            if (!this[key]) return;
+            this[key].intensity = 0;
+            this[key].visible = false;
+            Engine.scene.remove(this[key]);
+            if (this[key].target?.parent) Engine.scene.remove(this[key].target);
+        };
+
+        if (tier.fillDir) ensure('fillLight', 0xb7c9e4, 'threshold-fill');
+        else drop('fillLight');
+        if (tier.rim) ensure('rimLight', 0xe8f2ff, 'threshold-rim');
+        else drop('rimLight');
+    },
+
+    _disposeContact() {
+        if (!this.contact) return;
+        const Engine = this.engine || window.Engine;
+        const group = this.contact.group;
+        if (group) Engine?.scene?.remove(group);
+        this.contact.plane?.geometry?.dispose?.();
+        this.contact.plane?.material?.dispose?.();
+        this.contact.rt?.dispose?.();
+        this.contact.depthMaterial?.dispose?.();
+        this.contact = null;
     },
 
     setupImageBasedLighting(Engine, blurOverride) {
@@ -306,6 +344,7 @@ export const LightingRig = {
         const Environment = this.env || window.Environment;
         const sun = Environment?.sunLight;
         if (sun) this._setupSunShadow(sun, tier);
+        this._ensureAuxLights(tier);
         this._syncIntensities();
         if (Engine?.renderer) {
             Engine.renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -381,30 +420,49 @@ export const LightingRig = {
 
     _placeKeyFillRim() {
         const Environment = this.env || window.Environment;
+        const Engine = this.engine || window.Engine;
         const sun = Environment?.sunLight;
         if (!sun) return;
-        if (this.fillLight) {
-            this.fillLight.position.set(
-                -sun.position.x * 0.85,
-                Math.max(6, sun.position.y * 0.45),
-                -sun.position.z * 0.85,
-            );
-        }
-        if (this.rimLight) {
-            this.rimLight.position.set(
-                -sun.position.x * 0.55,
-                Math.max(12, sun.position.y + 10),
-                sun.position.z * 0.35,
-            );
-        }
+        const fx = Engine?.camera?.position.x ?? 0;
+        const fz = Engine?.camera?.position.z ?? 0;
+        sun.position.set(fx + this._sunOffX, this._sunOffY, fz + this._sunOffZ);
         if (sun.target) {
-            sun.target.position.set(0, 0, 0);
+            sun.target.position.set(fx, 0, fz);
             sun.target.updateMatrixWorld();
+        }
+        if (this.fillLight?.parent) {
+            this.fillLight.position.set(
+                fx - this._sunOffX * 0.85,
+                Math.max(6, this._sunOffY * 0.45),
+                fz - this._sunOffZ * 0.85,
+            );
+            if (this.fillLight.target) {
+                this.fillLight.target.position.set(fx, 0, fz);
+                this.fillLight.target.updateMatrixWorld();
+            }
+        }
+        if (this.rimLight?.parent) {
+            this.rimLight.position.set(
+                fx - this._sunOffX * 0.55,
+                Math.max(12, this._sunOffY + 10),
+                fz + this._sunOffZ * 0.35,
+            );
+            if (this.rimLight.target) {
+                this.rimLight.target.position.set(fx, 0, fz);
+                this.rimLight.target.updateMatrixWorld();
+            }
         }
         sun.shadow?.camera?.updateProjectionMatrix();
     },
 
     onTimeOfDay() {
+        const Environment = this.env || window.Environment;
+        const sun = Environment?.sunLight;
+        if (sun) {
+            this._sunOffX = sun.position.x;
+            this._sunOffY = sun.position.y;
+            this._sunOffZ = sun.position.z;
+        }
         this._placeKeyFillRim();
         this._syncIntensities();
     },
@@ -416,15 +474,15 @@ export const LightingRig = {
             Engine.renderer.toneMapping = THREE.ACESFilmicToneMapping;
             Engine.renderer.toneMappingExposure = isRealistic ? this._exposure() : Math.min(this._exposure(), 0.84);
         }
+        this._syncIntensities();
         this._applyEnvMapIntensity();
-        if (isRealistic) this._syncIntensities();
-        else if (this.rimLight) this.rimLight.intensity *= 0.35;
+        if (!isRealistic && this.rimLight?.visible) this.rimLight.intensity *= 0.35;
     },
 
     _setContactEnabled(on, tier) {
         const Engine = this.engine || window.Engine;
         if (!on || !Engine?.scene) {
-            if (this.contact?.group) this.contact.group.visible = false;
+            this._disposeContact();
             return;
         }
         if (!this.contact) this.contact = createContactShadow(THREE, tier);
@@ -435,12 +493,21 @@ export const LightingRig = {
 
     tick() {
         this._frame += 1;
-        if (this._frame % 40 === 0) this._applyEnvMapIntensity();
-        if (!this.contact?.group?.visible) return;
+        const tierId = getTierId();
+        const envEvery = (tierId === 'compatibility' || tierId === 'balanced') ? 96 : 40;
+        if (this._frame % envEvery === 0) this._applyEnvMapIntensity();
+        if (this._frame % 2 === 0) this._placeKeyFillRim();
+        if (!this.contact?.group) return;
         const Engine = this.engine || window.Engine;
-        const ultra = getTierId() === 'ultra';
-        if (!ultra && (this._frame % 2)) return;
         const cam = Engine?.camera;
+        const aerial = !!(cam && cam.position.y > 18);
+        if (aerial || !getTier().contactShadows) {
+            this.contact.group.visible = false;
+            return;
+        }
+        this.contact.group.visible = true;
+        const ultra = tierId === 'ultra';
+        if (!ultra && (this._frame % 2)) return;
         if (cam) _follow.set(cam.position.x, 0, cam.position.z);
         else _follow.set(0, 0, 0);
         this.contact.render(Engine.renderer, Engine.scene, _follow);
@@ -539,13 +606,21 @@ function createContactShadow(THREE, tier) {
             }
         };
         hide(plane);
+        const half = state.size * 0.55;
         scene.traverse((o) => {
             if (o === group || o === plane) return;
             if (o.isLight || o.isGridHelper || o.isCamera || o.isTransformControls) {
                 hide(o);
                 return;
             }
-            if (o.userData?.isFloor || o.userData?.negativeLodFloor || o.userData?.isHelper) hide(o);
+            if (o.userData?.isFloor || o.userData?.negativeLodFloor || o.userData?.isHelper) {
+                hide(o);
+                return;
+            }
+            if (!(o.isMesh || o.isSkinnedMesh || o.isInstancedMesh) || !o.visible) return;
+            const x = o.matrixWorld.elements[12];
+            const z = o.matrixWorld.elements[14];
+            if (Math.abs(x - follow.x) > half || Math.abs(z - follow.z) > half) hide(o);
         });
 
         const prevOverride = scene.overrideMaterial;
@@ -554,6 +629,8 @@ function createContactShadow(THREE, tier) {
         const prevClear = renderer.autoClear;
         const prevTarget = renderer.getRenderTarget();
         const prevShadow = renderer.shadowMap.enabled;
+        renderer.getClearColor(_clearColor);
+        const prevClearAlpha = renderer.getClearAlpha();
 
         scene.overrideMaterial = depthMaterial;
         scene.background = null;
@@ -571,6 +648,7 @@ function createContactShadow(THREE, tier) {
         renderer.autoClear = prevClear;
         renderer.shadowMap.enabled = prevShadow;
         renderer.setRenderTarget(prevTarget);
+        renderer.setClearColor(_clearColor, prevClearAlpha);
         for (let i = 0; i < hidden.length; i++) hidden[i].visible = true;
     };
 
